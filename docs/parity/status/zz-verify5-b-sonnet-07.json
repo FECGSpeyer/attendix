@@ -1,0 +1,337 @@
+{
+ "batch": "zz-verify5-b-sonnet-07",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "settings/files/files.page#action-484a5ba9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:897-902"
+   ],
+   "v": "bestätigt",
+   "n": "Menüpunkt \"Datei herunterladen\" nur für Dateien, vorhanden. Flutter zeigt dabei keinen Lade-Overlay (Ionic blockierend), niedrig/Look."
+  },
+  "settings/files/files.page#action-a4a98ab3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:903-907"
+   ],
+   "v": "bestätigt",
+   "n": "\"Link teilen\" für Dateien und Ordner; Link wie Ionic, Share-Sheet, sonst Zwischenablage, sonst Toast."
+  },
+  "settings/files/files.page#action-b50a0922": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1236-1244"
+   ],
+   "v": "bestätigt",
+   "n": "Suchfeld mit Platzhalter, Filter wie Ionic."
+  },
+  "settings/files/files.page#action-e5256591": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1248-1252"
+   ],
+   "v": "bestätigt",
+   "n": "\"Suche zurücksetzen\" nur bei Suchbegriff, leert das Feld."
+  },
+  "settings/files/files.page#action-fc7ea012": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1351-1356"
+   ],
+   "v": "bestätigt",
+   "n": "Drei-Punkte-Button im Auswahlmodus ausgeblendet; Popover mit gleichen Einträgen/Bedingungen."
+  },
+  "settings/files/files.page#field-5fd06a31": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1336-1345"
+   ],
+   "v": "bestätigt",
+   "n": "Checkbox im Auswahlmodus vor dem Eintrag, Zeile getönt."
+  },
+  "settings/files/files.page#modal-5e3c0523": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:345-358",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:382-397"
+   ],
+   "v": "bestätigt",
+   "n": "Vollbild-Bildbetrachter mit Dateiname und Schließen; Fehler beim URL-Laden -> Toast wie Ionic."
+  },
+  "settings/files/files.page#text-73b58f50": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:874"
+   ],
+   "v": "bestätigt",
+   "n": "Such-Hilfe-Popover: Text identisch (ARB = de.json)."
+  },
+  "settings/files/files.page#text-af5c84ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:872"
+   ],
+   "v": "bestätigt",
+   "n": "Such-Hilfe-Popover: Text identisch (ARB = de.json)."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-05925936": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:656-660",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:678-682"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-05925936-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:656-660",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:678-682"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-09e7d9fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:440-443",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:240-264"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-15722e77": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:418-421"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-160105ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:474-477",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:113-130"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-1f091cde": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:418-421"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-25b7b1ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:465-472"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-3dcbfc66": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:440-443",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:263"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-74da4c50": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:418-421"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-91f38a72": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:418-421"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-a3856866": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:474-477",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:113-130"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-ca6c05f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:440-443",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:263"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-e8512bfd": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:541-546",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:165-208"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#alert-34f8d44b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:142-154"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-0722d457": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:404-411"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-42c419ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:427-439"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-477aff7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:381-385"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-4c447044": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:363-380"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-4dafe561": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:381-385"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-5d3c4fca": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-60338e3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-6546f130": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-9589321d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:427-439"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-99c184df": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:396-403"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-9a759f2f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:381-385"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-9eea7996": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:381-385"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-c084e95b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:427-439"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-d5ae8d41": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:386-395"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-d84509fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:386-395"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-da097b90": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:404-411"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-dc17c391": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Sheet-Aufbau, Bedingungen (Person-only Sichtbar/Bearbeitbar/Zurücksetzen), Optionen-Löschen mit Dialog bei gespeicherten Optionen, Validierung/Toasts wie Ionic."
+  }
+ },
+ "extra": []
+}

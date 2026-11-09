@@ -1,0 +1,20 @@
+{
+  "batch": "zz-verify4-b34-team",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "protocols/protocol/protocol.page#action-48d91b74": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:1049",
+        "lib/core/router/app_router.dart:1074",
+        "lib/core/providers/push_providers.dart:311",
+        "lib/core/services/push/push_navigation.dart:117"
+      ],
+      "n": "In der App gleich: AppBar-Zurück (Pop) zur aufrufenden Seite, Speichern beim Verlassen (PopScope). Rollenabhängiger Fallback fehlt: Ionic defaultHref = backHref (Leitung → Termin /tabs/attendance/:id, Mitglieder → Teamorganisation › Protokolle), greift, wenn der Tab-Stack keinen Vorgänger hat (Push „protocol“, Direktlink/Neuladen) / Flutter: /settings/protocol/:id liegt unter /settings, Push öffnet per go → Zurück führt für alle Rollen auf die Einstellungen-Seite. Erstprüfer schob das in den Routing-Batch; gleiche Abweichung wie task-detail action-367e5078 (dort diff niedrig).",
+      "v": "korrigiert"
+    }
+  },
+  "extra": []
+}

@@ -1,0 +1,2690 @@
+{
+ "batch": "zz-verify5c-sonnet-34",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 6,
+    "cond": [
+     "@if (isLiveNow())"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "[color]": "\"liveMode ? 'danger' : 'primary'\""
+    },
+    "events": [
+     "(click)=toggleLive()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"liveMode ? 'radio' : 'radio-outline'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared-plan/shared-plan.page#action-47ec43ec"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:750-757"
+    ],
+    "n": "nur bei isLiveNow, Farbe danger/primary, schaltet Live-Modus – gleich. Ionic: Icon radio/radio-outline / Flutter: sensors/sensors_outlined",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 53,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@if (isEditMode)",
+     "in <ion-popover trigger=add-field-trigger #addPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=addField(addPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "planning.addField"
+    ],
+    "de": [
+     "Feld hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.addField' | transloco }}",
+    "id": "shared-plan/shared-plan.page#action-942dc972"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:673"
+    ],
+    "n": "„Feld hinzufügen“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 56,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@if (isEditMode)",
+     "in <ion-popover trigger=add-field-trigger #addPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=addNote(addPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "planning.addNoteField"
+    ],
+    "de": [
+     "Notizfeld hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.addNoteField' | transloco }}",
+    "id": "shared-plan/shared-plan.page#action-dd1ccee4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:674"
+    ],
+    "n": "„Notizfeld hinzufügen“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 37,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@if (planLabels.length)"
+    ],
+    "tag": "app-plan-chips",
+    "attrs": {},
+    "events": [
+     "(selectedChange)=selectPlan($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[labels]=\"planLabels\"",
+     "[selected]=\"planIndex\"",
+     "[todayIndex]=\"todayIndex\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared-plan/shared-plan.page#action-f8b2b6c5"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:517-534",
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:783-784"
+    ],
+    "n": "Flutter besser: Chips mit Plannamen und „heute“-Markierung, Wechsel des Plans gleich. Ionic: Wechsel bei laufendem Live-Modus schaltet ihn fälschlich aus (stopLive + toggleLive) bzw. lässt ihn ohne Timer an / Flutter: Live = isLiveNow des neuen Plans; im Bearbeitungsmodus werden offene Änderungen vor dem Wechsel gespeichert",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "shared-plan/shared-plan.page.ts",
+    "line": 505,
+    "method": "SharedPlanPage.showExportOptions",
+    "cond": [],
+    "header": {
+     "keys": [
+      "planning.export"
+     ],
+     "de": [
+      "Exportieren"
+     ],
+     "literals": [],
+     "expr": "translate('planning.export')"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "expr": "buttons",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "e3b9ad82",
+    "mbody": "90e14ba3",
+    "id": "shared-plan/shared-plan.page#actionsheet-7d9d8ba7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:713-733",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:57-77"
+    ],
+    "n": "Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Abbrechen“ gleich (kein Bild/Telegram). Ionic: ohne Icons / Flutter: Icons picture_as_pdf, content_copy.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "shared-plan/shared-plan.page.ts",
+    "line": 424,
+    "method": "SharedPlanPage.editStartTime",
+    "cond": [],
+    "header": {
+     "keys": [
+      "plans.editStartTime"
+     ],
+     "de": [
+      "Startzeit bearbeiten"
+     ],
+     "literals": [],
+     "expr": "translate('plans.editStartTime')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(evt: any) => { if (!evt.time) { return false; } this.time = this.date ? `${this.date}T${evt.time}` : evt.time; this.saveEdits(); }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "time",
+      "label": null,
+      "name": "'time'",
+      "placeholder": null,
+      "value": "current",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "bebba7d4",
+    "mbody": "0fa132cd",
+    "id": "shared-plan/shared-plan.page#alert-0caf6a44"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:650-666"
+    ],
+    "n": "Ionic: Alert „Startzeit bearbeiten“ mit Zeit-Eingabe und „Abbrechen“/„Speichern“ / Flutter: System-Zeitwahl (24 h) mit Hilfetext „Startzeit bearbeiten“. Gespeicherter Wert: Ad-hoc-Plan `${date}T${HH:mm}` gleich; Termin-Plan Ionic `${attendance.date}T${HH:mm}`, Flutter nur „HH:mm“",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "shared-plan/shared-plan.page.ts",
+    "line": 453,
+    "method": "SharedPlanPage.editField",
+    "cond": [],
+    "header": {
+     "keys": [
+      "planning.editField"
+     ],
+     "de": [
+      "Feld bearbeiten"
+     ],
+     "literals": [],
+     "expr": "translate('planning.editField')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(evt: any) => { if (!evt.field) { return false; } field.name = evt.field; if (!isNote) { field.conductor = evt.conductor ?? ''; field.info = evt.info?.trim() || undefined; if (evt.time) { field.time = String(evt.time); } } this.saveEdits()…"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "inputs",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "283365eb",
+    "mbody": "b18fee9a",
+    "id": "shared-plan/shared-plan.page#alert-29f54454"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155-195",
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:306-320"
+    ],
+    "n": "„Feld bearbeiten“ mit Programmpunkt/Ausführender/Info und Dauer, bei Notizen nur Text, „Abbrechen“ gleich. Ionic: Bestätigen „Speichern“, Dauer-Platzhalter „Dauer (min)“, leerer Name → stumm offen; Block-Kopf wird wie ein normales Feld (inkl. Dauer) bearbeitet / Flutter: Bestätigen „Updaten“, Feld „Minuten“, Fehlermeldung bei leerem Namen; Tippen auf Block-Kopf öffnet das Block-Aktionsblatt",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "shared-plan/shared-plan.page.ts",
+    "line": 382,
+    "method": "SharedPlanPage.addNote",
+    "cond": [],
+    "header": {
+     "keys": [
+      "attendance.addNote"
+     ],
+     "de": [
+      "Notiz hinzufügen"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.addNote')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.add"
+       ],
+       "de": [
+        "Hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.add')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(evt: any) => { if (!evt.text?.trim()) { return false; } this.fields.push({ id: `noteFld ${evt.text.trim()}-${Date.now()}`, name: evt.text.trim(), conductor: '', time: '0', }); this.saveEdits(); }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'text'",
+      "placeholder": {
+       "keys": [
+        "planning.enterNote"
+       ],
+       "de": [
+        "Notiz eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('planning.enterNote')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "458a1d9a",
+    "mbody": "cd272e54",
+    "id": "shared-plan/shared-plan.page#alert-5d93ade6"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:692-705"
+    ],
+    "n": "Platzhalter „Notiz eingeben...“, „Abbrechen“/„Hinzufügen“, Notiz (noteFld, Dauer 0) gleich. Ionic: Titel „Notiz hinzufügen“ (attendance.addNote), leer → stumm offen / Flutter: Titel „Notizfeld hinzufügen“, Meldung „Bitte eine Notiz eingeben.“",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "shared-plan/shared-plan.page.ts",
+    "line": 351,
+    "method": "SharedPlanPage.addField",
+    "cond": [],
+    "header": {
+     "keys": [
+      "planning.addField"
+     ],
+     "de": [
+      "Feld hinzufügen"
+     ],
+     "literals": [],
+     "expr": "translate('planning.addField')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.add"
+       ],
+       "de": [
+        "Hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.add')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(evt: any) => { if (!evt.field?.trim()) { return false; } this.fields.push({ id: `${evt.field.trim()}-${Date.now()}`, name: evt.field.trim(), conductor: evt.conductor?.trim() ?? '', info: evt.info?.trim() || undefined, time: '20', }); this…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'field'",
+      "placeholder": {
+       "keys": [
+        "planning.enterItem"
+       ],
+       "de": [
+        "Programmpunkt eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('planning.enterItem')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'conductor'",
+      "placeholder": {
+       "keys": [
+        "plans.performerOptional"
+       ],
+       "de": [
+        "Ausführender (optional)"
+       ],
+       "literals": [],
+       "expr": "translate('plans.performerOptional')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'info'",
+      "placeholder": {
+       "keys": [
+        "planning.infoOptional"
+       ],
+       "de": [
+        "Info-Text (optional)"
+       ],
+       "literals": [],
+       "expr": "translate('planning.infoOptional')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "f2a6bdae",
+    "mbody": "d5accc80",
+    "id": "shared-plan/shared-plan.page#alert-fe4c6b4f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:668-691",
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:177-191"
+    ],
+    "n": "Flutter besser: „Feld hinzufügen“, Platzhalter „Programmpunkt eingeben...“/„Ausführender (optional)“/„Info-Text (optional)“, „Abbrechen“/„Hinzufügen“, Dauer 20, getrimmt – gleich. Ionic: leerer Name → Dialog bleibt stumm offen / Flutter: Meldung „Bitte einen Programmpunkt eingeben.“; zusätzlich Feldbeschriftungen.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 51,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@if (isEditMode)"
+    ],
+    "inline": true,
+    "tag": "ion-popover",
+    "attrs": {
+     "trigger": "add-field-trigger",
+     "#": "addPopover"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "shared-plan/shared-plan.page#popover-84d9bbdf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:668-676"
+    ],
+    "n": "Popover am „+“ (showIonPopover)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 107,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@if (end)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.end"
+    ],
+    "de": [
+     "Ende"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.end' | transloco }}",
+    "id": "shared-plan/shared-plan.page#text-36e09e6c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:830-834",
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:207-217"
+    ],
+    "n": "„Ende“ gleich. Ionic: nur wenn end gespeichert ist / Flutter (Nur-Lesen): ohne end aus Start + Summe der Dauern berechnet und angezeigt",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 30,
+    "cond": [
+     "@if (!loading && notFound)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "plans.notFound"
+    ],
+    "de": [
+     "Plan nicht gefunden. Der Link ist möglicherweise abgelaufen oder ungültig."
+    ],
+    "literals": [],
+    "text": "{{ 'plans.notFound' | transloco }}",
+    "id": "shared-plan/shared-plan.page#text-5a696bcb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:769-778"
+    ],
+    "n": "„Plan nicht gefunden. Der Link ist möglicherweise abgelaufen oder ungültig.“ in einer Karte",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "shared-plan/shared-plan.page.ts",
+    "line": 493,
+    "method": "SharedPlanPage.saveEdits",
+    "cond": [],
+    "message": {
+     "keys": [
+      "plans.saveFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern"
+     ],
+     "literals": [],
+     "expr": "translate('plans.saveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "0d47302e",
+    "mbody": "0b1244d1",
+    "id": "shared-plan/shared-plan.page#toast-2ab6b1bd"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:630-633"
+    ],
+    "n": "Flutter besser: „Fehler beim Speichern“ (danger) gleich. Ionic: nur bei geworfener Exception (supabase-js liefert DB-Fehler als error zurück, daher praktisch nie) / Flutter: bei jedem fehlgeschlagenen oder wirkungslosen Update",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/attendance-response-modal/attendance-response-modal.component",
+   "ionic": {
+    "ts": "shared/attendance-response-modal/attendance-response-modal.component.ts",
+    "html": "shared/attendance-response-modal/attendance-response-modal.component.ts (inline)"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "shared/attendance-response-modal/attendance-response-modal.component.ts",
+    "line": 96,
+    "method": "AttendanceResponseModalComponent.send",
+    "cond": [],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "translate(message === 'expired' ? 'autoMessages.respExpired' : message === 'alreadyDecided' ? 'autoMessages.respAlreadyDecided' : 'autoMessages.respFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "4afb44e3",
+    "mbody": "03226b1d",
+    "id": "shared/attendance-response-modal/attendance-response-modal.component#toast-83a5af5a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/attendance_response_page.dart:80",
+     "lib/data/repositories/auto_message_repository.dart:449"
+    ],
+    "n": "Fehlercode aus body.error ('expired'/'alreadyDecided') → respExpired/respAlreadyDecided, sonst respFailed; roter Toast (showError)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/audio-player/audio-player.component",
+   "ionic": {
+    "ts": "shared/audio-player/audio-player.component.ts",
+    "html": "shared/audio-player/audio-player.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/audio-player/audio-player.component.html",
+    "line": 36,
+    "cond": [
+     "@if (audioPlayer.currentFile())"
+    ],
+    "tag": "ion-icon",
+    "attrs": {
+     "class": "close-icon"
+    },
+    "events": [
+     "(click)=audioPlayer.stop()"
+    ],
+    "link": null,
+    "model": "name=close-circle",
+    "bindings": [],
+    "icons": [
+     "close-circle"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/audio-player/audio-player.component#action-4b13b062"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/audio_player/audio_player_widget.dart:119"
+    ],
+    "n": "graues close-circle (Icons.cancel), stoppt und blendet Bar aus",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/audio-player/audio-player.component",
+   "ionic": {
+    "ts": "shared/audio-player/audio-player.component.ts",
+    "html": "shared/audio-player/audio-player.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "shared/audio-player/audio-player.component.html",
+    "line": 46,
+    "cond": [
+     "@if (audioPlayer.currentFile())"
+    ],
+    "tag": "ion-range",
+    "attrs": {
+     "class": "seek-slider",
+     "[min]": "\"0\"",
+     "[max]": "\"100\"",
+     "[value]": "\"audioPlayer.progress()\""
+    },
+    "events": [
+     "(ionKnobMoveStart)=onKnobMoveStart()",
+     "(ionKnobMoveEnd)=onKnobMoveEnd($event)"
+    ],
+    "link": null,
+    "model": "[value]=\"audioPlayer.progress()\"",
+    "bindings": [
+     "[pin]=\"false\"",
+     "[snaps]=\"false\"",
+     "[ticks]=\"false\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/audio-player/audio-player.component#field-2b108a9d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/audio_player/audio_player_widget.dart:149"
+    ],
+    "n": "Ionic Prozent-Range 0–100, Flutter Slider in ms – gleiches Verhalten (Ziehen → beim Loslassen springen)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/audio-player/audio-player.component",
+   "ionic": {
+    "ts": "shared/audio-player/audio-player.component.ts",
+    "html": "shared/audio-player/audio-player.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared/audio-player/audio-player.component.html",
+    "line": 58,
+    "cond": [
+     "@if (audioPlayer.currentFile())"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "time-label"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ audioPlayer.formatTime(audioPlayer.duration()) }}"
+    ],
+    "text": "{{ audioPlayer.formatTime(audioPlayer.duration()) }}",
+    "id": "shared/audio-player/audio-player.component#text-05909793"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/audio_player/audio_player_widget.dart:173"
+    ],
+    "n": "Gesamtdauer „m:ss“ rechts vom Regler (formatTime gleich, 0 → „0:00“).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/audio-player/audio-player.component",
+   "ionic": {
+    "ts": "shared/audio-player/audio-player.component.ts",
+    "html": "shared/audio-player/audio-player.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared/audio-player/audio-player.component.html",
+    "line": 30,
+    "cond": [
+     "@if (audioPlayer.currentFile())"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "track-name"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ audioPlayer.currentSongName() || audioPlayer.currentFile()?.fileName }}"
+    ],
+    "text": "{{ audioPlayer.currentSongName() || audioPlayer.currentFile()?.fileName }}",
+    "id": "shared/audio-player/audio-player.component#text-6d380bee"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/audio_player/audio_player_widget.dart:98"
+    ],
+    "n": "Songname, sonst Dateiname; einzeilig mit Ellipse",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/audio-player/audio-player.component",
+   "ionic": {
+    "ts": "shared/audio-player/audio-player.component.ts",
+    "html": "shared/audio-player/audio-player.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared/audio-player/audio-player.component.html",
+    "line": 44,
+    "cond": [
+     "@if (audioPlayer.currentFile())"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "time-label"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ audioPlayer.formatTime(audioPlayer.currentTime()) }}"
+    ],
+    "text": "{{ audioPlayer.formatTime(audioPlayer.currentTime()) }}",
+    "id": "shared/audio-player/audio-player.component#text-c16c5e16"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/audio_player/audio_player_widget.dart:130",
+     "lib/core/services/audio_player/audio_player_service.dart:115"
+    ],
+    "n": "Format m:ss, 0 → „0:00“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart",
+    "lib/core/services/audio_player/audio_player_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/audio-player/audio-player.component",
+   "ionic": {
+    "ts": "shared/audio-player/audio-player.component.ts",
+    "html": "shared/audio-player/audio-player.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared/audio-player/audio-player.component.html",
+    "line": 33,
+    "cond": [
+     "@if (audioPlayer.currentFile())",
+     "@if (audioPlayer.hasQueue())"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "queue-position"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ audioPlayer.queueIndex() + 1 }}/{{ audioPlayer.queue().length }}"
+    ],
+    "text": "{{ audioPlayer.queueIndex() + 1 }}/{{ audioPlayer.queue().length }}",
+    "id": "shared/audio-player/audio-player.component#text-e24bb605"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/audio_player/audio_player_widget.dart:111"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/excuse-reason-picker/excuse-reason-picker.component",
+   "ionic": {
+    "ts": "shared/excuse-reason-picker/excuse-reason-picker.component.ts",
+    "html": "shared/excuse-reason-picker/excuse-reason-picker.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/excuse-reason-picker/excuse-reason-picker.component.html",
+    "line": 12,
+    "cond": [
+     "in <ion-modal #modal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "[disabled]": "\"!isConfirmable()\""
+    },
+    "events": [
+     "(click)=onConfirm()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'common.confirm' | transloco\""
+    ],
+    "icons": [
+     "checkmark"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/excuse-reason-picker/excuse-reason-picker.component#action-9be93d63"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:105",
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:146"
+    ],
+    "n": "Häkchen rechts in der Kopfzeile, deaktiviert solange nicht bestätigbar – gleich. Ionic: nur dieses Häkchen / Flutter: zusätzlich ein großer Button „Bestätigen“ unter der Liste",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/excuse-reason-picker/excuse-reason-picker.component",
+   "ionic": {
+    "ts": "shared/excuse-reason-picker/excuse-reason-picker.component.ts",
+    "html": "shared/excuse-reason-picker/excuse-reason-picker.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/excuse-reason-picker/excuse-reason-picker.component.html",
+    "line": 6,
+    "cond": [
+     "in <ion-modal #modal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'common.cancel' | transloco\""
+    ],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/excuse-reason-picker/excuse-reason-picker.component#action-e4239dd0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:98"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/excuse-reason-picker/excuse-reason-picker.component",
+   "ionic": {
+    "ts": "shared/excuse-reason-picker/excuse-reason-picker.component.ts",
+    "html": "shared/excuse-reason-picker/excuse-reason-picker.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "shared/excuse-reason-picker/excuse-reason-picker.component.html",
+    "line": 35,
+    "cond": [
+     "in <ion-modal #modal>",
+     "@if (reasonSelection === customReasonValue)"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [
+     "(ionFocus)=onCustomReasonFocus()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"customReason\"",
+    "bindings": [
+     "[placeholder]=\"'excuse.minChars' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "excuse.minChars"
+    ],
+    "de": [
+     "Mindestens 5 Zeichen eingeben..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'excuse.minChars' | transloco\"",
+    "id": "shared/excuse-reason-picker/excuse-reason-picker.component#field-432c437c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:127"
+    ],
+    "n": "Label „Grund“, Platzhalter „Mindestens 5 Zeichen eingeben...“, Satzanfang groß, Bestätigen erst ab 5 Zeichen – gleich. Ionic: Textarea ohne Autofokus, wächst unbegrenzt (autoGrow) / Flutter: autofocus – Tastatur öffnet sofort bei „Sonstiger Grund“ bzw. beim Öffnen am Termintag; umrandetes Feld, 2–5 Zeilen.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/excuse-reason-picker/excuse-reason-picker.component",
+   "ionic": {
+    "ts": "shared/excuse-reason-picker/excuse-reason-picker.component.ts",
+    "html": "shared/excuse-reason-picker/excuse-reason-picker.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "shared/excuse-reason-picker/excuse-reason-picker.component.html",
+    "line": 19,
+    "cond": [
+     "in <ion-modal #modal>"
+    ],
+    "tag": "ion-radio-group",
+    "attrs": {},
+    "events": [
+     "(ionChange)=onReasonChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"reasonSelection\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"reason\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ reason }}"
+     },
+     {
+      "value": "\"customReasonValue\"",
+      "keys": [
+       "excuse.customOption"
+      ],
+      "de": [
+       "Sonstiger Grund (Text)"
+      ],
+      "literals": [],
+      "text": "{{ 'excuse.customOption' | transloco }}"
+     }
+    ],
+    "keys": [
+     "excuse.customOption"
+    ],
+    "de": [
+     "Sonstiger Grund (Text)"
+    ],
+    "literals": [],
+    "text": "{{ reason }} {{ 'excuse.customOption' | transloco }}",
+    "id": "shared/excuse-reason-picker/excuse-reason-picker.component#field-d6ba74db"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:113"
+    ],
+    "n": "Gründe der Instanz in Reihenfolge, danach „Sonstiger Grund (Text)“; iOS Häkchen links, MD Radio",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/excuse-reason-picker/excuse-reason-picker.component",
+   "ionic": {
+    "ts": "shared/excuse-reason-picker/excuse-reason-picker.component.ts",
+    "html": "shared/excuse-reason-picker/excuse-reason-picker.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "shared/excuse-reason-picker/excuse-reason-picker.component.html",
+    "line": 1,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "#": "modal"
+    },
+    "events": [
+     "(didDismiss)=onDidDismiss()"
+    ],
+    "bindings": [
+     "[breakpoints]=\"[0, 0.6, 1]\"",
+     "[initialBreakpoint]=\"0.6\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "shared/excuse-reason-picker/excuse-reason-picker.component#modal-f35f9845"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:25"
+    ],
+    "n": "Bottom-Sheet mit Griff in beiden; Ionic startet bei 60 % Höhe (bei freiem Text 100 %), Flutter passt die Höhe dem Inhalt an",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/excuse-reason-picker/excuse-reason-picker.component",
+   "ionic": {
+    "ts": "shared/excuse-reason-picker/excuse-reason-picker.component.ts",
+    "html": "shared/excuse-reason-picker/excuse-reason-picker.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared/excuse-reason-picker/excuse-reason-picker.component.html",
+    "line": 34,
+    "cond": [
+     "in <ion-modal #modal>",
+     "@if (reasonSelection === customReasonValue)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "excuse.reason"
+    ],
+    "de": [
+     "Grund"
+    ],
+    "literals": [],
+    "text": "{{ 'excuse.reason' | transloco }}",
+    "id": "shared/excuse-reason-picker/excuse-reason-picker.component#text-35e99679"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:138"
+    ],
+    "n": "„Grund“ als Feld-Label",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/excuse-reason-picker/excuse-reason-picker.component",
+   "ionic": {
+    "ts": "shared/excuse-reason-picker/excuse-reason-picker.component.ts",
+    "html": "shared/excuse-reason-picker/excuse-reason-picker.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared/excuse-reason-picker/excuse-reason-picker.component.html",
+    "line": 10,
+    "cond": [
+     "in <ion-modal #modal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "excuse.late",
+     "excuse.signOut"
+    ],
+    "de": [
+     "Verspätung",
+     "Abmeldung"
+    ],
+    "literals": [],
+    "text": "{{ (isLate ? 'excuse.late' : 'excuse.signOut') | transloco }}",
+    "id": "shared/excuse-reason-picker/excuse-reason-picker.component#text-7faca216"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:94"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/files-folder-picker/files-folder-picker.component",
+   "ionic": {
+    "ts": "shared/files-folder-picker/files-folder-picker.component.ts",
+    "html": "shared/files-folder-picker/files-folder-picker.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/files-folder-picker/files-folder-picker.component.html",
+    "line": 6,
+    "cond": [
+     "in <ion-modal #modal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'common.cancel' | transloco\""
+    ],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/files-folder-picker/files-folder-picker.component#action-0d52550a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:180"
+    ],
+    "n": "Ionic: X-Button links in der Toolbar / Flutter: kein Schließen-Button, nur Drag-Handle, Wischen oder Tippen außerhalb",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/files-folder-picker/files-folder-picker.component",
+   "ionic": {
+    "ts": "shared/files-folder-picker/files-folder-picker.component.ts",
+    "html": "shared/files-folder-picker/files-folder-picker.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/files-folder-picker/files-folder-picker.component.html",
+    "line": 46,
+    "cond": [
+     "in <ion-modal #modal>",
+     "@else (not isLoading)",
+     "@for (folder of folders; track folder.path)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=navigate(folder.path)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "folder-outline"
+    ],
+    "keys": [
+     "folderPicker.choose"
+    ],
+    "de": [
+     "Wählen"
+    ],
+    "literals": [],
+    "text": "{{ folder.name }} {{ 'folderPicker.choose' | transloco }}",
+    "id": "shared/files-folder-picker/files-folder-picker.component#action-a9992099"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:308"
+    ],
+    "n": "Tippen öffnet Unterordner – gleich. Ionic: Ordner-Icon in primary, im iOS-Look Chevron (button-Item) / Flutter: Ordner-Icon in Standardfarbe, kein Chevron",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/files-folder-picker/files-folder-picker.component",
+   "ionic": {
+    "ts": "shared/files-folder-picker/files-folder-picker.component.ts",
+    "html": "shared/files-folder-picker/files-folder-picker.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/files-folder-picker/files-folder-picker.component.html",
+    "line": 12,
+    "cond": [
+     "in <ion-modal #modal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "[disabled]": "\"!currentPath || isLoading\""
+    },
+    "events": [
+     "(click)=onSelect()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'folderPicker.chooseThis' | transloco\""
+    ],
+    "icons": [
+     "checkmark"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/files-folder-picker/files-folder-picker.component#action-ef82aba3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:333"
+    ],
+    "n": "Ionic: Häkchen rechts in der Toolbar (deaktiviert im Hauptordner/beim Laden) wählt aktuellen Ordner / Flutter: kein Häkchen in der Kopfzeile; dieselbe Funktion nur über den Button „Diesen Ordner wählen“ unten (siehe action-c2019029)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/files-folder-picker/files-folder-picker.component",
+   "ionic": {
+    "ts": "shared/files-folder-picker/files-folder-picker.component.ts",
+    "html": "shared/files-folder-picker/files-folder-picker.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "shared/files-folder-picker/files-folder-picker.component.html",
+    "line": 1,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "#": "modal"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 1]\"",
+     "[initialBreakpoint]=\"1\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "shared/files-folder-picker/files-folder-picker.component#modal-9164bfef"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:180",
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:262"
+    ],
+    "n": "Ionic: Sheet mit Breakpoints [0, 1], öffnet in voller Höhe mit Toolbar / Flutter: Bottom-Sheet mit Drag-Handle, Höhe nach Inhalt bis max. 75 %",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/files-folder-picker/files-folder-picker.component",
+   "ionic": {
+    "ts": "shared/files-folder-picker/files-folder-picker.component.ts",
+    "html": "shared/files-folder-picker/files-folder-picker.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "shared/files-folder-picker/files-folder-picker.component.ts",
+    "line": 53,
+    "method": "FilesFolderPickerComponent.navigate",
+    "cond": [],
+    "message": {
+     "keys": [
+      "folderPicker.loadFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Ordner: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('folderPicker.loadFailed', { error: error.message || error })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c00412fa",
+    "mbody": "209e122e",
+    "id": "shared/files-folder-picker/files-folder-picker.component#toast-6a3e186f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:250"
+    ],
+    "n": "Ionic: roter Toast „Fehler beim Laden der Ordner: {error}“ / Flutter: gleicher Text als rote Zeile im Sheet statt Toast",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/image-viewer/image-viewer.component",
+   "ionic": {
+    "ts": "shared/image-viewer/image-viewer.component.ts",
+    "html": "shared/image-viewer/image-viewer.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/image-viewer/image-viewer.component.html",
+    "line": 47,
+    "cond": [],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "[disabled]": "\"zoomPercent() >= 500\""
+    },
+    "events": [
+     "(click)=zoomIn()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'imageViewer.zoomIn' | transloco\""
+    ],
+    "icons": [
+     "add"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/image-viewer/image-viewer.component#action-236047c8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:337"
+    ],
+    "n": "Plus-Button, deaktiviert bei 500 % – gleich. Ionic: Faktor 1,6 (auch Tasten +/=) / Flutter: 1,5",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/image-viewer/image-viewer.component",
+   "ionic": {
+    "ts": "shared/image-viewer/image-viewer.component.ts",
+    "html": "shared/image-viewer/image-viewer.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/image-viewer/image-viewer.component.html",
+    "line": 41,
+    "cond": [],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "[disabled]": "\"zoomPercent() <= 100\""
+    },
+    "events": [
+     "(click)=zoomOut()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'imageViewer.zoomOut' | transloco\""
+    ],
+    "icons": [
+     "remove"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/image-viewer/image-viewer.component#action-24790a96"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:314"
+    ],
+    "n": "Minus-Button, deaktiviert bei 100 % – gleich. Ionic: Faktor 1/1,6 (auch Taste „-“) / Flutter: 1/1,5.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/image-viewer/image-viewer.component",
+   "ionic": {
+    "ts": "shared/image-viewer/image-viewer.component.ts",
+    "html": "shared/image-viewer/image-viewer.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/image-viewer/image-viewer.component.html",
+    "line": 44,
+    "cond": [],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "zoom-value"
+    },
+    "events": [
+     "(click)=resetZoom()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'imageViewer.zoomReset' | transloco\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ zoomPercent() }}&nbsp;%",
+    "id": "shared/image-viewer/image-viewer.component#action-3ac52411"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:330"
+    ],
+    "n": "„{n} %“ mit geschütztem Leerzeichen, Tippen setzt auf 100 % zurück.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/image-viewer/image-viewer.component",
+   "ionic": {
+    "ts": "shared/image-viewer/image-viewer.component.ts",
+    "html": "shared/image-viewer/image-viewer.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/image-viewer/image-viewer.component.html",
+    "line": 27,
+    "cond": [],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "glass-btn round"
+    },
+    "events": [
+     "(click)=close()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'common.close' | transloco\""
+    ],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/image-viewer/image-viewer.component#action-4620a8c0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:285"
+    ],
+    "n": "X oben rechts schließt (Ionic runder Glas-Button, Flutter weißes Icon auf Verlauf)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/image-viewer/image-viewer.component",
+   "ionic": {
+    "ts": "shared/image-viewer/image-viewer.component.ts",
+    "html": "shared/image-viewer/image-viewer.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/image-viewer/image-viewer.component.html",
+    "line": 10,
+    "cond": [
+     "in <div>",
+     "[hidden]=\"loading() || failed()\""
+    ],
+    "tag": "img",
+    "attrs": {
+     "[hidden]": "\"loading() || failed()\"",
+     "#": "image"
+    },
+    "events": [
+     "(load)=onImageLoad()",
+     "(error)=onImageError()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[src]=\"src\"",
+     "[alt]=\"title || 'Bild'\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/image-viewer/image-viewer.component#action-54bf8f0b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:224"
+    ],
+    "n": "Spinner während des Ladens, danach Bild – gleich. Ionic: bei Ladefehler wird fallbackSrc versucht (Passbild in Einstellungen/Person: Avatar-Platzhalter assets/icon/avatar-placeholder.svg) / Flutter: kein Fallback, direkt Fehleranzeige",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/image-viewer/image-viewer.component",
+   "ionic": {
+    "ts": "shared/image-viewer/image-viewer.component.ts",
+    "html": "shared/image-viewer/image-viewer.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/image-viewer/image-viewer.component.html",
+    "line": 4,
+    "cond": [],
+    "tag": "div",
+    "attrs": {
+     "class": "stage",
+     "#": "stage"
+    },
+    "events": [
+     "(pointerdown)=onPointerDown($event)",
+     "(pointermove)=onPointerMove($event)",
+     "(pointerup)=onPointerUp($event)",
+     "(pointercancel)=onPointerUp($event)",
+     "(wheel)=onWheel($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "image-outline"
+    ],
+    "keys": [
+     "imageViewer.loadFailed"
+    ],
+    "de": [
+     "Bild konnte nicht geladen werden"
+    ],
+    "literals": [],
+    "text": "{{ 'imageViewer.loadFailed' | transloco }}",
+    "id": "shared/image-viewer/image-viewer.component#action-dd54e64c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:163",
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:204",
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:230"
+    ],
+    "n": "Pinch/Pan/Mausrad-Zoom und Fehleranzeige „Bild konnte nicht geladen werden“ vorhanden. Ionic: Wischen nach oben ODER unten schließt (ab 110 px oder schneller Wisch > 0,6 px/ms), Bild folgt auch seitlich, fliegt animiert raus; elastisches Über-Zoomen/Rand-Gummiband; Fehler-Icon image-outline / Flutter: nur nach unten, erst ab 120 px (schneller kurzer Wisch schließt nicht), kein Gummiband; Fehler-Icon broken_image",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/image-viewer/image-viewer.component",
+   "ionic": {
+    "ts": "shared/image-viewer/image-viewer.component.ts",
+    "html": "shared/image-viewer/image-viewer.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared/image-viewer/image-viewer.component.html",
+    "line": 33,
+    "cond": [
+     "@if (showHint())"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "imageViewer.hint"
+    ],
+    "de": [
+     "Doppeltippen oder mit zwei Fingern zoomen"
+    ],
+    "literals": [],
+    "text": "{{ 'imageViewer.hint' | transloco }}",
+    "id": "shared/image-viewer/image-viewer.component#text-59c21e83"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:348"
+    ],
+    "n": "Text „Doppeltippen oder mit zwei Fingern zoomen“ gleich. Ionic: nur beim allerersten Öffnen (localStorage imageViewerHintSeen), 3,2 s, mit Hand-Icon, verschwindet mit den Leisten / Flutter: bei jedem Öffnen 3 s, ohne Icon, unabhängig vom Ausblenden der Leisten",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/image-viewer/image-viewer.component",
+   "ionic": {
+    "ts": "shared/image-viewer/image-viewer.component.ts",
+    "html": "shared/image-viewer/image-viewer.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared/image-viewer/image-viewer.component.html",
+    "line": 26,
+    "cond": [],
+    "tag": "span",
+    "attrs": {
+     "class": "title"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ title }}"
+    ],
+    "text": "{{ title }}",
+    "id": "shared/image-viewer/image-viewer.component#text-c27ded53"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:274",
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart:164",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:150",
+     "lib/features/settings/presentation/pages/files_page.dart:357"
+    ],
+    "n": "Ionic: Titel = Dateiname bzw. „Bildvorschau“ (Dateiablage); beim Passbild (settings.page.html:282, person.page.html:49) wird nur [attr.title] gesetzt, das @Input title bleibt leer → kein Titel / Flutter: immer ein Titel: Dateiname, „{Vorname Nachname}.jpg“ (Person) bzw. „Passbild.jpg“ (Stammdaten)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart",
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/message-editor/message-editor.component",
+   "ionic": {
+    "ts": "shared/message-editor/message-editor.component.ts",
+    "html": "shared/message-editor/message-editor.component.ts (inline)"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/message-editor/message-editor.component.ts (inline)",
+    "line": 40,
+    "cond": [],
+    "tag": "button",
+    "attrs": {
+     "type": "button"
+    },
+    "events": [
+     "(mousedown)=$event.preventDefault()",
+     "(click)=cmd('toggleOrderedList')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.active]=\"isActive('orderedList')\"",
+     "[attr.aria-label]=\"'editor.orderedList' | transloco\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"1≡\"",
+    "id": "shared/message-editor/message-editor.component#action-b11ec5dc"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/messages/presentation/pages/message_compose_page.dart:355"
+    ],
+    "n": "Nummerierte Liste vorhanden. Ionic: Reihenfolge Aufzählung, dann Nummerierung / Flutter (flutter_quill-Toolbar): erst Nummerierung, dann Aufzählung",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/message-editor/message-editor.component",
+   "ionic": {
+    "ts": "shared/message-editor/message-editor.component.ts",
+    "html": "shared/message-editor/message-editor.component.ts (inline)"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/message-editor/message-editor.component.ts (inline)",
+    "line": 38,
+    "cond": [],
+    "tag": "button",
+    "attrs": {
+     "type": "button"
+    },
+    "events": [
+     "(mousedown)=$event.preventDefault()",
+     "(click)=toggleHeading()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.active]=\"isActive('heading')\"",
+     "[attr.aria-label]=\"'editor.heading' | transloco\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"H\"",
+    "id": "shared/message-editor/message-editor.component#action-ee5fa118"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/messages/presentation/pages/message_compose_page.dart:353",
+     "lib/core/utils/tiptap_converter.dart:47"
+    ],
+    "n": "Ionic: ein Umschalt-Button „H“ (Überschrift Ebene 2 an/aus) / Flutter: Dropdown „Überschrift“ mit H1, H2, H3, Normal (H1 wird beim Speichern zu Ebene 2, H3 bleibt Ebene 3)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/notification-bell/notification-bell.component",
+   "ionic": {
+    "ts": "shared/notification-bell/notification-bell.component.ts",
+    "html": "shared/notification-bell/notification-bell.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/notification-bell/notification-bell.component.html",
+    "line": 24,
+    "cond": [
+     "in <ion-modal isOpen=\"isOpen()\">",
+     "@if (notifications().length > 0)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=deleteAll()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'bell.deleteAll' | transloco\""
+    ],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/notification-bell/notification-bell.component#action-28195174"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/notification_bell.dart:296"
+    ],
+    "n": "roter Papierkorb nur bei vorhandenen Einträgen",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/notification-bell/notification-bell.component",
+   "ionic": {
+    "ts": "shared/notification-bell/notification-bell.component.ts",
+    "html": "shared/notification-bell/notification-bell.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/notification-bell/notification-bell.component.html",
+    "line": 43,
+    "cond": [
+     "in <ion-modal isOpen=\"isOpen()\">"
+    ],
+    "tag": "ion-refresher",
+    "attrs": {
+     "slot": "fixed"
+    },
+    "events": [
+     "(ionRefresh)=handleRefresh($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/notification-bell/notification-bell.component#action-2c78ceb5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/notification_bell.dart:415"
+    ],
+    "n": "Pull-to-Refresh lädt Liste und Badge neu",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/notification-bell/notification-bell.component",
+   "ionic": {
+    "ts": "shared/notification-bell/notification-bell.component.ts",
+    "html": "shared/notification-bell/notification-bell.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/notification-bell/notification-bell.component.html",
+    "line": 63,
+    "cond": [
+     "in <ion-modal isOpen=\"isOpen()\">",
+     "@else (not notifications().length === 0)",
+     "@for (n of notifications(); track n.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "[button]": "\"!!n.data?.attendanceId || !!n.data?.messageId\"",
+     "[detail]": "\"!!n.data?.attendanceId || !!n.data?.messageId\""
+    },
+    "events": [
+     "(click)=onTap(n)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.unread]=\"!n.read\""
+    ],
+    "icons": [],
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [
+     " HH:mm"
+    ],
+    "text": "{{ tenantNameFor(n) }} {{ n.body }} {{ n.created_at | date: ('common.ngDate' | transloco) + ' HH:mm' }}",
+    "id": "shared/notification-bell/notification-bell.component#action-37616b6e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/messages/presentation/widgets/notification_bell.dart:479",
+     "lib/features/messages/presentation/widgets/notification_bell.dart:268"
+    ],
+    "n": "Roter Punkt bei ungelesen, Instanzname nur im Segment „Alle“, Text, Datum „dd.MM.yyyy HH:mm“, Tippen markiert gelesen und navigiert – gleich. Ionic: Button-Optik/Chevron nur bei Termin- oder Nachrichten-Benachrichtigung / Flutter: Chevron auch bei Einträgen mit eigener Route (Teamorganisation)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/notification-bell/notification-bell.component",
+   "ionic": {
+    "ts": "shared/notification-bell/notification-bell.component.ts",
+    "html": "shared/notification-bell/notification-bell.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/notification-bell/notification-bell.component.html",
+    "line": 4,
+    "cond": [],
+    "tag": "button",
+    "attrs": {
+     "class": "bell-trigger",
+     "type": "button"
+    },
+    "events": [
+     "(click)=open()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'bell.title' | transloco\""
+    ],
+    "icons": [
+     "notifications-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ unread() > 99 ? '99+' : unread() }}",
+    "id": "shared/notification-bell/notification-bell.component#action-9de90710"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/notification_bell.dart:160"
+    ],
+    "n": "Glocke notifications-outline mit rotem Badge (>99 → „99+“), nur bei ungelesenen; Seitenglocken bei aktivem Seitenpanel ausgeblendet wie Ionic-CSS",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/notification-bell/notification-bell.component",
+   "ionic": {
+    "ts": "shared/notification-bell/notification-bell.component.ts",
+    "html": "shared/notification-bell/notification-bell.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/notification-bell/notification-bell.component.html",
+    "line": 82,
+    "cond": [
+     "in <ion-modal isOpen=\"isOpen()\">",
+     "@else (not notifications().length === 0)",
+     "@for (n of notifications(); track n.id)"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=deleteOne(n, slidingItem)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/notification-bell/notification-bell.component#action-c59a8490"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/notification_bell.dart:505"
+    ],
+    "n": "Wischen nach links: rot, Papierkorb, löscht ohne Rückfrage",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/notification-bell/notification-bell.component",
+   "ionic": {
+    "ts": "shared/notification-bell/notification-bell.component.ts",
+    "html": "shared/notification-bell/notification-bell.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/notification-bell/notification-bell.component.html",
+    "line": 19,
+    "cond": [
+     "in <ion-modal isOpen=\"isOpen()\">",
+     "@if (unread() > 0)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=markAll()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'bell.markAllRead' | transloco\""
+    ],
+    "icons": [
+     "checkmark-done-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/notification-bell/notification-bell.component#action-d04c1557"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/notification_bell.dart:285"
+    ],
+    "n": "Doppelhaken-Icon nur bei ungelesenen der aktuellen Instanz",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/notification-bell/notification-bell.component",
+   "ionic": {
+    "ts": "shared/notification-bell/notification-bell.component.ts",
+    "html": "shared/notification-bell/notification-bell.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/notification-bell/notification-bell.component.html",
+    "line": 58,
+    "cond": [
+     "in <ion-modal isOpen=\"isOpen()\">",
+     "@else (not notifications().length === 0)",
+     "@for (n of notifications(); track n.id)"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "primary"
+    },
+    "events": [
+     "(click)=toggleRead(n, slidingItem)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"n.read ? 'mail-unread-outline' : 'mail-open-outline'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/notification-bell/notification-bell.component#action-dd7004d9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/notification_bell.dart:489"
+    ],
+    "n": "Wischen nach rechts: primary, Icon je Zustand (ungelesen/gelesen), schaltet Lesestatus in der Zeile um; Flutter ohne Durchwischen (expandable)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/notification-bell/notification-bell.component",
+   "ionic": {
+    "ts": "shared/notification-bell/notification-bell.component.ts",
+    "html": "shared/notification-bell/notification-bell.component.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "shared/notification-bell/notification-bell.component.ts",
+    "line": 177,
+    "method": "NotificationBellComponent.markAll",
+    "cond": [
+     "(this.segment() === 'all')"
+    ],
+    "header": {
+     "keys": [
+      "bell.markAllHeader"
+     ],
+     "de": [
+      "Alle als gelesen markieren?"
+     ],
+     "literals": [],
+     "expr": "translate('bell.markAllHeader')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "bell.markAllMessage"
+     ],
+     "de": [
+      "Alle Benachrichtigungen aus allen Instanzen werden als gelesen markiert."
+     ],
+     "literals": [],
+     "expr": "translate('bell.markAllMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "bell.mark"
+       ],
+       "de": [
+        "Markieren"
+       ],
+       "literals": [],
+       "expr": "translate('bell.mark')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (): Promise<void> => { await this.db.markAllNotificationsReadAllTenants(); await this.load(); await this.refreshCount(); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "bea3af8c",
+    "mbody": "4afd4629",
+    "id": "shared/notification-bell/notification-bell.component#alert-7b9d7085"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/notification_bell.dart:206"
+    ],
+    "n": "Nur im Segment „Alle“: „Alle als gelesen markieren?“ / „Alle Benachrichtigungen aus allen Instanzen werden als gelesen markiert.“ / „Abbrechen“, „Markieren“ → markAllRead(allTenants: true); im Segment „Aktuelle Instanz“ ohne Rückfrage.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart"
+   ]
+  }
+ ]
+}

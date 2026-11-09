@@ -1,0 +1,2658 @@
+{
+ "batch": "zz-verify5c-sonnet-14",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/import/import.page.html",
+    "line": 71,
+    "cond": [
+     "@if (step === 'preview')",
+     "@if (unresolvedGroupCount)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint ion-padding-horizontal"
+    },
+    "keys": [
+     "people.unresolvedGroups"
+    ],
+    "de": [
+     "{count, plural, one {# Person konnte keiner Gruppe zugeordnet werden.} other {# Personen konnten keiner Gruppe zugeordnet werden.}} Bitte prüfe und passe die Gruppe unten an – vorerst ist die Hauptgruppe hinterlegt."
+    ],
+    "literals": [],
+    "text": "{{ 'people.unresolvedGroups' | transloco: { count: unresolvedGroupCount } }}",
+    "id": "people/import/import.page#text-a0e302fc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:324-331"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/import/import.page.html",
+    "line": 16,
+    "cond": [
+     "@if (step === 'file')"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "people.importIntro"
+    ],
+    "de": [
+     "Importiere Personen aus einer Excel- (.xlsx/.xls) oder CSV-Datei. Die erste Zeile muss Spaltenüberschriften enthalten. Am einfachsten ist es, die Vorlage herunterzuladen und auszufüllen."
+    ],
+    "literals": [],
+    "text": "{{ 'people.importIntro' | transloco }}",
+    "id": "people/import/import.page#text-da6273ad"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:245",
+     "lib/features/people/presentation/widgets/import_widgets.dart:30"
+    ],
+    "n": "Text gleich. Ionic: grau (.intro medium, 0.9rem) / Flutter: normale Textfarbe. Der Text nennt .xls, das Flutter ablehnt (siehe field-bdcf25e7).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/import/import.page.html",
+    "line": 82,
+    "cond": [
+     "@if (step === 'preview')",
+     "@if (createAccounts)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "color": "warning"
+    },
+    "keys": [
+     "people.createAccountsHint"
+    ],
+    "de": [
+     "Für Personen mit E-Mail-Adresse werden Benutzerkonten erstellt und Einladungs-E-Mails versendet."
+    ],
+    "literals": [],
+    "text": "{{ 'people.createAccountsHint' | transloco }}",
+    "id": "people/import/import.page#text-ebd216e9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:340-347"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/import/import.page.html",
+    "line": 99,
+    "cond": [
+     "@if (step === 'preview')",
+     "@for (row of mappedRows; track row.rowIndex)",
+     "@if (row.player.email)"
+    ],
+    "tag": "#text",
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ row.player.email }}"
+    ],
+    "text": "{{ row.player.email }}",
+    "id": "people/import/import.page#text-f7d81c78"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:398",
+     "lib/core/utils/import_mapper.dart:332"
+    ],
+    "n": "Vorschauzeile zeigt die (kleingeschriebene, getrimmte) E-Mail unter dem Namen, nur wenn vorhanden – gleich.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 535,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismissPauseModal()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-032eda11"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:103"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 47,
+    "cond": [],
+    "tag": "ion-refresher",
+    "attrs": {
+     "slot": "fixed"
+    },
+    "events": [
+     "(ionRefresh)=handleRefresh($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-15041222"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:503",
+     "lib/features/people/presentation/pages/people_list_page.dart:648",
+     "lib/features/people/presentation/pages/people_list_page.dart:670"
+    ],
+    "n": "Ionic: Pull-to-Refresh lädt Personen und Termine (Prozente) neu und wartet / Flutter: invalidiert nur realtimePlayersProvider, Spinner endet sofort; Prozente kommen aus playerAttendancePercentagesProvider (nur per Realtime-Zähler aktualisiert).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 610,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "class": "ion-margin-top",
+     "[disabled]": "\"!pauseReason\""
+    },
+    "events": [
+     "(click)=confirmPause()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pause-outline"
+    ],
+    "keys": [
+     "people.pause"
+    ],
+    "de": [
+     "Pausieren"
+    ],
+    "literals": [],
+    "text": "{{ 'people.pause' | transloco }}",
+    "id": "people/list/list.page#action-32a9bf9f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:163",
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:177"
+    ],
+    "n": "Ionic: Block-Button in Primärfarbe / Flutter: gelber (warning) Button; sonst gleich (Pause-Icon, 'Pausieren', ohne Grund deaktiviert).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 588,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">",
+     "@if (pauseUntil)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "slot": "end"
+    },
+    "events": [
+     "(click)=pauseUntil = ''; $event.stopPropagation()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close-circle-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-62bad746"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:144",
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:359"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 521,
+    "cond": [
+     "in <ion-modal isOpen=\"isArchiveModalOpen\">"
+    ],
+    "tag": "ion-fab-button",
+    "attrs": {},
+    "events": [
+     "(click)=archivePlayer()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "archive-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-64a96898"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1430"
+    ],
+    "n": "Ionic: FAB mit Archiv-Icon unten rechts im Modal / Flutter: Button 'Archivieren' mit Archiv-Icon in der Dialog-Aktionsleiste.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 505,
+    "cond": [
+     "in <ion-modal isOpen=\"isArchiveModalOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismissArchiveModal()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-6ccc25e4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1426"
+    ],
+    "n": "Ionic: X-Icon in der Modal-Toolbar / Flutter: Textbutton 'Abbrechen' im Dialog.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 162,
+    "cond": [
+     "in <ion-popover #filterPopover>",
+     "@if (churchField)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=showChurchOverview(filterPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "business-outline"
+    ],
+    "keys": [
+     "attendance.churchOverview"
+    ],
+    "de": [
+     "Gemeinde-Übersicht"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.churchOverview' | transloco }}",
+    "id": "people/list/list.page#action-71140d62"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:936",
+     "lib/features/people/presentation/pages/people_list_page.dart:941"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 205,
+    "cond": [
+     "@if (loaded && todaysBirthdays.length)",
+     "@for (player of todaysBirthdays; track player.id)",
+     "in <button>",
+     "@if (player.img)"
+    ],
+    "tag": "img",
+    "attrs": {},
+    "events": [
+     "(error)=$event.target.src='assets/icon/avatar-placeholder.svg'"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[src]=\"player.img\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-99ad824e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1794",
+     "lib/features/people/presentation/widgets/ion/ion_widgets.dart:408"
+    ],
+    "n": "Fehlerhaftes Bild → Avatar-Platzhalter.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 239,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@if (sortOpt === 'instrument')",
+     "@for (group of playerGroups; track group.groupId)",
+     "in <ion-reorder-group>",
+     "in <ion-item>",
+     "@if (showImg)"
+    ],
+    "tag": "img",
+    "attrs": {},
+    "events": [
+     "(error)=$event.target.src='assets/icon/avatar-placeholder.svg'"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[src]=\"player.img\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-99ad824e-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1653",
+     "lib/features/people/presentation/widgets/ion/ion_widgets.dart:387"
+    ],
+    "n": "Avatar nur mit Ansicht 'Passbild' (Standard aus), Fehler/leer → Platzhalter; alle Rollen. Fehlender Avatar im Flutter-Reorder-Modus gehört zu action-e7b7f732 / Extra 'Reorder-Modus'.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 345,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@else (not sortOpt === 'instrument')",
+     "in <ion-reorder-group>",
+     "in <ion-item>",
+     "@if (showImg)"
+    ],
+    "tag": "img",
+    "attrs": {},
+    "events": [
+     "(error)=$event.target.src='assets/icon/avatar-placeholder.svg'"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[src]=\"player.img\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-99ad824e-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1653",
+     "lib/features/people/presentation/widgets/ion/ion_widgets.dart:387"
+    ],
+    "n": "Wie action-99ad824e-2 in der flachen Liste.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 14,
+    "cond": [
+     "@else (not isReordering)"
+    ],
+    "tag": "ion-menu-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-b6d96f14"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:499",
+     "lib/features/people/presentation/pages/people_list_page.dart:728",
+     "lib/features/people/presentation/pages/people_list_page.dart:748"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 6,
+    "cond": [
+     "@if (isReordering)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=toggleReorderMode()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-ba141813"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:463",
+     "lib/features/people/presentation/pages/people_list_page.dart:474"
+    ],
+    "n": "Häkchen speichert und beendet den Modus; Flutter hat zusätzlich links ein X zum Verwerfen (siehe extra).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 60,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "none"
+    },
+    "events": [
+     "(click)=filterPopover.present($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "options"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-c3aff9e6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:973",
+     "lib/features/people/presentation/pages/people_list_page.dart:976"
+    ],
+    "n": "Optionen-Icon, primärfarben wenn Filter ≠ 'Alle Anzeigen'.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 451,
+    "cond": [
+     "@else if (loaded && players?.length && !playersFiltered?.length && (filterOpt !== 'all' || searchTerm))"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "outline"
+    },
+    "events": [
+     "(click)=clearFilters()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "people.resetFilter"
+    ],
+    "de": [
+     "Filter zurücksetzen"
+    ],
+    "literals": [],
+    "text": "{{ 'people.resetFilter' | transloco }}",
+    "id": "people/list/list.page#action-de48c2e0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:582",
+     "lib/features/people/presentation/pages/people_list_page.dart:1243"
+    ],
+    "n": "Flutter besser: Ionic clearFilters leert nur filterOptAdd und zeigt alle Personen, Filterauswahl (Icon bleibt farbig) und Suchtext bleiben stehen / Flutter setzt Filter auf 'Alle Anzeigen', leert die Suche und speichert das.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 230,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@if (sortOpt === 'instrument')",
+     "@for (group of playerGroups; track group.groupId)"
+    ],
+    "tag": "ion-reorder-group",
+    "attrs": {
+     "[disabled]": "\"!isReordering\""
+    },
+    "events": [
+     "(ionItemReorder)=handleReorder($event, group.groupId)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash",
+     "pause",
+     "play"
+    ],
+    "keys": [
+     "people.teacherName",
+     "people.noTeacher",
+     "people.voiceLeader",
+     "people.new",
+     "people.problemCase",
+     "people.paused",
+     "people.candidate"
+    ],
+    "de": [
+     "Lehrer: {name}",
+     "Kein Lehrer",
+     "Stimmführer",
+     "Neu",
+     "Problemfall",
+     "Pausiert",
+     "Prüfling"
+    ],
+    "literals": [],
+    "text": "{{ player.firstName }} {{ player.lastName }} {{ player.text }} {{ player.groupName }} {{ 'people.teacherName' | transloco: { name: getTeacherName(player.teacher) } }} {{ 'people.noTeacher' | transloc…",
+    "id": "people/list/list.page#action-e7b7f732"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1189",
+     "lib/features/people/presentation/pages/people_list_page.dart:1147"
+    ],
+    "n": "Ionic: Reihenfolge direkt in der normalen Liste (ion-reorder-Griffe in den vollen Zeilen, Gruppen-Trenner) / Flutter: eigene vereinfachte Liste (Karten nur mit Name + Ziehgriff, Gruppentitel als Text) plus X zum Verwerfen. Zeileninhalt siehe action-982a1154.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 561,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">",
+     "@if (pauseFrom)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "slot": "end"
+    },
+    "events": [
+     "(click)=pauseFrom = ''; $event.stopPropagation()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close-circle-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-ff7f52d5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:130",
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:359"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/list/list.page.ts",
+    "line": 812,
+    "method": "ListPage.removePlayer",
+    "cond": [],
+    "header": {
+     "keys": [
+      "people.removeConfirm"
+     ],
+     "de": [
+      "Person wirklich entfernen?"
+     ],
+     "literals": [],
+     "expr": "translate('people.removeConfirm')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "people.cannotUndoExcl"
+     ],
+     "de": [
+      "Diese Aktion kann nicht rückgängig gemacht werden!"
+     ],
+     "literals": [],
+     "expr": "translate('people.cannotUndoExcl')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.remove"
+       ],
+       "de": [
+        "Entfernen"
+       ],
+       "literals": [],
+       "expr": "translate('common.remove')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { const loading = await Utils.getLoadingElement(5000, translate('people.removing')); await loading.present(); try { await this.db.removePlayer(player); Utils.showToast(translate('people.removed'), 'success'); await loading.dism…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "2d44ec82",
+    "mbody": "53ac8376",
+    "id": "people/list/list.page#alert-3e99f381"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1472",
+     "lib/core/utils/dialog_helper.dart:12"
+    ],
+    "n": "'Person wirklich entfernen?' / 'Diese Aktion kann nicht rückgängig gemacht werden!', 'Abbrechen' / 'Entfernen' (Flutter rot); löscht Person und entzieht Zugang wie db.removePlayer. Nur Admin/Verantwortlicher.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart",
+    "lib/core/utils/dialog_helper.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/list/list.page.ts",
+    "line": 953,
+    "method": "ListPage.unpausePlayer",
+    "cond": [],
+    "header": {
+     "keys": [
+      "people.reactivateConfirm"
+     ],
+     "de": [
+      "Person wieder aktivieren?"
+     ],
+     "literals": [],
+     "expr": "translate('people.reactivateConfirm')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { slider.close(); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "people.activate"
+       ],
+       "de": [
+        "Aktivieren"
+       ],
+       "literals": [],
+       "expr": "translate('people.activate')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { const history: PlayerHistoryEntry[] = player.history; history.push({ date: new Date().toISOString(), text: translate('people.activeAgain'), type: PlayerHistoryType.UNPAUSED, }); const loading = await Utils.getLoadingElement(5…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "2823b2fd",
+    "mbody": "561f0f37",
+    "id": "people/list/list.page#alert-c512ac6d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1337",
+     "lib/features/people/presentation/pages/people_list_page.dart:1358"
+    ],
+    "n": "'Person wieder aktivieren?' mit 'Abbrechen' / 'Aktivieren'; schreibt paused=false, paused_until=null, Historie 'Person wieder aktiv' und fügt die Person kommenden Terminen hinzu.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "people/list/list.page.html",
+    "line": 40,
+    "cond": [
+     "@else (not isReordering)"
+    ],
+    "tag": "app-notification-bell",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "people/list/list.page#embed-343ae756"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:501",
+     "lib/features/people/presentation/pages/people_list_page.dart:741",
+     "lib/features/people/presentation/pages/people_list_page.dart:751"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/list/list.page.html",
+    "line": 567,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date",
+     "size": "cover",
+     "[max]": "\"minPauseDate\""
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"pauseFrom\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#field-187f6bb7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:131",
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:135"
+    ],
+    "n": "Ionic: Inline-Kalender im Akkordeon (max heute, keine Untergrenze) / Flutter: Datumspicker-Dialog beim Tippen auf die Zeile (max heute, frühestens vor 5 Jahren).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/list/list.page.html",
+    "line": 68,
+    "cond": [
+     "in <ion-popover #filterPopover>"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "slot": "end",
+     "interface": "popover"
+    },
+    "events": [
+     "(ionFocus)=onFilterFocused()",
+     "(ionDismiss)=onFilterDismissed()",
+     "(ionChange)=onFilterChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"filterOpt\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "all",
+      "keys": [
+       "people.showAll"
+      ],
+      "de": [
+       "Alle Anzeigen"
+      ],
+      "literals": [],
+      "text": "{{ 'people.showAll' | transloco }}\"all\""
+     },
+     {
+      "value": "active",
+      "keys": [
+       "people.activePeople"
+      ],
+      "de": [
+       "Aktive Personen"
+      ],
+      "literals": [],
+      "text": "{{ 'people.activePeople' | transloco }}\"active\""
+     },
+     {
+      "value": "criticals",
+      "keys": [
+       "people.problemCases"
+      ],
+      "de": [
+       "Problemfälle"
+      ],
+      "literals": [],
+      "text": "{{ 'people.problemCases' | transloco }}\"criticals\""
+     },
+     {
+      "value": "leaders",
+      "keys": [
+       "people.voiceLeader"
+      ],
+      "de": [
+       "Stimmführer"
+      ],
+      "literals": [],
+      "text": "{{ 'people.voiceLeader' | transloco }}\"leaders\""
+     },
+     {
+      "value": "withoutAccount",
+      "keys": [
+       "people.withoutAccount"
+      ],
+      "de": [
+       "Ohne Account"
+      ],
+      "literals": [],
+      "text": "{{ 'people.withoutAccount' | transloco }}\"withoutAccount\""
+     },
+     {
+      "value": "examinee",
+      "keys": [
+       "people.candidates"
+      ],
+      "de": [
+       "Prüflinge"
+      ],
+      "literals": [],
+      "text": "{{ 'people.candidates' | transloco }}\"examinee\""
+     },
+     {
+      "value": "new",
+      "keys": [
+       "people.newPlayers"
+      ],
+      "de": [
+       "Neue Spieler"
+      ],
+      "literals": [],
+      "text": "{{ 'people.newPlayers' | transloco }}\"new\""
+     },
+     {
+      "value": "withoutTeacher",
+      "keys": [
+       "people.withoutTeacher"
+      ],
+      "de": [
+       "Ohne Lehrer"
+      ],
+      "literals": [],
+      "text": "{{ 'people.withoutTeacher' | transloco }}\"withoutTeacher\""
+     },
+     {
+      "value": "withoutTest",
+      "keys": [
+       "people.testResultMissing"
+      ],
+      "de": [
+       "Testergebnis fehlt"
+      ],
+      "literals": [],
+      "text": "{{ 'people.testResultMissing' | transloco }}\"withoutTest\""
+     },
+     {
+      "value": "otherInstance",
+      "keys": [
+       "people.otherInstanceMember"
+      ],
+      "de": [
+       "Mitglied anderer Instanz"
+      ],
+      "literals": [],
+      "text": "{{ 'people.otherInstanceMember' | transloco }}\"otherInstance\""
+     },
+     {
+      "value": "\"field.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ field.name }}"
+     },
+     {
+      "value": "\"field.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ field.name }}"
+     }
+    ],
+    "keys": [
+     "people.showAll",
+     "people.activePeople",
+     "people.problemCases",
+     "people.voiceLeader",
+     "people.withoutAccount",
+     "people.candidates",
+     "people.newPlayers",
+     "people.withoutTeacher",
+     "people.testResultMissing",
+     "people.otherInstanceMember"
+    ],
+    "de": [
+     "Alle Anzeigen",
+     "Aktive Personen",
+     "Problemfälle",
+     "Stimmführer",
+     "Ohne Account",
+     "Prüflinge",
+     "Neue Spieler",
+     "Ohne Lehrer",
+     "Testergebnis fehlt",
+     "Mitglied anderer Instanz"
+    ],
+    "literals": [],
+    "text": "\"all\" {{ 'people.showAll' | transloco }} \"active\" {{ 'people.activePeople' | transloco }} \"criticals\" {{ 'people.problemCases' | transloco }} \"leaders\" {{ 'people.voiceLeader' | transloco }} \"without…",
+    "id": "people/list/list.page#field-2000a145"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:760",
+     "lib/features/people/presentation/pages/people_list_page.dart:796",
+     "lib/features/people/presentation/pages/people_list_page.dart:851"
+    ],
+    "n": "Optionen, Reihenfolge und Bedingungen gleich (Stimmführer nicht bei 'general', VoS-Optionen, 'Mitglied anderer Instanz' nur mit verknüpften Instanzen, Zusatzfelder boolean/select/number/bfecg_church); erneute Wahl öffnet den Wert-Dialog wieder; Speicherung je Instanz.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/list/list.page.html",
+    "line": 58,
+    "cond": [],
+    "tag": "ion-searchbar",
+    "attrs": {},
+    "events": [
+     "(ionInput)=search($event)"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"searchTerm\"",
+    "bindings": [
+     "[placeholder]=\"'people.searchPerson' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "people.searchPerson"
+    ],
+    "de": [
+     "Person suchen..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'people.searchPerson' | transloco\"",
+    "id": "people/list/list.page#field-27abe29e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:510",
+     "lib/features/people/presentation/pages/people_list_page.dart:514",
+     "lib/features/people/presentation/pages/people_list_page.dart:309",
+     "lib/features/people/people_list_utils.dart:8"
+    ],
+    "n": "Flutter besser: Platzhalter 'Person suchen...' und Suchfelder (Vor-/Nachname, Gruppe, Text-/Zahl-Zusatzfelder) gleich; Ionic verwirft bei der Suche aber den aktiven Filter und die gewählte Sortierung (Ergebnis in Gruppenreihenfolge), Flutter kombiniert Suche, Filter und Sortierung.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart",
+    "lib/features/people/people_list_utils.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/list/list.page.html",
+    "line": 594,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date",
+     "size": "cover",
+     "[min]": "\"minPauseDate\""
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"pauseUntil\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#field-315040b9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:141",
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:150"
+    ],
+    "n": "Ionic: Inline-Kalender im Akkordeon (ab heute, ohne Obergrenze, keine Vorauswahl) / Flutter: Datumsdialog (ab heute, bis +3 Jahre, Start heute + 30 Tage).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/list/list.page.html",
+    "line": 545,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"pauseReason\"",
+    "bindings": [
+     "[placeholder]=\"'people.reasonPlaceholder' | transloco\"",
+     "[autoGrow]=\"true\""
+    ],
+    "icons": [],
+    "keys": [
+     "people.reasonPlaceholder"
+    ],
+    "de": [
+     "Bitte gib einen Grund an..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'people.reasonPlaceholder' | transloco\"",
+    "id": "people/list/list.page#field-c1d3a82f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:112",
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:116"
+    ],
+    "n": "Platzhalter Ionic 'Bitte gib einen Grund an...' / Flutter 'Gib einen Grund für die Pause an...' (personPauseReasonPlaceholder); sonst gleich (mehrzeilig, Satzanfang groß).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/list/list.page.html",
+    "line": 124,
+    "cond": [
+     "in <ion-popover #filterPopover>"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "multiple": "true",
+     "slot": "end",
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=onViewChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"viewOpts\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "instrument",
+      "keys": [
+       "people.group"
+      ],
+      "de": [
+       "Gruppe"
+      ],
+      "literals": [],
+      "text": "{{ 'people.group' | transloco }}\"instrument\""
+     },
+     {
+      "value": "attendance",
+      "keys": [
+       "people.attendance"
+      ],
+      "de": [
+       "Anwesenheit"
+      ],
+      "literals": [],
+      "text": "{{ 'people.attendance' | transloco }}\"attendance\""
+     },
+     {
+      "value": "birthday",
+      "keys": [
+       "people.birthday"
+      ],
+      "de": [
+       "Geburtsdatum"
+      ],
+      "literals": [],
+      "text": "{{ 'people.birthday' | transloco }}\"birthday\""
+     },
+     {
+      "value": "instruments",
+      "keys": [
+       "people.instruments"
+      ],
+      "de": [
+       "Instrumente"
+      ],
+      "literals": [],
+      "text": "{{ 'people.instruments' | transloco }}\"instruments\""
+     },
+     {
+      "value": "test",
+      "keys": [
+       "people.testResult"
+      ],
+      "de": [
+       "Testergebnis"
+      ],
+      "literals": [],
+      "text": "{{ 'people.testResult' | transloco }}\"test\""
+     },
+     {
+      "value": "exercises",
+      "keys": [
+       "people.otherDuties"
+      ],
+      "de": [
+       "Sonstige Dienste"
+      ],
+      "literals": [],
+      "text": "{{ 'people.otherDuties' | transloco }}\"exercises\""
+     },
+     {
+      "value": "leader",
+      "keys": [
+       "people.voiceLeader"
+      ],
+      "de": [
+       "Stimmführer"
+      ],
+      "literals": [],
+      "text": "{{ 'people.voiceLeader' | transloco }}\"leader\""
+     },
+     {
+      "value": "critical",
+      "keys": [
+       "people.problemCases"
+      ],
+      "de": [
+       "Problemfälle"
+      ],
+      "literals": [],
+      "text": "{{ 'people.problemCases' | transloco }}\"critical\""
+     },
+     {
+      "value": "new",
+      "keys": [
+       "people.new"
+      ],
+      "de": [
+       "Neu"
+      ],
+      "literals": [],
+      "text": "{{ 'people.new' | transloco }}\"new\""
+     },
+     {
+      "value": "paused",
+      "keys": [
+       "people.paused"
+      ],
+      "de": [
+       "Pausiert"
+      ],
+      "literals": [],
+      "text": "{{ 'people.paused' | transloco }}\"paused\""
+     },
+     {
+      "value": "notes",
+      "keys": [
+       "people.notes"
+      ],
+      "de": [
+       "Notizen"
+      ],
+      "literals": [],
+      "text": "{{ 'people.notes' | transloco }}\"notes\""
+     },
+     {
+      "value": "img",
+      "keys": [
+       "people.passportPhoto"
+      ],
+      "de": [
+       "Passbild"
+      ],
+      "literals": [],
+      "text": "{{ 'people.passportPhoto' | transloco }}\"img\""
+     },
+     {
+      "value": "teachers",
+      "keys": [
+       "people.teacher"
+      ],
+      "de": [
+       "Lehrer"
+      ],
+      "literals": [],
+      "text": "{{ 'people.teacher' | transloco }}\"teachers\""
+     },
+     {
+      "value": "examinee",
+      "keys": [
+       "people.candidate"
+      ],
+      "de": [
+       "Prüfling"
+      ],
+      "literals": [],
+      "text": "{{ 'people.candidate' | transloco }}\"examinee\""
+     },
+     {
+      "value": "\"field.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ field.name }}"
+     }
+    ],
+    "keys": [
+     "people.group",
+     "people.attendance",
+     "people.birthday",
+     "people.instruments",
+     "people.testResult",
+     "people.otherDuties",
+     "people.voiceLeader",
+     "people.problemCases",
+     "people.new",
+     "people.paused",
+     "people.notes",
+     "people.passportPhoto",
+     "people.teacher",
+     "people.candidate"
+    ],
+    "de": [
+     "Gruppe",
+     "Anwesenheit",
+     "Geburtsdatum",
+     "Instrumente",
+     "Testergebnis",
+     "Sonstige Dienste",
+     "Stimmführer",
+     "Problemfälle",
+     "Neu",
+     "Pausiert",
+     "Notizen",
+     "Passbild",
+     "Lehrer",
+     "Prüfling"
+    ],
+    "literals": [],
+    "text": "\"instrument\" {{ 'people.group' | transloco }} \"attendance\" {{ 'people.attendance' | transloco }} \"birthday\" {{ 'people.birthday' | transloco }} \"instruments\" {{ 'people.instruments' | transloco }} \"t…",
+    "id": "people/list/list.page#field-ed9d9a10"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:93",
+     "lib/features/people/presentation/pages/people_list_page.dart:909"
+    ],
+    "n": "Mehrfachauswahl mit gleichen Optionen, Reihenfolge und Bedingungen (Instrumente nur Chor, VoS-Optionen, Stimmführer nicht 'general', Lehrer nur maintainTeachers, Zusatzfelder boolean/text/select/Gemeinde/Zahl); Default Gruppe/Stimmführer/Anwesenheit/Problemfälle/Pausiert; je Instanz gespeichert.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/list/list.page.ts",
+    "line": 377,
+    "method": "ListPage.savePlayerOrder",
+    "cond": [],
+    "message": {
+     "keys": [
+      "people.savingOrder"
+     ],
+     "de": [
+      "Reihenfolge wird gespeichert..."
+     ],
+     "literals": [],
+     "expr": "translate('people.savingOrder')"
+    },
+    "duration": "5000",
+    "src": "47e9122d",
+    "mbody": "e6f21689",
+    "id": "people/list/list.page#loading-275de79e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:463",
+     "lib/features/people/presentation/pages/people_list_page.dart:1169"
+    ],
+    "n": "Ionic: blockierendes Overlay 'Reihenfolge wird gespeichert...' / Flutter: nur Spinner im Häkchen-Button, kein Overlay (X-Abbrechen und Ziehen bleiben bedienbar).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/list/list.page.ts",
+    "line": 821,
+    "method": "ListPage.removePlayer",
+    "cond": [],
+    "message": {
+     "keys": [
+      "people.removing"
+     ],
+     "de": [
+      "Person wird entfernt..."
+     ],
+     "literals": [],
+     "expr": "translate('people.removing')"
+    },
+    "duration": "5000",
+    "src": "d83ac60a",
+    "mbody": "53ac8376",
+    "id": "people/list/list.page#loading-5e1535fb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1480"
+    ],
+    "n": "Ionic: blockierendes Overlay 'Person wird entfernt...' / Flutter: kein Overlay.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/list/list.page.ts",
+    "line": 969,
+    "method": "ListPage.unpausePlayer",
+    "cond": [],
+    "message": {
+     "keys": [
+      "people.activating"
+     ],
+     "de": [
+      "Wird aktiviert..."
+     ],
+     "literals": [],
+     "expr": "translate('people.activating')"
+    },
+    "duration": "5000",
+    "src": "c71324f9",
+    "mbody": "561f0f37",
+    "id": "people/list/list.page#loading-8b3a6dad"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1357"
+    ],
+    "n": "Ionic: blockierendes Overlay 'Wird aktiviert...' / Flutter: kein Overlay.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/list/list.page.ts",
+    "line": 872,
+    "method": "ListPage.confirmPause",
+    "cond": [],
+    "message": {
+     "keys": [
+      "people.pausing"
+     ],
+     "de": [
+      "Wird pausiert..."
+     ],
+     "literals": [],
+     "expr": "translate('people.pausing')"
+    },
+    "duration": "5000",
+    "src": "2135e121",
+    "mbody": "ff40e073",
+    "id": "people/list/list.page#loading-93ed0021"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:211",
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:221"
+    ],
+    "n": "Ionic: blockierendes Overlay 'Wird pausiert...' / Flutter: kein Overlay; danach zusätzlich grüne Snackbar '<Vorname> wurde pausiert' (Ionic: keine Meldung).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/list/list.page.html",
+    "line": 499,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isArchiveModalOpen\""
+    },
+    "events": [],
+    "bindings": [
+     "[isOpen]=\"isArchiveModalOpen\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "people/list/list.page#modal-11a551b4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/archive_person_modal.dart:19",
+     "lib/features/people/presentation/pages/people_list_page.dart:1449",
+     "lib/data/repositories/player_repository.dart:605"
+    ],
+    "n": "Archiv-Modal \"{Name} Archivieren\" mit Austrittsdatum (Default heute), Notiz, FAB; schreibt left (lokale Mitternacht als ISO), History \"Kein Grund angegeben\", appId löschen + Zugang entfernen, Termine entfernen.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/list/list.page.html",
+    "line": 529,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isPauseModalOpen\""
+    },
+    "events": [
+     "(ionModalDidDismiss)=dismissPauseModal()"
+    ],
+    "bindings": [
+     "[breakpoints]=\"[0, 0.75, 1]\"",
+     "[initialBreakpoint]=\"0.75\"",
+     "[isOpen]=\"isPauseModalOpen\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "people/list/list.page#modal-7e8cba02"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:43",
+     "lib/features/people/presentation/pages/people_list_page.dart:1333"
+    ],
+    "n": "Bottom-Sheet über der Tab-Leiste (Höhe nach Inhalt statt Breakpoint 0.75), Wegtippen/Wischen schließt; Felder werden bei jedem Öffnen zurückgesetzt.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart",
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/list/list.page.ts",
+    "line": 1036,
+    "method": "ListPage.openBulkEditModal",
+    "cond": [],
+    "component": "BulkEditPage",
+    "props": [
+     "players"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "98829e72",
+    "mbody": "6bd9a622",
+    "id": "people/list/list.page#modal-a495856e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1280",
+     "lib/features/people/presentation/pages/people_list_page.dart:1289"
+    ],
+    "n": "Gefilterte Personen übergeben, Neuladen bei Rückgabe true gleich. Ionic: Modal mit presentingElement → auf iOS Karten-Modal (Seite dahinter sichtbar, Wischen schließt), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) auf allen Plattformen. Erstprüfung: ok – Darstellung auf iOS weicht ab (wie instrument-list modal-1bead9c9 bewertet).",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/list/list.page.ts",
+    "line": 1078,
+    "method": "ListPage.openImportModal",
+    "cond": [],
+    "component": "ImportPage",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "429a4012",
+    "mbody": "6f5a0acd",
+    "id": "people/list/list.page#modal-b8ba8673"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1298",
+     "lib/features/people/presentation/pages/people_list_page.dart:1302"
+    ],
+    "n": "Vollbild-Dialog-Route PersonImportPage; bei Rückgabe true wird neu geladen.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "people/list/list.page.html",
+    "line": 63,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-popover",
+    "attrs": {
+     "#": "filterPopover"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "people/list/list.page#popover-8130df68"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:888"
+    ],
+    "n": "MenuAnchor mit Filter-, Sortier- und Ansichtsauswahl (Untermenüs) und den Admin-Einträgen.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 584,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">",
+     "@else (not pauseUntil)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "people.noEndDate"
+    ],
+    "de": [
+     "Kein Enddatum gewählt"
+    ],
+    "literals": [],
+    "text": "{{ 'people.noEndDate' | transloco }}",
+    "id": "people/list/list.page#text-16971d80"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:143"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 557,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">",
+     "@else (not pauseFrom)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "people.fromToday"
+    ],
+    "de": [
+     "Ab heute"
+    ],
+    "literals": [],
+    "text": "{{ 'people.fromToday' | transloco }}",
+    "id": "people/list/list.page#text-610f68be"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:129"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 194,
+    "cond": [
+     "@if (loaded && todaysBirthdays.length)",
+     "@if (todaysBirthdays.length === 1)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "people.birthdayToday"
+    ],
+    "de": [
+     "Geburtstag heute"
+    ],
+    "literals": [],
+    "text": "{{ 'people.birthdayToday' | transloco }}",
+    "id": "people/list/list.page#text-61be9cf5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1768",
+     "lib/features/people/people_list_utils.dart:36"
+    ],
+    "n": "'Geburtstag heute' bei genau einem Geburtstag; gleiche Auswahl (birthday gesetzt, correctBirthday, Monat/Tag lokal = heute) aus allen geladenen Personen, für alle Rollen der Liste. Banner zusätzlich im Flutter-Auswahlmodus ausgeblendet.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart",
+    "lib/features/people/people_list_utils.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 196,
+    "cond": [
+     "@if (loaded && todaysBirthdays.length)",
+     "@else (not todaysBirthdays.length === 1)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "people.birthdaysToday"
+    ],
+    "de": [
+     "{count} Geburtstage heute"
+    ],
+    "literals": [],
+    "text": "{{ 'people.birthdaysToday' | transloco: { count: todaysBirthdays.length } }}",
+    "id": "people/list/list.page#text-632aa7d5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1769"
+    ],
+    "n": "'{count} Geburtstage heute' bei mehreren, gleiche Bedingung wie text-61be9cf5.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 606,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "class": "ion-padding",
+     "color": "medium"
+    },
+    "keys": [
+     "people.pauseHint"
+    ],
+    "de": [
+     "Mit einem Startdatum in der Vergangenheit wird die Person auch aus zurückliegenden Anwesenheiten ab diesem Datum entfernt. Wenn ein Enddatum angegeben wird, wird die Person automatisch reaktiviert."
+    ],
+    "literals": [],
+    "text": "{{ 'people.pauseHint' | transloco }}",
+    "id": "people/list/list.page#text-63b77c8c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:157"
+    ],
+    "n": "Ionic: '… Wenn ein Enddatum angegeben wird, wird die Person automatisch reaktiviert.' / Flutter: '… Wenn ein Enddatum angegeben ist, wird die Person danach automatisch wieder aktiviert.' (gleiche Bedeutung).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 450,
+    "cond": [
+     "@else if (loaded && players?.length && !playersFiltered?.length && (filterOpt !== 'all' || searchTerm))"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "ion-text-center"
+    },
+    "keys": [
+     "people.filtersNoMatch"
+    ],
+    "de": [
+     "Die aktiven Filter ergeben keine Treffer."
+    ],
+    "literals": [],
+    "text": "{{ 'people.filtersNoMatch' | transloco }}",
+    "id": "people/list/list.page#text-6468ac89"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:581"
+    ],
+    "n": "'Die aktiven Filter ergeben keine Treffer.' gleiche Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 4,
+    "cond": [
+     "@if (isReordering)"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "people.reorder"
+    ],
+    "de": [
+     "Reihenfolge anpassen"
+    ],
+    "literals": [],
+    "text": "{{ 'people.reorder' | transloco }}",
+    "id": "people/list/list.page#text-6edb0bb4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:449",
+     "lib/features/people/presentation/pages/people_list_page.dart:455"
+    ],
+    "n": "Gelbe (warning) AppBar mit 'Reihenfolge anpassen'.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 553,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "people.pausedFrom"
+    ],
+    "de": [
+     "Pausiert ab (optional)"
+    ],
+    "literals": [],
+    "text": "{{ 'people.pausedFrom' | transloco }}",
+    "id": "people/list/list.page#text-6fee986f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:128"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 555,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">",
+     "@if (pauseFrom)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ pauseFrom | date: ('common.ngDate' | transloco) }}",
+    "id": "people/list/list.page#text-7ee61a82"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:129"
+    ],
+    "n": "dd.MM.yyyy (dateFmt).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 582,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">",
+     "@if (pauseUntil)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ pauseUntil | date: ('common.ngDate' | transloco) }}",
+    "id": "people/list/list.page#text-7ee61a82-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:143"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 449,
+    "cond": [
+     "@else if (loaded && players?.length && !playersFiltered?.length && (filterOpt !== 'all' || searchTerm))"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.noPeopleFound"
+    ],
+    "de": [
+     "Keine Personen gefunden"
+    ],
+    "literals": [],
+    "text": "{{ 'people.noPeopleFound' | transloco }}",
+    "id": "people/list/list.page#text-b78dc42f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:580"
+    ],
+    "n": "'Keine Personen gefunden' bei Personen vorhanden, aber Filter/Suche ohne Treffer; alle Rollen.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 544,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.reasonRequired"
+    ],
+    "de": [
+     "Grund *"
+    ],
+    "literals": [],
+    "text": "{{ 'people.reasonRequired' | transloco }}",
+    "id": "people/list/list.page#text-b82e149a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:115"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  }
+ ]
+}

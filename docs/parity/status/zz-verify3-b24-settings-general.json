@@ -1,0 +1,337 @@
+{
+  "batch": "zz-verify3-b24-settings-general",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "settings/general/type/type.page#alert-67f98937": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1422-1455",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Gleicher Auslöser (Zurück-Pfeil bei Änderungen), Titel/Text gleich, Abbrechen / Verwerfen (rot) / Speichern; Speichern speichert (inkl. Dienstplan-Angebot) und verlässt die Seite auch bei Validierungsfehler – wie Ionic. roleGuarded kommt nur vom Alert-Button-Schlüssel „role:“, keine Rollenprüfung in der Methode. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#toast-6ffc1cbe": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1460-1467"
+      ],
+      "n": "Gleicher Text, rot; Flutter prüft < 2 (fängt auch 0), Reihenfolge Name → Status wie Ionic. Im Status-Dialog bleibt Anwesend gesperrt, Abwählen bis auf 1 möglich → Toast erreichbar wie in Ionic. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#toast-bfb92172": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1554-1556"
+      ],
+      "n": "Gleicher Text, grün, nach erfolgreichem Löschen; Demo-Konto: in beiden kein Erfolg. Bei verwendeten Typen löscht Flutter nicht (siehe alert-57a11ee0, dort hoch). roleGuarded kommt nur vom Alert-Button-Schlüssel „role:“, keine Rollenprüfung in der Methode. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#nav-41b5d1ca": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1556"
+      ],
+      "n": "Ionic router.navigate zur Typenliste / Flutter context.pop() → darunterliegende Typenliste (/settings/types ist Eltern-Route, auch bei Direktlink). roleGuarded kommt nur vom Alert-Button-Schlüssel „role:“, keine Rollenprüfung in der Methode. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#toast-28259494": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1557-1563",
+        "lib/core/utils/toast_helper.dart:28-31",
+        "lib/data/repositories/attendance_type_repository.dart:175"
+      ],
+      "n": "Flutter besser: Demo-Konto – Ionic: checkDemoRestriction zeigt den Demo-Hinweis und danach zusätzlich „Fehler beim Löschen des Anwesenheitstyps“ (rot, überlagert ihn) / Flutter: ensureNotDemo zeigt nur den Demo-Hinweis, der Fehler-Toast wird 4 s unterdrückt. Sonst gleicher Text/Farbe bei Fehlern; zusätzlich bei verwendeten Typen (siehe alert-57a11ee0, hoch). Rollen wie Ionic (nur Admin/Verantwortlich).",
+      "v": "korrigiert"
+    },
+    "settings/general/type/type.page#alert-0d2e84fe": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1029-1056",
+        "lib/data/repositories/duty_repository.dart:226-237"
+      ],
+      "n": "Gleiche Bedingungen (Dienst-Modus neu an, tenant.duty_view aus, kein anderer Dienst-Typ), Titel/Text/Buttons „Nein, normale Ansicht“ / „Ja, verwenden“; schreibt tenants.duty_view = true für die aktuelle Instanz (id-Filter) wie updateTenantData. Tenant-Flag duty_view in beiden geprüft; Demo: Speichern scheitert vorher in beiden. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#toast-307c76ec": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1052"
+      ],
+      "n": "Gleicher Text, grün. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#toast-e2f0301d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1053-1054"
+      ],
+      "n": "Gleicher Text, rot. Im Demo-Konto in beiden nicht erreichbar (Speichern scheitert vor dem Angebot). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#toast-43a95259": {
+      "s": "na",
+      "n": "toter Code: addReminder wird nur aus dem Block @if (canAddReminder()) (Chips, eigener Wert) aufgerufen, der bei 3 Erinnerungen ausgeblendet ist; Flutter blendet ebenso aus (type_reminders_editor.dart:129).",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#toast-8a7ee694": {
+      "s": "na",
+      "n": "toter Code: Hinzufügen-Button ist bei fehlendem Typ disabled ([disabled]=\"!newRegField.label?.trim() || !newRegField.type\", type.page.html:762); Flutter hat „Text“ vorausgewählt.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#toast-7092669c": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/registration_fields_editor.dart:52-61"
+      ],
+      "n": "Gleiche Prüfung (Komma-getrennt, getrimmt, leere raus, < 2) für Einfach-/Mehrfachauswahl, gleicher Text als Warnung. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-bcc05107": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:840-869"
+      ],
+      "n": "iOS: gestapeltes Label „Name“; Android/Web: „Name *“ (Stern = Satzzeichen-Nuance, Platzhalter siehe field-519cd48e). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-519cd48e": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:840-869"
+      ],
+      "n": "iOS gleich (gestapelt, Satzanfang groß). Android/Web: Ionic gestapeltes „Name“ ohne Platzhalter, autocapitalize=sentences / Flutter: schwebendes Label „Name *“ mit Platzhalter „z.B. Probe, Konzert“, ohne Großschreibung am Satzanfang; leerer Name als Feldfehler statt Toast (Toast-Item separat). Rollen wie Ionic.",
+      "v": "korrigiert"
+    },
+    "settings/general/type/type.page#text-44f5a998": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:279-280"
+      ],
+      "n": "Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-4bd5f276": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:284-295"
+      ],
+      "n": "Schalter „Aktiv“ mit Hilfetext, schreibt visible. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-71ea0fce": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:299-307"
+      ],
+      "n": "Label gleich (Optionen/Reihenfolge der Auswahl separat in field-1e46173e). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-0b9f9349": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:308-310"
+      ],
+      "n": "Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-63d333de": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:346-357"
+      ],
+      "n": "Schalter „Ganztägig“ mit Hilfetext, schreibt all_day. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-90aaada7": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:358-363"
+      ],
+      "n": "Text gleich, nur bei ganztägig; steht links neben dem Feld statt darüber (siehe field-4a2fa59b). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-4a2fa59b": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:358-385",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1484"
+      ],
+      "n": "Ionic: gestapeltes Label über vollbreitem Zahlenfeld, leer wenn duration_days nicht gesetzt, jeder Wert (auch 0/leer) wird gespeichert / Flutter: Label links, 60 px Feld rechts, zeigt „1“ wenn nicht gesetzt, übernimmt nur Werte > 0 (sonst bleibt still der letzte gültige Wert). Rollen wie Ionic.",
+      "v": "korrigiert"
+    },
+    "settings/general/type/type.page#text-0103bbc7": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:387-389"
+      ],
+      "n": "Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-fca1a1c4": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:390-392"
+      ],
+      "n": "Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-9786b85d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:393-395"
+      ],
+      "n": "Zeit als „HH:mm“ rechts, Tippen öffnet die Zeitwahl. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#modal-8afdfb0b": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213",
+        "lib/shared/widgets/adaptive/app_pickers.dart:79-157"
+      ],
+      "n": "Zeitwahl-Dialog (iOS: Karte mit 24-h-Rad, Android: Material-Zeitwahl) statt ion-modal mit ion-datetime (Plattform-Look); fehlendes 5-Minuten-Raster ist in field-ea19d7e9 erfasst. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-d7a84674": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:399"
+      ],
+      "n": "Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-9786b85d-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:397-403"
+      ],
+      "n": "Zeit als „HH:mm“ rechts, Tippen öffnet die Zeitwahl. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#modal-8afdfb0b-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213",
+        "lib/shared/widgets/adaptive/app_pickers.dart:79-157"
+      ],
+      "n": "Zeitwahl-Dialog statt ion-modal (Plattform-Look); 5-Minuten-Raster in field-32a15191 erfasst. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-740d3e37": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:405-416"
+      ],
+      "n": "Schalter mit Hilfetext, schreibt hide_name. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-af0bc58e": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:417-428"
+      ],
+      "n": "Schalter mit Hilfetext, schreibt highlight. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-fdd20919": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:429-440"
+      ],
+      "n": "Schalter mit Hilfetext, schreibt include_in_average. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-621715ef": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_protocol_settings.dart:114-120",
+        "lib/features/settings/presentation/widgets/type_protocol_settings.dart:31-36",
+        "lib/features/settings/presentation/widgets/type_protocol_settings.dart:47-51"
+      ],
+      "n": "Schalter mit Hilfetext; Einschalten setzt Dauer 10 wenn leer, „Vertagte Themen“ bleibt true (wie onProtocolToggle); schreibt enable_protocol. Keine Tenant-Bedingung in beiden. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#action-f6f5a988": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_protocol_settings.dart:121-127"
+      ],
+      "n": "„Mehr erfahren“ (Hilfe-Icon, primary) direkt unter dem Protokoll-Schalter → Hilfe-Artikel team-activate. Ionic nur !isNew; Flutter hat nur bestehende Typen auf der Seite (Anlegen per Namensdialog, dann diese Seite). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-91bd7675": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_protocol_settings.dart:128-148"
+      ],
+      "n": "Label links, Wert rechtsbündig, Platzhalter „10“; ungültig/≤ 0 wird nicht geschrieben (Ionic validate löscht den Schlüssel). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-ccf8bbf1": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_protocol_settings.dart:149-155"
+      ],
+      "n": "null zählt als an (wie !== false), schreibt suggest_postponed. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-ca2ec236": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_protocol_settings.dart:156-158"
+      ],
+      "n": "Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#action-7ac15547": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_protocol_settings.dart:159-164",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:449-452"
+      ],
+      "n": "Nur ohne Marker sichtbar, fügt Feld „Tagesordnung“ (time 0) ans Ende des Standard-Ablaufplans. Hinweis: der Ablaufplan selbst ist in Flutter nur bei „Werke verwalten“ sichtbar (text-6289c3a9, hoch). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-98265cec": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:455-466"
+      ],
+      "n": "Schalter mit Hilfetext, schreibt place_enabled. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-4d1722d2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:916-917"
+      ],
+      "n": "Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-8aa4fd37": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:921-942"
+      ],
+      "n": "Schalter mit Hilfetext; Einschalten: Personen ≥ 1, Neutral/Anwesend/Entschuldigt ergänzt, Standardstatus Neutral (Selbst-Eintragen/Benachrichtigen/Erinnerung kommen aus den DB-Defaults wie in Ionic). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-fe789c4f": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:944-963",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1505"
+      ],
+      "n": "Ionic: Zahlenfeld (rechtsbündig, Platzhalter „1“, frei eintippbar; 0 wird gespeichert, leer → null scheitert am NOT NULL) / Flutter: −/+-Stepper ab 1, kein Eintippen (große Zahlen nur per Mehrfach-Tippen), speichert mind. 1. Rollen wie Ionic.",
+      "v": "korrigiert"
+    }
+  },
+  "extra": []
+}

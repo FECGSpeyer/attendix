@@ -1,0 +1,1232 @@
+{
+ "batch": "b02-app",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "register/tenant-register/tenant-register.page#logic-b461582a": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:102",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:688",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1042",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1113",
+    "lib/features/registration/data/providers/registration_providers.dart:33",
+    "lib/features/registration/data/providers/registration_providers.dart:98"
+   ],
+   "n": "Kernablauf gleich (Tenant per register_id, Bereits-registriert-Check + Prefill, Passwort/OTP-Konto, Validierungsreihenfolge, Kirche anlegen, Player-Insert/Reaktivierung, Erfolgstexte, Weiterleitung). Abweichungen: Gruppenreihenfolge, Reihenfolge der Zusatzfelder, Default von Auswahl-Zusatzfeldern wird nicht gespeichert, Textarea/Datum-Zusatzfelder haben in Flutter Eingaben, Bestandskonto-Zweig nutzt registerUser – siehe extra.",
+   "sev": "hoch"
+  },
+  "register/tenant-register/tenant-register.page#toast-3163772f": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:146",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:171"
+   ],
+   "n": "Ionic: Toast 'Ungültiger Freigabe-Link.' auf leerer Seite (nur 'Registrierung abschließen' sichtbar) / Flutter: Fehleransicht 'Ungültiger Registrierungslink.' mit Button 'Zur Anmeldung', kein Toast.",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#loading-c4081e17": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:688"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay während Bereits-registriert-Prüfung / Flutter: Prüfung im Hintergrund ohne Overlay.",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#toast-51ea8218": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:704"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#nav-bda70e96": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:706"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#modal-c3de19e4": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:929",
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:139"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-fa4a46f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:959"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-9ab09d16": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:963"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#loading-ba12bb0b": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:968"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay beim Code-Anfordern / Flutter: nur Buttons deaktiviert (_isLoading), Spinner unten unter dem Formular, kein Overlay.",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#loading-54fa6693": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:988"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay beim Code-Bestätigen / Flutter: nur Buttons/Codefeld deaktiviert, kein Overlay.",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#db-e2edcd1f": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:998",
+    "lib/features/auth/data/auth_flow_service.dart:403"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#nav-daa5b1d7": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:158"
+   ],
+   "n": "Ionic goHome: Utils.getUrl(role) (Admin/Verantwortl. -> /tabs/player) / Flutter: homeRouteFor -> bei aktivem Dashboard-Tab /home-dashboard; Rolle 'none' -> /login statt Signout-Seite.",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#effect-6294e86d": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:163",
+    "lib/core/utils/dashboard_logic.dart:56"
+   ],
+   "n": "Ziel-Berechnung wie nav-daa5b1d7: Flutter homeRouteFor berücksichtigt zusätzlich die Dashboard-Startseite (Ionic Utils.getUrl nicht).",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#nav-e95f0182": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:165"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#alert-d3091b10": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:715"
+   ],
+   "n": "Gleicher Titel 'Anmelden', Buttons 'Abbrechen'/'Anmelden', danach Check+Prefill. Unterschiede: Flutter zusätzlicher Text 'Melde dich mit deinem bestehenden Account an.', Feld-Label 'E-Mail' statt Platzhalter 'E-Mail Adresse', Fehler als roter Text im Dialog statt Toast (bei unbestätigter E-Mail zeigt Flutter 'Bitte bestätige zuerst deine E-Mail-Adresse.', Ionic nichts).",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#loading-0e5874c4": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1121",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:436"
+   ],
+   "n": "Ionic: blockierendes Overlay 'Registrierung läuft...' (bis 45 s) / Flutter: Button deaktiviert + Spinner unter dem Button, ohne Text und ohne Overlay.",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#toast-218aaea9": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1155",
+    "lib/features/registration/data/providers/registration_providers.dart:143"
+   ],
+   "n": "Text identisch: 'Fehler beim Erstellen des Accounts: Deine E-Mail-Adresse existiert bereits. Bitte melde dich an.'"
+  },
+  "register/tenant-register/tenant-register.page#toast-e04d5d24": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1153",
+    "lib/features/registration/data/providers/registration_providers.dart:279"
+   ],
+   "n": "Ionic: 'Fehler bei der Registrierung: <technische Fehlermeldung>' (6 s) / Flutter: bei unbekannten Fehlern 'Fehler bei der Registrierung: Fehler beim Registrieren. Bitte versuche es erneut.' (generischer Text, Standarddauer).",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#nav-32addfec": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1183"
+   ],
+   "n": "Flutter navigiert erst nach Schließen des Erfolgsdialogs (Ionic navigiert und zeigt dann den Dialog)."
+  },
+  "register/tenant-register/tenant-register.page#alert-7152356e": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1164",
+    "lib/features/registration/data/providers/registration_providers.dart:371"
+   ],
+   "n": "Gleiche vier Texte je auto_approve/neu; Dialog erscheint in Flutter vor der Navigation statt danach."
+  },
+  "register/tenant-register/tenant-register.page#toast-b1bce191": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1043"
+   ],
+   "n": "Wie in Ionic praktisch unerreichbar, weil der Button bei fehlenden Gruppen deaktiviert ist."
+  },
+  "register/tenant-register/tenant-register.page#toast-c0b51c1d": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1047"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-84240372": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1050"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-67ca0f0d": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1053"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-c871f0d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1056"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-f19a42f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1060"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-4ef3175e": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1064"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-9de040da": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1067"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-33d6e4ed": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1070"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-bd259c1e": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1080"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-b918f4e0": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1085"
+   ],
+   "n": "Ionic: isNaN(Number(value)) – leerer Wert ('' oder null) gilt als gültig / Flutter: leeres Zahlenfeld -> Toast 'Bitte geben Sie eine gültige Zahl für das Feld ... ein.' (Pflichtfeld).",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#toast-02f7573a": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1089",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:552"
+   ],
+   "n": "Ionic: Datumsfelder haben kein Eingabeelement, geprüft wird nur der defaultValue / Flutter: Datumsauswahl; ohne Auswahl Toast (defaultValue wird ignoriert).",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#toast-23c76f81": {
+   "s": "missing",
+   "n": "Ionic: Ja/Nein-Feld ohne booleschen Wert (kein Default, nie umgeschaltet) -> Toast 'Bitte geben Sie einen gültigen Wert für das Feld \"…\" ein.' und Abbruch / Flutter: kein solcher Check, unberührter Schalter wird als false gespeichert (tenantRegisterFieldValue ungenutzt).",
+   "sev": "mittel"
+  },
+  "register/tenant-register/tenant-register.page#toast-2f09fbd9": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1098"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-f6feb7fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1102"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#toast-cad3c644": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1105"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#actionsheet-ab6f737a": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:283",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:294"
+   ],
+   "n": "Ionic: bei vorhandenem Passbild Action-Sheet 'Passbild ersetzen'/'Abbrechen' vor der Dateiauswahl / Flutter: kein Action-Sheet, Tap öffnet direkt die Galerie (Label wechselt auf 'Passbild ersetzen').",
+   "sev": "mittel"
+  },
+  "register/tenant-register/tenant-register.page#loading-19c310bc": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:590"
+   ],
+   "n": "Ionic: Loading-Overlay während Bild eingelesen wird / Flutter: kein Ladeindikator.",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#toast-2a68da3c": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:604"
+   ],
+   "n": "Gleicher Text. Ionic prüft die Originaldatei (>15 MB) / Flutter prüft erst nach Verkleinerung auf 800 px, Qualität 80 – greift praktisch nie, große Bilder werden angenommen.",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#toast-3aa86c36": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:613"
+   ],
+   "n": "Gleicher Text; Anlass in Flutter ein Fehler des Bildpickers (Nicht-Bild-Dateien sind dort nicht wählbar)."
+  },
+  "register/tenant-register/tenant-register.page#text-d4d4d1d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:127"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#action-7a63a66c": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:132"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-d4d4d1d6-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:221"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-ee3a0a59": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:255"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-3e7afcd9": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:265"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-fecdb4cb": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:274"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#action-8b405cb0": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:812"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-e89e2385": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:818",
+    "lib/features/auth/presentation/widgets/otp_widgets.dart:98"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-6e5a14fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:839"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-8ce1671c": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:833"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-5e6eb63c": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:850"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-0ebc2a01": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:846"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-585b0932": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:861"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-f2f670d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:857"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-86bd3a26": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:870",
+    "lib/features/auth/presentation/widgets/otp_widgets.dart:286"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#action-178ca27d": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:878"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#action-5df1dc21": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:887",
+    "lib/features/auth/presentation/widgets/otp_widgets.dart:108"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#action-73928114": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:895"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-019bcaa8": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:912"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-45cdc765": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:924",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:940"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#action-a45c8322": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:928"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-39166ec9": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:805"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-9b17d1d9": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:278"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#action-56c2bb62": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:282"
+   ],
+   "n": "Ionic: Label bleibt 'Wähle ein Passbild aus (max. 15 MB)' / Flutter: nach Auswahl Label 'Passbild ersetzen'.",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#action-86975787": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:284"
+   ],
+   "n": "Ionic: Avatar-Grafik (DEFAULT_IMAGE, Fallback avatar-placeholder.svg) / Flutter: graues Kreis-Avatar mit Personen-Icon.",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#field-9f610a4d": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:590"
+   ],
+   "n": "Ionic: Datei-Input accept=image/* (Systemauswahl inkl. Kamera/Dateien), Original wird hochgeladen / Flutter: ImagePicker nur Galerie (keine Kamera-Option), Bild auf 800x800 und Qualität 80 verkleinert.",
+   "sev": "mittel"
+  },
+  "register/tenant-register/tenant-register.page#text-6e76de7c": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:306"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-a282574a": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:299"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-52f381d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:317"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-3669e571": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:310"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-af1fd87d": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:323"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-3bbd0e84": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:324"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#modal-4836c219": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:446"
+   ],
+   "n": "Plattform-Datumsdialog statt ion-modal mit ion-datetime."
+  },
+  "register/tenant-register/tenant-register.page#field-61311198": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:446",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:79"
+   ],
+   "n": "Default 18 Jahre zurück wie Ionic; Flutter begrenzt auf 1900 bis heute."
+  },
+  "register/tenant-register/tenant-register.page#text-e0756481": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:339"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-d5f04c4f": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:332"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-b64d7643": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:347"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-0a9708a5": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:363"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-a9922b49": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:350",
+    "lib/features/registration/data/providers/registration_providers.dart:33"
+   ],
+   "n": "Label (Stimme/Instrument/Gruppe inkl. Sonderfall 194) und Vorauswahl der ersten Gruppe gleich. Ionic: Reihenfolge Kategorie, sort_order, Name; Filter maingroup !== true / Flutter: nur nach Name sortiert, Filter maingroup = false (NULL-Werte fallen raus).",
+   "sev": "mittel"
+  },
+  "register/tenant-register/tenant-register.page#text-1e23f15b": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:480"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-3d36f520": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:476"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-1e23f15b-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:497"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-3d36f520-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:494"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-ac71b961": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:525"
+   ],
+   "n": "Ionic: ion-select mit defaultValue vorbelegt, Wert wird immer in additional_fields gespeichert / Flutter: Default wird nur angezeigt; ohne aktive Auswahl fehlt der Schlüssel in additional_fields (anderer DB-Wert). Leerer Zustand zeigt 'Bitte auswählen'.",
+   "sev": "hoch"
+  },
+  "register/tenant-register/tenant-register.page#text-1e23f15b-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:516"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-25aab0fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:517"
+   ],
+   "n": "Unterschied in der Validierung siehe toast-23c76f81."
+  },
+  "register/tenant-register/tenant-register.page#text-1e23f15b-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:642"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#action-af297b3b": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:646",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:631"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#modal-6f647b7b": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:25"
+   ],
+   "n": "Ionic: Vollbild-ion-modal / Flutter: Bottom-Sheet mit 95 % Höhe (Inhalt gleich).",
+   "sev": "niedrig"
+  },
+  "register/tenant-register/tenant-register.page#text-3463a358": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:83"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#action-8a905f52": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:86"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-8ca795b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:98"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#action-702ca9a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:132"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#action-64e5e51e": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:138"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-1b40c5cb": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:143"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-cec7e3b3": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:677"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-2818a621": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:671"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#text-64a3929d": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:412"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#field-f6d39eb8": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:405"
+   ]
+  },
+  "register/tenant-register/tenant-register.page#action-5bd78b6a": {
+   "s": "diff",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:423"
+   ],
+   "n": "Ionic: nur bei fehlenden Gruppen deaktiviert (im OTP-Modus vor Codebestätigung -> Toast 'Das Passwort muss mindestens 6 Zeichen lang sein.'); auch bei ungültigem Link sichtbar / Flutter: zusätzlich im OTP-Modus vor Anmeldung und während des Ladens deaktiviert, bei ungültigem Link nicht vorhanden.",
+   "sev": "niedrig"
+  },
+  "tabs/side-nav/nav-items#logic-b5b3126c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/nav_items.dart:70",
+    "lib/shared/widgets/layout/side_nav/nav_items.dart:231"
+   ],
+   "n": "buildNavGroups und activeNavItemId 1:1 (gleiche Rollenmengen, Reihenfolge, Gruppen/Überschriften, Badges); Ionic-Routen /tabs/... auf Flutter-Routen abgebildet (/people, /org-plans-tab usw.)."
+  },
+  "tabs/side-nav/side-nav.component#logic-4d49612e": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:145",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:68",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:102",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:128",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:133",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:370"
+   ],
+   "n": "Gruppen, aktiver Eintrag, Badges (Flutter live statt 60-s-Drosselung), Profilname/Avatar, Rollenlabel, Strg/⌘+B, Instanzwechsel, Logout gleich. Abweichungen: Instanzlogo (logo_url) wird nie gezeigt (extra); Ablaufpläne als Seite statt Modal und kein Loading beim Instanzwechsel (eigene Items).",
+   "sev": "niedrig"
+  },
+  "tabs/side-nav/side-nav.component#nav-e03aff1e": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:116",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:121"
+   ],
+   "n": "Flutter prüft vorher Verlassen-Schutz der offenen Seite."
+  },
+  "tabs/side-nav/side-nav.component#nav-9b5ddf8f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:323"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#loading-e9133cc5": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:128",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:389"
+   ],
+   "n": "Ionic: Loading-Overlay während Instanzwechsel / Flutter: switchTenant ohne Ladeanzeige.",
+   "sev": "niedrig"
+  },
+  "tabs/side-nav/side-nav.component#nav-8a63e2cc": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:405"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#effect-81b5e180": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:405",
+    "lib/core/constants/enums.dart:137"
+   ],
+   "n": "role.defaultRoute entspricht Utils.getUrl."
+  },
+  "tabs/side-nav/side-nav.component#modal-186fad14": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:109",
+    "lib/core/router/app_router.dart:900"
+   ],
+   "n": "Ionic: 'Ablaufpläne' öffnet PlanningPage als Modal / Flutter: context.push('/planning') – normale Seite im Shell (Sidepanel bleibt sichtbar).",
+   "sev": "mittel"
+  },
+  "tabs/side-nav/side-nav.component#modal-4c4a8837": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:112",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:44"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#action-0465a216": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:257"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#action-e344604a": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:266"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#embed-972ec73c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:272"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#text-179b9e05": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:661",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:668"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#text-2e5c2fe9": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:622"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#text-b58c667f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:646"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#text-9e2fb11a": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:651"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#popover-bfa8543b": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:667"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#action-58669ad9": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:675"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#text-5522586b": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:193",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:451"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#action-b52e84d3": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:198",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:487"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#action-136d171b": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:316"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#action-f967a167": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:729"
+   ]
+  },
+  "tabs/side-nav/side-nav.component#action-a8d16ecc": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:354",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:133"
+   ]
+  },
+  "tabs/tabs.page#logic-658293a9": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:60",
+    "lib/shared/widgets/layout/main_shell.dart:309",
+    "lib/core/router/app_router.dart:214"
+   ],
+   "n": "Rollenflags und Tab-Sichtbarkeit gleich; unerlaubte URL -> Startseite der Rolle über Router-Redirect; Seiten-Glocke wird bei Sidepanel ausgeblendet. Einzige Abweichung beim Werke-Tab für Eltern (siehe action-8d0f89f7)."
+  },
+  "tabs/tabs.page#effect-179a0567": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:242",
+    "lib/core/constants/enums.dart:137"
+   ]
+  },
+  "tabs/tabs.page#nav-0ccaf6f8": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:214",
+    "lib/core/router/app_router.dart:426"
+   ]
+  },
+  "tabs/tabs.page#embed-164ce55b": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:339",
+    "lib/shared/widgets/layout/main_shell.dart:428"
+   ]
+  },
+  "tabs/tabs.page#embed-0dc068ec": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:266",
+    "lib/shared/widgets/layout/main_shell.dart:353",
+    "lib/shared/widgets/layout/main_shell.dart:401"
+   ]
+  },
+  "tabs/tabs.page#action-bc38dad9": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:73"
+   ]
+  },
+  "tabs/tabs.page#action-1a5f7288": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:83"
+   ]
+  },
+  "tabs/tabs.page#action-8f179464": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:93"
+   ]
+  },
+  "tabs/tabs.page#action-4846e761": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:104"
+   ]
+  },
+  "tabs/tabs.page#action-a15df102": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:115"
+   ]
+  },
+  "tabs/tabs.page#action-75b96733": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:125"
+   ]
+  },
+  "tabs/tabs.page#action-2b04f29c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:135"
+   ]
+  },
+  "tabs/tabs.page#action-8d0f89f7": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:145",
+    "lib/core/providers/optional_tabs_providers.dart:87"
+   ],
+   "n": "Ionic Tabbar: 'Werke' bei aktivierter Option für alle außer Bewerber (auch Eltern) / Flutter: zusätzlich für Eltern ausgeblendet (canOpenSongsTab). Ionic-Route/Sidepanel sperren Eltern ebenfalls.",
+   "sev": "niedrig"
+  },
+  "tabs/tabs.page#action-3a353b0e": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:153"
+   ]
+  },
+  "tabs/tabs.page#action-0c8a5479": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:163"
+   ]
+  },
+  "teams-config/teams-config.page#logic-3bb24ddf": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/teams_config_page.dart:38",
+    "lib/features/team_organization/presentation/pages/teams_config_page.dart:66",
+    "lib/core/services/teams/teams_service.dart:228"
+   ]
+  },
+  "teams-config/teams-config.page#text-3451cfe8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/teams_config_page.dart:81"
+   ]
+  },
+  "teams-config/teams-config.page#text-037582c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/teams_config_page.dart:107"
+   ]
+  },
+  "teams-config/teams-config.page#text-14e4215c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/teams_config_page.dart:110"
+   ]
+  },
+  "teams-config/teams-config.page#field-a99d60a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/teams_config_page.dart:112",
+    "lib/features/team_organization/presentation/pages/teams_config_page.dart:131"
+   ]
+  },
+  "teams-config/teams-config.page#text-b3a87b26": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/teams_config_page.dart:118"
+   ]
+  },
+  "terms/terms.page#logic-e0824f5f": {
+   "s": "diff",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:48",
+    "lib/data/repositories/account_repository.dart:54",
+    "lib/core/router/app_router.dart:366"
+   ],
+   "n": "Prüfungen, Datenschutz-Modal, refreshSession/signOut, updateUser terms_accepted_at und Toasts gleich. Abweichung: Ziel nach Zustimmung bzw. bei bereits akzeptierten Bedingungen ist /tenants (oder gemerkter Link) statt Utils.getUrl(role) – siehe extra.",
+   "sev": "mittel"
+  },
+  "terms/terms.page#nav-8447fd12": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:374"
+   ]
+  },
+  "terms/terms.page#nav-4d7988a7": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:370"
+   ],
+   "n": "Ionic: bereits akzeptiert -> Utils.getUrl(role) / Flutter: Router leitet auf gemerkten Link oder /tenants; ist schon eine Instanz aktiv, erscheint dort die Instanzauswahl statt der Startseite.",
+   "sev": "niedrig"
+  },
+  "terms/terms.page#effect-1f50895e": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:371",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:80"
+   ],
+   "n": "Wie nav-4d7988a7: Flutter berechnet kein Rollenziel, sondern geht über /tenants (Auto-Weiterleitung mit homeRouteFor nur ohne aktive Instanz).",
+   "sev": "niedrig"
+  },
+  "terms/terms.page#modal-0b75e632": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:154",
+    "lib/features/legal/presentation/pages/terms_page.dart:39",
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:139"
+   ]
+  },
+  "terms/terms.page#toast-16e05266": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:50"
+   ],
+   "n": "Wie in Ionic praktisch unerreichbar (Button deaktiviert)."
+  },
+  "terms/terms.page#db-d9bee59a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/account_repository.dart:56"
+   ]
+  },
+  "terms/terms.page#db-52eaee29": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/account_repository.dart:58"
+   ]
+  },
+  "terms/terms.page#nav-efbc7cef": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:61"
+   ]
+  },
+  "terms/terms.page#toast-f7e63a46": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:62"
+   ]
+  },
+  "terms/terms.page#db-36371cd5": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/account_repository.dart:62"
+   ]
+  },
+  "terms/terms.page#toast-be2dc843": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:66"
+   ]
+  },
+  "terms/terms.page#nav-4df0f2ac": {
+   "s": "diff",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:58",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:80"
+   ],
+   "n": "Ionic: nach Zustimmung direkt Utils.getUrl(role) (Startseite der Rolle) / Flutter: gemerkter Link oder /tenants; ohne aktive Instanz Auto-Weiterleitung zur Startseite, mit bereits geladener Instanz (z. B. Kaltstart mit gespeicherter Instanz) bleibt die Instanzauswahl stehen.",
+   "sev": "mittel"
+  },
+  "terms/terms.page#effect-9680384f": {
+   "s": "diff",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:58"
+   ],
+   "n": "Wie nav-4df0f2ac: Ziel wird nicht aus der Rolle berechnet, sondern über /tenants bzw. homeRouteFor (inkl. Dashboard-Startseite).",
+   "sev": "niedrig"
+  },
+  "terms/terms.page#text-7bac4a03": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:102"
+   ]
+  },
+  "terms/terms.page#text-20ec44fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:125"
+   ]
+  },
+  "terms/terms.page#text-b0594d7f": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:134"
+   ]
+  },
+  "terms/terms.page#text-082c259b": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:142"
+   ]
+  },
+  "terms/terms.page#text-75549760": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:143"
+   ]
+  },
+  "terms/terms.page#text-45358d8e": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:144"
+   ]
+  },
+  "terms/terms.page#text-63df665b": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:145"
+   ]
+  },
+  "terms/terms.page#action-0217fb55": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:146"
+   ]
+  },
+  "terms/terms.page#field-b576bf25": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:161"
+   ]
+  },
+  "terms/terms.page#text-b193e7b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:168",
+    "lib/features/legal/presentation/pages/terms_page.dart:177"
+   ]
+  },
+  "terms/terms.page#action-c5b88349": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:169"
+   ]
+  },
+  "terms/terms.page#action-88056e97": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:183"
+   ]
+  }
+ },
+ "extra": [
+  {
+   "unit": "register/tenant-register/tenant-register.page",
+   "title": "Reihenfolge der Gruppen-Auswahl",
+   "n": "Ionic: getGroups sortiert nach Kategorie, sort_order, Name und filtert maingroup !== true / Flutter: registrationGroupsProvider sortiert nur nach Name, Filter .eq('maingroup', false) schließt NULL aus.",
+   "sev": "mittel",
+   "ionic": "src/app/services/group/group.service.ts:18",
+   "f": [
+    "lib/features/registration/data/providers/registration_providers.dart:33"
+   ]
+  },
+  {
+   "unit": "register/tenant-register/tenant-register.page",
+   "title": "Reihenfolge der Zusatzfelder",
+   "n": "Ionic: Zusatzfelder in der Reihenfolge von registration_fields / Flutter: in der Reihenfolge von tenant.additional_fields (gefiltert auf registration_fields).",
+   "sev": "mittel",
+   "ionic": "src/app/register/tenant-register/tenant-register.page.ts:77",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:468"
+   ]
+  },
+  {
+   "unit": "register/tenant-register/tenant-register.page",
+   "title": "Default von Auswahl-Zusatzfeldern nicht gespeichert",
+   "n": "Ionic: additional_fields[id] = field.value (mit defaultValue vorbelegt) für jedes Feld / Flutter: Auswahlfeld wird nur nach aktiver Auswahl in additional_fields geschrieben; unverändert fehlt der Default im gespeicherten Datensatz.",
+   "sev": "hoch",
+   "ionic": "src/app/register/tenant-register/tenant-register.page.ts:304",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:527",
+    "lib/features/registration/data/providers/registration_providers.dart:334"
+   ]
+  },
+  {
+   "unit": "register/tenant-register/tenant-register.page",
+   "title": "Textarea- und Datums-Zusatzfelder",
+   "n": "Ionic: Template rendert für Typ 'textarea' und 'date' kein Eingabeelement (leeres ion-item), Validierung prüft nur den Default / Flutter: mehrzeiliges Textfeld bzw. Datumsauswahl vorhanden.",
+   "sev": "niedrig",
+   "ionic": "src/app/register/tenant-register/tenant-register.page.html:157",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:473",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:552"
+   ]
+  },
+  {
+   "unit": "register/tenant-register/tenant-register.page",
+   "title": "Bestandskonto bei Passwort-Registrierung",
+   "n": "Ionic: E-Mail existiert + Passwort stimmt -> addUserToTenant direkt (auch wenn bereits Mitglied) / Flutter: registerUser(selfRegister) -> bei bestehender Mitgliedschaft kein zweiter tenantUsers-Eintrag. Randfall, Flutter vermeidet Duplikat.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:1730",
+   "f": [
+    "lib/features/registration/data/providers/registration_providers.dart:150"
+   ]
+  },
+  {
+   "unit": "tabs/side-nav/side-nav.component",
+   "title": "Instanzlogo im Sidepanel fehlt",
+   "n": "Ionic: tenants.logo_url gesetzt -> Logo-Bild statt Initialen im Instanz-Button / Flutter: Tenant-Modell kennt logo_url nicht, es werden immer die Initialen gezeigt.",
+   "sev": "niedrig",
+   "ionic": "src/app/tabs/side-nav/side-nav.component.html:26",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:614"
+   ]
+  },
+  {
+   "unit": "terms/terms.page",
+   "title": "Ziel nach Zustimmung zu den Bedingungen",
+   "n": "Ionic: navigateByUrl(Utils.getUrl(tenantUser.role)) / Flutter: PendingFileLink oder /tenants; die Instanzauswahl leitet nur ohne aktive Instanz automatisch zur Startseite weiter.",
+   "sev": "mittel",
+   "ionic": "src/app/terms/terms.page.ts:61",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:58",
+    "lib/core/router/app_router.dart:371",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:80"
+   ]
+  }
+ ]
+}

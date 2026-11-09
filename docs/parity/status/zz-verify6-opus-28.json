@@ -1,0 +1,422 @@
+{
+ "batch": "zz-verify6-opus-28",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "shared/attendance-songs/attendance-songs.component#action-874165f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:390-397",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:336-360",
+    "lib/features/self_service/presentation/pages/signout_page.dart:778-792",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:101-110"
+   ],
+   "n": "Nach den Änderungen unverändert: Druck-Icon nur ohne linkOnly und mit Einträgen (Flutter-Einträge haben immer ein Werk = Ionic canPrint). „Meine Termine“ übergibt kein linkOnly → Icon; Elternportal linkOnly: true → kein Icon. Druckt pro Werk die Datei des eigenen Instruments (Chor: Chor-alle-Datei) als ein PDF „{Datum}.pdf“, ohne Treffer Warnung „signoutNoScoresFound“ wie printScores. Referenzen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "shared/attendance-songs/attendance-songs.component#action-d8f3a11f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:419-435",
+    "lib/features/self_service/presentation/pages/signout_page.dart:784-791",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:109",
+    "lib/data/repositories/sign_in_out_repository.dart:849-853",
+    "lib/features/parents/data/providers/parents_providers.dart:188-192"
+   ],
+   "n": "„Ablaufplan öffnen“ (Icon + Text primary, Chevron) nur wenn hasPlan (share_plan und Plan mit Feldern) – Mitglieder (CrossTenantPersonAttendance.hasPlan) und Eltern (ParentAttendanceGroup.hasPlan) wie Ionic; schließt das Sheet und öffnet den Ablaufplan. Referenz parents_providers korrigiert (103 war ChildPersonAttendance, richtig 188).",
+   "v": "bestätigt"
+  },
+  "shared/church-overview/church-overview.component#logic-58512849": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:32-58",
+    "lib/features/attendance/presentation/attendance_extra_actions.dart:102-128",
+    "lib/features/people/presentation/pages/people_list_page.dart:1187-1203"
+   ],
+   "n": "Zählung (gesamt, leer → ohne Gemeinde, je Gemeinde, unbekannte ID → „Unbekannte Gemeinde“), Sortierung nach Anzahl absteigend, Aufrufer (Termin: Anwesend/Verspätet/Verspätung gemeldet; Personenliste: gefilterte Personen, Untertitel „Personen“) gleich. Nur Gleichstand: Ionic localeCompare / Flutter compareTo (Codepoint, Umlaute/Kleinschreibung anders sortiert).",
+   "v": "bestätigt"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#logic-3be50423": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:173-253",
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:255",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2295-2306"
+   ],
+   "n": "Bucket files, Präfix {tenantId}/Pfad, limit 1000, name asc, .keep ausgeblendet, nur Ordner (id == null ≙ ohne metadata); Start im gespeicherten Ordner, bei Fehler in Unterordner zurück zum Hauptordner, im Hauptordner Fehlermeldung (Flutter inline statt Toast); Hoch/Breadcrumb, Auswahl gibt relativen Pfad zurück, Aufrufer schreibt attendance.files_folder (mit tenantId-Filter). Abweichung nur Nachsortierung (x-e438fe17af).",
+   "v": "bestätigt"
+  },
+  "x-e438fe17af": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:226-238"
+   ],
+   "n": "Weiterhin: Ionic FilesService.listEntries sortiert zusätzlich mit localeCompare / Flutter übernimmt die Storage-Reihenfolge (name asc) ohne Nachsortierung – nur Reihenfolge bei Groß-/Kleinschreibung/Umlauten anders.",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#nav-7f660468": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:98-141",
+    "lib/core/utils/ionic_route_mapper.dart:9-37",
+    "lib/core/router/app_router.dart:1063-1090"
+   ],
+   "n": "Eintrag mit data.route: nach Instanzwechsel (nur wenn data.tenantId gesetzt und anders) Navigation zur eigenen Route; mapIonicRoute entfernt /tabs, attendance/{id}/protocol → /settings/protocol/{id}; Ziele /settings/tasks/:id, /settings/protocol/:id, /settings/team-organization?tab=… existieren. Gelesen-Markierung vorher wie Ionic.",
+   "v": "bestätigt"
+  },
+  "x-1288ff4e83": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:209-215",
+    "lib/core/providers/message_providers.dart:261-277"
+   ],
+   "n": "Flutter besser, weiterhin: Ionic markAll/deleteAll/toggleRead/deleteOne ohne try/catch – DB-Fehler unbemerkt / Flutter _guard zeigt roten Toast „svcSaveFailed“, Notifier lädt Liste und Zähler in finally neu.",
+   "v": "bestätigt"
+  },
+  "shared/tiptap-editor/tiptap-editor.component#logic-80afa222": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:297-347",
+    "lib/features/team_organization/tiptap_delta.dart:1",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:355-410",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:38"
+   ],
+   "n": "Unverändert: flutter_quill mit Tiptap-JSON-Konvertierung (Absätze, H1–H3, Listen inkl. Aufgabenliste, Zitat, Code, Marks, taskRef/agendaItemRef als Embeds); Platzhalter editor.notesPlaceholder nur bearbeitbar; schreibgeschützt ohne Toolbar; Inhalt eines anderen Leiters ersetzt den Editor ohne Speichern (≙ ngOnChanges setContent emitUpdate:false); Aufgaben-Referenz am Cursor; Speichern verzögert 800 ms (Ionic 600 ms), Flush beim Verlassen (≙ takePendingChange). Abweichungen nur in den extras (niedrig).",
+   "v": "bestätigt"
+  },
+  "x-4fcbd24c7a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:358-395",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1381-1382",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1863-1864"
+   ],
+   "n": "Weiterhin: Ionic Bubble-Menü nur B/I/U/S, H1–H3, Listen; Referenzen nicht anklickbar / Flutter Toolbar zusätzlich Rückgängig/Wiederholen, Checkliste, Zitat, Einrücken, Link; Tippen auf Aufgaben-Referenz öffnet /settings/tasks/{id} (auch Ionic verlinkt Aufgaben auf der Protokollseite), auf Themen-Referenz /settings/agenda-items/{id} nur für Leitung (breites Layout nur Leitung). Referenz 1332 → 1381.",
+   "v": "bestätigt"
+  },
+  "songs/import/import.page#effect-cdbbd276": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:92-103",
+    "lib/core/utils/import_file_io.dart:25-27",
+    "lib/core/services/zip_service_io.dart:14-29",
+    "lib/core/services/zip_service_web.dart:9-50"
+   ],
+   "n": "Kopfzeilen inkl. Werk-Zusatzfelder, Beispielzeile, Blatt „Import“, Dateiname „Werke_Import_Vorlage.xlsx“ gleich; nur Admin/Verantwortlich. Ionic saveWorkbook: nativ Cache + FileViewer, mobiles Web Teilen-Sheet, Desktop Download / Flutter saveGeneratedFile: nativ Teilen-Sheet (jetzt ohne Begleittext), Web immer Anker-Download (Blob-Typ jetzt nach Endung xlsx korrekt); Fehler → Toast „Fehler: …“. Datei kommt in beiden beim Nutzer an.",
+   "v": "bestätigt"
+  },
+  "songs/import/import.page#logic-587858e7": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:105-127",
+    "lib/features/songs/presentation/pages/song_import_page.dart:132-187",
+    "lib/data/repositories/import_repository.dart:80-104",
+    "lib/data/repositories/import_repository.dart:109-128",
+    "lib/core/utils/spreadsheet_reader.dart:46",
+    "lib/core/utils/spreadsheet_reader.dart:195",
+    "lib/core/utils/xls_reader.dart:35"
+   ],
+   "n": "Nach Änderung import_repository geprüft: Duplikat-Schlüssel {prefix}{number} aus songs mit tenantId = Werkquelle (song_source_tenant_id ?? aktueller Tenant, paginiert) und Insert in songs mit tenantId = Werkquelle wie Ionic effectiveSongTenantId; .xls/Formelzellen weiterhin gelöst. 3 Schritte, Auto-Mapping, Pflichtfelder, Demo-Sperre gleich. Rest niedrig: Flutter besser: Insert-Fehler als Fehlerzeile gezählt (x-b739ec43ac).",
+   "v": "bestätigt"
+  },
+  "x-b739ec43ac": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/import_repository.dart:109-128",
+    "lib/features/songs/presentation/pages/song_import_page.dart:154-181"
+   ],
+   "n": "Weiterhin Flutter besser: Ionic SongService.addSong prüft error nicht → fehlgeschlagene Inserts zählen als importiert / Flutter insertSong wirft → Zeile „{Titel}: {Fehler}“ in „Nicht importierte Werke“, Warn-Toast mit Fehlanzahl.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-2b4e019d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:538",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1003-1040"
+   ],
+   "n": "Text „Werk in andere Instanz kopieren“, Icon, Position (nach Herkunft) und Bedingung (andere Instanzen der Organisation, in denen der Nutzer Admin/Verantwortlich ist, ohne aktuelle; auch für Nur-Lese-Rollen) gleich; öffnet Kopier-Sheet. Ionic zeigt den Eintrag auch in der öffentlichen Freigabe-Ansicht, wenn eingeloggt (Nebenpfad) / Flutter dort nie. Referenzen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-399b39c6": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:22-45",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1194-1215"
+   ],
+   "n": "Fix geprüft: Personen werden pro Druck geladen (player, pending=false, left null, tenantId, ohne pausierte); Ladefehler → roter Toast „Fehler beim Laden der Personen“ und Abbruch wie Ionic db.getPlayers. Eintrag „Gruppen-PDFs drucken“ nur !readOnly und mit Dateien, Warnungen „keine Gruppen-PDFs“/„keine Gruppen mit Personen“, Verhältnis-Dialog gleich.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-5a44841e": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:427-434",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:325-329",
+    "lib/core/providers/song_providers.dart:462",
+    "lib/core/providers/song_providers.dart:502"
+   ],
+   "n": "Keine Rollenbedingung in beiden: sichtbar, wenn der Tenant eine song_sharing_id hat (Flutter frisch aus tenants), in der Freigabe-Ansicht mit der ID aus der URL. Link https://attendix.de/{id}/{songId}, Tracking songShared, grüner Toast „Der Link wurde in die Zwischenablage kopiert“. Referenzen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-bb723d59": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:435-440",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:331-357",
+    "lib/core/providers/song_providers.dart:468-469",
+    "lib/data/repositories/song_repository.dart:311-345"
+   ],
+   "n": "Papierkorb nur Admin/Verantwortlich (Freigabe-Ansicht readOnly) wie Ionic; Bestätigung mit Sync-Hinweis (songsDeleteSyncedMessage) wie Ionic; Löschen in songs mit id + tenantId (Werkquelle) inkl. Storage-Bereinigung; Fehler → Toast (Flutter besser). Dialog/Overlay-Abweichungen in alert-877b5429/loading-a35a4f12.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-cfeeaff1": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1182-1187",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1141-1146",
+    "lib/core/services/zip_service.dart:15-63"
+   ],
+   "n": "Flutter besser: Knopf gleich (nur lesend + Dateien: alle Nur-Lese-Rollen und Freigabe-Link). In der öffentlichen Freigabe-Ansicht ohne Login bricht Ionic ab (effectiveSongTenantId → db.tenant() undefined, Overlay bleibt hängen); Flutter lädt über die öffentlichen URLs. Referenzen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#effect-8a9efedf": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1305-1312",
+    "lib/core/services/zip_service_io.dart:14-29",
+    "lib/core/services/zip_service_web.dart:9-38"
+   ],
+   "n": "Mac-Browser-Sonderfall gleich; Aktion nur !iOS || Audio wie Ionic. Ionic: Storage-Download, nativ Datei in Cache + FileViewer, mobiles Web Teilen-Menü, Desktop Anker-Download / Flutter: Download der URL, nativ Teilen-Dialog (share_plus), Web immer Anker-Download (MIME jetzt nach Endung). Fehler → Toast.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#effect-8cf392b2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1141-1146",
+    "lib/core/services/zip_service.dart:15-63",
+    "lib/core/services/zip_service_io.dart:14-29",
+    "lib/core/services/zip_service_web.dart:9-38"
+   ],
+   "n": "Ionic: ZIP „{Werkname|songs}.zip“, nativ Cache + FileViewer, mobiles Web Teilen-Menü, Desktop Anker-Download; ein Ladefehler bricht ab / Flutter: ZIP „{bereinigter_Name}_files.zip“ (Leerzeichen → _), nativ Teilen-Dialog mit Text „Song-Dateien“, Web immer Anker-Download; nicht ladbare Dateien übersprungen, doppelte Namen „ (2)“. Fehlendes Overlay separat (loading-f3d45d0c).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#effect-be55c6e1": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1288-1295",
+    "lib/features/songs/presentation/widgets/song_file_opener.dart:19-61"
+   ],
+   "n": "Ionic: Utils.openFileNative (Web neuer Tab bzw. In-App-Viewer in installierter Web-App, nativ System-FileViewer, iOS-App auf Mac Browser) / Flutter: PDFs im In-App-PDF-Viewer-Sheet, Bilder im Bild-Viewer-Sheet, andere Dateitypen extern wie Ionic (openSongFileExternally, installierte Web-App: Hinweis + Download). Datei wird in beiden angezeigt.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-12d333a5": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:643-654",
+    "lib/core/providers/song_providers.dart:150-156"
+   ],
+   "n": "„Kategorien“ (Kategorien der Werk-Bibliothek inkl. Sync-Quelle), Mehrfachauswahl im Dialog, speichert das ganze Formular nach OK (songs.update mit id + tenantId); nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-141ebaeb": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:752-767",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:495-496",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:190-193"
+   ],
+   "n": "Auswahl-Zusatzfeld mit Feldname und Optionen, Default wie Ionic (defaultValue sonst erste Option), nur Admin/Verantwortlich änderbar (sonst deaktiviert), speichert bei Änderung. Freigabe-Ansicht s. text-e14adf08.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-4caddb91": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:593-606"
+   ],
+   "n": "„Schwierigkeitsgrad“ mit „Nicht definiert“, „1 - Leicht“, „2 - Mittel“, „3 - Schwer“ (null/1/2/3) in gleicher Reihenfolge, speichert bei Änderung; nur Admin/Verantwortlich. Speichern jetzt in Warteschlange (keine Race mehr).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-74dfef04": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:739-750",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:190-193",
+    "lib/core/providers/song_providers.dart:499"
+   ],
+   "n": "Eingeloggt: Ja/Nein-Zusatzfeld für alle Rollen, nur Admin/Verantwortlich änderbar (sonst deaktiviert), Default true bzw. defaultValue wie Ionic. Abschnitts-Sichtbarkeit in der Freigabe-Ansicht in text-e14adf08.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-75d32e34": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:628-642",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:897-936",
+    "lib/core/providers/song_providers.dart:495-497"
+   ],
+   "n": "„Besetzung“ nur Orchester und Admin/Verantwortlich; Gruppen ohne Hauptgruppe, Gruppen mit Dateien gesperrt, Auswahl = gespeicherte instrument_ids + Gruppen aus Dateien (wie syncInstrumentIdsFromFiles, jetzt auch nach Datei-Änderungen), Mehrfachauswahl im Dialog, speichert nach OK.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-92ca11e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:608-616"
+   ],
+   "n": "Schalter „Chor & Orchester“, speichert sofort; nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-996c74c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:618-626"
+   ],
+   "n": "Schalter „Mit Solo-Gesang“, speichert sofort; nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#nav-0c47252a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:349-353",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:435-440",
+    "lib/core/router/app_router.dart:985-988"
+   ],
+   "n": "Löschen-Knopf nur bei !readOnly. Nach erfolgreichem Löschen context.go('/settings/songs') wie Ionic tabs/settings/songs, auch aus dem Werke-Tab (Beta-Zweig ausgenommen); bei Fehler keine Navigation, Toast.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-0685e298": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:412-414",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:424",
+    "lib/core/providers/song_providers.dart:468-469"
+   ],
+   "n": "Titel „{Nummer} {Name}“ nur lesend (alle Rollen außer Admin/Verantwortlich, Freigabe-Link) wie Ionic; Flutter trimmt bei fehlender Nummer das führende Leerzeichen.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-21178ee6": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:468-487",
+    "lib/core/providers/song_providers.dart:447-452"
+   ],
+   "n": "Flutter besser: In der öffentlichen Freigabe-Ansicht zeigt Ionic „Unbekannte Kategorie“ (db.songCategories() leer bzw. die des eingeloggten Tenants), Flutter die Namen der Kategorien des geteilten Tenants; sonst gleich (nur lesend, sekundäre Chips, unbekannte ID → „Unbekannte Kategorie“).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-3f41f257": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:412-414",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:424",
+    "lib/core/providers/song_providers.dart:468-469"
+   ],
+   "n": "„Werk bearbeiten“ nur für Admin/Verantwortlich, gleiche Rollenbedingung.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-6c47a33d": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:517-534"
+   ],
+   "n": "„Link“ (mehrzeiliges Feld, speichert bei Fokusverlust) nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-73c30dcc": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:488-492",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:661-668"
+   ],
+   "n": "Text gleich; Bedingung nutzt in Flutter weiterhin die gespeicherten instrument_ids ohne Datei-Merge (Ionic syncInstrumentIdsFromFiles beim Laden) – nur bei seltenem Datenstand anders (gleiche Ursache wie text-abd53d78).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-7af4a9f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:583-589"
+   ],
+   "n": "„Name“, gleiche Bedingung.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-93272c94": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:574-581"
+   ],
+   "n": "„Nummer“, gleiche Bedingung.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-a9668856": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:535-537",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:980-997",
+    "lib/features/songs/presentation/utils/song_utils.dart:166-171"
+   ],
+   "n": "Text „Kopiert aus {tenant} am {date}“ nur !readOnly gleich. Ionic: Datum per toLocaleDateString (de „4.11.2026“) / Flutter: dd.MM.yyyy („04.11.2026“).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-abd53d78": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:686-701"
+   ],
+   "n": "Ionic: Chips grün/rot nach instrument_ids, die beim Laden um Gruppen mit Dateien ergänzt werden / Flutter: Anzeige nutzt weiterhin song.instrumentIds (nicht das gemergte _instrumentIds) – Gruppe mit Datei, aber nicht in instrument_ids, erscheint rot (seltener Datenstand, Upload schreibt instrument_ids mit).",
+   "v": "bestätigt"
+  },
+  "x-01d5725b35": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:133-185",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:302-366",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:876-889",
+    "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:107-162",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:455-459"
+   ],
+   "n": "Weiterhin nur in Flutter: Erkennung über die erste Seite (Edge Function part-detect), Hinweise zur Unsicherheit, Checkbox „„{term}“ künftig als {group} erkennen“ (Synonym an der Gruppe; nur Admin/Verantwortlich, die Gruppen ohnehin bearbeiten dürfen), Kategorie „MIDI“; Pull-to-Refresh. Referenz Pull-to-Refresh 295 → 455.",
+   "v": "bestätigt"
+  },
+  "x-8b01b7366a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:276-281",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:349-356",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1072-1081",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1111-1114",
+    "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:206-210",
+    "lib/core/services/zip_service.dart:26-48"
+   ],
+   "n": "Weiterhin Flutter besser: Ionic ignoriert editSong-Fehler; Overlay hängt bei Fehlern in Löschen/Einzel-Upload/„Alle herunterladen“; >20 MB-Drop öffnet leeres Modal / Flutter Toasts „Fehler beim Speichern“, „Werk konnte nicht gelöscht werden“, „Fehler beim Hochladen: …“, „Fehler: …“; ZIP überspringt fehlerhafte Dateien; zu große Einzeldatei nur Toast. Referenzen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "x-9b8928fd51": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1315-1321",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1072-1081",
+    "lib/core/services/telegram_service.dart:357-366"
+   ],
+   "n": "Weiterhin: Ionic sendSongPerTelegram Erfolg „Nachricht wurde erfolgreich gesendet!“, Fehler „Fehler beim Senden der Nachricht, versuche es später erneut!“ / Flutter „Datei per Telegram gesendet“ bzw. „Fehler: {error}“ – gleiche Bedeutung, Fehler wird gemeldet.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

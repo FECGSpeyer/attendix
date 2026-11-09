@@ -1,0 +1,1848 @@
+{
+ "batch": "zz-verify5c-opus-30",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/tabs.page",
+   "ionic": {
+    "ts": "tabs/tabs.page.ts",
+    "html": "tabs/tabs.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "tabs/tabs.page.ts",
+    "line": 71,
+    "method": "TabsPage.initialize",
+    "cond": [
+     "(this.router.url !== url && !isFilesUrl && !Utils.isUrlAccessAllowed(this.router.url, this.db.tenantUser().role))"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "url",
+    "src": "bf7180ad",
+    "mbody": "25a9a0fa",
+    "roleGuarded": true,
+    "id": "tabs/tabs.page#nav-0ccaf6f8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:212-239",
+     "lib/core/router/app_router.dart:192",
+     "lib/core/router/route_access.dart:76-88",
+     "lib/core/router/attendance_detail_guard.dart:23-28",
+     "lib/core/constants/enums.dart:137-141"
+    ],
+    "n": "Flutter besser: Prinzip und Ziel gleich (nicht erlaubte URL -> Startseite der Rolle, defaultRoute = Utils.getUrl). Ionic prüft nur beim Laden/Instanzwechsel mit isUrlAccessAllowed, dessen Liste Lücken hat: '/tabs/attendance' nur Admin/Verantw./Beobachter -> Helfer und Helfer-Stimmführer landen beim Neuladen der Termine-Liste auf 'Meine Termine'; '/tabs/overview' fehlt ganz -> Spieler/Helfer verlieren beim Neuladen die 'Übersicht'. Flutter (Redirect bei jeder Navigation) lässt beides passend zu den sichtbaren Tabs zu. Strenger in Flutter: Beobachter wird bei Direkt-URL /attendance/<id> auf /people umgeleitet (Ionic erlaubt die URL, per UI aber nicht erreichbar); /members verlangt zusätzlich showMembersList.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/my-tasks/my-tasks.component",
+   "ionic": {
+    "ts": "tasks/my-tasks/my-tasks.component.ts",
+    "html": "tasks/my-tasks/my-tasks.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "tasks/my-tasks/my-tasks.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:35-43",
+     "get visible:45-47",
+     "get shownTasks:50-52",
+     "get overdueCount:54-56",
+     "get subtitle:58-61",
+     "load:63-79",
+     "isOverdue:81-83",
+     "dueLabel:85-89",
+     "complete:91-110"
+    ],
+    "bodies": {
+     "constructor": "98df0852",
+     "get visible": "b09bc74b",
+     "get shownTasks": "36906b92",
+     "get overdueCount": "780481ed",
+     "get subtitle": "d3e8df9a",
+     "load": "d0381ba7",
+     "isOverdue": "e3c0ec8e",
+     "dueLabel": "2dec973f",
+     "complete": "6a91f240"
+    },
+    "id": "tasks/my-tasks/my-tasks.component#logic-91cfedd0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:34",
+     "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:53",
+     "lib/core/providers/team_org_providers.dart:151",
+     "lib/core/providers/team_org_providers.dart:277",
+     "lib/core/providers/dashboard_providers.dart:304",
+     "lib/features/self_service/presentation/pages/signout_page.dart:91"
+    ],
+    "n": "Sichtbarkeit (Teamorganisation an + offene Aufgaben), Quelle (tasks der eigenen Person, tenant_id), Sortierung groupTasksByDue, Limit 5, Untertitel „n offen · n überfällig“, Fälligkeitstexte, optimistisches Erledigen (status completed + updated_at) mit Rücknahme und Toasts gleich. Status/sev bleiben, Begründung korrigiert: Erst-Extra „Flutter besser, Ionic lädt nur einmal je Mandant“ ist falsch – Dashboard und „Meine Termine“ rufen load() bei jeder Rückkehr (ionViewWillEnter) und bei Pull-to-Refresh auf. Tatsächlicher Unterschied: Flutter lädt nicht bei Rückkehr, nur nach eigenen Aufgaben-Änderungen und Pull-to-Refresh (siehe extra).",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/team_org_providers.dart",
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/my-tasks/my-tasks.component",
+   "ionic": {
+    "ts": "tasks/my-tasks/my-tasks.component.ts",
+    "html": "tasks/my-tasks/my-tasks.component.html"
+   },
+   "extra": {
+    "id": "x-40d089cd76",
+    "title": "Meine Aufgaben: kein Neuladen bei Rückkehr",
+    "n": "Ersetzt Erst-Extra „Karte aktualisiert sich“ (Flutter besser), dessen Prämisse falsch ist. Ionic: Dashboard (home-dashboard.page.ts:51) und „Meine Termine“ (signout.page.ts:1064) laden die Karte bei jeder Rückkehr auf die Seite und per Pull-to-Refresh neu / Flutter: myTasksProvider (nicht autoDispose) wird nur nach eigenen Aufgaben-Änderungen (TeamTaskNotifier) und per Pull-to-Refresh invalidiert – von der Leitung neu zugewiesene oder anderswo geänderte Aufgaben erscheinen beim Zurückkehren nicht. Dashboard-Teil deckt sich mit b05-Extra „Meine Aufgaben beim Zurückkehren“.",
+    "sev": "niedrig",
+    "ionic": "src/app/tasks/my-tasks/my-tasks.component.ts:63",
+    "f": [
+     "lib/core/providers/team_org_providers.dart:151",
+     "lib/core/providers/team_org_providers.dart:277",
+     "lib/core/providers/dashboard_providers.dart:304",
+     "lib/features/self_service/presentation/pages/signout_page.dart:91"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/providers/team_org_providers.dart",
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "tasks/task-detail/task-detail.page.ts",
+    "line": 146,
+    "method": "TaskDetailPage.deleteTask",
+    "cond": [],
+    "via": "navController.navigateBack",
+    "to": "'/tabs/settings/team-organization'",
+    "src": "f393c225",
+    "mbody": "bd998b2f",
+    "id": "tasks/task-detail/task-detail.page#nav-6c8e01ad"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:53-57",
+     "lib/core/router/app_router.dart:1029-1034"
+    ],
+    "n": "Nach erfolgreichem Löschen Toast und context.go('/settings/team-organization') = Ionic navigateBack('/tabs/settings/team-organization'); Aufgabenliste per Notifier invalidiert.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "teachers/teachers.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:23-27",
+     "trackByTeacherId:29-29",
+     "ngOnInit:31-36",
+     "getTeachers:38-44",
+     "addTeacher:46-60",
+     "openModal:62-83"
+    ],
+    "bodies": {
+     "constructor": "5212eb33",
+     "trackByTeacherId": "43cc05dd",
+     "ngOnInit": "0ff63533",
+     "getTeachers": "ec9e906f",
+     "addTeacher": "5f85ce07",
+     "openModal": "10b89de7"
+    },
+    "id": "teachers/teachers.page#logic-9d258dde"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/providers/teacher_providers.dart:66",
+     "lib/data/repositories/teacher_repository.dart:115",
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:27",
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:111"
+    ],
+    "n": "Admin = Admin/Verantwortlicher, Lehrer nach Name, Instrumentnamen, Anlegen mit gleicher Validierung (Name ≥ 3 Zeichen, mind. ein Instrument; Add-Auswahl ohne Hauptgruppe), Bearbeiten nur für Admin. Schüleranzahl siehe action-5b603f4a; weitere Abweichungen siehe extra (Löschen nur in Flutter u. a.).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/teacher_repository.dart",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "teachers/teachers.page.ts",
+    "line": 67,
+    "method": "TeachersPage.openModal",
+    "cond": [],
+    "component": "TeacherPage",
+    "props": [
+     "teacher",
+     "players"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "eb98bb62",
+    "mbody": "10b89de7",
+    "roleGuarded": true,
+    "id": "teachers/teachers.page#modal-81bd0046"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:135"
+    ],
+    "n": "Nur für Admin/Verantwortliche, übergibt den Lehrer (Schüler aus playersProvider). Ionic: iOS Karten-Modal (presentingElement), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) auf allen Plattformen; Liste wird danach neu geladen.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "extra": {
+    "id": "x-42f2057e70",
+    "title": "Pull-to-Refresh nur in Flutter",
+    "n": "Flutter besser: Ionic: kein ion-refresher / Flutter: Herunterziehen lädt Lehrer und Schüleranzahlen neu.",
+    "sev": "niedrig",
+    "ionic": "src/app/teachers/teachers.page.html:10",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:49"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "extra": {
+    "id": "x-791ebfa771",
+    "title": "Löschen von Lehrern nur in Flutter",
+    "n": "Ionic: keine Löschfunktion für Lehrer / Flutter: Wischen nach links (Admin/Verantwortliche) → Dialog „Lehrer löschen“ / „Möchtest du \"{Name}\" wirklich löschen?“ mit „Abbrechen“/„Löschen“, löscht den Lehrer und zeigt „Lehrer gelöscht“ (auch wenn das Löschen fehlschlägt, da deleteTeacher den Fehler verschluckt).",
+    "sev": "niedrig",
+    "ionic": "src/app/teachers/teachers.page.html:18",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:172",
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:211"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 277,
+    "method": "TeamTopicsTabComponent.accept",
+    "cond": [],
+    "header": {
+     "keys": [
+      "teamOrg.acceptSuggestion"
+     ],
+     "de": [
+      "Vorschlag übernehmen"
+     ],
+     "literals": [],
+     "expr": "translate('teamOrg.acceptSuggestion')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "teamOrg.whichPriority"
+     ],
+     "de": [
+      "Mit welcher Priorität kommt das Thema in den Themenspeicher?"
+     ],
+     "literals": [],
+     "expr": "translate('teamOrg.whichPriority')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.apply"
+       ],
+       "de": [
+        "Übernehmen"
+       ],
+       "literals": [],
+       "expr": "translate('common.apply')"
+      },
+      "role": "confirm",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "(['high', 'medium', 'low'] as AgendaItemPriority[]).map(p => ({ type: 'radio' as const, label: TOPIC_PRIORITY_LABELS[p]…",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "ec628716",
+    "mbody": "5a2bb611",
+    "roleGuarded": true,
+    "id": "team-organization/topics-tab/topics-tab.component#alert-07626e40"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:160-190",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:226-238",
+     "lib/core/providers/team_org_providers.dart:373-378"
+    ],
+    "n": "„Vorschlag übernehmen“, „Mit welcher Priorität kommt das Thema in den Themenspeicher?“, Radios Hoch/Mittel/Niedrig vorbelegt mit Priorität (Default medium), Abbrechen/Übernehmen; schreibt agenda_items proposal_status=accepted, priority, decision_note=null (id + tenant_id), danach team-notify proposal_decided und Toast.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 299,
+    "method": "TeamTopicsTabComponent.reject",
+    "cond": [],
+    "header": {
+     "keys": [
+      "teamOrg.rejectSuggestion"
+     ],
+     "de": [
+      "Vorschlag ablehnen"
+     ],
+     "literals": [],
+     "expr": "translate('teamOrg.rejectSuggestion')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "teamOrg.personInformed",
+      "teamOrg.thePerson"
+     ],
+     "de": [
+      "{name} wird informiert. Eine kurze Begründung hilft.",
+      "Die Person"
+     ],
+     "literals": [],
+     "expr": "translate('teamOrg.personInformed', { name: personName(item.proposer) || translate('teamOrg.thePerson') })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "teamOrg.reject"
+       ],
+       "de": [
+        "Ablehnen"
+       ],
+       "literals": [],
+       "expr": "translate('teamOrg.reject')"
+      },
+      "role": "confirm",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'note'",
+      "placeholder": {
+       "keys": [
+        "teamOrg.reasonOptional"
+       ],
+       "de": [
+        "Begründung (optional)"
+       ],
+       "literals": [],
+       "expr": "translate('teamOrg.reasonOptional')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "88896936",
+    "mbody": "17e4475a",
+    "roleGuarded": true,
+    "id": "team-organization/topics-tab/topics-tab.component#alert-f13f91ec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:312",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:194"
+    ],
+    "n": "Nur Leitung im Sheet „Vorschläge“. „Vorschlag ablehnen“, „{Name} wird informiert. Eine kurze Begründung hilft.“ bzw. „Die Person“, Textfeld „Begründung (optional)“; Abbrechen / Ablehnen → proposal_status rejected + decision_note (leer → null) + team-notify proposal_decided.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:73-79",
+     "get isLeader:81-83",
+     "get inCircle:85-87",
+     "ngOnInit:89-91",
+     "reload:93-110",
+     "loadLeader:112-130",
+     "setNextAttendance:132-139",
+     "topNumber:141-143",
+     "get nextTitle:145-147",
+     "get nextHeader:150-152",
+     "attendanceTitle:154-158",
+     "changeAttendance:161-173",
+     "changeDate:176-182",
+     "chooseAttendance:184-187",
+     "createAttendance:190-202",
+     "topAction:205-215",
+     "removeTop:217-228",
+     "topicSubtitle:230-237",
+     "isInNextPlan:239-241",
+     "openTopic:243-245",
+     "openNextAttendance:247-249",
+     "addTopic:251-253",
+     "openPicker:255-268",
+     "isDeciding:272-274",
+     "accept:276-296",
+     "reject:298-313",
+     "decide:315-329",
+     "openSuggest:333-337",
+     "sendSuggestion:339-358"
+    ],
+    "bodies": {
+     "constructor": "d3449b71",
+     "get isLeader": "c3cc14d1",
+     "get inCircle": "23e513f3",
+     "ngOnInit": "5e249a05",
+     "reload": "1b607a46",
+     "loadLeader": "4ceca775",
+     "setNextAttendance": "442d86de",
+     "topNumber": "9c84771b",
+     "get nextTitle": "826ec5ec",
+     "get nextHeader": "d0d9c79d",
+     "attendanceTitle": "3f1ffbee",
+     "changeAttendance": "60c61347",
+     "changeDate": "381ad4fd",
+     "chooseAttendance": "7b2b5cd0",
+     "createAttendance": "36f7424b",
+     "topAction": "7508fd60",
+     "removeTop": "4bc9d0ee",
+     "topicSubtitle": "2de71648",
+     "isInNextPlan": "1129e8be",
+     "openTopic": "252738d6",
+     "openNextAttendance": "f01e26ed",
+     "addTopic": "1b159038",
+     "openPicker": "10024ac8",
+     "isDeciding": "807a44a8",
+     "accept": "5a2bb611",
+     "reject": "17e4475a",
+     "decide": "6d478b0f",
+     "openSuggest": "24bea3a0",
+     "sendSuggestion": "666892e1"
+    },
+    "id": "team-organization/topics-tab/topics-tab.component#logic-5ba0ad22"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:351",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:69",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:128",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:226"
+    ],
+    "n": "Rollen-/Kreis-Weiche, Terminwahl, Datum ändern, Termin anlegen, TOP entfernen, Annehmen/Ablehnen, Vorschlagen gleich. Abweichung: Anzeige vor vollständigem Laden (siehe extra).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 257,
+    "method": "TeamTopicsTabComponent.openPicker",
+    "cond": [],
+    "component": "AgendaPickerComponent",
+    "props": [
+     "attendance",
+     "type"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "61a444ad",
+    "mbody": "10024ac8",
+    "roleGuarded": true,
+    "id": "team-organization/topics-tab/topics-tab.component#modal-54dabea2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:451",
+     "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:24"
+    ],
+    "n": "Übergabe Termin + Typ gleich, Plan danach aktualisiert. Ionic: Vollbild-Modal (ohne Breakpoints) / Flutter: Bottom-Sheet mit 90 % Höhe.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 248,
+    "method": "TeamTopicsTabComponent.openNextAttendance",
+    "cond": [
+     "(this.nextAttendance)"
+    ],
+    "via": "navController.navigateForward",
+    "to": "['/tabs/attendance', this.nextAttendance.id]",
+    "src": "ce6e9a6a",
+    "mbody": "f01e26ed",
+    "id": "team-organization/topics-tab/topics-tab.component#nav-78aeaedf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:431"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "extra": {
+    "id": "x-59f60cb213",
+    "title": "Anzeige vor vollständigem Laden",
+    "n": "Ionic: loadLeader wartet per Promise.all auf Themen, Protokolle und kommende Termine, bis dahin Skeleton / Flutter: Tab erscheint, sobald die Themen geladen sind; solange Termine/Protokolle noch laden, steht kurz „Kein Termin mit Protokoll & Tagesordnung geplant.“ mit „Termin anlegen“ da und „vertagt“-Badges fehlen. Mitglieder: Vorschlagskarte sofort, Liste mit Spinner statt Skeleton.",
+    "sev": "niedrig",
+    "ionic": "src/app/team-organization/topics-tab/topics-tab.component.ts:113",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:353",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:456",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:596"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "terms/terms.page.ts",
+    "line": 28,
+    "method": "TermsPage.ngOnInit",
+    "cond": [
+     "(this.db.user?.user_metadata?.['terms_accepted_at'])"
+    ],
+    "call": "Utils.getUrl",
+    "args": "this.db.tenantUser()?.role",
+    "src": "35ab897f",
+    "mbody": "799c954a",
+    "roleGuarded": true,
+    "id": "terms/terms.page#effect-1f50895e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:371",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:80"
+    ],
+    "n": "Wie nav-4d7988a7: Flutter berechnet kein Rollenziel, sondern geht über /tenants (Auto-Weiterleitung mit homeRouteFor nur ohne aktive Instanz).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "terms/terms.page.ts",
+    "line": 61,
+    "method": "TermsPage.accept",
+    "cond": [],
+    "call": "Utils.getUrl",
+    "args": "this.db.tenantUser()?.role",
+    "src": "35ab897f",
+    "mbody": "ee8ce7f2",
+    "roleGuarded": true,
+    "id": "terms/terms.page#effect-9680384f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/legal/presentation/pages/terms_page.dart:58"
+    ],
+    "n": "Wie nav-4df0f2ac: Ziel wird nicht aus der Rolle berechnet, sondern über /tenants bzw. homeRouteFor (inkl. Dashboard-Startseite).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/pages/terms_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "terms/terms.page.ts",
+    "line": 28,
+    "method": "TermsPage.ngOnInit",
+    "cond": [
+     "(this.db.user?.user_metadata?.['terms_accepted_at'])"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "Utils.getUrl(this.db.tenantUser()?.role)",
+    "src": "0982c2da",
+    "mbody": "799c954a",
+    "roleGuarded": true,
+    "id": "terms/terms.page#nav-4d7988a7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:370"
+    ],
+    "n": "Ionic: bereits akzeptiert -> Utils.getUrl(role) / Flutter: Router leitet auf gemerkten Link oder /tenants; ist schon eine Instanz aktiv, erscheint dort die Instanzauswahl statt der Startseite.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1760,
+    "method": "Utils.showInAppFileViewer",
+    "cond": [],
+    "call": "Utils.downloadFileNative",
+    "args": "await response.blob(), name || 'download'",
+    "src": "b229bdbf",
+    "mbody": "924d15c9",
+    "id": "utilities/Utils#effect-1a09a2fb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_file_opener.dart:80",
+     "lib/core/services/native/native_file_service.dart:77",
+     "lib/core/services/web_window_web.dart:52"
+    ],
+    "n": "In-App-Dateiansicht der installierten Web-App: auf Mobile-Web (iOS/Android) Ionic: System-Teilen-Dialog mit der Datei (navigator.share), Fallback Download / Flutter: immer Anchor-Download (Printing.sharePdf bzw. downloadBytesInBrowser), kein Teilen-Dialog.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/web_window_web.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1232,
+    "method": "Utils.saveWorkbook",
+    "cond": [
+     "(Capacitor.isNativePlatform() || isMobileWeb)"
+    ],
+    "call": "Utils.downloadFileNative",
+    "args": "blob, fileName",
+    "src": "1ea9fbfb",
+    "mbody": "baa968f9",
+    "id": "utilities/Utils#effect-44054f10"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/export_service.dart:706",
+     "lib/core/services/native/native_file_service.dart:167"
+    ],
+    "n": "Nativ gleich (Cache + Systemansicht); auf Mobile-Web (iOS/Android) Ionic: System-Teilen-Dialog mit der Datei (navigator.share), Fallback Download / Flutter: immer Anchor-Download (Printing.sharePdf bzw. downloadBytesInBrowser), kein Teilen-Dialog.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/export_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1207,
+    "method": "Utils.exportAttendanceToExcel",
+    "cond": [],
+    "call": "Utils.saveWorkbook",
+    "args": "wb, fileName",
+    "src": "25003243",
+    "mbody": "3b2ef019",
+    "id": "utilities/Utils#effect-ac49a0f3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/export_service.dart:706",
+     "lib/core/services/native/native_file_service.dart:167",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2407"
+    ],
+    "n": "Excel „{Info|Typ}_{TT_MM_JJJJ}_Anwesenheit.xlsx“ wird gespeichert. Nativ (Cache + Systemansicht) und Desktop-Browser (Download) wie Ionic. Ionic Mobile-Web (iOS/Android-Browser/PWA): Teilen-Dialog (navigator.share) / Flutter: Printing.sharePdf → nur Anchor-Download (Blob-Typ application/pdf), kein Teilen-Dialog.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/export_service.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "zusatzbefund",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-7da97d6aac",
+    "title": "Toasts hinter geöffneten Sheets (iOS-Look)",
+    "n": "Ionic ion-toast liegt immer über Modals und Sheets. Flutter ToastHelper._showToast nutzt im iOS-Look (Theme-Plattform iOS: iPhone, iPad) ScaffoldMessenger.showSnackBar; die SnackBar erscheint auf dem Scaffold der Seite, jedes per showModalBottomSheet geöffnete Sheet (meist useRootNavigator) liegt darüber. Widget-Test (Flutter 3.47.9, Sheet 500 bzw. 150 px hoch): ohne Sheet ist der Toast rot sichtbar, mit Sheet zeigt der Pixel in der Toast-Mitte das Sheet, am Rand nur abgedunkelt unter der Barriere. Auf dem Telefon ist das Sheet so breit wie der Bildschirm, der Toast also ganz verdeckt. Folge: Validierungs- und Fehlermeldungen aus Sheets, die offen bleiben (z. B. Zusatzfeld hinzufügen: Name ungültig, Optionen fehlen), sieht der Nutzer auf dem iPhone nicht; Speichern scheint ohne Grund nicht zu gehen. Erfolgsmeldungen nach dem Schließen sind sichtbar. Android und Web (md) zeigen den Toast über das Root-Overlay (showIonMdToast) und sind nicht betroffen. Fix-Vorschlag: auch im iOS-Look über Overlay.of(context, rootOverlay: true) anzeigen (iOS-Toast-Optik), dann sind alle Sheets auf einmal behoben.",
+    "sev": "hoch",
+    "ionic": "src/app/utilities/Utils.ts:372",
+    "f": [
+     "lib/core/utils/toast_helper.dart:105-140"
+    ],
+    "stale": false
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-create",
+   "ionic": {
+    "ts": "utilities/attendance-create.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "utilities/attendance-create.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function personsForAttendanceType:20-41",
+     "function createAttendanceForType:47-135",
+     "function hasNonDefaultStatus:138-141",
+     "function shiftDays:144-148",
+     "function changeAttendanceDate:156-200"
+    ],
+    "bodies": {
+     "function personsForAttendanceType": "1d858555",
+     "function createAttendanceForType": "7937a961",
+     "function hasNonDefaultStatus": "d84e7974",
+     "function shiftDays": "db2cb7e6",
+     "function changeAttendanceDate": "dc4e61c6"
+    },
+    "id": "utilities/attendance-create#logic-4ea5fabc"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/attendance_create_writes.dart:168",
+     "lib/features/attendance/presentation/attendance_create_writes.dart:267",
+     "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:40",
+     "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:69",
+     "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:113",
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart:36",
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart:63",
+     "lib/core/utils/attendance_logic_utils.dart:35"
+    ],
+    "n": "personsForAttendanceType (nicht pausiert/ausgetreten/pending, Gruppen, Zusatzfeld-Filter mit Default), createAttendanceForType (Datum 12:00 UTC, Checkliste mit dueDate, typeInfo/notes '', Zeiten des Typs, duration_days, is_org_plan, place, duty_required nur bei Abweichung; Status Neutral bei Dienst, Schicht, Abwesenheit, Regelmäßig verhindert) und hasNonDefaultStatus sind in beiden Anlege-Wegen (Terminliste, Teamorganisation) gleich. changeAttendanceDate gleich (Datum, deadline/Checkliste verschoben, History-Daten, Abwesenheiten/Reset, Schicht-Neuberechnung) bis auf das Verhalten bei Ladefehler der Abwesenheiten (siehe extra).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/attendance_create_writes.dart",
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart",
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-create",
+   "ionic": {
+    "ts": "utilities/attendance-create.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-89addaf6ae",
+    "title": "Datum ändern: Abwesenheiten-Ladefehler",
+    "n": "Flutter besser: Ionic changeAttendanceDate schreibt bei Fehler von getPlayerAbsencesForTenant trotzdem (ohne Abwesenheitsprüfung, ggf. Reset entschuldigter Personen) / Flutter lädt die Abwesenheiten vor dem ersten Schreiben und bricht mit Fehler-Toast (dateDialog.loadFailed) ohne Änderung ab.",
+    "sev": "niedrig",
+    "ionic": "src/app/utilities/attendance-create.ts:177",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart:137"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "alert",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 106,
+    "method": "promptCreateProtocolAttendance",
+    "cond": [
+     "(types.length > 1)"
+    ],
+    "header": {
+     "keys": [
+      "dateDialog.whichType"
+     ],
+     "de": [
+      "Welcher Termintyp?"
+     ],
+     "literals": [],
+     "expr": "translate('dateDialog.whichType')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.next"
+       ],
+       "de": [
+        "Weiter"
+       ],
+       "literals": [],
+       "expr": "translate('common.next')"
+      },
+      "role": "confirm",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "types.map((t, i) => ({ type: 'radio' as const, label: t.name, value: t.id, checked: i === 0 }))",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "948e9ff2",
+    "mbody": "68f539aa",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#alert-222957a0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:194"
+    ],
+    "n": "„Welcher Termintyp?“ als Radio-Liste, erster Eintrag vorausgewählt, Abbrechen/Weiter; nur bei mehreren Protokoll-Typen. Rollen wie toast-2ca18d28.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "alert",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 52,
+    "method": "promptAttendanceDateChange",
+    "cond": [
+     "(hasNonDefaultStatus(current, type))"
+    ],
+    "header": {
+     "keys": [
+      "dateDialog.resetStatus"
+     ],
+     "de": [
+      "Status zurücksetzen?"
+     ],
+     "literals": [],
+     "expr": "translate('dateDialog.resetStatus')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "dateDialog.resetStatusMessage"
+     ],
+     "de": [
+      "Nicht alle stehen auf „{status}“. Sollen mit der Verschiebung alle auf den Standardstatus zurückgesetzt werden? Abwesenheiten am neuen Tag werden danach wieder eingetragen."
+     ],
+     "literals": [],
+     "expr": "translate('dateDialog.resetStatusMessage', { status: Utils.getAttendanceStatusDescription(type.default_status) })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "dateDialog.keep"
+       ],
+       "de": [
+        "Behalten"
+       ],
+       "literals": [],
+       "expr": "translate('dateDialog.keep')"
+      },
+      "role": "keep",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "dateDialog.reset"
+       ],
+       "de": [
+        "Zurücksetzen"
+       ],
+       "literals": [],
+       "expr": "translate('dateDialog.reset')"
+      },
+      "role": "reset",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "96890db3",
+    "mbody": "cced74ba",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#alert-9dc8e8c5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart:117"
+    ],
+    "n": "Titel „Status zurücksetzen?“, Text mit Standardstatus, Buttons Abbrechen/Behalten/Zurücksetzen wie Ionic; Bedingung hasNonDefaultStatus über alle Personen (Detailseite: ungefilterte person_attendances, Themen-Tab: frisch geladen). Rollen wie beim Aufrufer (s. toast-37694bad).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "loading",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 140,
+    "method": "promptCreateProtocolAttendance",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "68f539aa",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#loading-191f06e1"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:170"
+    ],
+    "n": "Ionic: blockierendes Overlay beim Anlegen / Flutter: kein Overlay, nur Button gesperrt (_creatingAttendance im Themen-Tab).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "loading",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 35,
+    "method": "promptAttendanceDateChange",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "cced74ba",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#loading-7398625d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart:63"
+    ],
+    "n": "Ionic: blockierendes Lade-Overlay beim Laden des Termins / Flutter: kein Overlay.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "loading",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 67,
+    "method": "promptAttendanceDateChange",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "cced74ba",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#loading-7398625d-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart:148"
+    ],
+    "n": "Ionic: blockierendes Lade-Overlay (max. 3 s) während changeAttendanceDate / Flutter: kein Overlay oder Indikator während der Schreibvorgänge (Zeilen 148–211), Seite bleibt bedienbar.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 150,
+    "method": "promptCreateProtocolAttendance",
+    "cond": [],
+    "message": {
+     "keys": [
+      "dateDialog.created"
+     ],
+     "de": [
+      "Termin am {date} angelegt"
+     ],
+     "literals": [],
+     "expr": "translate('dateDialog.created', { date: dayjs(date).format(dateFmt('dayMonth')) })"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "5fdfd181",
+    "mbody": "68f539aa",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#toast-0f4733be"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:296"
+    ],
+    "n": "Grüner Toast „Termin am {TT.MM.} angelegt“ (dateFmt dayMonth). Rollen wie toast-2ca18d28.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 100,
+    "method": "promptCreateProtocolAttendance",
+    "cond": [
+     "(!types.length)"
+    ],
+    "message": {
+     "keys": [
+      "dateDialog.noProtocolType"
+     ],
+     "de": [
+      "Kein Termintyp mit Protokoll & Tagesordnung vorhanden"
+     ],
+     "literals": [],
+     "expr": "translate('dateDialog.noProtocolType')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "42ee6bf5",
+    "mbody": "68f539aa",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#toast-2ca18d28"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:186"
+    ],
+    "n": "Gelber Toast „Kein Termintyp mit Protokoll & Tagesordnung vorhanden“ (sichtbare Typen mit Protokoll). Aufrufer in beiden Apps nur Leitung (Admin/Verantwortlich): Themen-Tab „Termin anlegen“/„Neuer Termin“ und Thema-Detail „Einplanen“ → „Neuer Termin“ (isLeader, Status offen).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 75,
+    "method": "promptAttendanceDateChange",
+    "cond": [],
+    "message": {
+     "keys": [
+      "dateDialog.changeFailed"
+     ],
+     "de": [
+      "Datum konnte nicht geändert werden"
+     ],
+     "literals": [],
+     "expr": "translate('dateDialog.changeFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c55a78c2",
+    "mbody": "cced74ba",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#toast-45a99bdc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart:221"
+    ],
+    "n": "Roter Toast „Datum konnte nicht geändert werden“ bei Fehler beim Schreiben. Rollen wie Aufrufer.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 154,
+    "method": "promptCreateProtocolAttendance",
+    "cond": [],
+    "message": {
+     "keys": [
+      "dateDialog.createFailed"
+     ],
+     "de": [
+      "Termin konnte nicht angelegt werden"
+     ],
+     "literals": [],
+     "expr": "translate('dateDialog.createFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "491c9b6f",
+    "mbody": "68f539aa",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#toast-552c3214"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:299"
+    ],
+    "n": "Roter Toast „Termin konnte nicht angelegt werden“ bei Fehler beim Laden der Personen/Sperrzeiten oder beim Anlegen.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 71,
+    "method": "promptAttendanceDateChange",
+    "cond": [],
+    "message": {
+     "keys": [
+      "dateDialog.moved"
+     ],
+     "de": [
+      "Termin auf {date} verschoben"
+     ],
+     "literals": [
+      "dd, ${dateFmt()}"
+     ],
+     "expr": "translate('dateDialog.moved', { date: dayjs(value).locale(currentLanguage()).format(`dd, ${dateFmt()}`) })"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "c361af62",
+    "mbody": "cced74ba",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#toast-8b40658d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart:214"
+    ],
+    "n": "Grüner Toast „Termin auf {Datum} verschoben“; Wochentag Flutter „Mo.“ (EE) statt Ionic „Mo“ (dd) – nur Punkt. Rollen wie Aufrufer.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/db-helpers",
+   "ionic": {
+    "ts": "utilities/db-helpers.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "utilities/db-helpers.ts",
+    "line": 346,
+    "method": "syncDutyWithStatus",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, duty_state, duty_assigned_at, attendance:attendance_id(type_id)'",
+    "filters": [
+     "eq('id', id)",
+     "maybeSingle()"
+    ],
+    "tenantFilter": false,
+    "src": "0cbb4f87",
+    "mbody": "f3f2d8bf",
+    "id": "utilities/db-helpers#db-2d9892ee"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:662-666",
+     "lib/data/repositories/sign_in_out_repository.dart:141-158"
+    ],
+    "n": "Liest per id duty_state und attendance(tenantId, type_id, attType.duty_mode) – deckt Ionic id/duty_state/type_id + Dienst-Typ-Prüfung ab, zusätzlich Mandantenprüfung (Ionic ohne tenantId). duty_assigned_at liest Ionic, nutzt es aber nicht.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/db-helpers",
+   "ionic": {
+    "ts": "utilities/db-helpers.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "utilities/db-helpers.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function sanitizeImg:19-24",
+     "function pickInsertFields:29-36",
+     "function pickUpdateFields:41-46",
+     "function stripComputedFields:52-63",
+     "function pickPersonAttendanceFields:68-77",
+     "function pickPersonFields:92-210",
+     "function pickGroupFields:215-246",
+     "function pickTeacherFields:251-274",
+     "function pickHistoryFields:285-304",
+     "function pickTenantUserFields:309-330",
+     "function syncDutyWithStatus:341-365"
+    ],
+    "bodies": {
+     "function sanitizeImg": "cf777627",
+     "function pickInsertFields": "96061f74",
+     "function pickUpdateFields": "3117c2ef",
+     "function stripComputedFields": "cea0cb6a",
+     "function pickPersonAttendanceFields": "8db00579",
+     "function pickPersonFields": "dfaf7658",
+     "function pickGroupFields": "084dd431",
+     "function pickTeacherFields": "ca1235b7",
+     "function pickHistoryFields": "a8aa2e7e",
+     "function pickTenantUserFields": "036b61cf",
+     "function syncDutyWithStatus": "f3f2d8bf"
+    },
+    "id": "utilities/db-helpers#logic-19bf1565"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/utils/db_helpers.dart:121",
+     "lib/core/utils/duty_utils.dart:51-68",
+     "lib/data/repositories/attendance_repository.dart:683-723",
+     "lib/data/repositories/sign_in_out_repository.dart:141-190",
+     "lib/data/repositories/player_repository.dart:480",
+     "lib/data/repositories/player_repository.dart:532"
+    ],
+    "n": "pick*-Helfer durch explizite Payloads ersetzt (updatePersonAttendance entfernt berechnete Felder), sanitizeImg = data:-Prüfung in player_repository, syncDutyWithStatus = dutySyncFieldsForStatus in updatePersonAttendance/signIn/Abwesenheits-Reset. Fehlender Abgleich beim Schicht-Reset ist unter db-f424eb31 erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart",
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/instrument-matcher",
+   "ionic": {
+    "ts": "utilities/instrument-matcher.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-18ecc6c8c4",
+    "title": "Liedtext-/Aufnahme-Stichwörter vor den Gruppen",
+    "n": "Ionic addFiles: erst matchInstrument (Gruppenname/Synonym), erst danach detectSpecialFileType – „Sopran Text.pdf“ → Sopran / Flutter guessFileCategory → InstrumentMatcher.detect prüft zuerst lyricsKeywords (text, words, lyrics …) und bei Nicht-PDF recordingKeywords (audio, track, aufnahme …) und ordnet „Sopran Text.pdf“ dem Liedtext zu, bevor Gruppen bewertet werden.",
+    "sev": "niedrig",
+    "ionic": "src/app/songs/song/song.page.ts:234",
+    "f": [
+     "lib/core/utils/instrument_matcher.dart:204",
+     "lib/features/songs/presentation/widgets/file_upload_sheet.dart:164"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/utils/instrument_matcher.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/organisation-person-key",
+   "ionic": {
+    "ts": "utilities/organisation-person-key.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "utilities/organisation-person-key.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function getOrganisationPersonKey:3-13"
+    ],
+    "bodies": {
+     "function getOrganisationPersonKey": "67804929"
+    },
+    "id": "utilities/organisation-person-key#logic-285eabcd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/shared_person_fields.dart:20-26",
+     "lib/data/repositories/shared_person_fields.dart:50-55"
+    ],
+    "n": "„global:<id>“ vor „app:<uuid>“, sonst null – wie getOrganisationPersonKey (auch für rohe player-Zeilen).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/shared_person_fields.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/plan-days",
+   "ionic": {
+    "ts": "utilities/plan-days.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "utilities/plan-days.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function allPlans:14-17",
+     "function hasMultiplePlans:19-21",
+     "function isMultiDay:23-25",
+     "function attendanceEndDate:35-38",
+     "function attendanceHasEnded:41-43",
+     "function attendanceIsRunning:46-48",
+     "function planDay:51-56",
+     "function dayLabel:58-60",
+     "function planLabel:63-69",
+     "function planDate:72-74",
+     "function planSubtitle:77-84",
+     "function todayPlanIndex:87-92",
+     "function dayOptions:95-99",
+     "function nextFreeDay:102-105",
+     "function splitPlans:108-113"
+    ],
+    "bodies": {
+     "function allPlans": "38e5798c",
+     "function hasMultiplePlans": "b94fbaf2",
+     "function isMultiDay": "5d6f7a6c",
+     "function attendanceEndDate": "856ed138",
+     "function attendanceHasEnded": "9c212cef",
+     "function attendanceIsRunning": "01b3fbd0",
+     "function planDay": "7fa0a10d",
+     "function dayLabel": "83b1ab9c",
+     "function planLabel": "748427fe",
+     "function planDate": "a8d6b131",
+     "function planSubtitle": "8ea8e981",
+     "function todayPlanIndex": "ada39b35",
+     "function dayOptions": "bee21985",
+     "function nextFreeDay": "e3a386d2",
+     "function splitPlans": "29f871b5"
+    },
+    "id": "utilities/plan-days#logic-c1a9c827"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/utils/plan_utils.dart:333",
+     "lib/core/utils/event_list_utils.dart:60"
+    ],
+    "n": "Mehrtages-Helfer portiert, planSubtitle fehlt; siehe extra.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/utils/plan_utils.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/plan-days",
+   "ionic": {
+    "ts": "utilities/plan-days.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-828dda5f34",
+    "title": "planSubtitle fehlt",
+    "n": "Ionic: Untertitel des Plans = Datum, Tageslabel nur wenn es nicht das automatische Tageslabel ist / Flutter: bei mehreren Plänen immer longDate + ' · ' + planLabel, z. B. doppelt 'Samstag, 18.10.2025 · Sa 18.10.'.",
+    "sev": "niedrig",
+    "ionic": "src/app/utilities/plan-days.ts:77",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:124",
+     "lib/features/planning/presentation/pages/plan_viewer_page.dart:94"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/spreadsheet-reader",
+   "ionic": {
+    "ts": "utilities/spreadsheet-reader.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-fe9face194",
+    "title": "CSV-Datumsformat",
+    "n": "Flutter besser: Ionic SheetJS (cellDates) kann \"01/02/2020\" als MM/DD lesen und Tag/Monat vertauschen / Flutter liest DD/MM korrekt.",
+    "sev": "niedrig",
+    "ionic": "src/app/utilities/spreadsheet-reader.ts:19",
+    "f": [
+     "lib/core/utils/spreadsheet_reader.dart:1"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/utils/spreadsheet_reader.dart"
+   ]
+  }
+ ]
+}

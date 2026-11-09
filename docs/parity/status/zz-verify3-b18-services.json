@@ -1,0 +1,54 @@
+{
+  "batch": "zz-verify3-b18-services",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "services/instance/instance.service#toast-0ba0bad8": {
+      "s": "na",
+      "v": "bestätigt",
+      "n": "toter Code: InstanceService wird nur in db.service.ts:119 injiziert (public instanceSvc), aber nirgends benutzt – auch nicht in Templates; Instanz anlegen/löschen laufen über db.service.ts:3314/3275 (eigene Items)."
+    },
+    "services/instance/instance.service#toast-1d3e2d74": {
+      "s": "na",
+      "v": "bestätigt",
+      "n": "toter Code: InstanceService wird nur in db.service.ts:119 injiziert (public instanceSvc), aber nirgends benutzt – auch nicht in Templates; Instanz anlegen/löschen laufen über db.service.ts:3314/3275 (eigene Items)."
+    },
+    "services/live-activity/live-activity.service#db-142faef7": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/live_activity_repository.dart:30",
+        "lib/core/services/live_activity_service.dart:578"
+      ],
+      "n": "Gleiche Spalten/Filter (tenantId, 14 Tage zurück bis morgen 23:59 lokal, plan nicht null). Rollen gleich: Beobachter nie, Admin/Verantwortlich alle Pläne, alle anderen (Helfer, Stimmführer, Spieler, Eltern, Bewerber) nur mit share_plan. Nur native App mit Plugin."
+    },
+    "services/live-activity/live-activity.service#db-58d62735": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/org_plan_repository.dart:92",
+        "lib/core/services/live_activity_service.dart:598"
+      ],
+      "n": "Nur Admin/Verantwortlich (isLeader) und nur mit Organisation: tenant_group_tenants.tenant_id nach tenant_group = Org-ID – wie Ionic."
+    },
+    "services/live-activity/live-activity.service#db-f29b62df": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/org_plan_repository.dart:102",
+        "lib/core/services/live_activity_service.dart:598"
+      ],
+      "n": "Nur Admin/Verantwortlich mit Organisation; attendance 'id, date, plan, typeInfo, attType:type_id(name, color)', tenantId in Org-Instanzen, is_org_plan, gestern 0:00 bis morgen 23:59, plan nicht null; ohne verbundene Instanzen leer – wie Ionic."
+    },
+    "services/live-activity/live-activity.service#db-2675f6b3": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/org_plan_repository.dart:128",
+        "lib/core/services/live_activity_service.dart:648"
+      ],
+      "n": "Nur Admin/Verantwortlich mit Organisation; shared_plans nach org_id, date gestern bis morgen (YYYY-MM-DD); Flutter liest '*' statt fünf Spalten. Ohne date/time/fields übersprungen, Titel-Fallback „ORG-Plan“ – wie Ionic."
+    }
+  },
+  "extra": []
+}

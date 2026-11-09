@@ -1,0 +1,27 @@
+{
+  "batch": "zz-verify2-b30-songs",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "song-viewer/song-viewer.page#toast-d692cbd4": {
+      "s": "na",
+      "n": "toter Code: kein Modul/Route lädt song-viewer (app-routing.module.ts:84 lädt für /:songSharingId die SongsPage; grep nach song-viewer/SongViewerPage außerhalb des Ordners leer). Gleicher Toast der echten Seite: songs.page.ts:99 ↔ songs_list_page.dart:183 (Mandant: ungültige songSharingId).",
+      "v": "bestätigt"
+    },
+    "x-9564139e1c": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": ["lib/core/utils/spreadsheet_reader.dart:43", "lib/core/utils/spreadsheet_reader.dart:45", "lib/core/utils/import_file_io.dart:13"],
+      "n": "Echt: Ionic SheetJS read() liest .xls (BIFF) wie .xlsx / Flutter lehnt .xls ab („Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.“), obwohl Dateiauswahl .xls anbietet und der Intro-Text „Excel- (.xlsx/.xls)“ nennt. Import-Funktion für dieses Format fehlt (Umweg: als .xlsx speichern); betrifft auch den Personen-Import (gleicher Reader).",
+      "v": "bestätigt"
+    },
+    "x-1c8ba119fa": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/core/utils/spreadsheet_reader.dart:171", "lib/core/utils/spreadsheet_reader.dart:186"],
+      "n": "Echt (Paket excel 4.0.6 nicht im Pub-Cache; gecacht ist nur der Fork excel_community 2.6.2, dessen Parser gleich aufgebaut ist): Zahl-Formelzellen (<f> ohne t=\"str\") werden als FormulaCellValue(Formeltext) gelesen, cellToDart liefert immer value.formula → z. B. Nummer „A2+1“ statt 43 → Fehler „Nummer … muss eine Zahl sein“, in Freitext-/Zusatzfeldern würde der Formeltext importiert. Formeln mit Text-Ergebnis (t=\"str\") liefern laut Fork den Wert. Ionic SheetJS: immer berechneter Wert. Gilt auch für den Personen-Import.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

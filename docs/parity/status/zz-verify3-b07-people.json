@@ -1,0 +1,92 @@
+{
+ "batch": "zz-verify3-b07-people",
+ "ionic": "9f9b82af",
+ "flutter": "b218510",
+ "items": {
+  "people/bulk-edit/bulk-edit.page#toast-a80bef04": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:170",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:171",
+    "lib/core/utils/toast_helper.dart:65"
+   ],
+   "v": "bestätigt",
+   "n": "Warn-Toast 'Diese Funktion ist im Demo-Modus nicht verfügbar.' (orange), nichts gespeichert. Demo = Konto-E-Mail ist die Demo-Mail (Ionic db.isDemo, Flutter isDemoProvider/DemoGuard.isDemoEmail). Rollen: Massenbearbeitung/Import nur Admin/Verantwortlich (Ionic list.page isAdmin, list.page.html:167; Flutter people_list_page isAdmin = admin||responsible, Menü :943, Leerzustand :565) – Beobachter sieht die Personenliste, aber in beiden keinen Einstieg."
+  },
+  "people/bulk-edit/bulk-edit.page#toast-797d2d80": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:235"
+   ],
+   "v": "bestätigt",
+   "n": "'{n} Person(en) aktualisiert' (grün), danach schließen mit Aktualisierung. Rollen: Massenbearbeitung/Import nur Admin/Verantwortlich (Ionic list.page isAdmin, list.page.html:167; Flutter people_list_page isAdmin = admin||responsible, Menü :943, Leerzustand :565) – Beobachter sieht die Personenliste, aber in beiden keinen Einstieg."
+  },
+  "people/bulk-edit/bulk-edit.page#toast-2d9620c7": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:242"
+   ],
+   "v": "bestätigt",
+   "n": "'Fehler beim Speichern' (danger), Seite bleibt offen. Rollen: Massenbearbeitung/Import nur Admin/Verantwortlich (Ionic list.page isAdmin, list.page.html:167; Flutter people_list_page isAdmin = admin||responsible, Menü :943, Leerzustand :565) – Beobachter sieht die Personenliste, aber in beiden keinen Einstieg."
+  },
+  "people/import/import.page#toast-ab4a2819": {
+   "s": "na",
+   "v": "bestätigt",
+   "n": "toter Code: Import-Button ist bei !importableRows.length deaktiviert (import.page.html:136). Flutter: Button bei _importable.isEmpty deaktiviert (person_import_page.dart:332), gleicher Toast-Guard :176."
+  },
+  "people/import/import.page#toast-b3bb9f9f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:180",
+    "lib/features/people/presentation/pages/person_import_page.dart:181",
+    "lib/core/utils/toast_helper.dart:65"
+   ],
+   "v": "bestätigt",
+   "n": "Warn-Toast 'Diese Funktion ist im Demo-Modus nicht verfügbar.' vor dem Import. Demo = Konto-E-Mail ist die Demo-Mail (Ionic db.isDemo, Flutter isDemoProvider/DemoGuard.isDemoEmail). Rollen: Massenbearbeitung/Import nur Admin/Verantwortlich (Ionic list.page isAdmin, list.page.html:167; Flutter people_list_page isAdmin = admin||responsible, Menü :943, Leerzustand :565) – Beobachter sieht die Personenliste, aber in beiden keinen Einstieg."
+  },
+  "people/import/import.page#toast-e3036216": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:243",
+    "lib/features/people/presentation/pages/person_import_page.dart:248",
+    "lib/features/people/presentation/pages/person_import_page.dart:250"
+   ],
+   "v": "bestätigt",
+   "n": "'N Person(en) importiert.' + ggf. 'M fehlgeschlagen.', grün bzw. orange. Rollen: Massenbearbeitung/Import nur Admin/Verantwortlich (Ionic list.page isAdmin, list.page.html:167; Flutter people_list_page isAdmin = admin||responsible, Menü :943, Leerzustand :565) – Beobachter sieht die Personenliste, aber in beiden keinen Einstieg."
+  },
+  "people/import/import.page#toast-790b310b": {
+   "s": "na",
+   "v": "bestätigt",
+   "n": "toter Code: db.importPlayers fängt jeden Zeilenfehler selbst (db.service.ts:3630-3640), Demo ist vorher abgefangen (import.page.ts:207); im äußeren try bleiben nur loading.dismiss/Alert/modal.dismiss, die praktisch nicht werfen. Flutter fängt ebenfalls pro Zeile (person_import_page.dart:223-230)."
+  },
+  "people/import/import.page#effect-31a0aedd": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:119",
+    "lib/features/people/presentation/pages/person_import_page.dart:137",
+    "lib/core/utils/import_file_io.dart:25",
+    "lib/core/services/zip_service_io.dart:9",
+    "lib/core/services/zip_service_web.dart:7"
+   ],
+   "n": "Datei 'Personen_Import_Vorlage.xlsx', Blatt 'Import', Kopf- und Beispielzeile wie Ionic (Org-Zusatzfelder fehlen: eigener Befund). Ionic saveWorkbook: nativ Datei in Cache + Systemviewer, mobiler Browser Web-Share-Sheet, Desktop Download / Flutter: nativ Teilen-Dialog (share_plus) mit Begleittext 'Song-Dateien', im Web immer Anker-Download (Blob-Typ application/zip); bei Fehler Toast 'Fehler: …' nur in Flutter."
+  },
+  "people/import/import.page#text-6d4d3de0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:108"
+   ],
+   "v": "bestätigt",
+   "n": "Hinweis 'Bitte ordne Spalten für Vor- und Nachnamen zu (oder eine kombinierte Namensspalte).' in Warnfarbe, solange keine Namensspalte zugeordnet ist. Rollen: Massenbearbeitung/Import nur Admin/Verantwortlich (Ionic list.page isAdmin, list.page.html:167; Flutter people_list_page isAdmin = admin||responsible, Menü :943, Leerzustand :565) – Beobachter sieht die Personenliste, aber in beiden keinen Einstieg."
+  },
+  "people/import/import.page#text-f7d81c78": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:398",
+    "lib/core/utils/import_mapper.dart:332"
+   ],
+   "n": "Vorschauzeile zeigt die (kleingeschriebene, getrimmte) E-Mail unter dem Namen, nur wenn vorhanden – gleich."
+  }
+ },
+ "extra": []
+}

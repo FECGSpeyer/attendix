@@ -1,0 +1,2013 @@
+{
+ "batch": "zz-verify5-b-sonnet-04",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/list/list.page.html",
+    "line": 105,
+    "cond": [
+     "in <ion-popover #filterPopover>"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "slot": "end",
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=onSortChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"sortOpt\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "instrument",
+      "keys": [
+       "people.group"
+      ],
+      "de": [
+       "Gruppe"
+      ],
+      "literals": [],
+      "text": "{{ 'people.group' | transloco }}\"instrument\""
+     },
+     {
+      "value": "vorname",
+      "keys": [
+       "people.firstName"
+      ],
+      "de": [
+       "Vorname"
+      ],
+      "literals": [],
+      "text": "{{ 'people.firstName' | transloco }}\"vorname\""
+     },
+     {
+      "value": "nachname",
+      "keys": [
+       "people.lastName"
+      ],
+      "de": [
+       "Nachname"
+      ],
+      "literals": [],
+      "text": "{{ 'people.lastName' | transloco }}\"nachname\""
+     },
+     {
+      "value": "attAsc",
+      "keys": [
+       "people.attendanceAsc"
+      ],
+      "de": [
+       "Anwesenheit ↑"
+      ],
+      "literals": [],
+      "text": "{{ 'people.attendanceAsc' | transloco }}\"attAsc\""
+     },
+     {
+      "value": "attDesc",
+      "keys": [
+       "people.attendanceDesc"
+      ],
+      "de": [
+       "Anwesenheit ↓"
+      ],
+      "literals": [],
+      "text": "{{ 'people.attendanceDesc' | transloco }}\"attDesc\""
+     },
+     {
+      "value": "birthdayAsc",
+      "keys": [
+       "people.birthdayAsc"
+      ],
+      "de": [
+       "Geburtsdatum ↑"
+      ],
+      "literals": [],
+      "text": "{{ 'people.birthdayAsc' | transloco }}\"birthdayAsc\""
+     },
+     {
+      "value": "birthdayDesc",
+      "keys": [
+       "people.birthdayDesc"
+      ],
+      "de": [
+       "Geburtsdatum ↓"
+      ],
+      "literals": [],
+      "text": "{{ 'people.birthdayDesc' | transloco }}\"birthdayDesc\""
+     },
+     {
+      "value": "joinedAsc",
+      "keys": [
+       "people.joinAsc"
+      ],
+      "de": [
+       "Beitrittsdatum ↑"
+      ],
+      "literals": [],
+      "text": "{{ 'people.joinAsc' | transloco }}\"joinedAsc\""
+     },
+     {
+      "value": "joinedDesc",
+      "keys": [
+       "people.joinDesc"
+      ],
+      "de": [
+       "Beitrittsdatum ↓"
+      ],
+      "literals": [],
+      "text": "{{ 'people.joinDesc' | transloco }}\"joinedDesc\""
+     },
+     {
+      "value": "nextBirthday",
+      "keys": [
+       "people.nextBirthday"
+      ],
+      "de": [
+       "Nächster Geburtstag"
+      ],
+      "literals": [],
+      "text": "{{ 'people.nextBirthday' | transloco }}\"nextBirthday\""
+     },
+     {
+      "value": "test",
+      "keys": [
+       "people.testResult"
+      ],
+      "de": [
+       "Testergebnis"
+      ],
+      "literals": [],
+      "text": "{{ 'people.testResult' | transloco }}\"test\""
+     }
+    ],
+    "keys": [
+     "people.group",
+     "people.firstName",
+     "people.lastName",
+     "people.attendanceAsc",
+     "people.attendanceDesc",
+     "people.birthdayAsc",
+     "people.birthdayDesc",
+     "people.joinAsc",
+     "people.joinDesc",
+     "people.nextBirthday",
+     "people.testResult"
+    ],
+    "de": [
+     "Gruppe",
+     "Vorname",
+     "Nachname",
+     "Anwesenheit ↑",
+     "Anwesenheit ↓",
+     "Geburtsdatum ↑",
+     "Geburtsdatum ↓",
+     "Beitrittsdatum ↑",
+     "Beitrittsdatum ↓",
+     "Nächster Geburtstag",
+     "Testergebnis"
+    ],
+    "literals": [],
+    "text": "\"instrument\" {{ 'people.group' | transloco }} \"vorname\" {{ 'people.firstName' | transloco }} \"nachname\" {{ 'people.lastName' | transloco }} \"attAsc\" {{ 'people.attendanceAsc' | transloco }} \"attDesc\"…",
+    "id": "people/list/list.page#field-a2446bcd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:782",
+     "lib/features/people/presentation/pages/people_list_page.dart:814",
+     "lib/features/people/presentation/pages/people_list_page.dart:316"
+    ],
+    "n": "Gleiche 11 Optionen in gleicher Reihenfolge ('Testergebnis' nur VoS), gleiche Sortierlogik, Speicherung je Instanz. Umlaute in der Gruppen-Sortierung siehe extra.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/list/list.page.html",
+    "line": 518,
+    "cond": [
+     "in <ion-modal isOpen=\"isArchiveModalOpen\">"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"archiveNote\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#field-ab968b75"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1416"
+    ],
+    "n": "Mehrzeiliges Textfeld, Satzanfang groß.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 513,
+    "cond": [
+     "in <ion-modal isOpen=\"isArchiveModalOpen\">"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.leaveDate"
+    ],
+    "de": [
+     "Austrittsdatum"
+    ],
+    "literals": [],
+    "text": "{{ 'people.leaveDate' | transloco }}",
+    "id": "people/list/list.page#text-1edff7fb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1401"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 503,
+    "cond": [
+     "in <ion-modal isOpen=\"isArchiveModalOpen\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "people.archiveTitle"
+    ],
+    "de": [
+     "{name} Archivieren"
+    ],
+    "literals": [],
+    "text": "{{ 'people.archiveTitle' | transloco: { name: (playerToArchive?.firstName ?? '') + ' ' + (playerToArchive?.lastName ?? '') } }}",
+    "id": "people/list/list.page#text-2e536d7b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1395"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 517,
+    "cond": [
+     "in <ion-modal isOpen=\"isArchiveModalOpen\">"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.note"
+    ],
+    "de": [
+     "Notiz"
+    ],
+    "literals": [],
+    "text": "{{ 'people.note' | transloco }}",
+    "id": "people/list/list.page#text-3c936418"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1419"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 460,
+    "cond": [
+     "@else if (loaded && !players?.length && !playersFiltered?.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.noPeopleYet"
+    ],
+    "de": [
+     "Bisher wurden noch keine Personen angelegt"
+    ],
+    "literals": [],
+    "text": "{{ 'people.noPeopleYet' | transloco }}",
+    "id": "people/list/list.page#text-6f2a6577"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:559"
+    ],
+    "n": "'Bisher wurden noch keine Personen angelegt' für alle Rollen der Liste. Der daneben stehende Button 'Person hinzufügen' ohne Rollenprüfung (Beobachter kann anlegen) ist bei action-4792cae3 erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 223,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.peopleCount"
+    ],
+    "de": [
+     "Personen ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'people.peopleCount' | transloco: { count: playersFiltered?.length } }}",
+    "id": "people/list/list.page#text-75888fce"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:617"
+    ],
+    "n": "'Personen (n)' mit Anzahl der gefilterten Personen; keine Rollenbedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/list/list.page.ts",
+    "line": 883,
+    "method": "ListPage.confirmPause",
+    "cond": [],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "error"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c44cf0d9",
+    "mbody": "ff40e073",
+    "id": "people/list/list.page#toast-4abeba9d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:213"
+    ],
+    "n": "Roter Hinweis; Flutter: 'Fehler: <Fehlertext>'.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/list/list.page.ts",
+    "line": 387,
+    "method": "ListPage.savePlayerOrder",
+    "cond": [],
+    "message": {
+     "keys": [
+      "people.orderSaved"
+     ],
+     "de": [
+      "Reihenfolge gespeichert"
+     ],
+     "literals": [],
+     "expr": "translate('people.orderSaved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "363918fb",
+    "mbody": "e6f21689",
+    "id": "people/list/list.page#toast-c81105f4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1173"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 13,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-213509df"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1791",
+     "lib/features/people/presentation/pages/person_create_page.dart:324"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart",
+    "lib/features/people/presentation/pages/person_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 906,
+    "cond": [
+     "@else (not approveMode)",
+     "@if (player)",
+     "@if (hasLeft)"
+    ],
+    "tag": "ion-fab-button",
+    "attrs": {},
+    "events": [
+     "(click)=activate()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "arrow-undo-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-3a69a489"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1731"
+    ],
+    "n": "Flutter: nur Admin/Verantwortlicher (Ionic: hasLeft, Seite nur von Admin-Einstellungen geöffnet)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 891,
+    "cond": [
+     "@else (not approveMode)",
+     "@if (player)",
+     "@if (!existingPlayer)"
+    ],
+    "tag": "ion-fab-button",
+    "attrs": {},
+    "events": [
+     "(click)=addPerson()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "person-add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-8b894b78"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_create_page.dart:330"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/person/person.page.ts",
+    "line": 1579,
+    "method": "PersonPage.activate",
+    "cond": [],
+    "header": {
+     "keys": [
+      "person.reactivatePerson"
+     ],
+     "de": [
+      "Person reaktivieren"
+     ],
+     "literals": [],
+     "expr": "translate('person.reactivatePerson')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "person.reactivateConfirm"
+     ],
+     "de": [
+      "Möchtest du die Person wirklich reaktivieren?"
+     ],
+     "literals": [],
+     "expr": "translate('person.reactivateConfirm')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.yes"
+       ],
+       "de": [
+        "Ja"
+       ],
+       "literals": [],
+       "expr": "translate('common.yes')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.activateConfirmed()"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "56136b19",
+    "mbody": "badeca4e",
+    "id": "people/person/person.page#alert-5ffb2485"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1427",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1731"
+    ],
+    "n": "Nur bei archivierter Person; Flutter zusätzlich nur Admin/Verantwortliche (Ionic nur aus deren Archiv-Liste erreichbar). 'Person reaktivieren' / Text, 'Abbrechen' / 'Ja'.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/person/person.page.ts",
+    "line": 890,
+    "method": "PersonPage.confirmMerge",
+    "cond": [],
+    "header": {
+     "keys": [
+      "person.mergePeople"
+     ],
+     "de": [
+      "Personen zusammenführen"
+     ],
+     "literals": [],
+     "expr": "translate('person.mergePeople')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "person.mergeMessage"
+     ],
+     "de": [
+      "{name} wird mit der bestehenden Person {candidate} zusammengeführt. Deren Anwesenheitsdaten bleiben erhalten, der neu registrierte Account wird {candidate} zugeordnet. Dies kann nicht rückgängig gemacht werden."
+     ],
+     "literals": [
+      "${this.player.firstName} ${this.player.lastName}",
+      "${candidate.firstName} ${candidate.lastName}"
+     ],
+     "expr": "translate('person.mergeMessage', { name: `${this.player.firstName} ${this.player.lastName}`, candidate: `${candidate.firstName} ${candidate.lastName}`, })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "person.merge"
+       ],
+       "de": [
+        "Zusammenführen"
+       ],
+       "literals": [],
+       "expr": "translate('person.merge')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { // No auto-dismiss timeout — merge involves several sequential DB calls plus an email // webhook and can outlast a fixed duration, which would otherwise falsely trip the catch. const loading: HTMLIonLoadingElement = await Uti…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "cf7e18e6",
+    "mbody": "2bf92a21",
+    "id": "people/person/person.page#alert-c5cb3708"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:63",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1828"
+    ],
+    "n": "Nur bei ausstehender Person und canEdit (Ionic approveMode, nur aus Einstellungen für Admin/Verantwortliche). 'Personen zusammenführen', Text mit beiden Namen, 'Abbrechen' / 'Zusammenführen'.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/person/person.page.ts",
+    "line": 1537,
+    "method": "PersonPage.deleteAbsence",
+    "cond": [],
+    "header": {
+     "keys": [
+      "signout.deleteAbsence"
+     ],
+     "de": [
+      "Abwesenheit löschen"
+     ],
+     "literals": [],
+     "expr": "translate('signout.deleteAbsence')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "person.deleteAbsenceMessage"
+     ],
+     "de": [
+      "Soll die Abwesenheit gelöscht werden? Bereits entschuldigte Termine in diesem Zeitraum werden auf \"Neutral\" zurückgesetzt."
+     ],
+     "literals": [],
+     "expr": "translate('person.deleteAbsenceMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { const loading = await Utils.getLoadingElement(); await loading.present(); try { await this.db.deletePlayerAbsence(absence.id); const from = dayjs(absence.from_date); const until = dayjs(absence.until_date); const toReset = th…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "e083ab0e",
+    "mbody": "b78d7bc8",
+    "id": "people/person/person.page#alert-d5cca7fc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:256",
+     "lib/features/people/presentation/widgets/planned_absences.dart:259"
+    ],
+    "n": "'Abwesenheit löschen', Personen-Text, 'Abbrechen' / 'Löschen' (destruktiv); setzt entschuldigte Termine zurück. Gleiche Rollen wie toast-aee32adb.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 1096,
+    "cond": [
+     "in <ion-modal isOpen=\"isArchiveModalOpen\">"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"archiveNote\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-3de9eda0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1081"
+    ],
+    "n": "Flutter: TextField, 2 Zeilen",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 4,
+    "cond": [
+     "@if (!existingPlayer)"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "attendance.addPerson"
+    ],
+    "de": [
+     "Person hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.addPerson' | transloco }}",
+    "id": "people/person/person.page#text-012b5231"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_create_page.dart:313"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 1091,
+    "cond": [
+     "in <ion-modal isOpen=\"isArchiveModalOpen\">"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.leaveDate"
+    ],
+    "de": [
+     "Austrittsdatum"
+    ],
+    "literals": [],
+    "text": "{{ 'people.leaveDate' | transloco }}",
+    "id": "people/person/person.page#text-15cc2dfb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1064"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 591,
+    "cond": [
+     "@if (player)",
+     "@if (db.getPersonExtraFields().length)",
+     "@for (field of db.getPersonExtraFields(); track field.id)",
+     "@else if (field.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.name }}"
+    ],
+    "text": "{{ field.name }}",
+    "id": "people/person/person.page#text-2ef5c47d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:748"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 1081,
+    "cond": [
+     "in <ion-modal isOpen=\"isArchiveModalOpen\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "people.archiveTitle"
+    ],
+    "de": [
+     "{name} Archivieren"
+    ],
+    "literals": [],
+    "text": "{{ 'people.archiveTitle' | transloco: { name: (player?.firstName ?? '') + ' ' + (player?.lastName ?? '') } }}",
+    "id": "people/person/person.page#text-45b14cdb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1058"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 10,
+    "cond": [
+     "@if (approveMode)"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "person.approvePerson"
+    ],
+    "de": [
+     "Person genehmigen"
+    ],
+    "literals": [],
+    "text": "{{ 'person.approvePerson' | transloco }}",
+    "id": "people/person/person.page#text-a7ca92e9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1770"
+    ],
+    "n": "Flutter: bei pending-Person",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/person/person.page.ts",
+    "line": 1164,
+    "method": "PersonPage.searchPerson",
+    "cond": [
+     "(matches.length === 0)"
+    ],
+    "message": {
+     "keys": [
+      "person.noMatchOther"
+     ],
+     "de": [
+      "Es wurde keine passende Person in einer anderen Instanz gefunden"
+     ],
+     "literals": [],
+     "expr": "translate('person.noMatchOther')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "64bf0c58",
+    "mbody": "bef98da7",
+    "id": "people/person/person.page#toast-049f4205"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:907"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/person/person.page.ts",
+    "line": 404,
+    "method": "PersonPage.resetLateCount",
+    "cond": [],
+    "message": {
+     "keys": [
+      "person.resetFailed"
+     ],
+     "de": [
+      "Fehler beim Zurücksetzen"
+     ],
+     "literals": [],
+     "expr": "translate('person.resetFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "dbc25067",
+    "mbody": "6e8fb0f2",
+    "id": "people/person/person.page#toast-10d4fb42"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1172"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/person/person.page.ts",
+    "line": 823,
+    "method": "PersonPage.applyMatchedPerson",
+    "cond": [],
+    "message": {
+     "keys": [
+      "person.dataTaken"
+     ],
+     "de": [
+      "Die Daten wurden erfolgreich übernommen"
+     ],
+     "literals": [],
+     "expr": "translate('person.dataTaken')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "edd630e3",
+    "mbody": "39edeaa8",
+    "id": "people/person/person.page#toast-3e3e43d5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:883",
+     "lib/features/people/presentation/pages/person_create_page.dart:232"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart",
+    "lib/features/people/presentation/pages/person_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/person/person.page.ts",
+    "line": 1600,
+    "method": "PersonPage.activateConfirmed",
+    "cond": [],
+    "message": {
+     "keys": [
+      "person.reactivated"
+     ],
+     "de": [
+      "Die Person wurde erfolgreich wieder aktiviert"
+     ],
+     "literals": [],
+     "expr": "translate('person.reactivated')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "88d860af",
+    "mbody": "87e8cdda",
+    "id": "people/person/person.page#toast-58f0abe0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1449"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/person/person.page.ts",
+    "line": 1391,
+    "method": "PersonPage.archivePlayer",
+    "cond": [],
+    "message": {
+     "keys": [
+      "person.archived"
+     ],
+     "de": [
+      "Die Person wurde erfolgreich archiviert"
+     ],
+     "literals": [],
+     "expr": "translate('person.archived')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "a2fda9fd",
+    "mbody": "cd8c0116",
+    "id": "people/person/person.page#toast-78153810"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1138"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/person/person.page.ts",
+    "line": 1071,
+    "method": "PersonPage.removeImgFromViewer",
+    "cond": [],
+    "message": {
+     "keys": [
+      "person.photoRemoved"
+     ],
+     "de": [
+      "Das Passbild wurde erfolgreich entfernt"
+     ],
+     "literals": [],
+     "expr": "translate('person.photoRemoved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "17387c90",
+    "mbody": "0757972d",
+    "id": "people/person/person.page#toast-8a955d94"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart:331",
+     "lib/features/people/presentation/pages/person_create_page.dart:970"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/person/person.page.ts",
+    "line": 1097,
+    "method": "PersonPage.onImageSelect",
+    "cond": [
+     "(imgFile.size > 2 * 1024 * 1024)",
+     "(imgFile)"
+    ],
+    "message": {
+     "keys": [
+      "person.photoTooLarge"
+     ],
+     "de": [
+      "Das Bild darf maximal 2MB groß sein."
+     ],
+     "literals": [],
+     "expr": "translate('person.photoTooLarge')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "3426bee8",
+    "mbody": "41c8a13a",
+    "id": "people/person/person.page#toast-9d699ae0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart:232",
+     "lib/features/people/presentation/pages/person_create_page.dart:941"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/person/person.page.ts",
+    "line": 1567,
+    "method": "PersonPage.deleteAbsence",
+    "cond": [],
+    "message": {
+     "keys": [
+      "signout.absenceDeleted"
+     ],
+     "de": [
+      "Abwesenheit gelöscht"
+     ],
+     "literals": [],
+     "expr": "translate('signout.absenceDeleted')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "fa1a8c85",
+    "mbody": "b78d7bc8",
+    "id": "people/person/person.page#toast-b0dccec9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:270"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/plan-field-edit/plan-field-edit.component",
+   "ionic": {
+    "ts": "planning/plan-field-edit/plan-field-edit.component.ts",
+    "html": "planning/plan-field-edit/plan-field-edit.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "planning/plan-field-edit/plan-field-edit.component.html",
+    "line": 32,
+    "cond": [],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"info\"",
+    "bindings": [
+     "[label]=\"'planning.info' | transloco\"",
+     "[placeholder]=\"'planning.infoOptionalEllipsis' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "planning.info",
+     "planning.infoOptionalEllipsis"
+    ],
+    "de": [
+     "Info",
+     "Info-Text (optional)..."
+    ],
+    "literals": [],
+    "text": "[label]=\"'planning.info' | transloco\" [placeholder]=\"'planning.infoOptionalEllipsis' | transloco\"",
+    "id": "planning/plan-field-edit/plan-field-edit.component#field-159a7ede"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:281",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:170"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/plan-field-edit/plan-field-edit.component",
+   "ionic": {
+    "ts": "planning/plan-field-edit/plan-field-edit.component.ts",
+    "html": "planning/plan-field-edit/plan-field-edit.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "planning/plan-field-edit/plan-field-edit.component.html",
+    "line": 51,
+    "cond": [
+     "@if (showBeamer)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[ngModel]=\"beamerOn\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "planning.beamerNeeded",
+     "planning.beamerAutoSong",
+     "planning.beamerAutoWord"
+    ],
+    "de": [
+     "Beamer-Datei nötig",
+     "Automatisch an: Werk",
+     "Automatisch an: Titel enthält „{word}“"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.beamerNeeded' | transloco }} {{ (reason.song ? 'planning.beamerAutoSong' : 'planning.beamerAutoWord') | transloco: { word: reason.word } }}",
+    "id": "planning/plan-field-edit/plan-field-edit.component#field-86c9cb80"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:212",
+     "lib/features/planning/presentation/pages/planning_page.dart:2056"
+    ],
+    "n": "„Beamer-Datei nötig“, Auto-Grund „Automatisch an: Werk“ / „…Titel enthält „{word}““ nur ohne Handwert; Umschalten setzt Handwert, gespeichert als needsBeamer. showBeamer wie Ionic: fecg_link_enabled && beamer_files_enabled && Org-Plan (PlanBeamer.active, planning_page.dart:2056 → beamerFileOf; Notizen ohne Beamer-Bereich, Ionic: eigener Notiz-Dialog).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/plan-field-edit/plan-field-edit.component",
+   "ionic": {
+    "ts": "planning/plan-field-edit/plan-field-edit.component.ts",
+    "html": "planning/plan-field-edit/plan-field-edit.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "planning/plan-field-edit/plan-field-edit.component.html",
+    "line": 47,
+    "cond": [
+     "@if (showBeamer)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "planning.beamer"
+    ],
+    "de": [
+     "Beamer"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.beamer' | transloco }}",
+    "id": "planning/plan-field-edit/plan-field-edit.component#text-0fbfb680"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:209",
+     "lib/features/planning/presentation/pages/planning_page.dart:2056"
+    ],
+    "n": "„Beamer“ (Flutter versal). showBeamer wie Ionic: fecg_link_enabled && beamer_files_enabled && Org-Plan (PlanBeamer.active, planning_page.dart:2056 → beamerFileOf; Notizen ohne Beamer-Bereich, Ionic: eigener Notiz-Dialog).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/plan-field-edit/plan-field-edit.component",
+   "ionic": {
+    "ts": "planning/plan-field-edit/plan-field-edit.component.ts",
+    "html": "planning/plan-field-edit/plan-field-edit.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "planning/plan-field-edit/plan-field-edit.component.html",
+    "line": 6,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "planning.editField"
+    ],
+    "de": [
+     "Feld bearbeiten"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.editField' | transloco }}",
+    "id": "planning/plan-field-edit/plan-field-edit.component#text-572a71cd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:167"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/plan-share-sheet/plan-share-sheet.component",
+   "ionic": {
+    "ts": "planning/plan-share-sheet/plan-share-sheet.component.ts",
+    "html": "planning/plan-share-sheet/plan-share-sheet.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "planning/plan-share-sheet/plan-share-sheet.component.html",
+    "line": 43,
+    "cond": [
+     "@if (hasChatId)",
+     "@if (scope === 'one')"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=choose('telegramImage')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "image-outline"
+    ],
+    "keys": [
+     "attendance.telegramImage"
+    ],
+    "de": [
+     "Per Telegram senden (Bild)"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.telegramImage' | transloco }}",
+    "id": "planning/plan-share-sheet/plan-share-sheet.component#action-7476193c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:265"
+    ],
+    "n": "Nur mit Chat-ID und Umfang „Nur …“, wie Ionic.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/plan-viewer/plan-viewer.component",
+   "ionic": {
+    "ts": "planning/plan-viewer/plan-viewer.component.ts",
+    "html": "planning/plan-viewer/plan-viewer.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "planning/plan-viewer/plan-viewer.component.html",
+    "line": 57,
+    "cond": [
+     "@if (plan?.fields?.length)",
+     "@for (field of plan.fields; track field.id; let i = $index)",
+     "@if (isGroupHead(field))",
+     "@if (field.info)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "field-info"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.info }}"
+    ],
+    "text": "{{ field.info }}",
+    "id": "planning/plan-viewer/plan-viewer.component#text-1ca27ce8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:138"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/plan-viewer/plan-viewer.component",
+   "ionic": {
+    "ts": "planning/plan-viewer/plan-viewer.component.ts",
+    "html": "planning/plan-viewer/plan-viewer.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "planning/plan-viewer/plan-viewer.component.html",
+    "line": 55,
+    "cond": [
+     "@if (plan?.fields?.length)",
+     "@for (field of plan.fields; track field.id; let i = $index)",
+     "@if (isGroupHead(field))"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ groupRange(field, i) }}{{ field.conductor ? ' | ' + field.conductor : '' }}"
+    ],
+    "text": "{{ groupRange(field, i) }}{{ field.conductor ? ' | ' + field.conductor : '' }}",
+    "id": "planning/plan-viewer/plan-viewer.component#text-f89a1a83"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:130"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/plan-viewer/plan-viewer.component",
+   "ionic": {
+    "ts": "planning/plan-viewer/plan-viewer.component.ts",
+    "html": "planning/plan-viewer/plan-viewer.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "planning/plan-viewer/plan-viewer.component.ts",
+    "line": 366,
+    "method": "PlanViewerComponent.exportPdf",
+    "cond": [
+     "(!this.plan?.fields?.length)"
+    ],
+    "message": {
+     "keys": [
+      "planning.noPlan"
+     ],
+     "de": [
+      "Kein Plan verfügbar"
+     ],
+     "literals": [],
+     "expr": "translate('planning.noPlan')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "0f068ca0",
+    "mbody": "289dae83",
+    "id": "planning/plan-viewer/plan-viewer.component#toast-b048fc61"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:100"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/plan-viewer/plan-viewer.component",
+   "ionic": {
+    "ts": "planning/plan-viewer/plan-viewer.component.ts",
+    "html": "planning/plan-viewer/plan-viewer.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "planning/plan-viewer/plan-viewer.component.ts",
+    "line": 386,
+    "method": "PlanViewerComponent.sendTelegram",
+    "cond": [
+     "(!this.plan?.fields?.length)"
+    ],
+    "message": {
+     "keys": [
+      "planning.noPlan"
+     ],
+     "de": [
+      "Kein Plan verfügbar"
+     ],
+     "literals": [],
+     "expr": "translate('planning.noPlan')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "0f068ca0",
+    "mbody": "6b96a536",
+    "id": "planning/plan-viewer/plan-viewer.component#toast-f47f3c2c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:100"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "planning/planning.page.html",
+    "line": 326,
+    "cond": [
+     "in <ion-reorder-group>",
+     "@else",
+     "in <ion-item-options>"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=removeField(i, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "planning/planning.page#action-6c9b4483"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:560",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:197"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "planning/planning.page.html",
+    "line": 168,
+    "cond": [
+     "in <ion-popover trigger=add-trigger #addPopover>",
+     "@if (attendance)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=addPlan(addPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "copy-outline"
+    ],
+    "keys": [
+     "planning.addAnotherPlan"
+    ],
+    "de": [
+     "Weiteren Ablaufplan anlegen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.addAnotherPlan' | transloco }}",
+    "id": "planning/planning.page#action-6f76d26d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:1705",
+     "lib/features/planning/presentation/pages/planning_page.dart:1248"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  }
+ ]
+}

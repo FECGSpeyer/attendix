@@ -1,0 +1,398 @@
+{
+ "batch": "zz-verify5-b-opus-10",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "services/organisation/organisation.service#db-ad59e983": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "korrigiert",
+   "f": [
+    "lib/data/repositories/profile_repository.dart:310",
+    "lib/core/providers/profile_providers.dart:180",
+    "lib/features/people/presentation/pages/person_detail_page.dart:529",
+    "lib/features/people/presentation/pages/person_detail_page.dart:498",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:206",
+    "lib/data/repositories/shared_person_fields.dart:184"
+   ],
+   "n": "Upsert selbst wie Ionic: Zeilen {tenant_group, person_key, field_id, value}, onConflict tenant_group,person_key,field_id; alle vier Ionic-Aufrufer vorhanden (eigenes Profil, Personendetail, Massenbearbeitung, setGlobalPersonId-Standardwerte über writeOrganisationFieldDefaults). Neu gefunden: Ionic person.page lädt die gemeinsamen Werte in ngOnInit (person.page.ts:168); schlägt das fehl, bricht die Seite ab (Toast, this.player bleibt leer) und es wird nichts gespeichert. Flutter _loadSharedFieldValues setzt _orgId vor getSharedFieldValues und verschluckt den Fehler; beim nächsten Speichern schreibt _splitAndSaveSharedFields die angezeigten Instanz-/Standardwerte aller Organisationsfelder per Upsert und überschreibt so die echten gemeinsamen Werte der Person in allen Instanzen der Organisation (nur bei Ladefehler)."
+  },
+  "services/organisation/organisation.service#db-b982d376": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/profile_repository.dart:288",
+    "lib/features/people/presentation/pages/person_detail_page.dart:510",
+    "lib/data/repositories/profile_repository.dart:200"
+   ],
+   "n": "select field_id, value .eq(tenant_group).eq(person_key) wie Ionic (Personendetail, eigenes Profil). Fehlender Fehler-Toast ist in toast-748ceab8 erfasst; Folge beim Speichern siehe db-ad59e983."
+  },
+  "services/organisation/organisation.service#db-be14ed40": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/organisation_repository.dart:271",
+    "lib/core/providers/organisation_providers.dart:21",
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:15",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:155"
+   ],
+   "n": "tenantUsers .eq(userId).or(role.eq.1,role.eq.5), danach tenant_group_tenants in(tenant_id) mit Duplikat-Entfernung wie Ionic (Flutter liest nur tenantId, gleiche Daten). Rolle unverändert: Eintrag nur ohne Organisation und nur für Admin (isSuperAdmin = Role.admin, org_settings_page.dart:142/155). Geänderter Dialog: Auswahl mit erster Organisation vorausgewählt, Abbrechen/Auswählen/Neue Organisation erstellen, Erfolg-/Fehlertoast wie Ionic. Ladefehler → direkt „Organisation erstellen“ ist in toast-f9193a09 erfasst."
+  },
+  "services/organisation/organisation.service#db-d081bc1d": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/organisation_repository.dart:19",
+    "lib/core/providers/organisation_providers.dart:76",
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:82"
+   ],
+   "n": "insert tenant_groups {name} .select().single(), danach Verknüpfung mit der aktuellen Instanz wie db.createOrganisation; leerer Name → „Bitte gib gültige Werte ein.“ im offenen Dialog, blockierender Spinner, Fehler „Fehler beim Erstellen/Verknüpfen der Organisation“, Erfolg „Die Organisation wurde erfolgreich erstellt.“. Flutter trimmt den Namen."
+  },
+  "services/player-absence/player-absence.service#db-7fbdf33d": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:72",
+    "lib/core/providers/player_absence_providers.dart:87"
+   ],
+   "n": "insert player_absences {person_id, from_date, until_date, reason, tenant_id = aktuelle Instanz} .select().single() wie Ionic (Personendetail und Meine Termine)."
+  },
+  "services/player-absence/player-absence.service#db-936de012": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:102"
+   ],
+   "n": "delete player_absences .eq(id), Flutter zusätzlich .eq(tenant_id)."
+  },
+  "services/player-absence/player-absence.service#db-99111af5": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "korrigiert",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:35",
+    "lib/core/providers/player_absence_providers.dart:41",
+    "lib/features/people/presentation/widgets/planned_absences.dart:352",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:208"
+   ],
+   "n": "Filter gleich (person_id, tenant_id), aber Sortierung falsch herum: Ionic .order('from_date') = aufsteigend (postgrest-js), Flutter .order('from_date') ohne ascending = absteigend (postgrest-dart 2.6.0 Standard ascending:false). Flutter zeigt geplante Abwesenheiten im Personendetail und in Meine Termine daher neueste zuerst statt älteste zuerst; die Listen sortieren nicht nach (Provider-Kommentar „sorted by from_date“ meint aufsteigend)."
+  },
+  "services/player-absence/player-absence.service#db-d999637c": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:50",
+    "lib/data/repositories/dashboard_repository.dart:124"
+   ],
+   "n": "select * .eq(tenant_id) wie Ionic, Flutter seitenweise mit stabiler Sortierung nach id (Ionic ohne Sortierung; Verbraucher filtern/sortieren selbst)."
+  },
+  "services/player/player.service#db-08cf0e97": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/player_repository.dart:139"
+   ],
+   "n": "select * .eq(appId).eq(tenantId), bei mehreren Zeilen die aktive (nicht pending, nicht ausgetreten) bevorzugt wie Ionic."
+  },
+  "services/player/player.service#db-09f7345f": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/extra_fields_repository.dart:194",
+    "lib/data/repositories/extra_fields_repository.dart:111"
+   ],
+   "n": "update player {additional_fields} je Person mit Feld = Standardwert (+ tenantId), übersprungen wenn schon gleich. Früherer Randfall behoben: _tryUpdateRow überspringt fehlgeschlagene Einzel-Updates und zählt nur Erfolge wie Ionic."
+  },
+  "services/player/player.service#db-30161f29": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/extra_fields_repository.dart:171",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:350"
+   ],
+   "n": "Alter → neuer Wert (neuer Standard = erste verbleibende Option bzw. '') nur für Personen mit altem Wert, nach Bestätigung „Option löschen“; Toast „{n} Personen aktualisiert“ nur bei n > 0, bei Ladefehler bleibt die Option. Einzelfehler werden jetzt wie Ionic übersprungen (_tryUpdateRow)."
+  },
+  "services/player/player.service#db-48a709ce": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/extra_fields_repository.dart:76",
+    "lib/data/repositories/extra_fields_repository.dart:175"
+   ],
+   "n": "select id, additional_fields .eq(tenantId) aller Personen (ohne pending/left-Filter wie Ionic), seitenweise."
+  },
+  "services/player/player.service#db-4b96ef3d": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/player_repository.dart:814",
+    "lib/core/providers/player_providers.dart:218"
+   ],
+   "n": "delete player .eq(id) (+ tenantId), danach bei appId Zugang zur Instanz entfernen wie db.removePlayer (Liste und Personendetail). Fehlendes Tracking beim Zusammenführen ist als eigener Zusatzbefund erfasst."
+  },
+  "services/player/player.service#db-9a7299b3": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1989"
+   ],
+   "n": "update player_absences {person_id: Ziel} .eq(person_id, Bewerber) beim Zusammenführen, nach den Anwesenheiten wie Ionic; Flutter zusätzlich tenant_id-Filter, Prüfung beider Personen und Abbruch, wenn noch Zeilen übrig sind."
+  },
+  "services/player/player.service#db-bd0f56d3": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:189",
+    "lib/data/repositories/player_repository.dart:586"
+   ],
+   "n": "Massenbearbeitung Standardfeld: update player {[feld]: wert} .eq(id) (+ tenantId), parallel, Gruppenwechsel danach mit syncPlayerWithUpcomingAttendances wie Ionic."
+  },
+  "services/player/player.service#db-c1517084": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/extra_fields_repository.dart:98",
+    "lib/data/repositories/extra_fields_repository.dart:124",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:212"
+   ],
+   "n": "update player {additional_fields} .eq(id) (+ tenantId) in der Bereinigung nach dem Speichern der Zusatzfelder (aktive, nicht ausstehende Personen wie db.getPlayers) und in der Massenbearbeitung (nur Nicht-Organisationsfelder, wie Ionic)."
+  },
+  "services/player/player.service#db-c1a7cd43": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:328",
+    "lib/data/repositories/player_repository.dart:586"
+   ],
+   "n": "update player {history} (+ tenantId) nach „Eintrag entfernen?“ (Abbrechen/Ja), Toasts „entfernt“/Fehler wie Ionic. Randfall unverändert: Flutter entfernt Einträge mit gleichem Datum+Typ+Text, Ionic alle mit gleichem Datum."
+  },
+  "services/player/player.service#db-c3c2ba1a": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/extra_fields_repository.dart:198",
+    "lib/data/repositories/extra_fields_repository.dart:76"
+   ],
+   "n": "select id, additional_fields .eq(tenantId) aller Personen, Flutter seitenweise (Ionic max. 1000 Zeilen)."
+  },
+  "services/player/player.service#db-c8b7f696": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/player_repository.dart:178",
+    "lib/features/settings/presentation/pages/left_players_page.dart:23"
+   ],
+   "n": "pending false, tenantId, left not null, order left ascending:false wie Ionic; danach wie getModifiedPlayersForList nach Gruppe sortiert."
+  },
+  "services/player/player.service#db-ca2edd62": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1902",
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:17"
+   ],
+   "n": "tenantId, pending false, appId null, neq id, or(firstName/lastName ilike Präfix), limit 500, Ranking Schwelle 0,65 wie Ionic; Gruppenname aus groupsMapProvider statt Join. Stiller Ladefehler ist in toast-f8ff8801 erfasst."
+  },
+  "services/player/player.service#db-d3a9e9fb": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "korrigiert",
+   "f": [
+    "lib/data/repositories/player_repository.dart:166",
+    "lib/core/providers/realtime_providers.dart:337",
+    "lib/features/settings/presentation/pages/pending_players_page.dart:96"
+   ],
+   "n": "Filter gleich (pending true, tenantId), aber Sortierung falsch herum: Ionic .order('created_at', {ascending: true}), Flutter .order('created_at') ohne ascending = absteigend (postgrest-dart). Die Liste „Ausstehende Personen“ zeigt in Flutter die neueste Registrierung zuerst statt der ältesten; keine Nachsortierung."
+  },
+  "services/player/player.service#db-e018cb94": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/player_repository.dart:201",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:73",
+    "lib/core/router/route_access.dart:96",
+    "lib/features/settings/presentation/pages/settings_page.dart:198"
+   ],
+   "n": "player: tenantId, instrument, left null, pending false wie Ionic. Flutter-Query sortiert lastName absteigend (postgrest-dart), wirkt sich nicht aus: beide sortieren danach nach Nachname, Vorname (localeCompare). Rolle unverändert: Einstieg und Routen-Gate nur VOICE_LEADER/VOICE_LEADER_HELPER (canSeeVoiceLeaderSettings, Einstellungen nur !isGeneral && !sp)."
+  },
+  "services/profile/profile.service#db-4f868b0e": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1068"
+   ],
+   "n": "select player .eq(appId, userId).limit(1) zur Vorbelegung von Vorname, Nachname, Telefon (Geburtsdatum nur mit Registrierungsfeld birthDate) bei der Registrierung angemeldeter Nutzer, nur wenn noch nicht Mitglied der Instanz; Fehler still wie Ionic."
+  },
+  "services/profile/profile.service#logic-d5e6e268": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1068"
+   ],
+   "n": "Nur getFirstPlayerProfile ist lebendig (tenant-register prefillFromProfile, drei Auslöser: Seitenstart, nach AGB-Bestätigung, nach Login-Dialog); restliche Methoden toter Code (profileSvc sonst nur injiziert)."
+  },
+  "services/protocol/protocol.service#db-162a7f7a": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:49"
+   ],
+   "n": "Gleiche Spaltenliste (PROTOCOL_LIST_SELECT) .eq(tenant_id), danach nach Termin-Datum (sonst created_at) absteigend sortiert wie Ionic."
+  },
+  "services/protocol/protocol.service#db-4c131e2c": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:142",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1063"
+   ],
+   "n": "Entfernen aus Bucket attendances nach 60 s, Fehler ignoriert, wie Ionic."
+  },
+  "services/protocol/protocol.service#db-51e683b8": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:31"
+   ],
+   "n": "select * .eq(attendance_id).maybeSingle(), Flutter zusätzlich .eq(tenant_id). Fehlerverhalten siehe logic-c23941bd."
+  },
+  "services/protocol/protocol.service#db-61df41ec": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:95",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1024"
+   ],
+   "n": "rpc publish_protocol {p_attendance_id} nach dem Speichern offener Abschnitte, danach Themen abschließen, PDF, notifyTeam wie Ionic. Abbruch bei fehlgeschlagenem Speichern ist als Zusatzbefund der Protokollseite („Freigabe nur nach vollständigem Speichern“, Flutter besser) erfasst."
+  },
+  "services/protocol/protocol.service#db-76415810": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:71",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:434",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:490",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:510"
+   ],
+   "n": "rpc save_protocol_section mit gleichen Parametern: Notiz {doc}, Ergebnis {outcome, p_clear_outcome = Ergebnis == null}, leere Änderung legt das Protokoll an; Fehler-Toasts (Notizen max. alle 10 s, Ergebnis mit Rücksetzen) wie Ionic."
+  },
+  "services/protocol/protocol.service#db-7deba62c": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:134"
+   ],
+   "n": "getPublicUrl(path) aus Bucket attendances, URL an notifyTeam (pdfUrl) wie Ionic."
+  },
+  "services/protocol/protocol.service#db-80b2505a": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:125",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1046"
+   ],
+   "n": "Bucket attendances, Pfad protocols/<id>_<ms>.pdf, upsert, application/pdf, öffentliche URL; PDF-Fehler → Warnung „PDF konnte nicht erstellt werden …“ und Benachrichtigung ohne PDF wie Ionic."
+  },
+  "services/protocol/protocol.service#logic-c23941bd": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "korrigiert",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:31",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:225",
+    "lib/data/repositories/protocol_repository.dart:314"
+   ],
+   "n": "Flutter besser: Ionic getProtocolForAttendance/getProtocols verschlucken Fehler (null/[]), daher zeigt die Protokollseite bei Ladefehler der Leitung ein leeres Protokoll; Flutter wirft, die Protokollseite zeigt „Laden fehlgeschlagen“ (Protokoll-Tab und Themen bleiben bei leerer Liste wie Ionic). Zusätzlich _ensureAttendanceOfTenant vor Speichern/Freigabe und tenant_id-Filter. Übrige Methoden (saveSection, publish, uploadPdf, removePdf, deleteProtocol toter Code) gleich. Erste Bewertung „ok“ widerspricht der Regel für Flutter-besser-Abweichungen."
+  },
+  "services/push/push.service#db-79c337fc": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/device_token_repository.dart:119",
+    "lib/core/services/push/push_service.dart:533",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:126"
+   ],
+   "n": "update notifications {push_enabled} .eq(id, Nutzer), danach bei true initPush; Schalter „Push“ nur in den nativen Apps (isNativePushPlatform = Ionic isNative); Fehler still wie Ionic."
+  },
+  "services/push/push.service#db-917c3c05": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/core/services/push/push_service.dart:301",
+    "lib/data/repositories/device_token_repository.dart:119"
+   ],
+   "n": "Nach „Aktivieren“ im Dialog „Push-Benachrichtigungen aktivieren?“: initPush, dann push_enabled = true für den angemeldeten Nutzer; Dialog-Antwort wird gemerkt (push_prompt_shown)."
+  },
+  "services/push/push.service#logic-5a8d2b93": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/core/services/push/push_service.dart:265",
+    "lib/core/providers/push_providers.dart:59",
+    "lib/core/providers/push_providers.dart:289",
+    "lib/core/services/push/push_navigation.dart:89"
+   ],
+   "n": "Gleiches Verhalten: Abfrage nach Login (Später/Aktivieren, Merker, granted/denied ohne Dialog), Berechtigung, Token speichern (eine Zeile pro Nutzer/Token), Vordergrund-Alert (OK/Anzeigen, live_plan still), Tap → Mandantenwechsel, gelesen markieren, Ziel je Typ/Rolle wie navigateFromData/navigateToAttendance (canAddAttendance = Admin/Verantwortlich/Helfer/Stimmführer-Helfer, Eltern → /parents, sonst /signout), Badge leeren. Flutter härtet Sitzungswechsel ab (Generationszähler, serielle Bereinigung) und fragt erst in der App-Shell. Abweichung beim Abmelden siehe native-11e34032."
+  },
+  "services/push/push.service#native-11e34032": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "korrigiert",
+   "f": [
+    "lib/core/services/push/push_service.dart:421",
+    "lib/core/services/push/push_service.dart:500",
+    "lib/core/providers/push_providers.dart:101"
+   ],
+   "n": "Flutter besser: Ionic löscht das FCM-Token nur unter iOS und die device_tokens-Zeile erst nach SIGNED_OUT (ohne Sitzung, RLS „auth.uid() = user_id“ lässt das Löschen ins Leere laufen) – ein abgemeldetes Android-Gerät bekommt so weiter Pushes des alten Kontos. Flutter löscht Zeile(n) vor auth.signOut und widerruft das FCM-Token auf iOS und Android. Erste Bewertung „ok“ widerspricht der Regel für Flutter-besser-Abweichungen."
+  },
+  "services/push/push.service#native-17b43e12": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/core/services/push/firebase_push_messaging_client.dart:99",
+    "lib/core/services/push/push_service.dart:337"
+   ],
+   "n": "iOS: APNs-Registrierung übernimmt firebase_messaging; nach erteilter Berechtigung FCM-Token holen und wie Ionic in device_tokens speichern."
+  },
+  "services/push/push.service#native-17b43e12-2": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/core/services/push/firebase_push_messaging_client.dart:115",
+    "lib/core/services/push/push_service.dart:361"
+   ],
+   "n": "Android: FCM getToken statt register()+registration – gleiches Token, gleich gespeichert. Die frühere Android-13-Lücke ist geschlossen: _checkPermission behandelt „denied“ ohne eigene Anfrage als „prompt“ und fragt POST_NOTIFICATIONS an (push_service.dart:312)."
+  },
+  "services/push/push.service#native-920b8a86": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/core/services/push/firebase_push_messaging_client.dart:115",
+    "lib/core/services/push/push_service.dart:361"
+   ],
+   "n": "FCM-Token → device_tokens (Token anderer Nutzer und eigene Alt-Token löschen, upsert mit onConflict user_id,token); ohne Token nur Log wie Ionic; Token-Refresh-Listener speichert neue Token wie tokenReceived."
+  },
+  "services/push/push.service#native-95ceae7e": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/core/services/push/firebase_push_messaging_client.dart:99",
+    "lib/core/services/push/push_service.dart:337"
+   ],
+   "n": "getToken wartet unter iOS bis zu 10 s (20 × 500 ms) auf das APNs-Token, sonst kein Token und nur Log (Ionic: registration-Listener mit 10-s-Timeout, Fehler nur geloggt)."
+  }
+ },
+ "extra": [
+  {
+   "unit": "services/protocol/protocol.service",
+   "title": "Flutter besser: Ladefehler des Protokolls sichtbar",
+   "n": "Flutter besser: Ionic getProtocolForAttendance gibt bei Fehler null zurück, die Leitung sieht ein leeres Protokoll zum Bearbeiten. / Flutter wirft, die Protokollseite zeigt den Fehlerzustand statt eines leeren Protokolls.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/protocol/protocol.service.ts:16",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:31",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:225"
+   ]
+  }
+ ]
+}

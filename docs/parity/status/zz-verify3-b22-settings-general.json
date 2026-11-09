@@ -1,0 +1,134 @@
+{
+  "batch": "zz-verify3-b22-settings-general",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "settings/general/branding/branding.page#toast-cb6ec961": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:45"
+      ],
+      "n": "Roter Toast „Das Logo darf maximal 2MB groß sein.“ bei > 2 MB, vor der Typprüfung wie Ionic. Rollen: Ionic Einstieg über Einstellungen → Einstellungen und Organisation (beide isAdmin = Admin/Verantwortlich), Seite ohne eigene Rollenprüfung; Flutter /settings/general/** und /settings/org-settings nur Admin/Verantwortlich, Einträge in Allgemein- und Organisationseinstellungen, Seite ohne Rollenprüfung – gleich (Beobachter in Ionic nur per Direkt-URL, Routing-Batch)."
+    },
+    "settings/general/branding/branding.page#toast-e9f84b0e": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:64"
+      ],
+      "n": "Grüner Toast „Logo hochgeladen. Speichern nicht vergessen.“ nach Upload in Bucket branding (org-<orgId> der Organisation der aktuellen Instanz). Rollen wie toast-cb6ec961."
+    },
+    "settings/general/branding/branding.page#toast-08e586ef": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:66"
+      ],
+      "n": "Roter Toast mit Fehlertext: Ionic error.message / Flutter friendlyErrorMessage (StorageException.message; technische Texte → „Unbekannter Fehler“, Netzwerk → „Keine Internetverbindung vorhanden“)."
+    },
+    "settings/general/branding/branding.page#toast-81a12682": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:78"
+      ],
+      "n": "Grüner Toast „Logo entfernt. Speichern nicht vergessen.“; Ionic zeigt ihn auch bei Storage-Fehler (removeOrgLogo prüft error nicht), Flutter dann Fehler-Toast (eigenes Item)."
+    },
+    "settings/general/branding/branding.page#action-191f49f8": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:125"
+      ],
+      "n": "Haken-Button in der Toolbar nur mit Organisation (hasOrg), speichert logo_url/branding_text (getrimmt, leer → null) in tenant_groups der eigenen Organisation. Rollen wie toast-cb6ec961."
+    },
+    "settings/general/branding/branding.page#text-06060f56": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:136"
+      ],
+      "n": "Ohne Organisation: Info-Icon + „Branding wird auf Organisationsebene verwaltet …“; hasOrg in Flutter aus tenant_group_tenants der aktuellen Instanz (= Ionic db.organisation())."
+    },
+    "settings/general/branding/branding.page#text-4c26341a": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:166"
+      ]
+    },
+    "settings/general/branding/branding.page#text-1e2d6e0b": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:170"
+      ]
+    },
+    "settings/general/branding/branding.page#action-b1fdc47e": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:191"
+      ],
+      "n": "„Logo ersetzen“/„Logo hochladen“ mit Bild-Icon, öffnet Bildauswahl; nur mit Organisation."
+    },
+    "settings/general/branding/branding.page#action-5cc1cfe8": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:198"
+      ],
+      "n": "„Logo entfernen“ rot mit Papierkorb, nur mit Logo und Organisation."
+    },
+    "settings/general/branding/branding.page#field-42c132ed": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:211"
+      ],
+      "n": "Label „Branding-Text“, Placeholder „z.B. Verbandsname“, maxLength 60, Satzanfang groß; Material zeigt zusätzlich den Zeichenzähler (Plattform-Look)."
+    },
+    "settings/general/branding/branding.page#action-2cf08504": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:223"
+      ],
+      "n": "Block-Button „Speichern“ unten, gleiche Speicherung wie der Haken; nur mit Organisation."
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-72645316": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:257"
+      ],
+      "n": "„{count} Personen aktualisiert“ nur bei count > 0, nur Personenfelder, nur für bereits gespeicherte Option nach Bestätigung; bei Fehler bleibt die Option (beide). Seite in beiden Apps nur Admin/Verantwortlich (Ionic Einstieg Einstellungen → Einstellungen, Flutter-Route /settings/general/**), keine weitere Rollen-/Mandantenbedingung."
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-590eef57": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:289"
+      ],
+      "n": "Nach „Alle Werte zurücksetzen“ immer „{count} Personen aktualisiert“ (auch 0), nur für Personenfelder im Bearbeiten-Dialog. Rollen wie toast-72645316."
+    },
+    "settings/general/extra-fields/extra-fields.page#text-b6ab4515": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:606"
+      ],
+      "n": "„Es wurden noch keine zusätzlichen Felder hinzugefügt.“ im Abschnitt Personen, wenn leer."
+    },
+    "settings/general/extra-fields/extra-fields.page#text-b6ab4515-2": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:606"
+      ],
+      "n": "Gleicher Text im Abschnitt Werke (gemeinsames _buildSection), wenn leer."
+    }
+  },
+  "extra": []
+}

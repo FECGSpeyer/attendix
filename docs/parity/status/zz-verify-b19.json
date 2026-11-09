@@ -1,0 +1,589 @@
+{
+ "batch": "zz-verify-b19",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "services/organisation/organisation.service#db-2b71bceb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:260",
+    "lib/data/repositories/org_plan_repository.dart:227",
+    "lib/core/providers/plan_providers.dart:252"
+   ],
+   "n": "update tenant_groups {additional_fields} .eq('id', orgId) wie Ionic (Org über aktuelle Instanz); Feld-JSON gleiche Keys (id, name, type, defaultValue, options, visibleToPlayers, editableByPlayers, displayMode).",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#toast-748ceab8": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Ionic: Toast \"Fehler beim Laden der gemeinsamen Zusatzfelder\" (rot) beim Öffnen der Personendetails (person.page.ts:168). / Flutter: _loadSharedFieldValues fängt den Fehler still ab (person_detail_page.dart:333), es werden die Instanzwerte gezeigt.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-ad59e983": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/profile_repository.dart:281",
+    "lib/core/providers/profile_providers.dart:180",
+    "lib/features/people/presentation/pages/person_detail_page.dart:351",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:203"
+   ],
+   "n": "Gleiche Upsert-Zeilen {tenant_group, person_key, field_id, value} mit onConflict tenant_group,person_key,field_id; alle drei Ionic-Aufrufer (eigenes Profil, Personendetail, Massenbearbeitung) vorhanden. Flutter zusätzlich Mitgliedsprüfung der Org und Demo-Schutz.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-ac6b27bd": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:307",
+    "lib/core/providers/plan_providers.dart:255",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:107"
+   ],
+   "n": "delete tenant_group_person_fields .eq('tenant_group').in('field_id') nach dem Speichern der Felder, gelöschte IDs = original minus aktuell, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-d081bc1d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/organisation_repository.dart:22",
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:101"
+   ],
+   "n": "insert tenant_groups {name}, danach Verknüpfung mit der aktuellen Instanz wie db.createOrganisation. Flutter trimmt den Namen.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-00837cfa": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/organisation_repository.dart:78"
+   ],
+   "n": "Gleiche Einfügung {tenant_id, tenant_group}; Flutter prüft vorher Rolle (Admin/Verantwortlicher) und überspringt eine bestehende Verknüpfung still.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#toast-7f0bc6eb": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:74",
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:102"
+   ],
+   "n": "Ionic: \"Fehler beim Verknüpfen der Organisation\" (plus error.message der Seite). / Flutter: beim Auswählen \"Fehler beim Verknüpfen\"; beim Erstellen wird das Ergebnis von linkCurrentTenant ignoriert und trotz fehlgeschlagener Verknüpfung \"Die Organisation wurde erfolgreich erstellt.\" gezeigt.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-f9c49f6d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/organisation_repository.dart:120"
+   ],
+   "n": "delete tenant_group_tenants .eq('tenant_id').eq('tenant_group') wie Ionic; Flutter zusätzlich Rollenprüfung.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-bdc55acf": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/organisation_repository.dart:134"
+   ],
+   "n": "Keine Verknüpfung mehr → delete tenant_groups .eq('id', orgId), wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#toast-68cfa05e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/providers/organisation_providers.dart:11",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:143"
+   ],
+   "n": "Ionic: Toast \"Fehler beim Laden der Organisation\" (rot) bei jedem Laden (Instanzwechsel setTenant, Stück, Person). / Flutter: kein Toast; nur die Organisations-Seiten zeigen im Inhalt \"Fehler: <Meldung>\", sonst still (valueOrNull). Erster Prüfer: \"missing\" – es gibt aber die Inline-Meldung, daher diff (wie toast-8e502223).",
+   "v": "korrigiert"
+  },
+  "services/organisation/organisation.service#toast-c69e2a47": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:121",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1300"
+   ],
+   "n": "Ionic: \"Fehler beim Laden der Personen\". / Flutter: Personen verknüpfen \"Fehler beim Laden: <Meldung>\"; Statistik (Organisation) still.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#toast-f9193a09": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:17"
+   ],
+   "n": "Ionic: Toast \"Fehler beim Laden der Mandanten\", es öffnet sich kein Dialog. / Flutter: Fehler wird zu leerer Liste, danach öffnet sich direkt \"Organisation erstellen\".",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#toast-d0763e5e": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Ionic: \"Fehler beim Laden der Mandanten\" (rot). / Flutter: linkedTenantsProvider-Aufrufer nutzen valueOrNull, kein Hinweis (song_detail_page.dart:848, org_settings_page.dart:131, handover_page.dart:100, person_detail_page.dart:1361).",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#toast-8e502223": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:264"
+   ],
+   "n": "Ionic: Toast \"Fehler beim Laden der Organisationspläne\". / Flutter: Fehlermeldung im Seiteninhalt \"Fehler: <Meldung>\".",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#toast-8e502223-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:264"
+   ],
+   "n": "Wie toast-8e502223: Flutter zeigt \"Fehler: <Meldung>\" im Inhalt statt Toast.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-7215e087": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:201",
+    "lib/core/providers/plan_providers.dart:259"
+   ],
+   "n": "update tenant_groups {public_plan_key} .eq('id'); 16 Hex-Zeichen aus Random.secure (Ionic randomUUID-Hex).",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-66e9afc1": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:214"
+   ],
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#toast-c089dd9d": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Ionic: \"Fehler beim Widerrufen des öffentlichen Links\" (rot). / Flutter: bei Fehler kein Feedback (org_plans_page.dart:133-134 zeigt nur bei Erfolg einen Toast).",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-67309274": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:240",
+    "lib/core/providers/plan_providers.dart:239"
+   ],
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-81ff9814": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:243"
+   ],
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-a803b727": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:246",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:42"
+   ],
+   "n": "Getrimmter Name wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-341e339b": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/organisation_settings_repository.dart:128"
+   ],
+   "n": "update tenant_groups {logo_url, branding_text} (leer → null, Text getrimmt) .eq('id'); Flutter ermittelt die Organisation über die aktuelle Instanz.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#db-32f64acc": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:252",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:85"
+   ],
+   "n": "Gleiche Spalten (beamer_files_enabled bzw. gemeinde_app_key_hash + _hint, Schlüssel atx_+48 Hex, SHA-256).",
+   "v": "bestätigt"
+  },
+  "services/player-absence/player-absence.service#toast-88276f2b": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Ionic: \"Fehler beim Laden der Abwesenheiten\" (rot). / Flutter: Aufrufer nutzen valueOrNull, kein Feedback (planned_absences.dart:332, self_service_absences.dart:170).",
+   "v": "bestätigt"
+  },
+  "services/player-absence/player-absence.service#toast-41ab2170": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/attendance_create_writes.dart:131",
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:142",
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:149"
+   ],
+   "n": "Ionic: Service-Toast \"Fehler beim Laden der Abwesenheiten\" bei jedem Aufrufer (Termin anlegen, Datum ändern, Startseiten-Karte), auch wenn der Aufrufer weitermacht. / Flutter: Termin anlegen still; Datum ändern zeigt \"Termin konnte nicht geladen werden\" und bricht ab (Ionic attendance-create.ts:178 macht ohne Abwesenheiten weiter); Startseiten-Karte \"Fehler beim Laden: <Meldung>\". Erster Prüfer: \"missing\" mit nur einem Aufrufer.",
+   "v": "korrigiert"
+  },
+  "services/player-absence/player-absence.service#db-7fbdf33d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:88"
+   ],
+   "n": "Gleiche Spalten person_id, from_date, until_date, reason, tenant_id (= aktuelle Instanz).",
+   "v": "bestätigt"
+  },
+  "services/player-absence/player-absence.service#db-936de012": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:105"
+   ],
+   "n": "Flutter zusätzlich tenant_id-Filter.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-dd8efb3d": {
+   "s": "na",
+   "n": "toter Code: PlayerService.getPlayers wird nicht genutzt; DbService.getPlayers hat eine eigene Implementierung (db.service.ts:1559).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#toast-ecfc07c3": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Ionic: \"Fehler beim Laden der Personen\" (rot) in Einstellungen/Seitenmenü. / Flutter: realtimePendingPlayersProvider mit valueOrNull, kein Feedback (settings_page.dart:85).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#toast-f8ff8801": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Ionic: \"Fehler beim Laden der Personen\" (rot), Seite fängt danach still ab (person.page.ts:880). / Flutter: Fehler ergibt leere Liste ohne Feedback (duplicate_candidates_card.dart:27).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-9a7299b3": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1949"
+   ],
+   "n": "update player_absences {person_id: target} .eq('person_id', pending) beim Zusammenführen; Flutter zusätzlich tenant_id-Filter und Prüfung, dass beide Personen zur Instanz gehören.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-fdce56a8": {
+   "s": "na",
+   "n": "toter Code: PlayerService.getConductors wird nicht genutzt; DbService.getConductors (db.service.ts:1708) delegiert an ConductorService.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-79f04f65": {
+   "s": "na",
+   "n": "toter Code: PlayerService.addPlayer ungenutzt; DbService.addPlayer eigene Implementierung (db.service.ts:1716).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-0441732b": {
+   "s": "na",
+   "n": "toter Code: PlayerService.updatePlayer ungenutzt; DbService.updatePlayer eigene Implementierung (db.service.ts:2219); einziger weiterer Aufrufer PlayerService.checkAndUnpausePlayers ist ebenfalls tot (DbService.checkAndUnpausePlayers db.service.ts:2302).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-1cfc123d": {
+   "s": "na",
+   "n": "toter Code: PlayerService.updatePlayer ungenutzt (DbService.updatePlayer db.service.ts:2219).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-c1a7cd43": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:326",
+    "lib/data/repositories/player_repository.dart:565"
+   ],
+   "n": "update player {history} (+ tenantId). Randfall: Flutter entfernt Einträge mit gleichem Datum+Typ+Text, Ionic alle mit gleichem Datum.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-4741ff4c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/organisation_settings_repository.dart:158",
+    "lib/data/repositories/cross_tenant_person_repository.dart:177"
+   ],
+   "n": "update player {global_person_id} .in('id'); Flutter zusätzlich auf Instanzen der Org beschränkt; Standardwerte der Org-Felder werden wie in db.setGlobalPersonId geschrieben.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-c1517084": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/extra_fields_repository.dart:85",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:210"
+   ],
+   "n": "update player {additional_fields} .eq('id') (+ tenantId) in Bereinigung und Massenbearbeitung.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-bd0f56d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:184",
+    "lib/data/repositories/player_repository.dart:565"
+   ],
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-4b96ef3d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:796",
+    "lib/core/providers/player_providers.dart:218"
+   ],
+   "n": "delete player .eq('id') (+ tenantId).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-b01b972c": {
+   "s": "na",
+   "n": "toter Code: PlayerService.archivePlayer ungenutzt; DbService.archivePlayer eigene Implementierung (db.service.ts:2544).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-a017fdc2": {
+   "s": "na",
+   "n": "toter Code: PlayerService.reactivatePlayer hat keinen Aufrufer (DbService schreibt left:null selbst, db.service.ts:3545).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-10c42844": {
+   "s": "na",
+   "n": "toter Code: PlayerService.updateProfile ungenutzt; DbService.updateProfile eigene Implementierung (db.service.ts:1455).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-c3c2ba1a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/extra_fields_repository.dart:158",
+    "lib/data/repositories/extra_fields_repository.dart:73"
+   ],
+   "n": "select id, additional_fields .eq('tenantId') – Flutter seitenweise (Ionic max. 1000 Zeilen).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-09f7345f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/extra_fields_repository.dart:85",
+    "lib/data/repositories/extra_fields_repository.dart:167"
+   ],
+   "n": "Gleiche Werte. Randfall: Ionic überspringt fehlgeschlagene Einzel-Updates und zählt weiter, Flutter bricht beim ersten Fehler ab.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#toast-7d6f3e4f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:259"
+   ],
+   "n": "Ionic: \"Fehler beim Laden der Personen\". / Flutter: \"Fehler beim updaten der Zusatzfelder\".",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-30161f29": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/extra_fields_repository.dart:143",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:255"
+   ],
+   "n": "Alter → neuer Wert (neuer Standard = erste verbleibende Option) wie Ionic. Randfall wie db-09f7345f (Abbruch bei Einzelfehler).",
+   "v": "bestätigt"
+  },
+  "services/print/print.service#logic-e07957d3": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/songs/data/song_print_service.dart:57",
+    "lib/features/songs/data/song_print_service.dart:80",
+    "lib/core/services/native/native_file_service.dart:181"
+   ],
+   "n": "Sammeln, Kopien, Bilder auf A4 eingepasst, übersprungene zählen, Sperre gegen Doppeldruck und nativer Druckdialog mit Viewer-Fallback vorhanden. Unterschiede: PDF-Seiten werden mit 150 dpi gerastert statt als Vektorseiten übernommen; kein blockierender Ladehinweis (\"PDFs werden zusammengeführt...\"/\"Datei wird geladen...\"); mobiler Browser öffnet die PDF in neuem Tab statt Teilen/Download; Download nur über die öffentliche URL (Ionic Storage-Download mit fetch-Fallback). Siehe Extras.",
+   "v": "bestätigt"
+  },
+  "services/print/print.service#toast-c959cefd": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Ionic: \"Fehler beim Zusammenführen der Noten.\" (rot). / Flutter: Fehler aus doc.save/printPdf (Web: rethrow) werden in den Aufrufern nicht abgefangen, kein Toast.",
+   "v": "bestätigt"
+  },
+  "services/print/print.service#toast-b351a56a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:64",
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:53",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1131"
+   ],
+   "n": "Ionic: \"Keine druckbaren Noten (PDF/Bild) gefunden.\" (Warnung) an allen Stellen. / Flutter: gleicher Text in Aktuelle Stücke und Gruppenmappe; Stückdetail \"Datei konnte nicht gedruckt werden\"; Selbstbedienung \"Keine druckbaren Noten gefunden.\"; Gruppen-PDF-Druck (group_pdf_print.dart:55) ohne Hinweis.",
+   "v": "bestätigt"
+  },
+  "services/print/print.service#toast-b415683d": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Ionic: Desktop-Browser-Druck fehlgeschlagen → PDF-Download + Hinweis \"PDF heruntergeladen - bitte manuell drucken\" (Warnung). / Flutter (printing 5.15.1 Web): öffnet die PDF ohne Hinweis in neuem Tab.",
+   "v": "bestätigt"
+  },
+  "services/profile/profile.service#db-e82c3029": {
+   "s": "na",
+   "n": "toter Code: ProfileService wird nur in tenant-register.page.ts:121 (getFirstPlayerProfile) genutzt; DbService injiziert profileSvc (db.service.ts:120), ruft es aber nie auf (eigene updateProfile db.service.ts:1455, changePassword/updatePassword über AuthService/db.service.ts:1660).",
+   "v": "bestätigt"
+  },
+  "services/profile/profile.service#db-e82c3029-2": {
+   "s": "na",
+   "n": "toter Code: ProfileService wird nur in tenant-register.page.ts:121 (getFirstPlayerProfile) genutzt; DbService injiziert profileSvc (db.service.ts:120), ruft es aber nie auf (eigene updateProfile db.service.ts:1455, changePassword/updatePassword über AuthService/db.service.ts:1660).",
+   "v": "bestätigt"
+  },
+  "services/profile/profile.service#db-eef39e89": {
+   "s": "na",
+   "n": "toter Code: ProfileService wird nur in tenant-register.page.ts:121 (getFirstPlayerProfile) genutzt; DbService injiziert profileSvc (db.service.ts:120), ruft es aber nie auf (eigene updateProfile db.service.ts:1455, changePassword/updatePassword über AuthService/db.service.ts:1660).",
+   "v": "bestätigt"
+  },
+  "services/profile/profile.service#db-c18d5e82": {
+   "s": "na",
+   "n": "toter Code: ProfileService wird nur in tenant-register.page.ts:121 (getFirstPlayerProfile) genutzt; DbService injiziert profileSvc (db.service.ts:120), ruft es aber nie auf (eigene updateProfile db.service.ts:1455, changePassword/updatePassword über AuthService/db.service.ts:1660).",
+   "v": "bestätigt"
+  },
+  "services/profile/profile.service#toast-0519faf3": {
+   "s": "na",
+   "n": "toter Code: ProfileService wird nur in tenant-register.page.ts:121 (getFirstPlayerProfile) genutzt; DbService injiziert profileSvc (db.service.ts:120), ruft es aber nie auf (eigene updateProfile db.service.ts:1455, changePassword/updatePassword über AuthService/db.service.ts:1660).",
+   "v": "bestätigt"
+  },
+  "services/protocol/protocol.service#db-76415810": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:80",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:463"
+   ],
+   "n": "rpc save_protocol_section mit gleichen Parametern; p_clear_outcome = (Ergebnis == null) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/protocol/protocol.service#db-61df41ec": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:98",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:983"
+   ],
+   "v": "bestätigt"
+  },
+  "services/protocol/protocol.service#db-945a3954": {
+   "s": "na",
+   "n": "toter Code: deleteProtocol wird von keiner Seite aufgerufen (nur DbService.deleteProtocol db.service.ts:2994 ohne Aufrufer; Flutter ebenfalls ohne Aufrufer).",
+   "v": "bestätigt"
+  },
+  "services/protocol/protocol.service#db-80b2505a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:128",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1005"
+   ],
+   "n": "Bucket attendances, Pfad protocols/<id>_<ms>.pdf, upsert, application/pdf, öffentliche URL.",
+   "v": "bestätigt"
+  },
+  "services/protocol/protocol.service#db-4c131e2c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:144",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1022"
+   ],
+   "n": "Entfernen nach 60 s, Fehler ignoriert, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#native-95ceae7e-2": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/firebase_push_messaging_client.dart:99",
+    "lib/core/services/push/push_service.dart:318"
+   ],
+   "n": "firebase_messaging übernimmt die APNs-Registrierung; getToken wartet bis zu 10 s auf das APNs-Token, bei Fehler nur Log (Ionic: reject → console.error).",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#db-b54d7781": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/device_token_repository.dart:106",
+    "lib/core/services/push/push_service.dart:446",
+    "lib/core/providers/push_providers.dart:87"
+   ],
+   "n": "Flutter besser: Token wird vor dem Abmelden gelöscht (zusätzlich nach user_id), FCM-Token auch auf Android gelöscht. Ionic löscht erst im SIGNED_OUT-Handler (app.component.ts:166) – ohne Sitzung greift RLS \"Users can manage their own tokens\", der Delete ist wirkungslos; auf Android kommen danach weiter Pushes des alten Kontos.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#db-79c337fc": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/device_token_repository.dart:123",
+    "lib/core/services/push/push_service.dart:490",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:127"
+   ],
+   "n": "update notifications {push_enabled} .eq('id', userId), danach bei true initPush, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#db-917c3c05": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart:283",
+    "lib/data/repositories/device_token_repository.dart:123"
+   ],
+   "n": "Nach \"Aktivieren\" im Push-Dialog: initPush, dann push_enabled = true.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#db-90d5151a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/device_token_repository.dart:62"
+   ],
+   "v": "bestätigt"
+  },
+  "services/push/push.service#db-90d5151a-2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/device_token_repository.dart:70"
+   ],
+   "v": "bestätigt"
+  },
+  "services/push/push.service#db-b597994b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/device_token_repository.dart:79"
+   ],
+   "n": "Flutter besser: upsert mit onConflict user_id,token aktualisiert platform/updated_at. Ionic upsert hat KEIN onConflict (Konflikt nur auf PK id, nicht im Payload) → bei bereits gespeichertem Token schlägt der Insert mit 23505 an UNIQUE(user_id, token) fehl (MIGRATION_push_notifications.sql:13), nur console.error; Zeile bleibt unverändert. Erster Prüfer schrieb fälschlich \"wie Ionic\".",
+   "v": "korrigiert"
+  },
+  "services/role-permission/role-permission.service#db-32e31199": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/role_permission_repository.dart:48",
+    "lib/data/models/role_permission/tenant_role_permission.dart:30",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:72"
+   ],
+   "n": "Gleiche sechs Spalten; Flutter filtert zusätzlich nach tenant_id und speichert nur geänderte Rollen (gleicher Endzustand).",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "services/print/print.service",
+   "title": "PDF-Seiten werden gerastert",
+   "n": "Ionic: pdf-lib übernimmt die PDF-Seiten als Vektorseiten (copyPages). / Flutter: jede PDF-Seite wird mit 150 dpi als PNG gerastert und eingebettet – unschärferer Notendruck, deutlich größere Datei/Speicherbedarf bei großen Mappen.",
+   "sev": "mittel",
+   "ionic": "src/app/services/print/print.service.ts:150",
+   "f": [
+    "lib/features/songs/data/song_print_service.dart:80"
+   ]
+  },
+  {
+   "unit": "services/print/print.service",
+   "title": "Mobiler Browser: neuer Tab statt Teilen/Download",
+   "n": "Ionic: mobiler Browser/PWA → Utils.downloadFileNative (Teilen-Menü mit \"Drucken\" bzw. Download). / Flutter: Printing.layoutPdf öffnet auf Mobile-UA die PDF nur in einem neuen Tab (printing_web _getPdf).",
+   "sev": "niedrig",
+   "ionic": "src/app/services/print/print.service.ts:87",
+   "f": [
+    "lib/core/services/native/native_file_service.dart:181"
+   ]
+  },
+  {
+   "unit": "services/print/print.service",
+   "title": "Kein Ladehinweis beim Zusammenführen",
+   "n": "Ionic: blockierendes Loading \"PDFs werden zusammengeführt...\" bzw. \"Datei wird geladen...\" bis zum Druck. / Flutter: kein Ladeindikator während Download/Rastern (svcMergingPdfs/svcFileLoading ungenutzt).",
+   "sev": "niedrig",
+   "ionic": "src/app/services/print/print.service.ts:38",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:58"
+   ]
+  },
+  {
+   "unit": "services/db.service",
+   "title": "Zusammenführen: Rolle des übernommenen Kontos",
+   "n": "Außerhalb der Stichprobe, beim Prüfen von db-9a7299b3 gefunden. Ionic mergePendingPlayerIntoExisting: tenantUsers.role immer PLAYER (+ Mail mit Rolle Spieler). / Flutter: RESPONSIBLE, wenn die Zielperson in der Hauptgruppe ist (accountRoleFor), sonst PLAYER. Evtl. bewusst an createAccount angelehnt – Leon entscheidet.",
+   "sev": "hoch",
+   "ionic": "src/app/services/db.service.ts:3416",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1991"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1522 @@
+{
+ "batch": "zz-verify5-b-opus-11",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 129,
+    "method": "PushService.initPush",
+    "cond": [
+     "(isIos)"
+    ],
+    "plugin": "PushNotifications",
+    "call": "addListener",
+    "args": "'registrationError', (error) => { reject(new Error(error.error)); }",
+    "src": "a75a72e3",
+    "mbody": "92b48f51",
+    "roleGuarded": true,
+    "id": "services/push/push.service#native-95ceae7e-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/firebase_push_messaging_client.dart:99",
+     "lib/core/services/push/push_service.dart:318"
+    ],
+    "n": "firebase_messaging übernimmt die APNs-Registrierung; getToken wartet bis zu 10 s auf das APNs-Token, bei Fehler nur Log (Ionic: reject → console.error).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 158,
+    "method": "PushService.initPush",
+    "cond": [
+     "!(isIos)"
+    ],
+    "plugin": "PushNotifications",
+    "call": "addListener",
+    "args": "'registration', async (token) => { this.currentToken = token.value; await this.saveToken(token.value); }",
+    "src": "72c8ac65",
+    "mbody": "92b48f51",
+    "roleGuarded": true,
+    "id": "services/push/push.service#native-95ceae7e-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_service.dart:318",
+     "lib/core/services/push/push_service.dart:322"
+    ],
+    "n": "Android: Token speichern (saveToken: fremde Zeilen löschen, upsert) entspricht dem registration-Listener.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 164,
+    "method": "PushService.initPush",
+    "cond": [],
+    "plugin": "PushNotifications",
+    "call": "addListener",
+    "args": "'registrationError', async (error) => { console.error('Push registration error:', error); }",
+    "src": "4d5c4693",
+    "mbody": "92b48f51",
+    "roleGuarded": true,
+    "id": "services/push/push.service#native-95ceae7e-4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/firebase_push_messaging_client.dart:116",
+     "lib/core/services/push/push_service.dart:324"
+    ],
+    "n": "Registrierungsfehler nur geloggt wie Ionic (console.error), keine Nutzeranzeige.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 404,
+    "method": "PushService.clearBadge",
+    "cond": [],
+    "plugin": "Badge",
+    "call": "clear",
+    "args": "",
+    "src": "e562b094",
+    "mbody": "bbdcf0b3",
+    "id": "services/push/push.service#native-bb512112"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/firebase_push_messaging_client.dart:181",
+     "lib/core/providers/push_providers.dart:81"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/push_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 110,
+    "method": "PushService.initPush",
+    "cond": [
+     "(isIos)"
+    ],
+    "plugin": "FirebaseMessaging",
+    "call": "addListener",
+    "args": "'tokenReceived', async (event) => { this.zone.run(async () => { if (event.token) { this.currentToken = event.token; await this.saveToken(event.token); } }); }",
+    "src": "c088a39c",
+    "mbody": "92b48f51",
+    "roleGuarded": true,
+    "id": "services/push/push.service#native-ce80f086"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_service.dart:312",
+     "lib/core/services/push/firebase_push_messaging_client.dart:139"
+    ],
+    "n": "Token-Erneuerung → saveToken (onTokenRefresh, in Flutter auch auf Android). Keine Rollenbeschränkung in beiden.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 207,
+    "method": "PushService.setupPushListeners",
+    "cond": [],
+    "plugin": "PushNotifications",
+    "call": "addListener",
+    "args": "'pushNotificationActionPerformed', (action: ActionPerformed) => { this.zone.run(async () => { await this.clearBadge(); this.pendingPushData = action.notificati…",
+    "src": "e7e333b9",
+    "mbody": "7c2fb4b3",
+    "id": "services/push/push.service#native-d16c5044"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_service.dart:206"
+    ],
+    "n": "Ein Pfad über onMessageOpenedApp/getInitialMessage.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 180,
+    "method": "PushService.setupPushListeners",
+    "cond": [],
+    "plugin": "FirebaseMessaging",
+    "call": "addListener",
+    "args": "'notificationReceived', (event) => { this.zone.run(() => { const n = event.notification; // Live plan updates are silent data pushes handled natively, never an…",
+    "src": "f3827f11",
+    "mbody": "7c2fb4b3",
+    "id": "services/push/push.service#native-eaa8c988"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_service.dart:194",
+     "lib/core/services/push/push_navigation.dart:49"
+    ],
+    "n": "Hinweis: iOS-Banner im Vordergrund in Flutter unterdrückt (alert:false, firebase_push_messaging_client.dart:43), stattdessen eigener Hinweis; Ionic setzt presentationOptions badge/sound/alert – welches Verhalten unter Ionic wirklich greift, ist ohne Gerät nicht prüfbar.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 194,
+    "method": "PushService.setupPushListeners",
+    "cond": [],
+    "plugin": "FirebaseMessaging",
+    "call": "addListener",
+    "args": "'notificationActionPerformed', (event) => { this.zone.run(async () => { await this.clearBadge(); this.tracking.track(TrackingEvent.PushOpened); this.pendingPus…",
+    "src": "80f5db17",
+    "mbody": "7c2fb4b3",
+    "id": "services/push/push.service#native-eaa8c988-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_service.dart:206",
+     "lib/core/services/push/push_service.dart:155"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 120,
+    "method": "PushService.initPush",
+    "cond": [
+     "(isIos)"
+    ],
+    "plugin": "FirebaseMessaging",
+    "call": "requestPermissions",
+    "args": "",
+    "src": "edff5901",
+    "mbody": "92b48f51",
+    "roleGuarded": true,
+    "id": "services/push/push.service#native-fdd6118b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/firebase_push_messaging_client.dart:83",
+     "lib/core/services/push/push_service.dart:303"
+    ],
+    "n": "iOS: FirebaseMessaging.requestPermission (alert/badge/sound) im prompt-Fall; nach erteilter Berechtigung ist der Ionic-Aufruf ein No-op.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/push/push.service.ts",
+    "line": 368,
+    "method": "PushService.navigateToAttendance",
+    "cond": [
+     "!(role === Role.PARENT)",
+     "!(role === Role.ADMIN || role === Role.RESPONSIBLE || role === Role.HELPER || role === Role.VOICE_LEADER_HELPER)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/tabs/signout'",
+    "src": "6744948f",
+    "mbody": "1ae39548",
+    "roleGuarded": true,
+    "id": "services/push/push.service#nav-afe2b2de"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_navigation.dart:81",
+     "lib/core/router/route_access.dart:72",
+     "lib/features/self_service/presentation/pages/signout_page.dart:67"
+    ],
+    "n": "Spieler, Stimmführer, Bewerber, NONE → Meine Termine mit pendingAttendanceId – wie Ionic. Randfall Beobachter (bekommt keine Termin-Pushes, keine Benachrichtigungs-Einstellungen): Ionic AuthGuard bricht /tabs/signout ab (bleibt auf der Seite), Flutter leitet auf Personenliste um.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/register.guard",
+   "ionic": {
+    "ts": "services/register.guard.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/register.guard.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:10-10",
+     "canActivate:12-25"
+    ],
+    "bodies": {
+     "constructor": "89059650",
+     "canActivate": "64db3669"
+    },
+    "id": "services/register.guard#logic-238147e4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:339",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:364"
+    ],
+    "n": "Ionic /register ist \"Neue Instanz anlegen\" für Angemeldete ohne Instanz. Flutter: angemeldet auf /register → /tenants, das bei 0 Instanzen die nicht schließbare Seite \"Neue Instanz anlegen\" zeigt (TenantCreatePage canDismiss:false); Flutter-/register selbst ist die Konto-Registrierung (siehe nav-28791f97). Flutter verlangt vorher die AGB-Zustimmung.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 199,
+    "method": "ShiftService.updateShiftAttendancesInTenant",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, person_id, attendance_id, status, notes'",
+    "filters": [
+     "in('person_id', assignedPlayerIds)",
+     "in('attendance_id', attendanceIds)"
+    ],
+    "tenantFilter": false,
+    "src": "c9bd15e0",
+    "mbody": "84e2f044",
+    "id": "services/shift/shift.service#db-4e51e062"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:469"
+    ],
+    "n": "Flutter zusätzlich Inner-Join auf attendance.tenantId der Ziel-Instanz; notes wird nicht gelesen (nicht benötigt).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 119,
+    "method": "ShiftService.assignShiftToPlayersInTenant",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, appId'",
+    "filters": [
+     "eq('tenantId', targetTenantId)",
+     "in('appId', appIds)",
+     "is('left', null)"
+    ],
+    "tenantFilter": true,
+    "src": "0bbb606b",
+    "mbody": "ce90c87e",
+    "id": "services/shift/shift.service#db-71d6160b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:355"
+    ],
+    "n": "Gleich: player id, appId mit tenantId=Ziel, appId in (...), left is null.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 81,
+    "method": "ShiftService.deleteShift",
+    "cond": [],
+    "table": "shifts",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "7889c341",
+    "mbody": "0002eeab",
+    "id": "services/shift/shift.service#db-75386190"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/shift_repository.dart:109",
+     "lib/core/providers/shift_providers.dart:108"
+    ],
+    "n": "Delete shifts nach id (+ tenant_id). Vorher werden wie in DbService.deleteShift die Schicht-Zuweisungen aller Personen (pending=false) mit shift_id null zurückgesetzt.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/shift_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 48,
+    "method": "ShiftService.addShift",
+    "cond": [],
+    "table": "shifts",
+    "op": "insert",
+    "payload": "{ name: shift.name, description: shift.description, tenant_id: tenantId, definition: (shift.definition || []) as any, shifts: (shift.shifts || []) as any, }",
+    "options": [],
+    "columns": "'id'",
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "5b9ccb1c",
+    "mbody": "e1e95e3c",
+    "id": "services/shift/shift.service#db-8236c105"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/shift_repository.dart:53",
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:316"
+    ],
+    "n": "Insert shifts mit name, description, tenant_id, definition, shifts (Neu: aus ShiftPlan.toJson ohne id/created_at; Kopie: explizit mit tenant_id der Ziel-Instanz und '(Kopie)'). Kleinigkeiten: Flutter trimmt Name/Beschreibung, Segmente enthalten 'id': null.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 236,
+    "method": "ShiftService.updateShiftAttendancesInTenant",
+    "cond": [
+     "(result.status === AttendanceStatus.Excused && pa.status === attType.default_status)"
+    ],
+    "table": "person_attendances",
+    "op": "update",
+    "payload": "{ status: result.status, notes: result.note, }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', pa.id)"
+    ],
+    "tenantFilter": false,
+    "src": "65f8ef17",
+    "mbody": "84e2f044",
+    "id": "services/shift/shift.service#db-9d620c6f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:485",
+     "lib/core/utils/shift_utils.dart:338"
+    ],
+    "n": "Gleiche Bedingung (Ergebnis Entschuldigt und Status = default_status, ganztägige Typen übersprungen, Start/Ende-Fallback auf Typ) und gleiche Spalten status/notes ('Schichtbedingt') nach id. Unbekannter Schichtname: Ionic bricht ab, Flutter überspringt die Person (Randfall).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 186,
+    "method": "ShiftService.updateShiftAttendancesInTenant",
+    "cond": [],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, date, type_id, start_time, end_time'",
+    "filters": [
+     "eq('tenantId', targetTenantId)",
+     "gt('date', dayjs().startOf('day').toISOString())"
+    ],
+    "tenantFilter": true,
+    "src": "ccdbd1f8",
+    "mbody": "84e2f044",
+    "id": "services/shift/shift.service#db-a9051ad6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:462"
+    ],
+    "n": "Ionic date > heute 00:00 (ISO), Flutter date >= heutiges Datum – gleiche Termine ab heute.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 142,
+    "method": "ShiftService.assignShiftToPlayersInTenant",
+    "cond": [],
+    "table": "player",
+    "op": "update",
+    "payload": "{ shift_id: newShiftId, shift_name: originalData?.shift_name || null, shift_start: originalData?.shift_start || null, }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', player.id)"
+    ],
+    "tenantFilter": false,
+    "src": "c95b5a0b",
+    "mbody": "ce90c87e",
+    "id": "services/shift/shift.service#db-ad58aa81"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:383"
+    ],
+    "n": "Gleiche Spalten shift_id = neue Schicht, shift_name/shift_start aus Quellperson (leer → null), Zielpersonen per appId mit left = null; Flutter filtert zusätzlich tenantId. Nur Fehlerfall anders: Ionic überspringt fehlgeschlagene Einzel-Updates still, Flutter bricht mit Fehler-Toast ab.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 173,
+    "method": "ShiftService.updateShiftAttendancesInTenant",
+    "cond": [],
+    "table": "attendance_types",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenant_id', targetTenantId)"
+    ],
+    "tenantFilter": true,
+    "src": "03af7641",
+    "mbody": "84e2f044",
+    "id": "services/shift/shift.service#db-b2e7460e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:457"
+    ],
+    "n": "Flutter liest nur die benötigten Spalten (id, all_day, start_time, end_time, default_status) der Ziel-Instanz.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 33,
+    "method": "ShiftService.isShiftUsed",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id'",
+    "filters": [
+     "eq('shift_id', id)",
+     "limit(1)"
+    ],
+    "tenantFilter": false,
+    "src": "d680a605",
+    "mbody": "16c805dd",
+    "id": "services/shift/shift.service#db-eb72dd6f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/shift_repository.dart:141",
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:97"
+    ],
+    "n": "Flutter nutzt getShiftUsageCount (gleiche Abfrage player.shift_id, zusätzlich .eq('tenantId')), 'benutzt' = Anzahl > 0 statt limit(1).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 107,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(file)",
+     "(files.length === 1)"
+    ],
+    "call": "Utils.openFileNative",
+    "args": "file.url, file.fileName",
+    "src": "62e71090",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#effect-2f74a4fe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:143",
+     "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+    ],
+    "n": "Genau eine Datei (Instrument; bei Mandant type=choir plus \"Chor (alle)\", Dubletten nach fileName entfernt – gleiche Mandanten-Bedingung): \"Noten anzeigen\" → openSongFileExternally wie Utils.openFileNative (installierte Web-App In-App-Viewer, sonst neuer Tab, nativ Download + Systemviewer, iOS-App auf Mac Browser).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 162,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(files.length > 1)",
+     "!(files.length === 1)"
+    ],
+    "call": "Utils.openFileNative",
+    "args": "file.url, file.fileName",
+    "src": "62e71090",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#effect-2f74a4fe-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:153",
+     "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+    ],
+    "n": "Mehrere Dateien: Auswahl-Sheet \"Noten für … auswählen\", dann Datei öffnen wie Ionic; gleiche choir-Logik.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 235,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(liedtextFiles.length === 1)"
+    ],
+    "call": "Utils.openFileNative",
+    "args": "file.url, file.fileName",
+    "src": "62e71090",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#effect-2f74a4fe-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:177",
+     "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+    ],
+    "n": "Eine Liedtext-Datei (instrumentId 2): \"Liedtext ansehen\" öffnet sie direkt.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 247,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(liedtextFiles.length > 1)",
+     "!(liedtextFiles.length === 1)"
+    ],
+    "call": "Utils.openFileNative",
+    "args": "file.url, file.fileName",
+    "src": "62e71090",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#effect-2f74a4fe-4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:178",
+     "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+    ],
+    "n": "Mehrere Liedtext-Dateien: Auswahl-Sheet (chooseLyricsFor), dann öffnen.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 70,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(song.link)"
+    ],
+    "plugin": "Browser",
+    "call": "open",
+    "args": "{ url: song.link }",
+    "src": "bbc7f8c2",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#native-83bc9aed"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:136",
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:18",
+     "lib/core/services/native/native_file_service.dart:123"
+    ],
+    "n": "Nur mit song.link: Browser.open → openLinkInApp (nativ In-App-Browser, Web neuer Tab). Keine Rollenprüfung in der Methode; Eltern bekommen in beiden Apps nur den Link (linkOnly, parents_portal_page.dart:108). Flutter zeigt zusätzlich einen Fehler-Toast, wenn der Link nicht aufgeht.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-category/song-category.service",
+   "ionic": {
+    "ts": "services/song-category/song-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song-category/song-category.service.ts",
+    "line": 41,
+    "method": "SongCategoryService.updateSongCategory",
+    "cond": [],
+    "table": "song_categories",
+    "op": "update",
+    "payload": "category",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "0463ed1b",
+    "mbody": "fb83d642",
+    "id": "services/song-category/song-category.service#db-1d35ec20"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:484",
+     "lib/core/providers/song_providers.dart:620",
+     "lib/core/providers/song_providers.dart:648"
+    ],
+    "n": "Umbenennen schreibt name, Umsortieren index (Ionic schreibt beim Sortieren das ganze Kategorie-Objekt mit neuem index – gleiche Wirkung); Flutter zusätzlich .eq('tenant_id').",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/song_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/task/task.service",
+   "ionic": {
+    "ts": "services/task/task.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/task/task.service.ts",
+    "line": 35,
+    "method": "TaskService.getTasksForPerson",
+    "cond": [],
+    "table": "tasks",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "TASK_SELECT",
+    "filters": [
+     "eq('tenant_id', tenantId)",
+     "in('responsible_person_id', personIds)",
+     "order('due_date', { ascending: true, nullsFirst: false })"
+    ],
+    "tenantFilter": true,
+    "src": "78c07481",
+    "mbody": "bebb830a",
+    "id": "services/task/task.service#db-2e575b30"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/task_repository.dart:43",
+     "lib/core/providers/team_org_providers.dart:159"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/team_org_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/task/task.service",
+   "ionic": {
+    "ts": "services/task/task.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/task/task.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function toTaskWrite:12-15",
+     "getTasks:22-30",
+     "getTasksForPerson:33-43",
+     "getTasksForAttendance:45-53",
+     "getTask:55-63",
+     "getTasksForProtocol:65-73",
+     "getTasksForAgendaItem:75-83",
+     "addTask:85-94",
+     "updateTask:96-106",
+     "deleteTask:108-117"
+    ],
+    "bodies": {
+     "function toTaskWrite": "8d3a8297",
+     "getTasks": "30c9dd96",
+     "getTasksForPerson": "bebb830a",
+     "getTasksForAttendance": "831e422b",
+     "getTask": "08833149",
+     "getTasksForProtocol": "1ae6de38",
+     "getTasksForAgendaItem": "d139d033",
+     "addTask": "8eee706c",
+     "updateTask": "bce24ef2",
+     "deleteTask": "e86d20c2"
+    },
+    "id": "services/task/task.service#logic-5ad9225f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/task_repository.dart:13",
+     "lib/data/repositories/task_repository.dart:24",
+     "lib/data/repositories/task_repository.dart:106",
+     "lib/data/repositories/task_repository.dart:137",
+     "lib/data/repositories/task_repository.dart:165",
+     "lib/core/providers/team_org_providers.dart:159"
+    ],
+    "n": "Gleicher TASK_SELECT, gleiche Sortierungen, Schreibfelder ohne berechnete/Join-Felder, updated_at beim Update, Fehler 'svc.noDeletePermission' bei 0 gelöschten Zeilen. Flutter filtert alle Abfragen zusätzlich nach tenant_id. getTasksForProtocol ist toter Code (DbService.getTasksForProtocol wird nirgends aufgerufen).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/team_org_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/teacher/teacher.service",
+   "ionic": {
+    "ts": "services/teacher/teacher.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/teacher/teacher.service.ts",
+    "line": 25,
+    "method": "TeacherService.addTeacher",
+    "cond": [],
+    "table": "teachers",
+    "op": "insert",
+    "payload": "dbFields as any",
+    "options": [],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "04b81081",
+    "mbody": "8ef153f2",
+    "id": "services/teacher/teacher.service#db-5ebbb21d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/teacher_repository.dart:49"
+    ],
+    "n": "Gleiche Spalten wie pickTeacherFields beim Anlegen (name, instruments, notes, number, private, tenantId).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/teacher_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/teacher/teacher.service",
+   "ionic": {
+    "ts": "services/teacher/teacher.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/teacher/teacher.service.ts",
+    "line": 12,
+    "method": "TeacherService.getTeachers",
+    "cond": [],
+    "table": "teachers",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "order('name', { ascending: true, })"
+    ],
+    "tenantFilter": true,
+    "src": "f2eb759e",
+    "mbody": "3f8ef0d0",
+    "id": "services/teacher/teacher.service#db-b8a7ca5e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/teacher_repository.dart:16"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/teacher_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/teacher/teacher.service",
+   "ionic": {
+    "ts": "services/teacher/teacher.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/teacher/teacher.service.ts",
+    "line": 35,
+    "method": "TeacherService.updateTeacher",
+    "cond": [],
+    "table": "teachers",
+    "op": "update",
+    "payload": "dbFields as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "1e996521",
+    "mbody": "4f3c39b7",
+    "id": "services/teacher/teacher.service#db-f81643f4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/teacher_repository.dart:75"
+    ],
+    "n": "Update der Felder name, number, notes, private, instruments nach id; Flutter zusätzlich .eq('tenantId').",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/teacher_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 104,
+    "method": "TelegramService.notifyPerTelegram",
+    "cond": [],
+    "table": "edge:quick-processor",
+    "op": "invoke",
+    "payload": "{ body: { attId, type, reason, isParents, notes, isSelf }, method: 'POST', }",
+    "filters": [],
+    "src": "447e7a40",
+    "mbody": "9ae97051",
+    "roleGuarded": true,
+    "id": "services/telegram/telegram.service#db-0c03f7c6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/sign_in_out_repository.dart:117"
+    ],
+    "n": "quick-processor mit {attId, type, reason, isParents, notes, isSelf}; Fehler werden wie in Ionic nicht gemeldet (Flutter: reason null statt fehlend beim Anmelden).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/sign_in_out_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 80,
+    "method": "TelegramService.sendSongPerTelegram",
+    "cond": [],
+    "table": "edge:send-document",
+    "op": "invoke",
+    "payload": "{ body: { url, sendAsUrl: !url.includes('.pdf'), chat_id: chatId, }, method: 'POST', }",
+    "filters": [],
+    "src": "394ee380",
+    "mbody": "a4a3cd8a",
+    "id": "services/telegram/telegram.service#db-13c32112"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/telegram_service.dart:361"
+    ],
+    "n": "send-document mit {url, sendAsUrl: !url.contains('.pdf'), chat_id}.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/telegram_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 56,
+    "method": "TelegramService.sendPlanPerTelegram",
+    "cond": [],
+    "table": "edge:functionName",
+    "op": "invoke",
+    "payload": "{ body: { url: publicUrl, chat_id: chatId, }, method: 'POST', }",
+    "filters": [],
+    "src": "eefa3680",
+    "mbody": "4ce08636",
+    "id": "services/telegram/telegram.service#db-218b5340"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/telegram_service.dart:286"
+    ],
+    "n": "send-photo bzw. send-document mit {url (+ ?download=<Name>), chat_id}; Chat-ID aus notifications-Konfiguration wie Ionic tenantUser.telegram_chat_id.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/telegram_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 40,
+    "method": "TelegramService.sendPlanPerTelegram",
+    "cond": [],
+    "table": "storage:attendances",
+    "op": "getPublicUrl",
+    "payload": "fileName",
+    "filters": [],
+    "src": "9e6dca34",
+    "mbody": "4ce08636",
+    "id": "services/telegram/telegram.service#db-4db390b0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/telegram_service.dart:279",
+     "lib/core/services/telegram_service.dart:311"
+    ],
+    "n": "Öffentliche URL + ?download=<bereinigter Name + Endung>.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/telegram_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 73,
+    "method": "TelegramService.sendPlanPerTelegram",
+    "cond": [],
+    "table": "storage:attendances",
+    "op": "remove",
+    "payload": "[fileName]",
+    "filters": [],
+    "src": "1c377de3",
+    "mbody": "4ce08636",
+    "id": "services/telegram/telegram.service#db-6baa9f4d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/telegram_service.dart:296"
+    ],
+    "n": "Entfernen nach 10 s, auch wenn der Versand fehlschlug; scheitert schon der Upload, wird in beiden Apps nichts entfernt (Upload liegt in Flutter vor dem try/finally).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/telegram_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 111,
+    "method": "TelegramService.notifyPlayerPaused",
+    "cond": [],
+    "table": "edge:quick-processor",
+    "op": "invoke",
+    "payload": "{ body: { type: 'playerPaused', playerId, tenantId, reason, pauseUntil }, method: 'POST', }",
+    "filters": [],
+    "src": "e39c91ca",
+    "mbody": "5ede848b",
+    "id": "services/telegram/telegram.service#db-9f610e10"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/telegram_service.dart:241",
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:105"
+    ],
+    "n": "type playerPaused, playerId, tenantId, reason (ohne 'bis …'-Zusatz wie Ionic), pauseUntil (yyyy-MM-dd; ohne Datum weggelassen statt '').",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/telegram_service.dart",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 31,
+    "method": "TelegramService.sendPlanPerTelegram",
+    "cond": [],
+    "table": "storage:attendances",
+    "op": "upload",
+    "payload": "fileName, blob, { upsert: true, contentType: asImage ? 'image/png' : 'application/pdf' }",
+    "filters": [],
+    "src": "d15f86d6",
+    "mbody": "4ce08636",
+    "id": "services/telegram/telegram.service#db-f7e0ba0e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/telegram_service.dart:267"
+    ],
+    "n": "Bucket attendances, Dateiname wie encodeFilename (NFD-Nachbildung, _<100-999>), upsert, contentType image/png bzw. application/pdf.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/telegram_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/tenant/tenant.service",
+   "ionic": {
+    "ts": "services/tenant/tenant.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/tenant/tenant.service.ts",
+    "line": 31,
+    "method": "TenantService.getTenantById",
+    "cond": [],
+    "table": "tenants",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('id', id)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "42b02313",
+    "mbody": "cdc5146d",
+    "id": "services/tenant/tenant.service#db-397565f1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2071",
+     "lib/data/repositories/sign_in_out_repository.dart:556"
+    ],
+    "n": "Genutzt für Zusatzfelder bzw. seasonStart einer anderen Instanz (addPlayerToAttendancesByDate, getPersonAttendancesForTenant); Flutter liest dieselbe Zeile tenants.id, nur die benötigten Spalten.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/data/repositories/sign_in_out_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/tenant/tenant.service",
+   "ionic": {
+    "ts": "services/tenant/tenant.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/tenant/tenant.service.ts",
+    "line": 62,
+    "method": "TenantService.getTenantsByUserId",
+    "cond": [],
+    "table": "tenantUsers",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('userId', userId)"
+    ],
+    "tenantFilter": false,
+    "src": "52edec4e",
+    "mbody": "22233708",
+    "id": "services/tenant/tenant.service#db-5c587087"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/tenant_providers.dart:185",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:696"
+    ],
+    "n": "Korrektur der Notiz: nicht nur Registrierung – DbService.setTenant (db.service.ts:437) und setFavoriteTenant laden damit alle Mitgliedschaften des Nutzers. Flutter: userTenantsProvider liest tenantUsers per userId (tenantId, favorite, role); Registrierung prüft gezielt tenantId + userId – gleiche Daten/Entscheidung.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/tenant_providers.dart",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  }
+ ]
+}

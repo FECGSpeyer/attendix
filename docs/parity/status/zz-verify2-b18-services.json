@@ -1,0 +1,103 @@
+{
+  "batch": "zz-verify2-b18-services",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "services/live-activity/live-activity.service#db-f29b62df": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_plan_repository.dart:86",
+        "lib/data/repositories/org_plan_repository.dart:102",
+        "lib/core/services/live_activity_service.dart:598",
+        "lib/core/services/live_activity_service.dart:607"
+      ],
+      "n": "Nur Admin/Verantwortlich (isLeader) und nur mit Organisation: tenant_group_tenants der Org → attendance mit Spalten 'id, date, plan, typeInfo, attType:type_id(name, color)', in tenantId, is_org_plan = true, Datum gestern 0:00 bis morgen 23:59 lokal, plan nicht null; ohne verbundene Instanzen leer – wie Ionic. Nur native App mit Plugin."
+    },
+    "services/live-activity/live-activity.service#db-2675f6b3": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_plan_repository.dart:128",
+        "lib/core/services/live_activity_service.dart:871",
+        "lib/core/services/live_activity_service.dart:648"
+      ],
+      "n": "shared_plans nach org_id, date zwischen gestern und morgen (YYYY-MM-DD lokal); Flutter liest '*' statt der fünf Spalten. Ohne date/time/fields übersprungen, Titel 'ORG-Plan' als Fallback – wie Ionic."
+    },
+    "services/live-activity/live-activity.service#db-9e7fa6e4": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/core/services/live_activity_service.dart:926",
+        "lib/data/repositories/org_plan_repository.dart:151",
+        "lib/data/repositories/org_plan_repository.dart:157"
+      ],
+      "n": "Ionic: Tipp auf die Live-Aktivität eines Ad-hoc-ORG-Plans liest shared_plans nur nach id (RLS: Admin/Verantwortlich einer Instanz der Org) und öffnet den Plan-Viewer im Live-Modus. Flutter: zusätzlich org_id = Organisation der aktuellen Instanz, ohne Org kein Lesen. Wer Leiter in Instanzen zweier Organisationen ist und eine vom Server gestartete Aktivität der anderen Org antippt, sieht in Flutter nichts. Sonst gleich."
+    },
+    "services/login.guard#effect-45cebb67": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/core/router/app_router.dart:347",
+        "lib/core/router/app_router.dart:358",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:74",
+        "lib/core/utils/dashboard_logic.dart:56"
+      ],
+      "n": "Ziel je Rolle gleich (Dashboard bei Admin/Verantwortlich mit showDashboardTab, sonst Personen/Elternportal/Meine Termine). Aber Instanz-Einstellung 'Instanzauswahl aktivieren': Ionic LoginGuard → checkToken() → setTenant ohne Auswahl → bei bestehender Sitzung (jeder App-Start: '' → /login) direkt Startseite; Auswahl nur nach echtem Login. Flutter: /login mit Sitzung → /tenants, die Auto-Weiterleitung bricht bei wantInstanceSelection ab → Instanzliste bei jedem Kaltstart. Erstreview hat diesen Nutzer-Schalter nicht geprüft.",
+      "v": "korrigiert"
+    },
+    "services/login.guard#nav-2cb09388": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/core/router/app_router.dart:347",
+        "lib/core/router/app_router.dart:358",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:74",
+        "lib/core/utils/dashboard_logic.dart:56"
+      ],
+      "n": "Wie effect-45cebb67: Rollenziel gleich, aber mit 'Instanzauswahl aktivieren' zeigt Flutter bei bestehender Sitzung (Kaltstart über /login) die Instanzliste statt der Startseite; Ionic LoginGuard springt ohne Auswahl direkt zur Startseite der Rolle.",
+      "v": "korrigiert"
+    },
+    "x-8fea36599e": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/public_links/presentation/pages/open_file_page.dart:15",
+        "lib/core/router/app_router.dart:327"
+      ],
+      "n": "Befund real. Ionic setPendingLink → localStorage, consumePendingLink in routeAfterAuth (überlebt Reload, Bestätigungs-Mail im neuen Tab, App-Neustart). Flutter PendingFileLink ist ein statisches Feld im Speicher (auch für /open-attendance und Instanz-Links) → nach Reload/Neustart verloren, Nutzer landet auf der Startseite. Beim normalen Login ohne Reload funktioniert es.",
+      "v": "bestätigt"
+    },
+    "x-8c653dac0c": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/help/data/help_content_service.dart:62",
+        "lib/features/help/data/help_content_service.dart:123"
+      ],
+      "n": "Befund real. Ionic: Fuse.js (Gewichte Titel 2/Stichworte 1,5/Text 1, threshold 0.35, ignoreLocation, ganze Eingabe als ein Muster, Fehler proportional zur Länge). Flutter: eigene Suche, jedes Wort muss als Teilstring oder (ab 4 Zeichen) mit höchstens 1 Tippfehler vorkommen, eigene Punktzahl. Mehrwort-Suchen und Tippfehler liefern andere Treffer und Reihenfolge.",
+      "v": "bestätigt"
+    },
+    "x-d4f77f99b1": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/core/services/holiday_service.dart:122",
+        "lib/core/services/holiday_service.dart:168",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:784"
+      ],
+      "n": "Befund real. Ionic gone = startDate vor heute (Tag). Flutter isPast = endDate (lokal 0:00) vor jetzt. Liste 'Ferien/Feiertage' im Termin-Anlegen: ein Feiertag von heute fehlt in Flutter schon ab 0:00, in Ionic sichtbar; laufende Schulferien zeigt Flutter, Ionic nicht.",
+      "v": "bestätigt"
+    },
+    "x-6fc37335ce": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/core/services/native/store_update_service.dart:52",
+        "lib/features/auth/presentation/pages/login_page.dart:658",
+        "lib/features/settings/presentation/pages/settings_page.dart:552"
+      ],
+      "n": "Befund real, technisch bedingt (Dart-Code nicht per OTA austauschbar ohne z. B. Shorebird). Ionic: lädt signiertes Web-Bundle still, aktiviert beim nächsten Kaltstart bzw. sofort auf /login, /register; 'Update installieren' lädt neu. Flutter: prüft beim Kaltstart App Store/Play und bietet 'Update installieren' (Store-Seite bzw. Play In-App-Update) auf Login- und Einstellungsseite; sonst nur automatische Store-Updates des Betriebssystems. Hotfixes erreichen Nutzer erst nach Store-Freigabe.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

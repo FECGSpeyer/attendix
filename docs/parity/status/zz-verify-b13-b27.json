@@ -1,0 +1,505 @@
+{
+ "batch": "zz-verify-b13-b27",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "public-planning/public-planning.page#alert-53b00c7b": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155-195",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:306-320"
+   ],
+   "n": "Titel „Feld bearbeiten“, Name/Ausführender/Info bzw. bei Notizen nur Notiz, Leername-Prüfung gleich. Ionic: Buttons „Löschen“ (rot, entfernt das Feld sofort) / „Abbrechen“ / „Speichern“, keine Dauer im Dialog / Flutter: kein „Löschen“ (nur per Wischen), Bestätigen heißt „Updaten“, zusätzliches Feld „Minuten“, Feldbeschriftungen statt reiner Platzhalter, Info-Hinweis „Info-Text (optional)...“.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#effect-73ff88d2": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:726-742",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:91-111",
+    "lib/core/services/plan_export_service.dart:128-132",
+    "lib/core/providers/branding_providers.dart:40-46"
+   ],
+   "n": "PDF A4/2x A5 mit Titel, „Wochentag, Datum“ und Feldern gleich. Ionic: Branding = gewähltes öffentliches Branding (FECG-Logo + „FECG Speyer“/„FECG Schwegenheim“), bei „Kein Branding“ keins / Flutter: Auswahl ignoriert, resolvePdfBranding → eingeloggt immer Instanz-/Org-Branding (auch bei „Kein Branding“), anonym keins; FECG-Briefkopf gibt es nicht. Außerdem Ionic Download/Teilen-Sheet mit Datei „Titel_Wochentag, TT.MM.JJJJ(_2x).pdf“ / Flutter System-Druckdialog (Printing.layoutPdf), Name „Titel_TT_MM_JJJJ.pdf“.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#effect-6021ff44": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:726-737",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:112-113",
+    "lib/core/services/plan_export_service.dart:119-139"
+   ],
+   "n": "Bild (A4) = erste PDF-Seite als PNG gleich. Ionic: Branding aus der Auswahl (FECG-Logo + Text bzw. keins) / Flutter: Auswahl ignoriert, eingeloggt Instanz-Branding, anonym keins. Dateiname Ionic „Titel_JJJJ-MM-TT.png“ / Flutter „Titel_TT_MM_JJJJ.png“.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#effect-1ad39a4e": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:57-75",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:114-132",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:22-28"
+   ],
+   "n": "Telegram (PDF, PDF 2x A5, Bild) nur mit verknüpftem Chat, Name „Titel ohne erste Klammern_TT_MM_JJJJ(_2x)“ gleich. Ionic: Branding aus der Auswahl (FECG-Logo + Text bzw. keins) / Flutter: Auswahl ignoriert, Instanz-/Org-Branding des Nutzers – FECG-Briefkopf fehlt.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#effect-9082e8f4": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:144-154",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:760-785"
+   ],
+   "n": "Fallback Zwischenablage + Toast „Link in Zwischenablage kopiert“ gleich. Ionic: Kopieren nur, wenn navigator.share fehlt / Flutter (sharePlanLink): kopiert, wenn Share.share wirft oder „unavailable“ liefert – share_plus 10.1.4 liefert im Web auch nach ERFOLGREICHEM Teilen „unavailable“ (share_plus_web.dart:136), d. h. in der PWA wird nach dem Teilen-Sheet zusätzlich kopiert und getoastet; ohne Web-Share-API öffnet share_plus vorher einen mailto:-Link (share_plus_web.dart:96-125). Nativ: System-Teilen-Sheet statt Kopieren.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-a246cbc8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:771-780",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:311-320",
+    "lib/data/repositories/public_plan_repository.dart:208-219"
+   ],
+   "n": "Anonym: insert shared_plans mit id/edit_key (je 8 Hex), plan_title (Fallback „Ablaufplan“), date, time, end_time, fields, branding_id (bei „Kein Branding“ weggelassen = DB-Default null); kein creator, kein tenantId (Tabelle ohne Tenant). Fehler → Toast „plansLinkFailed“.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#effect-9082e8f4-2": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:144-154",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:771-785"
+   ],
+   "n": "Fallback Zwischenablage + Toast „Link in Zwischenablage kopiert“ gleich. Ionic: Kopieren nur, wenn navigator.share fehlt / Flutter (sharePlanLink): kopiert, wenn Share.share wirft oder „unavailable“ liefert – share_plus 10.1.4 liefert im Web auch nach ERFOLGREICHEM Teilen „unavailable“ (share_plus_web.dart:136), d. h. in der PWA wird nach dem Teilen-Sheet zusätzlich kopiert und getoastet; ohne Web-Share-API öffnet share_plus vorher einen mailto:-Link (share_plus_web.dart:96-125). Nativ: System-Teilen-Sheet statt Kopieren.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-b17aa9e7": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:311-320",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:335-362",
+    "lib/data/repositories/plan_repository.dart:225-242",
+    "lib/data/models/plan/plan.g.dart:147-161"
+   ],
+   "n": "upsert shared_plans (onConflict id) mit id, edit_key, plan_title, date, time, end_time, fields, creator_user_id gleich. Ionic: branding_id bei „Kein Branding“ explizit null / Flutter: SharedPlan.toJson (includeIfNull:false) lässt branding_id weg → beim Upsert bleibt ein früher gesetztes Branding in der DB stehen und kommt über „Meine Pläne“ zurück (abweichender DB-Write). Flutter besser: fehlgeschlagener Autosave → Toast, neue ID erst nach erfolgreichem Speichern.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-252fc2e5": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:261-274",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:693-707"
+   ],
+   "n": "Nur mit Organisation: Validierung, Speichern, update shared_plans set org_id = Org-ID where id; Toasts gleich. Flutter zusätzlich eq creator_user_id, bricht ab wenn das Speichern scheitert.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-99a947c6": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:261-274",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:680-691"
+   ],
+   "n": "org_id = null where id, nur mit Plan-ID; Toasts gleich; Flutter zusätzlich eq creator_user_id.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#alert-f51251df": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:453-466",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:369-392"
+   ],
+   "n": "„Vorlage wiederherstellen“, Text mit Vorlagenname, „Abbrechen“/„Wiederherstellen“; ohne Standardvorlage Warn-Toast – gleich.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#field-2ffcb596": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:58-62",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:902-915",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:107"
+   ],
+   "n": "Auswahl „Kein Branding“/„FECG Speyer“/„FECG Schwegenheim“, lokal und als branding_id gespeichert – gleich. Ionic: bestimmt Logo und Text im PDF-/Bild-/Telegram-Export / Flutter: ohne Wirkung auf den Export (es gilt Instanz-Branding), kein FECG-Logo vorhanden.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#text-8cbf6f85": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:143-149"
+   ],
+   "n": "„Keine Werke gefunden“ bei Suchbegriff ohne Treffer.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#modal-419a4f08-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:804-817"
+   ],
+   "n": "Plattform-Zeitwahl (24 h) statt ion-modal mit ion-datetime; Änderung speichert.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#text-aefaf1bb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:981-986"
+   ],
+   "n": "„Ende“ gleich. Ionic: sichtbar sobald end gesetzt (auch bei leerem Ablauf, z. B. Vorlage „Leerer Ablauf“; nach „Neuer Plan“ bis zur nächsten Änderung aus) / Flutter: nur wenn mindestens ein Feld existiert.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#alert-fe4c6b4f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:668-691",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:177-191"
+   ],
+   "n": "Flutter besser: „Feld hinzufügen“, Platzhalter „Programmpunkt eingeben...“/„Ausführender (optional)“/„Info-Text (optional)“, „Abbrechen“/„Hinzufügen“, Dauer 20, getrimmt – gleich. Ionic: leerer Name → Dialog bleibt stumm offen / Flutter: Meldung „Bitte einen Programmpunkt eingeben.“; zusätzlich Feldbeschriftungen.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#db-4e980eb4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:590-620",
+    "lib/data/repositories/public_plan_repository.dart:97-126"
+   ],
+   "n": "Flutter besser: gleiche Spalten (plan bzw. plan + extra_plans über splitPlans) mit time, fields, title (leer → null). Ionic: schreibt das alte end weiter, Filter nur id / Flutter: end neu berechnet, Filter zusätzlich share_key, share_edit_key, archived=false; keine getroffene Zeile → Fehler-Toast.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#db-64fc7972": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:621-627",
+    "lib/data/repositories/public_plan_repository.dart:168-205"
+   ],
+   "n": "Flutter besser: Ionic schreibt nur fields + plan_title (geänderte Startzeit eines Ad-hoc-Plans geht verloren, end_time bleibt alt) / Flutter schreibt fields, plan_title, time und neu berechnetes end_time; Filter id + edit_key, 0 Zeilen → Fehler-Toast.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#actionsheet-7d9d8ba7": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:713-733",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:57-77"
+   ],
+   "n": "Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Abbrechen“ gleich (kein Bild/Telegram). Ionic: ohne Icons / Flutter: Icons picture_as_pdf, content_copy.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#effect-228109d7": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:713-733",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:91-111",
+    "lib/core/providers/branding_providers.dart:40-46"
+   ],
+   "n": "PDF A4/2x A5 mit Titel, Feldern, bei mehreren Plänen „Wochentag, Datum · Planname“. Ionic: Branding aus branding_id des Ad-hoc-Plans (FECG-Logo + Text), Termin-Pläne ohne / Flutter: branding_id ignoriert; eingeloggte Betrachter bekommen ihr Instanz-Branding (auch bei Termin-Plänen), anonyme keins. Außerdem Untertitel bei einem Plan: Ionic Datum aus time (bei „HH:mm“ heute) / Flutter Plandatum; Datei Ionic Download „Titel_Wochentag, Datum.pdf“ / Flutter Druckdialog „Titel.pdf“; ohne Felder Ionic stumm, Flutter Warn-Toast „Kein Plan verfügbar“.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#action-3a3d613f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:789-797",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:668-676"
+   ],
+   "n": "„+“ nur im Bearbeitungsmodus, Popover mit „Feld hinzufügen“/„Notiz hinzufügen“.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#action-ec0c1511": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:815-836",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:110-149",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:537-566",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:106-205"
+   ],
+   "n": "Umsortieren nur im Bearbeitungsmodus, Block-Kopf samt Unterpunkten, danach Speichern; Ansicht mit Zeit | Ausführender, Info, „{min} min“ bzw. Countdown-Badge – gleich. Ionic Bearbeitungsmodus: einfache Zeilen (Name, Zeit, Info, Papierkorb, Griff), keine Minutenangabe, Tippen auf Block-Kopf öffnet den Feld-Dialog / Flutter: PlanFieldsEditor mit Minuten-Eingabefeld je Zeile, Wisch-Optionen „Einrücken“/„Ausrücken“/Löschen, Block ein-/ausklappen, „Unterpunkt hinzufügen“-Zeilen, Block-Optionen-Sheet, Hinweis „Keine Programmpunkte“. Ansicht: Block-Kopf Ionic nur Startzeit / Flutter Zeitraum „HH:mm – HH:mm“.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#action-a9ede0e6": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:537-566",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:197-204",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:303-332"
+   ],
+   "n": "Ionic: roter Papierkorb-Button an jeder Zeile im Bearbeitungsmodus, löscht sofort; beim Block-Kopf werden die Unterpunkte ohne Rückfrage normale Felder / Flutter: kein sichtbarer Button, Löschen nur per Wischen; Block-Kopf mit Unterpunkten → Rückfrage „Block löschen?“ (Nur Block auflösen / Alles löschen).",
+   "v": "bestätigt"
+  },
+  "settings/delete-account/delete-account.page#logic-92460c6b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/delete_account_page.dart:18-33",
+    "lib/features/settings/presentation/pages/delete_account_page.dart:61-97",
+    "lib/core/providers/legal_providers.dart:37-50",
+    "lib/data/repositories/account_repository.dart:27-42"
+   ],
+   "n": "Code (6 Zeichen aus ABCDEFGHJKMNPQRSTUVWXYZ23456789, neu pro Öffnen), Prüfung trim/upper, Rückfrage, Tracking AccountDeleted vor dem Löschen, Edge Function delete-account, signOut, Tenant-State leeren, /login – gleich. Abweichungen nur in loading/toast-Items.",
+   "v": "bestätigt"
+  },
+  "settings/delete-account/delete-account.page#loading-4ca29b26": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/delete_account_page.dart:205-223"
+   ],
+   "n": "Ionic: blockierendes Overlay „Konto wird gelöscht...“ (60 s) / Flutter: Spinner + „Konto wird gelöscht...“ im (gesperrten) Button, Seite bleibt bedienbar (Zurück möglich).",
+   "v": "bestätigt"
+  },
+  "settings/delete-account/delete-account.page#text-875bf378": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/delete_account_page.dart:144-153"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/delete-account/delete-account.page#text-2ed2dc08": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/delete_account_page.dart:161-165"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#effect-c39ff4df": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:426-438"
+   ],
+   "n": "Ionic: zuerst navigator.share (System-Teilen-Sheet, wo verfügbar, z. B. iOS-Safari/PWA), Zwischenablage nur als Fallback, bei Abbruch nichts / Flutter: kopiert immer zuerst in die Zwischenablage + Toast „Link kopiert“, Share.share nur wenn Kopieren fehlschlägt.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#loading-82305d64": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:403-414"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay während des Downloads / Flutter: kein Ladeindikator (öffnet die signierte URL über NativeFileService.openUrl).",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-d3727a66": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:411-412"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-030d7a9b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:386-401",
+    "lib/core/services/telegram_service.dart:357-366"
+   ],
+   "n": "Fehler beim Signieren der URL gleich („Telegram-Versand fehlgeschlagen: {error}“). Fehler der Edge Function send-document: Ionic (TelegramService.sendSongPerTelegram) „Fehler beim Senden der Nachricht, versuche es später erneut!“ / Flutter „Telegram-Versand fehlgeschlagen: {error}“.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-354386ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:650-664"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-42b3d799": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:135-151",
+    "lib/features/settings/presentation/pages/files_page.dart:1074-1077",
+    "lib/features/settings/presentation/pages/files_page.dart:955"
+   ],
+   "n": "Eintrag „Name“ mit Icon, sortiert Ordner zuerst – gleich. Ionic: localeCompare(Sprache, sensitivity base) / Flutter: toLowerCase().compareTo (Codepoint: Umlaute/Akzente hinter z). Gilt auch für die Standardsortierung beim Laden.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-14d154d9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1151-1170",
+    "lib/features/settings/presentation/pages/files_page.dart:317-323"
+   ],
+   "n": "„Root“ führt zur Wurzel. Ionic: openRoot behält den Suchbegriff / Flutter: _navigateTo leert das Suchfeld.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-b50a0922": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1236-1244"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#popover-f66de769": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:869-880"
+   ],
+   "n": "Ionic: Popover am Hilfe-Button (schließt durch Tippen daneben), Beispiele fett / Flutter: zentrierter Alert-Dialog mit OK-Button, gleiche Texte ohne Fettdruck. Erstprüfer: niedrig – Wechsel Popover → Dialog ist ein anderer Dialogtyp (laut Brief mittel, wie bei popover-92206ccb/help-article popover-c1b18c0d bewertet).",
+   "v": "korrigiert"
+  },
+  "settings/files/files.page#action-e5256591": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1248-1252"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#popover-92206ccb": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:882-943"
+   ],
+   "n": "Ionic: Popover am ⋯-Button / Flutter: Action Sheet von unten mit zusätzlichem „Abbrechen“, „Löschen“ rot; Einträge, Reihenfolge und Bedingungen (Telegram nur mit Chat, Bearbeiten nur mit Rechten) gleich.",
+   "v": "bestätigt"
+  },
+  "settings/handover-detail/handover-detail.page#logic-1c212d0f": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:27-36",
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:61-86",
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:129-179",
+    "lib/data/repositories/player_repository.dart:1598-1607"
+   ],
+   "n": "Auto-Zuordnung (gleich oder enthält bei >2 Zeichen, sonst erste Gruppe), Bestätigung, Übergabe je Person mit Fehlerliste (Fehler/Duplikat → Liste), Tracking HandoverCreated, Rücknavigation gleich. Abweichend (extras der Erstprüfung): Zielgruppen nur nach Name statt category/sort_order/name sortiert (andere Reihenfolge/Default), Ladefehler mit Toast.",
+   "v": "bestätigt"
+  },
+  "settings/handover-detail/handover-detail.page#alert-0f698f99": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:114-127"
+   ],
+   "n": "Titel „Personenübergabe“, Text mit Anzahl/Instanz/Hinweis, „Abbrechen“/„Übertragen“ gleich. Ionic: „Abbrechen“ mit role destructive (iOS rot) / Flutter: „Übertragen“ rot gefüllt wenn die Personen nicht in der Instanz bleiben, „Abbrechen“ neutral.",
+   "v": "bestätigt"
+  },
+  "settings/handover-detail/handover-detail.page#text-f95fbac6-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:189",
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:209"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#logic-8f08a3c7": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:57-81",
+    "lib/features/settings/presentation/pages/handover_page.dart:97-152",
+    "lib/data/repositories/player_repository.dart:62-80"
+   ],
+   "n": "Hauptgruppen-Filter, Älter/Jünger-Filter (Personen ohne Geburtstag fallen raus), Gruppenfilter, Ziel-Instanzen, Default erste Instanz/erste Gruppe, Alle auswählen, Übergabe nur der gefilterten Auswahl entsprechen Ionic. Abweichung (extra der Erstprüfung): Personenliste in DB-Reihenfolge (instrument-ID, isLeader, Nachname) statt Utils.getModifiedPlayersForList (Hauptgruppe zuerst, Gruppen-sort_order, Gruppenname, Personen-sort_order, Nachname).",
+   "v": "bestätigt"
+  },
+  "settings/help/article/help-article.page#popover-c1b18c0d": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:55-58",
+    "lib/features/help/presentation/widgets/glossary_term_dialog.dart:9-24"
+   ],
+   "n": "Inhalt gleich (Begriff als Titel, Definition als Markdown). Ionic: Popover am angetippten Begriff verankert, schließt durch Tippen daneben, ohne Button / Flutter: zentrierter Dialog (AppAlertDialog) mit Button „Schließen“.",
+   "v": "bestätigt"
+  },
+  "settings/help/article/help-article.page#text-6bc16511": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:36"
+   ],
+   "n": "Artikeltitel, sonst „Hilfe“ (Flutter l10n helpTitle, Ionic festes Literal).",
+   "v": "bestätigt"
+  },
+  "settings/help/article/help-article.page#action-bb7dd385": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:53-58",
+    "lib/features/help/presentation/widgets/help_markdown.dart:107-125"
+   ],
+   "n": "Glossar-Begriffe als antippbare Links (Primärfarbe, gepunktet unterstrichen); Begriff per Name/Alias gesucht, unbekannt → nichts.",
+   "v": "bestätigt"
+  },
+  "settings/help/content/index#logic-45b4ee2c": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/help/data/help_content_service.dart:199-215",
+    "lib/features/help/data/help_content.dart:244",
+    "lib/features/help/data/help_content.dart:268",
+    "lib/features/help/data/help_content_en.dart:145"
+   ],
+   "n": "localizeHelp-Logik gleich (nur en übersetzt, sonst Deutsch; Kategorielabel/Artikel/Glossar überlagert, deutscher Begriff als Alias). Eigener Textvergleich der 88 deutschen Artikel (Titel+Body) gegen Ionic 9f9b82af: 86 identisch; plan-beamer ohne Satz „Dort siehst du die ORG-Pläne der nächsten 8 Wochen und zusätzlich die letzten 20 vergangenen.“, songs-add bewusst umformuliert (extras der Erstprüfung).",
+   "v": "bestätigt"
+  },
+  "settings/help/glossary/help-glossary.page#text-bfb4a196": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_glossary_page.dart:69-70"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/role-permissions/role-permissions.page#alert-c705cf47": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:96-122",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:146-150"
+   ],
+   "n": "Flutter besser: Titel „Ungespeicherte Änderungen“, Text und Buttons (Abbrechen / Verwerfen rot / Speichern) gleich. Ionic: bei „Speichern“ wird die Seite auch verlassen, wenn das Speichern fehlschlägt (save() fängt den Fehler, danach resolve(true)) / Flutter bleibt bei Fehler auf der Seite.",
+   "v": "bestätigt"
+  },
+  "settings/voice-leader/voice-leader.page#logic-767b1744": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:36-45",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:61-120",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:138-144",
+    "lib/data/repositories/attendance_repository.dart:348-370",
+    "lib/data/repositories/player_repository.dart:200-219",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:25-110"
+   ],
+   "n": "Eigenes Profil per appId (aktive Zeile bevorzugt), Mitglieder der eigenen Gruppe (left null, nicht pending), Abwesenheiten Status 2/4/5 mit Datum nach heute 0 Uhr, nach Datum sortiert, Badge-Farben, Einteilung-Badge, Pull-to-Refresh entsprechen Ionic. Abweichungen: Sortierung mit Umlauten, Fall ohne Spielerprofil, archivierte Termine (extras der Erstprüfung) sowie neu: Abwesenheiten aller Mitglieder in EINER ungepagten Abfrage ohne Datumsfilter (siehe extra).",
+   "v": "bestätigt"
+  },
+  "settings/voice-leader/voice-leader.page#toast-9c4679a5": {
+   "s": "na",
+   "n": "toter Code: db.getPlayerByAppId(false) → playerSvc.getPlayerByAppId wirft bei 0 Zeilen ({code: 'PGRST116'}, services/player/player.service.ts:34-40), currentPlayer ist daher nie leer; der Fehler landet im catch (Toast voiceLeader.loadFailed).",
+   "v": "bestätigt"
+  },
+  "settings/voice-leader/voice-leader.page#action-206e640b": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:239",
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:395-410"
+   ],
+   "n": "Kein/fehlerhaftes Bild → Platzhalter-Avatar.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "settings/voice-leader/voice-leader.page",
+   "title": "Abwesenheiten ungepagt über alle Mitglieder",
+   "n": "Ionic: getPersonAttendances je Mitglied, nur Termine ab Saisonbeginn (getCurrentAttDate) – je Person weit unter dem PostgREST-Limit von 1000 Zeilen / Flutter: getUpcomingAbsencesForPersons lädt alle Abwesenheiten (Status 2/4/5) ALLER Gruppenmitglieder seit jeher in einer Abfrage ohne Datumsfilter, ohne Sortierung und ohne fetchAllPages; der Filter „ab heute“ läuft erst in Dart. Hat eine Stimmgruppe zusammen mehr als 1000 solcher Zeilen (große/langjährige Gruppen), schneidet der Server ab und kommende Abwesenheiten können fehlen. Grenzfall, sonst gleiches Ergebnis.",
+   "sev": "mittel",
+   "ionic": "src/app/settings/voice-leader/voice-leader.page.ts:63-72",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:348-370",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:79-107"
+   ]
+  }
+ ]
+}

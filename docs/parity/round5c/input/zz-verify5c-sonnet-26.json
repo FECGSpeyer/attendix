@@ -1,0 +1,2594 @@
+{
+ "batch": "zz-verify5c-sonnet-26",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 421,
+    "method": "OrganisationService.updateOrgGemeindeApp",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.saveGemeindeAppFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern der Gemeinde-App-Einstellungen"
+     ],
+     "literals": [],
+     "expr": "translate('svc.saveGemeindeAppFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f3fd0b35",
+    "mbody": "9f4114a3",
+    "id": "services/organisation/organisation.service#toast-5fe434c5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:67",
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:91"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 179,
+    "method": "OrganisationService.getOrganisationFromTenant",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.loadOrgFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Organisation"
+     ],
+     "literals": [],
+     "expr": "translate('svc.loadOrgFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c4f11261",
+    "mbody": "f5228d40",
+    "id": "services/organisation/organisation.service#toast-68cfa05e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/providers/organisation_providers.dart:11",
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:143"
+    ],
+    "n": "Ionic: Toast \"Fehler beim Laden der Organisation\" (rot) bei jedem Laden (Instanzwechsel setTenant, Stück, Person). / Flutter: kein Toast; nur die Organisations-Seiten zeigen im Inhalt \"Fehler: <Meldung>\", sonst still (valueOrNull). Erster Prüfer: \"missing\" – es gibt aber die Inline-Meldung, daher diff (wie toast-8e502223).",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 145,
+    "method": "OrganisationService.unlinkTenantFromOrganisation",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.removeOrgFailed"
+     ],
+     "de": [
+      "Fehler beim Entfernen der Organisation"
+     ],
+     "literals": [],
+     "expr": "translate('svc.removeOrgFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "55827dcf",
+    "mbody": "98b91952",
+    "id": "services/organisation/organisation.service#toast-7072cf99"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:59"
+    ],
+    "n": "Ionic: \"Fehler beim Entfernen der Organisation\". / Flutter: \"Fehler beim Trennen\" (rot).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 156,
+    "method": "OrganisationService.unlinkTenantFromOrganisation",
+    "cond": [
+     "(fetchError)"
+    ],
+    "message": {
+     "keys": [
+      "svc.removeOrgFailed"
+     ],
+     "de": [
+      "Fehler beim Entfernen der Organisation"
+     ],
+     "literals": [],
+     "expr": "translate('svc.removeOrgFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "55827dcf",
+    "mbody": "98b91952",
+    "id": "services/organisation/organisation.service#toast-7072cf99-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:59"
+    ],
+    "n": "Wie toast-7072cf99: Flutter \"Fehler beim Trennen\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 89,
+    "method": "OrganisationService.updatePersonFieldValues",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.saveSharedFieldsFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern der gemeinsamen Zusatzfelder"
+     ],
+     "literals": [],
+     "expr": "translate('svc.saveSharedFieldsFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "fbd7811f",
+    "mbody": "f1398995",
+    "id": "services/organisation/organisation.service#toast-81a862a6"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:730",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:258"
+    ],
+    "n": "Ionic: \"Fehler beim Speichern der gemeinsamen Zusatzfelder\". / Flutter: Fehler des Aufrufers: Personendetail \"Fehler beim aktualisieren des Spielers: …\", Mehrfachbearbeitung \"Fehler beim Speichern\", eigenes Profil \"Fehler beim Aktualisieren des Profils\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 356,
+    "method": "OrganisationService.updateOrgPlanningTemplates",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.savePlanTemplatesFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern der Planvorlagen"
+     ],
+     "literals": [],
+     "expr": "translate('svc.savePlanTemplatesFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "53cb0395",
+    "mbody": "b5c39cd2",
+    "id": "services/organisation/organisation.service#toast-83e4423b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:46"
+    ],
+    "n": "Ionic: \"Fehler beim Speichern der Planvorlagen\". / Flutter: \"Fehler beim Speichern\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 289,
+    "method": "OrganisationService.getOrgPlans",
+    "cond": [
+     "(tgtError)"
+    ],
+    "message": {
+     "keys": [
+      "svc.loadOrgPlansFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Organisationspläne"
+     ],
+     "literals": [],
+     "expr": "translate('svc.loadOrgPlansFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "ca9bebdf",
+    "mbody": "c5c01426",
+    "id": "services/organisation/organisation.service#toast-8e502223"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:264"
+    ],
+    "n": "Ionic: Toast \"Fehler beim Laden der Organisationspläne\". / Flutter: Fehlermeldung im Seiteninhalt \"Fehler: <Meldung>\".",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 310,
+    "method": "OrganisationService.getOrgPlans",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.loadOrgPlansFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Organisationspläne"
+     ],
+     "literals": [],
+     "expr": "translate('svc.loadOrgPlansFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "ca9bebdf",
+    "mbody": "c5c01426",
+    "id": "services/organisation/organisation.service#toast-8e502223-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:264"
+    ],
+    "n": "Wie toast-8e502223: Flutter zeigt \"Fehler: <Meldung>\" im Inhalt statt Toast.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 211,
+    "method": "OrganisationService.getAllPersonsFromOrganisation",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.loadPeopleFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Personen"
+     ],
+     "literals": [],
+     "expr": "translate('db.loadPeopleFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "76ebe788",
+    "mbody": "fcd61c58",
+    "id": "services/organisation/organisation.service#toast-c69e2a47"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/link_persons_page.dart:121",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1300"
+    ],
+    "n": "Ionic: \"Fehler beim Laden der Personen\". / Flutter: Personen verknüpfen \"Fehler beim Laden: <Meldung>\"; Statistik (Organisation) still.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 21,
+    "method": "OrganisationService.updateOrgExtraFields",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.saveOrgFieldsFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern der Organisations-Zusatzfelder"
+     ],
+     "literals": [],
+     "expr": "translate('svc.saveOrgFieldsFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "e284c959",
+    "mbody": "291e96da",
+    "id": "services/organisation/organisation.service#toast-d74063e5"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:116"
+    ],
+    "n": "Ionic: \"Fehler beim Speichern der Organisations-Zusatzfelder\" / Flutter: \"Fehler beim Speichern\" (rot).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 193,
+    "method": "OrganisationService.getInstancesOfOrganisation",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.loadOrgsFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Organisationen"
+     ],
+     "literals": [],
+     "expr": "translate('svc.loadOrgsFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f217e7d9",
+    "mbody": "5ff846dd",
+    "id": "services/organisation/organisation.service#toast-db3d69ea"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/link_persons_page.dart:121",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1300"
+    ],
+    "n": "Ionic: \"Fehler beim Laden der Organisationen\" (rot). / Flutter: Personen verknüpfen zeigt \"Fehler beim Laden: …\", Statistik blendet den Org-Abschnitt still aus.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 388,
+    "method": "OrganisationService.updateOrgName",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.renameOrgFailed"
+     ],
+     "de": [
+      "Fehler beim Umbenennen der Organisation"
+     ],
+     "literals": [],
+     "expr": "translate('svc.renameOrgFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "15590dc9",
+    "mbody": "80bdc228",
+    "id": "services/organisation/organisation.service#toast-f4cd350d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:44"
+    ],
+    "n": "Ionic: \"Fehler beim Umbenennen der Organisation\". / Flutter: \"Fehler beim Speichern\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 372,
+    "method": "OrganisationService.updateOrgDefaultFields",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.saveDefaultFieldsFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern der Standardfelder"
+     ],
+     "literals": [],
+     "expr": "translate('svc.saveDefaultFieldsFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "cbc430a1",
+    "mbody": "25a138cf",
+    "id": "services/organisation/organisation.service#toast-fed350fd"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:39"
+    ],
+    "n": "Ionic: \"Fehler beim Speichern der Standardfelder\". / Flutter: \"Fehler beim Speichern\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/player-absence/player-absence.service.ts",
+    "line": 38,
+    "method": "PlayerAbsenceService.getAbsencesForTenant",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.loadAbsencesFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Abwesenheiten"
+     ],
+     "literals": [],
+     "expr": "translate('svc.loadAbsencesFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "1ea89427",
+    "mbody": "ce0b85c6",
+    "id": "services/player-absence/player-absence.service#toast-41ab2170"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/attendance_create_writes.dart:131",
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart:142",
+     "lib/features/dashboard/presentation/widgets/people_cards.dart:149"
+    ],
+    "n": "Ionic: Service-Toast \"Fehler beim Laden der Abwesenheiten\" bei jedem Aufrufer (Termin anlegen, Datum ändern, Startseiten-Karte), auch wenn der Aufrufer weitermacht. / Flutter: Termin anlegen still; Datum ändern zeigt \"Termin konnte nicht geladen werden\" und bricht ab (Ionic attendance-create.ts:178 macht ohne Abwesenheiten weiter); Startseiten-Karte \"Fehler beim Laden: <Meldung>\". Erster Prüfer: \"missing\" mit nur einem Aufrufer.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/attendance_create_writes.dart",
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart",
+    "lib/features/dashboard/presentation/widgets/people_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/player-absence/player-absence.service.ts",
+    "line": 67,
+    "method": "PlayerAbsenceService.deleteAbsence",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.deleteAbsenceFailed"
+     ],
+     "de": [
+      "Fehler beim Löschen der Abwesenheit"
+     ],
+     "literals": [],
+     "expr": "translate('svc.deleteAbsenceFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "90bbd28d",
+    "mbody": "a53108f2",
+    "id": "services/player-absence/player-absence.service#toast-a5d07cbf"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:272"
+    ],
+    "n": "Ionic: \"Fehler beim Löschen der Abwesenheit\". / Flutter: \"Abwesenheit konnte nicht gelöscht werden\" (gleiche Bedeutung).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/player-absence/player-absence.service.ts",
+    "line": 53,
+    "method": "PlayerAbsenceService.addAbsence",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.saveAbsenceFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern der Abwesenheit"
+     ],
+     "literals": [],
+     "expr": "translate('svc.saveAbsenceFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "be323ae5",
+    "mbody": "97c1a4a4",
+    "id": "services/player-absence/player-absence.service#toast-fd2fd528"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:238",
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:74"
+    ],
+    "n": "Ionic: \"Fehler beim Speichern der Abwesenheit\". / Flutter: \"Abwesenheit konnte nicht gespeichert werden\" (gleiche Bedeutung).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/player/player.service.ts",
+    "line": 541,
+    "method": "PlayerService.resetExtraFieldValues",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.loadPeopleFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Personen"
+     ],
+     "literals": [],
+     "expr": "translate('db.loadPeopleFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "76ebe788",
+    "mbody": "c8812ed8",
+    "id": "services/player/player.service#toast-243104ec"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:291"
+    ],
+    "n": "Ionic: \"Fehler beim Laden der Personen\". / Flutter: \"Fehler beim updaten der Zusatzfelder\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/player/player.service.ts",
+    "line": 576,
+    "method": "PlayerService.updateExtraFieldValue",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.loadPeopleFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Personen"
+     ],
+     "literals": [],
+     "expr": "translate('db.loadPeopleFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "76ebe788",
+    "mbody": "e65cd3b1",
+    "id": "services/player/player.service#toast-7d6f3e4f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:259"
+    ],
+    "n": "Ionic: \"Fehler beim Laden der Personen\". / Flutter: \"Fehler beim updaten der Zusatzfelder\".",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/player/player.service.ts",
+    "line": 30,
+    "method": "PlayerService.getPlayerByAppId",
+    "cond": [
+     "(showToast)",
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.loadUserFailed"
+     ],
+     "de": [
+      "Fehler beim Laden des Benutzers"
+     ],
+     "literals": [],
+     "expr": "translate('db.loadUserFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "e62b28ca",
+    "mbody": "0e7fd42c",
+    "id": "services/player/player.service#toast-a7a067dd"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:245"
+    ],
+    "n": "Ionic: Toast \"Fehler beim Laden des Benutzers\" (rot). / Flutter: Fehleransicht \"Fehler: <Meldung>\" auf der Seite.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/player/player.service.ts",
+    "line": 38,
+    "method": "PlayerService.getPlayerByAppId",
+    "cond": [
+     "(showToast)",
+     "(!data?.length)"
+    ],
+    "message": {
+     "keys": [
+      "db.loadUserFailed"
+     ],
+     "de": [
+      "Fehler beim Laden des Benutzers"
+     ],
+     "literals": [],
+     "expr": "translate('db.loadUserFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "e62b28ca",
+    "mbody": "0e7fd42c",
+    "id": "services/player/player.service#toast-a7a067dd-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:281"
+    ],
+    "n": "Ionic: Toast \"Fehler beim Laden des Benutzers\" wenn keine Person gefunden. / Flutter: Text \"Für dein Konto wurde in dieser Instanz keine Person gefunden.\" auf der Seite.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/print/print.service",
+   "ionic": {
+    "ts": "services/print/print.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "loading",
+    "file": "services/print/print.service.ts",
+    "line": 38,
+    "method": "PrintService.printEntries",
+    "cond": [],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "loadingMessage"
+    },
+    "duration": "999999",
+    "src": "585ff49f",
+    "mbody": "61d66708",
+    "id": "services/print/print.service#loading-091f77ad"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/data/song_print_service.dart:61"
+    ],
+    "n": "Ionic: blockierendes Lade-Overlay während des Zusammenführens. / Flutter: kein Overlay, nur ein interner _printing-Schalter gegen Doppelstart.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/data/song_print_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/print/print.service",
+   "ionic": {
+    "ts": "services/print/print.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/print/print.service.ts",
+    "line": 52,
+    "method": "PrintService.printEntries",
+    "cond": [
+     "(!merged.pageCount)"
+    ],
+    "message": {
+     "keys": [
+      "svc.noPrintableScores"
+     ],
+     "de": [
+      "Keine druckbaren Noten (PDF/Bild) gefunden."
+     ],
+     "literals": [],
+     "expr": "translate('svc.noPrintableScores')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "35c46013",
+    "mbody": "61d66708",
+    "id": "services/print/print.service#toast-b351a56a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/current_songs_sheet.dart:64",
+     "lib/features/songs/presentation/widgets/group_files_sheet.dart:53",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:1131"
+    ],
+    "n": "Ionic: \"Keine druckbaren Noten (PDF/Bild) gefunden.\" (Warnung) an allen Stellen. / Flutter: gleicher Text in Aktuelle Stücke und Gruppenmappe; Stückdetail \"Datei konnte nicht gedruckt werden\"; Selbstbedienung \"Keine druckbaren Noten gefunden.\"; Gruppen-PDF-Druck (group_pdf_print.dart:55) ohne Hinweis.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "alert",
+    "file": "services/push/push.service.ts",
+    "line": 219,
+    "method": "PushService.showForegroundAlert",
+    "cond": [],
+    "header": {
+     "keys": [
+      "svc.notification"
+     ],
+     "de": [
+      "Benachrichtigung"
+     ],
+     "literals": [],
+     "expr": "notification.title || translate('svc.notification')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "notification.body || ''"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [],
+       "de": [],
+       "literals": [
+        "OK"
+       ],
+       "expr": "'OK'"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "svc.show"
+       ],
+       "de": [
+        "Anzeigen"
+       ],
+       "literals": [],
+       "expr": "translate('svc.show')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { this.navigateFromData(notification.data); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "2a5aaae6",
+    "mbody": "fada1a98",
+    "id": "services/push/push.service#alert-a69276d0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/push_providers.dart:224",
+     "lib/core/services/push/push_service.dart:194"
+    ],
+    "n": "Titel oder \"Benachrichtigung\", Text, \"OK\"/\"Anzeigen\" → navigateFromData; live_plan still; Tracking PushReceived. Alle Rollen. Ob Ionic auf iOS zusätzlich den Systembanner im Vordergrund zeigt (Plugin-Default presentationOptions), ist ohne Plugin-Quellen nicht prüfbar; Flutter zeigt bewusst nur den Dialog.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/providers/push_providers.dart",
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/shift/shift.service.ts",
+    "line": 87,
+    "method": "ShiftService.deleteShift",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.deleteShiftFailed"
+     ],
+     "de": [
+      "Fehler beim Löschen der Schicht"
+     ],
+     "literals": [],
+     "expr": "translate('svc.deleteShiftFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "eeac2332",
+    "mbody": "0002eeab",
+    "id": "services/shift/shift.service#toast-2cfee317"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:503"
+    ],
+    "n": "Ionic: Toast 'Fehler beim Löschen der Schicht' / Flutter: 'Fehler beim Löschen des Schichtplans' – gleiche Bedeutung.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/shift/shift.service.ts",
+    "line": 127,
+    "method": "ShiftService.assignShiftToPlayersInTenant",
+    "cond": [
+     "(fetchError)"
+    ],
+    "message": {
+     "keys": [
+      "svc.searchTargetPeopleFailed"
+     ],
+     "de": [
+      "Fehler beim Suchen der Personen in Ziel-Instanz"
+     ],
+     "literals": [],
+     "expr": "translate('svc.searchTargetPeopleFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "897731ed",
+    "mbody": "ce90c87e",
+    "id": "services/shift/shift.service#toast-574abc71"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:434"
+    ],
+    "n": "Ionic: Toast 'Fehler beim Suchen der Personen in Ziel-Instanz' (danger, danach Seiten-Toast) / Flutter: nur allgemeiner Toast 'Fehler beim Kopieren: <Fehlertext>'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/shift/shift.service.ts",
+    "line": 40,
+    "method": "ShiftService.isShiftUsed",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.checkShiftUsageFailed"
+     ],
+     "de": [
+      "Fehler beim Überprüfen der Schichtverwendung"
+     ],
+     "literals": [],
+     "expr": "translate('svc.checkShiftUsageFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f326a19b",
+    "mbody": "16c805dd",
+    "id": "services/shift/shift.service#toast-7ef37344"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:112"
+    ],
+    "n": "Ionic: Toast 'Fehler beim Überprüfen der Schichtverwendung' (danger) / Flutter: Fehler des Usage-Providers wird stumm ignoriert (SizedBox.shrink, Anzahl 0).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/shift/shift.service.ts",
+    "line": 75,
+    "method": "ShiftService.updateShift",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.updateShiftFailed"
+     ],
+     "de": [
+      "Fehler beim Aktualisieren der Schicht"
+     ],
+     "literals": [],
+     "expr": "translate('svc.updateShiftFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "87bc0e00",
+    "mbody": "31471b3f",
+    "id": "services/shift/shift.service#toast-8a42eed5"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:462"
+    ],
+    "n": "Ionic: Toast 'Fehler beim Aktualisieren der Schicht' (danger) / Flutter: 'Fehler: <Fehlertext>'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/shift/shift.service.ts",
+    "line": 101,
+    "method": "ShiftService.getPlayersWithShift",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.loadShiftPeopleFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Personen mit Schicht"
+     ],
+     "literals": [],
+     "expr": "translate('svc.loadShiftPeopleFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "debb17e1",
+    "mbody": "47d5a500",
+    "id": "services/shift/shift.service#toast-b0942088"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:43"
+    ],
+    "n": "Ionic: Toast 'Fehler beim Laden der Personen mit Schicht' (danger) / Flutter: Fehler beim Laden der Anzahl wird nicht gemeldet (unbehandelter Future-Fehler, Anzahl bleibt 0).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/shift/shift.service.ts",
+    "line": 61,
+    "method": "ShiftService.addShift",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.addShiftFailed"
+     ],
+     "de": [
+      "Fehler beim Hinzufügen der Schicht"
+     ],
+     "literals": [],
+     "expr": "translate('svc.addShiftFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "0282d8ca",
+    "mbody": "e1e95e3c",
+    "id": "services/shift/shift.service#toast-cb1e402a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/pages/shifts_list_page.dart:206",
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:434"
+    ],
+    "n": "Ionic: Toast 'Fehler beim Hinzufügen der Schicht' (danger) / Flutter: 'Fehler beim Erstellen: <Fehlertext>' bzw. beim Kopieren 'Fehler beim Kopieren: <Fehlertext>'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/teams/teams.service",
+   "ionic": {
+    "ts": "services/teams/teams.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/teams/teams.service.ts",
+    "line": 155,
+    "method": "TeamsService.ssoLink",
+    "cond": [],
+    "message": {
+     "keys": [
+      "svc.linkFailed"
+     ],
+     "de": [
+      "Verknüpfung fehlgeschlagen"
+     ],
+     "literals": [],
+     "expr": "res.error || translate('svc.linkFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "26908886",
+    "mbody": "b03d28bb",
+    "id": "services/teams/teams.service#toast-74546254"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:244"
+    ],
+    "n": "Rote Meldung mit Server-Fehlertext bzw. 'Verknüpfung fehlgeschlagen'. Flutter zeigt sie auch, wenn Token fehlt/verifyOtp scheitert (Ionic dort ohne Toast).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "loading",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 26,
+    "method": "TelegramService.sendPlanPerTelegram",
+    "cond": [],
+    "message": null,
+    "duration": "99999",
+    "src": "ed5913fc",
+    "mbody": "4ce08636",
+    "id": "services/telegram/telegram.service#loading-752e4954"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:126",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2010",
+     "lib/features/planning/presentation/widgets/register_plan_sheet.dart:342"
+    ],
+    "n": "Ionic: blockierendes Lade-Overlay (ohne Text) während Upload und Versand / Flutter: kein blockierendes Overlay (Registerprobenplan-Sheet nur _busy).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 92,
+    "method": "TelegramService.sendSongPerTelegram",
+    "cond": [
+     "!(!sendError)"
+    ],
+    "message": {
+     "keys": [
+      "svc.sendMessageFailed"
+     ],
+     "de": [
+      "Fehler beim Senden der Nachricht, versuche es später erneut!"
+     ],
+     "literals": [],
+     "expr": "translate('svc.sendMessageFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "ad8897ee",
+    "mbody": "a4a3cd8a",
+    "id": "services/telegram/telegram.service#toast-9359ba11"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:905",
+     "lib/features/settings/presentation/pages/files_page.dart:399"
+    ],
+    "n": "Ionic: 'Fehler beim Senden der Nachricht, versuche es später erneut!' (danger) / Flutter: Werk-Seite 'Fehler: <Fehler>', Dateiablage 'Telegram-Versand fehlgeschlagen: <Fehler>'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart",
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 67,
+    "method": "TelegramService.sendPlanPerTelegram",
+    "cond": [
+     "(!sendError)"
+    ],
+    "message": {
+     "keys": [
+      "svc.messageSent"
+     ],
+     "de": [
+      "Nachricht wurde erfolgreich gesendet!"
+     ],
+     "literals": [],
+     "expr": "translate('svc.messageSent')"
+    },
+    "color": null,
+    "duration": null,
+    "src": "7f965f7a",
+    "mbody": "4ce08636",
+    "id": "services/telegram/telegram.service#toast-d48335d8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/register_plan_sheet.dart:372",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:132",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2018"
+    ],
+    "n": "Ionic: nach dem Plan-Versand immer 'Nachricht wurde erfolgreich gesendet!' / Flutter: nur der Registerprobenplan zeigt diesen Text; Planung/Ablaufplan-Export zeigt nach dem Senden 'Plan wird per Telegram gesendet...', die Terminseite 'Plan per Telegram gesendet'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 69,
+    "method": "TelegramService.sendPlanPerTelegram",
+    "cond": [
+     "!(!sendError)"
+    ],
+    "message": {
+     "keys": [
+      "svc.sendMessageFailed"
+     ],
+     "de": [
+      "Fehler beim Senden der Nachricht, versuche es später erneut!"
+     ],
+     "literals": [],
+     "expr": "translate('svc.sendMessageFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "ad8897ee",
+    "mbody": "4ce08636",
+    "id": "services/telegram/telegram.service#toast-d81870f7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/register_plan_sheet.dart:374",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:135",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2022"
+    ],
+    "n": "Ionic: 'Fehler beim Senden der Nachricht, versuche es später erneut!' (danger) / Flutter: nur der Registerprobenplan zeigt diesen Text; Planung/Ablaufplan 'Fehler beim Export: <Fehler>', Terminseite 'Fehler beim Senden: <Fehler>'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 90,
+    "method": "TelegramService.sendSongPerTelegram",
+    "cond": [
+     "(!sendError)"
+    ],
+    "message": {
+     "keys": [
+      "svc.messageSent"
+     ],
+     "de": [
+      "Nachricht wurde erfolgreich gesendet!"
+     ],
+     "literals": [],
+     "expr": "translate('svc.messageSent')"
+    },
+    "color": null,
+    "duration": null,
+    "src": "7f965f7a",
+    "mbody": "a4a3cd8a",
+    "id": "services/telegram/telegram.service#toast-fb958f4a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:1148",
+     "lib/features/settings/presentation/pages/files_page.dart:397"
+    ],
+    "n": "Ionic: 'Nachricht wurde erfolgreich gesendet!' / Flutter: Dateiablage gleich, Werk-Seite 'Datei per Telegram gesendet' (gleiche Bedeutung).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart",
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/administration/administration.page.html",
+    "line": 103,
+    "cond": [
+     "@for (c of churches; track c)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "clear",
+     "color": "medium"
+    },
+    "events": [
+     "(click)=mergeChurchManual(c); $event.stopPropagation()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "git-merge-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/administration/administration.page#action-1551fcba"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:374",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:376",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:377"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/administration/administration.page.html",
+    "line": 20,
+    "cond": [],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "true",
+     "routerLink": "/tabs/dashboard"
+    },
+    "events": [],
+    "link": "/tabs/dashboard",
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "analytics-outline"
+    ],
+    "keys": [
+     "usage.title"
+    ],
+    "de": [
+     "Usage Dashboard"
+    ],
+    "literals": [],
+    "text": "{{ 'usage.title' | transloco }}",
+    "id": "settings/administration/administration.page#action-6be3dfaa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:248",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:249",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:250",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:251"
+    ],
+    "n": "push('/dashboard') = Usage Dashboard (Ionic /tabs/dashboard).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/administration/administration.page.html",
+    "line": 112,
+    "cond": [],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=openChurchInput()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [
+     "admin.addChurch"
+    ],
+    "de": [
+     "Gemeinde hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'admin.addChurch' | transloco }}",
+    "id": "settings/administration/administration.page#action-91aecc64"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:386",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:387",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:390",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:391"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/administration/administration.page.html",
+    "line": 100,
+    "cond": [
+     "@for (c of churches; track c)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "clear",
+     "color": "medium"
+    },
+    "events": [
+     "(click)=renameChurch(c); $event.stopPropagation()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pencil-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/administration/administration.page#action-94ed76ef"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:369",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:371",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:372"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/administration/administration.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-back-button",
+    "attrs": {
+     "defaultHref": "/tabs/settings"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"\"",
+    "id": "settings/administration/administration.page#action-99bed056"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:238"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/administration/administration.page.html",
+    "line": 83,
+    "cond": [
+     "@if (duplicateGroups.length > 0)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=mergeAllDuplicates()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "git-merge-outline"
+    ],
+    "keys": [
+     "admin.mergeAllDuplicates"
+    ],
+    "de": [
+     "Alle Duplikate zusammenführen"
+    ],
+    "literals": [],
+    "text": "{{ 'admin.mergeAllDuplicates' | transloco }}",
+    "id": "settings/administration/administration.page#action-a0f21844"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:338",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:339",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:340",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:342",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:343"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/administration/administration.page.html",
+    "line": 76,
+    "cond": [
+     "@if (duplicateGroups.length > 0)",
+     "@for (group of duplicateGroups; track group.target.id)",
+     "@for (dup of group.duplicates; track dup.id)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "outline",
+     "color": "warning"
+    },
+    "events": [
+     "(click)=mergeChurch(group.target, dup)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "git-merge-outline"
+    ],
+    "keys": [
+     "admin.merge"
+    ],
+    "de": [
+     "Zusammenführen"
+    ],
+    "literals": [],
+    "text": "{{ 'admin.merge' | transloco }}",
+    "id": "settings/administration/administration.page#action-c192fed9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:317",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:318",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:323",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:324",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:327"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/administration/administration.page.ts",
+    "line": 154,
+    "method": "AdministrationPage.mergeAllDuplicates",
+    "cond": [],
+    "header": {
+     "keys": [
+      "admin.mergeAllDuplicates"
+     ],
+     "de": [
+      "Alle Duplikate zusammenführen"
+     ],
+     "literals": [],
+     "expr": "translate('admin.mergeAllDuplicates')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "admin.mergeAllMessage"
+     ],
+     "de": [
+      "{total} Duplikat(e) in {groups} Gruppe(n) werden zusammengeführt. Fortfahren?"
+     ],
+     "literals": [],
+     "expr": "translate('admin.mergeAllMessage', { total, groups: this.duplicateGroups.length })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "admin.mergeAll"
+       ],
+       "de": [
+        "Alle zusammenführen"
+       ],
+       "literals": [],
+       "expr": "translate('admin.mergeAll')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { const loading = await Utils.getLoadingElement(999999, translate('admin.merging')); await loading.present(); try { let totalUpdated = 0; for (const group of [...this.duplicateGroups]) { for (const dup of group.duplicates) { to…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "6d692d1c",
+    "mbody": "d6f1b520",
+    "id": "settings/administration/administration.page#alert-104dadf1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:219",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:224",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:226",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:227",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:228",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:343"
+    ],
+    "n": "Titel 'Alle Duplikate zusammenführen', Nachricht '{total} Duplikat(e) in {groups} Gruppe(n) …', Abbrechen / Alle zusammenführen (destruktiv). Seite nur für den Super-Developer (SuperDeveloperGuard ↔ Route-Redirect isSuperDeveloperProvider, gleiche E-Mail), keine weitere Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/administration/administration.page.ts",
+    "line": 218,
+    "method": "AdministrationPage.mergeChurchManual",
+    "cond": [],
+    "header": {
+     "keys": [
+      "admin.mergeWith"
+     ],
+     "de": [
+      "„{name}“ zusammenführen mit..."
+     ],
+     "literals": [],
+     "expr": "translate('admin.mergeWith', { name: source.name })"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "admin.merge"
+       ],
+       "de": [
+        "Zusammenführen"
+       ],
+       "literals": [],
+       "expr": "translate('admin.merge')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (targetId: string) => { if (!targetId) {return;} const target = this.churches.find(c => c.id === targetId); const confirmAlert = await this.alertController.create({ header: translate('common.confirm'), message: translate('admin.merge…"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "targets.map((c, i) => ({ type: 'radio' as const, label: c.name, value: c.id, checked: i === 0, }))",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "0f583181",
+    "mbody": "5ff3ef1f",
+    "id": "settings/administration/administration.page#alert-a83fabc5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:155",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:158",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:163",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:170",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:182",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:186"
+    ],
+    "n": "Titel '„{name}“ zusammenführen mit...', eine Radio-Zeile je anderer Gemeinde (erste vorausgewählt), Abbrechen / Zusammenführen → Bestätigung. Seite nur für den Super-Developer (SuperDeveloperGuard ↔ Route-Redirect isSuperDeveloperProvider, gleiche E-Mail), keine weitere Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/administration/administration.page.ts",
+    "line": 233,
+    "method": "AdministrationPage.mergeChurchManual",
+    "cond": [],
+    "header": {
+     "keys": [
+      "common.confirm"
+     ],
+     "de": [
+      "Bestätigen"
+     ],
+     "literals": [],
+     "expr": "translate('common.confirm')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "admin.mergeMoveMessage"
+     ],
+     "de": [
+      "„{source}“ wird gelöscht und alle Personen zu „{target}“ verschoben. Fortfahren?"
+     ],
+     "literals": [],
+     "expr": "translate('admin.mergeMoveMessage', { source: source.name, target: target.name })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "admin.merge"
+       ],
+       "de": [
+        "Zusammenführen"
+       ],
+       "literals": [],
+       "expr": "translate('admin.merge')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { const loading = await Utils.getLoadingElement(999999, translate('admin.merging')); await loading.present(); try { const count = await this.db.mergeChurches(targetId, source.id); this.churches = await this.db.getChurches(); th…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "8ef84611",
+    "mbody": "5ff3ef1f",
+    "id": "settings/administration/administration.page#alert-d95dbe90"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:194",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:196",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:197",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:198",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:138"
+    ],
+    "n": "Titel 'Bestätigen', Nachricht '„{source}“ wird gelöscht und alle Personen zu „{target}“ verschoben. Fortfahren?', Abbrechen / Zusammenführen (destruktiv).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/administration/administration.page.ts",
+    "line": 125,
+    "method": "AdministrationPage.mergeChurch",
+    "cond": [],
+    "header": {
+     "keys": [
+      "admin.mergeChurches"
+     ],
+     "de": [
+      "Gemeinden zusammenführen"
+     ],
+     "literals": [],
+     "expr": "translate('admin.mergeChurches')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "admin.mergeMessage"
+     ],
+     "de": [
+      "„{source}“ wird in „{target}“ zusammengeführt. Alle Personen werden aktualisiert. Fortfahren?"
+     ],
+     "literals": [],
+     "expr": "translate('admin.mergeMessage', { source: duplicate.name, target: target.name })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "admin.merge"
+       ],
+       "de": [
+        "Zusammenführen"
+       ],
+       "literals": [],
+       "expr": "translate('admin.merge')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { const loading = await Utils.getLoadingElement(999999, translate('admin.merging')); await loading.present(); try { const count = await this.db.mergeChurches(target.id, duplicate.id); this.churches = await this.db.getChurches()…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "18f2a5fd",
+    "mbody": "a5a546cd",
+    "id": "settings/administration/administration.page#alert-e0b718fa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:132",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:138",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:141",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:327",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:329",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:331"
+    ],
+    "n": "Titel 'Gemeinden zusammenführen', Nachricht mit Quelle/Ziel, Abbrechen / Zusammenführen (destruktiv); danach Merge, Liste und Duplikate neu. Seite nur für den Super-Developer (SuperDeveloperGuard ↔ Route-Redirect isSuperDeveloperProvider, gleiche E-Mail), keine weitere Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/administration/administration.page.html",
+    "line": 29,
+    "cond": [],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number",
+     "inputmode": "decimal",
+     "[disabled]": "\"isSaving\""
+    },
+    "events": [
+     "(ionBlur)=saveFilesLimit()",
+     "(keyup.enter)=saveFilesLimit()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"filesMaxGb\"",
+    "bindings": [
+     "[label]=\"'admin.maxStorage' | transloco\"",
+     "[placeholder]=\"'admin.unlimited' | transloco\"",
+     "[helperText]=\"'admin.limitHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "admin.maxStorage",
+     "admin.unlimited",
+     "admin.limitHelper"
+    ],
+    "de": [
+     "Max. Speicher (GB)",
+     "Unbegrenzt",
+     "Leer lassen für unbegrenzt. Neue Instanzen starten mit 5 GB."
+    ],
+    "literals": [],
+    "text": "[label]=\"'admin.maxStorage' | transloco\" [placeholder]=\"'admin.unlimited' | transloco\" [helperText]=\"'admin.limitHelper' | transloco\"",
+    "id": "settings/administration/administration.page#field-e645a227"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:259",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:260",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:261",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:262",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:266",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:267",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:269",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:48",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:49"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "settings/administration/administration.page.ts",
+    "line": 81,
+    "method": "AdministrationPage.openChurchInput",
+    "cond": [
+     "(data.name.length)"
+    ],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "b7f77ed0",
+    "id": "settings/administration/administration.page#loading-2cf2d119"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:104"
+    ],
+    "n": "Ionic: blockierendes Loading-Overlay (ohne Text, max. 3 s) beim Anlegen / Flutter: kein Overlay, keine Sperre.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "settings/administration/administration.page.ts",
+    "line": 242,
+    "method": "AdministrationPage.mergeChurchManual",
+    "cond": [],
+    "message": {
+     "keys": [
+      "admin.merging"
+     ],
+     "de": [
+      "Gemeinden werden zusammengeführt..."
+     ],
+     "literals": [],
+     "expr": "translate('admin.merging')"
+    },
+    "duration": "999999",
+    "src": "e3cd176d",
+    "mbody": "5ff3ef1f",
+    "id": "settings/administration/administration.page#loading-6b2cf021"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:141",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:377"
+    ],
+    "n": "Ionic: blockierendes Overlay \"Gemeinden werden zusammengeführt...\" / Flutter: kein Overlay, nur Buttons während saving deaktiviert.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/administration/administration.page",
+   "ionic": {
+    "ts": "settings/administration/administration.page.ts",
+    "html": "settings/administration/administration.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "settings/administration/administration.page.ts",
+    "line": 134,
+    "method": "AdministrationPage.mergeChurch",
+    "cond": [],
+    "message": {
+     "keys": [
+      "admin.merging"
+     ],
+     "de": [
+      "Gemeinden werden zusammengeführt..."
+     ],
+     "literals": [],
+     "expr": "translate('admin.merging')"
+    },
+    "duration": "999999",
+    "src": "e3cd176d",
+    "mbody": "a5a546cd",
+    "id": "settings/administration/administration.page#loading-9b43bea8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:141",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:207",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:325"
+    ],
+    "n": "Ionic: blockierendes Overlay \"Gemeinden werden zusammengeführt...\" / Flutter: kein Overlay und kein Text, nur Merge-/Umbenennen-Buttons während saving deaktiviert.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  }
+ ]
+}

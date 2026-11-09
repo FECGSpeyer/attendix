@@ -1,0 +1,412 @@
+{
+ "batch": "zz-verify6-opus-10",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "people/person/person.page#text-e09c40a1": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:313",
+    "lib/features/people/presentation/pages/person_detail_page.dart:2099"
+   ],
+   "n": "Grund als Untertitel der Abwesenheitszeile (leerer Grund → keine Zeile, Ionic leeres <p>). Akkordeon nur canEdit (Admin/Verantwortliche, nicht archiviert) && canManagePlannedAbsences – entspricht Ionic existingPlayer && !readOnly && canManagePlannedAbsences. Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-e54bddae": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:120",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:128"
+   ],
+   "n": "Name aus dem Entwurf (ändert sich beim Bearbeiten mit), Zeile auch bei leerem Namen sichtbar, wenn bearbeitbar (onEditName nur canEdit && !_editingName) – wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-e65374d2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:66",
+    "lib/features/people/presentation/pages/person_detail_page.dart:2053",
+    "lib/features/people/presentation/pages/person_create_page.dart:475",
+    "lib/features/people/presentation/pages/person_create_page.dart:506"
+   ],
+   "n": "Bearbeiten-Seite gleich: Akkordeon „Account“ nur canEdit (Admin/Verantwortliche) && !pending, also ohne Eltern/Beobachter/Bewerbungsmodus wie Ionic (!isParent && !readOnly && !approveMode). Erstreviewer hat die Neu-Seite übersehen: Ionic zeigt das Akkordeon „Account“ auch beim Anlegen (E-Mail, Suche, Hilfe darin) / Flutter-Neu-Seite: E-Mail-Feld und Hilfetext ohne Überschrift „Account“ direkt im Formular. Nur Anordnung.",
+   "sev": "niedrig",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#toast-0c4f57a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1664",
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:266",
+    "lib/data/repositories/user_registration_repository.dart:311"
+   ],
+   "n": "Rollenauswahl nur im Account-Bereich (canEdit = Admin/Verantwortliche, nicht pending/archiviert), gesperrt bei Hauptgruppe; Optionen Mitglied/Verantwortlich/Helfer (+ Stimmführer-Rollen bei isLeader) wie Ionic; schreibt tenantUsers.role (tenantId + userId), grüner Toast „Die Rolle wurde erfolgreich aktualisiert.“ gleich. Flutter meldet zusätzlich Fehler (Ionic keiner).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-1b04b6d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1407"
+   ],
+   "n": "Behoben: Fehler beim Genehmigen zeigt jetzt rot „Fehler beim aktualisieren des Spielers“ (personUpdateFailed) wie Ionic approvePlayer; der Erstbefund „Fehler: {error}“ trifft nicht mehr zu.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#toast-46aad51d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:1037"
+   ],
+   "n": "„Fehler beim hinzufügen der Person: {error}“ rot; Flutter mit lesbarer Fehlermeldung.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-9348bff8": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:392",
+    "lib/features/people/presentation/pages/person_create_page.dart:411"
+   ],
+   "n": "Ionic: Toast „Bitte gib den Vornamen und Nachnamen an.“ / Flutter: Inline-Fehler unter den Feldern „Vorname ist erforderlich“ / „Nachname ist erforderlich“ (Labels mit „*“, nur Leerzeichen zählt als leer). Meldung vorhanden, Nutzer erfährt dasselbe.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-968501f7": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1236"
+   ],
+   "n": "Behoben: Fehler bei „Meinen Benutzer zuweisen“ zeigt jetzt nur die Fehlermeldung (friendlyErrorMessage) rot wie Ionic error.message, ohne „Fehler:“-Präfix.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#toast-c09ff9ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1403"
+   ],
+   "n": "Behoben: nach dem Genehmigen grüner Toast „Die Spielerdaten wurden erfolgreich aktualisiert.“ (personUpdated) und Schließen wie Ionic; „Person wurde genehmigt“ gibt es nicht mehr.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#toast-e88a740d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:1031"
+   ],
+   "n": "„Die Person wurde erfolgreich hinzugefügt“ grün, danach Seite zu. _save legt jetzt nur für Admin/Verantwortliche an (Ionic: Beobachter mit gesperrten Feldern kommt nicht über die Namensprüfung); Zugang zur Neu-Seite selbst bei list.page#action-4792cae3.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-f74ad707": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1291"
+   ],
+   "n": "Wieder aktivieren (Mehr-Menü, pausierte Person): Ionic Roh-Fehler (error-Objekt) / Flutter „Fehler: {error}“ rot. Fehler wird in beiden gemeldet.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-f74ad707-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1634"
+   ],
+   "n": "Entfernen: Ionic schließt die Seite vor dem Löschen, Fehler roh / Flutter löscht erst, dann „Die Person wurde erfolgreich entfernt“ bzw. „Fehler: {error}“ rot. Fehler wird in beiden gemeldet.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-4b8b68cee9": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:962",
+    "lib/features/people/presentation/pages/person_create_page.dart:966",
+    "lib/data/repositories/player_repository.dart:302"
+   ],
+   "n": "Flutter besser: weiterhin – Ionic addPerson legt ohne Namensprüfung an / Flutter fragt bei gleichem Vor- und Nachnamen (ilike, Instanz inkl. archivierter/ausstehender, tenantId-Filter) „Mögliches Duplikat“ – „Eine Person mit dem Namen \"{name}\" existiert bereits ({count}x). Trotzdem erstellen?“ mit Abbrechen/„Trotzdem erstellen“.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-5c4108ee61": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:251",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:264",
+    "lib/data/repositories/cross_tenant_person_repository.dart:322"
+   ],
+   "n": "Flutter besser: weiterhin – Ionic überschreibt die Historie der Person in der anderen Instanz mit der kompletten Historie dieser Instanz (pausePlayerInOtherTenant(..., history)) / Flutter liest die Historie dort und hängt nur den Pausiert-Eintrag an. Nebenbei: Flutter bietet nur Instanzen an, in denen der Nutzer Admin/Verantwortlich ist (Ionic alle Instanzen der Person, Schreiben dort scheitert sonst an RLS).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-78e8317eac": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1114",
+    "lib/features/people/presentation/pages/person_detail_page.dart:962",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:290"
+   ],
+   "n": "Lage hat sich umgedreht: Flutter übernimmt das Passbild jetzt in den Entwurf (Header-Vorschau wie Ionic) und otherExercise/range wie Ionic auch wenn leer. Neu: Flutter schreibt img beim Speichern in player (_changedFields enthält „img“), Ionic speichert img beim Aktualisieren nie (pickPersonFields ohne img, Bild nur bis zum Schließen sichtbar). Folge: die Bild-URL der Person aus der anderen Instanz wird dauerhaft gesetzt (späteres „Entfernen“ löscht deren Storage-Datei mit), hat der Treffer kein Bild, wird img=null geschrieben und das bisherige Passbild geht verloren. Anderer DB-Wert → nicht niedrig.",
+   "sev": "mittel",
+   "v": "korrigiert"
+  },
+  "x-e0dc1b2b62": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1424",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1343"
+   ],
+   "n": "Flutter besser: weiterhin – Ionic resetLateCount speichert den ganzen Spieler (db.updatePlayer(this.player)) inkl. noch ungespeicherter Formularänderungen / Flutter schreibt nur lastSolve (id + tenantId), ungespeicherte Änderungen bleiben im Entwurf.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#logic-84b752f5": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:220",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:246",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:177",
+    "lib/core/utils/plan_beamer.dart:31"
+   ],
+   "n": "Gleich: Vorbelegung (Minuten leer → 20), Beamer-Automatik (Werk oder „Lied“/„Gedicht“ im Titel, live beim Tippen), Grund-Text, manueller Schalter nur bei Änderung, Datei der Zeile sonst des Werks, Pflicht-Programmpunkt (getrimmt, Meldung im Dialog), Info leer → entfernt, needsBeamer nur bei sichtbarem Beamer-Bereich, Titel „Feld bearbeiten“ mit „Updaten“. Abweichung siehe x-dac15bf3b3 (0 Minuten); Ausführender wird in Flutter getrimmt (Ionic nicht), unerheblich.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-dac15bf3b3": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:246",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:188"
+   ],
+   "n": "Flutter besser: Ionic: Minuten 0 (oder leer) → alte Dauer bleibt (`this.time ? … : field.time`), die Eingabe 0 wird stillschweigend verworfen / Flutter: leer → alte Dauer, 0 → Dauer „0“ wie eingegeben.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/plan-minutes.pipe#logic-a54b756e": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/plan_utils.dart:102",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:155"
+   ],
+   "n": "Block-Kopf = Summe der Unterpunkte, sonst Dauer des Feldes – gleich. Ionic: gibt field.time unverändert aus (leer → „ min“) / Flutter: Zahl, leer/ungültig → „0 min“.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#modal-677ebe61": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:237",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:244"
+   ],
+   "n": "Ionic: Sheet-Modal, Start 0,5 bzw. 0,75 (mit Telegram), auf volle Höhe hochziehbar / Flutter: Bottom-Sheet mit fester Höhe 0,5 bzw. 0,75, nicht vergrößerbar. Inhalt (Segment, Optionen) gleich.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#effect-2cc43a4d": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:143",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:104",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:161",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:167"
+   ],
+   "n": "Titel-Fallback jetzt wie Ionic (Plantitel, sonst getPlanningTitle(Typ, typeInfo)); Name „{Titel ohne Klammern}_{TT_MM_JJJJ}[_2x]“, Branding, Bild/PDF gleich. Bleibt: Ionic Lade-Overlay beim Versand, sofort „Plan wird per Telegram gesendet...“ und danach „Nachricht wurde erfolgreich gesendet!“ / Flutter kein Overlay, nach dem Versand nur „Plan wird per Telegram gesendet...“, Fehler „Fehler beim Export: …“.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#effect-2dd21155": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:143",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:115",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:145"
+   ],
+   "n": "Erstbefund teils überholt: PDF wird jetzt gespeichert wie downloadFileNative (Web-Download, nativ Datei-Viewer) statt Druckdialog, Titel-Fallback wie Ionic, „Kein Plan verfügbar“ bei leerem Plan gleich. Bleibt: Dateiname Ionic „{Titel}_{Wochentag, TT.MM.JJJJ}.pdf“ / Flutter „{Titel}_TT_MM_JJJJ.pdf“; mobiles Web ohne Teilen-Sheet (Ionic navigator.share mit Datei).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#effect-51032d7f": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:126",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:138",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:126",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:145"
+   ],
+   "n": "Teilen-Sheet (Nur …/Alle n Pläne) → Export gleich aufgebaut (PDF, 2x A5, Telegram nur mit Chat-ID, Bild nur bei „Nur …“), Branding immer, keine Rollenbedingung. Jetzt wie Ionic: Dateiname mit „_alle“, Titel-Fallback getPlanningTitle, PDF-Download statt Druckdialog. Bleibt: Ionic überspringt Pläne ohne Einträge / Flutter exportiert sie als leere Seiten; Untertitel Ionic planSubtitle (Tagespläne ohne eigenes Label nur Datum) / Flutter immer „Datum · Label“; Titel/Datum im Namen vom ersten Plan (Ionic) bzw. vom angezeigten Plan (Flutter); Telegram ohne Overlay. Aus der Terminliste ohne Chips nicht erreichbar (bekannter Befund „Weitere Ablaufpläne fehlen im Viewer“).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#logic-46c421ae": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:72",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:204",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:91"
+   ],
+   "n": "Live-Modus (Schalter nur von Start −5 bis Ende +15 Min.), Start-/Zeilen-Countdown, Chips (Wechsel prüft Live neu), Ende-Berechnung, Werke-Aktion, Export entsprechen Ionic; Unterschied siehe x-fb8f058a7d (kein Auto-Scroll).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-fb8f058a7d": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:91",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:223"
+   ],
+   "n": "Ionic: im Live-Modus scrollt der Viewer einmal je Live-Start/Planwechsel automatisch zur laufenden Zeile (scrollToActive mit hasAutoScrolled) / Flutter: aktive Zeile wird markiert, aber nicht in den sichtbaren Bereich gescrollt.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-0e411c55": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:244",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:255",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:360"
+   ],
+   "n": "Wie Telegram (PDF): nur mit Telegram-Chat-ID, deaktiviert wie isPlanExportDisabled; sendet Seite 1 als PNG, danach „Nachricht wurde erfolgreich gesendet!“ bzw. Fehlermeldung, Sheet schließt.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-2935ce6a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:244",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:249",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:30"
+   ],
+   "n": "Bedingung = Telegram-Chat-ID des Nutzers (Ionic tenantUser.telegram_chat_id / Flutter notificationConfigProvider) – gleich, rollenunabhängig; deaktiviert wie isPlanExportDisabled; Name „Registerprobenplan_TT_MM_JJJJ“.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-2a8d020c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1726",
+    "lib/features/planning/presentation/pages/planning_page.dart:1604",
+    "lib/core/providers/plan_providers.dart:221"
+   ],
+   "n": "Rollen geprüft: Ionic isAdmin = nur ADMIN, Flutter role.isAdmin (effectiveRole = echte Rolle im Release) – gleich; Verantwortliche/Helfer sehen kein Löschen. Bestätigung „Vorlage löschen?“ mit Abbrechen/Löschen, schreibt tenants.plan_block_templates ohne die Vorlage (eq id = Instanz).",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-748cb97a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1713",
+    "lib/features/planning/presentation/pages/planning_page.dart:1714"
+   ],
+   "n": "canAddTopics gleich: Termin gewählt, Plan 1, Termintyp mit Protokoll, Admin/Verantwortlich; öffnet nach Speichern den Themen-Picker.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-9c4fc925": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:507",
+    "lib/features/planning/presentation/pages/planning_page.dart:2216",
+    "lib/features/planning/presentation/pages/planning_page.dart:1656"
+   ],
+   "n": "canAddTopics in beiden: Termin gewählt, Plan 1, Termintyp mit Protokoll und Teamleitung (Admin/Verantwortlich; Helfer nicht). Knopf „Themen aufnehmen“ am Tagesordnungs-Platzhalter öffnet den Themen-Picker.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-9ddba146": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:653",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:658",
+    "lib/core/utils/plan_utils.dart:157"
+   ],
+   "n": "Wisch-Option „Einrücken“/„Ausrücken“ (grau) nur bei canIndent (gleiche Regel), keine Rollenbedingung.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#actionsheet-0f4e0ac3": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:330",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:342",
+    "lib/features/planning/presentation/pages/planning_page.dart:2218"
+   ],
+   "n": "Kopf Blockname, Unterzeile „{n} Unterpunkte · {min} min“, Einträge Block bearbeiten / Unterpunkt hinzufügen / (nur Admin, mit Unterpunkten) Als Vorlage speichern bzw. Vorlage aktualisieren / Block auflösen / Block mit Inhalt löschen – gleich. Ionic ohne Icons / Flutter mit Icons.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#actionsheet-d52e80e4": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1983",
+    "lib/features/planning/presentation/pages/planning_page.dart:1997",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:71"
+   ],
+   "n": "Kopf „Aktionen“, Einträge in gleicher Reihenfolge und Bedingung: nur mit Feldern PDF exportieren, (bei >1 Plan) PDF exportieren (alle Pläne), PDF exportieren (2x A5), mit Chat-ID 3× Telegram; Registerprobenplan erstellen nur Chor/Orchester. Ionic ohne Icons / Flutter mit Icons.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#effect-160cbfb2-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:347",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:380"
+   ],
+   "n": "Behoben: Registerprobenplan-PDF wird jetzt gespeichert (NativeFileService.saveBytes: Web-Download, nativ Datei-Viewer) unter „{Kürzel} Registerprobenplan: {Datum}.pdf“ wie Ionic downloadFileNative; kein Druckdialog mehr.",
+   "v": "korrigiert"
+  },
+  "planning/planning.page#effect-4dc197ef": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2019",
+    "lib/features/planning/presentation/pages/planning_page.dart:2028",
+    "lib/features/planning/presentation/pages/planning_page.dart:1962",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:145"
+   ],
+   "n": "„PDF exportieren (alle Pläne)“ nur mit Feldern und >1 Plan, vorher Speichern, Titel je Plan (eigener, sonst getPlanningTitle), Branding nach Schalter, jetzt PDF-Download statt Druckdialog – gleich; keine Rollen-/Mandantenbedingung. Bleibt: Ionic überspringt Pläne ohne Einträge / Flutter exportiert sie als leere Seiten; Untertitel Ionic planSubtitle (Tagespläne ohne eigenes Label nur Datum) / Flutter immer „Datum · Label“; Dateiname Ionic „{Titel}_{Plandatum}_alle.pdf“ / Flutter „{Titel}_{Termindatum}.pdf“.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#effect-53794f7b": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1993",
+    "lib/features/planning/presentation/pages/planning_page.dart:1969",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:145"
+   ],
+   "n": "Erstbefund teils überholt: PDF wird jetzt gespeichert (Verhalten von downloadFileNative) statt Druckdialog; Validierung mit Toast, Titel, Branding-Schalter gleich. Bleibt: Dateiname Ionic „{Titel}_{Wochentag, TT.MM.JJJJ}.pdf“ (bzw. mit Plan-Untertitel) / Flutter „{Titel}_TT_MM_JJJJ.pdf“; Untertitel bei Tagesplänen mehrtägiger Termine ohne eigenes Label Ionic nur Datum / Flutter „Datum · Label“.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#effect-cba63ea5": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:161",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:167",
+    "lib/features/planning/presentation/pages/planning_page.dart:2001"
+   ],
+   "n": "Validierung, Name „{Titel ohne Klammern}_{TT_MM_JJJJ}[_2x]“, Untertitel, Branding gleich. Ionic: blockierendes Lade-Overlay während Upload/Versand, danach „Nachricht wurde erfolgreich gesendet!“ bzw. „Fehler beim Senden der Nachricht, versuche es später erneut!“ / Flutter: kein Overlay, nach dem Versand „Plan wird per Telegram gesendet...“, Fehler „Fehler beim Export: …“.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#effect-cc0f301b": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1950",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:217",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:183"
+   ],
+   "n": "Ionic: Link immer https://attendix.de/plan?… / Flutter (Web): aktuelle Origin + „#/plan?…“ (native Apps: attendix.de wie Ionic). navigator.share mit Titel, sonst Kopieren + „Link in Zwischenablage kopiert“ gleich.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#effect-d8aa5cb2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:380"
+   ],
+   "n": "Behoben: Registerprobenplan wird jetzt wie Ionic downloadFileNative gespeichert (Web-Download, nativ Datei-Viewer) unter „{Kürzel} Registerprobenplan: {Datum}.pdf“, kein Druckdialog mehr.",
+   "v": "korrigiert"
+  },
+  "planning/planning.page#logic-5522ee54": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:735",
+    "lib/features/planning/presentation/pages/planning_page.dart:761",
+    "lib/data/repositories/plan_repository.dart:49",
+    "lib/data/repositories/plan_repository.dart:61"
+   ],
+   "n": "plan_repository weiter wie Ionic getAttendance: Termine ab Saisonstart (gt date, tenantId, neueste zuerst), archivierte nur für Admin/Verantwortliche (filterArchivedForRole), auch beim Laden per ID; Start-Termin = nächster kommender. hoch/mittel-Extras bleiben behoben; Rest nur niedrig (Export-Dateinamen/Untertitel siehe effect-Items, 0 Minuten Flutter besser, Nachladen per ID Flutter besser).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

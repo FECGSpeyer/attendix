@@ -1,0 +1,493 @@
+{
+ "batch": "zz-verify6-opus-24",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "services/tenant/tenant.service#db-93334b15": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/public_song_repository.dart:42"
+   ],
+   "n": "tenants select '*' nach song_sharing_id, kein tenantId-Filter nötig (Zeile = Instanz). Ionic .single() ohne Fehlerprüfung → null bei 0 Treffern / Flutter maybeSingle → null bei 0 Treffern; Netzwerkfehler wirft Flutter (Aufrufer song_providers.dart:333/441, eigener Batch). Gleiche Daten.",
+   "v": "bestätigt"
+  },
+  "services/tenant/tenant.service#db-a71d98ce": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/role_permission_repository.dart:65",
+    "lib/core/providers/role_permission_providers.dart:293",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:221",
+    "lib/data/repositories/plan_repository.dart:233",
+    "lib/data/repositories/extra_fields_repository.dart:62",
+    "lib/data/repositories/administration_repository.dart:46",
+    "lib/data/repositories/song_repository.dart:402",
+    "lib/data/repositories/duty_repository.dart:227"
+   ],
+   "n": "Update tenants nach id = aktuelle Instanz; Flutter ohne zentrale Methode, die Aufrufer schreiben ihre Spalten direkt (.eq('id', currentTenantId)). Demo-Sperre (Ionic DbService.updateTenantData → checkDemoRestriction) haben: Allgemein (DemoGuard.blocked), saveBlockTemplates, saveFields, updateSongSourceTenantId, setDutyView (ensureNotDemo); Speicherlimit nur Super-Developer. Abweichung weiterhin: updateFilesShared ('Dateiablage für alle Mitglieder', Rollen & Berechtigungen) ohne Demo-Sperre – Ionic: Hinweis 'Diese Funktion ist im Demo-Modus nicht verfügbar.', files_shared wird nicht geschrieben, dann 'Fehler beim Speichern der Rollenberechtigungen' / Flutter: das Demo-Konto (Admin der Demo-Instanz) speichert files_shared und bekommt 'gespeichert'. Bewertung korrigiert: ein Konto schreibt Daten, die Ionic sperrt, und der Sicherheitshinweis fehlt → mittel statt niedrig. f-Zeilen auf aktuellen Stand (plan_repository 188→233, duty_repository 226→227).",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "services/tenant/tenant.service#logic-029b4bca": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2102",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:221",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:746",
+    "lib/data/repositories/public_song_repository.dart:42",
+    "lib/features/registration/data/providers/registration_providers.dart:20"
+   ],
+   "n": "Lebendig nur getTenantById (db.service.ts:1858/4065: additional_fields/seasonStart einer anderen Instanz → Flutter _loadExtraFieldDefaults(tenantId)), updateTenantData (db.service.ts:630), getTenantsByUserId (tenant-register 'bereits registriert' → Flutter _checkExistingRegistration, gleiche Wirkung), getTenantBySongSharingId, getTenantByRegisterId (tenantByRegisterIdProvider) – gleiche Daten. getTenantUserById nur über den nie aufgerufenen db.getTenantUserById-Wrapper (db.service.ts:753), übrige Methoden toter Code (DbService/ViewerParentService/OrganisationService eigene Implementierungen). Abweichungen in den Items db-a71d98ce (Demo-Konto kann files_shared speichern) und toast-028a6639 (Planung 'Vorlage löschen' scheitert ohne Meldung), beide mittel → Gesamt mittel statt niedrig. Alte f-Zeilen zeigten nach Dateiänderungen auf andere Stellen, aktualisiert.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "services/tenant/tenant.service#toast-028a6639": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:302",
+    "lib/features/planning/presentation/pages/planning_page.dart:1612",
+    "lib/core/providers/plan_providers.dart:221"
+   ],
+   "n": "Ionic: jedes fehlgeschlagene Tenant-Update zeigt 'Fehler beim Aktualisieren der Einstellungen' (rot) / Flutter: kein zentraler Toast; fast alle Aufrufer zeigen eine eigene Fehlermeldung (Allgemein, Rollen & Berechtigungen, Zusatzfelder, Dienstplan-Ansicht, Werk-Sync 'Fehler beim Speichern', Speicherlimit, Vorlage speichern). Aber Planung 'Vorlage löschen': planning_page.dart:1612 ignoriert das Ergebnis von deleteBlockTemplate (_run fängt den Fehler) → keine Meldung, die Vorlage bleibt einfach stehen; in Ionic (planning.page.ts:705, kein eigenes catch) ist genau dieser Service-Toast die einzige Fehlermeldung. Fehlende Fehlermeldung → mittel statt niedrig.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "services/user-registration/user-registration.service#toast-3186331d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/user_registration_repository.dart:239",
+    "lib/features/registration/data/providers/registration_providers.dart:199",
+    "lib/features/registration/data/providers/registration_providers.dart:321",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1214"
+   ],
+   "n": "Insert tenantUsers {userId, role, tenantId, email} wie Ionic; bei Fehler AccountFlowException mit gleichem Text 'Fehler beim Hinzufügen des Benutzers zum Mandanten' (svcAddUserToTenantFailed), Aufrufer zeigen ihn als roten Toast (Selbstregistrierung: 'Fehler bei der Registrierung: …'). Keine Rollenprüfung in der Methode (Aufrufer-Flows separat).",
+   "v": "bestätigt"
+  },
+  "services/viewer-parent/viewer-parent.service#db-9ac84e15": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/viewer_repository.dart:21"
+   ],
+   "n": "Flutter besser: gleiche Abfrage viewers select * mit tenantId, zusätzlich nach lastName/firstName sortiert (ascending: true); Ionic zeigt die Beobachter im Modal in DB-Reihenfolge.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/viewer-parent/viewer-parent.service#db-ca7d5935": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/parent_repository.dart:21"
+   ],
+   "n": "Flutter besser: gleiche Abfrage parents select * mit tenantId, zusätzlich nach lastName/firstName sortiert (ascending: true); Ionic ohne Sortierung (Einstellungen-Modal und Person-Seite).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/viewer-parent/viewer-parent.service#logic-7fe2dddf": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/viewer_repository.dart:19",
+    "lib/data/repositories/parent_repository.dart:19",
+    "lib/features/settings/presentation/pages/viewers_page.dart:52",
+    "lib/features/settings/presentation/pages/parents_page.dart:52"
+   ],
+   "n": "Lebendig nur getViewers/getParents (db.service.ts:886/910); createViewer/deleteViewer/createParent/deleteParent toter Code (DbService eigene Implementierungen mit Demo-Sperre). Abweichungen: Flutter sortiert alphabetisch; Ladefehler inline ('Fehler: …') statt Toast 'Fehler beim Laden der Beobachter/Eltern' – Nutzer erfährt es in beiden.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#logic-8ed9a172": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:61",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:93",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:128",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:147",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:170",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:231",
+    "lib/core/providers/dashboard_providers.dart:336",
+    "lib/core/providers/dashboard_providers.dart:368",
+    "lib/core/utils/dashboard_logic.dart:288"
+   ],
+   "n": "Laden (Limit frisch aus DB statt Tenant-Cache, Belegung per RPC, Gemeinden), toGb-Rundung, Validierung, Speichern bei Fokusverlust/Enter, findDuplicates-Normalisierung, Umbenennen und Zusammenführen (einzeln/alle/manuell) entsprechen Ionic. Abweichungen siehe extra: Fehlertoast Speicherlimit, Duplikat-Neuberechnung nach Hinzufügen (Flutter besser) und neu: neues Limit wird nicht in die geladene Instanz übernommen.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#toast-22cb7d57": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:65",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:66",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:68"
+   ],
+   "n": "Seite nur für den Super-Developer (Route-Guard isSuperDeveloperProvider ↔ SuperDeveloperGuard). Warn-Toast 'Bitte eine Zahl größer 0 eingeben oder das Feld leeren (unbegrenzt).' bei Wert ≤ 0/ungültig; leeres Feld = unbegrenzt (beide).",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#toast-4886e3c8": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:80",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:84"
+   ],
+   "n": "Texte gleich ('Speicher: unbegrenzt' / 'Speicherlimit: {gb} GB', grün). Ionic: {gb} = rohe JS-Zahl mit Dezimalpunkt ('2.5') / Flutter: _fmtGb mit Dezimalkomma, auf 2 Stellen gerundet ('2,5').",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-8e4f4f2cf3": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:231"
+   ],
+   "n": "Flutter besser: Ionic lädt nach openChurchInput nur this.churches neu, ruft findDuplicates() nicht auf → Duplikat-Hinweis erst nach dem nächsten Umbenennen/Zusammenführen/Öffnen / Flutter berechnet findChurchDuplicates bei jedem Build aus churchesProvider neu.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-cb6fc2f426": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:87",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:89"
+   ],
+   "n": "Ionic: updateTenantData-Fehler zeigt Service-Toast 'Fehler beim Aktualisieren der Einstellungen' und setzt das Feld zurück / Flutter: setzt das Feld zurück und zeigt 'Fehler beim Speichern' (rot). Gleiche Bedeutung.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/list/auto-message-list.page#logic-37f87a77": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:62",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:73",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:75",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:81",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:115",
+    "lib/features/messages/presentation/auto_message_texts.dart:92",
+    "lib/features/messages/presentation/auto_message_texts.dart:100",
+    "lib/features/messages/presentation/auto_message_texts.dart:125",
+    "lib/core/providers/auto_message_providers.dart:37",
+    "lib/core/providers/auto_message_providers.dart:54"
+   ],
+   "n": "Laden (Regeln tenantId, created_at ascending; Läufe 7 Tage, status=sent, Summe recipient_count), ein Fehler-Toast je Ladezyklus, summary/chips/delayText, open/create, toggle inkl. Zurücksetzen bei Fehler entsprechen Ionic. Abweichungen: kein Neuladen bei jedem Wiedereintritt (extra x-989ef4722f) und neu: Demo-Konto kann Regeln nicht umschalten (extra, Flutter besser).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-989ef4722f": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:62",
+    "lib/core/providers/auto_message_providers.dart:54"
+   ],
+   "n": "Ionic: ionViewWillEnter lädt Regeln und 'Letzte 7 Tage' bei jedem Zurückkehren neu / Flutter: Neuladen nur nach Speichern/Löschen/Umschalten (Invalidierung autoMessageRulesProvider), bei Pull-to-Refresh oder wenn die Seite neu geöffnet wird (autoDispose); 'Letzte 7 Tage' bleibt beim Zurückkehren aus der Regel unverändert.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#logic-e4bf4b56": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:78",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:117",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:145",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:157",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:165",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:176",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:200",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:223",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:236",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:250",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:273",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:437",
+    "lib/core/providers/auto_message_providers.dart:127",
+    "lib/data/models/auto_message/auto_message.dart:81",
+    "lib/data/models/auto_message/auto_message.dart:189",
+    "lib/data/models/auto_message/auto_message.dart:212",
+    "lib/data/repositories/auto_message_repository.dart:64"
+   ],
+   "n": "Geprüft: Defaults, Vorlagen-Presets, Toggles (leer → null), Stepper-Grenzen (2–50, 1–365 in 7er-Schritten), delayLabel, Textmodus/Reset, Platzhalter, Beispieltext, Vorschau, problems. saveRule schreibt dieselben Spalten (enabled_at nur beim Einschalten, created_by/tenantId beim Insert); Update/Delete filtern zusätzlich tenantId. Abweichungen (alle niedrig): Verlaufstitel bei ausgeblendeten Typen (Flutter besser), Regel-ID nicht gefunden (x-ef1ea07851) und neu: Demo-Sperre für Speichern/Löschen (extra, Flutter besser).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#nav-4f4f5283": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:287",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:289"
+   ],
+   "n": "Ionic: navigateByUrl('/tabs/settings/auto-messages') → immer zur Regel-Liste / Flutter: context.pop() → zurück zur vorherigen Seite (Route ist unter auto-messages verschachtelt, Direktaufruf landet auch auf der Liste). Gleich beim Aufruf aus der Liste; aus dem Termin-Panel (?tab=history) landet Flutter wieder auf dem Termin.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#nav-61929704": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:260",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:265"
+   ],
+   "n": "Ionic: nach Speichern navigateByUrl('/tabs/settings/auto-messages') → immer zur Regel-Liste / Flutter: context.pop() → vorherige Seite. Gleich beim Aufruf aus der Liste; aus dem Termin-Panel (?tab=history) landet Flutter wieder auf dem Termin.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#nav-a0e783c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:895",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:897",
+    "lib/core/router/app_router.dart:966"
+   ],
+   "n": "Verlaufszeile mit messageId öffnet /messages/<id> (Ionic /tabs/messages/<id>, Nachricht-Detail); ohne messageId nicht antippbar. f-Zeilen nach Dateiänderung aktualisiert (alte 924–927 zeigen jetzt auf _StepperTile).",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#toast-31bb7a6e": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:110",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:111",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:842"
+   ],
+   "n": "Flutter besser: Laden der Regel scheitert → gleicher roter Toast 'Automatische Nachrichten konnten nicht geladen werden'. Ionic zeigt den Toast auch, wenn nur loadHistory scheitert, und dann im Verlauf 0/0/0 + 'Diese Regel hat noch nichts verschickt.' / Flutter: kein Toast, im Tab Verlauf Hinweis 'Automatische Nachrichten konnten nicht geladen werden'.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-ef1ea07851": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:63",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:82",
+    "lib/data/repositories/auto_message_repository.dart:86"
+   ],
+   "n": "Flutter besser: Ionic: getRule liefert null → Formular 'Neue Regel' mit leerem Namen und tenantId 0 (defaultAutoMessageRule(0)); Speichern scheitert ('Speichern fehlgeschlagen') / Flutter: Formular 'Neue Regel' mit leerem Namen und aktuellem Tenant (getRule filtert zusätzlich tenantId); Speichern legt eine neue Regel an. Nur bei veraltetem Link.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#action-54e62c3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1105",
+    "lib/features/settings/presentation/pages/files_page.dart:1109",
+    "lib/features/settings/presentation/pages/files_page.dart:791",
+    "lib/features/settings/presentation/pages/files_page.dart:798"
+   ],
+   "n": "Menüeintrag 'Dateien hochladen' (cloud_upload) nur für Admin/Verantwortlich (canEditFilesProvider = Ionic canEditFiles); Mehrfach-Dateiauswahl (FilePicker allowMultiple), _upload prüft das Recht erneut wie triggerUpload/onFileSelected.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-5f30ac55": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1115",
+    "lib/features/settings/presentation/pages/files_page.dart:1120",
+    "lib/features/settings/presentation/pages/files_page.dart:524",
+    "lib/features/settings/presentation/pages/files_page.dart:534"
+   ],
+   "n": "'Mehrere auswählen' nur für Admin/Verantwortlich und nur bei vorhandenen Einträgen; startet leere Auswahl im aktuellen Ordner.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-dd0fc07d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1096",
+    "lib/features/settings/presentation/pages/files_page.dart:1100",
+    "lib/features/settings/presentation/pages/files_page.dart:524",
+    "lib/features/settings/presentation/pages/files_page.dart:534"
+   ],
+   "n": "Nur außerhalb des Auswahlmodus, für Admin/Verantwortlich und nur bei vorhandenen Einträgen; Tooltip 'Auswählen', Icon check_circle_outline; startet leere Auswahl. Übrige Rollen sehen ihn in beiden nicht.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-ecc09e57": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1269",
+    "lib/features/settings/presentation/pages/files_page.dart:1274",
+    "lib/features/settings/presentation/pages/files_page.dart:685",
+    "lib/features/settings/presentation/pages/files_page.dart:733"
+   ],
+   "n": "'Mehr Speicher anfragen' (add_circle_outline) nur für Admin/Verantwortlich mit geladener Belegung ab 80 % des Limits; öffnet denselben Anfrage-Dialog.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#alert-157216a5": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:685",
+    "lib/features/settings/presentation/pages/files_page.dart:733",
+    "lib/data/repositories/feedback_repository.dart:24"
+   ],
+   "n": "Titel, Hinweis, Textfeld 'Wie viel Speicher braucht ihr ungefähr? (optional)', Abbrechen/Senden, Nachrichtentext (Anfrage/Instanz/Belegt/Nachricht) und Insert in questions mit tenant_id/user_id gleich. Einziger Unterschied: phone Ionic '' / Flutter null; einziger Verbraucher (Edge Function send-telegram-on-question: record.phone ?? '(keine Nummer)') zeigt bei Flutter '(keine Nummer)' statt leer – Flutter besser, kein Nutzer-Effekt.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#alert-3b9b2763": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:478",
+    "lib/features/settings/presentation/pages/files_page.dart:490"
+   ],
+   "n": "Titel 'Ordner/Datei umbenennen', Feld mit aktuellem Namen, Platzhalter 'Neuer Name', Abbrechen/Speichern gleich; leerer Name benennt in beiden nichts um. Ionic lässt den Dialog dann offen / Flutter schließt ihn ohne Aktion (keine Meldung in beiden).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#alert-7aee8034": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:574",
+    "lib/features/settings/presentation/pages/files_page.dart:588"
+   ],
+   "n": "Plural-Header/-Text, Abbrechen / Löschen (destruktiv); Auswahlmodus nur für canEditFiles, Methode prüft canEdit zusätzlich wie Ionic; Zusammenfassung ok/fehlgeschlagen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#alert-b07996d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:735",
+    "lib/features/settings/presentation/pages/files_page.dart:750"
+   ],
+   "n": "'Datei existiert bereits', Text mit max. 5 Namen + '… und n weitere', Abbrechen / Überspringen / Überschreiben in gleicher Reihenfolge; nur im Upload (canEditFiles).",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#alert-e8c9b56a": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:456",
+    "lib/features/settings/presentation/pages/files_page.dart:470"
+   ],
+   "n": "Titel 'Ordner erstellen', Platzhalter 'Ordnername', Abbrechen/Erstellen, Rechteprüfung mit 'files.noEditRights' gleich. Leerer Name: Ionic lässt den Dialog offen / Flutter schließt ihn ohne Aktion (keine Meldung in beiden).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#effect-a54e7eb4": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:404",
+    "lib/features/settings/presentation/pages/files_page.dart:414",
+    "lib/core/services/native/native_file_service.dart:142"
+   ],
+   "n": "Nativ gleich (Cache + System-Viewer). Web: Ionic lädt den Blob herunter (Desktop <a download>, mobiler Browser Teilen-Dialog mit Datei) / Flutter öffnet die signierte URL mit ?download= im Browser (launchExternal) – Datei kommt in beiden an.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#loading-4e44e24e": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:478",
+    "lib/features/settings/presentation/pages/files_page.dart:495"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay beim Umbenennen / Flutter: kein Ladeindikator (_renameEntry ohne _withLoading).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#loading-82305d64": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:404",
+    "lib/features/settings/presentation/pages/files_page.dart:414"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay während des Downloads / Flutter: kein Ladeindikator (öffnet die signierte URL über NativeFileService.openUrl).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#loading-90e0e43b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:633",
+    "lib/features/settings/presentation/pages/files_page.dart:650",
+    "lib/features/settings/presentation/pages/files_page.dart:500",
+    "lib/features/settings/presentation/pages/files_page.dart:512"
+   ],
+   "n": "Blockierender Spinner (_withLoading, nicht wegtippbar) während Zielprüfung und Verschieben.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#loading-9a00fe11": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:588",
+    "lib/features/settings/presentation/pages/files_page.dart:597",
+    "lib/features/settings/presentation/pages/files_page.dart:500",
+    "lib/features/settings/presentation/pages/files_page.dart:512"
+   ],
+   "n": "Blockierender Spinner (_withLoading, PopScope) während des Löschens der Auswahl.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#loading-cdff1a47": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:666",
+    "lib/features/settings/presentation/pages/files_page.dart:683"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay beim Löschen eines Eintrags / Flutter: kein Ladeindikator.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#loading-d65a6193": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:387",
+    "lib/features/settings/presentation/pages/files_page.dart:394"
+   ],
+   "n": "Ionic: blockierendes Overlay 'Datei wird per Telegram gesendet...' / Flutter: nur Info-Toast mit diesem Text, nicht blockierend.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#loading-f1fabfb1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:817",
+    "lib/features/settings/presentation/pages/files_page.dart:833",
+    "lib/features/settings/presentation/pages/files_page.dart:835",
+    "lib/features/settings/presentation/pages/files_page.dart:860"
+   ],
+   "n": "Nicht wegtippbarer Dialog mit Spinner und 'Upload n/N (p%)' + Dateiname während des Uploads; nur canEditFiles.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#logic-003f54cc": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:269",
+    "lib/features/settings/presentation/pages/files_page.dart:574",
+    "lib/features/settings/presentation/pages/files_page.dart:611",
+    "lib/features/settings/presentation/pages/files_page.dart:753",
+    "lib/features/settings/presentation/pages/files_page.dart:791"
+   ],
+   "n": "Laden, Suche (typ:/datum:), Speicherprüfung/-anfrage, Upload mit Duplikat-Abfrage und Fortschritt, Mehrfachauswahl, Verschieben (Überspringen vorhandener Namen), Löschen, Direktlink ?path/&open, Rechte (canEditFiles = Admin/Verantwortlich) entsprechen Ionic. Abweichungen in den Items (u. a. Suchbegriff beim Ordnerwechsel, Ladeanzeigen) und extra 'alte Liste während des Ladens'.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#media-b8018f1d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1262",
+    "lib/features/settings/presentation/pages/files_page.dart:1267"
+   ],
+   "n": "Fortschrittsbalken used/max, rot ab 90 %, sonst Primärfarbe, nur mit Limit und nur Admin/Verantwortlich mit geladener Belegung (Flutter zusätzlich max > 0, Limit 0 ohne praktische Bedeutung).",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "settings/administration/administration.page",
+   "title": "Neues Speicherlimit nicht in die geladene Instanz übernommen",
+   "n": "Ionic: db.updateTenantData setzt danach this.tenant (db.service.ts:631) → Dateiablage nutzt sofort das neue files_max_bytes (Anzeige 'von X', Fortschrittsbalken, Speicherprüfung beim Upload) / Flutter: setFilesMaxBytes invalidiert nur tenantStorageInfoProvider, currentTenantProvider.filesMaxBytes bleibt alt (andere Tenant-Updates nutzen updateTenantLocalIfCurrent) → Dateiablage des Super-Developers zeigt und prüft bis zum Neuladen der Instanz das alte Limit. DB-Wert richtig, nur Super-Developer betroffen.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/administration/administration.page.ts:58",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:368",
+    "lib/features/settings/presentation/pages/files_page.dart:208"
+   ]
+  },
+  {
+   "unit": "settings/auto-messages/list/auto-message-list.page",
+   "title": "Demo-Konto kann Regeln nicht umschalten",
+   "n": "Flutter besser: Ionic toggle → AutoMessageService.setEnabled ohne Demo-Sperre, das Demo-Konto schaltet Regeln ein/aus / Flutter: setEnabled ruft ensureNotDemo('toggleAutoMessageRule') → Hinweis 'Diese Funktion ist im Demo-Modus nicht verfügbar.', Schalter springt zurück. Gleiche Linie wie andere bewusst ergänzte Demo-Sperren.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/auto-messages/list/auto-message-list.page.ts:71",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:98",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:87"
+   ]
+  },
+  {
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "title": "Demo-Konto kann Regeln nicht speichern/löschen",
+   "n": "Flutter besser: Ionic save/remove → AutoMessageService.saveRule/deleteRule ohne Demo-Sperre, das Demo-Konto kann Regeln anlegen, ändern und löschen / Flutter: saveRule/deleteRule rufen ensureNotDemo → Hinweis 'Diese Funktion ist im Demo-Modus nicht verfügbar.', nichts wird geschrieben. Gleiche Linie wie andere bewusst ergänzte Demo-Sperren.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/auto-messages/rule/auto-message-rule.page.ts:278",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:65",
+    "lib/data/repositories/auto_message_repository.dart:117",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:260",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:287"
+   ]
+  }
+ ]
+}

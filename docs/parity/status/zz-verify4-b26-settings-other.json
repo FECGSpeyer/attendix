@@ -1,0 +1,26 @@
+{
+  "batch": "zz-verify4-b26-settings-other",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "settings/auto-messages/rule/auto-message-rule.page#text-648a41a3": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:843",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:846"
+      ],
+      "n": "„· nur E-Mail“ hinter dem Gruppennamen bei !app && email (Vorschau im Regel-Tab). Bei leerem Gruppennamen ohne führenden Punkt (Ionic „ · nur E-Mail“) – unerheblich. Rollen: Regel-Seite in Ionic nur über Einstellungen › Kommunikation › Nachrichten (isAdmin = Admin/Verantwortlich, nicht im Seitenpanel) und über das Termin-Panel (nur Admin/Verantwortlich) erreichbar / Flutter: Route-Guard /settings/auto-messages nur Admin/Verantwortlich (app_router.dart:181), gleiche Einstiege.",
+      "v": "bestätigt"
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#text-bcc226f6": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:843",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:847"
+      ],
+      "n": "„· nicht erreichbar“ bei !app && !email, sonst wie text-648a41a3 (gleiche Rollenbeschränkung).",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

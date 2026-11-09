@@ -1,0 +1,173 @@
+{
+  "batch": "zz-verify3-b13-planning-org",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "public-planning/public-planning.page#db-7c1e7e29": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:180",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:191"
+      ],
+      "v": "bestätigt",
+      "n": "Ionic auth.getSession() → isLoggedIn (davon abhängig hasOrg, isGeneral, Werke/Historie) / Flutter currentSession → _loggedIn; Org nur eingeloggt, Instanztyp aus currentTenantProvider. Eingeloggt nur Admin/Verantwortlich erreichbar (Ionic: /planung → /tabs/settings/planung, isUrlAccessAllowed ADMIN/RESPONSIBLE; Flutter app_router.dart:309 + :182), anonym nur /planung."
+    },
+    "public-planning/public-planning.page#nav-d5e2c588": {
+      "s": "ok",
+      "f": [
+        "lib/core/router/app_router.dart:309",
+        "lib/core/router/app_router.dart:182",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:191"
+      ],
+      "v": "bestätigt",
+      "n": "Eingeloggt auf /planung → /settings/planung ersetzt den Eintrag; dort für Rollen außer Admin/Verantwortlich Umleitung auf die Startseite der Rolle – wie Ionic TabsPage (isUrlAccessAllowed → Utils.getUrl)."
+    },
+    "public-planning/public-planning.page#alert-b65125be": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:415",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:425",
+        "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:369"
+      ],
+      "v": "bestätigt",
+      "n": "roleGuarded nur wegen role:„cancel“. „Vorlage anwenden“, „Aktuellen Ablauf durch die Vorlage ersetzen?“, „Abbrechen“/„Ersetzen“, ohne Felder direkt; Org-Vorlagen nur eingeloggt mit Organisation (beide). Unterschied nach „Abbrechen“ (Ionic behält die neue Auswahl im Select) ist in field-9dc37d80 erfasst."
+    },
+    "public-planning/public-planning.page#alert-32122b22": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:542",
+        "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:237"
+      ],
+      "v": "korrigiert",
+      "n": "Titel, Platzhalter „Programmpunkt eingeben...“/„Ausführender (optional)“/„Info-Text (optional)“, „Abbrechen“/„Hinzufügen“, Meldung „Bitte einen Programmpunkt eingeben.“, Dauer 20, für alle (auch anonym) – gleich. Ionic: Eingaben nur mit Platzhaltern, Name/Ausführender ungetrimmt (nur Leerzeichen wird angenommen) / Flutter: zusätzlich Feldbeschriftungen „Programmpunkt“/„Ausführender“/„Info“, Werte getrimmt. Erstprüfer nannte das selbst, wertete aber ok; wie planning alert-70a7354c ist das diff niedrig."
+    },
+    "public-planning/public-planning.page#alert-25e72979": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:552",
+        "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:237"
+      ],
+      "v": "korrigiert",
+      "n": "„Notizfeld hinzufügen“, Platzhalter „Notiz eingeben...“, „Abbrechen“/„Hinzufügen“, Meldung „Bitte eine Notiz eingeben.“, id „noteFld …-Zeit“, Dauer 0 – gleich. Ionic: nur Platzhalter, Text ungetrimmt / Flutter: zusätzlich Feldbeschriftung „Notiz“, Text getrimmt (kosmetisch, wie planning alert-70a7354c)."
+    },
+    "public-planning/public-planning.page#alert-9f6c8399": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:303",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:973"
+      ],
+      "v": "bestätigt",
+      "n": "Gemeinsamer PlanFieldsEditor: „Block löschen?“, „„{name}“ hat n Unterpunkte.“, „Abbrechen“/„Nur Block auflösen“/„Alles löschen“ (rot), ohne Unterpunkte direkt; keine Rollenbedingung (auch anonym)."
+    },
+    "public-planning/public-planning.page#alert-815ae115": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:626",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:938"
+      ],
+      "v": "bestätigt",
+      "n": "„Neuer Plan“ nur eingeloggt (Admin/Verantwortlich); mit Feldern Rückfrage „Neuer Plan“/„Aktuellen Plan verwerfen und einen neuen erstellen?“, „Abbrechen“/„Neuer Plan“; setzt Titel, Datum, 10:00, Felder, Vorlage, Branding, Org-Zuordnung zurück (nur lokal)."
+    },
+    "public-planning/public-planning.page#toast-44b64ac5": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:453",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:456"
+      ],
+      "v": "bestätigt",
+      "n": "„Keine Vorlage ausgewählt.“ (warning), wenn keine Standardvorlage gewählt ist (auch bei Org-Vorlage, da nur die Standardvorlagen durchsucht werden) – gleich, keine Rollenbedingung."
+    },
+    "public-planning/public-planning.page#action-bc995e2f": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:839",
+        "lib/core/router/app_router.dart:1153",
+        "lib/core/router/app_router.dart:1163",
+        "lib/core/router/app_router.dart:1328"
+      ],
+      "v": "bestätigt",
+      "n": "Zurück-Pfeil nur in der App (eingeloggt = inApp, anonymes /planung ohne); Ziel Einstellungen bzw. Org-Pläne (Tab oder Einstellungen) über die Routen-Hierarchie wie defaultHref."
+    },
+    "public-planning/public-planning.page#action-e29a181c": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:844",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:669"
+      ],
+      "v": "bestätigt",
+      "n": "„Meine Pläne“ (Listen-Icon) nur eingeloggt; Eingeloggt nur Admin/Verantwortlich erreichbar (Ionic: /planung → /tabs/settings/planung, isUrlAccessAllowed ADMIN/RESPONSIBLE; Flutter app_router.dart:309 + :182), anonym nur /planung. Darstellung des Dialogs: modal-c85eff60."
+    },
+    "public-planning/public-planning.page#action-7c6a22b8": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:928",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:676"
+      ],
+      "v": "bestätigt",
+      "n": "hasOrg = eingeloggt && Organisation in beiden; „In Organisation \"{org}\"“ (grün, check_circle) entfernt bzw. „Zur Organisation hinzufügen“ (primär, business) validiert, speichert und setzt shared_plans.org_id; Toasts gleich (Flutter filtert zusätzlich creator_user_id, siehe db-252fc2e5/db-99a947c6)."
+    },
+    "public-planning/public-planning.page#action-58426c72": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:938"
+      ],
+      "v": "bestätigt",
+      "n": "„Neuer Plan“ grau mit add_circle_outline, nur eingeloggt (Admin/Verantwortlich)."
+    },
+    "public-planning/public-planning.page#action-b290a33e": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:509"
+      ],
+      "v": "bestätigt",
+      "n": "Nur eingeloggt und Instanztyp ≠ general (beide); fügt fehlende Werke der Historie an (20 min, Dirigent, Präfix „Nr. “), ohne Toast bei leerer Historie wie Ionic. Quelle/Reihenfolge: bekannter Befund „Quelle und Reihenfolge der aktuellen Werke“."
+    },
+    "public-planning/public-planning.page#action-5dd20907": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:511"
+      ],
+      "v": "bestätigt",
+      "n": "Nur eingeloggt, Instanztyp ≠ general und mit Werken (beide); öffnet „Werk auswählen“, fügt „Nr. Name“ mit 20 min an."
+    },
+    "public-planning/public-planning.page#text-4ae11dda": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:513"
+      ],
+      "v": "bestätigt",
+      "n": "„Felder“ nur eingeloggt mit Org-Standardfeldern (Flutter: Org nur bei Login gelesen)."
+    },
+    "public-planning/public-planning.page#action-3c7894ec": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:516",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:528"
+      ],
+      "v": "bestätigt",
+      "n": "„{Name} {min} min“ fügt Kopie des Org-Felds an; nur eingeloggt mit Org-Feldern."
+    },
+    "public-planning/public-planning.page#action-d456b0fb": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:549",
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:554"
+      ],
+      "v": "bestätigt",
+      "n": "„Einrücken“/„Ausrücken“ (grau) nur bei canIndent; keine Rollenbedingung (auch anonym)."
+    },
+    "shared-plan/shared-plan.page#alert-cbcf9904": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/shared_plan_page.dart:637",
+        "lib/features/planning/presentation/pages/shared_plan_page.dart:800",
+        "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:326"
+      ],
+      "v": "bestätigt",
+      "n": "Nur im Bearbeitungsmodus (gültiger Bearbeitungsschlüssel) in beiden – Titel nur dann antippbar. „Titel bearbeiten“, Feld mit aktuellem Titel, Platzhalter „Titel“, „Abbrechen“/„Speichern“, leer → bleibt offen; getrimmt gespeichert (Spalten siehe db-64fc7972/db-4e980eb4)."
+    }
+  },
+  "extra": []
+}

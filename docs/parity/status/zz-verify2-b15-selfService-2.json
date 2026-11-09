@@ -1,0 +1,411 @@
+{
+  "batch": "zz-verify2-b15-selfService-2",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "selfService/signout/signout.page#text-24cd62e0": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/event_list/excuse_reason_sheet.dart:439",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Titel „Beschreibung“ des Beschreibungs-Sheets (Infos-Chip/Aktion). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte. Darstellungsabweichung (HTML gestrippt, kein X) gehört zu modal-819b10ac.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-853f6c93": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:201",
+        "lib/core/utils/event_list_utils.dart:248",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Bedingung deadline gesetzt in beiden; Text „Anmeldefrist: dd.MM.yyyy HH:mm Uhr“ / „Anmeldefrist abgelaufen“, gleiche Wandzeit-Logik (UTC-Komponenten als lokale Zeit). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-4d732655": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:203",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "„Notiz: {note}“ bei att.notes, auf aktueller Karte, Anstehend-Zeilen und Nächster Dienst. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-0547ed34": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:205",
+        "lib/features/self_service/presentation/pages/signout_page.dart:724",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Chip „♪ n Werke“ bei Werken des Termins, öffnet Werke-Sheet (0.75) mit Ablaufplan-Sprung bei hasPlan wie Ionic openAttendanceSongs. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-81c2bdec": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:211",
+        "lib/data/repositories/sign_in_out_repository.dart:837",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "hasPlan = share_plan && plan.fields nicht leer wie Ionic; öffnet Plan-Viewer (Viewer-Abweichung siehe modal-ef7b9f1b). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-9e318750": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:217",
+        "lib/shared/widgets/event_list/excuse_reason_sheet.dart:425",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Chip „Infos“ bei description, öffnet Beschreibung (Darstellung siehe modal-819b10ac). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-c1386577": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:223",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:1140",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Label attachment_name oder „Anhang“, öffnet In-App-Browser (Ionic Browser.open). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-3dbfcf11": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:229",
+        "lib/core/providers/role_permission_providers.dart:116",
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:25",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "hasFilesFolder = files_folder && canAccessFiles; canAccessFiles identisch (files_shared: alle außer Bewerber/NONE, sonst nur Admin/Verantw./Helfer/SF-Helfer → Spieler/Stimmführer sehen den Chip in beiden nur bei files_shared). Öffnet /settings/files?path=…, Route ohne Rollensperre wie Ionic isFilesUrl. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-58742e6e": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:235",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:1108",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Chip „Route“ bei place; iOS Auswahl Apple Maps/Google Maps, sonst Google Maps wie Utils.openNavigation. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-341d2a0e": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:130",
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:455",
+        "lib/core/providers/duty_providers.dart:131",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Rollen/Bedingung (useDutyView, Dienst vorhanden) gleich, aber Darstellung abweichend, vom Erstprüfer übersehen. Ionic: „NÄCHSTER DIENST“ als .ev-month-Label (0.8rem, semibold, Großbuchstaben, grau, wie „Heute“/Monatsköpfe) / Flutter: _SectionTitle „Nächster Dienst“ fett in Textfarbe (titleMedium). EventMonthHeader wäre die Entsprechung.",
+      "v": "korrigiert"
+    },
+    "selfService/signout/signout.page#text-a25b156c": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:141",
+        "lib/data/repositories/duty_repository.dart:41",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "Titel typeInfo || Typname (Ionic-Join ohne hide_name, daher kein Unterschied zu DutyTermin.title). Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-35e2d1b7": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:149",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "Chip „Du“. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-de14a933": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:150",
+        "lib/core/providers/duty_providers.dart:141",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "Vornamen der anderen belegenden Personen (occupiesDuty) wie Ionic dutyTeam. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-b5878c89": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:157",
+        "lib/features/duty/presentation/widgets/duty_actions.dart:129",
+        "lib/core/providers/duty_providers.dart:256",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "„Kann doch nicht“: Absagegrund-Picker, signOut([pa.id], Grund, isLate=false, isSelf=true) + duty-notify understaffed, Toast „Danke fürs Abmelden“ wie Ionic quickSignout/onExcuseConfirm. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-74a3b56c": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:170",
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:468",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "Erstprüfer übersah die Darstellung. Text/Bedingung gleich (immer in der Dienstplan-Ansicht, keine Rollenprüfung). Ionic: .ev-section h2 1.35rem fett wie „Anstehend“/„Vergangen“ / Flutter: _SectionTitle titleMedium (16) fett – sichtbar kleiner als die übrigen Abschnittsköpfe der Seite (EventSectionHeader).",
+      "v": "korrigiert"
+    },
+    "selfService/signout/signout.page#action-6dcae27f": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:173",
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:317",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "„Alle {count}“ ab >3 offenen Diensten, öffnet Sheet „Offene Dienste“ (0.75). Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-3e9b3859-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:189",
+        "lib/core/providers/duty_providers.dart:176",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "dutyTitle = typeInfo || Typname || „Dienst“, identisch. Offene Dienste: duty_self_signup != false, nicht zugeteilt, nicht abgesagt, nicht voll – gleich. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-9febe693-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "dutyMeta „HH:mm · x von y besetzt“, „Dringend“ davor, gleich; Flutter setzt das Datum als Text vorne statt Datumskachel (Kachel ist eigenes Element). Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-1351f460": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:191",
+        "lib/core/theme/app_theme.dart:166",
+        "lib/features/duty/presentation/widgets/duty_actions.dart:157",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "Erstprüfer übersah die Darstellung. Wirkung gleich (RPC duty_take + notify filled, Toasts ok/voll/nicht erlaubt), Rollen gleich. Farbe abweichend: Ionic ion-button small solid primary (petrol, weiße Schrift) / Flutter FilledButton.tonal → secondaryContainer hellblau (#6FD4FF) mit dunkelblauer Schrift.",
+      "v": "korrigiert"
+    },
+    "selfService/signout/signout.page#text-ff2e0c87": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:183",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "„Gerade sind alle Dienste besetzt. Danke!“ bei leerer Vorschau. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-1914b2e8": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:205",
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:468",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "Erstprüfer übersah die Darstellung. Bedingung (weitere bestätigte Dienste nach dem nächsten) gleich. Ionic: .ev-section h2 1.35rem fett / Flutter: _SectionTitle titleMedium (16) fett – kleiner als „Anstehend“/„Vergangen“.",
+      "v": "korrigiert"
+    },
+    "selfService/signout/signout.page#text-5f79bd8f": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:205",
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:471",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "Erstprüfer übersah die Darstellung. Zahl gleich (bestätigte Dienste ohne den nächsten). Ionic: .ev-section__count als graue Zahl (0.95rem) neben der Überschrift wie bei „Anstehend“ / Flutter: farbige Primary-Pill (DutyPill).",
+      "v": "korrigiert"
+    },
+    "selfService/signout/signout.page#action-92b10fb3": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:237",
+        "lib/features/self_service/presentation/pages/signout_page.dart:295",
+        "lib/core/providers/signout_providers.dart:168",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "„Weitere Termine“ mit „n · Titel1, Titel2“ (Termine ohne eigene Dienste) und Chevron-Toggle, gleiche Zählung (applySignoutDutyView). Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-07592d89": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:245",
+        "lib/features/duty/presentation/pages/unavailability_page.dart:21",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "„Regelmäßig verhindert“ öffnet Vollbild-Seite für die eigene Person wie Ionic UnavailabilityModal. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-dd3099f2": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:251",
+        "lib/features/self_service/presentation/pages/signout_page.dart:299",
+        "lib/core/providers/player_absence_providers.dart:69",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "canPlannedAbsence = player_planned_absence der eigenen Rolle in beiden (canSelfReportAbsenceProvider); öffnet Abwesenheits-Sheet. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-14a391d6": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:492",
+        "lib/core/utils/event_list_utils.dart:75",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "„Heute“ bei laufendem Termin (tagesbasiert inkl. mehrtägig), sonst „Nächster Termin“. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-f3fe22c1": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:497",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:696",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Wochentag „Mo“… wie dayjs dd. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-3ec229f3": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:497",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:696",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Tag zweistellig wie dayjs DD. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-321ae3a4": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:498",
+        "lib/data/repositories/sign_in_out_repository.dart:868",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "eventTitle = typeInfo || Typname || Lesedatum wie getEventTitle. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-12426941": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:499",
+        "lib/data/repositories/sign_in_out_repository.dart:876",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "eventMeta(withDate: true, withPlace: false) wie getEventMeta(att, true, false). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-d89e83ec": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:501",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:227",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Pill „Nicht eingeladen“ mit Auge-Icon bei show_all_attendances && !isMember, sonst Status – gleich. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-6f78d5d8": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:502",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:732",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Ort mit location-Icon bei place. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-751098ef": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:485",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:756",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Infotext bei show_all_attendances && !isMember: Mandanten-Text oder Standard defaults.showAllInfoText, gleiche Position. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-7d0a5a99": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:507",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:794",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "„Weitere Optionen“ nur bei quickActions (eigener Termin mit PA-id), öffnet Aktionsblatt ohne Schnellaktionen/Chips. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-3822774c": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:518",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "„Anstehend“ bei weiteren Terminen (ohne aktuellen), nicht zugeteilte Dienste ausgeblendet wie Ionic. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-037f4b7e": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:518",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Anzahl ohne aktuellen Termin. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-8bc5216f": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:520",
+        "lib/core/utils/event_list_utils.dart:136",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Monatsgruppen „MMMM yyyy“ lokalisiert. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-9fa1e53c": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:565",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "„Vergangen“ auch in der Dienstplan-Ansicht sichtbar wie Ionic. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-86de3c2f": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:565",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "Anzahl eigener vergangener Termine (ohne nicht zugeteilte Dienste). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-472eaa05": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:569",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:908",
+        "lib/core/providers/signout_providers.dart:90",
+        "lib/core/router/route_access.dart:73"
+      ],
+      "n": "„{perc}%“ aus countsForAverage(fallback true) inkl. shift_excused_as_present, vor dem Dienst-Filter berechnet wie Ionic. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

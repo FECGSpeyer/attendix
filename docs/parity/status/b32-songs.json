@@ -1,0 +1,790 @@
+{
+ "batch": "b32-songs",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "songs/songs.page#logic-673d2fb4": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:155",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:227",
+    "lib/core/providers/song_providers.dart:71",
+    "lib/core/providers/song_providers.dart:326",
+    "lib/core/providers/song_filter_providers.dart:166",
+    "lib/core/providers/song_filter_providers.dart:225",
+    "lib/core/providers/song_providers.dart:695"
+   ],
+   "n": "Gleich: öffentlicher Modus über Sharing-ID, Laden von Werken/Historie/Kategorien/Gruppen/aktuellen Werken, lastSung/nextPlanned (Historie bis heute bzw. nächster künftiger Eintrag), Default-Besetzung = alle Gruppen bei Orchester, Filter (Segment, Kategorien, Gruppen, Chor/Solo, Schwierigkeit, Zusatzfelder), Suche (Name, Dirigent, Präfix+Nummer, 250 ms), 6 Sortierungen, gespeicherte Sortierung/Ansicht/Filter je Tenant (Schwierigkeit nicht), Gruppenverzeichnis inkl. Dirigenten/Chor (alle), Realtime, Rollen Admin/Verantwortlicher. Unterschiede siehe Items und extra: Kategorie-Bereinigung nur beim ersten Laden, Dirigentenname-Quelle, Suchreset-Eigenheit, Lade-/Fehler-/Leerzustand; öffentliche Seite nutzt in Flutter Rolle/Zusatzfelder des freigebenden statt des eingeloggten Tenants.",
+   "sev": "mittel"
+  },
+  "songs/songs.page#toast-9ab6d68a": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:175",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:183"
+   ],
+   "n": "Text „Ungültiger Freigabe-Link.“ gleich. Ionic: Toast in Standardfarbe success (grün); Seite bleibt mit Titel „Werke (0)“, ⋮-Menü, Suchleiste und Skeleton-Liste stehen / Flutter: neutraler Info-Toast; Seite mit Titel „Werke“, Zurück-Button (→ /login) und leerem Inhalt",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#db-3dd65a36": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/song_providers.dart:205",
+    "lib/core/providers/song_providers.dart:220",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:157"
+   ],
+   "n": "Ionic: alle Events auf public.songs ohne Filter, Reload wenn new.tenantId = effektiver Werk-Tenant oder old.id vorhanden / Flutter: INSERT/UPDATE mit Filter tenantId = effektiver Werk-Tenant, DELETE nur wenn ID in geladenen Werken, 300 ms Debounce. Sichtbares Ergebnis gleich (Liste aktualisiert sich). Öffentliche Seite: Flutter ohne Realtime (Ionic abonniert dort den eingeloggten Tenant bzw. wirft ohne Login)."
+  },
+  "songs/songs.page#db-f4cfc4cb": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/song_providers.dart:221"
+   ],
+   "n": "Kanal `songs-changes-<song_source_tenant_id ?? tenantId>` identisch"
+  },
+  "songs/songs.page#alert-4b046a4c": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:27",
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:132",
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:164"
+   ],
+   "n": "Titel „Gruppe wählen“, Radio-Liste aller Nicht-Hauptgruppen, „Abbrechen“/„Noten drucken“; ohne Auswahl Warn-Toast, Dialog bleibt offen; Datei je Gruppe, in Chören Fallback „Chor (alle)“; Dateiname Noten_<Gruppe>_<yyyy-MM-dd>.pdf. Flutter nutzt die geladenen aktuellen Werke (Ionic lädt neu) und schließt den Dialog vor dem Druck (Ionic erst nach Ende des Handlers)."
+  },
+  "songs/songs.page#toast-539860db": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:171"
+   ],
+   "n": "Warnung (orange) gleich"
+  },
+  "songs/songs.page#toast-cb7ca862": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:54"
+   ],
+   "n": "Warnung (orange) gleich"
+  },
+  "songs/songs.page#toast-f272cb30": {
+   "s": "na",
+   "n": "toter Code: printGroupFolder ist nur über den Druck-Button erreichbar, der nur bei selectedGroupName && selectedGroupFiles.length erscheint (songs.page.html:325); Flutter hat dieselbe, ebenso unerreichbare Prüfung (group_files_sheet.dart:42, Button nur bei files.isNotEmpty :84)"
+  },
+  "songs/songs.page#effect-d5df5767": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:128",
+    "lib/features/songs/presentation/widgets/song_file_opener.dart:19",
+    "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+   ],
+   "n": "Ionic: Utils.openFileNative(url) → Web: neuer Browser-Tab (installierte Web-App: In-App-Viewer), nativ: System-Dateiviewer / Flutter: PDFs und Bilder immer im In-App-Viewer-Sheet, nur andere Dateien extern",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#nav-3b77363a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:282"
+   ],
+   "n": "Push auf /settings/org-settings/songs, Suchbegriff als ?q= (Flutter getrimmt)"
+  },
+  "songs/songs.page#modal-6574191a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:98"
+   ],
+   "n": "Vollbild-Modal SongImportPage, Liste nur bei imported neu geladen"
+  },
+  "songs/songs.page#effect-97c69a71": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/data/song_print_service.dart:190",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "Download/Teilen über NativeFileService.saveBytes (Port von downloadFileNative), Dateiname <Kurzname>_Werkverzeichnis_<dd-MM-yyyy>.pdf gleich"
+  },
+  "songs/songs.page#effect-cd42ffa6": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/data/song_print_service.dart:125",
+    "lib/features/songs/data/song_print_service.dart:164",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:137"
+   ],
+   "n": "Inhalt gleich: Kopf „Werkverzeichnis …“/„Stand: …“ mit Branding, Spalten Nr./Name, ggf. Zuletzt gespielt/gesungen (nicht öffentlich), Schwierigkeit, Chor/Orch., Solo, sichtbare Zusatzfelder; Zeilen = gefilterte Liste. Ionic: 11 pt, automatische Verkleinerung (Padding 2 → 9 pt → 8 pt), damit die Liste möglichst auf eine Seite passt; Export-Schrift / Flutter: feste 9 pt (Kopf 10 pt), Standardschrift; Flutter meldet Fehler als Toast. Öffentliche Seite: Ionic nimmt Zusatzfelder/Branding des eingeloggten Tenants, Flutter Felder des freigebenden, kein Branding",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#toast-37a6c970": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:68"
+   ],
+   "n": "roter Toast gleich; Flutter vergleicht mit getrimmtem Präfix und als Zahl geparster Nummer"
+  },
+  "songs/songs.page#toast-0dade735": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:72",
+    "lib/features/songs/presentation/utils/song_utils.dart:201"
+   ],
+   "n": "roter Toast gleich; http/https-Prüfung gleichwertig"
+  },
+  "songs/songs.page#nav-4756a104": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:114",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:364"
+   ],
+   "n": "im Werke-Tab → /songs-tab/<id>"
+  },
+  "songs/songs.page#nav-ecc8ff90": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:118",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:364"
+   ],
+   "n": "sonst → /settings/songs/<id>"
+  },
+  "songs/songs.page#toast-aaacbda9": {
+   "s": "na",
+   "n": "toter Code: SongsPage.editSong wird nirgends aufgerufen (kein Aufruf in songs.page.html; song.page nutzt db.editSong direkt)"
+  },
+  "songs/songs.page#toast-1b92e36e": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:132"
+   ],
+   "n": "grüner Toast, Link https://attendix.de/<sharing_id>"
+  },
+  "songs/songs.page#nav-48b97106": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:114",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:111"
+   ],
+   "n": "Flutter besser: Ionic öffnet ein Werk aus „Aktuelle Werke“ immer unter /tabs/settings/songs/<id>, auch im Werke-Tab (Wechsel in den Einstellungen-Kontext) / Flutter: im Werke-Tab /songs-tab/<id>, sonst /settings/songs/<id>",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#nav-bb5caed5": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:112"
+   ],
+   "n": "öffentlich → /<sharing_id>/<songId>"
+  },
+  "songs/songs.page#alert-f19b0ff1": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:151",
+    "lib/core/providers/song_providers.dart:597"
+   ],
+   "n": "Flutter besser: Titel „Kategorie hinzufügen“, Platzhalter „Name der Kategorie“, „Abbrechen“/„Hinzufügen“, leer → Dialog zu + roter Toast gleich. Ionic: index = Anzahl Kategorien (nach Löschen ohne Neunummerierung doppelte Indizes möglich) / Flutter: index = höchster Index + 1",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#toast-1a24aa1c": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:190"
+   ]
+  },
+  "songs/songs.page#toast-b63ac699": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:184"
+   ]
+  },
+  "songs/songs.page#alert-5ae7adcc": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:195"
+   ],
+   "n": "Titel, vorbelegter Name, Platzhalter, „Abbrechen“/„Speichern“, Name getrimmt gespeichert"
+  },
+  "songs/songs.page#toast-5b825f48": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:236"
+   ]
+  },
+  "songs/songs.page#toast-0b939d73": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:229"
+   ]
+  },
+  "songs/songs.page#alert-aba0e0bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:240"
+   ],
+   "n": "Titel, Text, „Abbrechen“/„Löschen“ gleich; Löschen-Button in Flutter rot"
+  },
+  "songs/songs.page#toast-e880762a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:267"
+   ]
+  },
+  "songs/songs.page#action-a3de1883": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:258",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:260"
+   ],
+   "n": "Ionic: Zurück-Button (text \"\", defaultHref \"/\" bzw. \"tabs/settings\") außerhalb des Werke-Tabs, also auch auf der öffentlichen Freigabe-Seite / Flutter: automaticallyImplyLeading: !isPublic → auf der gültigen öffentlichen Seite kein Zurück-Button (nur bei ungültigem Link); /settings/songs gleich",
+   "sev": "mittel"
+  },
+  "songs/songs.page#action-5cbe4f9b": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:260",
+    "lib/shared/widgets/layout/side_nav/side_nav_layout.dart:111"
+   ],
+   "n": "Menü-Button nur im Werke-Tab und nur bei Overlay-Seitenleiste (autoHide)"
+  },
+  "songs/songs.page#text-5ecb67ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:245",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:257"
+   ]
+  },
+  "songs/songs.page#text-b8539fda": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:247",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:257"
+   ],
+   "n": "„Werke ({count})“ mit Anzahl aller Werke"
+  },
+  "songs/songs.page#action-8679efba": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:264"
+   ],
+   "n": "⋮-Button als PopupMenuButton"
+  },
+  "songs/songs.page#popover-27f2ff4c": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:289"
+   ],
+   "n": "Menü am ⋮-Button, Reihenfolge gleich (Kategorien, Link kopieren, Tab, Import, Org-Suche, PDF); Bedingungen siehe Einträge"
+  },
+  "songs/songs.page#action-0dba564e": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+   ],
+   "n": "Flutter besser: Ionic zeigt „Werk-Kategorien“ allen Rollen und auch auf der öffentlichen Seite (dort Kategorien des eingeloggten Tenants bzw. leer); Anlegen/Ändern/Löschen scheitert für Nicht-Admins an RLS (admins_manage_song_categories: Rolle 1/5) / Flutter: nur Admin/Verantwortlicher, nicht öffentlich",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#action-cfab610a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:299",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:132"
+   ]
+  },
+  "songs/songs.page#action-ed429618": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:310",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:123"
+   ],
+   "n": "Texte „Tab ausblenden“/„Als Tab anzeigen“, Bookmark-Icon, user_metadata showSongsTab_<tenantId> gleich; Flutter zusätzlich nur bei songsTabAllowed (Tenant ≠ general, nicht Bewerber/Eltern) – entspricht der Erreichbarkeit der Seite in Ionic (settings.page.html:522)"
+  },
+  "songs/songs.page#action-684cb018": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:324"
+   ],
+   "n": "nur Admin/Verantwortlicher, nicht öffentlich"
+  },
+  "songs/songs.page#action-380a0b3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:334"
+   ],
+   "n": "nur Admin/Verantwortlicher, nicht öffentlich, mit Organisation"
+  },
+  "songs/songs.page#action-fe98ea36": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:345"
+   ],
+   "n": "immer sichtbar, auch öffentlich"
+  },
+  "songs/songs.page#modal-6abfa0ce": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:31",
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:337"
+   ],
+   "n": "Sheet, Start 60 %; Flutter max. 90 % statt 100 %"
+  },
+  "songs/songs.page#text-c5e1d048": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:48"
+   ]
+  },
+  "songs/songs.page#action-356e8b27": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:50"
+   ]
+  },
+  "songs/songs.page#action-dd312053": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:99",
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:143",
+    "lib/core/providers/song_providers.dart:648"
+   ],
+   "n": "Drag-Handle am Zeilenende; Flutter schreibt je Kategorie nur index (Ionic ganzes Objekt mit index) – gleiches Ergebnis; Flutter aktualisiert danach auch das Segment"
+  },
+  "songs/songs.page#action-9e4f3c09": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:313"
+   ],
+   "n": "Stift in Warnfarbe"
+  },
+  "songs/songs.page#action-0eba8e50": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:318"
+   ],
+   "n": "Mülleimer in Gefahrfarbe"
+  },
+  "songs/songs.page#text-113b2882": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:85"
+   ]
+  },
+  "songs/songs.page#action-303682fd": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:87",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:371"
+   ],
+   "n": "Flutter besser: Pull-to-Refresh lädt in Flutter auch „Aktuelle Werke“ und Kategorien neu / Ionic doRefresh → getSongs lädt aktuelle Werke nicht neu und nimmt Kategorien aus dem Cache",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#text-5ecb67ec-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:376"
+   ],
+   "n": "großer Titel (iOS condense)"
+  },
+  "songs/songs.page#text-b8539fda-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:376"
+   ],
+   "n": "großer Titel (iOS condense)"
+  },
+  "songs/songs.page#field-f67e3253": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:377",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:559"
+   ],
+   "n": "scrollbares md-Segment „Alle“ + Kategorien, nur wenn Kategorien vorhanden, Auswahl je Tenant gespeichert"
+  },
+  "songs/songs.page#field-c5082654": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:402",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:80",
+    "lib/core/providers/song_filter_providers.dart:211"
+   ],
+   "n": "Platzhalter „Werk suchen...“, 250 ms, Suche in Name/Dirigent/Präfix+Nummer"
+  },
+  "songs/songs.page#action-f4c583da": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:413",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:430"
+   ],
+   "n": "Öffnet Filter (siehe popover-21a14c45). Icon tune statt options (ähnlich); Flutter zusätzlich Punkt-Badge bei aktiven Filtern",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#popover-21a14c45": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:42",
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:52",
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:215"
+   ],
+   "n": "Ionic: Popover am Filter-Button, Einträge nur mit Icons, ohne Überschriften / Flutter: Bottom-Sheet „Filter & Ansicht“ mit Abschnittsüberschriften (Sortierung, Schwierigkeitsgrad, Kategorien, Gruppen, Ansicht), „Zurücksetzen“ bei aktiven Filtern und Schließen-Button",
+   "sev": "mittel"
+  },
+  "songs/songs.page#field-8b94b50e": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:28",
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:74",
+    "lib/data/models/song/song_filter.dart:19"
+   ],
+   "n": "Optionen und Reihenfolge gleich, „Zuletzt gespielt/gesungen ↑/↓“ nur nicht-öffentlich, Default Nummer ↑, gespeichert"
+  },
+  "songs/songs.page#field-6acb3577": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:88"
+   ],
+   "n": "Alle/1 - Leicht/2 - Mittel/3 - Schwer, Default Alle, nicht gespeichert (wie Ionic)"
+  },
+  "songs/songs.page#field-4e8c4d24": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:100",
+    "lib/core/providers/song_filter_providers.dart:172"
+   ],
+   "n": "Schalter „Chor & Orchester“, Logik und Speicherung gleich"
+  },
+  "songs/songs.page#field-2c010447": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:107",
+    "lib/core/providers/song_filter_providers.dart:172"
+   ],
+   "n": "Schalter „Solo“, Logik und Speicherung gleich"
+  },
+  "songs/songs.page#field-de9835a0": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:114"
+   ],
+   "n": "Logik (mind. eine gewählte Kategorie), Bedingung und Speicherung gleich. Ionic: Mehrfach-Select (Alert mit Checkboxen) mit Preisschild-Icon ohne Label / Flutter: FilterChips unter Überschrift „Kategorien“",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#field-a0424ef7": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:133",
+    "lib/core/providers/song_providers.dart:308"
+   ],
+   "n": "Ionic: Mehrfach-Select (Noten-Icon), Optionen nur bei Orchester (instruments wird nur für isOrchestra gefüllt), bei Chor/Allgemein leer / Flutter: Chips „Gruppen“ mit allen Nicht-Hauptgruppen bei jedem Tenant-Typ; in Chören haben Werke meist keine instrument_ids, Auswahl einer Stimme leert dann die Liste",
+   "sev": "mittel"
+  },
+  "songs/songs.page#field-d23661dc": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:32",
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:170"
+   ],
+   "n": "Optionen/Reihenfolge gleich (Link, Schwierigkeitsgrad, Chor & Orchester, Solo, Fehlende Instrumente, Zuletzt gespielt/gesungen nur nicht-öffentlich, Zusatzfelder), Default und Speicherung gleich. Ionic: Mehrfach-Select im Popover (Auge-Icon) / Flutter: Checkbox-Liste direkt im Sheet unter „Ansicht“. Öffentliche Seite: Ionic listet Zusatzfelder des eingeloggten Tenants, Flutter die des freigebenden",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#field-4796fb04": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:152"
+   ],
+   "n": "Optionen „Alle“ + Feldoptionen und Filterlogik gleich. Ionic: Select mit Platzhalter = Feldname, am Ende des Popovers nach der Ansicht-Auswahl / Flutter: Dropdown mit Überschrift = Feldname, vor dem Abschnitt „Ansicht“. Öffentliche Seite: Ionic Felder des eingeloggten Tenants, Flutter des freigebenden",
+   "sev": "mittel"
+  },
+  "songs/songs.page#field-5c68cf0f": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:152",
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:160"
+   ],
+   "n": "Optionen Alle/Ja/Nein und Filterlogik gleich. Ionic: Select mit Platzhalter = Feldname, am Ende des Popovers nach der Ansicht-Auswahl / Flutter: Dropdown mit Überschrift = Feldname, vor dem Abschnitt „Ansicht“. Öffentliche Seite: Ionic Felder des eingeloggten Tenants, Flutter des freigebenden",
+   "sev": "mittel"
+  },
+  "songs/songs.page#action-3ecba25c": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:238",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:609"
+   ],
+   "n": "nur mit aktuellen Werken und ohne Kategorie-Auswahl, primärfarben"
+  },
+  "songs/songs.page#action-b6c27476": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:241",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:616"
+   ],
+   "n": "nur wenn Gruppen mit Dateien existieren"
+  },
+  "songs/songs.page#modal-f0b363a1": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:72",
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:183"
+   ],
+   "n": "Sheet, Start 80 % bei mehr als einer Gruppe, sonst 50 %"
+  },
+  "songs/songs.page#text-86c56c21": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:83"
+   ]
+  },
+  "songs/songs.page#action-3f72e6db": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:85",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:466"
+   ],
+   "n": "Flutter besser: Druck-Button nur für Admin/Verantwortlichen und nie auf der öffentlichen Seite / Ionic: isAdmin = Rolle im eingeloggten Tenant, daher auch auf fremder Freigabe-Seite sichtbar (druckt dann Werke des eigenen Tenants)",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#text-0313f0c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:101"
+   ],
+   "n": "Gruppenkopf „dd.MM.yyyy | Typ“ aus loadCurrentSongsForTenant"
+  },
+  "songs/songs.page#action-cda4f15d": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:106",
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:114",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:111"
+   ],
+   "n": "Text „<Präfix><Nr> <Name>“ gleich. Flutter besser: Ionic öffnet immer /tabs/settings/songs/<id>, auch im Werke-Tab / Flutter: im Werke-Tab /songs-tab/<id>",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#modal-bf4ade5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:64",
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:143"
+   ],
+   "n": "Sheet, Start 90 %; Gruppenauswahl wird beim Schließen verworfen"
+  },
+  "songs/songs.page#action-e101b87f": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:76"
+   ]
+  },
+  "songs/songs.page#text-072ab7b9": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:75"
+   ],
+   "n": "Gruppenname bzw. „Gruppe wählen“"
+  },
+  "songs/songs.page#action-c4805ac6": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:35",
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:84"
+   ],
+   "n": "Druck als „Mappe_<Gruppe>_<yyyy-MM-dd>.pdf“ gleich. Sortierung nach Präfix: Ionic localeCompare / Flutter compareTo (Codepoint) – abweichend nur bei Groß-/Kleinschreibung oder Umlauten im Präfix",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#text-417895db": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:99"
+   ]
+  },
+  "songs/songs.page#action-e5aa1038": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:107",
+    "lib/core/providers/song_providers.dart:717"
+   ],
+   "n": "Aufbau gleich (Dirigenten, Chor (alle), dann Gruppen mit Dateien). Sortierung der Gruppen: Ionic name.localeCompare (sprachgerecht) / Flutter toLowerCase().compareTo (Codepoint, z. B. „Ö…“ nach „Z…“)",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#action-97754899": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:121",
+    "lib/features/songs/presentation/widgets/song_file_opener.dart:19"
+   ],
+   "n": "Zeile Dateiname + „<Präfix><Nr> <Name>“ gleich. Öffnen: Ionic openFileNative → Browser-Tab (Web) bzw. System-Viewer (nativ) / Flutter: PDFs und Bilder im In-App-Viewer-Sheet, andere Dateien extern",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#text-94263118": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:481"
+   ],
+   "n": "„Werke ({count})“ mit gefilterter Anzahl"
+  },
+  "songs/songs.page#action-80f8f4a3": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:628",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:656",
+    "lib/features/songs/presentation/utils/song_utils.dart:115",
+    "lib/core/providers/player_providers.dart:116"
+   ],
+   "n": "Titel, Zuletzt gespielt/gesungen am … | Dirigent, „Noch nicht …“ + „Geplant am …“, Zusatzfelder darunter, Badges Solo/Chor bzw. Orchester/Link/Schwierigkeit/Zusatzfelder in gleicher Reihenfolge und Farbe, Ziel-Route gleich. Flutter besser (gewollt): Zeile „Ohne …“ zählt für Dirigenten/Helfer nur Gruppen mit aktiven Spielern (Ionic: alle Nicht-Hauptgruppen) – Text kann kürzer sein oder fehlen. Außerdem Reihenfolge ganz fehlender Kategorien: Ionic nach Kategorie-ID aufsteigend, „Sonstige“ zuletzt / Flutter in Gruppenreihenfolge",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#action-dc1e2c52": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:521"
+   ],
+   "n": "Flutter-natives Lazy-Rendering (SliverList) statt 100er-Blöcken mit Nachlade-Spinner; alle Werke erreichbar"
+  },
+  "songs/songs.page#modal-b27e7f62": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:360",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:238"
+   ],
+   "n": "FAB „+“ nur für Admin/Verantwortlichen. Ionic: Sheet in voller Höhe (breakpoints [0,1]) / Flutter: Bottom-Sheet in Inhaltshöhe. Flutter besser: auf der öffentlichen Seite nie (Ionic zeigt den FAB einem eingeloggten Admin auch dort und legt dann im eigenen Tenant an)",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#text-c364c614": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:156"
+   ]
+  },
+  "songs/songs.page#text-969bc289": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:169"
+   ]
+  },
+  "songs/songs.page#field-84303b95": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:164"
+   ],
+   "n": "Hilfetext „Bspw. um Weihnachtslieder …“ gleich"
+  },
+  "songs/songs.page#text-3400020d": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:177"
+   ]
+  },
+  "songs/songs.page#field-e45acad0": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:174"
+   ],
+   "n": "Zahlentastatur"
+  },
+  "songs/songs.page#text-ff22518d": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:183"
+   ]
+  },
+  "songs/songs.page#field-e45acad0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:180"
+   ]
+  },
+  "songs/songs.page#text-0a936b9f": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:191"
+   ]
+  },
+  "songs/songs.page#field-8bf1ecb0": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:186"
+   ],
+   "n": "Ionic: ion-textarea (autoGrow) markiert beim Fokus den gesamten Inhalt (onTextAreaFocus) / Flutter: mehrzeiliges TextField (1–4 Zeilen, URL-Tastatur) ohne Alles-Markieren",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#field-1ade78f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:193"
+   ],
+   "n": "Default aus"
+  },
+  "songs/songs.page#field-c79cb682": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:199"
+   ],
+   "n": "Default aus"
+  },
+  "songs/songs.page#field-91386d59": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:205",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:100",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:40"
+   ],
+   "n": "nur Orchester, Label „Besetzung“, Vorauswahl alle Gruppen; Ionic Modal-Select / Flutter Dialog mit Checkboxen (Abbrechen/OK)"
+  },
+  "songs/songs.page#action-761fe550": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:58",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:61",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:218",
+    "lib/data/repositories/song_repository.dart:252"
+   ],
+   "n": "Flutter besser: „Hinzufügen“ nur aktiv mit Nummer und Name, Duplikat-/Link-Prüfung, Insert-Spalten und Navigation zum neuen Werk gleich. Flutter trimmt Name/Präfix/Link, parst die Nummer als Zahl, sendet leeren Link nicht (Ionic: \"\"), zeigt bei Fehler „Werk konnte nicht erstellt werden“ und lässt das Sheet offen (Ionic schließt das Modal ohne Meldung, keine Navigation)",
+   "sev": "niedrig"
+  }
+ },
+ "extra": [
+  {
+   "unit": "songs/songs.page",
+   "title": "Gelöschte Kategorie bleibt als Filter aktiv",
+   "n": "Ionic: getSongs bereinigt nach jedem Laden (auch nach Kategorie löschen) selectedCategory/selectedCategories → Liste zeigt wieder alle Werke / Flutter: pruneCategories läuft nur beim ersten Laden der Seite (_pruned). Wird die im Segment gewählte Kategorie im Kategorien-Sheet gelöscht, bleibt die Liste darauf gefiltert (Werke behalten die category_ids), kein Segment-Eintrag markiert, „Aktuelle Werke anzeigen“ ausgeblendet; war es die letzte Kategorie, verschwindet das Segment und es gibt bis zum Verlassen der Seite keinen Weg zurück zu „Alle“",
+   "sev": "mittel",
+   "ionic": "src/app/songs/songs.page.ts:191",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:219",
+    "lib/core/providers/song_filter_providers.dart:92"
+   ]
+  },
+  {
+   "unit": "songs/songs.page",
+   "title": "Dirigentenname in „Zuletzt gesungen am …“ aus anderer Quelle",
+   "n": "Ionic: Name nur, wenn person_id ein Mitglied der Hauptgruppe ist (getConductors inkl. Ausgetretene, ohne pending), sonst otherConductor; ohne Hauptgruppe wirft getConductors und die Seite lädt nicht / Flutter: Name jeder verknüpften Person (Join person_id), sonst otherConductor; keine Hauptgruppe nötig. Wirkt auch auf die Suche nach Dirigent",
+   "sev": "niedrig",
+   "ionic": "src/app/songs/songs.page.ts:205",
+   "f": [
+    "lib/core/providers/song_providers.dart:110",
+    "lib/data/repositories/song_repository.dart:706"
+   ]
+  },
+  {
+   "unit": "songs/songs.page",
+   "title": "Suchbegriff wird in Ionic still verworfen",
+   "n": "Flutter besser: Ionic setzt bei Filter-/Sortier-/Segmentwechsel, Pull-to-Refresh und Realtime-Reload searchTerm = \"\" und zeigt die Liste ohne Suche, obwohl der Text in der Suchleiste stehen bleibt (auch „In der Organisation suchen“ übergibt dann kein q) / Flutter: Suche bleibt angewendet, solange Text in der Leiste steht",
+   "sev": "niedrig",
+   "ionic": "src/app/songs/songs.page.ts:586",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:227"
+   ]
+  },
+  {
+   "unit": "songs/songs.page",
+   "title": "Lade- und Fehlerzustand",
+   "n": "Ionic: beim Laden volle Toolbar (Titel „Werke (0)“, ⋮-Menü), Suchleiste, Refresher und Skeleton-Inset-Liste (Kopf + 10 zweizeilige Einträge); Ladefehler → Skeleton bleibt dauerhaft / Flutter: nur AppBar „Werke“ (öffentlich leer) und 10 einzeilige Skeleton-Zeilen ohne Menü/Suche; Ladefehler → ErrorStateView mit „Erneut versuchen“ (Flutter besser)",
+   "sev": "niedrig",
+   "ionic": "src/app/songs/songs.page.html:245",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:168",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:206"
+   ]
+  },
+  {
+   "unit": "songs/songs.page",
+   "title": "Leerzustand nur in Flutter",
+   "n": "Ionic: bei 0 Treffern nur Kopf „Werke (0)“ / Flutter: Icon + „Keine Werke vorhanden“ bzw. „Keine Werke gefunden“ und bei aktiven Filtern Button „Filter zurücksetzen“",
+   "sev": "niedrig",
+   "ionic": "src/app/songs/songs.page.html:366",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:487"
+   ]
+  }
+ ]
+}

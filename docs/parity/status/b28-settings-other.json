@@ -1,0 +1,857 @@
+{
+ "batch": "b28-settings-other",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "settings/handover/handover.page#logic-8f08a3c7": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:57",
+    "lib/features/settings/presentation/pages/handover_page.dart:97",
+    "lib/features/settings/presentation/pages/handover_page.dart:104",
+    "lib/features/settings/presentation/pages/handover_page.dart:118",
+    "lib/features/settings/presentation/pages/handover_page.dart:121",
+    "lib/core/providers/organisation_providers.dart:39",
+    "lib/data/repositories/organisation_repository.dart:312"
+   ],
+   "n": "Hauptgruppen-Filter, Älter/Jünger-Filter (Personen ohne Geburtstag fallen raus), Gruppenfilter, Ziel-Instanzen (Organisation ohne aktuelle Instanz), Default erste Instanz/erste Gruppe, Alle auswählen und Übergabe der Auswahl entsprechen Ionic. Abweichung siehe extra (Sortierung der Personenliste).",
+   "sev": "mittel"
+  },
+  "settings/handover/handover.page#toast-3db15108": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:107",
+    "lib/features/settings/presentation/pages/handover_page.dart:111"
+   ]
+  },
+  "settings/handover/handover.page#nav-f9737832": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:136",
+    "lib/core/router/app_router.dart:1253"
+   ],
+   "n": "Ionic: navigateForward /tabs/settings/handover/detail mit DataService.setHandoverData / Flutter: push /settings/handover/detail mit HandoverData (Personen, Ziel-Instanz, stayInInstance) als extra."
+  },
+  "settings/handover/handover.page#nav-42b92fe4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:130",
+    "lib/core/router/app_router.dart:1248"
+   ],
+   "n": "Ionic: navigateBack('/tabs/settings') / Flutter: AppBar-Zurück poppt; Route ist Unterroute von /settings, darunter liegt immer die Einstellungsseite."
+  },
+  "settings/handover/handover.page#action-1fedb4c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:130"
+   ],
+   "n": "Automatischer AppBar-Zurück-Button statt eigenem ion-button mit arrow-back."
+  },
+  "settings/handover/handover.page#text-00d1539c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:130"
+   ]
+  },
+  "settings/handover/handover.page#text-00d1539c-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:157"
+   ]
+  },
+  "settings/handover/handover.page#text-3b90f88b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:163",
+    "lib/features/settings/presentation/pages/handover_page.dart:166"
+   ]
+  },
+  "settings/handover/handover.page#text-02a47564": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:173"
+   ]
+  },
+  "settings/handover/handover.page#field-20427ab9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:177"
+   ]
+  },
+  "settings/handover/handover.page#field-d58ec07f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:183"
+   ]
+  },
+  "settings/handover/handover.page#field-4f89e8e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:194"
+   ]
+  },
+  "settings/handover/handover.page#text-a96b4575": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:218"
+   ],
+   "n": "Text \"Filter hinzufügen\" gleich. Ionic: Eintrag ohne Icon / Flutter: zusätzliches Filter-Icon (Icons.filter_list) links.",
+   "sev": "niedrig"
+  },
+  "settings/handover/handover.page#popover-df1d98a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:208"
+   ],
+   "n": "Ionic: ion-popover am Eintrag / Flutter: PopupMenuButton am selben Eintrag, gleiche Einträge in gleicher Reihenfolge."
+  },
+  "settings/handover/handover.page#action-6e5c82dd": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:211",
+    "lib/features/settings/presentation/pages/handover_page.dart:212"
+   ]
+  },
+  "settings/handover/handover.page#action-7abd5de8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:211",
+    "lib/features/settings/presentation/pages/handover_page.dart:213"
+   ]
+  },
+  "settings/handover/handover.page#action-f380e665": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:215",
+    "lib/features/settings/presentation/pages/handover_page.dart:216"
+   ]
+  },
+  "settings/handover/handover.page#text-9ab2f207": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:225"
+   ]
+  },
+  "settings/handover/handover.page#text-3ddcbed1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:225"
+   ]
+  },
+  "settings/handover/handover.page#field-ad9ffa44": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:226",
+    "lib/features/settings/presentation/pages/handover_page.dart:227"
+   ],
+   "n": "Ionic: readonly-Input mit dd.MM.yyyy / Flutter: Untertitel der Zeile mit dateFmt() (de: dd.MM.yyyy), Tippen öffnet Datumsauswahl."
+  },
+  "settings/handover/handover.page#modal-6a6f8076": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:83",
+    "lib/features/settings/presentation/pages/handover_page.dart:227"
+   ],
+   "n": "Ionic: ion-modal mit ion-datetime / Flutter: showAppDatePicker (Material-Dialog bzw. iOS-Picker)."
+  },
+  "settings/handover/handover.page#field-de4639bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:85",
+    "lib/features/settings/presentation/pages/handover_page.dart:89",
+    "lib/features/settings/presentation/pages/handover_page.dart:92"
+   ],
+   "n": "Max = heute (lastDate: now), Sprache aktiv; Filter wird nach Auswahl neu berechnet."
+  },
+  "settings/handover/handover.page#action-9a8d9ded": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:228",
+    "lib/features/settings/presentation/pages/handover_page.dart:231"
+   ]
+  },
+  "settings/handover/handover.page#text-5ed16866": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:246"
+   ]
+  },
+  "settings/handover/handover.page#field-4656433f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:241",
+    "lib/features/settings/presentation/pages/handover_page.dart:252"
+   ]
+  },
+  "settings/handover/handover.page#action-5dfd8fdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:255",
+    "lib/features/settings/presentation/pages/handover_page.dart:257"
+   ]
+  },
+  "settings/handover/handover.page#text-2d600236": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:280"
+   ]
+  },
+  "settings/handover/handover.page#action-cc05caae": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:283",
+    "lib/features/settings/presentation/pages/handover_page.dart:289"
+   ]
+  },
+  "settings/handover/handover.page#field-52ec26b9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:297",
+    "lib/features/settings/presentation/pages/handover_page.dart:308",
+    "lib/features/settings/presentation/pages/handover_page.dart:309"
+   ],
+   "n": "Name, Geburtstag dd.MM.yyyy | Gruppe. Ohne Geburtstag zeigt Ionic \" | Gruppe\", Flutter nur \"Gruppe\" (Satzzeichen-Nuance)."
+  },
+  "settings/handover/handover.page#text-6b3fef02": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:268",
+    "lib/features/settings/presentation/pages/handover_page.dart:272"
+   ],
+   "n": "Während des Ladens zeigt Flutter einen Spinner statt der Meldung."
+  },
+  "settings/handover/handover.page#action-0467769e": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:122",
+    "lib/features/settings/presentation/pages/handover_page.dart:132"
+   ],
+   "n": "Flutter besser: Ionic aktiviert den FAB, sobald irgendeine Person ausgewählt ist (auch wenn sie durch einen späteren Filter ausgeblendet ist) und navigiert dann mit leerer Personenliste / Flutter aktiviert nur, wenn mindestens eine ausgewählte Person im gefilterten Ergebnis ist.",
+   "sev": "niedrig"
+  },
+  "settings/help/article/help-article.page#logic-aa7d58b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:24",
+    "lib/features/help/presentation/pages/help_article_page.dart:53",
+    "lib/features/help/presentation/pages/help_article_page.dart:55",
+    "lib/features/help/data/help_content_service.dart:33",
+    "lib/features/help/data/help_content_service.dart:51"
+   ],
+   "n": "Artikel per Route-ID laden, Markdown rendern, Glossar-Link → Begriff per Name/Alias suchen (unbekannt → nichts). Abweichungen bei Popover und Zurück siehe Items."
+  },
+  "settings/help/article/help-article.page#popover-c1b18c0d": {
+   "s": "diff",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:57",
+    "lib/features/help/presentation/widgets/glossary_term_dialog.dart:9",
+    "lib/features/help/presentation/widgets/glossary_term_dialog.dart:13",
+    "lib/features/help/presentation/widgets/glossary_term_dialog.dart:17"
+   ],
+   "n": "Inhalt gleich (Begriff als Titel, Definition). Ionic: Popover (Karte) am angetippten Begriff verankert, schließt durch Tippen daneben, ohne Button / Flutter: zentrierter Dialog (AppAlertDialog) mit zusätzlichem Button \"Schließen\".",
+   "sev": "mittel"
+  },
+  "settings/help/article/help-article.page#nav-63850d0a": {
+   "s": "diff",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:34",
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:126"
+   ],
+   "n": "Flutter besser: Ionic navigateBack('/tabs/settings/help') führt immer zur Hilfe-Übersicht, auch wenn der Artikel aus der Termin-Art-Seite (Teamorganisation aktivieren) geöffnet wurde / Flutter maybePop kehrt zur aufrufenden Seite zurück (aus der Hilfe: Hilfe-Übersicht, aus der Termin-Art: Termin-Art).",
+   "sev": "niedrig"
+  },
+  "settings/help/article/help-article.page#action-40c0f47e": {
+   "s": "diff",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:32",
+    "lib/features/help/presentation/pages/help_article_page.dart:34"
+   ],
+   "n": "Flutter besser: Button (arrow-back) gleich; Wirkung wie nav-63850d0a (Flutter kehrt zur aufrufenden Seite zurück statt immer zur Hilfe-Übersicht).",
+   "sev": "niedrig"
+  },
+  "settings/help/article/help-article.page#text-6bc16511": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:36"
+   ],
+   "n": "Artikeltitel, sonst \"Hilfe\" (Flutter übersetzt helpTitle, Ionic festes Literal)."
+  },
+  "settings/help/article/help-article.page#action-bb7dd385": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:53",
+    "lib/features/help/presentation/widgets/help_markdown.dart:107",
+    "lib/features/help/presentation/widgets/help_markdown.dart:114"
+   ],
+   "n": "Glossar-Begriffe als antippbare Links (Primärfarbe, gepunktet unterstrichen) wie Ionic .glossary-term."
+  },
+  "settings/help/article/help-article.page#text-f416d4a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:43"
+   ]
+  },
+  "settings/help/content/index#logic-45b4ee2c": {
+   "s": "diff",
+   "f": [
+    "lib/features/help/data/help_content_service.dart:199",
+    "lib/features/help/data/help_content.dart:240",
+    "lib/features/help/data/help_content.dart:268",
+    "lib/features/help/data/help_content_en.dart:142",
+    "lib/features/help/data/help_content_en.dart:162"
+   ],
+   "n": "localizeHelp-Logik gleich (nur en übersetzt, Rest Deutsch; Kategorielabel/Artikel/Glossar überlagert; deutscher Begriff als Alias). Kategorien, Glossar und 86 von 88 Artikeln identisch zu Ionic (mit tool/help/build_help.mjs gegen Ionic 9f9b82af nachgeneriert und verglichen). Abweichungen siehe extra (plan-beamer veraltet, songs-add bewusst geändert).",
+   "sev": "mittel"
+  },
+  "settings/help/glossary-popover/help-glossary-popover.component#logic-a30427dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/widgets/glossary_term_dialog.dart:15",
+    "lib/features/help/presentation/widgets/help_markdown.dart:110"
+   ],
+   "n": "Definition per Markdown, [[Begriff]] darin kursiv (nicht verlinkt) wie renderGlossaryDefinitionHtml."
+  },
+  "settings/help/glossary-popover/help-glossary-popover.component#text-038f5429": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/widgets/glossary_term_dialog.dart:13"
+   ],
+   "n": "Begriff als Titel; Darstellung als Dialog statt Popover-Karte siehe help-article popover-c1b18c0d."
+  },
+  "settings/help/glossary/help-glossary.page#logic-024095b3": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_glossary_page.dart:35",
+    "lib/features/help/presentation/pages/help_glossary_page.dart:36",
+    "lib/features/help/presentation/pages/help_glossary_page.dart:93",
+    "lib/features/help/data/help_content_service.dart:40"
+   ],
+   "n": "Alle Begriffe alphabetisch; Suche getrimmt+klein → Glossar-Treffer der Hilfe-Suche; Definition mit Glossar-Markdown. Sortier-/Suchalgorithmus selbst gehört zum Service (b18)."
+  },
+  "settings/help/glossary/help-glossary.page#nav-a21d69d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_glossary_page.dart:50"
+   ],
+   "n": "Glossar wird nur aus der Hilfe-Übersicht geöffnet; maybePop führt dorthin zurück wie navigateBack('/tabs/settings/help')."
+  },
+  "settings/help/glossary/help-glossary.page#action-dbad7d0a": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_glossary_page.dart:48"
+   ]
+  },
+  "settings/help/glossary/help-glossary.page#text-c804ee27": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_glossary_page.dart:52"
+   ]
+  },
+  "settings/help/glossary/help-glossary.page#field-53b532fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_glossary_page.dart:55",
+    "lib/features/help/presentation/pages/help_glossary_page.dart:57"
+   ]
+  },
+  "settings/help/glossary/help-glossary.page#text-bfb4a196": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_glossary_page.dart:69",
+    "lib/features/help/presentation/pages/help_glossary_page.dart:70"
+   ]
+  },
+  "settings/help/glossary/help-glossary.page#text-adf8885f": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_glossary_page.dart:72",
+    "lib/features/help/presentation/pages/help_glossary_page.dart:74"
+   ],
+   "n": "Aufklappbare Einträge, mehrere gleichzeitig offen (Ionic multiple=true)."
+  },
+  "settings/help/help-markdown.util#logic-1614d5eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/widgets/help_markdown.dart:158",
+    "lib/features/help/presentation/widgets/help_markdown.dart:225",
+    "lib/features/help/presentation/widgets/help_markdown.dart:107"
+   ],
+   "n": "Eigener Renderer statt marked: Absätze, Zeilenumbrüche (breaks), -/1.-Listen, **fett**, *kursiv*, `code`, [[Begriff|Text]] (Artikel: Link, Definition: kursiv). Alle in den Ionic-Inhalten genutzten Markdown-Elemente geprüft: keine Überschriften, Links, Zitate, Tabellen, verschachtelten oder unterbrochenen Listen → gleiche Darstellung."
+  },
+  "settings/help/help.page#logic-59c167a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:34",
+    "lib/features/help/presentation/pages/help_page.dart:36",
+    "lib/features/help/presentation/pages/help_page.dart:41",
+    "lib/features/help/presentation/pages/help_page.dart:42",
+    "lib/features/help/data/help_content_service.dart:27"
+   ],
+   "n": "Kategorien nach order, Artikel je Kategorie, Suche nur bei nicht-leerem getrimmtem Begriff. Die Suche selbst (Ionic Fuse.js / Flutter eigene Näherung) gehört zum Service-Batch b18."
+  },
+  "settings/help/help.page#nav-c3ee1fb7": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:34"
+   ]
+  },
+  "settings/help/help.page#nav-b4a601c3": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:36"
+   ]
+  },
+  "settings/help/help.page#nav-b922e3ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:54",
+    "lib/core/router/app_router.dart:1181"
+   ],
+   "n": "maybePop; Route ist Unterroute von /settings (aus Einstellungen oder Seitennavigation) → zurück zu Einstellungen."
+  },
+  "settings/help/help.page#action-2871786d": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:52"
+   ]
+  },
+  "settings/help/help.page#text-cd7270db": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:56"
+   ]
+  },
+  "settings/help/help.page#field-4664219c": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:59",
+    "lib/features/help/presentation/pages/help_page.dart:61"
+   ]
+  },
+  "settings/help/help.page#text-cd633d67": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:95",
+    "lib/features/help/presentation/pages/help_page.dart:96"
+   ]
+  },
+  "settings/help/help.page#action-48b3efa7": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:97",
+    "lib/features/help/presentation/pages/help_page.dart:102"
+   ]
+  },
+  "settings/help/help.page#action-66bacb30": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:104",
+    "lib/features/help/presentation/pages/help_page.dart:109"
+   ]
+  },
+  "settings/help/help.page#text-2dd39152": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:126"
+   ]
+  },
+  "settings/help/help.page#action-66bacb30-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:128",
+    "lib/features/help/presentation/pages/help_page.dart:131"
+   ]
+  },
+  "settings/help/help.page#text-36df300e": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:138"
+   ]
+  },
+  "settings/help/help.page#text-0fe83dd4": {
+   "s": "diff",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:143",
+    "lib/features/help/presentation/pages/help_page.dart:149"
+   ],
+   "n": "Kategorie-Label und Icon gleich. Ionic: ion-accordion-group ohne multiple → beim Öffnen einer Kategorie schließt die vorher offene / Flutter: unabhängige ExpansionTiles, mehrere Kategorien gleichzeitig offen.",
+   "sev": "niedrig"
+  },
+  "settings/help/help.page#action-226eee74": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:163",
+    "lib/features/help/presentation/pages/help_page.dart:174"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#logic-c5be0bdc": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:22",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:31",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:53",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:61",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:73",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:145",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:146",
+    "lib/core/providers/role_permission_providers.dart:279",
+    "lib/data/repositories/role_permission_repository.dart:39",
+    "lib/data/repositories/role_permission_repository.dart:65"
+   ],
+   "n": "Rollen und Reihenfolge (Helfer, Stimmführer-Helfer, Stimmführer, Mitglied, Beobachter, Eltern), Sichtbarkeit der Schalter je Rolle, Abschnitt nur mit DB-Zeile, files_shared nur für Admin, Ungespeichert-Erkennung, beforeunload-Warnung und geschriebene Spalten (6 Flags in tenant_role_permissions, tenants.files_shared) gleich. Flutter schreibt nur geänderte Rollen-Zeilen (Ionic alle mit id) und filtert zusätzlich tenant_id – gleiches Ergebnis. Abweichung siehe extra (Zurück-Geste).",
+   "sev": "niedrig"
+  },
+  "settings/role-permissions/role-permissions.page#nav-9b045fa2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:123",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:161"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#alert-c705cf47": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:96",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:100",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:104",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:114"
+   ],
+   "n": "Flutter besser: Titel, Text und Buttons (Abbrechen / Verwerfen rot / Speichern) gleich. Ionic: bei \"Speichern\" wird die Seite auch verlassen, wenn das Speichern fehlschlägt (resolve(true) nach save() mit gefangenem Fehler) / Flutter bleibt bei Fehler auf der Seite.",
+   "sev": "niedrig"
+  },
+  "settings/role-permissions/role-permissions.page#toast-e9051e56": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:89"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#toast-b7aee864": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:91"
+   ],
+   "n": "Seiten-Toast gleich; zusätzlicher Service-Toast von Ionic (svc.updateRolePermissionFailed) gehört zum Service-Batch."
+  },
+  "settings/role-permissions/role-permissions.page#action-872a68b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:159",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:161"
+   ],
+   "n": "Pop wird von PopScope abgefangen → bei Änderungen derselbe Rückfrage-Dialog."
+  },
+  "settings/role-permissions/role-permissions.page#text-ef573695": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:163"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#text-ef573695-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:182"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#text-6422dfcb": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:186",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:198"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#field-960c2d92": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:189",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:193",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:200",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:204"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#text-d1804890": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:210",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:283",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:290"
+   ],
+   "n": "Aufklappbarer Rollen-Abschnitt, mehrere gleichzeitig offen (Ionic multiple=true)."
+  },
+  "settings/role-permissions/role-permissions.page#field-8c1e1d62": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:234"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#field-d7afd422": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:240"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#field-eb839598": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:246"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#field-1bfec850": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:252"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#field-5585f9ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:259"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#field-c1ffb95b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:266"
+   ]
+  },
+  "settings/role-permissions/role-permissions.page#action-ef56f97e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:165",
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:166"
+   ],
+   "n": "Flutter sperrt den FAB während des Speicherns (Spinner)."
+  },
+  "settings/voice-leader/voice-leader.page#logic-767b1744": {
+   "s": "diff",
+   "f": [
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:36",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:61",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:96",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:118",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:138",
+    "lib/data/repositories/attendance_repository.dart:357",
+    "lib/data/repositories/player_repository.dart:200",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:42"
+   ],
+   "n": "Eigenes Profil per appId, Mitglieder der eigenen Gruppe (aktiv, nicht pending), Abwesenheiten Status 2/4/5 ab heute nach Datum sortiert, Badge-Farben, Einteilung-Badge, Pull-to-Refresh entsprechen Ionic. Abweichungen siehe extra (Sortierung mit Umlauten, Fall ohne Spielerprofil, archivierte Termine).",
+   "sev": "mittel"
+  },
+  "settings/voice-leader/voice-leader.page#toast-9c4679a5": {
+   "s": "na",
+   "n": "toter Code: db.getPlayerByAppId(false) → playerSvc.getPlayerByAppId wirft bei 0 Zeilen ({code: 'PGRST116'}, services/player/player.service.ts:35-41), currentPlayer ist daher nie leer; der Fehler landet im catch (Toast voiceLeader.loadFailed). Tatsächliches Verhalten siehe extra."
+  },
+  "settings/voice-leader/voice-leader.page#nav-733c1b29": {
+   "s": "na",
+   "n": "toter Code: gleicher Zweig wie toast-9c4679a5 (!currentPlayer nie wahr, getPlayerByAppId wirft bei fehlendem Profil)."
+  },
+  "settings/voice-leader/voice-leader.page#toast-19ba0043": {
+   "s": "diff",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:56",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:61",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:62"
+   ],
+   "n": "Ionic: roter Toast \"Fehler beim Laden der Gruppenmitglieder.\", Seite zeigt danach den (leeren) Gruppenkopf / Flutter: kein Toast, stattdessen Fehlerzustand auf der Seite mit demselben Text, der rohen Fehlermeldung (error.toString()) und Button \"Erneut versuchen\".",
+   "sev": "niedrig"
+  },
+  "settings/voice-leader/voice-leader.page#nav-70357302": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:39",
+    "lib/core/router/app_router.dart:1104",
+    "lib/features/settings/presentation/pages/settings_page.dart:206"
+   ],
+   "n": "AppBar-Zurück; Route ist Unterroute von /settings → zurück zu Einstellungen."
+  },
+  "settings/voice-leader/voice-leader.page#action-8c8b4086": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:39"
+   ],
+   "n": "Automatischer AppBar-Zurück-Button statt eigenem arrow-back-Button."
+  },
+  "settings/voice-leader/voice-leader.page#text-1073a5d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:40"
+   ]
+  },
+  "settings/voice-leader/voice-leader.page#action-970e7957": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:42",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:44"
+   ]
+  },
+  "settings/voice-leader/voice-leader.page#text-e0cad10d": {
+   "s": "diff",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:84",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:166",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:48"
+   ],
+   "n": "Gruppenname gleich. Fallback ohne Gruppe: Ionic \"Meine Stimme\" (voiceLeader.myVoice) / Flutter \"Stimmgruppe\" (voiceLeaderFlutterVoiceGroup); Flutter zeigt den Fallback auch kurz, solange der Name noch lädt.",
+   "sev": "niedrig"
+  },
+  "settings/voice-leader/voice-leader.page#text-1fe5d099": {
+   "s": "diff",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:170"
+   ],
+   "n": "Ionic: \"1 Mitglied\" bei genau einem, sonst \"n Mitglieder\" / Flutter: immer \"{count} Mitglieder\" (auch \"1 Mitglieder\").",
+   "sev": "niedrig"
+  },
+  "settings/voice-leader/voice-leader.page#text-2e503acb": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:92",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:105"
+   ]
+  },
+  "settings/voice-leader/voice-leader.page#action-206e640b": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:239",
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:408"
+   ],
+   "n": "Kein/fehlerhaftes Bild → Platzhalter-Avatar."
+  },
+  "settings/voice-leader/voice-leader.page#text-aad1dc5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:251"
+   ]
+  },
+  "settings/voice-leader/voice-leader.page#text-b3aad9b6": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:254",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:256"
+   ]
+  },
+  "settings/voice-leader/voice-leader.page#text-cfb6a3f5": {
+   "s": "diff",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:30",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:232",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:259"
+   ],
+   "n": "Badge mit player.additional_fields.einteilung gleich. Ionic: Feld-Definition aus getPersonExtraFields (Organisation + Instanz) / Flutter: nur Instanz-Felder (currentTenant.additionalFields) → ist \"einteilung\" nur als Organisationsfeld angelegt, zeigt Flutter kein Badge (Ionic nur bei lokal am Spieler gespeichertem Wert).",
+   "sev": "niedrig"
+  },
+  "settings/voice-leader/voice-leader.page#action-64f90755": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:264",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:196"
+   ]
+  },
+  "settings/voice-leader/voice-leader.page#action-dd83bb9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:266",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:196"
+   ]
+  },
+  "settings/voice-leader/voice-leader.page#text-5bf7ee55": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:267",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:269"
+   ]
+  },
+  "settings/voice-leader/voice-leader.page#text-2c106b1d": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:272",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:284"
+   ]
+  },
+  "settings/voice-leader/voice-leader.page#text-2c67af35": {
+   "s": "diff",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:296",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:298",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:125"
+   ],
+   "n": "Datum dd.MM., typeInfo bzw. Typname, Farben (Entschuldigt/Verspätet entschuldigt gelb, Abwesend rot) gleich. Ionic: getPersonAttendances lädt attType ohne hide_name → Typname wird auch bei \"Name ausblenden\" angezeigt (\"12.05. Probe\") / Flutter beachtet hide_name und zeigt nur \"12.05.\".",
+   "sev": "niedrig"
+  }
+ },
+ "extra": [
+  {
+   "unit": "settings/handover/handover.page",
+   "title": "Sortierung der Personenliste",
+   "n": "Ionic: Utils.getModifiedPlayersForList sortiert Hauptgruppe zuerst, dann Gruppen-sort_order, Gruppenname, Personen-sort_order, Nachname / Flutter: Reihenfolge aus der DB (instrument-ID, isLeader absteigend, Nachname), keine Hauptgruppe-zuerst- und keine sort_order-Sortierung.",
+   "sev": "mittel",
+   "ionic": "src/app/settings/handover/handover.page.ts:40",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:121",
+    "lib/data/repositories/player_repository.dart:77"
+   ]
+  },
+  {
+   "unit": "settings/help/content/index",
+   "title": "Hilfeartikel plan-beamer veraltet",
+   "n": "Ionic: Artikel \"Beamer-Dateien im Ablaufplan (Gemeinde App)\" enthält im ersten Absatz zusätzlich \"Dort siehst du die ORG-Pläne der nächsten 8 Wochen und zusätzlich die letzten 20 vergangenen.\" (en: \"There you see the org plans of the next 8 weeks plus the 20 most recent past ones.\") / Flutter: Satz fehlt (generierte Inhalte nicht neu erzeugt).",
+   "sev": "mittel",
+   "ionic": "src/app/settings/help/content/articles/planning.articles.ts:79",
+   "f": [
+    "lib/features/help/data/help_content.dart:244",
+    "lib/features/help/data/help_content_en.dart:145"
+   ]
+  },
+  {
+   "unit": "settings/help/content/index",
+   "title": "Hilfeartikel songs-add bewusst abweichend",
+   "n": "Ionic: \"Tippst du auf eine Datei und dann auf \\\"Datei öffnen\\\", öffnet sie sich in einem neuen Tab. Nutzt du Attendix als installierte Web-App …, zeigt Attendix PDFs und Bilder direkt in der App an.\" / Flutter: \"… zeigt Attendix PDFs und Bilder direkt in der App an. Andere Dateien öffnen sich in einem neuen Tab bzw. in der passenden App.\" (Override OVERRIDES_DE/EN in tool/help/build_help.mjs, beschreibt das Flutter-Verhalten).",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/help/content/articles/songs.articles.ts:11",
+   "f": [
+    "lib/features/help/data/help_content.dart:268",
+    "lib/features/help/data/help_content_en.dart:162"
+   ]
+  },
+  {
+   "unit": "settings/role-permissions/role-permissions.page",
+   "title": "Rückfrage auch bei Zurück-Geste",
+   "n": "Flutter besser: Ionic fragt nur beim eigenen Zurück-Button nach ungespeicherten Änderungen; iOS-Wischgeste bzw. Android-Zurück verlassen die Seite ohne Rückfrage (kein CanDeactivate) / Flutter: PopScope(canPop: !_hasUnsavedChanges) fängt jedes Zurück ab und zeigt den Dialog.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/role-permissions/role-permissions.page.ts:83",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:146"
+   ]
+  },
+  {
+   "unit": "settings/voice-leader/voice-leader.page",
+   "title": "Sortierung der Mitglieder bei Umlauten",
+   "n": "Ionic: localeCompare (Umlaute wie Grundbuchstaben, z. B. \"Müller\" vor \"Mustermann\") / Flutter: toLowerCase().compareTo (Code-Einheiten, ü nach z → \"Müller\" nach \"Mustermann\", \"Özdemir\" nach \"Zimmer\").",
+   "sev": "mittel",
+   "ionic": "src/app/settings/voice-leader/voice-leader.page.ts:83",
+   "f": [
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:138"
+   ]
+  },
+  {
+   "unit": "settings/voice-leader/voice-leader.page",
+   "title": "Kein eigenes Spielerprofil",
+   "n": "Flutter besser: Ionic: getPlayerByAppId wirft → roter Toast \"Fehler beim Laden der Gruppenmitglieder.\", Seite bleibt mit leerem Gruppennamen, \"0 Mitglieder\" und \"Keine Mitglieder in deiner Stimme gefunden.\" / Flutter: Seite zeigt Leerzustand \"Kein Spielerprofil gefunden.\" ohne Toast und ohne Zurücknavigation.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/voice-leader/voice-leader.page.ts:47",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:34",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:73"
+   ]
+  },
+  {
+   "unit": "settings/voice-leader/voice-leader.page",
+   "title": "Archivierte Termine bei Abwesenheiten",
+   "n": "Ionic: getPersonAttendances blendet archivierte Termine für Rollen außer Admin/Verantwortlicher aus (Stimmführer sehen sie nicht) / Flutter: Abfrage lädt archived nicht und filtert nicht. Praktisch ohne Wirkung, da nur vergangene Termine archiviert werden können und die Seite nur Termine ab heute zeigt.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:2721",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:357"
+   ]
+  }
+ ]
+}

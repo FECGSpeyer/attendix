@@ -1,0 +1,62 @@
+{
+ "batch": "zz-verify2-b07-people",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "x-b434dfaf0e": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:115-134"
+   ],
+   "n": "Real: Ionic getDefaultBulkValue ruft Utils.getFieldTypeDefaultValue(type, undefined, options, churches) → Feld-Standardwert ignoriert: Boolean true, Zahl 0, Auswahl erste Option, Gemeinde erste Gemeinde (falls geladen), Datum new Date().toISOString() (im type=date-Feld nicht sichtbar, wird aber geschrieben), Text ''. Flutter: Feld-Standardwert, sonst false / null / erste Option / ''. 'Für alle setzen' ohne Anpassung schreibt andere Werte. Deckt sich mit den Feld-Items (field-817de781, field-523de84f-2, field-fc367be8-2 …), als logic-Befund berechtigt; mittel passt (Startwert ist sichtbar außer beim Datum).",
+   "v": "bestätigt"
+  },
+  "x-081d71cc45": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:52-61",
+    "lib/features/people/presentation/pages/person_import_page.dart:108-111",
+    "lib/core/providers/profile_providers.dart:67-91"
+   ],
+   "n": "Real: Ionic buildContext/downloadTemplate nutzen db.getPersonExtraFields() (Org-Felder + Instanz-Felder); die Werte landen in player.additional_fields und werden angezeigt (hydrateSharedPersonFieldValues überschreibt nur bei vorhandenem Org-Wert). Flutter _buildContext und Vorlage nur currentTenant.additionalFields (personListExtraFieldsProvider ungenutzt) → in Instanzen einer Organisation mit Org-Zusatzfeldern keine Zuordnung, Werte gehen verloren, Vorlage ohne diese Spalten.",
+   "v": "bestätigt"
+  },
+  "x-dce118d389": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:39-50",
+    "lib/core/utils/import_file_io.dart:13",
+    "lib/features/people/presentation/pages/person_import_page.dart:249"
+   ],
+   "n": "Real: Ionic readSpreadsheetFile/SheetJS read() liest auch .xls (accept '.xlsx,.xls,.csv'). Flutter: Dateiauswahl erlaubt .xls, readSpreadsheet lehnt ab mit 'Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.' – obwohl der Einleitungstext (wie Ionic) 'Excel- (.xlsx/.xls)' verspricht. Import aus .xls nicht möglich → hoch.",
+   "v": "bestätigt"
+  },
+  "x-1a63f4f2ee": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:104-129",
+    "lib/core/utils/import_file_io.dart:25-27",
+    "lib/core/services/zip_service_io.dart:9-18",
+    "lib/core/services/zip_service_web.dart:7-28"
+   ],
+   "n": "Real: Ionic Utils.saveWorkbook → nativ Datei im Cache + FileViewer-Vorschau, mobiles Web Web-Share-Sheet, Desktop writeFile-Download, Fehler ohne Hinweis. Flutter nutzt den ZIP-Export-Code: nativ Share-Sheet mit Begleittext 'Song-Dateien' (falscher Text), Web immer Anker-Download (Blob-Typ application/zip), bei Fehler Toast 'Fehler: …'.",
+   "v": "bestätigt"
+  },
+  "x-994adc4d18": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1280-1294",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:102-112",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:161-206"
+   ],
+   "n": "Real: Ionic getModifiedPlayersForList füllt player.additional_fields in place mit Defaults (Utils.ts:121-126; defaultValue, sonst Boolean true, Auswahl erste Option, Gemeinde erste Gemeinde …), openBulkEditModal übergibt diese Objekte (list.page.ts:1035-1041). Flutter _openBulkEdit übergibt nur mergeSharedPersonFieldValues ohne Defaults → bei Personen ohne gespeicherten Wert Schalter aus bzw. Auswahl leer, andere Änderungszahl; Ionic schreibt beim Speichern das aufgefüllte Objekt (auch Defaults anderer Felder), Flutter nur Rohwerte + bearbeitetes Feld.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

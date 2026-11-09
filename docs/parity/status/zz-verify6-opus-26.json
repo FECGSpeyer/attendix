@@ -1,0 +1,392 @@
+{
+ "batch": "zz-verify6-opus-26",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "settings/general/general.page#toast-a82c1284": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:280",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:282-298"
+   ],
+   "n": "Grüner Toast „Einstellungen gespeichert“ nach Update tenants (eq id) und evaluate-critical-rules, danach Dialog „Einstellungen gespeichert“ mit Abbrechen/„Neu laden“ wie Ionic. Seite in beiden nur Admin/Verantwortlich (Ionic isUrlAccessAllowed '/tabs/settings/general', Flutter _protectedRoutes '/settings/general'). Referenz von :282 (Dialog) auf :280 (Toast) gesetzt.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#toast-b6c301a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:186-189"
+   ],
+   "n": "Roter Toast „Der Gruppenname darf nicht leer sein.“ als erste Prüfung (trim), danach Kurzname, wie Ionic; nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#toast-dcf43f84": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:194-204"
+   ],
+   "n": "Roter Toast „Registrierung kann nicht aktiviert werden: …“, wenn Registrierung an und keine Gruppe ohne maingroup existiert (Ionic db.groups(), Flutter groupsProvider), gleiche Prüfreihenfolge nach Namen/Kurzname.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#toast-f79901f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:300-303"
+   ],
+   "n": "Roter Toast „Fehler beim Aktualisieren der Einstellungen“, wenn das Update fehlschlägt (catch um Update/Neuladen-Dialog wie Ionic). Referenz von :304 auf :302 korrigiert.",
+   "v": "bestätigt"
+  },
+  "x-17553629eb": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:117-134"
+   ],
+   "n": "Besteht weiter: Ionic feste Reihenfolge der Abwesenheits-/Verspätungsgründe / Flutter ReorderableListView mit Drag-Handle (zusätzliche Funktion, Ionic-Funktionen hinzufügen/löschen/Standard wiederherstellen vorhanden).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-42634188f9": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:164",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:260",
+    "lib/data/models/tenant/tenant.dart:127"
+   ],
+   "n": "Besteht weiter: Ionic ngOnInit ergänzt period_type = 'days' bei Altregeln und schreibt es beim Speichern in tenants.critical_rules / Flutter übernimmt periodType null und lässt 'period_type' beim Speichern weg (nur das Bearbeiten-Sheet setzt days). Bewertung korrigiert niedrig → mittel: anderer DB-Wert. Auswertung (evaluate-critical-rules) für Altregeln mit period_days gleich (default-Zweig nutzt period_days), ohne period_days anders (Ionic 30 Tage, Flutter ohne Startdatum).",
+   "sev": "mittel",
+   "v": "korrigiert"
+  },
+  "x-42b30dc6ee": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_card.dart:33-34",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:795-817"
+   ],
+   "n": "Besteht weiter: Ionic Regeln nur hinzufügen/löschen / Flutter Tippen auf Regel öffnet Bearbeiten-Sheet, Toast „Regel aktualisiert“ (Zusatzfunktion, geschrieben erst beim Speichern der Seite).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-d86d0880b8": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:311-315",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:390-395",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:403-410"
+   ],
+   "n": "Besteht weiter: Ionic JSON-Vergleich ohne Gründe, Zurückschalten = keine Änderung, Rückfrage nur Header-Zurück/beforeunload / Flutter Dirty-Flag inkl. Gründe, bleibt nach Zurückschalten gesetzt, Rückfrage auch bei System-Zurück (PopScope) und beforeunload. Gleicher Dialog (Abbrechen/Verwerfen/Speichern).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#logic-c5f7ff6e": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:64-75",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:441-472",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:475-511",
+    "lib/core/providers/shift_providers.dart:149-174",
+    "lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:44-87",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:27-155"
+   ],
+   "n": "Weiter wie Ionic: Laden (Plan mit tenant_id, Nutzung, Kopierziele = eigene Instanzen der Organisation ohne Beobachter), Speichern (Name-Pflicht, Update shifts eq id+tenant_id), Löschen (erst künftige Schicht-Entschuldigungen aller Personen des Plans zurücksetzen, dann löschen), Kopieren (jetzt Alert mit Radio-Liste ohne Vorauswahl, Zuweisungs-Alert, Ergebnis-Toasts), Beispielrechnung (Montag nächster Woche bzw. Anfangsdatum, 30 Tage, (+1)). Abweichungen in Items (Dauer neuer Abschnitt, Trim, Grenzen, Texte); einziges extra (Cache, Flutter besser) niedrig.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#nav-6104294b": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:85-91"
+   ],
+   "n": "Zurück-Pfeil: Ionic navigateBack('/tabs/settings/general/shifts') / Flutter pop (Seite wird von der Liste gepusht) bzw. go('/settings/shifts') ohne Stack – gleiches Ziel.",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#nav-64b3c9d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:500-507"
+   ],
+   "n": "Nach erfolgreichem Löschen Toast „Schichtplan gelöscht“ und zurück zur Schichtplan-Liste (Ionic router.navigate auf die Liste, Flutter context.pop()). Referenz von :501 auf :506 präzisiert.",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#toast-4ae23615": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:168-226"
+   ],
+   "n": "Behoben: Flutter zeigt jetzt den Alert „In Instanz kopieren“ mit Radio-Liste ohne Vorauswahl; „Weiter“ ohne Auswahl zeigt Warn-Toast „Bitte wähle eine Instanz aus.“ und lässt den Alert offen – wie Ionic. Erstprüfung (Vorauswahl, Hinweis fehlt) ist überholt.",
+   "v": "korrigiert"
+  },
+  "x-e9a63ed372": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:64-75"
+   ],
+   "n": "Besteht weiter: Flutter besser: Ionic bearbeitet das Objekt aus db.shifts() direkt (ungespeicherte Änderungen bis zum Neuladen in der Liste) / Flutter kopiert in lokale Listen (_initializeFromShift), Liste unverändert.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shifts.page#logic-541274b4": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:113-184",
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:186-210",
+    "lib/data/repositories/shift_repository.dart:17-32",
+    "lib/data/repositories/shift_repository.dart:53-74"
+   ],
+   "n": "Ablauf gleich (Sheet schließen, Name prüfen, Plan anlegen mit definition/shifts [] und tenant_id, zum neuen Plan navigieren, Liste nach Name aufsteigend). Abweichungen in extra (b24): Erfolgs-Toast, Navigation per ID (Flutter besser) und Trim – Flutter speichert name/description getrimmt (Ionic ungetrimmt). Bewertung korrigiert niedrig → mittel: Trim ist ein anderer DB-Wert und damit nach Vorgabe nie niedrig (praktisch nur bei Leerzeichen am Rand sichtbar, z. B. Sortierung); das extra „Name/Beschreibung getrimmt“ entsprechend mittel.",
+   "sev": "mittel",
+   "v": "korrigiert"
+  },
+  "settings/general/shifts/shifts.page#nav-cfc6f85d": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:199-202",
+    "lib/core/router/app_router.dart:1145-1158"
+   ],
+   "n": "Nach dem Anlegen push '/settings/shifts/<neue id>' (Ionic router.navigate(['/tabs/settings/general/shifts/', shift.id])); Route unter /settings/shifts (Admin/Verantwortlich wie Ionic). Ionic sucht die id per Name (ggf. falscher Plan bei gleichem Namen) – als extra erfasst.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#alert-0d2e84fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1009-1037",
+    "lib/data/repositories/duty_repository.dart:227-238"
+   ],
+   "n": "Nach Speichern/Anlegen nur wenn Dienst-Modus an, beim Laden aus, tenant.duty_view aus und kein anderer Dienst-Typ; Titel/Text, „Nein, normale Ansicht“ / „Ja, verwenden“; schreibt tenants.duty_view = true (eq id = aktueller Tenant) wie updateTenantData, Toast „…aktiv“ bzw. Fehler-Toast. Seite nur Admin/Verantwortlich in beiden.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-2bab6162": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:147-158",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1191-1226",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "n": "Zahlenfeld „Stunden vor Termin“, Platzhalter „z.B. 12 für 12 Stunden vorher“, Hilfetext „Gültige Werte: 0-168 …“ im Erinnerungen-Sheet, nur bei < 3 Erinnerungen und Erinnerung an. Rolle unverändert: /settings/types → _isAdminOrResponsible (Ionic ADMIN/RESPONSIBLE).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#nav-ab53d5e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:121-127",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:564",
+    "lib/core/router/app_router.dart:1216-1226"
+   ],
+   "n": "„Mehr erfahren“ unter Protokoll/Tagesordnung (nur bestehender Typ, Ionic @if !isNew) → push '/settings/help/article/team-activate' (Ionic navigateForward '/tabs/settings/help/article/team-activate').",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-5cb01ac6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:129-130",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "n": "„Schnellauswahl“ nur solange < 3 Erinnerungen. Rolle unverändert (Admin/Verantwortlich).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-dfaf8c58": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:168-183",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "n": "Warnkarte mit Warn-Icon und „Maximum von 3 Erinnerungen erreicht …“ bei 3 Erinnerungen. Rolle unverändert (Admin/Verantwortlich).",
+   "v": "bestätigt"
+  },
+  "x-0f8c22baa3": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:306-313"
+   ],
+   "n": "Besteht weiter: Flutter besser: PopScope fragt auch bei Android-Zurück/iOS-Wischgeste nach (bzw. beim neuen Typ „Änderungen verwerfen?“) / Ionic nur beim Zurück-Pfeil.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-4296344228": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:263-270"
+   ],
+   "n": "Behoben: _applyType setzt die Zeit des Tagesordnungs-Markers (agenda-items-placeholder) beim Laden auf '0' wie Ionic ngOnInit, ohne Änderungs-Flag; „Gesamt“ und Speichern nutzen 0. Befund zurückgezogen.",
+   "v": "korrigiert"
+  },
+  "x-698d8902b1": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1895",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1905",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1908",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1910-1912",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1920-1922"
+   ],
+   "n": "Teilweise behoben: checklist jetzt wie Ionic (aus = null, an = Liste auch []), planning_title '' bleibt '' (null nur wenn vorher null und geleert). Weiter abweichend: reminders beim Bearbeiten leer → null (Ionic []), end_time bei ganztägig → null (Ionic behält; Ionic-Termine übernehmen type.end_time), duration_days bei nicht-ganztägig → null (Ionic behält; nach Zurückschalten zeigt Flutter 1). Bewertung korrigiert niedrig → mittel: anderer DB-Wert (Erinnerungs-Funktion liest reminders || [] gleich).",
+   "sev": "mittel",
+   "v": "korrigiert"
+  },
+  "x-79fd46d253": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:147",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:356",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:362"
+   ],
+   "n": "Besteht weiter: Ionic hasUnsavedChanges per JSON-Vergleich, Speichern-FAB immer aktiv / Flutter Flag _hasChanges bei jeder Eingabe, FAB ohne Änderung deaktiviert (Hin- und Zurückschalten zählt als Änderung).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-91589b8337": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:306-313"
+   ],
+   "n": "Besteht weiter (Duplikat von x-0f8c22baa3): Flutter besser: Rückfrage auch bei System-Zurück / Ionic nur beim Zurück-Pfeil.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-975297fc93": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:368-387",
+    "lib/data/repositories/attendance_type_repository.dart:174-187"
+   ],
+   "n": "Besteht weiter: Ionic kein Hinweis / Flutter Karte oben „Wird in {count} Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.“ (Zusatzinfo).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-b41f2f171e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:263-270"
+   ],
+   "n": "Behoben (Duplikat von x-4296344228): Agenda-Marker-Zeit wird beim Laden auf 0 gesetzt wie Ionic. Befund zurückgezogen.",
+   "v": "korrigiert"
+  },
+  "x-c81359471b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1048-1049",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1074-1080"
+   ],
+   "n": "Behoben: Dropdown-Wert ist selectedField?.id (nur aktuelle Auswahl-/Ja-Nein-Felder); unbekannter Schlüssel → „Kein Filter“ angezeigt, gespeicherter Filter bleibt bis zur Änderung – wie Ionic. Keine Assertion mehr. Befund zurückgezogen.",
+   "v": "korrigiert"
+  },
+  "x-c9929afd0d": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:147",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:362",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1746-1779"
+   ],
+   "n": "Besteht weiter: Ionic Vergleich mit Original-JSON (Zurückändern = keine Änderung) / Flutter Flag _hasChanges bleibt gesetzt → Rückfrage trotz unverändertem Stand.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-f8e7ccbb61": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1891-1938"
+   ],
+   "n": "Duplikat von x-698d8902b1, gleiche Lage: checklist/planning_title inzwischen wie Ionic; reminders leer → null (Ionic []), end_time bei ganztägig → null, duration_days bei nicht-ganztägig → null (Ionic behält beide). Bewertung korrigiert niedrig → mittel: anderer DB-Wert.",
+   "sev": "mittel",
+   "v": "korrigiert"
+  },
+  "x-fdbae2f115": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:368-387",
+    "lib/data/repositories/attendance_type_repository.dart:174-187"
+   ],
+   "n": "Besteht weiter (Duplikat von x-975297fc93): Flutter-Karte „Wird in {count} Termin(en) verwendet …“ mit zusätzlicher Abfrage attendance (type_id, tenantId).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/general/types/types.page#logic-8220f429": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:126-176",
+    "lib/data/repositories/attendance_type_repository.dart:209-225",
+    "lib/data/repositories/attendance_type_repository.dart:25-31"
+   ],
+   "n": "Sortieren/Speichern gleich (index = Position für alle Typen des Tenants, Liste nach index aufsteigend), Anlegen jetzt wie Ionic als Modal der Typ-Seite im Neu-Modus (showAttendanceTypeCreateModal). Übrig: kein blockierendes Loading (Item), Fehlerbehandlung beim Sortieren (extra x-cacb75d561, Flutter besser).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/general/types/types.page#nav-08d36e35": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:45-48",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:487"
+   ],
+   "n": "Zurück-Pfeil → pop zur Seite Einstellungen (general), von der die Liste gepusht wird (Ionic navigateBack('/tabs/settings/general')).",
+   "v": "bestätigt"
+  },
+  "x-cacb75d561": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:146-176"
+   ],
+   "n": "Besteht weiter: Flutter besser: Ionic ohne Fehlerbehandlung (Loading bleibt bis Timeout) / Flutter Toast „Fehler beim Speichern. Bitte erneut versuchen.“, Sortiermodus und lokale Reihenfolge bleiben.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/handover-detail/handover-detail.page#logic-1c212d0f": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:27-36",
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:61-86",
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:129-179",
+    "lib/data/repositories/player_repository.dart:1635-1651"
+   ],
+   "n": "Zielgruppen nach category, sort_order (nulls last), name wie GroupService.getGroups → gleiche Auto-Zuordnung (Name gleich oder enthält, sonst erste Gruppe). Gruppenwahl, Bestätigung, Übergabe je Person mit Fehlerliste, Tracking, Rücknavigation gleich. Übrig: Flutter besser: Ladefehler der Zielgruppen mit Toast (x-c62672af53).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/handover-detail/handover-detail.page#toast-1afd9d81": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:61-66",
+    "lib/core/router/app_router.dart:180"
+   ],
+   "n": "Ohne Übergabedaten (Reload/Direktaufruf) roter Toast „Keine Daten für die Personenübergabe vorhanden.“ und zurück zu /settings/handover. Nur Admin/Verantwortlich (Ionic '/tabs/settings/handover/detail', Flutter Präfix '/settings/handover').",
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#nav-f9737832": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:137-153",
+    "lib/core/router/app_router.dart:1283-1296"
+   ],
+   "n": "Ionic: navigateForward '/tabs/settings/handover/detail' mit DataService.setHandoverData (gefilterte ∩ ausgewählte Personen, Ziel-Instanz, stayInInstance) / Flutter: push '/settings/handover/detail' mit HandoverData als extra, gleiche Personenauswahl.",
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#toast-3db15108": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:104-118",
+    "lib/data/repositories/organisation_repository.dart:312-330"
+   ],
+   "n": "Gleiche Datenquelle (tenant_group_tenants der Organisation ohne aktuelle Instanz; ohne Organisation leer) → einmal roter Toast „Es sind keine weiteren Instanzen vorhanden…“. Randfall nur bei doppelten Organisations-Links: Ionic .single() → null → Toast, Flutter limit(1) findet die Organisation. Seite nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "settings/help/article/help-article.page#nav-63850d0a": {
+   "s": "diff",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:34",
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:126"
+   ],
+   "n": "Besteht weiter: Flutter besser: Ionic navigateBack('/tabs/settings/help') führt immer zur Hilfe-Übersicht, auch wenn der Artikel aus der Termin-Art (team-activate/duty-setup) geöffnet wurde / Flutter maybePop kehrt zur aufrufenden Seite zurück (aus der Hilfe: Übersicht).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-ed039cfb84": {
+   "s": "diff",
+   "f": [
+    "lib/features/help/data/help_content.dart:268-272",
+    "lib/features/help/data/help_content_en.dart:162-165"
+   ],
+   "n": "Besteht weiter: Artikel songs-add beschreibt bewusst das Flutter-Verhalten („…zeigt Attendix PDFs und Bilder direkt in der App an. Andere Dateien öffnen sich in einem neuen Tab bzw. in der passenden App …“) statt Ionic („…öffnet sie sich in einem neuen Tab …“); Text passt zur App.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

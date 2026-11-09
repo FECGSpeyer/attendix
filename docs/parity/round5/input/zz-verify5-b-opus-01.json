@@ -1,0 +1,1298 @@
+{
+ "batch": "zz-verify5-b-opus-01",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "line": 263,
+    "method": "AgendaItemDetailPage.save",
+    "cond": [
+     "(!this.item.title?.trim())"
+    ],
+    "message": {
+     "keys": [
+      "agenda.enterTitle"
+     ],
+     "de": [
+      "Bitte einen Titel eingeben"
+     ],
+     "literals": [],
+     "expr": "translate('agenda.enterTitle')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "3557d336",
+    "mbody": "90eaccbf",
+    "roleGuarded": true,
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-333c131c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:230",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:74"
+    ],
+    "n": "Speichern-FAB nur Leitung (Ionic isLeader && item / Flutter isLeader && (item || neu) – gleich, da Ionic für „new“ ein leeres Item anlegt). Oranger Toast „Bitte einen Titel eingeben“.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "teachers/teachers-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/teachers",
+    "component": "TeachersPage",
+    "unit": "teachers/teachers.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-07b55f9c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:186",
+     "lib/core/router/app_router.dart:987-991"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/general/general-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/general",
+    "component": "GeneralPage",
+    "unit": "settings/general/general.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-1ed5378b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:165",
+     "lib/core/router/app_router.dart:1061-1065"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/handover/handover-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/handover",
+    "component": "HandoverPage",
+    "unit": "settings/handover/handover.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-259813cd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:179",
+     "lib/core/router/app_router.dart:1247-1262"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "tabs/tabs-routing.module.ts",
+    "line": 80,
+    "cond": [],
+    "path": "/tabs/settings/agenda-items",
+    "component": null,
+    "unit": null,
+    "redirectTo": "settings/team-organization",
+    "data": null,
+    "id": "app-routing.module#route-26467c34"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/legacy_routes.dart:84-88"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "songs/songs-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/:songSharingId",
+    "component": "SongsPage",
+    "unit": "songs/songs.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-30d5de34"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:1336-1341"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/general/types/types-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/general/types",
+    "component": "TypesPage",
+    "unit": "settings/general/types/types.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-362ac3d6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/legacy_routes.dart:95-96",
+     "lib/core/router/app_router.dart:1071-1086"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "people/list/list-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/player",
+    "component": "ListPage",
+    "unit": "people/list/list.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-3957412a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:187",
+     "lib/core/router/app_router.dart:790-817",
+     "lib/core/router/legacy_routes.dart:48-49"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart",
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "open-attendance/open-attendance-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/open-attendance",
+    "component": "OpenAttendancePage",
+    "unit": "open-attendance/open-attendance.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-3a204f54"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:311-316",
+     "lib/core/router/app_router.dart:523-530"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "app-redirect/app-redirect-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/app",
+    "component": "AppRedirectPage",
+    "unit": "app-redirect/app-redirect.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-4195df74"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:254-260",
+     "lib/core/router/app_router.dart:1324-1327"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "register/tenant-register/tenant-register-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/register/:id",
+    "component": "TenantRegisterPage",
+    "unit": "register/tenant-register/tenant-register.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-49fc5ebe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:477-484"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "home-dashboard/home-dashboard-routing.module.ts",
+    "line": 6,
+    "cond": [],
+    "path": "/tabs/home-dashboard",
+    "component": "HomeDashboardPage",
+    "unit": "home-dashboard/home-dashboard.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-54b016ce"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:1276-1282"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "songs/song/song-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/:songSharingId/:songId",
+    "component": "SongPage",
+    "unit": "songs/song/song.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-57e60fc9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:1342-1349"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "tabs/tabs-routing.module.ts",
+    "line": 89,
+    "cond": [],
+    "path": "/tabs/settings/tasks",
+    "component": null,
+    "unit": null,
+    "redirectTo": "settings/team-organization",
+    "data": null,
+    "id": "app-routing.module#route-5d496c10"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/legacy_routes.dart:84-88"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "org-settings/org-planning-templates/org-planning-templates-routing.module.ts",
+    "line": 5,
+    "cond": [],
+    "path": "/tabs/settings/org-settings/planning-templates",
+    "component": "OrgPlanningTemplatesPage",
+    "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-600bc78e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:1153-1177"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "legal/legal-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/legal",
+    "component": "LegalPage",
+    "unit": "legal/legal.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-61b8a146"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:297-298",
+     "lib/core/router/app_router.dart:487-491"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/dashboard/dashboard-settings-routing.module.ts",
+    "line": 6,
+    "cond": [],
+    "path": "/tabs/settings/dashboard",
+    "component": "DashboardSettingsPage",
+    "unit": "settings/dashboard/dashboard-settings.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-64f686ec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:1276-1282"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "public-planning/public-planning-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/org-plans/planung",
+    "component": "PublicPlanningPage",
+    "unit": "public-planning/public-planning.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-66af9bdd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:1141-1152"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "public-planning/public-planning-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/planung",
+    "component": "PublicPlanningPage",
+    "unit": "public-planning/public-planning.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-74c4b07e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:181",
+     "lib/core/router/app_router.dart:1136-1140"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "app-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/",
+    "component": null,
+    "unit": null,
+    "redirectTo": "/login",
+    "data": null,
+    "id": "app-routing.module#route-7f7cfdbd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/legacy_routes.dart:26-29"
+    ],
+    "n": "'' → /login (Query bleibt erhalten); LoginGuard-Weiterleitung entspricht AR-Redirect für angemeldete Nutzer.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "teams-config/teams-config-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/teams-config",
+    "component": "TeamsConfigPage",
+    "unit": "teams-config/teams-config.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-80d287ce"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:301",
+     "lib/core/router/app_router.dart:498-502"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "open-file/open-file-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/open-file",
+    "component": "OpenFilePage",
+    "unit": "open-file/open-file.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-892610fa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:1328-1335"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/general/branding/branding-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/general/branding",
+    "component": "BrandingPage",
+    "unit": "settings/general/branding/branding.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-8b879178"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:1222-1226"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/role-permissions/role-permissions-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/role-permissions",
+    "component": "RolePermissionsPage",
+    "unit": "settings/role-permissions/role-permissions.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-8fe0e4ca"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:173",
+     "lib/core/router/app_router.dart:1212"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "org-plan-public/org-plan-public-routing.module.ts",
+    "line": 5,
+    "cond": [],
+    "path": "/org-plan",
+    "component": "OrgPlanPublicPage",
+    "unit": "org-plan-public/org-plan-public.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-956f337d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:518-522"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "org-plans/org-plans-routing.module.ts",
+    "line": 5,
+    "cond": [],
+    "path": "/tabs/settings/org-plans",
+    "component": "OrgPlansPage",
+    "unit": "org-plans/org-plans.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-9a25908b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:182",
+     "lib/core/router/app_router.dart:1141-1152"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/settings/settings-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings",
+    "component": "SettingsPage",
+    "unit": "settings/settings/settings.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-9ddb8b7c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:936-942"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/handover-detail/handover-detail-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/handover/detail",
+    "component": "HandoverDetailPage",
+    "unit": "settings/handover-detail/handover-detail.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-a99e6e47"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:1252-1260"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "shared-plan/shared-plan-routing.module.ts",
+    "line": 6,
+    "cond": [],
+    "path": "/plan",
+    "component": "SharedPlanPage",
+    "unit": "shared-plan/shared-plan.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-bd3213ab"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:504-512"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/files/files-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/files",
+    "component": "FilesPage",
+    "unit": "settings/files/files.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-c4744fe8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:1204-1211",
+     "lib/features/settings/presentation/pages/files_page.dart:1126-1133"
+    ],
+    "n": "Zugriff wie Ionic canAccessFiles (Prüfung in der Seite statt im Guard).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart",
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "selfService/signout/signout-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/signout",
+    "component": "SignoutPage",
+    "unit": "selfService/signout/signout.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-c75ffb00"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/route_access.dart:72-75",
+     "lib/core/router/legacy_routes.dart:65-71"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "instruments/instrument-list/instrument-list-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/instruments",
+    "component": "InstrumentListPage",
+    "unit": "instruments/instrument-list/instrument-list.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-c862e0d0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:167",
+     "lib/core/router/app_router.dart:982"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/general/type/type-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/general/types/:id",
+    "component": "TypePage",
+    "unit": "settings/general/type/type.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-d10242f3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/legacy_routes.dart:95-96",
+     "lib/core/router/app_router.dart:1071-1086"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "login/login-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/login",
+    "component": "LoginPage",
+    "unit": "login/login.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-d6ee1e0c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:339-361",
+     "lib/core/router/app_router.dart:444-448"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "public-planning/public-planning-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/planung",
+    "component": "PublicPlanningPage",
+    "unit": "public-planning/public-planning.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-e346b9e2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:305-309",
+     "lib/core/router/app_router.dart:513-517"
+    ],
+    "n": "Öffentliche Planungsansicht; ok.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "tabs/tabs-routing.module.ts",
+    "line": 74,
+    "cond": [],
+    "path": "/tabs/settings/meetings",
+    "component": null,
+    "unit": null,
+    "redirectTo": "settings/team-organization",
+    "data": null,
+    "id": "app-routing.module#route-ed286061"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/legacy_routes.dart:89-90",
+     "lib/core/router/app_router.dart:993-1004"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "selfService/parents/parents-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/parents",
+    "component": "ParentsPage",
+    "unit": "selfService/parents/parents.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-ede3e6e8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/route_access.dart:70",
+     "lib/core/router/app_router.dart:881-889"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "org-settings/org-settings-routing.module.ts",
+    "line": 6,
+    "cond": [],
+    "path": "/tabs/settings/org-settings",
+    "component": "OrgSettingsPage",
+    "unit": "org-settings/org-settings.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-f9c1060e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:183",
+     "lib/core/router/app_router.dart:1153-1177"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "org-plans/org-plans-routing.module.ts",
+    "line": 5,
+    "cond": [],
+    "path": "/tabs/org-plans",
+    "component": "OrgPlansPage",
+    "unit": "org-plans/org-plans.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-fc0d5b73"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/legacy_routes.dart:63-64",
+     "lib/core/router/app_router.dart:199",
+     "lib/core/router/app_router.dart:1302-1318"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app.component",
+   "ionic": {
+    "ts": "app.component.ts",
+    "html": "app.component.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "app.component.ts",
+    "line": 156,
+    "method": "AppComponent.listenToAuthChanges",
+    "cond": [],
+    "table": "auth",
+    "op": "onAuthStateChange",
+    "payload": "async (event) => { if (event === 'PASSWORD_RECOVERY') { this.presentPasswordRecoveryAlert(); } if (event === 'SIGNED_IN') { this.tracking.track(TrackingEvent.Login); this.pushService.promptAndEnable(…",
+    "filters": [],
+    "src": "85b86e92",
+    "mbody": "50cfbfa4",
+    "id": "app.component#db-c155d49d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:137-146",
+     "lib/core/providers/push_providers.dart:62-77"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart",
+    "lib/core/providers/push_providers.dart"
+   ]
+  }
+ ]
+}

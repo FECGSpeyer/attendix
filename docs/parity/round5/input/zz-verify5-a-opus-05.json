@@ -1,0 +1,1929 @@
+{
+ "batch": "zz-verify5-a-opus-05",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/import/import.page",
+   "ionic": {
+    "ts": "songs/import/import.page.ts",
+    "html": "songs/import/import.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "songs/import/import.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:48-52",
+     "buildContext:54-59",
+     "buildTargetOptions:61-77",
+     "triggerFilePicker:79-81",
+     "onFileSelect:83-116",
+     "get canProceedFromMapping:118-120",
+     "proceedToPreview:122-141",
+     "backToMapping:143-145",
+     "get importableRows:147-149",
+     "get errorCount:151-153",
+     "get duplicateCount:155-157",
+     "get warningCount:159-161",
+     "rowStatus:163-168",
+     "startImport:170-215",
+     "showFailureDetails:217-229",
+     "downloadTemplate:231-244",
+     "dismiss:246-248"
+    ],
+    "bodies": {
+     "constructor": "759afdeb",
+     "buildContext": "f7cfa117",
+     "buildTargetOptions": "44b68f64",
+     "triggerFilePicker": "56d7f043",
+     "onFileSelect": "ba0acee7",
+     "get canProceedFromMapping": "0e2143be",
+     "proceedToPreview": "56799206",
+     "backToMapping": "4fa36895",
+     "get importableRows": "7583f5a6",
+     "get errorCount": "d71e2b10",
+     "get duplicateCount": "9095fb09",
+     "get warningCount": "29bc1fcc",
+     "rowStatus": "07263111",
+     "startImport": "3b433dec",
+     "showFailureDetails": "3da479c4",
+     "downloadTemplate": "937c1a7d",
+     "dismiss": "69a7489b"
+    },
+    "id": "songs/import/import.page#logic-587858e7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/pages/song_import_page.dart:62",
+     "lib/features/songs/presentation/pages/song_import_page.dart:105",
+     "lib/features/songs/presentation/pages/song_import_page.dart:132",
+     "lib/core/utils/import_mapper.dart:467",
+     "lib/core/utils/import_mapper.dart:608",
+     "lib/core/utils/import_mapper.dart:632",
+     "lib/data/repositories/import_repository.dart:80",
+     "lib/data/repositories/import_repository.dart:109",
+     "lib/core/utils/spreadsheet_reader.dart:43",
+     "lib/core/utils/spreadsheet_reader.dart:186"
+    ],
+    "n": "Gleich: 3 Schritte Datei → Zuordnung → Vorschau, Zielfeld-Optionen, Auto-Mapping, Pflicht Nummer+Name, Zeilen-Validierung, Duplikate in Datei und in effektiver Werkbibliothek (paginiert, tenantId = Werk-Quelle), Zähler/Status, Insert in songs mit denselben Spalten und tenantId = effectiveSongTenantId, Demo-Sperre, Vorlage, Schließen. Unterschiede (s. Erst-extra): .xls wird abgelehnt (hoch); Flutter erkennt DB-Insert-Fehler (Ionic zählt sie als importiert); Fehlergrund technisch formatiert. Formelzellen jetzt verifiziert: excel_community 2.6.2 liefert FormulaCellValue(formula, cachedValue), cellToDart nimmt die Formel statt des Ergebnisses → z. B. Nummer per Formel wird Fehlerzeile (Ionic/SheetJS: berechneter Wert).",
+    "sev": "hoch",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/utils/spreadsheet_reader.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/import/import.page",
+   "ionic": {
+    "ts": "songs/import/import.page.ts",
+    "html": "songs/import/import.page.html"
+   },
+   "extra": {
+    "id": "x-1c8ba119fa",
+    "title": "Formelzellen evtl. als Formeltext gelesen (unverifiziert)",
+    "n": "Echt (Paket excel 4.0.6 nicht im Pub-Cache; gecacht ist nur der Fork excel_community 2.6.2, dessen Parser gleich aufgebaut ist): Zahl-Formelzellen (<f> ohne t=\"str\") werden als FormulaCellValue(Formeltext) gelesen, cellToDart liefert immer value.formula → z. B. Nummer „A2+1“ statt 43 → Fehler „Nummer … muss eine Zahl sein“, in Freitext-/Zusatzfeldern würde der Formeltext importiert. Formeln mit Text-Ergebnis (t=\"str\") liefern laut Fork den Wert. Ionic SheetJS: immer berechneter Wert. Gilt auch für den Personen-Import.",
+    "sev": "mittel",
+    "ionic": "src/app/utilities/spreadsheet-reader.ts:16",
+    "f": [
+     "lib/core/utils/spreadsheet_reader.dart:171",
+     "lib/core/utils/spreadsheet_reader.dart:186"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-querschnitt.json",
+    "n": "behoben in #295 (songs/import/import.page: Formelzellen evtl. als Formeltext gelesen (unverifiziert))"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/import/import.page",
+   "ionic": {
+    "ts": "songs/import/import.page.ts",
+    "html": "songs/import/import.page.html"
+   },
+   "extra": {
+    "id": "x-9564139e1c",
+    "title": ".xls-Dateien werden nicht importiert",
+    "n": "Echt: Ionic SheetJS read() liest .xls (BIFF) wie .xlsx / Flutter lehnt .xls ab („Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.“), obwohl Dateiauswahl .xls anbietet und der Intro-Text „Excel- (.xlsx/.xls)“ nennt. Import-Funktion für dieses Format fehlt (Umweg: als .xlsx speichern); betrifft auch den Personen-Import (gleicher Reader).",
+    "sev": "hoch",
+    "ionic": "src/app/utilities/spreadsheet-reader.ts:16",
+    "f": [
+     "lib/core/utils/spreadsheet_reader.dart:43",
+     "lib/core/utils/spreadsheet_reader.dart:45",
+     "lib/core/utils/import_file_io.dart:13"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-querschnitt.json",
+    "n": "behoben in #295 (songs/import/import.page: .xls-Dateien werden nicht importiert)"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/song/song.page.html",
+    "line": 200,
+    "cond": [
+     "@if (song)",
+     "@else if (song.files && song.files.length > 0)",
+     "in <ion-popover trigger=files-button #filesPopover>",
+     "@if (!readOnly)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=printSongFiles(filesPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "print-outline"
+    ],
+    "keys": [
+     "songs.printGroupPdfs"
+    ],
+    "de": [
+     "Gruppen-PDFs drucken"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.printGroupPdfs' | transloco }}",
+    "id": "songs/song/song.page#action-399b39c6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/group_pdf_print.dart",
+     "lib/data/repositories/player_repository.dart"
+    ],
+    "n": "behoben in #293",
+    "v": null,
+    "src": "zz-fixed-werke.json",
+    "flutterAt": "2353b98"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "songs/song/song.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "get showBeamerFile:71-73",
+     "syncInstrumentIdsFromFiles:82-86",
+     "get aufnahmeFile:88-90",
+     "playAufnahme:92-97",
+     "get instrumentIdsFromFiles:99-105",
+     "get copiedFromText:108-113",
+     "getHistoryEntryTitle:115-117",
+     "constructor:119-127",
+     "ngOnInit:129-190",
+     "onTargetTenantChange:192-197",
+     "onFilesSelected:199-203",
+     "onDragOver:205-208",
+     "onDragLeave:210-212",
+     "onDrop:214-220",
+     "addFiles:222-255",
+     "onPageDragEnter:259-263",
+     "onPageDragOver:265-267",
+     "onPageDragLeave:269-273",
+     "onPageDrop:275-282",
+     "handlePageDrop:284-293",
+     "findConflictingFiles:295-301",
+     "refreshSingleFileConflicts:303-318",
+     "onSingleFileInstrumentChange:320-329",
+     "onSingleFileNoteChange:331-336",
+     "toggleConflictToReplace:338-345",
+     "toggleModalConflict:347-352",
+     "cancelSingleFile:354-359",
+     "onSingleFileModalDismiss:361-363",
+     "performDirectUpload:365-383",
+     "getFileSelectValue:385-388",
+     "changeFileInstrument:390-407",
+     "updateFileNote:409-416",
+     "uploadFiles:418-452",
+     "performUpload:454-501",
+     "getInstrumentName:503-512",
+     "fileSortKey:514-526",
+     "get sortedFiles:528-533",
+     "getBadgeColor:535-548",
+     "openFile:550-552",
+     "openLink:554-564",
+     "downloadFile:566-570",
+     "deleteFile:572-592",
+     "changeCategory:594-600",
+     "saveCategoryModal:602-610",
+     "focusAlertInput:612-623",
+     "saveFileChange:625-634",
+     "removeSelectedFile:636-639",
+     "deleteAllFiles:641-667",
+     "downloadAllFiles:669-692",
+     "openFileActionSheet:694-774",
+     "sendPerTelegram:776-781",
+     "getSongSharingLink:783-785",
+     "copyShareLink:787-791",
+     "update:793-797",
+     "confirmDeleteSong:799-825",
+     "getSyncedTenantNames:831-842",
+     "getCategoryName:844-848",
+     "mapInstrumentId:853-879",
+     "copySong:881-916",
+     "getPlayerCountByGroup:921-923",
+     "printSongFiles:928-1006",
+     "generatePrintPdf:1011-1026"
+    ],
+    "bodies": {
+     "get showBeamerFile": "2becb13e",
+     "syncInstrumentIdsFromFiles": "1d4b4e91",
+     "get aufnahmeFile": "289b6910",
+     "playAufnahme": "2f8f0997",
+     "get instrumentIdsFromFiles": "4eaf47d5",
+     "get copiedFromText": "7749cad4",
+     "getHistoryEntryTitle": "ee9febb6",
+     "constructor": "7be73b2c",
+     "ngOnInit": "7da3fa4a",
+     "onTargetTenantChange": "4ee344d2",
+     "onFilesSelected": "d9a0de49",
+     "onDragOver": "0a977a6f",
+     "onDragLeave": "a3977229",
+     "onDrop": "f8529f0d",
+     "addFiles": "347aa203",
+     "onPageDragEnter": "fc87bcf9",
+     "onPageDragOver": "1a9decb1",
+     "onPageDragLeave": "e2b4e6c9",
+     "onPageDrop": "ecd261af",
+     "handlePageDrop": "e5d1854a",
+     "findConflictingFiles": "00c63296",
+     "refreshSingleFileConflicts": "a215d36d",
+     "onSingleFileInstrumentChange": "5b39d6ec",
+     "onSingleFileNoteChange": "398b58ef",
+     "toggleConflictToReplace": "17f84019",
+     "toggleModalConflict": "41a96b58",
+     "cancelSingleFile": "44b2ff7f",
+     "onSingleFileModalDismiss": "cdf44d90",
+     "performDirectUpload": "8d6896b7",
+     "getFileSelectValue": "4e711c39",
+     "changeFileInstrument": "4c161cf6",
+     "updateFileNote": "37b61d3b",
+     "uploadFiles": "ef8fa356",
+     "performUpload": "5db3cea6",
+     "getInstrumentName": "25804c6b",
+     "fileSortKey": "bed9c5eb",
+     "get sortedFiles": "e1076d14",
+     "getBadgeColor": "a70df320",
+     "openFile": "edd84cda",
+     "openLink": "a929e6ea",
+     "downloadFile": "9597de19",
+     "deleteFile": "b45d5f14",
+     "changeCategory": "6c4e5823",
+     "saveCategoryModal": "95d983f4",
+     "focusAlertInput": "ac2c3c50",
+     "saveFileChange": "ccd18f61",
+     "removeSelectedFile": "0af5367f",
+     "deleteAllFiles": "41b53dfb",
+     "downloadAllFiles": "fb75ff87",
+     "openFileActionSheet": "b1008e78",
+     "sendPerTelegram": "a5c91057",
+     "getSongSharingLink": "51883073",
+     "copyShareLink": "24ef5fb2",
+     "update": "a22da755",
+     "confirmDeleteSong": "ea78d06a",
+     "getSyncedTenantNames": "c6950bd4",
+     "getCategoryName": "83bf207d",
+     "mapInstrumentId": "d56596ab",
+     "copySong": "5cf172fc",
+     "getPlayerCountByGroup": "4e64207e",
+     "printSongFiles": "1e5449ae",
+     "generatePrintPdf": "31daed3d"
+    },
+    "id": "songs/song/song.page#logic-84499787"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:98-160",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:911-1204",
+     "lib/core/providers/song_providers.dart:434-504",
+     "lib/core/providers/song_providers.dart:141-147",
+     "lib/core/services/song_file_service.dart:295-299",
+     "lib/features/songs/presentation/widgets/file_upload_sheet.dart:446-465",
+     "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:181-211"
+    ],
+    "n": "Methoden selbst nachgeprüft (Laden inkl. Rollen/Freigabe-Link, Datei-Merge, Konflikte, Kategorie, Sortierung/Badges, Teilen, Löschen mit Sync-Namen, Kopieren, Gruppen-Druck, Aufnahme-FAB). Extras des Erstreviews bestätigt: _update bricht bei laufendem Speichern ab (_saving) → Änderung geht verloren (hoch); _init nur einmal pro Werk → Besetzung nach Upload/Datei löschen/Alle löschen/Kategorie veraltet, nächstes Speichern schreibt alte Gruppen zurück (Ionic: DbService upload/deleteSongFile setzen instrument_ids aus den Dateien, Seite lädt neu) (hoch); kein Neuladen nach Teil-Fehler (mittel); Telegram-Texte, Fehlermeldungen, Zusatzfunktionen (niedrig). Neu: Werk und Werkhistorie aus Sitzungs-Cache (extra, mittel). Randfall Kopieren: Flutter mappt Gruppen auch in Chören und für die Hauptgruppe (groupsProvider), Ionic nur this.instruments (Orchester ohne Hauptgruppe), sonst null.",
+    "sev": "hoch",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart",
+    "lib/core/providers/song_providers.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/song/song.page.html",
+    "line": 135,
+    "cond": [
+     "@if (song)",
+     "@if (db.tenant()?.song_additional_fields?.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.extraFields"
+    ],
+    "de": [
+     "Zusatzfelder"
+    ],
+    "literals": [],
+    "text": "{{ 'people.extraFields' | transloco }}",
+    "id": "songs/song/song.page#text-e14adf08"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart"
+    ],
+    "n": "behoben in #293",
+    "v": null,
+    "src": "zz-fixed-werke.json",
+    "flutterAt": "2353b98"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "extra": {
+    "id": "x-1a9462e316",
+    "title": "Teil-Fehler beim Upload: Liste nicht aktualisiert",
+    "n": "Real. Ionic performUpload lädt das Werk auch bei Teil-Fehlern neu. Flutter: bei Teil-Fehler bleibt das Sheet offen, X gibt false zurück → kein _refresh; erfolgreich hochgeladene Dateien fehlen in der Liste – wegen gecachtem songByIdProvider auch nach erneutem Öffnen, bis Pull-to-Refresh oder ein erfolgreicher Wiederholversuch.",
+    "sev": "mittel",
+    "ionic": "src/app/songs/song/song.page.ts:485",
+    "f": [
+     "lib/features/songs/presentation/widgets/file_upload_sheet.dart:446-465",
+     "lib/features/songs/presentation/widgets/file_upload_sheet.dart:506-509",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:928"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-werke.json",
+    "n": "behoben in #293"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "extra": {
+    "id": "x-47806f440c",
+    "title": "Besetzung nach Datei-Änderungen veraltet",
+    "n": "Real. Ionic DbService.uploadSongFile/deleteSongFile und saveFileChange setzen instrument_ids aus den Dateien, die Seite lädt das Werk neu. Flutter schreibt dieselben Werte, aber _instrumentIds wird nach _refresh nicht neu gesetzt (_init nur einmal pro Werk-ID): „Besetzung“ zeigt alte Gruppen (z. B. nach Kategorie ändern A→B weiter A, nach „Alle löschen“ alle alten), neue Datei-Gruppen gesperrt aber nicht angehakt; das nächste Speichern eines beliebigen Feldes schreibt die alten Gruppen zurück. Bewertung hoch bleibt.",
+    "sev": "hoch",
+    "ionic": "src/app/songs/song/song.page.ts:485",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:98-121",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:130-154",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:464-476",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:984-987",
+     "lib/core/services/song_file_service.dart:298",
+     "lib/core/services/song_file_service.dart:379",
+     "lib/core/services/song_file_service.dart:470"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-werke.json",
+    "n": "behoben in #293"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "extra": {
+    "id": "x-65c1fb4b3b",
+    "title": "Änderung während laufendem Speichern verworfen",
+    "n": "Real. _update bricht bei _saving ohne Nachholen ab. Im Web/PWA und Desktop entfernt PointerDown außerhalb des Textfelds den Fokus (Standard onTapOutside) → Blur-Speichern startet, der Schalter-Tap (onChanged bei PointerUp) trifft auf _saving und wird nicht geschrieben, obwohl der Schalter umgelegt angezeigt wird; Verlassen der Seite → Änderung verloren. Ionic schreibt jede Änderung. Bewertung hoch bleibt.",
+    "sev": "hoch",
+    "ionic": "src/app/songs/song/song.page.ts:793",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:130-160",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:382-387",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:444-462"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-werke.json",
+    "n": "behoben in #293"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "extra": {
+    "id": "x-6e2b231559",
+    "title": "Werk und Werkhistorie aus Sitzungs-Cache",
+    "n": "Real, aber zu niedrig bewertet. songByIdProvider/songHistoryProvider(id) sind family ohne autoDispose und leben die ganze App-Sitzung; nur Änderungen auf dieser Seite invalidieren sie (Realtime und Pull-to-Refresh der Werkliste nur songsProvider). Ionic lädt bei jedem Öffnen frisch. Folge für alle Rollen: Spieler sehen nach Upload/Ersetzen durch Dirigent beim erneuten Öffnen die alte Dateiliste (ersetzte Dateien → gelöschte Storage-URLs), ohne Hinweis; nur Pull-to-Refresh auf der Werkseite hilft. Falsche/fehlende Daten → hoch.",
+    "sev": "hoch",
+    "ionic": "src/app/songs/song/song.page.ts:147",
+    "f": [
+     "lib/core/providers/song_providers.dart:141-147",
+     "lib/core/providers/song_providers.dart:160-168",
+     "lib/core/providers/song_providers.dart:471-485",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2097-2098",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:87-96"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-werke.json",
+    "n": "behoben in #293 (Werk und Werkhistorie werden beim Öffnen der Seite neu geladen, auch für Spieler)"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/songs.page.html",
+    "line": 221,
+    "cond": [
+     "in <ion-popover trigger=filter-trigger-songs>",
+     "@for (field of db.tenant()?.song_additional_fields; track field.id)",
+     "@if (field.type === fieldTypes.SELECT)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "slot": "end",
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=onFilterChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"filterOpts[field.id]\"",
+    "bindings": [
+     "[placeholder]=\"field.name\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"''\"",
+      "keys": [
+       "common.all"
+      ],
+      "de": [
+       "Alle"
+      ],
+      "literals": [],
+      "text": "{{ 'common.all' | transloco }}"
+     },
+     {
+      "value": "\"opt\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ opt }}"
+     }
+    ],
+    "keys": [
+     "common.all"
+    ],
+    "de": [
+     "Alle"
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"field.name\" {{ 'common.all' | transloco }} {{ opt }}",
+    "id": "songs/songs.page#field-4796fb04"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+    ],
+    "n": "behoben in #293",
+    "v": null,
+    "src": "zz-fixed-werke.json",
+    "flutterAt": "2353b98"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/songs.page.html",
+    "line": 232,
+    "cond": [
+     "in <ion-popover trigger=filter-trigger-songs>",
+     "@for (field of db.tenant()?.song_additional_fields; track field.id)",
+     "@else if (field.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "slot": "end",
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=onFilterChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"filterOpts[field.id]\"",
+    "bindings": [
+     "[placeholder]=\"field.name\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "",
+      "keys": [
+       "common.all"
+      ],
+      "de": [
+       "Alle"
+      ],
+      "literals": [],
+      "text": "{{ 'common.all' | transloco }}\"\""
+     },
+     {
+      "value": "true",
+      "keys": [
+       "common.yes"
+      ],
+      "de": [
+       "Ja"
+      ],
+      "literals": [],
+      "text": "{{ 'common.yes' | transloco }}\"true\""
+     },
+     {
+      "value": "false",
+      "keys": [
+       "common.no"
+      ],
+      "de": [
+       "Nein"
+      ],
+      "literals": [],
+      "text": "{{ 'common.no' | transloco }}\"false\""
+     }
+    ],
+    "keys": [
+     "common.all",
+     "common.yes",
+     "common.no"
+    ],
+    "de": [
+     "Alle",
+     "Ja",
+     "Nein"
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"field.name\" \"\" {{ 'common.all' | transloco }} \"true\" {{ 'common.yes' | transloco }} \"false\" {{ 'common.no' | transloco }}",
+    "id": "songs/songs.page#field-5c68cf0f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+    ],
+    "n": "behoben in #293",
+    "v": null,
+    "src": "zz-fixed-werke.json",
+    "flutterAt": "2353b98"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "songs/songs.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:71-77",
+     "trackBySongId:80-80",
+     "loadMoreSongs:86-89",
+     "ngOnInit:91-136",
+     "ionViewWillEnter:138-150",
+     "ngOnDestroy:152-154",
+     "subscribeToUpdates:156-169",
+     "getSongs:171-218",
+     "get isChoir:223-225",
+     "isScoreFile:227-229",
+     "buildGroupsWithFiles:231-268",
+     "toggleSongsTab:270-274",
+     "printNotesForGroup:275-319",
+     "printGroupFolder:321-331",
+     "selectGroup:333-348",
+     "openFile:350-352",
+     "resetGroupSelection:354-357",
+     "doRefresh:359-365",
+     "openOrgSongSearch:367-372",
+     "openImportModal:374-386",
+     "exportSongsPdf:388-480",
+     "addSong:482-512",
+     "editSong:514-530",
+     "isValidHttpUrl:532-542",
+     "search:544-559",
+     "searchSongs:561-576",
+     "onFilterChanged:578-590",
+     "filter:592-630",
+     "onSortChanged:632-662",
+     "filterChoirSolo:664-677",
+     "onViewChanged:679-681",
+     "onCategoryChanged:683-688",
+     "initializeItems:690-693",
+     "onTextAreaFocus:695-697",
+     "getInstrumentText:699-701",
+     "getSongSharingLink:703-705",
+     "openCategoriesModal:707-710",
+     "copyShareLink:712-716",
+     "openSong:718-725",
+     "addCategory:727-762",
+     "editCategory:764-799",
+     "deleteCategory:801-823",
+     "handleReorder:825-833"
+    ],
+    "bodies": {
+     "constructor": "e0e264ed",
+     "trackBySongId": "2c9cad93",
+     "loadMoreSongs": "267cb51e",
+     "ngOnInit": "ae6d888f",
+     "ionViewWillEnter": "879e332e",
+     "ngOnDestroy": "a814b3d4",
+     "subscribeToUpdates": "e721e1ed",
+     "getSongs": "6f3bc3d7",
+     "get isChoir": "9ce35992",
+     "isScoreFile": "fc592c7e",
+     "buildGroupsWithFiles": "30ee8875",
+     "toggleSongsTab": "0b06965f",
+     "printNotesForGroup": "7b86a74d",
+     "printGroupFolder": "d51f234c",
+     "selectGroup": "0b455c7e",
+     "openFile": "7226bd73",
+     "resetGroupSelection": "0f857113",
+     "doRefresh": "6141523f",
+     "openOrgSongSearch": "1b9d67f4",
+     "openImportModal": "6e774b81",
+     "exportSongsPdf": "1f2c0b38",
+     "addSong": "a2b146be",
+     "editSong": "7ec416ef",
+     "isValidHttpUrl": "88224bd3",
+     "search": "9922809c",
+     "searchSongs": "b3bdb814",
+     "onFilterChanged": "cb3c57f0",
+     "filter": "bd51fa7f",
+     "onSortChanged": "9e6e68b7",
+     "filterChoirSolo": "8616bd2c",
+     "onViewChanged": "b0c91ec4",
+     "onCategoryChanged": "277edd15",
+     "initializeItems": "924d2b1d",
+     "onTextAreaFocus": "cbe6da93",
+     "getInstrumentText": "b845c751",
+     "getSongSharingLink": "2cf0e1de",
+     "openCategoriesModal": "9dd61d5c",
+     "copyShareLink": "ae2cd365",
+     "openSong": "9bcfd048",
+     "addCategory": "3200da91",
+     "editCategory": "cf7a6b2d",
+     "deleteCategory": "f76c0e3a",
+     "handleReorder": "cb35cb69"
+    },
+    "id": "songs/songs.page#logic-673d2fb4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:155",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:219-232",
+     "lib/core/providers/song_providers.dart:71",
+     "lib/core/providers/song_providers.dart:326",
+     "lib/core/providers/song_filter_providers.dart:166",
+     "lib/core/providers/song_filter_providers.dart:225",
+     "lib/core/providers/song_providers.dart:695"
+    ],
+    "n": "Gleich: öffentlicher Modus über Sharing-ID (ungültig → Toast „Ungültiger Freigabe-Link.“), Laden von Werken/Historie/Kategorien/Gruppen/aktuellen Werken, lastSung/nextPlanned (letzter Eintrag bis heute bzw. nächster künftiger), Default-Besetzung = alle Gruppen bei Orchester, Filter (Segment, Kategorien, Gruppen, Chor/Solo, Schwierigkeit, Zusatzfelder), Suche (Name, Dirigent, Präfix+Nummer, 250 ms), 6 Sortierungen, gespeicherte Sortierung/Ansicht/Filter je Tenant (Schwierigkeit in beiden nicht wiederhergestellt), Gruppenverzeichnis (Gruppen-ID > 2, Dirigenten/Chor (alle) vorn), Realtime, Admin = Admin/Verantwortlicher, Freigabe-Link https://attendix.de/<id>. editSong ist in Ionic toter Code (kein Template-Aufruf). Unterschiede siehe Items und extra: Kategorie-Bereinigung nur beim ersten Aufbau, Dirigentenname-Quelle, Suchreset-Eigenheit, Lade-/Fehler-/Leerzustand, öffentliche Seite (Flutter: keine Admin-Funktionen, Zusatzfelder des freigebenden Tenants; Ionic: Rolle/Zusatzfelder/Branding des eingeloggten Tenants).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart",
+    "lib/core/providers/song_providers.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "extra": {
+    "id": "x-e99fb6352e",
+    "title": "Gelöschte Kategorie bleibt als Filter aktiv",
+    "n": "Bestätigt. Ionic: getSongs (auch nach deleteCategory) setzt eine nicht mehr existierende selectedCategory auf '' und bereinigt selectedCategories (songs.page.ts:190) / Flutter: pruneCategories nur einmal pro Seitenzustand (_pruned). Nach Löschen im Kategorien-Sheet bleibt filter.category auf der gelöschten ID: Liste zeigt nur Werke, die die ID noch in category_ids tragen (beide Apps bereinigen die Werke nicht), kein Segment markiert, „Aktuelle Werke anzeigen“ weg, „Filter zurücksetzen“ behält category; war es die letzte Kategorie, fehlt das Segment → erst nach Verlassen der Seite (ShellRoute ohne Zustand) wieder alle Werke.",
+    "sev": "mittel",
+    "ionic": "src/app/songs/songs.page.ts:191",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:219",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:238",
+     "lib/core/providers/song_filter_providers.dart:92"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-werke.json",
+    "n": "behoben in #293"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "stats/stats.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:101-105",
+     "trackByPersonId:107-107",
+     "ngOnInit:109-139",
+     "applyDateFilter:141-167",
+     "onDateFilterChange:169-171",
+     "initializeCharts:173-182",
+     "initAttendanceTrendChart:184-213",
+     "initStatusPieChart:215-264",
+     "initInstrumentBarChart:266-315",
+     "initTop20Chart:317-368",
+     "initAgeDistributionChart:370-431",
+     "initAvgAgePerInstrumentChart:433-498",
+     "initDivaIndexChart:500-544",
+     "initFieldStats:546-566",
+     "get selectedField:568-570",
+     "get fieldStatsGroups:573-576",
+     "fieldStatsPersons:578-584",
+     "fieldValueLabel:587-603",
+     "fieldValueOrder:606-618",
+     "updateFieldStats:620-702",
+     "getOrganizationStats:704-737",
+     "filterInstances:739-751",
+     "dismiss:753-755",
+     "getAttTypeLength:757-759",
+     "openInstancesAlert:761-769"
+    ],
+    "bodies": {
+     "constructor": "cf8b3cda",
+     "trackByPersonId": "08dfc74a",
+     "ngOnInit": "aa60f849",
+     "applyDateFilter": "36ecbc86",
+     "onDateFilterChange": "6a924800",
+     "initializeCharts": "4423acdb",
+     "initAttendanceTrendChart": "3afc6967",
+     "initStatusPieChart": "45e4ea3f",
+     "initInstrumentBarChart": "cc67a010",
+     "initTop20Chart": "5e726290",
+     "initAgeDistributionChart": "4a3ae186",
+     "initAvgAgePerInstrumentChart": "e3e5e59b",
+     "initDivaIndexChart": "ac2adff3",
+     "initFieldStats": "9f06b002",
+     "get selectedField": "eb6dc57c",
+     "get fieldStatsGroups": "5f3ff0c4",
+     "fieldStatsPersons": "dee0d2b3",
+     "fieldValueLabel": "fcd24a2c",
+     "fieldValueOrder": "7b9c8054",
+     "updateFieldStats": "04b781b8",
+     "getOrganizationStats": "9728d2dc",
+     "filterInstances": "dbf3f64b",
+     "dismiss": "69a7489b",
+     "getAttTypeLength": "cd5c0fca",
+     "openInstancesAlert": "c1931c93"
+    },
+    "id": "stats/stats.page#logic-49d4b21b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/providers/statistics_providers.dart:54",
+     "lib/core/providers/statistics_providers.dart:69",
+     "lib/core/providers/statistics_providers.dart:200",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:127",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:759",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:787",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:849",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:877"
+    ],
+    "n": "Datenbasis und Berechnungen wie Erstprüfung beschrieben gleich (Zeitraum Saisonstart bzw. 2023-01-01 bis heute, nur Termine bis heute, Prozent je Termin neu berechnet, Ø nur include_in_average, Aggregationen über aktive Personen, Organisation). Nachgeprüft: fl_chart 0.69.2 (pub-cache) kennt keine Drehung; die Balkendiagramme sind senkrecht, untere Achse leer, Namen über leftTitles an den Y-Wert-Teilstrichen (data[0], data[20] …) → Namen stehen nicht an ihren Balken (extra 'Balkendiagramme ohne zuordenbare Namen', hoch, trifft zu).",
+    "sev": "hoch",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "extra": {
+    "id": "x-6a02894975",
+    "title": "Balkendiagramme ohne zuordenbare Namen",
+    "n": "Real: fl_chart 0.69.2 (pub-cache) hat keine Drehung, BarChart zeichnet senkrechte Balken, bottomTitles sind aus. leftTitles laufen über die Y-Achse (side_titles_widget.dart: iterateThroughAxis minY..maxY), getTitlesWidget nimmt value.toInt() als Index → data[0] bei 0, data[20] bei 20 … Namen stehen an Wert-Teilstrichen statt an den Balken, meist nur der erste sichtbar. Betrifft Top 20, pro Instrument, Unentschuldigte, Ø-Alter. Ionic: horizontale Balken mit Namen je Balken. Zuordnung nur per Tooltip → hoch bestätigt.",
+    "sev": "hoch",
+    "ionic": "src/app/stats/stats.page.ts:306",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:737-803",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:827-893",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1008-1075",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1100-1168"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-uebersicht.json",
+    "n": "behoben in #298"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "extra": {
+    "id": "x-ab8ae02d16",
+    "title": "Diagrammtitel und Achsentitel fehlen",
+    "n": "Real: Ionic Chart.js-Titel 'Anwesenheitsverlauf (letzte 20 Termine)', 'Statusverteilung (in %)', 'Top 20 - Anwesenheits-Elite 🏆', 'Anwesenheitsquote nach Instrument', 'Unentschuldigte Abwesenheiten', 'Altersverteilung 🎂', 'Durchschnittsalter pro Instrument' + Achsentitel '%'/'Jahre'. Die ARB-Keys statsHistoryChart … werden in Flutter nirgends genutzt; nur Abschnittsüberschriften, '%' steckt in den Tick-Labels. Flutter zeigt auch nur die letzten 20 Termine, der Hinweis darauf fehlt → mittel.",
+    "sev": "mittel",
+    "ionic": "src/app/stats/stats.page.ts:207",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:234-273",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:516-600"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-uebersicht.json",
+    "n": "behoben in #298"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "team-organization/protocols-tab/protocols-tab.component",
+   "ionic": {
+    "ts": "team-organization/protocols-tab/protocols-tab.component.ts",
+    "html": "team-organization/protocols-tab/protocols-tab.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "team-organization/protocols-tab/protocols-tab.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:44-44",
+     "ngOnInit:46-48",
+     "reload:50-83",
+     "applyFilter:85-95",
+     "publishedText:97-102"
+    ],
+    "bodies": {
+     "constructor": "4cb5ffb7",
+     "ngOnInit": "5e249a05",
+     "reload": "6fd771ba",
+     "applyFilter": "235ef0f9",
+     "publishedText": "462bba61"
+    },
+    "id": "team-organization/protocols-tab/protocols-tab.component#logic-58a7de00"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/protocols_tab.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "team-organization/tasks-tab/tasks-tab.component",
+   "ionic": {
+    "ts": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "html": "team-organization/tasks-tab/tasks-tab.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "line": 74,
+    "method": "TeamTasksTabComponent.reload",
+    "cond": [],
+    "message": {
+     "keys": [
+      "teamOrg.tasksLoadFailed"
+     ],
+     "de": [
+      "Aufgaben konnten nicht geladen werden"
+     ],
+     "literals": [],
+     "expr": "translate('teamOrg.tasksLoadFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "ccd4a675",
+    "mbody": "b22b48d9",
+    "roleGuarded": true,
+    "id": "team-organization/tasks-tab/tasks-tab.component#toast-1b91ff64"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart",
+     "lib/core/providers/team_org_providers.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "team-organization/team-organization.page",
+   "ionic": {
+    "ts": "team-organization/team-organization.page.ts",
+    "html": "team-organization/team-organization.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "team-organization/team-organization.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:29-38",
+     "ionViewWillEnter:40-46",
+     "onSegmentChange:48-50",
+     "handleRefresh:52-55",
+     "reloadActive:57-63"
+    ],
+    "bodies": {
+     "constructor": "4456caa9",
+     "ionViewWillEnter": "1315a563",
+     "onSegmentChange": "016c8575",
+     "handleRefresh": "50dceebf",
+     "reloadActive": "dbc28f39"
+    },
+    "id": "team-organization/team-organization.page#logic-cb8d3ed3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/team_organization_page.dart",
+     "lib/core/providers/team_org_providers.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 106,
+    "method": "TeamTopicsTabComponent.reload",
+    "cond": [],
+    "message": {
+     "keys": [
+      "agenda.loadFailed"
+     ],
+     "de": [
+      "Themen konnten nicht geladen werden"
+     ],
+     "literals": [],
+     "expr": "translate('agenda.loadFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "91e2c4e5",
+    "mbody": "1b607a46",
+    "roleGuarded": true,
+    "id": "team-organization/topics-tab/topics-tab.component#toast-f0d73e65"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart",
+     "lib/core/providers/team_org_providers.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "terms/terms.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:19-19",
+     "ngOnInit:21-31",
+     "openPrivacy:33-38",
+     "accept:40-62"
+    ],
+    "bodies": {
+     "constructor": "4223ddf1",
+     "ngOnInit": "799c954a",
+     "openPrivacy": "be8e7d1f",
+     "accept": "ee8ce7f2"
+    },
+    "id": "terms/terms.page#logic-e0824f5f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/pages/terms_page.dart",
+     "lib/core/router/app_router.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "terms/terms.page.ts",
+    "line": 61,
+    "method": "TermsPage.accept",
+    "cond": [],
+    "via": "router.navigateByUrl",
+    "to": "Utils.getUrl(this.db.tenantUser()?.role)",
+    "src": "0982c2da",
+    "mbody": "ee8ce7f2",
+    "roleGuarded": true,
+    "id": "terms/terms.page#nav-4df0f2ac"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/pages/terms_page.dart",
+     "lib/core/router/app_router.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 950,
+    "method": "Utils.createPlanExport",
+    "cond": [
+     "!(props.asBlob)",
+     "(props.sideBySide)"
+    ],
+    "call": "Utils.downloadFileNative",
+    "args": "doc.output('blob'), fileName",
+    "src": "1dafb1a7",
+    "mbody": "eedb9b65",
+    "id": "utilities/Utils#effect-178a8abf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/plan_export_service.dart",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1036,
+    "method": "Utils.createPlanExport",
+    "cond": [
+     "!(props.asBlob)"
+    ],
+    "call": "Utils.downloadFileNative",
+    "args": "doc.output('blob'), fileName",
+    "src": "1dafb1a7",
+    "mbody": "eedb9b65",
+    "id": "utilities/Utils#effect-178a8abf-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/plan_export_service.dart",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 950,
+    "method": "Utils.createPlanExport",
+    "cond": [
+     "!(props.asBlob)",
+     "(props.sideBySide)"
+    ],
+    "call": "doc.output",
+    "args": "'blob'",
+    "src": "e5784968",
+    "mbody": "eedb9b65",
+    "id": "utilities/Utils#effect-576bec88-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/plan_export_service.dart",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1036,
+    "method": "Utils.createPlanExport",
+    "cond": [
+     "!(props.asBlob)"
+    ],
+    "call": "doc.output",
+    "args": "'blob'",
+    "src": "e5784968",
+    "mbody": "eedb9b65",
+    "id": "utilities/Utils#effect-576bec88-4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/plan_export_service.dart",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1060,
+    "method": "Utils.createMultiPlanExport",
+    "cond": [],
+    "call": "Utils.downloadFileNative",
+    "args": "out, opts.fileName",
+    "src": "8e7e362f",
+    "mbody": "72cdc746",
+    "id": "utilities/Utils#effect-b60c4449"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/plan_export_service.dart",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1104,
+    "method": "Utils.exportAttendancePlans",
+    "cond": [
+     "(indexes.length === 1)"
+    ],
+    "call": "Utils.createPlanExport",
+    "args": "{ ...plan.props, asBlob: opts.asBlob, asImage: opts.asImage }, plan.title",
+    "src": "17a6c1f7",
+    "mbody": "c917302e",
+    "id": "utilities/Utils#effect-fad4e9cc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/plan_export_service.dart",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "utilities/Utils.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "isChoirAllFile:21-23",
+     "getId:25-27",
+     "getModifiedPlayersForList:29-178",
+     "getModifiedPlayers:180-207",
+     "sortPlayers:209-268",
+     "getModifiedAttendanceData:270-279",
+     "isWorkExcused:281-283",
+     "getPercentage:285-300",
+     "getClefText:302-313",
+     "getRoleText:315-338",
+     "getTypeTitle:340-346",
+     "getPlayerHistoryTypeText:348-370",
+     "showToast:372-395",
+     "validateEmail:397-402",
+     "validatePhoneNumber:404-407",
+     "getLoadingElement:409-411",
+     "registerExportFont:441-465",
+     "arrayBufferToBase64:469-477",
+     "loadImageDataUrl:491-552",
+     "addBrandingHeader:567-655",
+     "buildTenantBranding:662-674",
+     "createPlanExport:676-1038",
+     "createMultiPlanExport:1044-1061",
+     "exportAttendancePlans:1069-1109",
+     "pdfDataUriToImageBlob:1114-1169",
+     "exportAttendanceToExcel:1171-1208",
+     "saveWorkbook:1220-1237",
+     "getUrl:1239-1257",
+     "isUrlAccessAllowed:1259-1327",
+     "calculateAge:1329-1341",
+     "getAttText:1343-1366",
+     "getAttendanceStatusDescription:1368-1385",
+     "formatList:1388-1390",
+     "getInstrumentText:1392-1444",
+     "getFieldTypeDefaultValue:1446-1472",
+     "getDefaultAttendanceTypes:1474-1528",
+     "getStatusByShift:1530-1592",
+     "getReadableDate:1594-1605",
+     "isPracticeTypeName:1608-1611",
+     "getPlanningTitle:1613-1619",
+     "getNavigationUrl:1621-1627",
+     "isIosBrowser:1629-1634",
+     "openNavigation:1636-1664",
+     "isIosAppOnMac:1670-1672",
+     "openInMacBrowser:1679-1681",
+     "downloadInMacBrowser:1688-1695",
+     "isStandaloneWebApp:1697-1702",
+     "openInNewTab:1710-1723",
+     "showInAppFileViewer:1725-1789",
+     "openFileNative:1791-1838",
+     "downloadFileNative:1840-1893",
+     "blobToBase64:1895-1905",
+     "generateVorkursCertificates:1912-1964"
+    ],
+    "bodies": {
+     "isChoirAllFile": "e29cbf1c",
+     "getId": "7ec3b06e",
+     "getModifiedPlayersForList": "61d0b1de",
+     "getModifiedPlayers": "ed0c2851",
+     "sortPlayers": "42d2a0de",
+     "getModifiedAttendanceData": "230c347a",
+     "isWorkExcused": "ec9533db",
+     "getPercentage": "3405fc74",
+     "getClefText": "f4c8526a",
+     "getRoleText": "68613418",
+     "getTypeTitle": "410135e0",
+     "getPlayerHistoryTypeText": "36ce3872",
+     "showToast": "50a395e2",
+     "validateEmail": "11464bca",
+     "validatePhoneNumber": "83e33319",
+     "getLoadingElement": "64b19d12",
+     "registerExportFont": "b1dd8c63",
+     "arrayBufferToBase64": "34a124c6",
+     "loadImageDataUrl": "7b50b14f",
+     "addBrandingHeader": "c03379c0",
+     "buildTenantBranding": "76122d52",
+     "createPlanExport": "eedb9b65",
+     "createMultiPlanExport": "72cdc746",
+     "exportAttendancePlans": "c917302e",
+     "pdfDataUriToImageBlob": "eaa7f32b",
+     "exportAttendanceToExcel": "3b2ef019",
+     "saveWorkbook": "baa968f9",
+     "getUrl": "3d1e8116",
+     "isUrlAccessAllowed": "6751b642",
+     "calculateAge": "45b125c5",
+     "getAttText": "6a13d41b",
+     "getAttendanceStatusDescription": "23dd7a99",
+     "formatList": "b0a0aab4",
+     "getInstrumentText": "29f55524",
+     "getFieldTypeDefaultValue": "3827004b",
+     "getDefaultAttendanceTypes": "0665ed59",
+     "getStatusByShift": "4a4f59dc",
+     "getReadableDate": "30931975",
+     "isPracticeTypeName": "e370f677",
+     "getPlanningTitle": "0cc76e63",
+     "getNavigationUrl": "fc796a83",
+     "isIosBrowser": "d88769e9",
+     "openNavigation": "5eb1c933",
+     "isIosAppOnMac": "a1f9c6d1",
+     "openInMacBrowser": "2384a4b3",
+     "downloadInMacBrowser": "0c1740aa",
+     "isStandaloneWebApp": "d772bd93",
+     "openInNewTab": "8dec7818",
+     "showInAppFileViewer": "924d15c9",
+     "openFileNative": "5af52658",
+     "downloadFileNative": "a8516628",
+     "blobToBase64": "07cac426",
+     "generateVorkursCertificates": "a466d143"
+    },
+    "id": "utilities/Utils#logic-1c33d253"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/plan_export_service.dart:59",
+     "lib/core/services/export_service.dart:255",
+     "lib/core/services/pdf_branding.dart:1",
+     "lib/core/services/native/native_file_service.dart:142",
+     "lib/core/utils/shift_utils.dart:129",
+     "lib/features/people/people_list_utils.dart:58",
+     "lib/core/providers/attendance_providers.dart:275"
+    ],
+    "n": "Helfer weitgehend portiert (getPercentage, getStatusByShift, getAttText, Excel-Export, Feld-Defaults, Standard-Typen, Navigation, Datei speichern/öffnen, Branding). hoch wegen PDF-Schrift: kein pw.Document in lib setzt eine TTF/ThemeData, pdf 3.13.1 Type1-Helvetica kann nur U+0000–00FF (type1_font.dart:126), andere Zeichen (Kyrillisch, „“, –, €) werden als Platzhalter gezeichnet (widgets/text.dart:903). Weitere Abweichungen (Gruppensortierung ohne localeCompare, Zeitfenster der Quote, Ohne-Text, Bild-Render-URL) wie in b21 extra – nachgeprüft.",
+    "sev": "hoch",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/plan_export_service.dart",
+    "lib/core/services/export_service.dart",
+    "lib/core/services/pdf_branding.dart",
+    "lib/features/people/people_list_utils.dart",
+    "lib/core/providers/attendance_providers.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-562b23ba0c",
+    "title": "Teilen auf dem iPad schlägt fehl (share_plus ohne sharePositionOrigin)",
+    "n": "Ionic: navigator.share bzw. Datei im Systemviewer, auf dem iPad als Popover / Flutter (normales Design): Share.shareXFiles ohne sharePositionOrigin in zip_service_io.dart; share_plus 10.1.4 bricht auf dem iPad (Popover) ab (FPPSharePlusPlugin.m:381-392), der Nutzer sieht nur „Fehler: …“. Betroffen sind Datei-Ausgaben: Werk-Datei bzw. ZIP herunterladen (song_detail_page.dart:1139, zip_service.dart:58) und die Import-Vorlage (eigener Punkt people/import#effect-31a0aedd). Nicht betroffen (Sol-Review): Datei-Links in der Dateiablage werden zuerst kopiert, Share.share ist nur der Fehlerpfad (files_page.dart:429); Plan-Links fallen bei Share-Fehler auf „Link kopiert“ zurück (plan_export_actions.dart:150) – auf dem iPad also Zwischenablage statt Teilen-Menü, Funktion bleibt (niedrig). Beta (rd_actions.dart) übergibt den Ursprung bereits; Begleittext immer „Song-Dateien“.",
+    "sev": "hoch",
+    "ionic": "src/app/planning/planning.page.ts:1003",
+    "f": [
+     "lib/core/services/zip_service_io.dart:14",
+     "lib/core/services/zip_service.dart:58",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:1139"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-querschnitt.json",
+    "n": "behoben in #295"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "alert",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 121,
+    "method": "promptCreateProtocolAttendance",
+    "cond": [],
+    "header": {
+     "keys": [],
+     "de": [],
+     "literals": [
+      "${type.name} anlegen"
+     ],
+     "expr": "`${type.name} anlegen`"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "dateDialog.whichDay"
+     ],
+     "de": [
+      "An welchem Tag findet der Termin statt?"
+     ],
+     "literals": [],
+     "expr": "translate('dateDialog.whichDay')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.create"
+       ],
+       "de": [
+        "Anlegen"
+       ],
+       "literals": [],
+       "expr": "translate('common.create')"
+      },
+      "role": "confirm",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "date",
+      "label": null,
+      "name": "'date'",
+      "placeholder": null,
+      "value": "dayjs().format('YYYY-MM-DD')",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "33b8862b",
+    "mbody": "68f539aa",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#alert-6ec992cf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart",
+     "lib/shared/widgets/adaptive/app_dialog.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "alert",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 20,
+    "method": "promptAttendanceDateChange",
+    "cond": [],
+    "header": {
+     "keys": [
+      "dateDialog.changeDate"
+     ],
+     "de": [
+      "Datum ändern"
+     ],
+     "literals": [],
+     "expr": "translate('dateDialog.changeDate')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "dateDialog.moveTo"
+     ],
+     "de": [
+      "Auf welchen Tag soll der Termin verschoben werden?"
+     ],
+     "literals": [],
+     "expr": "translate('dateDialog.moveTo')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.next"
+       ],
+       "de": [
+        "Weiter"
+       ],
+       "literals": [],
+       "expr": "translate('common.next')"
+      },
+      "role": "confirm",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "date",
+      "label": null,
+      "name": "'date'",
+      "placeholder": null,
+      "value": "dayjs(att.date).format('YYYY-MM-DD')",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "87f79d93",
+    "mbody": "cced74ba",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#alert-fb943686"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart",
+     "lib/shared/widgets/adaptive/app_dialog.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/instrument-matcher",
+   "ionic": {
+    "ts": "utilities/instrument-matcher.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "utilities/instrument-matcher.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function normalizeFilename:144-165",
+     "function normalizeName:172-186",
+     "function filenameMatches:199-231",
+     "function generateInstrumentVariations:237-285",
+     "function matchInstrument:291-378",
+     "function detectSpecialFileType:384-452"
+    ],
+    "bodies": {
+     "function normalizeFilename": "02ad07a9",
+     "function normalizeName": "d9472f0f",
+     "function filenameMatches": "f10660b2",
+     "function generateInstrumentVariations": "2e863db6",
+     "function matchInstrument": "17ecc59f",
+     "function detectSpecialFileType": "c6366530"
+    },
+    "id": "utilities/instrument-matcher#logic-602c073f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/utils/instrument_matcher.dart:194",
+     "lib/features/songs/presentation/widgets/file_upload_sheet.dart:23",
+     "lib/features/songs/presentation/widgets/file_upload_sheet.dart:133"
+    ],
+    "n": "Anderer Zuordnungs-Algorithmus (Punktbewertung, ganze Wörter, Konfidenz, lernbare Synonyme) mit fehlenden Ionic-Begriffen (Akkordeon/Bajan, Mandoline, Banjo, Celesta, Triangel, Becken, Blockflöte, russ. Transliterationen); zusätzlich prüft Flutter Liedtext-/Aufnahme-Stichwörter vor den Gruppen (siehe extra). Nur Vorbelegung im Upload-Dialog, dort änderbar.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/utils/instrument_matcher.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "utilities/instrument-matcher",
+   "ionic": {
+    "ts": "utilities/instrument-matcher.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-327176cf3d",
+    "title": "Automatische Stimmen-Zuordnung beim Upload",
+    "n": "Befund real. Ionic: drei Durchgänge (Name/Synonyme, Übersetzungs-Varianten, Kürzel) mit Teilstring-Abgleich, erste Gruppe gewinnt. Flutter: bewertet alle Gruppen (ganze Wörter, Stimmnummern, Konfidenz, Synonyme, part-detect). In Flutter fehlen u. a. Akkordeon/Bajan, Mandoline, Banjo, Celesta, Triangel, Becken, Blockflöte und Transliterationen (skripka, fleita, truba, valtorna, litavry) sowie к-б/ф-но/уд → solche Dateien werden anders oder gar nicht automatisch zugeordnet (Name/Synonym der Gruppe greift weiter).",
+    "sev": "mittel",
+    "ionic": "src/app/utilities/instrument-matcher.ts:291",
+    "f": [
+     "lib/core/utils/instrument_matcher.dart:40",
+     "lib/core/utils/instrument_matcher.dart:48"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-querschnitt-hilfe-matcher.json",
+    "n": "behoben in #295 (aus #327)"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/spreadsheet-reader",
+   "ionic": {
+    "ts": "utilities/spreadsheet-reader.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "utilities/spreadsheet-reader.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function readSpreadsheetFile:11-20",
+     "function isCsv:22-24",
+     "function decodeCsv:26-33"
+    ],
+    "bodies": {
+     "function readSpreadsheetFile": "c3724d32",
+     "function isCsv": "69ff1cb1",
+     "function decodeCsv": "a617ca46"
+    },
+    "id": "utilities/spreadsheet-reader#logic-cc538ad0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/utils/spreadsheet_reader.dart:43",
+     "lib/core/utils/spreadsheet_reader.dart:186",
+     "lib/core/utils/import_file_io.dart:13"
+    ],
+    "n": "CSV-Dekodierung (UTF-8 strikt, BOM, Fallback Windows-1252) gleich. Ionic liest .xls / Flutter: Dateiauswahl bietet xls an, Leser bricht mit „Das alte Excel-Format (.xls) wird nicht unterstützt…“ ab. Formelzellen: Flutter liefert bei Zahl-/Datumsformeln den Formeltext statt des berechneten Werts (excel_community 2.6.2 worksheet_parser.dart:844, cachedValue ungenutzt); Text-Formeln (t=\"str\") liefern den Wert.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/utils/spreadsheet_reader.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "utilities/spreadsheet-reader",
+   "ionic": {
+    "ts": "utilities/spreadsheet-reader.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-689f15c9e6",
+    "title": ".xls nicht unterstützt",
+    "n": "Befund real. Ionic: SheetJS liest .xlsx, .xls, .csv (Personen- und Werk-Import, accept='.xlsx,.xls,.csv'). Flutter: Dateiauswahl erlaubt xls, readSpreadsheet bricht bei .xls mit coreFlutterXlsUnsupported ab – Nutzer muss nach xlsx/csv umwandeln.",
+    "sev": "mittel",
+    "ionic": "src/app/utilities/spreadsheet-reader.ts:16",
+    "f": [
+     "lib/core/utils/spreadsheet_reader.dart:43",
+     "lib/core/utils/import_file_io.dart:13"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-querschnitt.json",
+    "n": "behoben in #295 (utilities/spreadsheet-reader: .xls nicht unterstützt)"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "utilities/spreadsheet-reader",
+   "ionic": {
+    "ts": "utilities/spreadsheet-reader.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-b0bfc0b3f4",
+    "title": "Formelzellen",
+    "n": "Befund real (Flutter-Code eindeutig, Paket excel-4.0.6 nicht im Pub-Cache, Verhalten nach bekanntem 4.x-Parser): cellToDart gibt bei FormulaCellValue value.formula zurück. Numerische Formelzellen liefern damit den Formeltext (z. B. 'A2+1'), Formeln mit Text-Ergebnis (t='str') den gespeicherten Wert. Ionic SheetJS liefert immer den berechneten Wert → importierte Zahlen/Daten aus Formeln falsch.",
+    "sev": "mittel",
+    "ionic": "src/app/utilities/spreadsheet-reader.ts:16",
+    "f": [
+     "lib/core/utils/spreadsheet_reader.dart:186"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-querschnitt.json",
+    "n": "behoben in #295 (utilities/spreadsheet-reader: Formelzellen)"
+   }
+  }
+ ]
+}

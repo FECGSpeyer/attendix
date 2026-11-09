@@ -1,0 +1,1905 @@
+{
+ "batch": "zz-verify5-b-opus-12",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/tenant/tenant.service",
+   "ionic": {
+    "ts": "services/tenant/tenant.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/tenant/tenant.service.ts",
+    "line": 369,
+    "method": "TenantService.getTenantByRegisterId",
+    "cond": [],
+    "table": "tenants",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('register_id', registerId)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "fdb3547f",
+    "mbody": "0b907fdb",
+    "id": "services/tenant/tenant.service#db-e8782084"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/data/providers/registration_providers.dart:22"
+    ],
+    "n": "tenants nach register_id (maybeSingle statt single).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/terms.guard",
+   "ionic": {
+    "ts": "services/terms.guard.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/terms.guard.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:7-7",
+     "canActivate:9-19"
+    ],
+    "bodies": {
+     "constructor": "6924cf11",
+     "canActivate": "d21ccd81"
+    },
+    "id": "services/terms.guard#logic-12641baa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:364",
+     "lib/data/repositories/account_repository.dart:45"
+    ],
+    "n": "Eingeloggte Nutzer ohne user_metadata.terms_accepted_at werden auf /terms umgeleitet; öffentliche Routen (legal, Songs-Links, Planung, teams-config) bleiben wie in Ionic (dort nur unter /tabs geprüft) frei.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/user-notification/user-notification.service",
+   "ionic": {
+    "ts": "services/user-notification/user-notification.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/user-notification/user-notification.service.ts",
+    "line": 88,
+    "method": "UserNotificationService.markMatchingRead",
+    "cond": [],
+    "table": "user_notifications",
+    "op": "update",
+    "payload": "{ read: true }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('user_id', userId)",
+     "eq('tenantId', tenantId)",
+     "eq('type', type)",
+     "eq('read', false)"
+    ],
+    "tenantFilter": true,
+    "src": "c162772e",
+    "mbody": "d9916881",
+    "id": "services/user-notification/user-notification.service#db-751a177d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/user_notification_repository.dart:155",
+     "lib/core/providers/push_providers.dart:280"
+    ],
+    "n": "Gleiche Filter (user_id, type, read=false, optional data->>attendanceId; nicht bei type 'message'); tenantId = aktueller Tenant nach Wechsel auf den Push-Tenant.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/push_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/user-notification/user-notification.service",
+   "ionic": {
+    "ts": "services/user-notification/user-notification.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/user-notification/user-notification.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getNotifications:19-33",
+     "getAllNotifications:40-53",
+     "getUnreadCount:55-68",
+     "markRead:70-79",
+     "markMatchingRead:87-104",
+     "markReadByAttendance:111-123",
+     "markUnread:125-134",
+     "deleteOne:136-145",
+     "markAllRead:147-158",
+     "deleteAll:160-170",
+     "markAllReadAllTenants:176-186",
+     "deleteAllAllTenants:192-201"
+    ],
+    "bodies": {
+     "getNotifications": "f6a0cfb8",
+     "getAllNotifications": "1be0dd37",
+     "getUnreadCount": "1a5cc149",
+     "markRead": "5140707c",
+     "markMatchingRead": "d9916881",
+     "markReadByAttendance": "397670d9",
+     "markUnread": "9aea989a",
+     "deleteOne": "22d8f7de",
+     "markAllRead": "173bb0f9",
+     "deleteAll": "f66faae0",
+     "markAllReadAllTenants": "d79b3441",
+     "deleteAllAllTenants": "ec907a5b"
+    },
+    "id": "services/user-notification/user-notification.service#logic-528bc807"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/user_notification_repository.dart:33",
+     "lib/core/providers/push_providers.dart:287",
+     "lib/features/planning/presentation/pages/open_attendance_page.dart:76"
+    ],
+    "n": "Alle Methoden vorhanden. markMatchingRead/markReadByAttendance: Ionic nimmt tenantId aus Push-/Link-Daten, Flutter den aktuellen Tenant nach dem Tenant-Wechsel – gleiches Ergebnis.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/push_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 247,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not !entries.length / !filteredEntries.length)",
+     "@for (entry of filteredEntries; track entry.path; let last = $last; let i = $index)",
+     "in <ion-item>",
+     "in <ion-popover #actionPopover>",
+     "@if (canEditEntries)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=handleEntryAction('delete', entry, actionPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [
+     "common.delete"
+    ],
+    "de": [
+     "Löschen"
+    ],
+    "literals": [],
+    "text": "{{ 'common.delete' | transloco }}",
+    "id": "settings/files/files.page#action-0d33b3ea"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:932-937",
+     "lib/features/settings/presentation/pages/files_page.dart:650-667"
+    ],
+    "n": "„Löschen“ nur für Admin/Verantwortlich; öffnet Lösch-Bestätigung. Rote Darstellung im Action Sheet ist bei popover-92206ccb erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 235,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not !entries.length / !filteredEntries.length)",
+     "@for (entry of filteredEntries; track entry.path; let last = $last; let i = $index)",
+     "in <ion-item>",
+     "in <ion-popover #actionPopover>",
+     "@if (canEditEntries)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=handleEntryAction('rename', entry, actionPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "create-outline"
+    ],
+    "keys": [
+     "files.rename"
+    ],
+    "de": [
+     "Umbenennen"
+    ],
+    "literals": [],
+    "text": "{{ 'files.rename' | transloco }}",
+    "id": "settings/files/files.page#action-1e396038"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:915-920",
+     "lib/features/settings/presentation/pages/files_page.dart:462-479"
+    ],
+    "n": "„Umbenennen“ nur bei canEdit (Admin/Verantwortlich) im Eintrags-Menü (im Auswahlmodus ausgeblendet wie Ionic); öffnet Umbenennen-Dialog. _renameEntry ohne eigene Rechteprüfung, aber nur von dort erreichbar.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 243,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not !entries.length / !filteredEntries.length)",
+     "@for (entry of filteredEntries; track entry.path; let last = $last; let i = $index)",
+     "in <ion-item>",
+     "in <ion-popover #actionPopover>",
+     "@if (canEditEntries)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=actionPopover.dismiss(); startSelection(entry)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark-circle-outline"
+    ],
+    "keys": [
+     "files.selectMultiple"
+    ],
+    "de": [
+     "Mehrere auswählen"
+    ],
+    "literals": [],
+    "text": "{{ 'files.selectMultiple' | transloco }}",
+    "id": "settings/files/files.page#action-331d5d6d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:926-931",
+     "lib/features/settings/presentation/pages/files_page.dart:508-517"
+    ],
+    "n": "„Mehrere auswählen“ nur für Admin/Verantwortlich; startet die Auswahl mit diesem Eintrag.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 46,
+    "cond": [
+     "in <ion-popover #filesMenuPopover>",
+     "@if (canEditEntries)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=filesMenuPopover.dismiss(); createFolder()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "folder-open-outline"
+    ],
+    "keys": [
+     "files.createFolder"
+    ],
+    "de": [
+     "Ordner erstellen"
+    ],
+    "literals": [],
+    "text": "{{ 'files.createFolder' | transloco }}",
+    "id": "settings/files/files.page#action-6c4bf952"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1050-1053",
+     "lib/features/settings/presentation/pages/files_page.dart:440-460"
+    ],
+    "n": "„Ordner erstellen“ nur für Admin/Verantwortlich, öffnet Namensdialog (Recht im Handler erneut geprüft). Icon create_new_folder statt folder-open-outline (gleiche Bedeutung, wie im Verschieben-Dialog als ok bewertet).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 228,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not !entries.length / !filteredEntries.length)",
+     "@for (entry of filteredEntries; track entry.path; let last = $last; let i = $index)",
+     "in <ion-item>",
+     "in <ion-popover #actionPopover>",
+     "@if (!entry.isFolder)",
+     "@if (db.tenantUser()?.telegram_chat_id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=handleEntryAction('telegram', entry, actionPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "paper-plane-outline"
+    ],
+    "keys": [
+     "files.sendTelegram"
+    ],
+    "de": [
+     "Per Telegram senden"
+    ],
+    "literals": [],
+    "text": "{{ 'files.sendTelegram' | transloco }}",
+    "id": "settings/files/files.page#action-d05fb9ea"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:907-914",
+     "lib/features/settings/presentation/pages/files_page.dart:386-401"
+    ],
+    "n": "„Per Telegram senden“ nur für Dateien (nicht Ordner) und nur mit telegram_chat_id der eigenen tenantUsers-Zeile; für alle Rollen mit Dateizugriff, keine weitere Rollenbedingung in beiden. Sendet signierte URL (600 s) an die eigene Chat-ID. Action-Sheet statt Popover unter popover-92206ccb, Lade-Overlay unter loading-d65a6193.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 239,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not !entries.length / !filteredEntries.length)",
+     "@for (entry of filteredEntries; track entry.path; let last = $last; let i = $index)",
+     "in <ion-item>",
+     "in <ion-popover #actionPopover>",
+     "@if (canEditEntries)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=handleEntryAction('move', entry, actionPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "swap-horizontal-outline"
+    ],
+    "keys": [
+     "files.move"
+    ],
+    "de": [
+     "Verschieben"
+    ],
+    "literals": [],
+    "text": "{{ 'files.move' | transloco }}",
+    "id": "settings/files/files.page#action-ea539710"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:921-925",
+     "lib/features/settings/presentation/pages/files_page.dart:595-599"
+    ],
+    "n": "„Verschieben“ nur für Admin/Verantwortlich; öffnet Zielordner-Auswahl, _moveEntries prüft das Recht erneut.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/files/files.page.ts",
+    "line": 896,
+    "method": "FilesPage.deleteEntry",
+    "cond": [],
+    "header": {
+     "keys": [
+      "files.deleteFolder",
+      "files.deleteFile"
+     ],
+     "de": [
+      "Ordner löschen?",
+      "Datei löschen?"
+     ],
+     "literals": [],
+     "expr": "entry.isFolder ? translate('files.deleteFolder') : translate('files.deleteFile')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "files.deleteMessage"
+     ],
+     "de": [
+      "Möchtest du {name} wirklich löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('files.deleteMessage', { name: entry.name })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { const loading = await Utils.getLoadingElement(999999); await loading.present(); try { await this.filesSvc.deleteEntry(this.db.tenant().id, entry.path, entry.isFolder); Utils.showToast(translate('files.deleted'), 'success'); a…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "c4ad37b0",
+    "mbody": "02091d71",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#alert-1b4d7bd6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:650-658",
+     "lib/features/settings/presentation/pages/files_page.dart:915-940"
+    ],
+    "n": "„Ordner löschen?“/„Datei löschen?“, „Möchtest du {name} wirklich löschen?“, Abbrechen / Löschen (rot); nur Admin/Verantwortlich (Aktionsmenü unter canEdit). Fehlendes Lade-Overlay siehe loading-cdff1a47.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "settings/files/files.page.ts",
+    "line": 103,
+    "method": "FilesPage.shareEntry",
+    "cond": [],
+    "call": "navigator.clipboard.writeText",
+    "args": "url",
+    "src": "c926664a",
+    "mbody": "a1dd95be",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#effect-c48b9ee3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:426-430"
+    ],
+    "n": "Link in die Zwischenablage; keine Rollenbedingung (Teilen im Menü und im Eintragsmenü für alle mit Dateizugriff, canAccessFiles identisch). Dass Ionic zuerst navigator.share nutzt und nur als Fallback kopiert, ist unter effect-c39ff4df (diff mittel) erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 104,
+    "method": "FilesPage.shareEntry",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.linkCopied"
+     ],
+     "de": [
+      "Link in Zwischenablage kopiert"
+     ],
+     "literals": [],
+     "expr": "translate('files.linkCopied')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "1d398f5c",
+    "mbody": "a1dd95be",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-33795926"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:430"
+    ],
+    "n": "„Link in Zwischenablage kopiert“ grün nach dem Kopieren; Teilen-Sheet-Unterschied siehe effect-c39ff4df.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 765,
+    "method": "FilesPage.onFileSelected",
+    "cond": [
+     "(successCount > 0 || failedCount > 0 || skippedCount > 0)",
+     "!(successCount > 0 && failedCount === 0 && skippedCount === 0)"
+    ],
+    "message": {
+     "keys": [
+      "files.uploadSummary"
+     ],
+     "de": [
+      "{ok} hochgeladen, {skipped} übersprungen, {failed} fehlgeschlagen."
+     ],
+     "literals": [],
+     "expr": "translate('files.uploadSummary', { ok: successCount, skipped: skippedCount, failed: failedCount })"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "0174f93c",
+    "mbody": "3c15b233",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-a9d4ec9d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:854-855"
+    ],
+    "n": "„{ok} hochgeladen, {skipped} übersprungen, {failed} fehlgeschlagen.“ als Warnung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 763,
+    "method": "FilesPage.onFileSelected",
+    "cond": [
+     "(successCount > 0 && failedCount === 0 && skippedCount === 0)"
+    ],
+    "message": {
+     "keys": [
+      "files.uploadedOne",
+      "files.uploadedMany"
+     ],
+     "de": [
+      "Datei wurde hochgeladen.",
+      "{count} Dateien wurden hochgeladen."
+     ],
+     "literals": [],
+     "expr": "successCount === 1 ? translate('files.uploadedOne') : translate('files.uploadedMany', { count: successCount })"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "5d33878a",
+    "mbody": "3c15b233",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-ce962bb5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:851-853"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/extra-fields/extra-fields.page.ts",
+    "line": 250,
+    "method": "ExtraFieldsPage.resetExtraFieldValues",
+    "cond": [],
+    "message": {
+     "keys": [
+      "extraFields.personsUpdated"
+     ],
+     "de": [
+      "{count} Personen aktualisiert"
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.personsUpdated', { count })"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "51c7e6b9",
+    "mbody": "0252cd71",
+    "roleGuarded": true,
+    "id": "settings/general/extra-fields/extra-fields.page#toast-590eef57"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:289"
+    ],
+    "n": "Nach „Alle Werte zurücksetzen“ immer „{count} Personen aktualisiert“ (auch 0), nur für Personenfelder im Bearbeiten-Dialog. Rollen wie toast-72645316.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/extra-fields/extra-fields.page.ts",
+    "line": 217,
+    "method": "ExtraFieldsPage.removeEditExtraOption",
+    "cond": [
+     "(count > 0)",
+     "(target === 'person')",
+     "(isExistingOption && optionToRemove)"
+    ],
+    "message": {
+     "keys": [
+      "extraFields.personsUpdated"
+     ],
+     "de": [
+      "{count} Personen aktualisiert"
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.personsUpdated', { count })"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "51c7e6b9",
+    "mbody": "941b3c2c",
+    "roleGuarded": true,
+    "id": "settings/general/extra-fields/extra-fields.page#toast-72645316"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:257"
+    ],
+    "n": "„{count} Personen aktualisiert“ nur bei count > 0, nur Personenfelder, nur für bereits gespeicherte Option nach Bestätigung; bei Fehler bleibt die Option (beide). Seite in beiden Apps nur Admin/Verantwortlich (Ionic Einstieg Einstellungen → Einstellungen, Flutter-Route /settings/general/**), keine weitere Rollen-/Mandantenbedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "settings/general/general.page.ts",
+    "line": 342,
+    "method": "GeneralPage.saveGeneralSettings",
+    "cond": [],
+    "table": "edge:evaluate-critical-rules",
+    "op": "invoke",
+    "payload": null,
+    "filters": [],
+    "src": "aacb9009",
+    "mbody": "a08e0334",
+    "roleGuarded": true,
+    "id": "settings/general/general.page#db-dd1f5988"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:268-273"
+    ],
+    "n": "Gleicher Aufruf functions.invoke('evaluate-critical-rules') nach dem Tenant-Update; Fehler wird ignoriert (supabase-js liefert error, Flutter wirft → catch).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/general/type/type.page.ts",
+    "line": 388,
+    "method": "TypePage.offerDutyView",
+    "cond": [],
+    "header": {
+     "keys": [
+      "typeSettings.useDutyView"
+     ],
+     "de": [
+      "Dienstplan-Ansicht verwenden?"
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.useDutyView')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "typeSettings.useDutyViewMessage"
+     ],
+     "de": [
+      "Sind Dienste bei euch der Normalfall? Dann zeigt „Meine Termine“ für alle im Dienst-Team zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Du kannst das jederzeit unter Mehr → Einstellungen ändern."
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.useDutyViewMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "typeSettings.normalView"
+       ],
+       "de": [
+        "Nein, normale Ansicht"
+       ],
+       "literals": [],
+       "expr": "translate('typeSettings.normalView')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "typeSettings.useIt"
+       ],
+       "de": [
+        "Ja, verwenden"
+       ],
+       "literals": [],
+       "expr": "translate('typeSettings.useIt')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { try { await this.db.updateTenantData({ duty_view: true }); Utils.showToast(translate('typeSettings.dutyViewActive'), 'success'); } catch { Utils.showToast(translate('typeSettings.viewFailed'), 'danger'); } }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "b8e01695",
+    "mbody": "88ca4c16",
+    "roleGuarded": true,
+    "id": "settings/general/type/type.page#alert-0d2e84fe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1029-1056",
+     "lib/data/repositories/duty_repository.dart:226-237"
+    ],
+    "n": "Gleiche Bedingungen (Dienst-Modus neu an, tenant.duty_view aus, kein anderer Dienst-Typ), Titel/Text/Buttons „Nein, normale Ansicht“ / „Ja, verwenden“; schreibt tenants.duty_view = true für die aktuelle Instanz (id-Filter) wie updateTenantData. Tenant-Flag duty_view in beiden geprüft; Demo: Speichern scheitert vorher in beiden. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/type/type.page.ts",
+    "line": 398,
+    "method": "TypePage.offerDutyView",
+    "cond": [],
+    "message": {
+     "keys": [
+      "typeSettings.dutyViewActive"
+     ],
+     "de": [
+      "Dienstplan-Ansicht ist aktiv"
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.dutyViewActive')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "a359953f",
+    "mbody": "88ca4c16",
+    "roleGuarded": true,
+    "id": "settings/general/type/type.page#toast-307c76ec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1052"
+    ],
+    "n": "Gleicher Text, grün. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/type/type.page.ts",
+    "line": 400,
+    "method": "TypePage.offerDutyView",
+    "cond": [],
+    "message": {
+     "keys": [
+      "typeSettings.viewFailed"
+     ],
+     "de": [
+      "Konnte die Ansicht nicht umstellen"
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.viewFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "09e8526e",
+    "mbody": "88ca4c16",
+    "roleGuarded": true,
+    "id": "settings/general/type/type.page#toast-e2f0301d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1053-1054"
+    ],
+    "n": "Gleicher Text, rot. Im Demo-Konto in beiden nicht erreichbar (Speichern scheitert vor dem Angebot). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/handover/handover.page",
+   "ionic": {
+    "ts": "settings/handover/handover.page.ts",
+    "html": "settings/handover/handover.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/handover/handover.page.ts",
+    "line": 55,
+    "method": "HandoverPage.ngOnInit",
+    "cond": [
+     "!(this.tenants.length > 0)"
+    ],
+    "message": {
+     "keys": [
+      "handover.noOtherTenants"
+     ],
+     "de": [
+      "Es sind keine weiteren Instanzen vorhanden. Bitte füge weitere Instanzen dieser Organisation hinzu."
+     ],
+     "literals": [],
+     "expr": "translate('handover.noOtherTenants')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "1c4a62b6",
+    "mbody": "c0920ee2",
+    "id": "settings/handover/handover.page#toast-3db15108"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_page.dart:100",
+     "lib/features/settings/presentation/pages/handover_page.dart:113",
+     "lib/data/repositories/organisation_repository.dart:312"
+    ],
+    "n": "Gleiche Datenquelle (tenant_group_tenants der Organisation ohne aktuelle Instanz; ohne Organisation leer) → roter Toast; bei Ladefehler in beiden kein Toast. Seite in beiden nur Admin/Verantw.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/handover_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/article/help-article.page",
+   "ionic": {
+    "ts": "settings/help/article/help-article.page.ts",
+    "html": "settings/help/article/help-article.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/help/article/help-article.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:19-24",
+     "ngOnInit:26-30",
+     "onBodyClick:34-52",
+     "navigateBack:54-56"
+    ],
+    "bodies": {
+     "constructor": "36188f7c",
+     "ngOnInit": "1a781061",
+     "onBodyClick": "03c836df",
+     "navigateBack": "dc6cd59c"
+    },
+    "id": "settings/help/article/help-article.page#logic-aa7d58b7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/help/presentation/pages/help_article_page.dart:24",
+     "lib/features/help/presentation/pages/help_article_page.dart:53",
+     "lib/features/help/presentation/pages/help_article_page.dart:55",
+     "lib/features/help/data/help_content_service.dart:33",
+     "lib/features/help/data/help_content_service.dart:51"
+    ],
+    "n": "Artikel per Route-ID laden, Markdown rendern, Glossar-Link → Begriff per Name/Alias suchen (unbekannt → nichts). Abweichungen bei Popover und Zurück siehe Items.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/help/presentation/pages/help_article_page.dart",
+    "lib/features/help/data/help_content_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/glossary-popover/help-glossary-popover.component",
+   "ionic": {
+    "ts": "settings/help/glossary-popover/help-glossary-popover.component.ts",
+    "html": "settings/help/glossary-popover/help-glossary-popover.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/help/glossary-popover/help-glossary-popover.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "get definitionHtml:17-19"
+    ],
+    "bodies": {
+     "get definitionHtml": "f987c362"
+    },
+    "id": "settings/help/glossary-popover/help-glossary-popover.component#logic-a30427dc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/help/presentation/widgets/glossary_term_dialog.dart:15",
+     "lib/features/help/presentation/widgets/help_markdown.dart:110"
+    ],
+    "n": "Definition per Markdown, [[Begriff]] darin kursiv (nicht verlinkt) wie renderGlossaryDefinitionHtml.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/help/presentation/widgets/glossary_term_dialog.dart",
+    "lib/features/help/presentation/widgets/help_markdown.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/glossary/help-glossary.page",
+   "ionic": {
+    "ts": "settings/help/glossary/help-glossary.page.ts",
+    "html": "settings/help/glossary/help-glossary.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/help/glossary/help-glossary.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:18-21",
+     "ngOnInit:23-26",
+     "search:28-33",
+     "definitionHtml:35-37",
+     "navigateBack:39-41"
+    ],
+    "bodies": {
+     "constructor": "0d1dcf7c",
+     "ngOnInit": "430514eb",
+     "search": "bd2ca4a4",
+     "definitionHtml": "49e14bfd",
+     "navigateBack": "dc6cd59c"
+    },
+    "id": "settings/help/glossary/help-glossary.page#logic-024095b3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/help/presentation/pages/help_glossary_page.dart:35",
+     "lib/features/help/presentation/pages/help_glossary_page.dart:36",
+     "lib/features/help/presentation/pages/help_glossary_page.dart:93",
+     "lib/features/help/data/help_content_service.dart:40"
+    ],
+    "n": "Alle Begriffe alphabetisch; Suche getrimmt+klein → Glossar-Treffer der Hilfe-Suche; Definition mit Glossar-Markdown. Sortier-/Suchalgorithmus selbst gehört zum Service (b18).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/help/data/help_content_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/help-markdown.util",
+   "ionic": {
+    "ts": "settings/help/help-markdown.util.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/help/help-markdown.util.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function renderArticleHtml:16-23",
+     "function renderGlossaryDefinitionHtml:27-33"
+    ],
+    "bodies": {
+     "function renderArticleHtml": "c95dd293",
+     "function renderGlossaryDefinitionHtml": "78bf56fe"
+    },
+    "id": "settings/help/help-markdown.util#logic-1614d5eb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/help/presentation/widgets/help_markdown.dart:158",
+     "lib/features/help/presentation/widgets/help_markdown.dart:225",
+     "lib/features/help/presentation/widgets/help_markdown.dart:107"
+    ],
+    "n": "Eigener Renderer statt marked: Absätze, Zeilenumbrüche (breaks), -/1.-Listen, **fett**, *kursiv*, `code`, [[Begriff|Text]] (Artikel: Link, Definition: kursiv). Alle in den Ionic-Inhalten genutzten Markdown-Elemente geprüft: keine Überschriften, Links, Zitate, Tabellen, verschachtelten oder unterbrochenen Listen → gleiche Darstellung.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/help/presentation/widgets/help_markdown.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/help.page",
+   "ionic": {
+    "ts": "settings/help/help.page.ts",
+    "html": "settings/help/help.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/help/help.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:19-22",
+     "ngOnInit:24-29",
+     "search:31-35",
+     "openArticle:37-39",
+     "openGlossary:41-43",
+     "navigateBack:45-47"
+    ],
+    "bodies": {
+     "constructor": "0d1dcf7c",
+     "ngOnInit": "831affde",
+     "search": "9b5f5c61",
+     "openArticle": "ddfebce3",
+     "openGlossary": "02162ee3",
+     "navigateBack": "c9176779"
+    },
+    "id": "settings/help/help.page#logic-59c167a9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/help/presentation/pages/help_page.dart:34",
+     "lib/features/help/presentation/pages/help_page.dart:36",
+     "lib/features/help/presentation/pages/help_page.dart:41",
+     "lib/features/help/presentation/pages/help_page.dart:42",
+     "lib/features/help/data/help_content_service.dart:27"
+    ],
+    "n": "Kategorien nach order, Artikel je Kategorie, Suche nur bei nicht-leerem getrimmtem Begriff. Die Suche selbst (Ionic Fuse.js / Flutter eigene Näherung) gehört zum Service-Batch b18.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/help/data/help_content_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 675,
+    "cond": [
+     "@if (!isApplicant)",
+     "@if (isAdmin)",
+     "@if (isVorkursTenant(db.tenant()))"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "detail": "false",
+     "button": ""
+    },
+    "events": [
+     "(click)=generateVorkursCertificates()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "ribbon-outline"
+    ],
+    "keys": [
+     "settings.certificates"
+    ],
+    "de": [
+     "Urkunden generieren"
+    ],
+    "literals": [],
+    "text": "{{ 'settings.certificates' | transloco }}",
+    "id": "settings/settings/settings.page#action-96f2fe49"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/settings_page.dart:452",
+     "lib/features/settings/presentation/pages/settings_page.dart:457",
+     "lib/core/services/certificate_service.dart:14"
+    ],
+    "n": "Nur Admin/Verantw. in Instanzen mit „vorkurs“ im Kurz- oder Langnamen (isVorkursTenantName = isVorkursTenant).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/core/services/certificate_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 99,
+    "cond": [
+     "@if (pendingPersons.length && isAdmin)",
+     "in <ion-modal trigger=pending-button>",
+     "@for (p of pendingPersons; track p)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "detail": "false",
+     "button": ""
+    },
+    "events": [
+     "(click)=openApprovePersonModal(p)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ p.firstName }} {{ p.lastName }} {{ p.email }}",
+    "id": "settings/settings/settings.page#action-a2970ae5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/pending_players_page.dart:116-125",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1696-1699",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1825"
+    ],
+    "n": "Name + E-Mail; Tippen öffnet die Person mit Genehmigen-Aktionen (canEdit = Admin/Verantwortliche, Laden per id+tenantId ohne pending-Filter). Rollen gleich; Darstellung Modal vs. Seite siehe modal-fb3873fe.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 986,
+    "cond": [
+     "in <ion-modal isOpen=\"isInstancesModalOpen\" #instancesModal>",
+     "@for (tenant of db.tenants(); track tenant)",
+     "in <ion-item-options>"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "warning"
+    },
+    "events": [
+     "(click)=setInstanceAsFavorite(tenant, sliding)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"tenant.favorite ? 'star-outline' : 'star'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/settings/settings.page#action-a468909d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:521",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:524",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:234"
+    ],
+    "n": "Für alle Rollen; gelbe Aktion, Stern bzw. Stern-Umriss je nach Favorit; schreibt nur den eigenen tenantUsers-Eintrag wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "settings/settings/settings.page.ts",
+    "line": 1047,
+    "method": "SettingsPage.onTenantSelectionChange",
+    "cond": [],
+    "table": "auth",
+    "op": "updateUser",
+    "payload": "{ data: { currentTenantId: this.db.user.user_metadata?.currentTenantId ?? null, wantInstanceSelection: this.wantInstanceSelection, } }",
+    "filters": [],
+    "src": "ba830df9",
+    "mbody": "9c0c2362",
+    "id": "settings/settings/settings.page#db-d18f91fc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:228",
+     "lib/core/providers/user_preferences_provider.dart:75",
+     "lib/core/providers/user_preferences_provider.dart:93"
+    ],
+    "n": "auth.updateUser mit data.wantInstanceSelection (Flutter übernimmt die übrigen Metadaten inkl. currentTenantId). Schreibweg gleich; dass der Schalter danach den alten Wert zeigt und Folge-Taps denselben Wert schreiben, ist unter field-fdb790d6 erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart",
+    "lib/core/providers/user_preferences_provider.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "settings/settings/settings.page.ts",
+    "line": 401,
+    "method": "SettingsPage.onTenantChange",
+    "cond": [],
+    "call": "Utils.getUrl",
+    "args": "this.db.tenantUser().role",
+    "src": "599c2113",
+    "mbody": "2ba9ec22",
+    "roleGuarded": true,
+    "id": "settings/settings/settings.page#effect-4e3df8e4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:192",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:405",
+     "lib/core/constants/enums.dart:137"
+    ],
+    "n": "Utils.getUrl(role) ↔ role.defaultRoute, gleiche Zuordnung für alle Rollen wie nav-78b78dd3.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.html",
+    "line": 88,
+    "cond": [
+     "@if (pendingPersons.length && isAdmin)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "pending-button"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 1]\"",
+     "[initialBreakpoint]=\"1\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/settings/settings.page#modal-3a4ca14e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/settings_page.dart:610",
+     "lib/features/settings/presentation/pages/pending_players_page.dart:17-21"
+    ],
+    "n": "Tippen auf die Karte öffnet Sheet in voller Höhe; nur Admin/Verantwortliche, da nur dort die Karte erscheint.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.html",
+    "line": 693,
+    "cond": [
+     "@if (!isApplicant)",
+     "@if (isAdmin)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "archive-button"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 0.5, 1]\"",
+     "[initialBreakpoint]=\"0.5\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/settings/settings.page#modal-bdb71a9d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/settings_page.dart:466",
+     "lib/features/settings/presentation/pages/left_players_page.dart:27"
+    ],
+    "n": "Nur Admin/Verantw.; Sheet initial halbe Höhe, auf volle Höhe ziehbar.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/left_players_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 93,
+    "cond": [
+     "@if (pendingPersons.length && isAdmin)",
+     "in <ion-modal trigger=pending-button>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "settings.pendingPersons"
+    ],
+    "de": [
+     "Ausstehende Personen"
+    ],
+    "literals": [],
+    "text": "{{ 'settings.pendingPersons' | transloco }}",
+    "id": "settings/settings/settings.page#text-142fcb20"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/pending_players_page.dart:39-43"
+    ],
+    "n": "Titel „Ausstehende Personen“; nur über die Admin/Verantwortliche-Karte erreichbar.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/settings/settings.page.ts",
+    "line": 953,
+    "method": "SettingsPage.updateUserData",
+    "cond": [],
+    "message": {
+     "keys": [
+      "settings.profileUpdated"
+     ],
+     "de": [
+      "Die Profildaten wurden erfolgreich aktualisiert."
+     ],
+     "literals": [],
+     "expr": "translate('settings.profileUpdated')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "17eec283",
+    "mbody": "ac3b3dd4",
+    "roleGuarded": true,
+    "id": "settings/settings/settings.page#toast-68b1e36d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:255"
+    ],
+    "n": "Erfolgs-Toast 'Die Profildaten wurden erfolgreich aktualisiert.' nach dem Speichern (Flutter schließt danach das Sheet, s. action-100a2fb9).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "shared-plan/shared-plan.page.ts",
+    "line": 167,
+    "method": "SharedPlanPage.subscribeAttendanceRealtime",
+    "cond": [],
+    "table": "realtime",
+    "op": "subscribe",
+    "payload": null,
+    "filters": [],
+    "src": "0a8b0384",
+    "mbody": "8ffd2273",
+    "id": "shared-plan/shared-plan.page#db-19ab5fbe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/public_plan_repository.dart:297-308",
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:370-374"
+    ],
+    "n": "nur im Bearbeitungsmodus; UPDATE attendance id=eq.{id}",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "shared-plan/shared-plan.page.ts",
+    "line": 187,
+    "method": "SharedPlanPage.subscribeSharedPlanRealtime",
+    "cond": [],
+    "table": "realtime",
+    "op": "subscribe",
+    "payload": null,
+    "filters": [],
+    "src": "a1fb9227",
+    "mbody": "c7786c18",
+    "id": "shared-plan/shared-plan.page#db-21ceecec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/public_plan_repository.dart:314-325",
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:453-457"
+    ],
+    "n": "nur im Bearbeitungsmodus; UPDATE shared_plans id=eq.{key}",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "shared-plan/shared-plan.page.ts",
+    "line": 140,
+    "method": "SharedPlanPage.loadSharedPlan",
+    "cond": [],
+    "table": "shared_plans",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('id', key)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "0ee4ac05",
+    "mbody": "0b0477ec",
+    "id": "shared-plan/shared-plan.page#db-63498014"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/public_plan_repository.dart:129-161",
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:446-458"
+    ],
+    "n": "shared_plans per id; Flutter ohne edit_key-Spalte, Schlüssel per Filter geprüft",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "shared-plan/shared-plan.page.ts",
+    "line": 89,
+    "method": "SharedPlanPage.loadAttendancePlan",
+    "cond": [],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, date, duration_days, plan, extra_plans, type_id, typeInfo, share_key, share_edit_key'",
+    "filters": [
+     "eq('id', id)",
+     "eq('share_key', key)",
+     "eq('archived', false)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "f95ae57f",
+    "mbody": "5c0184ce",
+    "id": "shared-plan/shared-plan.page#db-c07797b1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/public_plan_repository.dart:56-94",
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:354-375"
+    ],
+    "n": "attendance per id, share_key, archived=false; Flutter liest share_key/share_edit_key nicht mit und prüft den Bearbeitungsschlüssel per Filter (verifySharedAttendanceEditKey) – gleiche Daten, gleicher Modus",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  }
+ ]
+}

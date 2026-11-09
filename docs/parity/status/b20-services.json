@@ -1,0 +1,1361 @@
+{
+  "batch": "b20-services",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "services/shift/shift.service#logic-8cc479ce": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/shift_repository.dart:17",
+        "lib/core/providers/shift_providers.dart:108",
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:278",
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:451"
+      ],
+      "n": "Alle Methoden portiert (Repository/Notifier bzw. Kopier-Sheet für die Ziel-Instanz-Methoden), Flutter filtert zusätzlich nach tenantId. Abweichung: Ionic sortiert beim Laden die Segmente nach 'index', Flutter nicht (siehe extra). Fehler-Toasts des Service fehlen bzw. sind anders formuliert (eigene Items).",
+      "sev": "mittel"
+    },
+    "services/shift/shift.service#db-7b43b654": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/shift_repository.dart:19"
+      ],
+      "n": "Gleiche Abfrage (shifts, tenant_id, order name). Sortierung der definition nach index fehlt in Flutter – siehe extra der Unit."
+    },
+    "services/shift/shift.service#toast-3dcb713a": {
+      "s": "diff",
+      "f": [
+        "lib/features/shifts/presentation/pages/shifts_list_page.dart:53"
+      ],
+      "n": "Ionic: Toast 'Fehler beim Laden der Schichten' (danger) / Flutter: kein Toast, Liste zeigt Inline-Text 'Fehler: <Fehlertext>'.",
+      "sev": "niedrig"
+    },
+    "services/shift/shift.service#db-eb72dd6f": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/shift_repository.dart:141",
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:97"
+      ],
+      "n": "Flutter nutzt getShiftUsageCount (gleiche Abfrage player.shift_id, zusätzlich .eq('tenantId')), 'benutzt' = Anzahl > 0 statt limit(1)."
+    },
+    "services/shift/shift.service#toast-7ef37344": {
+      "s": "diff",
+      "f": [
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:112"
+      ],
+      "n": "Ionic: Toast 'Fehler beim Überprüfen der Schichtverwendung' (danger) / Flutter: Fehler des Usage-Providers wird stumm ignoriert (SizedBox.shrink, Anzahl 0).",
+      "sev": "niedrig"
+    },
+    "services/shift/shift.service#db-8236c105": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/shift_repository.dart:53",
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:316"
+      ],
+      "n": "Insert in shifts mit name, description, tenant_id, definition, shifts (Flutter aus ShiftPlan.toJson ohne id/created_at bzw. explizit im Kopier-Sheet mit tenant_id der Ziel-Instanz). Flutter selektiert die ganze Zeile statt nur id."
+    },
+    "services/shift/shift.service#toast-cb1e402a": {
+      "s": "diff",
+      "f": [
+        "lib/features/shifts/presentation/pages/shifts_list_page.dart:206",
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:434"
+      ],
+      "n": "Ionic: Toast 'Fehler beim Hinzufügen der Schicht' (danger) / Flutter: 'Fehler beim Erstellen: <Fehlertext>' bzw. beim Kopieren 'Fehler beim Kopieren: <Fehlertext>'.",
+      "sev": "niedrig"
+    },
+    "services/shift/shift.service#db-33af5718": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/shift_repository.dart:93"
+      ],
+      "n": "Ionic schreibt das ganze ShiftPlan-Objekt, Flutter dieselben Inhaltsfelder (name, description, definition, shifts) ohne id/created_at/tenant_id; Filter id + zusätzlich tenant_id."
+    },
+    "services/shift/shift.service#toast-8a42eed5": {
+      "s": "diff",
+      "f": [
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:462"
+      ],
+      "n": "Ionic: Toast 'Fehler beim Aktualisieren der Schicht' (danger) / Flutter: 'Fehler: <Fehlertext>'.",
+      "sev": "niedrig"
+    },
+    "services/shift/shift.service#db-75386190": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/shift_repository.dart:112",
+        "lib/core/providers/shift_providers.dart:108"
+      ],
+      "n": "Delete shifts nach id (+ tenant_id). Vorheriges Zurücksetzen der Schicht-Zuweisungen wie DbService.deleteShift im Notifier."
+    },
+    "services/shift/shift.service#toast-2cfee317": {
+      "s": "diff",
+      "f": [
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:503"
+      ],
+      "n": "Ionic: Toast 'Fehler beim Löschen der Schicht' / Flutter: 'Fehler beim Löschen des Schichtplans' – gleiche Bedeutung.",
+      "sev": "niedrig"
+    },
+    "services/shift/shift.service#db-de95fd8a": {
+      "s": "diff",
+      "f": [
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:43",
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:334",
+        "lib/data/repositories/shift_repository.dart:141"
+      ],
+      "n": "Ionic: liest Personen mit dieser Schicht nur mit appId (not appId is null); davon hängt ab, ob die Zuweisungs-Abfrage kommt und welche Anzahl genannt wird / Flutter: Anzahl über getShiftUsageCount ohne appId-Filter (zählt auch Personen ohne Konto), der Kopiervorgang liest dann tenantId+shift_id und filtert appId erst in Dart. Schalter 'Zuweisungen kopieren' und Personenanzahl können daher abweichen.",
+      "sev": "niedrig"
+    },
+    "services/shift/shift.service#toast-b0942088": {
+      "s": "diff",
+      "f": [
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:43"
+      ],
+      "n": "Ionic: Toast 'Fehler beim Laden der Personen mit Schicht' (danger) / Flutter: Fehler beim Laden der Anzahl wird nicht gemeldet (unbehandelter Future-Fehler, Anzahl bleibt 0).",
+      "sev": "niedrig"
+    },
+    "services/shift/shift.service#db-71d6160b": {
+      "s": "ok",
+      "f": [
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:355"
+      ],
+      "n": "Gleich: player id, appId mit tenantId=Ziel, appId in (...), left is null."
+    },
+    "services/shift/shift.service#toast-574abc71": {
+      "s": "diff",
+      "f": [
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:434"
+      ],
+      "n": "Ionic: Toast 'Fehler beim Suchen der Personen in Ziel-Instanz' (danger, danach Seiten-Toast) / Flutter: nur allgemeiner Toast 'Fehler beim Kopieren: <Fehlertext>'.",
+      "sev": "niedrig"
+    },
+    "services/shift/shift.service#db-ad58aa81": {
+      "s": "ok",
+      "f": [
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:383"
+      ],
+      "n": "Gleiche Spalten shift_id=neue Schicht, shift_name/shift_start aus Quellperson (leer → null); Flutter filtert zusätzlich tenantId. Unterschied: Ionic überspringt fehlgeschlagene Einzel-Updates still, Flutter bricht mit Fehler-Toast ab."
+    },
+    "services/shift/shift.service#db-b2e7460e": {
+      "s": "ok",
+      "f": [
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:457"
+      ],
+      "n": "Flutter liest nur die benötigten Spalten (id, all_day, start_time, end_time, default_status) der Ziel-Instanz."
+    },
+    "services/shift/shift.service#db-a9051ad6": {
+      "s": "ok",
+      "f": [
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:462"
+      ],
+      "n": "Ionic date > heute 00:00 (ISO), Flutter date >= heutiges Datum – gleiche Termine ab heute."
+    },
+    "services/shift/shift.service#db-4e51e062": {
+      "s": "ok",
+      "f": [
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:469"
+      ],
+      "n": "Flutter zusätzlich Inner-Join auf attendance.tenantId der Ziel-Instanz; notes wird nicht gelesen (nicht benötigt)."
+    },
+    "services/shift/shift.service#db-9d620c6f": {
+      "s": "ok",
+      "f": [
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:485",
+        "lib/core/utils/shift_utils.dart:338"
+      ],
+      "n": "Gleiche Bedingung (Ergebnis Entschuldigt und aktueller Status = default_status, ganztägige Typen übersprungen, Start/Ende-Fallback auf Typ) und gleiche Spalten status/notes nach id."
+    },
+    "services/sign-in-out/sign-in-out.service#logic-6ffa52b8": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/sign_in_out_repository.dart:164",
+        "lib/data/repositories/sign_in_out_repository.dart:201",
+        "lib/data/repositories/sign_in_out_repository.dart:245",
+        "lib/data/repositories/sign_in_out_repository.dart:104",
+        "lib/data/repositories/sign_in_out_repository.dart:141"
+      ],
+      "n": "signout/signin/updateAttendanceNote gleich: Status Entschuldigt bzw. Verspätung gemeldet (lateExcused) mit Grund als notes, Anmelden → Anwesend mit notes, Notiz-Update; danach quick-processor mit signout/lateSignout/noteUpdate bzw. Vorstatus; Pflicht-Status-Sync wie syncDutyWithStatus (Flutter im selben Update). Flutter prüft zusätzlich die Mandanten-/Eigentümerschaft der IDs. Einziger Unterschied: changed_by bei der Abmeldung (siehe db-Item).",
+      "sev": "niedrig"
+    },
+    "services/sign-in-out/sign-in-out.service#db-574d5c66": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/sign_in_out_repository.dart:108"
+      ],
+      "n": "Flutter besser: gleiche Tabelle/Spalten (status, notes, changed_at, Pflicht-Felder) nach id, aber changed_by: Ionic schreibt bei signout (DbService.signout gibt keine userId weiter) changed_by = null, bei signin/Notiz die User-ID / Flutter schreibt immer die aktuelle User-ID. Folge: nach einer Selbst-Abmeldung zeigt 'Zuletzt geändert von' in Flutter den Namen statt 'Status wurde noch nicht geändert'. Flutter schreibt mehrere IDs in einem Update (inFilter) statt einzeln.",
+      "sev": "niedrig"
+    },
+    "services/song-actions/song-actions.service#logic-91f46ed9": {
+      "s": "diff",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:100",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:144",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:277"
+      ],
+      "n": "hasNotesForInstrument (inkl. 'Chor (alle)'), printFileFor (Chor-Fallback), printScores und openSongOptions (gleiche Buttons in gleicher Reihenfolge, Chor-Dateien dedupliziert, Auswahl-Sheets bei mehreren Dateien) portiert. Abweichungen siehe Items (Toast ohne Instrument, Download-Button auf iOS-Web, Präfix im Titel) und extra (Audiotitel).",
+      "sev": "niedrig"
+    },
+    "services/song-actions/song-actions.service#toast-04cdfab1": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:38",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:348"
+      ],
+      "n": "Warn-Toast 'Keine Noten für dein Instrument gefunden.' beim Drucken ohne passende Dateien."
+    },
+    "services/song-actions/song-actions.service#toast-448502f0": {
+      "s": "diff",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:111"
+      ],
+      "n": "Ionic: Toast 'Für dein Instrument sind leider keine Noten verfügbar.' (danger, 4 s) nur wenn eine instrumentId gesetzt ist / Flutter: zeigt den Toast auch ohne Instrument (playerInstrumentId null, kein Chor), z.B. im Ablaufplan ohne eigene Person.",
+      "sev": "niedrig"
+    },
+    "services/song-actions/song-actions.service#native-83bc9aed": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:137",
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:18"
+      ],
+      "n": "Browser.open → NativeFileService.openLinkInApp (In-App-Browser nativ, Web neuer Tab); Flutter zeigt zusätzlich Fehler-Toast, wenn der Link nicht geöffnet werden kann."
+    },
+    "services/song-actions/song-actions.service#effect-a62dbd79": {
+      "s": "diff",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:124",
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:74"
+      ],
+      "n": "Ionic: 'Noten herunterladen' fehlt bei isPlatform('ios') – das gilt auch für iPhone/iPad im Browser/PWA; Download lädt die Datei aus dem Storage und gibt sie im mobilen Web an das Teilen-Menü (Web Share), am Desktop als Anchor-Download, nativ Cache + FileViewer / Flutter: Button im Web immer sichtbar (auch iOS-Web), PWA lädt per Anchor-Download (kein Teilen-Menü), Browser-Tab öffnet URL mit ?download=, nativ Cache + Systemviewer.",
+      "sev": "niedrig"
+    },
+    "services/song-actions/song-actions.service#effect-2f74a4fe": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:143",
+        "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+      ],
+      "n": "openFileNative ↔ openSongFileExternally: installierte Web-App In-App-Viewer, sonst neuer Tab, nativ Download + Systemviewer, iOS-App auf Mac Browser."
+    },
+    "services/song-actions/song-actions.service#effect-a62dbd79-2": {
+      "s": "diff",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:146",
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:74"
+      ],
+      "n": "Wie Einzeldatei-Download: Ionic blendet 'Noten herunterladen' auch auf iOS-Web aus und nutzt im mobilen Web das Teilen-Menü / Flutter zeigt den Button im Web immer, Anchor-Download bzw. ?download=-URL ohne Teilen-Menü.",
+      "sev": "niedrig"
+    },
+    "services/song-actions/song-actions.service#actionsheet-9e3330e3": {
+      "s": "diff",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:149",
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:54"
+      ],
+      "n": "Header 'Noten für {song} auswählen', Dateinamen + 'Abbrechen' (destruktiv) gleich. Ionic: {song} = '<number>. <name>' ohne Präfix, Sheet auf iOS-Web nie erreichbar / Flutter: mit Präfix (fullNumber), im Web auch auf iOS.",
+      "sev": "niedrig"
+    },
+    "services/song-actions/song-actions.service#effect-2f74a4fe-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:156",
+        "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+      ]
+    },
+    "services/song-actions/song-actions.service#actionsheet-9e3330e3-2": {
+      "s": "diff",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:156"
+      ],
+      "n": "Header 'Noten für {song} auswählen', Dateinamen, 'Abbrechen' gleich; {song} Ionic '<number>. <name>' ohne Präfix / Flutter mit Präfix (z.B. 'A12. Name').",
+      "sev": "niedrig"
+    },
+    "services/song-actions/song-actions.service#actionsheet-ee67de06": {
+      "s": "diff",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:160",
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:126"
+      ],
+      "n": "Header 'Noten für {song} drucken', Dateinamen, 'Abbrechen' gleich; {song} Ionic ohne Präfix / Flutter mit Präfix. Druck über SongPrintService statt PrintService.printSongFile (eigene Unit).",
+      "sev": "niedrig"
+    },
+    "services/song-actions/song-actions.service#effect-2999b087": {
+      "s": "diff",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:172",
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:74"
+      ],
+      "n": "Aufnahme herunterladen auf allen Plattformen (gleich). Ionic: mobiles Web → Teilen-Menü (Web Share), Desktop → Anchor-Download / Flutter: PWA Anchor-Download, Browser-Tab öffnet ?download=-URL, kein Teilen-Menü.",
+      "sev": "niedrig"
+    },
+    "services/song-actions/song-actions.service#effect-2f74a4fe-3": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:177"
+      ]
+    },
+    "services/song-actions/song-actions.service#effect-2f74a4fe-4": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:182"
+      ]
+    },
+    "services/song-actions/song-actions.service#actionsheet-f2b52b99": {
+      "s": "diff",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:182"
+      ],
+      "n": "Header 'Liedtext für {song} auswählen', Dateinamen, 'Abbrechen' gleich; {song} Ionic ohne Präfix / Flutter mit Präfix.",
+      "sev": "niedrig"
+    },
+    "services/song-actions/song-actions.service#toast-cfd2b633": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:186"
+      ],
+      "n": "Warn-Toast 'Für dieses Werk sind keine Aktionen verfügbar.' wenn außer Abbrechen nichts da ist."
+    },
+    "services/song-actions/song-actions.service#actionsheet-6742ebe7": {
+      "s": "diff",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:191",
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:135"
+      ],
+      "n": "Buttons und Reihenfolge gleich (Notenlink öffnen, Noten herunterladen, Noten anzeigen, Noten drucken, Aufnahme anhören, Aufnahme herunterladen, Liedtext ansehen, Abbrechen). Header Ionic '<number>. <name>' / Flutter '<prefix><number>. <name>' (ohne Nummer nur Name).",
+      "sev": "niedrig"
+    },
+    "services/song-category/song-category.service#logic-524df545": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/song_repository.dart:442",
+        "lib/data/repositories/song_repository.dart:460",
+        "lib/data/repositories/song_repository.dart:484",
+        "lib/data/repositories/song_repository.dart:500",
+        "lib/core/providers/song_providers.dart:590",
+        "lib/data/repositories/public_song_repository.dart:103"
+      ],
+      "n": "Laden (effektive Werk-Instanz bzw. geteilte Instanz, nach index), Anlegen, Umbenennen/Umsortieren, Löschen ohne Neunummerierung portiert; Flutter filtert Update/Delete zusätzlich nach tenant_id. Einziger Unterschied: index beim Anlegen (siehe db-Item, Flutter besser).",
+      "sev": "niedrig"
+    },
+    "services/song-category/song-category.service#db-b81915ee": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:444"
+      ]
+    },
+    "services/song-category/song-category.service#db-e31017a2": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/song_repository.dart:466",
+        "lib/core/providers/song_providers.dart:602"
+      ],
+      "n": "Flutter besser: gleiche Spalten name, index, tenant_id (effektive Werk-Instanz). Ionic (songs.page) gibt index = Anzahl der Kategorien mit, nach einem Löschen kann so ein doppelter index entstehen / Flutter: index = höchster index + 1.",
+      "sev": "niedrig"
+    },
+    "services/song-category/song-category.service#db-1d35ec20": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:487",
+        "lib/core/providers/song_providers.dart:623",
+        "lib/core/providers/song_providers.dart:656"
+      ],
+      "n": "Umbenennen schreibt name, Umsortieren index (Ionic schreibt beim Sortieren das ganze Kategorie-Objekt mit neuem index – gleiche Wirkung); Flutter zusätzlich .eq('tenant_id')."
+    },
+    "services/song-category/song-category.service#db-769b608f": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:503"
+      ],
+      "n": "Flutter zusätzlich .eq('tenant_id')."
+    },
+    "services/song/song.service#logic-77d06c32": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/song_repository.dart:129",
+        "lib/data/repositories/song_repository.dart:226",
+        "lib/data/repositories/song_repository.dart:244",
+        "lib/data/repositories/song_repository.dart:283",
+        "lib/data/repositories/song_repository.dart:311",
+        "lib/data/repositories/org_song_repository.dart:35",
+        "lib/data/repositories/org_song_repository.dart:127",
+        "lib/data/repositories/org_song_repository.dart:162"
+      ],
+      "n": "Lebendige Methoden portiert: getSongs (Seiten à 1000, Offline-Cache), getSong (Dateien nach instrumentId sortiert), addSong, editSong, removeSong, ensureSongCategories, searchOrgSongs, copyOrgSong (inkl. Rückbau bei Fehler). Abweichung nur beim Löschen der Storage-Dateien (siehe db-Item). uploadSongFile, downloadSongFile, deleteSongFile, copySongToTenant, uploadSongFileToTenant sowie add/update/removeSongCategory sind in SongService toter Code (DbService/SongCategoryService haben eigene Implementierungen). Flutter prüft bei Org-Kopien zusätzlich Admin/Verantwortlich-Rolle in der Ziel-Bibliothek (wie die Ionic-Zielliste).",
+      "sev": "niedrig"
+    },
+    "services/song/song.service#native-20d780b6": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:141"
+      ],
+      "n": "Network.getStatus ↔ connectivityCheckProvider; offline wird der Cache gelesen."
+    },
+    "services/song/song.service#db-c372e06b": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:148"
+      ],
+      "n": "Gleiche Abfrage/Sortierung/Paging, Cache danach geschrieben (Flutter Key pro Benutzer). Flutter fällt bei Netzwerkfehlern auf den Cache zurück, Ionic liefert bei Fehler auf Seite 1 null."
+    },
+    "services/song/song.service#db-ae5c34c0": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:228",
+        "lib/data/repositories/song_repository.dart:695"
+      ],
+      "n": "id + tenantId, Dateien nach instrumentId sortiert; maybeSingle statt single."
+    },
+    "services/song/song.service#db-23a63c9e": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:269"
+      ],
+      "n": "Explizite Felder wie Ionic songs.page (number, name, link, withChoir, withSolo, instrument_ids, prefix) + tenantId der effektiven Werk-Instanz; link nur wenn gesetzt."
+    },
+    "services/song/song.service#db-52157af4": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:295"
+      ],
+      "n": "Update der übergebenen Felder (ohne id/created_at/tenantId/berechnete Felder) nach id, Flutter zusätzlich .eq('tenantId')."
+    },
+    "services/song/song.service#db-b99e04f3": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/song_repository.dart:322",
+        "lib/data/repositories/song_repository.dart:330"
+      ],
+      "n": "Flutter besser: Ionic entfernt Pfade '<tenantId>/<songId>/<fileName>' (ohne Präfix 'songs/' und mit Anzeigenamen statt storageName) – die hochgeladenen Objekte unter 'songs/<tenantId>/<songId>/<storageName>' bleiben dadurch liegen / Flutter löscht 'songs/<tenantId>/<songId>/<storageName ?? fileName>' (best effort) und damit die Dateien wirklich.",
+      "sev": "niedrig"
+    },
+    "services/song/song.service#db-e603c5b1": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:336"
+      ],
+      "n": "Delete songs nach id, Flutter zusätzlich .eq('tenantId')."
+    },
+    "services/song/song.service#db-5368ac22": {
+      "s": "na",
+      "n": "toter Code: SongService.uploadSongFile wird nirgends aufgerufen – song.page ruft DbService.uploadSongFile (db.service.ts:178, eigene Implementierung, geprüft in deren Unit)."
+    },
+    "services/song/song.service#db-1ffb00d1": {
+      "s": "na",
+      "n": "toter Code: SongService.uploadSongFile wird nirgends aufgerufen (DbService.uploadSongFile, db.service.ts:178)."
+    },
+    "services/song/song.service#db-a6cf5777": {
+      "s": "na",
+      "n": "toter Code: SongService.uploadSongFile wird nirgends aufgerufen (DbService.uploadSongFile, db.service.ts:178)."
+    },
+    "services/song/song.service#db-dd1e35e6": {
+      "s": "na",
+      "n": "toter Code: SongService.downloadSongFile wird nirgends aufgerufen – song.page, song-actions und print.service nutzen DbService.downloadSongFile (db.service.ts:226)."
+    },
+    "services/song/song.service#db-6ca0fd0d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_song_repository.dart:242",
+        "lib/data/repositories/org_song_repository.dart:320"
+      ],
+      "n": "Lebendig nur über copyOrgSong: Download aus Bucket songs mit dem Pfad aus der öffentlichen URL (Flutter storagePathFromPublicUrl, zusätzlich URL-dekodiert)."
+    },
+    "services/song/song.service#db-9aa446b6": {
+      "s": "na",
+      "n": "toter Code: SongService.deleteSongFile wird nirgends aufgerufen – song.page nutzt DbService.deleteSongFile (db.service.ts:371)."
+    },
+    "services/song/song.service#db-4652fec4": {
+      "s": "na",
+      "n": "toter Code: SongService.deleteSongFile wird nirgends aufgerufen (DbService.deleteSongFile, db.service.ts:371)."
+    },
+    "services/song/song.service#db-147cdaa3": {
+      "s": "na",
+      "n": "toter Code: SongService.copySongToTenant wird nirgends aufgerufen – song.page.ts:899 ruft DbService.copySongToTenant (db.service.ts:281)."
+    },
+    "services/song/song.service#db-cc72c8cc": {
+      "s": "na",
+      "n": "toter Code: SongService.copySongToTenant wird nirgends aufgerufen (DbService.copySongToTenant, db.service.ts:281)."
+    },
+    "services/song/song.service#db-681c2b2d": {
+      "s": "na",
+      "n": "toter Code: SongService.uploadSongFileToTenant wird nur vom toten SongService.copySongToTenant aufgerufen (DbService hat eigene Version, db.service.ts:249)."
+    },
+    "services/song/song.service#db-f64da987": {
+      "s": "na",
+      "n": "toter Code: SongService.uploadSongFileToTenant wird nur vom toten SongService.copySongToTenant aufgerufen."
+    },
+    "services/song/song.service#db-d9929d1c": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_song_repository.dart:131"
+      ],
+      "n": "Lebendig nur über ensureSongCategories (Org-Werke kopieren): song_categories der Ziel-Bibliothek nach index. Direkte Aufrufe von SongService.getSongCategories gibt es nicht (Kategorien laufen über SongCategoryService)."
+    },
+    "services/song/song.service#db-e456e73d": {
+      "s": "na",
+      "n": "toter Code: SongService.addSongCategory wird nirgends aufgerufen – DbService.addSongCategory nutzt SongCategoryService (db.service.ts:2910)."
+    },
+    "services/song/song.service#db-6a553deb": {
+      "s": "na",
+      "n": "toter Code: SongService.updateSongCategory wird nirgends aufgerufen – DbService nutzt SongCategoryService (db.service.ts:2916)."
+    },
+    "services/song/song.service#db-66d40315": {
+      "s": "na",
+      "n": "toter Code: SongService.removeSongCategory wird nirgends aufgerufen – DbService nutzt SongCategoryService (db.service.ts:2923)."
+    },
+    "services/song/song.service#db-d6b1b3a5": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_song_repository.dart:142"
+      ],
+      "n": "Gleich: name, index = höchster index + 1 (fortlaufend), tenant_id der Ziel-Bibliothek; Namensvergleich trim/lowercase."
+    },
+    "services/song/song.service#db-bb6065f5": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_song_repository.dart:43"
+      ],
+      "n": "Gleiche Parameter (p_tenant_id aktuelle Instanz, p_query, p_tenant_ids leer → null, p_only_with_files, p_limit 50, p_offset 0)."
+    },
+    "services/song/song.service#db-4fc60603": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_song_repository.dart:191"
+      ],
+      "n": "Gleiche Felder (übernommene fields, additional_fields gemergt, copied_from nur wenn leer); Flutter filtert zusätzlich tenantId der Ziel-Bibliothek."
+    },
+    "services/song/song.service#db-0074db7d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_song_repository.dart:202"
+      ],
+      "n": "Gleiche Spalten (name, number, prefix, withChoir/withSolo false, instrument_ids [], category null, category_ids [], fields, copied_from, tenantId)."
+    },
+    "services/song/song.service#db-d957876c": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_song_repository.dart:246"
+      ],
+      "n": "Pfad 'songs/<Bibliothek>/<songId>/<storageName>', upsert; Flutter wählt einen noch freien storageName und setzt contentType."
+    },
+    "services/song/song.service#db-7609f151": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_song_repository.dart:258"
+      ]
+    },
+    "services/song/song.service#db-4fc60603-2": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_song_repository.dart:264",
+        "lib/data/repositories/org_song_repository.dart:269",
+        "lib/core/utils/song_copy.dart:99"
+      ],
+      "n": "files = bestehende + neue (storageName, fileName, fileType, url, instrumentId, note), instrument_ids ohne 1/2/Hauptgruppe. Bestehende Dateien: Ionic in der nach instrumentId sortierten Reihenfolge aus getSong, Flutter in gespeicherter Reihenfolge – gleicher Inhalt."
+    },
+    "services/song/song.service#db-a8efa0d8": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_song_repository.dart:281"
+      ]
+    },
+    "services/song/song.service#db-155bea19": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_song_repository.dart:286"
+      ],
+      "n": "Nur bei neu angelegtem Werk; Flutter zusätzlich .eq('tenantId')."
+    },
+    "services/super-developer.guard#logic-85893776": {
+      "s": "diff",
+      "f": [
+        "lib/core/router/app_router.dart:1240",
+        "lib/core/router/app_router.dart:1279",
+        "lib/core/providers/dashboard_providers.dart:31"
+      ],
+      "n": "Gleiche Prüfung (E-Mail = Super-Developer) für /settings/administration und /dashboard; Abweichung nur beim Umleitungsziel (siehe nav-Item).",
+      "sev": "niedrig"
+    },
+    "services/super-developer.guard#nav-5ef82b68": {
+      "s": "diff",
+      "f": [
+        "lib/core/router/app_router.dart:1243",
+        "lib/core/router/app_router.dart:1280"
+      ],
+      "n": "Ionic: Nicht-Super-Developer werden nach '/tabs/player' (Personen) umgeleitet / Flutter: nach '/settings'. Nur bei direktem Aufruf der URL sichtbar.",
+      "sev": "niedrig"
+    },
+    "services/task/task.service#logic-5ad9225f": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/task_repository.dart:13",
+        "lib/data/repositories/task_repository.dart:24",
+        "lib/data/repositories/task_repository.dart:106",
+        "lib/data/repositories/task_repository.dart:137",
+        "lib/data/repositories/task_repository.dart:165",
+        "lib/core/providers/team_org_providers.dart:159"
+      ],
+      "n": "Gleicher TASK_SELECT, gleiche Sortierungen, Schreibfelder ohne berechnete/Join-Felder, updated_at beim Update, Fehler 'svc.noDeletePermission' bei 0 gelöschten Zeilen. Flutter filtert alle Abfragen zusätzlich nach tenant_id. getTasksForProtocol ist toter Code (DbService.getTasksForProtocol wird nirgends aufgerufen)."
+    },
+    "services/task/task.service#db-58b769d9": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/task_repository.dart:26"
+      ]
+    },
+    "services/task/task.service#db-2e575b30": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/task_repository.dart:43",
+        "lib/core/providers/team_org_providers.dart:159"
+      ]
+    },
+    "services/task/task.service#db-a6eb3efe": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/task_repository.dart:59"
+      ],
+      "n": "Flutter zusätzlich .eq('tenant_id')."
+    },
+    "services/task/task.service#db-25702156": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/task_repository.dart:91"
+      ],
+      "n": "Flutter zusätzlich .eq('tenant_id') und maybeSingle."
+    },
+    "services/task/task.service#db-9c46c0a8": {
+      "s": "na",
+      "n": "toter Code: getTasksForProtocol wird nur von DbService.getTasksForProtocol (db.service.ts:3043) aufgerufen, das selbst nirgends genutzt wird; Protokolle laden Aufgaben über getTasksForAttendance."
+    },
+    "services/task/task.service#db-6049b29b": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/task_repository.dart:75"
+      ],
+      "n": "Flutter zusätzlich .eq('tenant_id')."
+    },
+    "services/task/task.service#db-1fc12b4b": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/task_repository.dart:109"
+      ],
+      "n": "Gleiche Spalten wie Ionic task-form (title, description, responsible_person_id, priority, due_date, status, agenda_item_id, protocol_id, attendance_id, tenant_id); Rückgabe mit TASK_SELECT."
+    },
+    "services/task/task.service#db-c6bd446c": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/task_repository.dart:150"
+      ],
+      "n": "Übergebene Felder ohne id/tenant_id/created_at/completed_at/Joins + updated_at; Flutter zusätzlich .eq('tenant_id')."
+    },
+    "services/task/task.service#db-80a35c2f": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/task_repository.dart:168"
+      ],
+      "n": "Delete mit select('id'), leere Antwort → 'Keine Berechtigung zum Löschen' (svcNoDeletePermission); Flutter zusätzlich .eq('tenant_id')."
+    },
+    "services/teacher/teacher.service#logic-32d6a1c3": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/teacher_repository.dart:14",
+        "lib/data/repositories/teacher_repository.dart:49",
+        "lib/data/repositories/teacher_repository.dart:75",
+        "lib/data/repositories/teacher_repository.dart:98"
+      ],
+      "n": "getTeachers/addTeacher/updateTeacher gleich (Flutter zusätzlich tenantId-Filter). deleteTeacher ist in Ionic toter Code, Flutter bietet Löschen aber an – siehe extra.",
+      "sev": "mittel"
+    },
+    "services/teacher/teacher.service#db-b8a7ca5e": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/teacher_repository.dart:16"
+      ]
+    },
+    "services/teacher/teacher.service#db-5ebbb21d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/teacher_repository.dart:52"
+      ],
+      "n": "Gleiche Spalten wie pickTeacherFields beim Anlegen (name, instruments, notes, number, private, tenantId)."
+    },
+    "services/teacher/teacher.service#db-f81643f4": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/teacher_repository.dart:82"
+      ],
+      "n": "Update der übergebenen Felder ohne id/created_at/tenantId; Flutter zusätzlich .eq('tenantId')."
+    },
+    "services/teacher/teacher.service#db-b3fb8906": {
+      "s": "na",
+      "n": "toter Code: TeacherService.deleteTeacher wird nirgends aufgerufen (DbService hat keinen Wrapper, keine Lösch-Aktion in teachers/teacher-Seite). Flutter hat dagegen eine Lösch-Aktion – siehe extra."
+    },
+    "services/terms.guard#logic-12641baa": {
+      "s": "ok",
+      "f": [
+        "lib/core/router/app_router.dart:364",
+        "lib/data/repositories/account_repository.dart:45"
+      ],
+      "n": "Eingeloggte Nutzer ohne user_metadata.terms_accepted_at werden auf /terms umgeleitet; öffentliche Routen (legal, Songs-Links, Planung, teams-config) bleiben wie in Ionic (dort nur unter /tabs geprüft) frei."
+    },
+    "services/terms.guard#nav-8a2c0ef2": {
+      "s": "ok",
+      "f": [
+        "lib/core/router/app_router.dart:369"
+      ]
+    },
+    "services/teams/teams.service#logic-dca45560": {
+      "s": "diff",
+      "f": [
+        "lib/core/services/teams/teams_service.dart:110",
+        "lib/core/services/teams/teams_service.dart:142",
+        "lib/core/services/teams/teams_service.dart:157",
+        "lib/core/services/teams/teams_service.dart:181",
+        "lib/core/services/teams/teams_service.dart:208",
+        "lib/core/services/teams/teams_service.dart:244",
+        "web/index.html:466",
+        "web/index.html:496"
+      ],
+      "n": "isInIframe (kein Service Worker im iframe), init mit 2-s-Timeout + notifySuccess, Teams-Theme dark/contrast → Dunkelmodus, ssoSignIn, ssoLink, consumeTokenHash, attendanceDeepLink (gleiches Format) und teams-sso-Aufruf mit Anon-Key portiert. Abweichung bei Fehlerantworten von teams-sso – siehe extra.",
+      "sev": "niedrig"
+    },
+    "services/teams/teams.service#db-b5152148": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/teams/teams_service.dart:289"
+      ],
+      "n": "Access-Token der aktuellen Session nach dem Passwort-Login (currentSession.accessToken statt getSession())."
+    },
+    "services/teams/teams.service#toast-74546254": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/presentation/pages/login_page.dart:244"
+      ],
+      "n": "Rote Meldung mit Server-Fehlertext bzw. 'Verknüpfung fehlgeschlagen'. Flutter zeigt sie auch, wenn Token fehlt/verifyOtp scheitert (Ionic dort ohne Toast)."
+    },
+    "services/teams/teams.service#db-5a391f54": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/teams/teams_service.dart:278"
+      ],
+      "n": "verifyOTP mit tokenHash, type magiclink."
+    },
+    "services/telegram/telegram.service#logic-be595d17": {
+      "s": "diff",
+      "f": [
+        "lib/core/services/telegram_service.dart:258",
+        "lib/core/services/telegram_service.dart:306",
+        "lib/core/services/telegram_service.dart:356",
+        "lib/core/services/telegram_service.dart:241",
+        "lib/data/repositories/sign_in_out_repository.dart:117"
+      ],
+      "n": "encodeFilename/cleanName (NFD, Sonderzeichen → '-', '_<100-999>'+Endung, leer → 'file'), Upload in Bucket attendances, öffentliche URL mit ?download=<Name>, send-photo/send-document, Löschen nach 10 s (auch bei Fehler), send-document mit sendAsUrl, quick-processor (signout/lateSignout/noteUpdate/Vorstatus inkl. isSelf) und playerPaused gleich. Abweichungen nur bei Ladeanzeige und Toasts (siehe Items).",
+      "sev": "niedrig"
+    },
+    "services/telegram/telegram.service#loading-752e4954": {
+      "s": "diff",
+      "f": [
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:126",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2010",
+        "lib/features/planning/presentation/widgets/register_plan_sheet.dart:342"
+      ],
+      "n": "Ionic: blockierendes Lade-Overlay (ohne Text) während Upload und Versand / Flutter: kein blockierendes Overlay (Registerprobenplan-Sheet nur _busy).",
+      "sev": "niedrig"
+    },
+    "services/telegram/telegram.service#db-f7e0ba0e": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/telegram_service.dart:266"
+      ],
+      "n": "Bucket attendances, Dateiname encodeFilename, upsert, contentType image/png bzw. application/pdf."
+    },
+    "services/telegram/telegram.service#db-4db390b0": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/telegram_service.dart:279",
+        "lib/core/services/telegram_service.dart:311"
+      ],
+      "n": "Öffentliche URL + ?download=<bereinigter Name + Endung>."
+    },
+    "services/telegram/telegram.service#db-218b5340": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/telegram_service.dart:286"
+      ],
+      "n": "send-photo bzw. send-document mit {url, chat_id} (Chat-ID aus notifications-Konfiguration, wie Ionic tenantUser.telegram_chat_id)."
+    },
+    "services/telegram/telegram.service#toast-d48335d8": {
+      "s": "diff",
+      "f": [
+        "lib/features/planning/presentation/widgets/register_plan_sheet.dart:372",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:132",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2018"
+      ],
+      "n": "Ionic: nach dem Plan-Versand immer 'Nachricht wurde erfolgreich gesendet!' / Flutter: nur der Registerprobenplan zeigt diesen Text; Planung/Ablaufplan-Export zeigt nach dem Senden 'Plan wird per Telegram gesendet...', die Terminseite 'Plan per Telegram gesendet'.",
+      "sev": "niedrig"
+    },
+    "services/telegram/telegram.service#toast-d81870f7": {
+      "s": "diff",
+      "f": [
+        "lib/features/planning/presentation/widgets/register_plan_sheet.dart:374",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:135",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2022"
+      ],
+      "n": "Ionic: 'Fehler beim Senden der Nachricht, versuche es später erneut!' (danger) / Flutter: nur der Registerprobenplan zeigt diesen Text; Planung/Ablaufplan 'Fehler beim Export: <Fehler>', Terminseite 'Fehler beim Senden: <Fehler>'.",
+      "sev": "niedrig"
+    },
+    "services/telegram/telegram.service#db-6baa9f4d": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/telegram_service.dart:294"
+      ],
+      "n": "Entfernen nach 10 s, auch wenn der Versand fehlschlug. Unterschied: Ionic löscht nicht, wenn schon der Upload scheitert – dann gibt es auch keine Datei."
+    },
+    "services/telegram/telegram.service#db-13c32112": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/telegram_service.dart:361"
+      ],
+      "n": "send-document mit {url, sendAsUrl: !url.contains('.pdf'), chat_id}."
+    },
+    "services/telegram/telegram.service#toast-fb958f4a": {
+      "s": "diff",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1148",
+        "lib/features/settings/presentation/pages/files_page.dart:397"
+      ],
+      "n": "Ionic: 'Nachricht wurde erfolgreich gesendet!' / Flutter: Dateiablage gleich, Werk-Seite 'Datei per Telegram gesendet' (gleiche Bedeutung).",
+      "sev": "niedrig"
+    },
+    "services/telegram/telegram.service#toast-9359ba11": {
+      "s": "diff",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:905",
+        "lib/features/settings/presentation/pages/files_page.dart:399"
+      ],
+      "n": "Ionic: 'Fehler beim Senden der Nachricht, versuche es später erneut!' (danger) / Flutter: Werk-Seite 'Fehler: <Fehler>', Dateiablage 'Telegram-Versand fehlgeschlagen: <Fehler>'.",
+      "sev": "niedrig"
+    },
+    "services/telegram/telegram.service#db-0c03f7c6": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/sign_in_out_repository.dart:126"
+      ],
+      "n": "quick-processor mit {attId, type, reason, isParents, notes, isSelf}; Fehler werden wie in Ionic (unawaited) nicht gemeldet."
+    },
+    "services/telegram/telegram.service#db-9f610e10": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/telegram_service.dart:247",
+        "lib/features/self_service/presentation/widgets/self_service_absences.dart:105"
+      ],
+      "n": "type playerPaused, playerId, tenantId, reason (ohne 'bis …'-Zusatz wie Ionic), pauseUntil (yyyy-MM-dd, ohne Datum weggelassen)."
+    },
+    "services/tenant/tenant.service#logic-029b4bca": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/player_repository.dart:2071",
+        "lib/features/settings/presentation/pages/general_settings_page.dart:221",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:696",
+        "lib/data/repositories/public_song_repository.dart:39",
+        "lib/features/registration/data/providers/registration_providers.dart:19"
+      ],
+      "n": "Lebendig sind nur getTenantById, updateTenantData, getTenantsByUserId, getTenantBySongSharingId, getTenantByRegisterId (DbService-Wrapper db.service.ts:630/750/1858/3897/3901/4065) – alle mit gleichen Daten in Flutter vorhanden. Alle übrigen Methoden (getTenants, getTenantUserById, addUserToTenant, updateTenantUser, removeUserFromTenant, setFavorite, getRoleFromTenantUser, Viewers/Parents, Organisation, getAdminUsers, createAdminUser, createTenant, deleteTenant) sind toter Code: DbService/ViewerParentService/OrganisationService haben eigene Implementierungen. Abweichung: zentraler Fehler-Toast beim Tenant-Update fehlt (siehe Item).",
+      "sev": "niedrig"
+    },
+    "services/tenant/tenant.service#db-ff63f1b0": {
+      "s": "na",
+      "n": "toter Code: TenantService.getTenants wird nirgends aufgerufen – DbService.getTenants (db.service.ts:609) hat eine eigene Abfrage."
+    },
+    "services/tenant/tenant.service#db-397565f1": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:2071",
+        "lib/data/repositories/sign_in_out_repository.dart:556"
+      ],
+      "n": "Genutzt für Zusatzfelder bzw. seasonStart einer anderen Instanz (addPlayerToAttendancesByDate, getPersonAttendancesForTenant); Flutter liest dieselbe Zeile tenants.id, nur die benötigten Spalten."
+    },
+    "services/tenant/tenant.service#db-a71d98ce": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:221",
+        "lib/data/repositories/plan_repository.dart:188",
+        "lib/data/repositories/extra_fields_repository.dart:62",
+        "lib/data/repositories/role_permission_repository.dart:68",
+        "lib/data/repositories/administration_repository.dart:49",
+        "lib/data/repositories/song_repository.dart:406",
+        "lib/data/repositories/duty_repository.dart:230"
+      ],
+      "n": "Generisches Update tenants nach id. Flutter hat keine zentrale Methode, die Aufrufer (Einstellungen, Bausteine, Zusatzfelder, Dateiablage, Speicherlimit, Werkbibliothek, Dienstplan) schreiben ihre Felder direkt nach id = aktuelle Instanz; die Feldinhalte werden in den Seiten-Batches geprüft."
+    },
+    "services/tenant/tenant.service#toast-028a6639": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:210"
+      ],
+      "n": "Ionic: bei jedem fehlgeschlagenen Tenant-Update Toast 'Fehler beim Aktualisieren der Einstellungen' (danger) / Flutter: kein zentraler Toast, jede Seite zeigt ihre eigene Fehlermeldung.",
+      "sev": "niedrig"
+    },
+    "services/tenant/tenant.service#db-5c587087": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:696",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1010"
+      ],
+      "n": "Nur von der Registrierungsseite genutzt (bereits Mitglied? / Profil vorbelegen). Flutter liest gezielt tenantUsers mit tenantId + userId – gleiche Entscheidung."
+    },
+    "services/tenant/tenant.service#db-4b526f55": {
+      "s": "na",
+      "n": "toter Code: DbService.getTenantUserById (db.service.ts:753) wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-d265b28d": {
+      "s": "na",
+      "n": "toter Code: TenantService.addUserToTenant wird nur vom ebenfalls ungenutzten createAdminUser aufgerufen; DbService nutzt UserRegistrationService/eigenen Code."
+    },
+    "services/tenant/tenant.service#db-5acc02de": {
+      "s": "na",
+      "n": "toter Code: TenantService.updateTenantUser wird nirgends aufgerufen (kein tenantSvc.updateTenantUser)."
+    },
+    "services/tenant/tenant.service#db-c12ba082": {
+      "s": "na",
+      "n": "toter Code: TenantService.removeUserFromTenant wird nirgends aufgerufen (DbService hat eigene Implementierung)."
+    },
+    "services/tenant/tenant.service#db-5ff103ce": {
+      "s": "na",
+      "n": "toter Code: TenantService.removeUserFromTenant wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-f9e40089": {
+      "s": "na",
+      "n": "toter Code: TenantService.removeUserFromTenant wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-845aaaac": {
+      "s": "na",
+      "n": "toter Code: TenantService.setFavorite wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-04693084": {
+      "s": "na",
+      "n": "toter Code: TenantService.getRoleFromTenantUser wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-311acbd6": {
+      "s": "na",
+      "n": "toter Code: TenantService.getViewers wird nirgends aufgerufen – Beobachter laufen über ViewerParentService (eigene Unit)."
+    },
+    "services/tenant/tenant.service#toast-7947587d": {
+      "s": "na",
+      "n": "toter Code: TenantService.getViewers wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-d3d7b560": {
+      "s": "na",
+      "n": "toter Code: TenantService.createViewer wird nirgends aufgerufen (ViewerParentService)."
+    },
+    "services/tenant/tenant.service#db-98a35387": {
+      "s": "na",
+      "n": "toter Code: TenantService.deleteViewer wird nirgends aufgerufen (ViewerParentService)."
+    },
+    "services/tenant/tenant.service#toast-ec38f99d": {
+      "s": "na",
+      "n": "toter Code: TenantService.deleteViewer wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-4f8432cc": {
+      "s": "na",
+      "n": "toter Code: TenantService.getParents wird nirgends aufgerufen (ViewerParentService)."
+    },
+    "services/tenant/tenant.service#toast-f5ab712d": {
+      "s": "na",
+      "n": "toter Code: TenantService.getParents wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-4ae7a104": {
+      "s": "na",
+      "n": "toter Code: TenantService.createParent wird nirgends aufgerufen (ViewerParentService)."
+    },
+    "services/tenant/tenant.service#db-094c587d": {
+      "s": "na",
+      "n": "toter Code: TenantService.deleteParent wird nirgends aufgerufen (ViewerParentService)."
+    },
+    "services/tenant/tenant.service#toast-37c6ce7d": {
+      "s": "na",
+      "n": "toter Code: TenantService.deleteParent wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-4252594f": {
+      "s": "na",
+      "n": "toter Code: TenantService.getOrganisationForTenant wird nirgends aufgerufen (Organisationen über OrganisationService/DbService)."
+    },
+    "services/tenant/tenant.service#db-040b2d1f": {
+      "s": "na",
+      "n": "toter Code: TenantService.createOrganisation wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-5dd8dc66": {
+      "s": "na",
+      "n": "toter Code: TenantService.linkTenantToOrganisation wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-d95f5940": {
+      "s": "na",
+      "n": "toter Code: TenantService.linkTenantToOrganisation wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-c9f27844": {
+      "s": "na",
+      "n": "toter Code: TenantService.unlinkTenantFromOrganisation wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-b27223aa": {
+      "s": "na",
+      "n": "toter Code: TenantService.unlinkTenantFromOrganisation wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-b5feb394": {
+      "s": "na",
+      "n": "toter Code: TenantService.unlinkTenantFromOrganisation wird nirgends aufgerufen."
+    },
+    "services/tenant/tenant.service#db-0b82b158": {
+      "s": "na",
+      "n": "toter Code: TenantService.getAdminUsers wird nirgends aufgerufen (Admins über AdminService.getAdmins)."
+    },
+    "services/tenant/tenant.service#db-d136d786": {
+      "s": "na",
+      "n": "toter Code: TenantService.createTenant wird nirgends aufgerufen (DbService.createInstance hat eigene Implementierung)."
+    },
+    "services/tenant/tenant.service#db-67e01a31": {
+      "s": "na",
+      "n": "toter Code: TenantService.deleteTenant wird nirgends aufgerufen (DbService hat eigene Implementierung)."
+    },
+    "services/tenant/tenant.service#db-93334b15": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/public_song_repository.dart:42"
+      ],
+      "n": "tenants nach song_sharing_id (maybeSingle statt single)."
+    },
+    "services/tenant/tenant.service#db-e8782084": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/data/providers/registration_providers.dart:22"
+      ],
+      "n": "tenants nach register_id (maybeSingle statt single)."
+    },
+    "services/tracking/tracking.service#logic-cb8b4899": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/tracking/tracking_service.dart:45",
+        "lib/core/services/tracking/tracking_event.dart",
+        "lib/data/repositories/usage_events_repository.dart:18"
+      ],
+      "n": "track/fire: fire-and-forget, Fehler werden in beiden geschluckt; device_type ios/android/web; alle 28 Event-Namen identisch."
+    },
+    "services/tracking/tracking.service#db-7764569b": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/tracking/tracking_service.dart:52",
+        "lib/data/repositories/usage_events_repository.dart:18",
+        "lib/data/models/usage_event.dart"
+      ],
+      "n": "usage_events insert mit event_name, tenant_id (aktueller Tenant oder null), device_type, properties – gleich."
+    },
+    "services/user-notification/user-notification.service#logic-528bc807": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:33",
+        "lib/core/providers/push_providers.dart:287",
+        "lib/features/planning/presentation/pages/open_attendance_page.dart:76"
+      ],
+      "n": "Alle Methoden vorhanden. markMatchingRead/markReadByAttendance: Ionic nimmt tenantId aus Push-/Link-Daten, Flutter den aktuellen Tenant nach dem Tenant-Wechsel – gleiches Ergebnis."
+    },
+    "services/user-notification/user-notification.service#db-cea3ff5c": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:35"
+      ]
+    },
+    "services/user-notification/user-notification.service#db-aef21fef": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:61"
+      ]
+    },
+    "services/user-notification/user-notification.service#db-fdde1b31": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:77"
+      ],
+      "n": "count exact, head, read=false, user_id und tenantId – gleich."
+    },
+    "services/user-notification/user-notification.service#db-3d4fe03d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:94"
+      ],
+      "n": "setRead(n, true): update read=true per id; Flutter filtert zusätzlich user_id und tenantId der Zeile."
+    },
+    "services/user-notification/user-notification.service#db-751a177d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:157",
+        "lib/core/providers/push_providers.dart:287"
+      ],
+      "n": "Gleiche Filter (user_id, type, read=false, optional data->>attendance_id); tenantId = aktueller Tenant nach Wechsel auf den Push-Tenant."
+    },
+    "services/user-notification/user-notification.service#db-8574d4eb": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:140",
+        "lib/features/planning/presentation/pages/open_attendance_page.dart:76"
+      ],
+      "n": "Gleiche Filter; tenantId = aktueller Tenant (nach Wechsel auf den Link-Tenant)."
+    },
+    "services/user-notification/user-notification.service#db-33bd8879": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:94"
+      ],
+      "n": "setRead(n, false): update read=false per id; zusätzlich user_id/tenantId-Filter."
+    },
+    "services/user-notification/user-notification.service#db-d8ddd53c": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:109"
+      ],
+      "n": "delete per id; zusätzlich user_id/tenantId-Filter."
+    },
+    "services/user-notification/user-notification.service#db-16ac72ba": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:124"
+      ]
+    },
+    "services/user-notification/user-notification.service#db-7d7e1ee8": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:199"
+      ]
+    },
+    "services/user-notification/user-notification.service#db-2f7f4ceb": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:185"
+      ]
+    },
+    "services/user-notification/user-notification.service#db-d9cbe8be": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_notification_repository.dart:221"
+      ]
+    },
+    "services/user-registration/user-registration.service#logic-032a6456": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:202",
+        "lib/data/repositories/user_registration_repository.dart:239",
+        "lib/core/providers/player_providers.dart:282"
+      ],
+      "n": "Lebendig sind nur informUserAboutApproval/-Reject und addUserToTenant (DbService-Wrapper db.service.ts:1051/1055/1059) – gleich in Flutter. registerUser, getAppIdByEmail, validateUserExistsInRoleTable, createPlayerAccount, updateTenantUserRole sind toter Code (DbService hat eigene Implementierungen, z. B. db.service.ts:953/1076)."
+    },
+    "services/user-registration/user-registration.service#db-14bc18fd": {
+      "s": "na",
+      "n": "toter Code: UserRegistrationService.registerUser wird nie aufgerufen – DbService.registerUser (db.service.ts:953) hat eigene Implementierung."
+    },
+    "services/user-registration/user-registration.service#db-8f96327b": {
+      "s": "na",
+      "n": "toter Code: UserRegistrationService.registerUser wird nie aufgerufen – DbService.registerUser (db.service.ts:953) hat eigene Implementierung."
+    },
+    "services/user-registration/user-registration.service#db-43ec96b4": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:202",
+        "lib/core/providers/player_providers.dart:282"
+      ],
+      "n": "attendix-user action approve mit email, name, Rollen-Text (wie Utils.getRoleText), roleId, tenantId – gleich."
+    },
+    "services/user-registration/user-registration.service#db-e7b013a4": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:221",
+        "lib/core/providers/player_providers.dart:295"
+      ]
+    },
+    "services/user-registration/user-registration.service#db-dbaba9be": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:242"
+      ],
+      "n": "tenantUsers insert userId, role, tenantId, email – gleich."
+    },
+    "services/user-registration/user-registration.service#toast-3186331d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:250"
+      ],
+      "n": "Flutter wirft AccountFlowException mit gleichem Text (svcAddUserToTenantFailed), Aufrufer zeigen ihn per friendlyErrorMessage als Fehler-Toast."
+    },
+    "services/user-registration/user-registration.service#db-538d6243": {
+      "s": "na",
+      "n": "toter Code: UserRegistrationService.updateTenantUserRole wird nirgends aufgerufen."
+    },
+    "services/user-registration/user-registration.service#db-0a918c84": {
+      "s": "na",
+      "n": "toter Code: UserRegistrationService.getAppIdByEmail wird nie aufgerufen – DbService.getAppIdByEmail (db.service.ts:1076) hat eigene Implementierung."
+    },
+    "services/user-registration/user-registration.service#db-adbe799f": {
+      "s": "na",
+      "n": "toter Code: UserRegistrationService.getAppIdByEmail wird nie aufgerufen – DbService hat eigene Implementierung."
+    },
+    "services/user-registration/user-registration.service#db-80d3e75d": {
+      "s": "na",
+      "n": "toter Code: validateUserExistsInRoleTable nur aus dem toten getAppIdByEmail dieses Services aufgerufen."
+    },
+    "services/user-registration/user-registration.service#db-55cccb61": {
+      "s": "na",
+      "n": "toter Code: validateUserExistsInRoleTable nur aus dem toten getAppIdByEmail dieses Services aufgerufen."
+    },
+    "services/user-registration/user-registration.service#db-b3bd98e0": {
+      "s": "na",
+      "n": "toter Code: validateUserExistsInRoleTable nur aus dem toten getAppIdByEmail dieses Services aufgerufen."
+    },
+    "services/user-registration/user-registration.service#toast-78cb147e": {
+      "s": "na",
+      "n": "toter Code: UserRegistrationService.createPlayerAccount wird nirgends aufgerufen (DbService.createAccount hat eigene Implementierung)."
+    },
+    "services/user-registration/user-registration.service#db-85f39f81": {
+      "s": "na",
+      "n": "toter Code: UserRegistrationService.createPlayerAccount wird nirgends aufgerufen."
+    },
+    "services/viewer-parent/viewer-parent.service#logic-7fe2dddf": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/viewer_repository.dart:19",
+        "lib/data/repositories/parent_repository.dart:19",
+        "lib/features/settings/presentation/pages/viewers_page.dart:52",
+        "lib/features/settings/presentation/pages/parents_page.dart:52"
+      ],
+      "n": "Lebendig nur getViewers/getParents (db.service.ts:886/910); createViewer/deleteViewer/createParent/deleteParent sind toter Code (DbService eigene Implementierungen). Abweichungen: Flutter sortiert alphabetisch, Fehler inline statt Toast (siehe Items).",
+      "sev": "niedrig"
+    },
+    "services/viewer-parent/viewer-parent.service#db-9ac84e15": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/viewer_repository.dart:21"
+      ],
+      "n": "Flutter besser: gleiche Abfrage viewers/tenantId, zusätzlich .order('lastName').order('firstName'); Ionic ohne Sortierung (DB-Reihenfolge).",
+      "sev": "niedrig"
+    },
+    "services/viewer-parent/viewer-parent.service#toast-e246152a": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/viewers_page.dart:52",
+        "lib/features/settings/presentation/pages/settings_page.dart:287"
+      ],
+      "n": "Ionic: Fehler-Toast 'Fehler beim Laden der Beobachter' / Flutter: kein Toast; Beobachter-Seite zeigt 'Fehler: …' mit Wiederholen-Button, Einstellungs-Badge zeigt 0.",
+      "sev": "niedrig"
+    },
+    "services/viewer-parent/viewer-parent.service#db-da48c4c0": {
+      "s": "na",
+      "n": "toter Code: ViewerParentService.createViewer wird nie aufgerufen – DbService.createViewer hat eigene Implementierung."
+    },
+    "services/viewer-parent/viewer-parent.service#db-4ae247b6": {
+      "s": "na",
+      "n": "toter Code: ViewerParentService.deleteViewer wird nie aufgerufen – DbService.deleteViewer hat eigene Implementierung."
+    },
+    "services/viewer-parent/viewer-parent.service#toast-ab05fe52": {
+      "s": "na",
+      "n": "toter Code: ViewerParentService.deleteViewer wird nie aufgerufen."
+    },
+    "services/viewer-parent/viewer-parent.service#db-ca7d5935": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/parent_repository.dart:21"
+      ],
+      "n": "Flutter besser: gleiche Abfrage parents/tenantId, zusätzlich alphabetisch nach lastName/firstName sortiert; Ionic ohne Sortierung.",
+      "sev": "niedrig"
+    },
+    "services/viewer-parent/viewer-parent.service#toast-4ab2f7b2": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/parents_page.dart:52"
+      ],
+      "n": "Ionic: Fehler-Toast 'Fehler beim Laden der Elternteile' / Flutter: kein Toast; Eltern-Seite zeigt 'Fehler: …' mit Wiederholen-Button.",
+      "sev": "niedrig"
+    },
+    "services/viewer-parent/viewer-parent.service#db-8f772956": {
+      "s": "na",
+      "n": "toter Code: ViewerParentService.createParent wird nie aufgerufen – DbService.createParent hat eigene Implementierung."
+    },
+    "services/viewer-parent/viewer-parent.service#db-bf04ac35": {
+      "s": "na",
+      "n": "toter Code: ViewerParentService.deleteParent wird nie aufgerufen – DbService.deleteParent hat eigene Implementierung."
+    },
+    "services/viewer-parent/viewer-parent.service#toast-41b0519e": {
+      "s": "na",
+      "n": "toter Code: ViewerParentService.deleteParent wird nie aufgerufen."
+    },
+    "utilities/archived#logic-c8811f0b": {
+      "s": "ok",
+      "f": [
+        "lib/core/utils/archived_attendance.dart:6",
+        "lib/core/utils/event_list_utils.dart:68"
+      ],
+      "n": "Sichtbar nur Admin/Verantwortlicher, Filter und 'archiviert || Termin vorbei (letzter Tag < heute)' identisch."
+    },
+    "utilities/attendance-create#logic-4ea5fabc": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/attendance_create_writes.dart:168",
+        "lib/features/attendance/presentation/attendance_create_writes.dart:267",
+        "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:40",
+        "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:69",
+        "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:113",
+        "lib/features/attendance/presentation/widgets/attendance_date_change.dart:36",
+        "lib/features/attendance/presentation/widgets/attendance_date_change.dart:63",
+        "lib/core/utils/attendance_logic_utils.dart:35"
+      ],
+      "n": "personsForAttendanceType (nicht pausiert/ausgetreten/pending, Gruppen, Zusatzfeld-Filter mit Default), createAttendanceForType (Datum 12:00 UTC, Checkliste mit dueDate, typeInfo/notes '', Zeiten des Typs, duration_days, is_org_plan, place, duty_required nur bei Abweichung; Status Neutral bei Dienst, Schicht, Abwesenheit, Regelmäßig verhindert) und hasNonDefaultStatus sind in beiden Anlege-Wegen (Terminliste, Teamorganisation) gleich. changeAttendanceDate gleich (Datum, deadline/Checkliste verschoben, History-Daten, Abwesenheiten/Reset, Schicht-Neuberechnung) bis auf das Verhalten bei Ladefehler der Abwesenheiten (siehe extra).",
+      "sev": "niedrig"
+    }
+  },
+  "extra": [
+    {
+      "unit": "services/shift/shift.service",
+      "title": "Segmente nicht nach index sortiert",
+      "n": "Ionic: loadShifts sortiert definition nach 'index' (Ionic-Editor vergibt index = Länge, nach Löschen und Neuanlegen kann die gespeicherte Reihenfolge davon abweichen, z.B. [2,3,2]) / Flutter: getShifts übernimmt die gespeicherte Array-Reihenfolge ohne Sortierung. Bei solchen Plänen ergeben sich andere Segment-Reihenfolge, anderer Zyklus und damit andere schichtbedingte Status.",
+      "sev": "mittel",
+      "ionic": "src/app/services/shift/shift.service.ts:28",
+      "f": [
+        "lib/data/repositories/shift_repository.dart:25",
+        "lib/data/models/shift/shift_plan.dart:80"
+      ]
+    },
+    {
+      "unit": "services/song-actions/song-actions.service",
+      "title": "Audiotitel mit Präfix",
+      "n": "Ionic: Aufnahme anhören startet den Player mit Titel '<number> <name>' / Flutter: '<prefix><number> <name>'.",
+      "sev": "niedrig",
+      "ionic": "src/app/services/song-actions/song-actions.service.ts:216",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:170"
+      ]
+    },
+    {
+      "unit": "services/teacher/teacher.service",
+      "title": "Lehrer löschen nur in Flutter",
+      "n": "Ionic: keine Lösch-Aktion für Lehrer (deleteTeacher ungenutzt) / Flutter: Admins können Lehrer in der Lehrerliste löschen (Delete teachers nach id + tenantId).",
+      "sev": "mittel",
+      "ionic": "src/app/services/teacher/teacher.service.ts:43",
+      "f": [
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:95",
+        "lib/data/repositories/teacher_repository.dart:98"
+      ]
+    },
+    {
+      "unit": "services/teams/teams.service",
+      "title": "teams-sso-Fehler ≠ Verknüpfen",
+      "n": "Ionic: jede Nicht-2xx-Antwort von teams-sso (401/409/500) liefert linked=false → ssoSignIn 'needs-link' → Login öffnet im Verknüpfungsmodus / Flutter: Nicht-2xx → linked=null → 'failed' → normales Login-Formular; nur ein 200 {linked:false} führt zum Verknüpfen.",
+      "sev": "niedrig",
+      "ionic": "src/app/services/teams/teams.service.ts:206",
+      "f": [
+        "lib/core/services/teams/teams_service.dart:262",
+        "lib/core/services/teams/teams_service.dart:269"
+      ]
+    },
+    {
+      "unit": "utilities/attendance-create",
+      "title": "Datum ändern: Abwesenheiten-Ladefehler",
+      "n": "Flutter besser: Ionic changeAttendanceDate schreibt bei Fehler von getPlayerAbsencesForTenant trotzdem (ohne Abwesenheitsprüfung, ggf. Reset entschuldigter Personen) / Flutter lädt die Abwesenheiten vor dem ersten Schreiben und bricht mit Fehler-Toast (dateDialog.loadFailed) ohne Änderung ab.",
+      "sev": "niedrig",
+      "ionic": "src/app/utilities/attendance-create.ts:177",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_date_change.dart:137"
+      ]
+    }
+  ]
+}

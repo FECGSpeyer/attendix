@@ -1,0 +1,67 @@
+{
+ "batch": "zz-fixed-personen-r6",
+ "ionic": "1923d203",
+ "afterRound": 6,
+ "flutter": "525a06f",
+ "items": {
+  "people/list/list.page#modal-11a551b4": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/core/utils/date_helper.dart"
+   ],
+   "n": "Archivieren entfernt Termine erst nach dem lokalen Tagesbeginn des Austrittstags (> lokale Mitternacht in UTC) wie Ionic getAttendancesByDate; nicht mehr auch die Termine des Vortags. Pausieren nutzt dieselbe lokale Tagesgrenze mit >=. PR #343."
+  },
+  "services/db.service#db-1e5584c0": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart"
+   ],
+   "n": "Austritt: removeFromUpcomingAttendances mit lokaler Tagesgrenze und > wie Ionic (gleicher Fix wie modal-11a551b4). Eintritt war schon gleich. PR #343."
+  },
+  "x-7ff54f52b2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/dashboard_repository.dart"
+   ],
+   "n": "„Aktuelle Werke“: untere Grenze startOfToday.toUtc().toIso8601String() wie Ionic dayjs().startOf('day').toISOString(); heutige Einträge erscheinen. PR #343."
+  },
+  "services/db.service#db-50229123": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/dashboard_repository.dart"
+   ],
+   "n": "Übersicht-Karte „Aktuelle Werke“ mit Tagesgrenze in UTC (gleicher Fix wie x-7ff54f52b2); Werke-Seiten waren schon gleich. PR #343."
+  },
+  "people/person/person.page#field-016207ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ],
+   "n": "Unterschicht-Auswahl ohne Leer-Option „Keine Schicht zugewiesen“ wie Ionic; shift_name lässt sich dort nicht mehr auf null setzen. PR #343."
+  },
+  "x-dac55a9bd1": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/attendance_providers.dart"
+   ],
+   "n": "Anwesenheits-Badge und Sortierung zählen ohne Saisonstart nur Termine ab 2023-01-01 wie Ionic getCurrentAttDate. PR #343."
+  },
+  "services/db.service#db-01e8ff41": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart"
+   ],
+   "n": "Reaktivierung schreibt img nicht mehr (Ionic pickPersonFields ohne img); die reaktivierte Zeile behält ihr Bild. PR #343."
+  },
+  "x-78e8317eac": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart",
+    "lib/core/utils/profile_image_path.dart",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+   ],
+   "n": "Übernommenes Passbild nur als Vorschau, beim Speichern wird img nicht geschrieben (wie Ionic); Ersetzen/Entfernen löscht nur die eigene Datei der Person. PR #343."
+  }
+ }
+}

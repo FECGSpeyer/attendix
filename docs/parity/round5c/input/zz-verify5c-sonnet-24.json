@@ -1,0 +1,2261 @@
+{
+ "batch": "zz-verify5c-sonnet-24",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 160,
+    "cond": [],
+    "tag": "app-excuse-reason-picker",
+    "attrs": {
+     "#": "excusePicker"
+    },
+    "events": [
+     "(confirm)=onExcuseConfirm($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[absenceReasons]=\"absenceReasons\"",
+     "[lateReasons]=\"lateReasons\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "selfService/parents/parents.page#action-d04c7e28"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:483",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:489"
+    ],
+    "n": "Nur Elternportal (Rolle Eltern, beide). Gründe der aktuellen Instanz bzw. Standardgründe; isToday = Termindatum ist heute (Ionic isSame day, Flutter isRunning mit Dauer 1 = gleich); Absage/Verspätung für die gewählten Kinder-Teilnahmen, Toasts „parentsThanks…“ gleich.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 191,
+    "cond": [
+     "<ng-template #eventChips>",
+     "@if (hasPlan(att) || att.description || att.attachment_url || songsOf(att).length)",
+     "@if (att.description)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-chip"
+    },
+    "events": [
+     "(click)=openDescription(att); $event.stopPropagation()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "information-circle-outline"
+    ],
+    "keys": [
+     "signout.infos"
+    ],
+    "de": [
+     "Infos"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.infos' | transloco }}",
+    "id": "selfService/parents/parents.page#action-d29165b7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:121-126"
+    ],
+    "n": "Chip ok; Inhalt des Sheets siehe modal-fc6bc685",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 219,
+    "cond": [
+     "@if (currentAttendance)",
+     "@for (pa of kidsByAttendance[currentAttendance.id] ?? []; track pa.id)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-today__row"
+    },
+    "events": [
+     "(click)=openActionSheet(currentAttendance, false, pa)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "signout.noteChip"
+    ],
+    "de": [
+     "Notiz: {note}"
+    ],
+    "literals": [],
+    "text": "{{ initials(pa) }} {{ pa.person.firstName }} {{ 'signout.noteChip' | transloco: { note: pa.notes } }} {{ statusLabelOf(pa.status) }}",
+    "id": "selfService/parents/parents.page#action-ea934dc1"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:264-271",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:561-621"
+    ],
+    "n": "Zeile (Initialen, Vorname, 'Notiz: …', Status-Pill) und Aktionsblatt gleich. Funktion gleich; Reihenfolge der Kinder je Termin: Ionic nach Kinder-Sortierung (Instrument, isLeader, Nachname) / Flutter Reihenfolge der DB-Zeilen (nicht garantiert gleich)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 188,
+    "cond": [
+     "<ng-template #eventChips>",
+     "@if (hasPlan(att) || att.description || att.attachment_url || songsOf(att).length)",
+     "@if (hasPlan(att))"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-chip"
+    },
+    "events": [
+     "(click)=openPlanViewer(att); $event.stopPropagation()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "document-text-outline"
+    ],
+    "keys": [
+     "signout.runSheet"
+    ],
+    "de": [
+     "Ablaufplan"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.runSheet' | transloco }}",
+    "id": "selfService/parents/parents.page#action-f2490e18"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:115-120"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 232,
+    "cond": [
+     "@if (currentAttendance)",
+     "@if (kids.length !== 1)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "fill": "outline"
+    },
+    "events": [
+     "(click)=openActionSheet(currentAttendance, true)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "selfService.allKidsSignInOut"
+    ],
+    "de": [
+     "Alle Kinder an- bzw. abmelden"
+    ],
+    "literals": [],
+    "text": "{{ 'selfService.allKidsSignInOut' | transloco }}",
+    "id": "selfService/parents/parents.page#action-fe13ebcd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:272-281"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "selfService/parents/parents.page.html",
+    "line": 70,
+    "cond": [],
+    "tag": "app-notification-bell",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "selfService/parents/parents.page#embed-8aa4a4c3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:188"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "selfService/parents/parents.page.ts",
+    "line": 540,
+    "method": "ParentsPage.openPlanViewer",
+    "cond": [],
+    "component": "PlanViewerComponent",
+    "props": [
+     "attendance",
+     "plan",
+     "isPractice"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "a10689b4",
+    "mbody": "8bdd8a97",
+    "id": "selfService/parents/parents.page#modal-f1fcb99c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:510-534",
+     "lib/features/planning/presentation/pages/plan_viewer_page.dart:223-244"
+    ],
+    "n": "Vollbild-Modal wie Ionic, Plan inkl. extra_plans/duration_days; isPractice ist im Ionic-PlanViewer ungenutzt",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 277,
+    "cond": [
+     "@if (pastAttendances.length > 0)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "signout.past"
+    ],
+    "de": [
+     "Vergangen"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.past' | transloco }}",
+    "id": "selfService/parents/parents.page#text-1b40f902"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:328"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 210,
+    "cond": [
+     "@if (currentAttendance)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-today__meta"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getEventMeta(currentAttendance, true, false) }}"
+    ],
+    "text": "{{ getEventMeta(currentAttendance, true, false) }}",
+    "id": "selfService/parents/parents.page#text-29268b7c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:259",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:65-76"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 214,
+    "cond": [
+     "@if (currentAttendance)",
+     "@if (currentAttendance.place)"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ currentAttendance.place }}"
+    ],
+    "text": "{{ currentAttendance.place }}",
+    "id": "selfService/parents/parents.page#text-341f8082"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:260",
+     "lib/shared/widgets/event_list/event_list_widgets.dart:732-753"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 252,
+    "cond": [
+     "@if (upcomingAttendances.length > 0)",
+     "@for (group of upcomingGroups; track group.key)",
+     "@for (att of group.items; track att.id)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getEventTitle(att) }}"
+    ],
+    "text": "{{ getEventTitle(att) }}",
+    "id": "selfService/parents/parents.page#text-45095c3b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:294"
+    ],
+    "n": "Ionic: Titel = typeInfo oder Typname auch bei hide_name (attType-Join in getPersonAttendances ohne hide_name) / Flutter: bei hide_name ohne typeInfo das Datum (z. B. 'So., 20.10.2026')",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 288,
+    "cond": [
+     "@if (pastAttendances.length > 0)",
+     "@for (att of pastPreview; track att.id)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getEventTitle(att) }}"
+    ],
+    "text": "{{ getEventTitle(att) }}",
+    "id": "selfService/parents/parents.page#text-45095c3b-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:333"
+    ],
+    "n": "Ionic: Titel = typeInfo oder Typname auch bei hide_name (attType-Join in getPersonAttendances ohne hide_name) / Flutter: bei hide_name ohne typeInfo das Datum (z. B. 'So., 20.10.2026')",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 248,
+    "cond": [
+     "@if (upcomingAttendances.length > 0)",
+     "@for (group of upcomingGroups; track group.key)",
+     "@for (att of group.items; track att.id)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-tile__wd"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ weekday(att.date) }}"
+    ],
+    "text": "{{ weekday(att.date) }}",
+    "id": "selfService/parents/parents.page#text-50b4b4e0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:292-293"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 284,
+    "cond": [
+     "@if (pastAttendances.length > 0)",
+     "@for (att of pastPreview; track att.id)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-tile__wd"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ weekday(att.date) }}"
+    ],
+    "text": "{{ weekday(att.date) }}",
+    "id": "selfService/parents/parents.page#text-50b4b4e0-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:331-332"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 240,
+    "cond": [
+     "@if (upcomingAttendances.length > 0)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-section__count"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ upcomingAttendances.length }}"
+    ],
+    "text": "{{ upcomingAttendances.length }}",
+    "id": "selfService/parents/parents.page#text-51c19dc2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:285"
+    ],
+    "n": "ohne laufende Termine wie Ionic",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 135,
+    "cond": [
+     "in <ion-modal isOpen=\"songsModalOpen\">",
+     "@for (group of upcomingSongs; track group.date)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ group.date }}"
+    ],
+    "text": "{{ group.date }}",
+    "id": "selfService/parents/parents.page#text-525b7dae"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/parents/data/providers/parents_providers.dart:401-411"
+    ],
+    "n": "Gruppenkopf 'TT.MM.JJJJ | Titel': Ionic: Titel = typeInfo oder Typname auch bei hide_name (attType-Join in getPersonAttendances ohne hide_name) / Flutter: bei hide_name ohne typeInfo das Datum (z. B. 'So., 20.10.2026'); Fallback-Datum in Flutter ohne Mehrtages-Spanne",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/data/providers/parents_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 239,
+    "cond": [
+     "@if (upcomingAttendances.length > 0)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "signout.upcoming"
+    ],
+    "de": [
+     "Anstehend"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.upcoming' | transloco }}",
+    "id": "selfService/parents/parents.page#text-574b264e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:284-285"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 98,
+    "cond": [
+     "@if (kids.length > 0)",
+     "@for (kid of kids; track kid.id)",
+     "@if (kidStats[kid.id])"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "[color]": "\"kidStats[kid.id].perc >= 75 ? 'success' : kidStats[kid.id].perc >= 50 ? 'warning' : 'danger'\""
+    },
+    "bindings": [
+     "[color]=\"kidStats[kid.id].perc >= 75 ? 'success' : kidStats[kid.id].perc >= 50 ? 'warning' : 'danger'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ kidStats[kid.id].perc }}%"
+    ],
+    "text": "{{ kidStats[kid.id].perc }}%",
+    "id": "selfService/parents/parents.page#text-896db40b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/widgets/parents_header_widgets.dart:179-217",
+     "lib/features/parents/data/providers/parents_providers.dart:419-452"
+    ],
+    "n": "Farbe ≥75 grün, ≥50 gelb, sonst rot; Prozent über alle vergangenen Termine des Kindes",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/data/providers/parents_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 201,
+    "cond": [
+     "@if (currentAttendance)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-month"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Heute",
+     "Nächster Termin"
+    ],
+    "bound": [
+     "{{ isRunning(currentAttendance) ? 'Heute' : 'Nächster Termin' }}"
+    ],
+    "text": "{{ isRunning(currentAttendance) ? 'Heute' : 'Nächster Termin' }}",
+    "id": "selfService/parents/parents.page#text-8f78a1b0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:254"
+    ],
+    "n": "Flutter immer 'Heute'; Ionic-Zweig 'Nächster Termin' ist toter Code (currentAttendance enthält nur laufende Termine)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 96,
+    "cond": [
+     "@if (kids.length > 0)",
+     "@for (kid of kids; track kid.id)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ kid.firstName }}"
+    ],
+    "text": "{{ kid.firstName }}",
+    "id": "selfService/parents/parents.page#text-afd4ff21"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/widgets/parents_header_widgets.dart:150",
+     "lib/data/repositories/player_repository.dart:235"
+    ],
+    "n": "Kinder-Chips mit kid.firstName + Prozent-Badge; Kinder wie Ionic getPlayers(PARENT): parent_id, pending=false, left null, Sortierung instrument/isLeader desc/lastName, tenantId-gefiltert.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 249,
+    "cond": [
+     "@if (upcomingAttendances.length > 0)",
+     "@for (group of upcomingGroups; track group.key)",
+     "@for (att of group.items; track att.id)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-tile__day"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ day(att.date) }}"
+    ],
+    "text": "{{ day(att.date) }}",
+    "id": "selfService/parents/parents.page#text-b3b0e9f9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:292-293"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 285,
+    "cond": [
+     "@if (pastAttendances.length > 0)",
+     "@for (att of pastPreview; track att.id)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-tile__day"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ day(att.date) }}"
+    ],
+    "text": "{{ day(att.date) }}",
+    "id": "selfService/parents/parents.page#text-b3b0e9f9-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:331-332"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 294,
+    "cond": [
+     "@if (pastAttendances.length > 0)",
+     "@for (att of pastPreview; track att.id)",
+     "@for (pa of kidsByAttendance[att.id] ?? []; track pa.id)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-pill"
+    },
+    "bindings": [
+     "[ngClass]=\"'ion-color-' + statusColorOf(pa.status)\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ pa.person.firstName }} · {{ statusLabelOf(pa.status, true) }}"
+    ],
+    "text": "{{ pa.person.firstName }} · {{ statusLabelOf(pa.status, true) }}",
+    "id": "selfService/parents/parents.page#text-cb64c81a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:344-349"
+    ],
+    "n": "'Vorname · Status' (vergangene Form) gleich. Funktion gleich; Reihenfolge der Kinder je Termin: Ionic nach Kinder-Sortierung (Instrument, isLeader, Nachname) / Flutter Reihenfolge der DB-Zeilen (nicht garantiert gleich)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 206,
+    "cond": [
+     "@if (currentAttendance)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-tile__day"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ day(currentAttendance.date) }}"
+    ],
+    "text": "{{ day(currentAttendance.date) }}",
+    "id": "selfService/parents/parents.page#text-d711fc20"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:255-257"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 205,
+    "cond": [
+     "@if (currentAttendance)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-tile__wd"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ weekday(currentAttendance.date) }}"
+    ],
+    "text": "{{ weekday(currentAttendance.date) }}",
+    "id": "selfService/parents/parents.page#text-e91e7329"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:255-257"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 254,
+    "cond": [
+     "@if (upcomingAttendances.length > 0)",
+     "@for (group of upcomingGroups; track group.key)",
+     "@for (att of group.items; track att.id)",
+     "@if (getEventMeta(att); as meta)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ meta }}"
+    ],
+    "text": "{{ meta }}",
+    "id": "selfService/parents/parents.page#text-eb70b83e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:295",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:65-76"
+    ],
+    "n": "Zeit und Ort, Datum nur bei Mehrtägigen",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 209,
+    "cond": [
+     "@if (currentAttendance)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-today__title"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getEventTitle(currentAttendance) }}"
+    ],
+    "text": "{{ getEventTitle(currentAttendance) }}",
+    "id": "selfService/parents/parents.page#text-ec0de4fb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:258"
+    ],
+    "n": "Ionic: Titel = typeInfo oder Typname auch bei hide_name (attType-Join in getPersonAttendances ohne hide_name) / Flutter: bei hide_name ohne typeInfo das Datum (z. B. 'So., 20.10.2026')",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 278,
+    "cond": [
+     "@if (pastAttendances.length > 0)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-section__count"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ pastAttendances.length }}"
+    ],
+    "text": "{{ pastAttendances.length }}",
+    "id": "selfService/parents/parents.page#text-fc884c7b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:328",
+     "lib/features/parents/data/providers/parents_providers.dart:345-356"
+    ],
+    "n": "max. 10 wie Ionic",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart",
+    "lib/features/parents/data/providers/parents_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/parents/parents.page.html",
+    "line": 243,
+    "cond": [
+     "@if (upcomingAttendances.length > 0)",
+     "@for (group of upcomingGroups; track group.key)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-month"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ group.label }}"
+    ],
+    "text": "{{ group.label }}",
+    "id": "selfService/parents/parents.page#text-ff4a6508"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:286-287"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/parents/parents.page.ts",
+    "line": 427,
+    "method": "ParentsPage.onExcuseConfirm",
+    "cond": [],
+    "message": {
+     "keys": [
+      "selfService.parentsThanksLate",
+      "selfService.parentsThanksSignout"
+     ],
+     "de": [
+      "Vielen Dank für die Info und Gottes Segen!",
+      "Vielen Dank für die rechtzeitige Abmeldung und Gottes Segen!"
+     ],
+     "literals": [],
+     "expr": "isLate ? translate('selfService.parentsThanksLate') : translate('selfService.parentsThanksSignout')"
+    },
+    "color": "success",
+    "duration": "4000",
+    "src": "53bd6355",
+    "mbody": "e487c2e0",
+    "id": "selfService/parents/parents.page#toast-18f5fd94"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:483-508"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/signout/signout.page.html",
+    "line": 42,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "legend-button"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "information-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "selfService/signout/signout.page#action-39d272cd-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:151"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/signout/signout.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-menu-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "selfService/signout/signout.page#action-92b05db6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:165"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 890,
+    "method": "SignoutPage.showSingleFieldAlert",
+    "cond": [],
+    "header": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "field.label"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "expr": "...(isEdit ? [{ text: translate('common.cancel'), role: 'cancel', handler: () => { this.pendingSigninAttendance = null;…",
+      "keys": [
+       "common.cancel"
+      ],
+      "de": [
+       "Abbrechen"
+      ],
+      "literals": []
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save",
+        "signout.signIn"
+       ],
+       "de": [
+        "Speichern",
+        "Anmelden"
+       ],
+       "literals": [],
+       "expr": "isEdit ? translate('common.save') : translate('signout.signIn')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(data) => { const answer = field.type === 'multi_select' ? (Array.isArray(data) ? data : []) : data?.answer ?? data; this.confirmRegistrationAnswers({ [field.id]: answer }); }"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "inputs",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": "isEdit",
+    "src": "8d6470cd",
+    "mbody": "cd42392f",
+    "id": "selfService/signout/signout.page#alert-1e78c190"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:564-691",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:288-330"
+    ],
+    "n": "Kopf = Feldname; Text („...“)/Ja-Nein/Optionen/Checkboxen; Anmelde-Modus nur „Anmelden“ und nicht wegtippbar, Bearbeiten-Modus „Abbrechen“/„Speichern“; leeres Textfeld → Hinweis „signout.fillField“.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 1292,
+    "method": "SignoutPage.deleteAbsence",
+    "cond": [],
+    "header": {
+     "keys": [
+      "signout.deleteAbsence"
+     ],
+     "de": [
+      "Abwesenheit löschen"
+     ],
+     "literals": [],
+     "expr": "translate('signout.deleteAbsence')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "signout.deleteAbsenceMessage"
+     ],
+     "de": [
+      "Soll die Abwesenheit gelöscht werden? Bereits entschuldigte Termine in diesem Zeitraum werden auf den Standardstatus des jeweiligen Termintyps zurückgesetzt."
+     ],
+     "literals": [],
+     "expr": "translate('signout.deleteAbsenceMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { const loading = await Utils.getLoadingElement(); await loading.present(); try { await this.db.deletePlayerAbsence(absence.id); const from = dayjs(absence.from_date); const until = dayjs(absence.until_date); const allUpcoming …"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "8d3cb50b",
+    "mbody": "624ba78a",
+    "id": "selfService/signout/signout.page#alert-cf2e9968"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:249",
+     "lib/data/repositories/player_absence_repository.dart:245"
+    ],
+    "n": "Alert 'Abwesenheit löschen' mit Originaltext, Abbrechen/Löschen (destruktiv); löscht Abwesenheit, setzt entschuldigte Termine mit gleichem Grund im Zeitraum auf Standardstatus des Termintyps + leere Notiz zurück, Toast 'Abwesenheit gelöscht', Fehlerfall mit Toast.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_absence_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 1339,
+    "method": "SignoutPage.confirmUnpause",
+    "cond": [],
+    "header": {
+     "keys": [
+      "signout.endPause"
+     ],
+     "de": [
+      "Pausierung beenden"
+     ],
+     "literals": [],
+     "expr": "translate('signout.endPause')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "signout.endPauseMessage"
+     ],
+     "de": [
+      "Möchtest du deine Pausierung wirklich beenden und wieder aktiv werden?"
+     ],
+     "literals": [],
+     "expr": "translate('signout.endPauseMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "signout.reactivate"
+       ],
+       "de": [
+        "Reaktivieren"
+       ],
+       "literals": [],
+       "expr": "translate('signout.reactivate')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { const history: PlayerHistoryEntry[] = [...this.player.history]; history.push({ date: new Date().toISOString(), text: 'Selbst reaktiviert', type: PlayerHistoryType.UNPAUSED, }); try { await this.db.updatePlayer({ ...this.playe…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "794ebf08",
+    "mbody": "f24d5589",
+    "id": "selfService/signout/signout.page#alert-f9609962"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:120-135",
+     "lib/data/repositories/player_repository.dart:867-903"
+    ],
+    "n": "Sichtbar bei player_self_pause der Spieler-Rolle (gilt für alle Rollen der Seite, beide) und Person geladen; Pausierung beenden / Text / Abbrechen + Reaktivieren; Historie „Selbst reaktiviert“, paused=false, paused_until=null, wieder in kommende Termine.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart",
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "selfService/signout/signout.page.html",
+    "line": 82,
+    "cond": [],
+    "tag": "app-notification-bell",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "selfService/signout/signout.page#embed-77581ed3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:157"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 1301,
+    "method": "SignoutPage.deleteAbsence",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "624ba78a",
+    "id": "selfService/signout/signout.page#loading-19b27361"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:248"
+    ],
+    "n": "Ionic: Lade-Overlay beim Löschen der Abwesenheit / Flutter: kein blockierendes Overlay.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 535,
+    "method": "SignoutPage.openUnavailability",
+    "cond": [],
+    "component": "UnavailabilityModalComponent",
+    "props": [
+     "personId"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "e52c6a52",
+    "mbody": "d29fb21a",
+    "id": "selfService/signout/signout.page#modal-2b19c5d0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:21",
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:249",
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:354"
+    ],
+    "n": "Ionic UnavailabilityModalComponent (Vollbild-Modal, personId) / Flutter Vollbild-Seite mit personId; Neuladen über Invalidierung.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 916,
+    "method": "SignoutPage.confirmRegistrationAnswers",
+    "cond": [
+     "(field.type === 'text' && !answers[field.id]?.toString().trim())"
+    ],
+    "message": {
+     "keys": [
+      "signout.fillField"
+     ],
+     "de": [
+      "Bitte \"{field}\" ausfüllen"
+     ],
+     "literals": [],
+     "expr": "translate('signout.fillField', { field: field.label })"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "6a77121b",
+    "mbody": "0af641c0",
+    "id": "selfService/signout/signout.page#toast-36f88117"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:310",
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:305"
+    ],
+    "n": "Einzelfeld-Dialog: gleicher Warn-Toast. Ionic: auch im Anmeldefelder-Modal (2+ Felder) Toast \"Bitte \"{field}\" ausfüllen\" / Flutter: dort roter Hinweistext im Sheet statt Toast.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 1363,
+    "method": "SignoutPage.confirmUnpause",
+    "cond": [],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "error"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c44cf0d9",
+    "mbody": "f24d5589",
+    "id": "selfService/signout/signout.page#toast-479275a1"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:132-134",
+     "lib/core/utils/error_message.dart:24"
+    ],
+    "n": "Erstprüfer übersah den Text: Ionic „Fehler beim updaten des Spielers“ (danger, aus updatePlayer) / Flutter „Fehler: <Fehlertext>“ (friendlyErrorMessage, z. B. „Keine Internetverbindung vorhanden“). Flutter meldet zudem Fehler beim Wiedereintragen in kommende Termine (Ionic ohne await).",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 928,
+    "method": "SignoutPage.confirmRegistrationAnswers",
+    "cond": [
+     "(this.regFieldsMode === 'edit')"
+    ],
+    "message": {
+     "keys": [
+      "signout.registrationFieldsSaved"
+     ],
+     "de": [
+      "Anmeldefelder gespeichert."
+     ],
+     "literals": [],
+     "expr": "translate('signout.registrationFieldsSaved')"
+    },
+    "color": "success",
+    "duration": "4000",
+    "src": "071a9fac",
+    "mbody": "0af641c0",
+    "id": "selfService/signout/signout.page#toast-dd2b303a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:329"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 293,
+    "method": "SignoutPage.signin",
+    "cond": [],
+    "message": {
+     "keys": [
+      "signout.gladYouCome"
+     ],
+     "de": [
+      "Schön, dass du dabei bist 🙂"
+     ],
+     "literals": [],
+     "expr": "translate('signout.gladYouCome')"
+    },
+    "color": "success",
+    "duration": "4000",
+    "src": "fde6119a",
+    "mbody": "d47cb372",
+    "id": "selfService/signout/signout.page#toast-f428f7f6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:339"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 1189,
+    "method": "SignoutPage.confirmPause",
+    "cond": [],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "error"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c44cf0d9",
+    "mbody": "b70f3a83",
+    "id": "selfService/signout/signout.page#toast-f735d008"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:115"
+    ],
+    "n": "Flutter Text \"Fehler: …\" (signoutFlutterError), rot.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 1159,
+    "method": "SignoutPage.confirmPause",
+    "cond": [
+     "(!this.pauseReason)"
+    ],
+    "message": {
+     "keys": [
+      "signout.giveReason"
+     ],
+     "de": [
+      "Bitte gib einen Grund an!"
+     ],
+     "literals": [],
+     "expr": "translate('signout.giveReason')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "97c409f0",
+    "mbody": "b70f3a83",
+    "id": "selfService/signout/signout.page#toast-f998f8b6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:395"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance-type/attendance-type.service",
+   "ionic": {
+    "ts": "services/attendance-type/attendance-type.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/attendance-type/attendance-type.service.ts",
+    "line": 38,
+    "method": "AttendanceTypeService.getAttendanceType",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.loadAttendanceTypeFailed"
+     ],
+     "de": [
+      "Fehler beim Laden des Anwesenheitstyps"
+     ],
+     "literals": [],
+     "expr": "translate('db.loadAttendanceTypeFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "90819a32",
+    "mbody": "f84684b7",
+    "id": "services/attendance-type/attendance-type.service#toast-8252c8d0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:205"
+    ],
+    "n": "Ionic: Toast 'Fehler beim Laden des Anwesenheitstyps' (danger), Seite bleibt leer / Flutter: kein Toast; Seite zeigt 'Typ nicht gefunden' bzw. bleibt im Ladezustand.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance-type/attendance-type.service",
+   "ionic": {
+    "ts": "services/attendance-type/attendance-type.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/attendance-type/attendance-type.service.ts",
+    "line": 20,
+    "method": "AttendanceTypeService.getAttendanceTypes",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.loadTypesFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Anwesenheitstypen"
+     ],
+     "literals": [],
+     "expr": "translate('svc.loadTypesFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "df6c202d",
+    "mbody": "8f3e9f91",
+    "id": "services/attendance-type/attendance-type.service#toast-853b9ecb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_types_page.dart:73"
+    ],
+    "n": "Ionic: Toast 'Fehler beim Laden der Anwesenheitstypen' (danger) / Flutter: kein Toast; Typen-Seite zeigt 'Fehler: …' im Inhalt, andere Stellen nutzen den Provider-Fehler still.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance-type/attendance-type.service",
+   "ionic": {
+    "ts": "services/attendance-type/attendance-type.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/attendance-type/attendance-type.service.ts",
+    "line": 69,
+    "method": "AttendanceTypeService.addAttendanceType",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.addTypeFailed"
+     ],
+     "de": [
+      "Fehler beim Hinzufügen des Anwesenheitstyps"
+     ],
+     "literals": [],
+     "expr": "translate('svc.addTypeFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "35618729",
+    "mbody": "e7d5eb48",
+    "id": "services/attendance-type/attendance-type.service#toast-fb1159a4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_types_page.dart:239"
+    ],
+    "n": "Ionic: Service-Toast 'Fehler beim Hinzufügen des Anwesenheitstyps' + Seiten-Toast 'Fehler beim Erstellen des Anwesenheitstyps' / Flutter: nur 'Fehler beim Erstellen des Anwesenheitstyps' – gleiche Bedeutung.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auth/auth.service",
+   "ionic": {
+    "ts": "services/auth/auth.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/auth/auth.service.ts",
+    "line": 156,
+    "method": "AuthService.resendConfirmationEmail",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "auth.resendConfirmationFailed"
+     ],
+     "de": [
+      "Fehler beim Senden der Bestätigungs-E-Mail"
+     ],
+     "literals": [],
+     "expr": "translate('auth.resendConfirmationFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "de807831",
+    "mbody": "e4c51ec0",
+    "id": "services/auth/auth.service#toast-29996129"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:424",
+     "lib/features/auth/presentation/pages/login_page.dart:392"
+    ],
+    "n": "Erreichbar über den Login-Dialog 'E-Mail nicht bestätigt' → Erneut senden (normaler Login); gleicher Text 'Fehler beim Senden der Bestätigungs-E-Mail' als Fehler-Toast.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auth/auth.service",
+   "ionic": {
+    "ts": "services/auth/auth.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/auth/auth.service.ts",
+    "line": 160,
+    "method": "AuthService.resendConfirmationEmail",
+    "cond": [],
+    "message": {
+     "keys": [
+      "auth.confirmationResent"
+     ],
+     "de": [
+      "Bestätigungs-E-Mail wurde erneut gesendet"
+     ],
+     "literals": [],
+     "expr": "translate('auth.confirmationResent')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "7c7cae34",
+    "mbody": "e4c51ec0",
+    "id": "services/auth/auth.service#toast-5bce91d5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:423",
+     "lib/features/auth/presentation/pages/login_page.dart:395"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auth/auth.service",
+   "ionic": {
+    "ts": "services/auth/auth.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/auth/auth.service.ts",
+    "line": 69,
+    "method": "AuthService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "auth.invalidCredentials"
+     ],
+     "de": [
+      "Ungültige Anmeldedaten"
+     ],
+     "literals": [],
+     "expr": "translate('auth.invalidCredentials')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "eaf9c134",
+    "mbody": "c825b586",
+    "id": "services/auth/auth.service#toast-c252a214"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:79",
+     "lib/features/auth/presentation/pages/login_page.dart:207"
+    ],
+    "n": "Nur im Teams-Verknüpfungsmodus erreichbar (TeamsService.ssoLink → authSvc.login); der normale Login läuft über DbService.login (eigene Unit). Ionic: 'Ungültige Anmeldedaten' / Flutter: 'E-Mail oder Passwort falsch. Falls du kein Passwort gesetzt hast, nutze den Anmelde-Code per E-Mail.' (danach in beiden der Code-Login-Hinweis).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  }
+ ]
+}

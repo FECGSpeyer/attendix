@@ -1,0 +1,352 @@
+{
+ "batch": "zz-verify5-b-sonnet-02",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "attendance/auto-message-panel/auto-message-panel.component#text-241dd21d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:425",
+    "lib/features/messages/presentation/auto_message_texts.dart:68"
+   ],
+   "n": "Grund (fehlend/unbekannt → „Sonstiges“) + „: Text“.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-38f24a5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:282",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:305"
+   ],
+   "n": "„dd.MM.yyyy, HH:mm“ lokal.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-4bfd5861": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:298"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-5b92afdf": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:296"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-5dd3621d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:442",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:161"
+   ],
+   "n": "Name über person_attendance_id aus den Personen des Termins, sonst „Unbekannt“.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-71044245": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:424"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-7f432be1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:476",
+    "lib/features/messages/presentation/auto_message_texts.dart:76"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-bb9383cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:322"
+   ],
+   "n": "Zählt offene Rückmeldungen inkl. lokal entschiedener wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-bdda8e46": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:297"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-cbe9ec72": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:295"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-f9dc6cea": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:291",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:249"
+   ],
+   "n": "Panel nur Admin/Verantwortliche und ab Terminbeginn (isManager && started); Uhrzeit HH:mm = Terminende + Verzögerung.",
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#alert-500b3722": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:238",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:249",
+    "lib/shared/widgets/adaptive/app_dialog.dart:927"
+   ],
+   "n": "Behebung bestätigt: jetzt Alert mit Radio-Liste, Titel „{Vorname} tauschen“ / „Person wählen“, Untertitel „{Titel} · {Datum}“, „Niemand (Platz offen lassen)“ zuerst nur beim Tauschen, Einträge „Name (Anzahl)“ aufsteigend nach Anzahl, dann Name; „Abbrechen“ / „Übernehmen“, Auswahl gilt erst mit „Übernehmen“ (ohne Auswahl keine Änderung), offene Plätze neu berechnet; Toast „Niemand sonst …“ wenn keine Option. Datumsformat ohne führende Null bleibt eigenes Item (text-e73248fa).",
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#toast-fb615d29": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:231"
+   ],
+   "n": "Gelber Toast „Niemand sonst ist für diesen Termin verfügbar“ nur bei leerer Auswahl ohne aktuelle Person (Ionic: inputs leer). Rolle: Modal in beiden nur für Admin/Verantwortlicher bei vorhandenen Dienst-Typen (Ionic att-list isConductor && hasDutyTypes / Flutter attendance_list_page:314), im Modal keine weitere Prüfung.",
+   "v": "bestätigt"
+  },
+  "duty/unavailability-modal/unavailability-modal.component#alert-7cb35beb": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:153",
+    "lib/data/repositories/duty_repository.dart:407"
+   ],
+   "n": "„Regel löschen?“ / „Bereits eingetragene Abmeldungen bleiben bestehen.“, „Abbrechen“ / „Löschen“ (rot); löscht person_unavailability (Flutter zusätzlich mit tenant_id-Filter) und lädt neu. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+   "v": "bestätigt"
+  },
+  "history/history.page#action-a6f939ed": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:443",
+    "lib/features/history/presentation/pages/history_page.dart:538",
+    "lib/data/repositories/attendance_repository.dart:897"
+   ],
+   "n": "Prüfung 'mind. ein Werk' (Flutter Warn- statt Danger-Toast, niedrig), je Werk history-Zeile songId/person_id/otherConductor/date/visible=true, tenantId im Repo erzwungen; Datum YYYY-MM-DD, gleicher Tag.",
+   "v": "bestätigt"
+  },
+  "history/history.page#alert-6e1a25c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:367",
+    "lib/features/history/presentation/pages/history_page.dart:479"
+   ],
+   "n": "Alert-Inhalt gleich. Randfall (Abbrechen/leerer Name bei 'Anderer Dirigent' lässt in Flutter vorige Auswahl stehen, Ionic: Eintrag ohne Dirigent) ist Flutter besser, niedrig, kein Verlust.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-4ca684b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:80"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#action-057151b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:43",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:121",
+    "lib/core/router/app_router.dart:199"
+   ],
+   "n": "canOpen-Rollen identisch (Admin, Verantwortlich, Helfer, Stimmführer & Helfer); die Startseite selbst ist in beiden nur für Admin/Verantwortlich erreichbar (Ionic Tab/Side-Nav/isUrlAccessAllowed, Flutter Route-Guard), daher tippbar für genau diese Rollen. Zeile: blaue Datumskachel (solid wenn heute), Typinfo, 'Wochentag · {start – end} Uhr', relative Tage; Tap öffnet den Termin, danach Neuladen.",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-31fc2b8a": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:57"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-ce89ab63": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:56"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#toast-a428ffb5": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:58"
+   ],
+   "n": "Roter Toast „Fehler beim Speichern der Reihenfolge“ bei Fehler (auch Demo-Sperre). Ionic zeigt davor zusätzlich den Service-Toast „Fehler beim updaten des Instruments“ (Service-Batch).",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#action-2c9f44ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:712"
+   ],
+   "n": "Button „Aktualisieren“; Ablauf beim Speichern siehe extra.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#action-82db5bdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:716"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#text-7f650816": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:704"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#toast-e997b3c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:474"
+   ],
+   "n": "Grüner Toast „{Name} wurde erfolgreich aktualisiert“, in Flutter nach dem Schließen aus der Liste.",
+   "v": "bestätigt"
+  },
+  "login/login.page#alert-6409ac1a": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:401-409",
+    "lib/features/auth/presentation/pages/login_page.dart:214",
+    "lib/features/auth/presentation/pages/login_page.dart:280"
+   ],
+   "n": "\"Kein Konto gefunden\", Abbrechen / Registrieren → Registrieren-Modal; Auslöser user_not_found beim Login und kein Konto bei \"Code senden\" wie Ionic. Im Teams-Modus käme er nur über user_not_found (liefert signInWithPassword praktisch nicht) oder den Code-Weg (siehe Extra).",
+   "v": "bestätigt"
+  },
+  "login/login.page#toast-30a11df6": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:233-259"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#action-0994f764": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:382"
+   ],
+   "n": "Quill-Editor mit Toolbar statt Tiptap-Komponente; Änderung speichert Entwurf und prüft canSend. Editor selbst wird in eigener Unit geprüft.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#action-27ae197e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:131-138",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:92-108",
+    "lib/data/repositories/message_repository.dart:254-260"
+   ],
+   "n": "Papierkorb rot. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich. Dialog 'Mitteilung löschen?' + Hinweistext, Abbrechen/Löschen (destruktiv); DELETE messages per id (Flutter zusätzlich tenantId), danach /settings/messages, Fehler-Toast 'Fehler beim Löschen'.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#action-91d55a5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:110-114",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:206"
+   ],
+   "n": "Pull-to-refresh lädt Mitteilung und Empfänger neu. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#action-df113b87": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:82",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:127",
+    "lib/core/constants/enums.dart:137"
+   ],
+   "n": "Zurück ohne Verlauf: Manager -> /settings/messages, sonst Rollen-Startseite (Admin/Verantw./Beobachter -> Personen, Eltern -> /parents, übrige -> /signout) wie Utils.getUrl. Kleinigkeit: Flutter-Manager prüft Instanz nicht, nur im Randfall fremde Instanz.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#alert-183a4e8d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:92",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:131",
+    "lib/core/utils/dialog_helper.dart:12"
+   ],
+   "n": "'Mitteilung löschen?' + Hinweistext, 'Abbrechen' / 'Löschen' (rot); danach Löschen (messages, eq id + tenantId) und Navigation. Papierkorb nur bei isManager && message in beiden; Rollen: isManager = Admin/Verantwortlich UND Mitteilung gehört zur aktuellen Instanz (Ionic message-detail.page.ts:95, Flutter _isManager + tenantId-Vergleich).",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#nav-9c26e0e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:104"
+   ],
+   "n": "context.go('/settings/messages') statt navigateByUrl('/tabs/settings/messages'); gleiches Ziel, Liste lädt neu (messagesProvider invalidiert). Nur Manager wie Ionic.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-330ba71f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:128"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#toast-fac5b4e7": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:106"
+   ],
+   "n": "Fehler-Toast 'Fehler beim Löschen' (danger), Seite bleibt. Nur Manager wie Ionic.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-0dddd55e": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:215",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:125",
+    "lib/core/providers/push_providers.dart:34"
+   ],
+   "n": "Nur native App (iOS/Android) wie Capacitor.isNativePlatform.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-12e883c7": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:232"
+   ],
+   "n": "Flutter-Code geprüft, Element unverändert vorhanden und gleich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#text-cf5a89a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:138"
+   ],
+   "n": "Info kursiv grau, nicht bei Notizfeldern",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#action-0ad682ab": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:298"
+   ],
+   "n": "„Verwalten“ → _managePublicLink",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#action-3a0eef49": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:287"
+   ],
+   "n": "„Vergangene Pläne“ grau, ohne Chevron, nur bei vergangenen Plänen; keine Rollenabhängigkeit über den Seitenzugang hinaus.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

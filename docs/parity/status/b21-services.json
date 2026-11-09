@@ -1,0 +1,596 @@
+{
+ "batch": "b21-services",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "utilities/attendance-date-dialog#logic-8dd6e8f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:63",
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:32",
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:170"
+   ],
+   "n": "Methoden portiert (Datum ändern, Anwesenheiten zurücksetzen/behalten, Protokoll-Termin anlegen); Dialog-Unterschiede bei den Einzel-Items."
+  },
+  "utilities/attendance-date-dialog#alert-fb943686": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:93"
+   ],
+   "n": "Ionic: Alert \"Datum ändern\" mit Datumsfeld, Buttons Abbrechen/Weiter / Flutter: showAppDatePicker mit helpText \"Auf welchen Tag…\", Kopf \"Datum ändern\" fehlt (dateDialogChangeDate ungenutzt), Material-Picker Abbrechen/OK statt \"Weiter\"; iOS-Look: Antippen eines Tages übernimmt sofort ohne Bestätigung; Bereich auf ±5 Jahre begrenzt.",
+   "sev": "mittel"
+  },
+  "utilities/attendance-date-dialog#loading-7398625d": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:63"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay beim Laden des Termins / Flutter: kein Overlay.",
+   "sev": "niedrig"
+  },
+  "utilities/attendance-date-dialog#toast-37694bad": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:88",
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:110"
+   ]
+  },
+  "utilities/attendance-date-dialog#alert-9dc8e8c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:118"
+   ],
+   "n": "Abbrechen / Behalten / Zurücksetzen wie Ionic."
+  },
+  "utilities/attendance-date-dialog#loading-7398625d-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:144"
+   ],
+   "n": "Ionic: blockierendes Overlay beim Speichern / Flutter: kein Overlay.",
+   "sev": "niedrig"
+  },
+  "utilities/attendance-date-dialog#toast-8b40658d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:214"
+   ],
+   "n": "Format EE, dd.MM.yyyy → \"Mo., …\" statt \"Mo, …\" (nur Punkt)."
+  },
+  "utilities/attendance-date-dialog#toast-45a99bdc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:221"
+   ]
+  },
+  "utilities/attendance-date-dialog#toast-2ca18d28": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:186"
+   ]
+  },
+  "utilities/attendance-date-dialog#alert-222957a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:193"
+   ],
+   "n": "Radio-Liste, erster Eintrag vorausgewählt, Abbrechen/Weiter."
+  },
+  "utilities/attendance-date-dialog#alert-6ec992cf": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:223"
+   ],
+   "n": "Ionic: Alert mit Datumsfeld und Buttons Abbrechen/Anlegen / Flutter: Datepicker (helpText \"{name} anlegen – An welchem Tag…\", Bestätigen \"Anlegen\", firstDate heute); iOS-Look ohne Anlegen/Abbrechen – Antippen eines Tages legt den Termin sofort an.",
+   "sev": "mittel"
+  },
+  "utilities/attendance-date-dialog#toast-8fed68b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:234"
+   ]
+  },
+  "utilities/attendance-date-dialog#loading-191f06e1": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:170"
+   ],
+   "n": "Ionic: blockierendes Overlay beim Anlegen / Flutter: kein Overlay, nur Button gesperrt (_creatingAttendance im Themen-Tab).",
+   "sev": "niedrig"
+  },
+  "utilities/attendance-date-dialog#toast-0f4733be": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:292"
+   ]
+  },
+  "utilities/attendance-date-dialog#toast-552c3214": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:299"
+   ]
+  },
+  "utilities/attendance-songs#logic-64344b75": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/attendance_songs.dart:32",
+    "lib/core/utils/attendance_songs.dart:53"
+   ],
+   "n": "Einzige Abweichung: fehlende Werk-Nummer ergibt \"\" statt \"undefined\"."
+  },
+  "utilities/db-helpers#logic-19bf1565": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/db_helpers.dart:1",
+    "lib/core/utils/duty_utils.dart:51",
+    "lib/data/repositories/attendance_repository.dart:650",
+    "lib/data/repositories/sign_in_out_repository.dart:142"
+   ],
+   "n": "pick*-Helfer durch explizite Repository-Payloads ersetzt (mobile/street etc. sind keine player-Spalten); syncDutyWithStatus = dutySyncFieldsForStatus; sanitizeImg über data:-Prüfung in player_repository.dart:459/511; generateIonicId db_helpers.dart:121."
+  },
+  "utilities/db-helpers#db-2d9892ee": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:652"
+   ],
+   "n": "Liest id, duty_state und attendance(tenantId,type_id,duty_mode) per id, mit Tenant-Prüfung."
+  },
+  "utilities/db-helpers#db-f424eb31": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:674"
+   ],
+   "n": "duty_state/duty_reminder_sent/duty_assigned_by/at im selben Update .eq(id) nach Tenant-Prüfung."
+  },
+  "utilities/duty#logic-b56a9902": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/duty_utils.dart:1",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:16"
+   ],
+   "n": "set/getDutyTypeIds durch duty_mode-Join ersetzt; Ionic dutyStateLabel ist ungenutzt; distributeDuties stabil sortiert wie Ionic."
+  },
+  "utilities/event-list#logic-f79ac8d0": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/event_list_utils.dart:87",
+    "lib/core/utils/event_list_utils.dart:136",
+    "lib/core/utils/event_list_utils.dart:189"
+   ]
+  },
+  "utilities/file-move#logic-a98c13f1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/data/file_move.dart:13"
+   ]
+  },
+  "utilities/import-mapper#logic-95a09cd2": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/import_mapper.dart:1"
+   ],
+   "n": "Gleiche Spalten, Aliase, Warnungen und Payloads; Randfälle: D.M.YYYY-Regex akzeptiert gemischte Formen wie \"1.02.2020\", Werk-Nr. \"12.5\" wird zu 12."
+  },
+  "utilities/instrument-matcher#logic-602c073f": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/instrument_matcher.dart:40",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:23"
+   ],
+   "n": "Anderer Zuordnungs-Algorithmus (ganze Wörter, Konfidenz, Synonyme); siehe extra.",
+   "sev": "mittel"
+  },
+  "utilities/live-plan#logic-3ae83003": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/live_plan.dart:365",
+    "lib/core/utils/live_plan.dart:372",
+    "lib/core/utils/live_plan.dart:380"
+   ]
+  },
+  "utilities/organisation-person-key#logic-285eabcd": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/shared_person_fields.dart:18",
+    "lib/data/repositories/org_plan_repository.dart:319"
+   ]
+  },
+  "utilities/person-matcher#logic-72098ed1": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/person_matcher.dart:87"
+   ],
+   "n": "Bis auf normalizeName identisch; siehe extra.",
+   "sev": "niedrig"
+  },
+  "utilities/plan-beamer#logic-c68a6019": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/plan_beamer.dart:1"
+   ]
+  },
+  "utilities/plan-days#logic-c1a9c827": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/plan_utils.dart:333",
+    "lib/core/utils/event_list_utils.dart:60"
+   ],
+   "n": "Mehrtages-Helfer portiert, planSubtitle fehlt; siehe extra.",
+   "sev": "niedrig"
+  },
+  "utilities/plan-groups#logic-7f5e06ab": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/plan_utils.dart:90",
+    "lib/core/utils/plan_utils.dart:162",
+    "lib/core/utils/plan_utils.dart:207",
+    "lib/core/utils/dashboard_utils.dart:347"
+   ]
+  },
+  "utilities/song-copy#logic-d5bb528b": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/song_copy.dart:1"
+   ],
+   "n": "Nur NFC-Normalisierung fehlt (Randfall)."
+  },
+  "utilities/spreadsheet-reader#logic-cc538ad0": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:43",
+    "lib/core/utils/spreadsheet_reader.dart:186"
+   ],
+   "n": ".xls und Formelzellen weichen ab; siehe extra.",
+   "sev": "mittel"
+  },
+  "utilities/unique-dates#logic-49754779": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/attendance_create_writes.dart:31"
+   ]
+  },
+  "utilities/Utils#logic-1c33d253": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/plan_export_service.dart:59",
+    "lib/core/services/pdf_branding.dart:1",
+    "lib/core/services/native/native_file_service.dart:142",
+    "lib/core/utils/attendance_percentage_utils.dart:41",
+    "lib/core/utils/shift_utils.dart:129",
+    "lib/features/people/people_list_utils.dart:58",
+    "lib/features/songs/presentation/utils/song_utils.dart:115",
+    "lib/features/tenant_selection/tenant_defaults.dart:80"
+   ],
+   "n": "Helfer weitgehend portiert (Prozent, Schicht-Status, Ohne-Text, Standard-Typen, Feld-Defaults, Navigation, Datei öffnen/speichern, Branding, Urkunden); Abweichungen siehe extra.",
+   "sev": "hoch"
+  },
+  "utilities/Utils#toast-bc8376d4": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/toast_helper.dart:105"
+   ],
+   "n": "md/Desktop identisch (Ionic-Toast oben, 3 s). Ionic auch auf iOS: Toast oben, 3 s, ohne Button / Flutter iOS-Look: SnackBar unten, 4 s, mit Icon und OK-Button.",
+   "sev": "niedrig"
+  },
+  "utilities/Utils#loading-ec398d04": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/toast_helper.dart:1"
+   ],
+   "n": "Ionic: generisches blockierendes LoadingController-Overlay mit Text / Flutter: kein entsprechender Helfer, Seiten zeigen Inline-Spinner oder sperren Buttons.",
+   "sev": "niedrig"
+  },
+  "utilities/Utils#effect-d0866846": {
+   "s": "na",
+   "n": "toter Code: asImage + sideBySide wird nie zusammen aufgerufen (attendance.page.ts:1383/1384 telegramImage ohne 2x, plan-viewer:307-309, planning send(true))."
+  },
+  "utilities/Utils#effect-576bec88": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:124",
+    "lib/core/services/plan_export_service.dart:59"
+   ],
+   "n": "2x-A5-PDF als Bytes für Telegram."
+  },
+  "utilities/Utils#effect-178a8abf": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/plan_export_service.dart:128",
+    "lib/core/services/plan_export_service.dart:131"
+   ],
+   "n": "Ionic: PDF wird gespeichert (Desktop-Web Download, Mobile-Web System-Teilen-Dialog, nativ Cache + Dateiansicht) / Flutter: sharePdf ruft Printing.layoutPdf auf = System-Druckdialog (2x A5).",
+   "sev": "mittel"
+  },
+  "utilities/Utils#effect-576bec88-2": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/plan_export_service.dart:131"
+   ],
+   "n": "Ionic: PDF wird gespeichert (Desktop-Web Download, Mobile-Web System-Teilen-Dialog, nativ Cache + Dateiansicht) / Flutter: sharePdf ruft Printing.layoutPdf auf = System-Druckdialog (2x A5).",
+   "sev": "mittel"
+  },
+  "utilities/Utils#effect-d0866846-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:123",
+    "lib/core/services/plan_export_service.dart:119"
+   ],
+   "n": "A4-Plan als PNG (Printing.raster 150 dpi statt jsPDF scale 6) für Telegram."
+  },
+  "utilities/Utils#effect-576bec88-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:124",
+    "lib/core/services/plan_export_service.dart:59"
+   ],
+   "n": "A4-PDF als Bytes für Telegram."
+  },
+  "utilities/Utils#effect-178a8abf-2": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/plan_export_service.dart:131"
+   ],
+   "n": "Ionic: PDF wird gespeichert (Desktop-Web Download, Mobile-Web System-Teilen-Dialog, nativ Cache + Dateiansicht) / Flutter: sharePdf ruft Printing.layoutPdf auf = System-Druckdialog (A4).",
+   "sev": "mittel"
+  },
+  "utilities/Utils#effect-576bec88-4": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/plan_export_service.dart:131"
+   ],
+   "n": "Ionic: PDF wird gespeichert (Desktop-Web Download, Mobile-Web System-Teilen-Dialog, nativ Cache + Dateiansicht) / Flutter: sharePdf ruft Printing.layoutPdf auf = System-Druckdialog (A4).",
+   "sev": "mittel"
+  },
+  "utilities/Utils#effect-28c159d1": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/plan_export_service.dart:59",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:121"
+   ],
+   "n": "Mehrere Pläne = mehrere Seiten in einem PDF."
+  },
+  "utilities/Utils#effect-b60c4449": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/plan_export_service.dart:131",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:121"
+   ],
+   "n": "Ionic: PDF wird gespeichert (Desktop-Web Download, Mobile-Web System-Teilen-Dialog, nativ Cache + Dateiansicht) / Flutter: sharePdf ruft Printing.layoutPdf auf = System-Druckdialog (alle Pläne eines Mehrtages-Termins).",
+   "sev": "mittel"
+  },
+  "utilities/Utils#toast-29969d9e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:100"
+   ],
+   "n": "\"Kein Plan verfügbar\" als Warnung."
+  },
+  "utilities/Utils#effect-fad4e9cc": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:116",
+    "lib/core/services/plan_export_service.dart:131"
+   ],
+   "n": "Ionic: Titel = Plantitel, sonst getPlanningTitle(Typ, Info) z. B. \"Probenplan (Info)\"; Datei wird gespeichert / Flutter: Titel = Plantitel, sonst typeInfo, sonst \"Ablaufplan\" (planning_title/Typname fehlen); Ausgabe über System-Druckdialog.",
+   "sev": "mittel"
+  },
+  "utilities/Utils#effect-44054f10": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/export_service.dart:706",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "Nativ gleich (Cache + Systemansicht); auf Mobile-Web (iOS/Android) Ionic: System-Teilen-Dialog mit der Datei (navigator.share), Fallback Download / Flutter: immer Anchor-Download (Printing.sharePdf bzw. downloadBytesInBrowser), kein Teilen-Dialog.",
+   "sev": "niedrig"
+  },
+  "utilities/Utils#effect-c9b53196": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1116"
+   ],
+   "n": "launchUrl externalApplication."
+  },
+  "utilities/Utils#actionsheet-62ce72e1": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1127"
+   ],
+   "n": "Nur iOS (nativ und iOS-Browser): Apple Karten / Google Maps / Abbrechen."
+  },
+  "utilities/Utils#effect-6f74527d": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/native/native_file_service.dart:92",
+    "lib/core/services/native/native_file_service.dart:142"
+   ],
+   "n": "iOS-App auf dem Mac: Link im Standardbrowser (launchUrl extern)."
+  },
+  "utilities/Utils#effect-468e81fe": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/web_window_web.dart:36"
+   ],
+   "n": "window.open, in installierter Web-App echter Link-Klick."
+  },
+  "utilities/Utils#effect-1a09a2fb": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_file_opener.dart:80",
+    "lib/core/services/native/native_file_service.dart:77",
+    "lib/core/services/web_window_web.dart:52"
+   ],
+   "n": "In-App-Dateiansicht der installierten Web-App: auf Mobile-Web (iOS/Android) Ionic: System-Teilen-Dialog mit der Datei (navigator.share), Fallback Download / Flutter: immer Anchor-Download (Printing.sharePdf bzw. downloadBytesInBrowser), kein Teilen-Dialog.",
+   "sev": "niedrig"
+  },
+  "utilities/Utils#toast-2178bb1b": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_file_opener.dart:82"
+   ]
+  },
+  "utilities/Utils#native-ba567b9c": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/native/native_file_service.dart:142"
+   ],
+   "n": "Nativ: Download in Cache-Ordner und Systemansicht (downloadAndOpen)."
+  },
+  "utilities/Utils#native-136ecfef": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "Nativ: writeAndOpen (Cache-Ordner + Systemansicht)."
+  },
+  "utilities/Utils#effect-c485f21b": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:57",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "Dateiname Urkunden_Vorkurs_YYYY-MM-DD.pdf gleich; nativ gleich; auf Mobile-Web (iOS/Android) Ionic: System-Teilen-Dialog mit der Datei (navigator.share), Fallback Download / Flutter: immer Anchor-Download (Printing.sharePdf bzw. downloadBytesInBrowser), kein Teilen-Dialog.",
+   "sev": "niedrig"
+  },
+  "utilities/Utils#effect-b60269d9": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/certificate_service.dart:28"
+   ],
+   "n": "Eine A4-Seite je Person, Times fett-kursiv, gleicher Text; Name schrumpft per FittedBox (ohne 28-pt-Untergrenze)."
+  }
+ },
+ "extra": [
+  {
+   "unit": "utilities/instrument-matcher",
+   "title": "Automatische Stimmen-Zuordnung beim Upload",
+   "n": "Ionic: Teilstring-Abgleich mit Familien/Begriffen inkl. Akkordeon/Bajan, Mandoline, Banjo, Celesta, Triangel, Becken, Blockflöte, russischen Transliterationen (skripka, fleita, truba, valtorna …) und Kürzeln к-б/ф-но/уд, 3. Durchgang als Fallback / Flutter: anderer Algorithmus (ganze Wörter, Konfidenz, lernbare Synonyme, Bild-Erkennung part-detect), diese Begriffe fehlen → Dateien werden anders oder gar nicht automatisch einer Gruppe zugeordnet.",
+   "sev": "mittel",
+   "ionic": "src/app/utilities/instrument-matcher.ts:291",
+   "f": [
+    "lib/core/utils/instrument_matcher.dart:40",
+    "lib/core/utils/instrument_matcher.dart:48"
+   ]
+  },
+  {
+   "unit": "utilities/instrument-matcher",
+   "title": "detectSpecialFileType",
+   "n": "Ionic: Teilstrings ('full', 'text', 'chor'), audio/* per MIME → Aufnahme, .mid als Audio / Flutter: ganze Wörter, Audio per Endungsliste, .sib/.mid vor dem Gruppenabgleich, .mid mit Notiz 'MIDI', Partitur-Komposita erkannt (Flutter besser: weniger Fehlzuordnungen).",
+   "sev": "niedrig",
+   "ionic": "src/app/utilities/instrument-matcher.ts:384",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:23",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:62",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:123"
+   ]
+  },
+  {
+   "unit": "utilities/person-matcher",
+   "title": "normalizeName Diakritika",
+   "n": "Ionic: entfernt alle kombinierenden Zeichen per NFD (z. B. ğ→g, auch zerlegte Umlaute) / Flutter: feste Diakritika-Tabelle – ğ u. a. fehlen, zerlegte Umlaute werden zu Leerzeichen; dafür ł/đ besser. Import-Abgleich kann bei solchen Namen anders ausfallen.",
+   "sev": "niedrig",
+   "ionic": "src/app/utilities/person-matcher.ts:56",
+   "f": [
+    "lib/core/utils/person_matcher.dart:87"
+   ]
+  },
+  {
+   "unit": "utilities/plan-days",
+   "title": "planSubtitle fehlt",
+   "n": "Ionic: Untertitel des Plans = Datum, Tageslabel nur wenn es nicht das automatische Tageslabel ist / Flutter: bei mehreren Plänen immer longDate + ' · ' + planLabel, z. B. doppelt 'Samstag, 18.10.2025 · Sa 18.10.'.",
+   "sev": "niedrig",
+   "ionic": "src/app/utilities/plan-days.ts:77",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:124",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:94"
+   ]
+  },
+  {
+   "unit": "utilities/spreadsheet-reader",
+   "title": ".xls nicht unterstützt",
+   "n": "Ionic: SheetJS liest .xlsx, .xls und .csv (Import-Seiten accept='.xlsx,.xls,.csv') / Flutter: Dateiauswahl erlaubt xls, Leser bricht aber mit coreFlutterXlsUnsupported ab.",
+   "sev": "mittel",
+   "ionic": "src/app/utilities/spreadsheet-reader.ts:16",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:43",
+    "lib/core/utils/import_file_io.dart:13"
+   ]
+  },
+  {
+   "unit": "utilities/spreadsheet-reader",
+   "title": "Formelzellen",
+   "n": "Ionic: SheetJS liefert den berechneten Wert der Formelzelle / Flutter: cellToDart gibt value.formula zurück (Formeltext statt cachedValue) → importierte Werte falsch, wenn die Tabelle Formeln enthält.",
+   "sev": "mittel",
+   "ionic": "src/app/utilities/spreadsheet-reader.ts:16",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:186"
+   ]
+  },
+  {
+   "unit": "utilities/spreadsheet-reader",
+   "title": "CSV-Datumsformat",
+   "n": "Flutter besser: Ionic SheetJS (cellDates) kann \"01/02/2020\" als MM/DD lesen und Tag/Monat vertauschen / Flutter liest DD/MM korrekt.",
+   "sev": "niedrig",
+   "ionic": "src/app/utilities/spreadsheet-reader.ts:19",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:1"
+   ]
+  },
+  {
+   "unit": "utilities/Utils",
+   "title": "PDF-Exporte ohne Unicode-Schrift",
+   "n": "Ionic: registerExportFont bettet NotoSans in alle PDF-Exporte ein (Kyrillisch, „“, –, € werden gedruckt) / Flutter: kein pw.ThemeData/TTF in irgendeinem PDF (Plan, Anwesenheit, Werke, Protokoll), Standard-Helvetica Type1 nur U+0000–00FF (pdf-3.13.1 type1_font.dart:126) → kyrillische Namen/Titel, typografische Anführungszeichen, Gedankenstrich und € erscheinen als leere Platzhalterkästchen.",
+   "sev": "hoch",
+   "ionic": "src/app/utilities/Utils.ts:441",
+   "f": [
+    "lib/core/services/plan_export_service.dart:60",
+    "lib/core/services/export_service.dart:255",
+    "lib/core/services/export_service.dart:491",
+    "lib/features/songs/data/song_print_service.dart:64",
+    "lib/features/team_organization/protocol_pdf.dart:54"
+   ]
+  },
+  {
+   "unit": "utilities/Utils",
+   "title": "Gruppensortierung ohne localeCompare",
+   "n": "Ionic getModifiedPlayersForList: Gruppenname und Nachname per localeCompare (Ä/Ö/Ü bei A/O/U) / Flutter sortPeopleByGroup: toLowerCase().compareTo (Codepunkt) → 'Özdemir' steht nach 'Zimmer'; betrifft Personenliste (Standardsortierung Gruppe), Mitglieder, Export, Ausgetretene. localeCompareDe existiert (core/utils/people_sort.dart:8), wird hier aber nicht genutzt.",
+   "sev": "mittel",
+   "ionic": "src/app/utilities/Utils.ts:100",
+   "f": [
+    "lib/features/people/people_list_utils.dart:77",
+    "lib/features/people/people_list_utils.dart:85",
+    "lib/features/people/presentation/pages/people_list_page.dart:397"
+   ]
+  },
+  {
+   "unit": "utilities/Utils",
+   "title": "Zeitfenster der Anwesenheitsquote",
+   "n": "Ionic: zählt Termine mit Datum vor jetzt + 1 Tag (heutiger Termin immer, morgiger ab 12 Uhr, da Datum auf 12:00 gespeichert) / Flutter playerAttendancePercentagesProvider: .lte('attendance.date', now) → heutiger Termin erst ab 12 Uhr, morgiger nie. Prozentwerte in der Personenliste weichen um Termin-Tage herum ab.",
+   "sev": "mittel",
+   "ionic": "src/app/utilities/Utils.ts:146",
+   "f": [
+    "lib/core/providers/attendance_providers.dart:300"
+   ]
+  },
+  {
+   "unit": "utilities/Utils",
+   "title": "Ohne-Text (getInstrumentText)",
+   "n": "Flutter besser: Ionic listet alle Nicht-Hauptgruppen ohne Stimme / Flutter lässt für Dirigent/Helfer Gruppen ohne aktive Personen weg (missingGroupsPlayerCountsProvider). Zusätzlich Reihenfolge: Ionic Kategorien nach id aufsteigend, Flutter nach erstem Auftreten.",
+   "sev": "niedrig",
+   "ionic": "src/app/utilities/Utils.ts:1392",
+   "f": [
+    "lib/features/songs/presentation/utils/song_utils.dart:115",
+    "lib/core/providers/player_providers.dart:116"
+   ]
+  },
+  {
+   "unit": "utilities/Utils",
+   "title": "Profilbilder ohne Bildtransformation",
+   "n": "Ionic: Listenbilder über Supabase render/image …?quality=20 (klein) / Flutter: lädt die Originalbilder (kein render-URL), mehr Datenvolumen und langsameres Laden in Listen.",
+   "sev": "niedrig",
+   "ionic": "src/app/utilities/Utils.ts:162",
+   "f": [
+    "lib/core/utils/profile_image_path.dart:10"
+   ]
+  }
+ ]
+}

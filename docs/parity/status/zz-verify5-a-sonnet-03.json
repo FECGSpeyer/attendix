@@ -1,0 +1,336 @@
+{
+ "batch": "zz-verify5-a-sonnet-03",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "settings/files/files.page#popover-f66de769": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:880",
+    "lib/features/settings/presentation/pages/files_page.dart:1302"
+   ],
+   "n": "Hilfe-Popover am ?-Button der Suche: Überschrift 'Suche', Freitext-Hinweis, typ:/datum:/Kombi-Zeilen mit fettem Filter-Text (ARB-Texte wie Ionic).",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#action-38045a06": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:299"
+   ],
+   "n": "Bestätigt: Sheet wie Ionic; Schließen (X/Wischen) übernimmt die bearbeitete Kopie, Validierung erst beim Speichern; Option löschen mit Rückfrage und Migration der Personenwerte (nur Person).",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#action-5fa87742": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:299"
+   ],
+   "n": "Bestätigt: Sheet wie Ionic; Schließen (X/Wischen) übernimmt die bearbeitete Kopie, Validierung erst beim Speichern; Option löschen mit Rückfrage und Migration der Personenwerte (nur Person).",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#action-e93b0747": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:299"
+   ],
+   "n": "Bestätigt: Sheet wie Ionic; Schließen (X/Wischen) übernimmt die bearbeitete Kopie, Validierung erst beim Speichern; Option löschen mit Rückfrage und Migration der Personenwerte (nur Person).",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#field-26cfdf12": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:299"
+   ],
+   "n": "Bestätigt: Sheet wie Ionic; Schließen (X/Wischen) übernimmt die bearbeitete Kopie, Validierung erst beim Speichern; Option löschen mit Rückfrage und Migration der Personenwerte (nur Person).",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#field-618124b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:299"
+   ],
+   "n": "Bestätigt: Sheet wie Ionic; Schließen (X/Wischen) übernimmt die bearbeitete Kopie, Validierung erst beim Speichern; Option löschen mit Rückfrage und Migration der Personenwerte (nur Person).",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#modal-48c8bdd3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:299"
+   ],
+   "n": "Bestätigt: Sheet wie Ionic; Schließen (X/Wischen) übernimmt die bearbeitete Kopie, Validierung erst beim Speichern; Option löschen mit Rückfrage und Migration der Personenwerte (nur Person).",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#modal-67f7ba0c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:299"
+   ],
+   "n": "Bestätigt: Sheet wie Ionic; Schließen (X/Wischen) übernimmt die bearbeitete Kopie, Validierung erst beim Speichern; Option löschen mit Rückfrage und Migration der Personenwerte (nur Person).",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-918527db": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:299"
+   ],
+   "n": "Bestätigt: Sheet wie Ionic; Schließen (X/Wischen) übernimmt die bearbeitete Kopie, Validierung erst beim Speichern; Option löschen mit Rückfrage und Migration der Personenwerte (nur Person).",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-924f922c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:299"
+   ],
+   "n": "Bestätigt: Sheet wie Ionic; Schließen (X/Wischen) übernimmt die bearbeitete Kopie, Validierung erst beim Speichern; Option löschen mit Rückfrage und Migration der Personenwerte (nur Person).",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#action-50952c99": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:93"
+   ],
+   "n": "Bestätigt: Inline-Eingabe 'Grund eingeben...', 'Grund hinzufügen' hängt leere Zeile an, leere Zeilen werden beim Speichern entfernt (leer = null).",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#action-578da7ee": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:93"
+   ],
+   "n": "Bestätigt: Inline-Eingabe 'Grund eingeben...', 'Grund hinzufügen' hängt leere Zeile an, leere Zeilen werden beim Speichern entfernt (leer = null).",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#field-0d3aad25": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:93"
+   ],
+   "n": "Bestätigt: Inline-Eingabe 'Grund eingeben...', 'Grund hinzufügen' hängt leere Zeile an, leere Zeilen werden beim Speichern entfernt (leer = null).",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#field-34705c68": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:93"
+   ],
+   "n": "Bestätigt: Inline-Eingabe 'Grund eingeben...', 'Grund hinzufügen' hängt leere Zeile an, leere Zeilen werden beim Speichern entfernt (leer = null).",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#field-6d77eb19": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:166"
+   ],
+   "n": "Bestätigt: Multi-Select mit Placeholder 'Alle Typen' bzw. Status (Anwesend, Abwesend, Entschuldigt, Verspätet, Verspätet entsch.), leere Typenliste = alle; Validierungs-Toasts wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#field-7d3ff9d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:166"
+   ],
+   "n": "Bestätigt: Multi-Select mit Placeholder 'Alle Typen' bzw. Status (Anwesend, Abwesend, Entschuldigt, Verspätet, Verspätet entsch.), leere Typenliste = alle; Validierungs-Toasts wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#text-e7ca4bc1": {
+   "s": "ok",
+   "f": [
+    "lib/data/models/tenant/tenant.dart:185",
+    "lib/features/settings/presentation/widgets/critical_rule_card.dart:30"
+   ],
+   "n": "Bestätigt: Beschreibung 'Name: 3x Abwesend in 30 Tagen (Typen)' wie getCriticalRuleDescription; leerer Typ-Treffer lässt Klammer weg (Randfall).",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#alert-0ef2eadc": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:94"
+   ],
+   "n": "Bestätigt: Alert 'Zuweisungen kopieren?' mit Abbrechen / Nur Schichtplan / Mit Zuweisungen; Ziel-Instanzen = verknüpfte Instanzen ohne Beobachter-Rolle; gleiche Schreibzugriffe (shifts insert, player update mit tenantId, Termin-Status).",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#alert-9674aef6": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:474"
+   ],
+   "n": "Bestätigt: Alert 'Schichtplan löschen' mit Ionic-Text, Abbrechen/Löschen, Erfolgs-/Fehlertoast, löscht mit id+tenant_id.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-2be774f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:316",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1769"
+   ],
+   "n": "X nur bei isNew (Modal); Verwerfen-Alert erst wenn Name eingegeben, wie Ionic dismiss().",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-2e6f9d01": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:622"
+   ],
+   "n": "'Mehr erfahren' nur bei !isNew, öffnet Hilfeartikel duty-setup (Route /settings/help/article/:id vorhanden).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-3a657512": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:241"
+   ],
+   "n": "Tippen auf Programmpunkt öffnet Alert 'Feld bearbeiten' (Programmpunkt/Ausführender/Info, Notiz nur 'Notiz'), 'Updaten', leerer Name hält Dialog offen mit 'Bitte gib einen Programmpunkt ein'.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-8950195c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1397"
+   ],
+   "n": "'+'-Popover mit Feld, Notizfeld, Werk Platzhalter (nicht general), Tagesordnung Platzhalter (nur bei Protokoll).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-a1e62eae": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1805",
+    "lib/data/repositories/attendance_type_repository.dart:121"
+   ],
+   "n": "FAB 'Anlegen' nur bei neuem Typ: Validierung Name, dann min. 2 Status, Insert in attendance_types mit tenant_id, Toast, Dienstplan-Angebot, Modal schließt.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-a5acb470": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1466"
+   ],
+   "n": "'Werk Platzhalter' nur wenn !isGeneral: id song-placeholder-N, Name 'Werk Platzhalter N', 20 min.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-af88791e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1435"
+   ],
+   "n": "Alert 'Feld hinzufügen' mit Freitext + Info (optional); id=name, time 20, kein Pflichtname wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-bab9d008": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1569",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1688"
+   ],
+   "n": "Button 'To-Do hinzufügen' deaktiviert bei leerem Text; Deadline (Presets 1 Std/1 Tag/2 Tage/1 Woche, benutzerdefiniert) wie Ionic; Liste geleert nach Hinzufügen.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-c1a3e2f1": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:566"
+   ],
+   "n": "Wisch-Option Löschen entfernt Zeile ohne Rückfrage wie Ionic, Ende wird neu berechnet.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-c4c2cba9": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:475",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1334"
+   ],
+   "n": "Reorder-Liste: Tagesordnung-Zeile (Icon, 'Tagesordnung', 'Hier werden Themen eingefügt', nicht editierbar), Minuten-Eingabe 'min', Drag-Handle, Ende wird neu berechnet.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-c71a96a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1451"
+   ],
+   "n": "Alert 'Notizfeld hinzufügen': id 'noteFld <text>', conductor '', time '0'.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-d5d47659": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:491",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1180"
+   ],
+   "n": "'Erinnerungen konfigurieren' nur wenn notification aktiv, Untertitel '{n} Erinnerung(en) aktiv'/'Keine Erinnerungen konfiguriert', Badge n/3, öffnet Sheet.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-f45c84b6": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:566"
+   ],
+   "n": "Löschen per Wisch-Aktion vorhanden; Ionic-Vollwisch (ionSwipe löscht direkt) fehlt als reine Geste, Löschen-Button bleibt erreichbar.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#alert-4bd8b87d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1451"
+   ],
+   "n": "Alert 'Notizfeld hinzufügen' (Textarea-Notiz, Abbrechen/Hinzufügen) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#alert-57a11ee0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1999"
+   ],
+   "n": "Löschen-Alert 'Termintyp löschen' mit Namen, Abbrechen/Löschen, Toast, Rückkehr zur Liste; delete mit id + tenant_id, keine Vorprüfung wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#alert-7993d27e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:241"
+   ],
+   "n": "Alert 'Feld bearbeiten' wie Ionic (3 Felder bzw. nur Notiz, 'Updaten', Fehlertext bei leerem Namen).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#alert-ae40e4a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1435"
+   ],
+   "n": "Alert 'Feld hinzufügen' mit Freitext + Info optional, Abbrechen/Hinzufügen.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-111f251b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1349"
+   ],
+   "n": "Toggle 'Instanz-Name vor Werken' (+Hilfetext) nur bei !isGeneral; wird gelesen und als planning_prefix_instance_name mitgespeichert.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-1e46173e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:739"
+   ],
+   "n": "Multi-Select verfügbare Status (Neutral, Anwesend fix, Abwesend, Entschuldigt, Verspätet); Standardstatus fällt auf Anwesend zurück; weniger als 2 Status gibt Toast beim Speichern.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-1ef7f6fa": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1050"
+   ],
+   "n": "Erste Bewertung ok; Randfall: Ionic zeigt den Filter auch wenn nur Organisations-Felder select/boolean sind (getPersonExtraFields), Flutter nur Instanz-Felder (tenant.additionalFields). Optionen listet Ionic selbst nur aus der Instanz, praktische Wirkung minimal.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#field-246edae3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1363"
+   ],
+   "n": "Toggle nur bei Organisation, Text identisch, wird als is_default_org_plan gespeichert.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

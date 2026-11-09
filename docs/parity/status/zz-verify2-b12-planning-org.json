@@ -1,0 +1,82 @@
+{
+ "batch": "zz-verify2-b12-planning-org",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "planning/planning.page#action-2a8d020c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1680",
+    "lib/features/planning/presentation/pages/planning_page.dart:1558",
+    "lib/core/providers/plan_providers.dart:215"
+   ],
+   "n": "Rollen geprüft: Ionic isAdmin = nur ADMIN (nicht Verantwortlich), Flutter role.isAdmin – gleich; Helfer/Verantwortliche sehen kein Löschen. Bestätigung „Vorlage löschen?“, schreibt tenants.plan_block_templates ohne die Vorlage.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-2935ce6a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:242",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:247",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:23"
+   ],
+   "n": "Bedingung = Telegram-Chat-ID des Nutzers (Ionic tenantUser.telegram_chat_id aus notification config / Flutter notificationConfigProvider) – gleich, rollenunabhängig; deaktiviert wie isPlanExportDisabled.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-0e411c55": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:242",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:253"
+   ],
+   "n": "Wie Telegram (PDF): gleiche Bedingung, sendet Seite 1 als Bild.",
+   "v": "bestätigt"
+  },
+  "x-7d55a70233": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:803",
+    "lib/features/planning/presentation/pages/planning_page.dart:805",
+    "lib/features/planning/presentation/pages/planning_page.dart:809",
+    "lib/features/planning/presentation/pages/planning_page.dart:255"
+   ],
+   "n": "Befund echt. Ionic: Termin ohne Plan zeigt „Wort “ (id '', 10 min); nur bei kommender Werke-Historie ruft ngOnInit onAttChange → Typ-Vorlage bzw. leere Liste → calculateEnd speichert (nur wenn gültig); ohne Historie wird beim Öffnen nichts geschrieben. / Flutter _loadAttendance: immer Typ-Vorlage, sonst „Wort“ (id 'Wort'), _dirty = true → beim Verlassen/dispose wird attendance.plan geschrieben, auch ohne Nutzeränderung. Folge: Termin ohne Typ-Vorlage erhält allein durchs Öffnen einen „Wort“-Plan (andere DB-Schreibung).",
+   "v": "bestätigt"
+  },
+  "x-9b169a1078": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:721",
+    "lib/features/planning/presentation/pages/planning_page.dart:700"
+   ],
+   "n": "Befund echt. Ionic: ohne attendanceId upcomingAttendances[0], ohne kommenden Termin keiner gewählt (Bearbeiten speichert dann nicht). / Flutter: wählt dann den neuesten (vergangenen) Termin – zusammen mit x-7d55a70233 bekommt dieser beim Verlassen ggf. einen „Wort“-Plan. Teil 2 (attendanceId außerhalb der Liste per ID nachladen) ist Flutter besser.",
+   "v": "bestätigt"
+  },
+  "x-de53b1e39b": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/planning/presentation/attendance_plan_viewer.dart:37",
+    "lib/features/self_service/presentation/pages/signout_page.dart:716",
+    "lib/data/repositories/sign_in_out_repository.dart:21",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:61"
+   ],
+   "n": "Befund echt. Ionic att-list/signout übergeben attendance + plan === attendance.plan, extra_plans geladen → Chips je Plan/Tag, Start = heutiger Plan. / Flutter: openAttendancePlanViewer übergibt plan explizit und PlanAttendance ohne extraPlans (Attendance-Modell hat kein extra_plans); Selbstservice: kSignoutAttendanceColumns ohne extra_plans, showPlanViewerSheet ohne extraPlans → nur Plan 1 sichtbar (Eltern-Portal übergibt extraPlans korrekt). Mitglieder sehen in „Meine Termine“ nur Plan 1.",
+   "v": "bestätigt"
+  },
+  "x-5e1a396117": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:44",
+    "lib/data/repositories/plan_repository.dart:13",
+    "lib/core/router/route_access.dart:109"
+   ],
+   "n": "Befund echt (Rollenlücke). Ionic: getAttendance → filterArchivedForRole, Helfer/Stimmführer-Helfer sehen in der Terminauswahl (inkl. Vor/Zurück) keine archivierten Termine. / Flutter: getPlanAttendances lädt archived nicht und filtert nicht; Helfer erreichen /planning?attendanceId=… und können archivierte Termine auswählen und deren Plan bearbeiten (schreiben). Admin/Verantwortlich gleich.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

@@ -1,0 +1,1618 @@
+{
+ "batch": "zz-verify5-b-opus-10",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 84,
+    "method": "OrganisationService.updatePersonFieldValues",
+    "cond": [],
+    "table": "tenant_group_person_fields",
+    "op": "upsert",
+    "payload": "rows",
+    "options": [
+     "{ onConflict: 'tenant_group,person_key,field_id' }"
+    ],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "713d72e1",
+    "mbody": "f1398995",
+    "id": "services/organisation/organisation.service#db-ad59e983"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/profile_repository.dart:281",
+     "lib/core/providers/profile_providers.dart:180",
+     "lib/features/people/presentation/pages/person_detail_page.dart:351",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:203"
+    ],
+    "n": "Gleiche Upsert-Zeilen {tenant_group, person_key, field_id, value} mit onConflict tenant_group,person_key,field_id; alle drei Ionic-Aufrufer (eigenes Profil, Personendetail, Massenbearbeitung) vorhanden. Flutter zusätzlich Mitgliedsprüfung der Org und Demo-Schutz.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/profile_repository.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 29,
+    "method": "OrganisationService.getPersonFieldValues",
+    "cond": [],
+    "table": "tenant_group_person_fields",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'field_id, value'",
+    "filters": [
+     "eq('tenant_group', orgId)",
+     "eq('person_key', personKey)"
+    ],
+    "tenantFilter": false,
+    "src": "9a933144",
+    "mbody": "e4f09741",
+    "id": "services/organisation/organisation.service#db-b982d376"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/profile_repository.dart:259",
+     "lib/features/people/presentation/pages/person_detail_page.dart:324"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/profile_repository.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 219,
+    "method": "OrganisationService.getOrganisationsFromUser",
+    "cond": [],
+    "table": "tenantUsers",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, tenantId(*)'",
+    "filters": [
+     "eq('userId', userId)",
+     "or('role.eq.1, role.eq.5')"
+    ],
+    "tenantFilter": false,
+    "src": "fd7262d2",
+    "mbody": "d5cd4ba4",
+    "roleGuarded": true,
+    "id": "services/organisation/organisation.service#db-be14ed40"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:271",
+     "lib/core/providers/organisation_providers.dart:21",
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:18"
+    ],
+    "n": "tenantUsers mit userId und or(role.eq.1,role.eq.5) wie Ionic (Flutter liest nur die Spalte tenantId, gleiche Daten). Rolle: Aufrufer \"Organisation erstellen oder verknüpfen\" nur für Admin (Ionic isSuperAdmin, Flutter isSuperAdmin = Role.admin) und nur ohne Organisation (org_settings_page.dart:158).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 109,
+    "method": "OrganisationService.createOrganisation",
+    "cond": [],
+    "table": "tenant_groups",
+    "op": "insert",
+    "payload": "{ name }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "be2682f6",
+    "mbody": "41c7f6ff",
+    "id": "services/organisation/organisation.service#db-d081bc1d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:22",
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:101"
+    ],
+    "n": "insert tenant_groups {name}, danach Verknüpfung mit der aktuellen Instanz wie db.createOrganisation. Flutter trimmt den Namen.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player-absence/player-absence.service.ts",
+    "line": 46,
+    "method": "PlayerAbsenceService.addAbsence",
+    "cond": [],
+    "table": "player_absences",
+    "op": "insert",
+    "payload": "absence",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "001edb16",
+    "mbody": "97c1a4a4",
+    "id": "services/player-absence/player-absence.service#db-7fbdf33d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_absence_repository.dart:88"
+    ],
+    "n": "Gleiche Spalten person_id, from_date, until_date, reason, tenant_id (= aktuelle Instanz).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_absence_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player-absence/player-absence.service.ts",
+    "line": 61,
+    "method": "PlayerAbsenceService.deleteAbsence",
+    "cond": [],
+    "table": "player_absences",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', id)"
+    ],
+    "tenantFilter": false,
+    "src": "5cc4d7d1",
+    "mbody": "a53108f2",
+    "id": "services/player-absence/player-absence.service#db-936de012"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_absence_repository.dart:105"
+    ],
+    "n": "Flutter zusätzlich tenant_id-Filter.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_absence_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player-absence/player-absence.service.ts",
+    "line": 16,
+    "method": "PlayerAbsenceService.getAbsencesForPerson",
+    "cond": [],
+    "table": "player_absences",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('person_id', personId)",
+     "eq('tenant_id', tenantId)",
+     "order('from_date')"
+    ],
+    "tenantFilter": true,
+    "src": "e4efcbe1",
+    "mbody": "e5c00771",
+    "id": "services/player-absence/player-absence.service#db-99111af5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_absence_repository.dart:30"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_absence_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player-absence/player-absence.service.ts",
+    "line": 32,
+    "method": "PlayerAbsenceService.getAbsencesForTenant",
+    "cond": [],
+    "table": "player_absences",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenant_id', tenantId)"
+    ],
+    "tenantFilter": true,
+    "src": "8444ad33",
+    "mbody": "ce0b85c6",
+    "id": "services/player-absence/player-absence.service#db-d999637c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_absence_repository.dart:52",
+     "lib/data/repositories/dashboard_repository.dart:124"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_absence_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 22,
+    "method": "PlayerService.getPlayerByAppId",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('appId', appId)",
+     "eq('tenantId', tenantId)"
+    ],
+    "tenantFilter": true,
+    "src": "dae0c676",
+    "mbody": "0e7fd42c",
+    "id": "services/player/player.service#db-08cf0e97"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:138"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 556,
+    "method": "PlayerService.resetExtraFieldValues",
+    "cond": [],
+    "table": "player",
+    "op": "update",
+    "payload": "{ additional_fields: extraFieldsData }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', player.id)"
+    ],
+    "tenantFilter": false,
+    "src": "56269061",
+    "mbody": "c8812ed8",
+    "id": "services/player/player.service#db-09f7345f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/extra_fields_repository.dart:85",
+     "lib/data/repositories/extra_fields_repository.dart:167"
+    ],
+    "n": "Gleiche Werte. Randfall: Ionic überspringt fehlgeschlagene Einzel-Updates und zählt weiter, Flutter bricht beim ersten Fehler ab.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/extra_fields_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 588,
+    "method": "PlayerService.updateExtraFieldValue",
+    "cond": [
+     "(extraFieldsData[fieldId] === oldValue)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ additional_fields: extraFieldsData }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', player.id)"
+    ],
+    "tenantFilter": false,
+    "src": "56269061",
+    "mbody": "e65cd3b1",
+    "id": "services/player/player.service#db-30161f29"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/extra_fields_repository.dart:143",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:255"
+    ],
+    "n": "Alter → neuer Wert (neuer Standard = erste verbleibende Option) wie Ionic. Randfall wie db-09f7345f (Abbruch bei Einzelfehler).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/extra_fields_repository.dart",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 570,
+    "method": "PlayerService.updateExtraFieldValue",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, additional_fields'",
+    "filters": [
+     "eq('tenantId', tenantId)"
+    ],
+    "tenantFilter": true,
+    "src": "6f3e7540",
+    "mbody": "e65cd3b1",
+    "id": "services/player/player.service#db-48a709ce"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/extra_fields_repository.dart:137"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/extra_fields_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 430,
+    "method": "PlayerService.removePlayer",
+    "cond": [],
+    "table": "player",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: player.id })"
+    ],
+    "tenantFilter": false,
+    "src": "c44fc78c",
+    "mbody": "548481a6",
+    "id": "services/player/player.service#db-4b96ef3d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:796",
+     "lib/core/providers/player_providers.dart:218"
+    ],
+    "n": "delete player .eq('id') (+ tenantId).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 255,
+    "method": "PlayerService.reassignPlayerAbsences",
+    "cond": [],
+    "table": "player_absences",
+    "op": "update",
+    "payload": "{ person_id: toId }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('person_id', fromId)"
+    ],
+    "tenantFilter": false,
+    "src": "bb061736",
+    "mbody": "d06f36c3",
+    "id": "services/player/player.service#db-9a7299b3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:1949"
+    ],
+    "n": "update player_absences {person_id: target} .eq('person_id', pending) beim Zusammenführen; Flutter zusätzlich tenant_id-Filter und Prüfung, dass beide Personen zur Instanz gehören.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 419,
+    "method": "PlayerService.updatePlayerField",
+    "cond": [],
+    "table": "player",
+    "op": "update",
+    "payload": "{ [field]: value } as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "826f1bd2",
+    "mbody": "b1289404",
+    "id": "services/player/player.service#db-bd0f56d3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:184",
+     "lib/data/repositories/player_repository.dart:565"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart",
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 405,
+    "method": "PlayerService.updatePlayerAdditionalFields",
+    "cond": [],
+    "table": "player",
+    "op": "update",
+    "payload": "{ additional_fields }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "709eb465",
+    "mbody": "30d1b74d",
+    "id": "services/player/player.service#db-c1517084"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/extra_fields_repository.dart:85",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:210"
+    ],
+    "n": "update player {additional_fields} .eq('id') (+ tenantId) in Bereinigung und Massenbearbeitung.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/extra_fields_repository.dart",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 375,
+    "method": "PlayerService.updatePlayerHistory",
+    "cond": [],
+    "table": "player",
+    "op": "update",
+    "payload": "{ history: history as any[] }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "c2c54a39",
+    "mbody": "f4b15fd3",
+    "id": "services/player/player.service#db-c1a7cd43"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:326",
+     "lib/data/repositories/player_repository.dart:565"
+    ],
+    "n": "update player {history} (+ tenantId). Randfall: Flutter entfernt Einträge mit gleichem Datum+Typ+Text, Ionic alle mit gleichem Datum.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart",
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 535,
+    "method": "PlayerService.resetExtraFieldValues",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, additional_fields'",
+    "filters": [
+     "eq('tenantId', tenantId)"
+    ],
+    "tenantFilter": true,
+    "src": "6f3e7540",
+    "mbody": "c8812ed8",
+    "id": "services/player/player.service#db-c3c2ba1a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/extra_fields_repository.dart:158",
+     "lib/data/repositories/extra_fields_repository.dart:73"
+    ],
+    "n": "select id, additional_fields .eq('tenantId') – Flutter seitenweise (Ionic max. 1000 Zeilen).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/extra_fields_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 168,
+    "method": "PlayerService.getLeftPlayers",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "is('pending', false)",
+     "eq('tenantId', tenantId)",
+     "not('left', 'is', null)",
+     "order('left', { ascending: false })"
+    ],
+    "tenantFilter": true,
+    "src": "5421259d",
+    "mbody": "df0af889",
+    "id": "services/player/player.service#db-c8b7f696"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:177",
+     "lib/features/settings/presentation/pages/left_players_page.dart:24"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/features/settings/presentation/pages/left_players_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 217,
+    "method": "PlayerService.getPossibleDuplicatesInTenant",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, instrumentGroup:instrument(name)'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "is('pending', false)",
+     "is('appId', null)",
+     "neq('id', excludeId)",
+     "or(orParts.join(','))",
+     "limit(500)"
+    ],
+    "tenantFilter": true,
+    "src": "316a5589",
+    "mbody": "9ebbe087",
+    "id": "services/player/player.service#db-ca2edd62"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:1863",
+     "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:17"
+    ],
+    "n": "Gruppenname kommt in Flutter aus groupsMapProvider.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 149,
+    "method": "PlayerService.getPendingPersons",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "is('pending', true)",
+     "eq('tenantId', tenantId)",
+     "order('created_at', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "ebbc78af",
+    "mbody": "8e286fc8",
+    "id": "services/player/player.service#db-d3a9e9fb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:158",
+     "lib/core/providers/realtime_providers.dart:337"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 127,
+    "method": "PlayerService.getPlayersByGroup",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "eq('instrument', groupId)",
+     "is('left', null)",
+     "is('pending', false)",
+     "order('isLeader', { ascending: false })",
+     "order('lastName')"
+    ],
+    "tenantFilter": true,
+    "src": "607298aa",
+    "mbody": "0f57c3f0",
+    "roleGuarded": true,
+    "id": "services/player/player.service#db-e018cb94"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:200",
+     "lib/features/voice_leader/data/providers/voice_leader_providers.dart:72",
+     "lib/core/router/route_access.dart:96",
+     "lib/features/settings/presentation/pages/settings_page.dart:198"
+    ],
+    "n": "player: tenantId, instrument, left null, pending false, Sortierung isLeader desc/lastName wie Ionic. Rolle: Ionic settings/voice-leader nur über Einstiege für VOICE_LEADER/VOICE_LEADER_HELPER (settings.page isVoiceLeader && !isGeneral && !sp, side-nav, isUrlAccessAllowed); Flutter gleiche Einstiege (canSeeVoiceLeaderSettings) plus Routen-Gate für dieselben Rollen.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/profile/profile.service",
+   "ionic": {
+    "ts": "services/profile/profile.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/profile/profile.service.ts",
+    "line": 31,
+    "method": "ProfileService.getFirstPlayerProfile",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('appId', userId)",
+     "limit(1)"
+    ],
+    "tenantFilter": false,
+    "src": "b81dfd10",
+    "mbody": "cf06b1b5",
+    "id": "services/profile/profile.service#db-4f868b0e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1012"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/profile/profile.service",
+   "ionic": {
+    "ts": "services/profile/profile.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/profile/profile.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getPlayerProfile:12-28",
+     "getFirstPlayerProfile:30-45",
+     "getPlayerByAppId:47-66",
+     "updateProfile:68-103",
+     "changePassword:105-107",
+     "updatePassword:109-122"
+    ],
+    "bodies": {
+     "getPlayerProfile": "6937e044",
+     "getFirstPlayerProfile": "cf06b1b5",
+     "getPlayerByAppId": "b4882a8d",
+     "updateProfile": "f9895652",
+     "changePassword": "9fc625b6",
+     "updatePassword": "7438525c"
+    },
+    "id": "services/profile/profile.service#logic-d5e6e268"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1010"
+    ],
+    "n": "Nur getFirstPlayerProfile ist lebendig (Vorbelegung bei Instanz-Registrierung); restliche Methoden toter Code.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/protocol/protocol.service",
+   "ionic": {
+    "ts": "services/protocol/protocol.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/protocol/protocol.service.ts",
+    "line": 26,
+    "method": "ProtocolService.getProtocols",
+    "cond": [],
+    "table": "protocols",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "PROTOCOL_LIST_SELECT",
+    "filters": [
+     "eq('tenant_id', tenantId)"
+    ],
+    "tenantFilter": true,
+    "src": "0807dde2",
+    "mbody": "34de1c50",
+    "id": "services/protocol/protocol.service#db-162a7f7a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/protocol_repository.dart:50"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/protocol_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/protocol/protocol.service",
+   "ionic": {
+    "ts": "services/protocol/protocol.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/protocol/protocol.service.ts",
+    "line": 86,
+    "method": "ProtocolService.removePdf",
+    "cond": [],
+    "table": "storage:attendances",
+    "op": "remove",
+    "payload": "[path]",
+    "filters": [],
+    "src": "3633227f",
+    "mbody": "0d03dcc8",
+    "id": "services/protocol/protocol.service#db-4c131e2c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/protocol_repository.dart:144",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1022"
+    ],
+    "n": "Entfernen nach 60 s, Fehler ignoriert, wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/protocol_repository.dart",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/protocol/protocol.service",
+   "ionic": {
+    "ts": "services/protocol/protocol.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/protocol/protocol.service.ts",
+    "line": 16,
+    "method": "ProtocolService.getProtocolForAttendance",
+    "cond": [],
+    "table": "protocols",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('attendance_id', attendanceId)",
+     "maybeSingle()"
+    ],
+    "tenantFilter": false,
+    "src": "9317b398",
+    "mbody": "c3fdb7a4",
+    "id": "services/protocol/protocol.service#db-51e683b8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/protocol_repository.dart:32"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/protocol_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/protocol/protocol.service",
+   "ionic": {
+    "ts": "services/protocol/protocol.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/protocol/protocol.service.ts",
+    "line": 56,
+    "method": "ProtocolService.publish",
+    "cond": [],
+    "table": "rpc:publish_protocol",
+    "op": "rpc",
+    "payload": "{ p_attendance_id: attendanceId }",
+    "filters": [],
+    "src": "e40e82a6",
+    "mbody": "6fa0c3a3",
+    "id": "services/protocol/protocol.service#db-61df41ec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/protocol_repository.dart:98",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:983"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/protocol_repository.dart",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/protocol/protocol.service",
+   "ionic": {
+    "ts": "services/protocol/protocol.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/protocol/protocol.service.ts",
+    "line": 43,
+    "method": "ProtocolService.saveSection",
+    "cond": [],
+    "table": "rpc:save_protocol_section",
+    "op": "rpc",
+    "payload": "{ p_attendance_id: attendanceId, p_field_id: fieldId, p_doc: changes.doc ?? null, p_outcome: changes.outcome ?? null, p_clear_outcome: changes.outcome === null, }",
+    "filters": [],
+    "src": "b71c3783",
+    "mbody": "a2a516cc",
+    "id": "services/protocol/protocol.service#db-76415810"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/protocol_repository.dart:80",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:463"
+    ],
+    "n": "rpc save_protocol_section mit gleichen Parametern; p_clear_outcome = (Ergebnis == null) wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/protocol_repository.dart",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/protocol/protocol.service",
+   "ionic": {
+    "ts": "services/protocol/protocol.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/protocol/protocol.service.ts",
+    "line": 81,
+    "method": "ProtocolService.uploadPdf",
+    "cond": [],
+    "table": "storage:attendances",
+    "op": "getPublicUrl",
+    "payload": "path",
+    "filters": [],
+    "src": "75ef9f3c",
+    "mbody": "2684f732",
+    "id": "services/protocol/protocol.service#db-7deba62c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/protocol_repository.dart:133"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/protocol_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/protocol/protocol.service",
+   "ionic": {
+    "ts": "services/protocol/protocol.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/protocol/protocol.service.ts",
+    "line": 77,
+    "method": "ProtocolService.uploadPdf",
+    "cond": [],
+    "table": "storage:attendances",
+    "op": "upload",
+    "payload": "path, blob, { upsert: true, contentType: 'application/pdf' }",
+    "filters": [],
+    "src": "9bfee503",
+    "mbody": "2684f732",
+    "id": "services/protocol/protocol.service#db-80b2505a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/protocol_repository.dart:128",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1005"
+    ],
+    "n": "Bucket attendances, Pfad protocols/<id>_<ms>.pdf, upsert, application/pdf, öffentliche URL.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/protocol_repository.dart",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/protocol/protocol.service",
+   "ionic": {
+    "ts": "services/protocol/protocol.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/protocol/protocol.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getProtocolForAttendance:15-23",
+     "getProtocols:25-33",
+     "saveSection:39-53",
+     "publish:55-59",
+     "deleteProtocol:61-68",
+     "uploadPdf:75-83",
+     "removePdf:85-87"
+    ],
+    "bodies": {
+     "getProtocolForAttendance": "c3fdb7a4",
+     "getProtocols": "34de1c50",
+     "saveSection": "a2a516cc",
+     "publish": "6fa0c3a3",
+     "deleteProtocol": "3624af6b",
+     "uploadPdf": "2684f732",
+     "removePdf": "0d03dcc8"
+    },
+    "id": "services/protocol/protocol.service#logic-c23941bd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/protocol_repository.dart:30"
+    ],
+    "n": "Flutter wirft bei Fehlern statt null/[] zurückzugeben und prüft zusätzlich, dass der Termin zur Instanz gehört (_ensureAttendanceOfTenant).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/protocol_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/push/push.service.ts",
+    "line": 412,
+    "method": "PushService.togglePush",
+    "cond": [],
+    "table": "notifications",
+    "op": "update",
+    "payload": "{ push_enabled: enabled }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', userId)"
+    ],
+    "tenantFilter": false,
+    "src": "48411320",
+    "mbody": "d846addb",
+    "id": "services/push/push.service#db-79c337fc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/device_token_repository.dart:123",
+     "lib/core/services/push/push_service.dart:490",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:127"
+    ],
+    "n": "update notifications {push_enabled} .eq('id', userId), danach bei true initPush, wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart",
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/push/push.service.ts",
+    "line": 426,
+    "method": "PushService.enablePushInDb",
+    "cond": [],
+    "table": "notifications",
+    "op": "update",
+    "payload": "{ push_enabled: true }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', user.id)"
+    ],
+    "tenantFilter": false,
+    "src": "fecc5cf1",
+    "mbody": "af58de35",
+    "id": "services/push/push.service#db-917c3c05"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_service.dart:283",
+     "lib/data/repositories/device_token_repository.dart:123"
+    ],
+    "n": "Nach \"Aktivieren\" im Push-Dialog: initPush, dann push_enabled = true.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/push/push.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:36-44",
+     "promptAndEnable:46-90",
+     "initPush:92-170",
+     "setupPushListeners:172-214",
+     "showForegroundAlert:218-233",
+     "handlePendingPushNavigation:245-267",
+     "navigateFromData:269-347",
+     "navigateToAttendance:359-370",
+     "consumePendingAttendanceId:375-379",
+     "removeToken:381-399",
+     "clearBadge:401-409",
+     "togglePush:411-420",
+     "enablePushInDb:422-430",
+     "saveToken:432-472"
+    ],
+    "bodies": {
+     "constructor": "bc51963f",
+     "promptAndEnable": "a883a63d",
+     "initPush": "92b48f51",
+     "setupPushListeners": "7c2fb4b3",
+     "showForegroundAlert": "fada1a98",
+     "handlePendingPushNavigation": "95350fa4",
+     "navigateFromData": "969d95dc",
+     "navigateToAttendance": "1ae39548",
+     "consumePendingAttendanceId": "5f115076",
+     "removeToken": "9e4ea8a4",
+     "clearBadge": "bbdcf0b3",
+     "togglePush": "d846addb",
+     "enablePushInDb": "af58de35",
+     "saveToken": "a449e0e1"
+    },
+    "id": "services/push/push.service#logic-5a8d2b93"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_service.dart:266",
+     "lib/core/providers/push_providers.dart:195",
+     "lib/core/services/push/push_navigation.dart:49"
+    ],
+    "n": "Gleiches Verhalten (Abfrage nach Login, Registrierung, Token speichern, Listener, Navigation, Badge, Abmelden). Flutter härtet Sitzungswechsel ab (Generationszähler), fragt erst nach Aufbau der App-Shell und auch bei initialSession.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart",
+    "lib/core/providers/push_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 392,
+    "method": "PushService.removeToken",
+    "cond": [
+     "(Capacitor.getPlatform() === 'ios')"
+    ],
+    "plugin": "FirebaseMessaging",
+    "call": "deleteToken",
+    "args": "",
+    "src": "5d19fdce",
+    "mbody": "9e4ea8a4",
+    "id": "services/push/push.service#native-11e34032"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_service.dart:457"
+    ],
+    "n": "Flutter löscht das FCM-Token auch unter Android.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 138,
+    "method": "PushService.initPush",
+    "cond": [
+     "(isIos)"
+    ],
+    "plugin": "PushNotifications",
+    "call": "register",
+    "args": "",
+    "src": "b8e1a40a",
+    "mbody": "92b48f51",
+    "roleGuarded": true,
+    "id": "services/push/push.service#native-17b43e12"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/firebase_push_messaging_client.dart:99",
+     "lib/core/services/push/push_service.dart:318"
+    ],
+    "n": "iOS-APNs-Registrierung übernimmt firebase_messaging; Token danach wie Ionic gespeichert.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 156,
+    "method": "PushService.initPush",
+    "cond": [
+     "!(isIos)"
+    ],
+    "plugin": "PushNotifications",
+    "call": "register",
+    "args": "",
+    "src": "b8e1a40a",
+    "mbody": "92b48f51",
+    "roleGuarded": true,
+    "id": "services/push/push.service#native-17b43e12-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/firebase_push_messaging_client.dart:99",
+     "lib/core/services/push/push_service.dart:318"
+    ],
+    "n": "Android: FCM getToken statt register()+registration – gleiches Ergebnis, sobald die Berechtigung erteilt ist (Android-13+-Lücke siehe native-9bb3502f).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 144,
+    "method": "PushService.initPush",
+    "cond": [
+     "(isIos)"
+    ],
+    "plugin": "FirebaseMessaging",
+    "call": "getToken",
+    "args": "",
+    "src": "4e36cf9d",
+    "mbody": "92b48f51",
+    "roleGuarded": true,
+    "id": "services/push/push.service#native-920b8a86"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/firebase_push_messaging_client.dart:115",
+     "lib/core/services/push/push_service.dart:318"
+    ],
+    "n": "FCM-Token → device_tokens; ohne Token nur Log wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 124,
+    "method": "PushService.initPush",
+    "cond": [
+     "(isIos)"
+    ],
+    "plugin": "PushNotifications",
+    "call": "addListener",
+    "args": "'registration', (token) => { // APNS token received, now AppDelegate has set it on Firebase Messaging resolve(); }",
+    "src": "92d54d9c",
+    "mbody": "92b48f51",
+    "roleGuarded": true,
+    "id": "services/push/push.service#native-95ceae7e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/firebase_push_messaging_client.dart:99",
+     "lib/core/services/push/push_service.dart:318"
+    ],
+    "n": "firebase_messaging registriert APNs selbst; getToken wartet bis zu 10 s auf das APNs-Token (Ionic: registration-Listener mit 10-s-Timeout).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart"
+   ]
+  }
+ ]
+}

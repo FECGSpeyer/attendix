@@ -1,0 +1,647 @@
+{
+ "batch": "zz-verify5-b-sonnet-12",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/tasks-tab/tasks-tab.component",
+   "ionic": {
+    "ts": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "html": "team-organization/tasks-tab/tasks-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/tasks-tab/tasks-tab.component.html",
+    "line": 63,
+    "cond": [
+     "@else (not loading)",
+     "@empty of groups"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ emptyText }}"
+    ],
+    "text": "{{ emptyText }}",
+    "id": "team-organization/tasks-tab/tasks-tab.component#text-444e918f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:100",
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:132"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 185,
+    "cond": [
+     "@else if (inCircle)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block"
+    },
+    "events": [
+     "(click)=openSuggest()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "bulb-outline"
+    ],
+    "keys": [
+     "teamOrg.suggestTopic"
+    ],
+    "de": [
+     "Thema vorschlagen"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.suggestTopic' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-1d76455a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:587"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 127,
+    "cond": [
+     "@else if (isLeader)"
+    ],
+    "tag": "ion-fab-button",
+    "attrs": {},
+    "events": [
+     "(click)=addTopic()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'teamOrg.createTopic' | transloco\""
+    ],
+    "icons": [
+     "add"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "team-organization/topics-tab/topics-tab.component#action-699aa11a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:362",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:365"
+    ],
+    "n": "FAB „Thema anlegen“ → /settings/agenda-items/new, nur Leitung. Randnotiz: Flutter zeigt den FAB schon während des Skeletons (Ionic erst nach dem Laden) – ohne praktische Wirkung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 114,
+    "cond": [
+     "@else if (isLeader)",
+     "@if (doneTopics.length)",
+     "@if (showDone)",
+     "@for (item of doneTopics; track item.id; let last = $last)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "class": "is-done"
+    },
+    "events": [
+     "(click)=openTopic(item.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[lines]=\"last ? 'none' : 'full'\""
+    ],
+    "icons": [],
+    "keys": [
+     "agenda.statusDropped",
+     "agenda.statusDone"
+    ],
+    "de": [
+     "Verworfen",
+     "Erledigt"
+    ],
+    "literals": [],
+    "text": "{{ item.title }} {{ (item.status === 'dropped' ? 'agenda.statusDropped' : 'agenda.statusDone') | transloco }}{{ item.responsible_person ? ' · ' + personName(item.responsible_person) : '' }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-7f827458"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:524",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:537"
+    ],
+    "n": "Titel durchgestrichen grau, „Verworfen“/„Erledigt“ · Verantwortlich; öffnet Thema. Nur Leitung bei eingeschaltetem Schalter.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 16,
+    "cond": [
+     "@else if (isLeader)",
+     "@if (pending.length)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "lines": "none",
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=isReviewOpen = true"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "bulb-outline"
+    ],
+    "keys": [
+     "teamOrg.submittedByMembers",
+     "teamOrg.review"
+    ],
+    "de": [
+     "Von Mitgliedern eingereicht",
+     "Prüfen"
+    ],
+    "literals": [
+     "1 neuer Vorschlag",
+     " neue Vorschläge"
+    ],
+    "text": "{{ pending.length === 1 ? '1 neuer Vorschlag' : pending.length + ' neue Vorschläge' }} {{ 'teamOrg.submittedByMembers' | transloco }} {{ 'teamOrg.review' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-d04855de"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:29",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:396",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:400"
+    ],
+    "n": "Banner nur Leitung bei offenen Vorschlägen: „1 neuer Vorschlag“/„n neue Vorschläge“ (ICU-Plural), „Von Mitgliedern eingereicht“, Glühbirne warning; Tippen öffnet Prüf-Sheet. Topics-Tab: Leitung → Leitungsansicht in beiden (Ionic @else if (isLeader), Flutter TopicsTab → _LeaderTopics); übrige Rollen nie.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 244,
+    "method": "TeamTopicsTabComponent.openTopic",
+    "cond": [
+     "(id)"
+    ],
+    "via": "navController.navigateForward",
+    "to": "['/tabs/settings/agenda-items', id]",
+    "src": "8edac219",
+    "mbody": "252738d6",
+    "id": "team-organization/topics-tab/topics-tab.component#nav-190be6fd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:141",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:508",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:537"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 252,
+    "method": "TeamTopicsTabComponent.addTopic",
+    "cond": [],
+    "via": "navController.navigateForward",
+    "to": "['/tabs/settings/agenda-items', 'new']",
+    "src": "0ab37991",
+    "mbody": "1b159038",
+    "id": "team-organization/topics-tab/topics-tab.component#nav-f98c876b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:365"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 204,
+    "cond": [
+     "@else if (inCircle)",
+     "@for (item of items; track item.id)",
+     "@else (not item.proposal_status === 'accepted')"
+    ],
+    "tag": "#text",
+    "keys": [
+     "teamOrg.submittedOn",
+     "common.ngDate"
+    ],
+    "de": [
+     "Eingereicht am {date}",
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.submittedOn' | transloco: { date: (item.created_at | date: ('common.ngDate' | transloco)) } }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-040514d0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:619",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:645"
+    ],
+    "n": "Sonst „Eingereicht am dd.MM.yyyy“ (lokales Datum von created_at); gleiche Rollen wie text-15024791.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 215,
+    "cond": [
+     "@else if (inCircle)",
+     "@empty of items"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium",
+     "class": "ion-text-wrap"
+    },
+    "keys": [
+     "teamOrg.nothingSuggested"
+    ],
+    "de": [
+     "Du hast noch nichts vorgeschlagen."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.nothingSuggested' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-2b2a9314"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:606"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 181,
+    "cond": [
+     "@else if (inCircle)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "teamOrg.suggestHint"
+    ],
+    "de": [
+     "Du hast ein Anliegen für die nächste Sitzung? Die Leitung entscheidet, ob es auf die Tagesordnung kommt."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.suggestHint' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-59b7f7b0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:583"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 194,
+    "cond": [
+     "@else if (inCircle)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "teamOrg.mySuggestions"
+    ],
+    "de": [
+     "Meine Vorschläge"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.mySuggestions' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-67aab65d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:604"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 180,
+    "cond": [
+     "@else if (inCircle)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "teamOrg.suggestTopic"
+    ],
+    "de": [
+     "Thema vorschlagen"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.suggestTopic' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-729adf66"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:582"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 350,
+    "method": "TeamTopicsTabComponent.sendSuggestion",
+    "cond": [],
+    "message": {
+     "keys": [
+      "teamOrg.suggestionSent"
+     ],
+     "de": [
+      "Vorschlag gesendet"
+     ],
+     "literals": [],
+     "expr": "translate('teamOrg.suggestionSent')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "2fb8f358",
+    "mbody": "666892e1",
+    "id": "team-organization/topics-tab/topics-tab.component#toast-3235ad83"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:564"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "terms/terms.page.ts",
+    "line": 36,
+    "method": "TermsPage.openPrivacy",
+    "cond": [],
+    "component": "LegalModalComponent",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "806f99f8",
+    "mbody": "be8e7d1f",
+    "id": "terms/terms.page#modal-0b75e632"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/pages/terms_page.dart:154",
+     "lib/features/legal/presentation/pages/terms_page.dart:39",
+     "lib/features/legal/presentation/widgets/legal_content_view.dart:139"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/pages/terms_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "utilities/Utils.ts",
+    "line": 1082,
+    "method": "Utils.exportAttendancePlans",
+    "cond": [
+     "(!indexes.length)"
+    ],
+    "message": {
+     "keys": [
+      "export.noPlan"
+     ],
+     "de": [
+      "Kein Plan verfügbar"
+     ],
+     "literals": [],
+     "expr": "translate('export.noPlan')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "78d45b37",
+    "mbody": "c917302e",
+    "id": "utilities/Utils#toast-29969d9e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:100"
+    ],
+    "n": "\"Kein Plan verfügbar\" als Warnung.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  }
+ ]
+}

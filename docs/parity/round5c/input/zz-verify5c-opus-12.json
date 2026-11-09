@@ -1,0 +1,1836 @@
+{
+ "batch": "zz-verify5c-opus-12",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/register.page.html",
+    "line": 92,
+    "cond": [
+     "@switch (tenant.type) case 'orchestra'"
+    ],
+    "tag": "#text",
+    "keys": [
+     "register.helpOrchestra"
+    ],
+    "de": [
+     "Optimiert für Orchester/Musikgruppen mit Instrumentengruppen."
+    ],
+    "literals": [],
+    "text": "{{ 'register.helpOrchestra' | transloco }}",
+    "id": "register/register.page#text-76739b9f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:75",
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:281"
+    ],
+    "n": "„Optimiert für Orchester/Musikgruppen mit Instrumentengruppen.“ bei gewähltem Typ orchestra; nur Formularzustand, rollenunabhängig.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/register.page.html",
+    "line": 173,
+    "cond": [
+     "@else (not tenant.longName && tenant.shortName && mainGroupName)",
+     "@if (!mainGroupName)"
+    ],
+    "tag": "li",
+    "attrs": {},
+    "keys": [
+     "register.missingMainGroup"
+    ],
+    "de": [
+     "Name der Hauptgruppe fehlt"
+    ],
+    "literals": [],
+    "text": "{{ 'register.missingMainGroup' | transloco }}",
+    "id": "register/register.page#text-79616fca"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:427-428"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/register.page.html",
+    "line": 158,
+    "cond": [
+     "@if (tenant.longName && tenant.shortName && mainGroupName)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "register.summaryMainGroup"
+    ],
+    "de": [
+     "Hauptgruppe: {name}"
+    ],
+    "literals": [],
+    "text": "{{ 'register.summaryMainGroup' | transloco: { name: mainGroupName } }}",
+    "id": "register/register.page#text-89093a58"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:400-404"
+    ],
+    "n": "\"Hauptgruppe: {name}\", grau. Bedingung ist Formularzustand, keine Rolle.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/register.page.html",
+    "line": 164,
+    "cond": [
+     "@else (not tenant.longName && tenant.shortName && mainGroupName)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "register.fillAll"
+    ],
+    "de": [
+     "Bitte fülle alle Felder aus, um fortzufahren."
+    ],
+    "literals": [],
+    "text": "{{ 'register.fillAll' | transloco }}",
+    "id": "register/register.page#text-9349f4dc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:405-419"
+    ],
+    "n": "\"Bitte fülle alle Felder aus, um fortzufahren.\" mit Warn-Icon in medium, solange ein Feld fehlt (Flutter wertet getrimmt, siehe Extra \"Namen werden getrimmt\").",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/register.page.html",
+    "line": 88,
+    "cond": [
+     "@switch (tenant.type) case 'choir'"
+    ],
+    "tag": "#text",
+    "keys": [
+     "register.helpChoir"
+    ],
+    "de": [
+     "Optimiert für Chöre mit Stimmgruppen (Sopran, Alt, Tenor, Bass)."
+    ],
+    "literals": [],
+    "text": "{{ 'register.helpChoir' | transloco }}",
+    "id": "register/register.page#text-db3fe0a6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:66",
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:281"
+    ],
+    "n": "„Optimiert für Chöre mit Stimmgruppen (Sopran, Alt, Tenor, Bass).“ bei gewähltem Typ choir; nur Formularzustand, rollenunabhängig.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/register.page.html",
+    "line": 188,
+    "cond": [
+     "@else (not tenant.longName && tenant.shortName && mainGroupName)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "class": "ion-margin"
+    },
+    "keys": [
+     "register.create"
+    ],
+    "de": [
+     "Instanz jetzt erstellen"
+    ],
+    "literals": [],
+    "text": "{{ 'register.create' | transloco }}",
+    "id": "register/register.page#text-e5c14cf9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:446-460"
+    ],
+    "n": "Bei unvollständigem Formular derselbe Button deaktiviert (gleicher Text und Icon).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/register.page.html",
+    "line": 167,
+    "cond": [
+     "@else (not tenant.longName && tenant.shortName && mainGroupName)",
+     "@if (!tenant.longName)"
+    ],
+    "tag": "li",
+    "attrs": {},
+    "keys": [
+     "register.missingName"
+    ],
+    "de": [
+     "Name der Instanz fehlt"
+    ],
+    "literals": [],
+    "text": "{{ 'register.missingName' | transloco }}",
+    "id": "register/register.page#text-ed5b440c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:421-424"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/register.page.html",
+    "line": 156,
+    "cond": [
+     "@if (tenant.longName && tenant.shortName && mainGroupName)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "({{ tenant.shortName }})"
+    ],
+    "text": "({{ tenant.shortName }})",
+    "id": "register/register.page#text-f594a3e2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:387-393"
+    ],
+    "n": "Kürzel \" (MV)\" gleich. Ionic: die ganze erste Summary-Zeile ist ein ion-label-<p> und damit grau (iOS step-400 #999, md step-600 #666) / Flutter: Standard-Textfarbe (schwarz), nur Zeilen 2–3 grau. Text und Daten gleich; Bedingung ist Formularzustand, kein Rollen-/Mandantenbezug.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/register.page.ts",
+    "line": 57,
+    "method": "RegisterPage.createInstance",
+    "cond": [],
+    "message": {
+     "keys": [
+      "register.createFailed"
+     ],
+     "de": [
+      "Fehler beim Erstellen der Instanz: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('register.createFailed', { error: error.message })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f1f5549c",
+    "mbody": "86c32c7d",
+    "roleGuarded": true,
+    "id": "register/register.page#toast-535997f4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:596-599"
+    ],
+    "n": "Flutter besser: Ionic: Toast mit roher Fehlermeldung (register.createFailed + error.message), teils doppelt / Flutter: verständlicher deutscher Fehlertext.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "extra": {
+    "id": "x-4bc57ec809",
+    "title": "Schließen der Route-Variante",
+    "n": "Flutter besser: Ionic ruft modalController.dismiss() auch in der Route-Variante (/tabs/settings/register) auf, wo kein Modal existiert (Fehler/kein Schließen) / Flutter navigiert korrekt zurück.",
+    "sev": "niedrig",
+    "ionic": "src/app/register/register.page.ts:53",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:561-564"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "extra": {
+    "id": "x-530439cff7",
+    "title": "Namen werden getrimmt",
+    "n": "Ionic speichert Instanz-/Namensfelder ungetrimmt / Flutter trimmt Leerzeichen.",
+    "sev": "niedrig",
+    "ionic": "src/app/register/register.page.ts:40-58",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:470-490"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 66,
+    "cond": [
+     "@if (tenantData)",
+     "@if (!db.user)",
+     "@else (not !otpMode)",
+     "@if (otpSent)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "[disabled]": "\"!otpCode\""
+    },
+    "events": [
+     "(click)=verifyCode()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "tenantRegister.confirmCode"
+    ],
+    "de": [
+     "Code bestätigen"
+    ],
+    "literals": [],
+    "text": "{{ 'tenantRegister.confirmCode' | transloco }}",
+    "id": "register/tenant-register/tenant-register.page#action-178ca27d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:878",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:985"
+    ],
+    "n": "Deaktiviert ohne Code; danach Anmeldung, terms_accepted_at stempeln, Bereits-registriert-Prüfung + Prefill, Seite bleibt – wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 102,
+    "cond": [
+     "@if (tenantData)",
+     "@if (tenantData.registration_fields?.includes('picture'))"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=changeImg()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "tenantRegister.choosePicture"
+    ],
+    "de": [
+     "Wähle ein Passbild aus (max. 15 MB)"
+    ],
+    "literals": [],
+    "text": "{{ 'tenantRegister.choosePicture' | transloco }}",
+    "id": "register/tenant-register/tenant-register.page#action-56c2bb62"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:282"
+    ],
+    "n": "Ionic: Label bleibt 'Wähle ein Passbild aus (max. 15 MB)' / Flutter: nach Auswahl Label 'Passbild ersetzen'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 69,
+    "cond": [
+     "@if (tenantData)",
+     "@if (!db.user)",
+     "@else (not !otpMode)",
+     "@if (otpSent)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "[disabled]": "\"resendCooldown > 0\""
+    },
+    "events": [
+     "(click)=resendCode()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.resendIn",
+     "login.resendCode"
+    ],
+    "de": [
+     "Erneut senden ({seconds}s)",
+     "Code erneut senden"
+    ],
+    "literals": [],
+    "text": "{{ resendCooldown > 0 ? ('login.resendIn' | transloco: { seconds: resendCooldown }) : ('login.resendCode' | transloco) }}",
+    "id": "register/tenant-register/tenant-register.page#action-5df1dc21"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:887",
+     "lib/features/auth/presentation/widgets/otp_widgets.dart:108",
+     "lib/features/auth/data/auth_flow_service.dart:32"
+    ],
+    "n": "30 s Cooldown, Texte 'Erneut senden ({seconds}s)' / 'Code erneut senden'; erneuter Versand prüft E-Mail und Zustimmung wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 200,
+    "cond": [
+     "@if (tenantData)",
+     "@for (field of additionalFields; track field.name)",
+     "@else if (field.type === 'bfecg_church')",
+     "in <ion-modal isOpen=\"isChurchModalOpen\">",
+     "@for (church of filteredChurches; track church.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=selectChurch(field, church.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ church.name }}",
+    "id": "register/tenant-register/tenant-register.page#action-64e5e51e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/church_picker.dart:137-142",
+     "lib/data/repositories/church_repository.dart:18-32"
+    ],
+    "n": "Gemeinden aus churches nach Name sortiert (beide), Häkchen bei gewählter Gemeinde, Auswahl setzt die id und schließt.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/church_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 193,
+    "cond": [
+     "@if (tenantData)",
+     "@for (field of additionalFields; track field.name)",
+     "@else if (field.type === 'bfecg_church')",
+     "in <ion-modal isOpen=\"isChurchModalOpen\">"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=selectChurch(field, '')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark-outline"
+    ],
+    "keys": [
+     "tenantRegister.notListed"
+    ],
+    "de": [
+     "Nicht gelistet"
+    ],
+    "literals": [],
+    "text": "{{ 'tenantRegister.notListed' | transloco }}",
+    "id": "register/tenant-register/tenant-register.page#action-702ca9a0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/church_picker.dart:132-136",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:659-665"
+    ],
+    "n": "'Nicht gelistet' immer oben, Häkchen bei Wert '', Auswahl setzt '' und schließt.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 73,
+    "cond": [
+     "@if (tenantData)",
+     "@if (!db.user)",
+     "@else (not !otpMode)",
+     "@else (not otpSent)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=requestCode()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.sendCode"
+    ],
+    "de": [
+     "Code senden"
+    ],
+    "literals": [],
+    "text": "{{ 'login.sendCode' | transloco }}",
+    "id": "register/tenant-register/tenant-register.page#action-73928114"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:895",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:957",
+     "lib/features/auth/data/auth_flow_service.dart:353"
+    ],
+    "n": "Prüft E-Mail, dann Zustimmung (gleiche Toasts), signInWithOtp mit shouldCreateUser=true und signup_method/terms_accepted_at; Erfolgs-/Fehlertoasts wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 104,
+    "cond": [
+     "@if (tenantData)",
+     "@if (tenantData.registration_fields?.includes('picture'))",
+     "in <ion-item>"
+    ],
+    "tag": "img",
+    "attrs": {},
+    "events": [
+     "(error)=$event.target.src='assets/icon/avatar-placeholder.svg'"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[src]=\"profilePicture\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#action-86975787"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:284"
+    ],
+    "n": "Ionic: Avatar-Grafik (DEFAULT_IMAGE, Fallback avatar-placeholder.svg) / Flutter: graues Kreis-Avatar mit Personen-Icon.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 35,
+    "cond": [
+     "@if (tenantData)",
+     "@if (!db.user)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=login()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "tenantRegister.haveAccount"
+    ],
+    "de": [
+     "Account bereits vorhanden? Hier klicken"
+    ],
+    "literals": [],
+    "text": "{{ 'tenantRegister.haveAccount' | transloco }}",
+    "id": "register/tenant-register/tenant-register.page#action-8b405cb0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:812",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:715"
+    ],
+    "n": "Öffentliche Seite ohne Rollenprüfung (Ionic wie Flutter); nur ohne Anmeldung sichtbar (Ionic !db.user / Flutter !_isLoggedIn), verschwindet nach Login. Dialog-Unterschiede bei alert-d3091b10.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 87,
+    "cond": [
+     "@if (tenantData)",
+     "@if (!db.user)"
+    ],
+    "tag": "a",
+    "attrs": {
+     "href": "#"
+    },
+    "events": [
+     "(click)=openPrivacy($event)"
+    ],
+    "link": "#",
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "registerModal.privacyLink"
+    ],
+    "de": [
+     "Datenschutzerklärung"
+    ],
+    "literals": [],
+    "text": "{{ 'registerModal.privacyLink' | transloco }}",
+    "id": "register/tenant-register/tenant-register.page#action-a45c8322"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:929",
+     "lib/features/legal/presentation/widgets/legal_content_view.dart:139"
+    ],
+    "n": "Öffnet Rechtliches-Modal (Titel, Schließen-Button, gleicher Inhalt) wie LegalModalComponent.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 175,
+    "cond": [
+     "@if (tenantData)",
+     "@for (field of additionalFields; track field.name)",
+     "@else if (field.type === 'bfecg_church')"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=openChurchModal()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ getChurchLabel(field) }}",
+    "id": "register/tenant-register/tenant-register.page#action-af297b3b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:631-667"
+    ],
+    "n": "Beschriftung wie getChurchLabel ('Bitte auswählen' / 'Nicht gelistet' / Gemeindename), Tap öffnet die Gemeindesuche mit leerem Suchbegriff. Flutter: während des Ladens deaktiviert, bei Ladefehler Fehlertext. Darstellung des Modals siehe modal-6f647b7b.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 376,
+    "method": "TenantRegisterPage.register",
+    "cond": [],
+    "header": {
+     "keys": [
+      "tenantRegister.success.header"
+     ],
+     "de": [
+      "Registrierung erfolgreich"
+     ],
+     "literals": [],
+     "expr": "translate('tenantRegister.success.header')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "tenantRegister.success.joined",
+      "tenantRegister.success.newConfirm",
+      "tenantRegister.success.pending",
+      "tenantRegister.success.newPending"
+     ],
+     "de": [
+      "Deine Registrierung war erfolgreich! Du bist nun teil der Instanz.",
+      "Dein Konto wurde erstellt. Um dich anmelden zu können, bestätige bitte deine E-Mail. Falls keine E-Mail ankommt, überprüfe bitte deinen Spam-Ordner. Im Anschluss kannst du dich anmelden.",
+      "Deine Registrierung war erfolgreich! Bitte warte auf die Genehmigung durch einen Administrator.",
+      "Dein Konto wurde erstellt und wartet auf die Genehmigung durch einen Administrator. Bitte bestätige deine E-Mail, um dich anmelden zu können. Falls keine E-Mail ankommt, überprüfe bitte deinen Spam-Ordner."
+     ],
+     "literals": [],
+     "expr": "this.tenantData.auto_approve_registrations ? !isNew ? translate('tenantRegister.success.joined') : translate('tenantRegister.success.newConfirm') : !isNew ? translate('tenantRegister.success.pending'…"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.ok"
+       ],
+       "de": [
+        "OK"
+       ],
+       "literals": [],
+       "expr": "translate('common.ok')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "acd5fd35",
+    "mbody": "dd22fdb7",
+    "roleGuarded": true,
+    "id": "register/tenant-register/tenant-register.page#alert-7152356e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1164-1176",
+     "lib/features/registration/data/providers/registration_providers.dart:368-383"
+    ],
+    "n": "„Registrierung erfolgreich“, gleiche vier Texte je auto_approve_registrations × neues Konto, Knopf „OK“. Dialog erscheint in Flutter vor der Navigation (Ionic danach über der Zielseite).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart",
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 248,
+    "method": "TenantRegisterPage.goHome",
+    "cond": [
+     "(this.db.user && this.db.tenantUser())"
+    ],
+    "call": "Utils.getUrl",
+    "args": "this.db.tenantUser().role",
+    "src": "599c2113",
+    "mbody": "a6203d0b",
+    "roleGuarded": true,
+    "id": "register/tenant-register/tenant-register.page#effect-6294e86d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:163",
+     "lib/core/utils/dashboard_logic.dart:56"
+    ],
+    "n": "Ziel-Berechnung wie nav-daa5b1d7: Flutter homeRouteFor berücksichtigt zusätzlich die Dashboard-Startseite (Ionic Utils.getUrl nicht).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 79,
+    "cond": [
+     "@if (tenantData)",
+     "@if (!db.user)"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"privacyAccepted\"",
+    "bindings": [
+     "[attr.aria-label]=\"'tenantRegister.acceptTerms' | transloco\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#field-019bcaa8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:906-912"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 55,
+    "cond": [
+     "@if (tenantData)",
+     "@if (!db.user)",
+     "@if (!otpMode)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "password",
+     "autocomplete": "new-password"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"password\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#field-0ebc2a01"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:846",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:845"
+    ],
+    "n": "Sichtbarkeit (ohne Anmeldung, Passwort-Modus) gleich. Übersehen: Ionic bindet [(ngModel)]=\"password\", nach Wechsel zu 'Code per E-Mail' und zurück steht das Passwort wieder im Feld / Flutter: TextFormField ohne Controller wird beim Moduswechsel neu aufgebaut, Feld ist danach leer.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 117,
+    "cond": [
+     "@if (tenantData)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "text",
+     "autocomplete": "family-name"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"lastName\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#field-3669e571"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:310",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:318",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1060"
+    ],
+    "n": "Flutter besser: Nachname wird getrimmt (nur Leerzeichen → Toast 'tenantRegister.nameRequired') / Ionic speichert ungetrimmt. Prefill und Sichtbarkeit gleich.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 122,
+    "cond": [
+     "@if (tenantData)",
+     "@if (tenantData.registration_fields?.includes('birthDate'))"
+    ],
+    "tag": "ion-datetime-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#field-3bbd0e84"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:324",
+     "lib/l10n/languages.dart:65"
+    ],
+    "n": "Bedingung und Vorbelegung gleich. Anzeigeformat: Ionic ion-datetime-button (locale de-DE, Standard-formatOptions month:'short') → '4. Nov. 2008' / Flutter DateFormat('dd.MM.yyyy') → '04.11.2008'. Ionic-Paket nicht im Container, Standardformat aus Ionic 9 datetime-button.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 163,
+    "cond": [
+     "@if (tenantData)",
+     "@for (field of additionalFields; track field.name)",
+     "@else if (field.type === 'number')"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"field.value\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#field-3d36f520-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:494",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:498",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:502"
+    ],
+    "n": "Label/Default gleich. Ionic: type=number (Dezimal/Minus eingebbar), NumericValueAccessor speichert parseFloat-Zahl / Flutter: TextInputType.number ohne Dezimal/Vorzeichen (Mobil kein ',' '.' '-'), int.tryParse – Dezimalwerte (z. B. Web) werden als String gespeichert. Leer-Prüfung bei toast-b918f4e0.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 125,
+    "cond": [
+     "@if (tenantData)",
+     "@if (tenantData.registration_fields?.includes('birthDate'))",
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date",
+     "id": "birthdateReg"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"birthDate\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#field-61311198"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:446",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:79"
+    ],
+    "n": "Kalender mit Datumsauswahl, Vorbelegung heute-18 Jahre bzw. Profil-Geburtstag. Bereich: Ionic-Standard 100 Jahre zurück bis Jahresende / Flutter 1900 bis heute – für Geburtsdaten unerheblich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 64,
+    "cond": [
+     "@if (tenantData)",
+     "@if (!db.user)",
+     "@else (not !otpMode)",
+     "@if (otpSent)"
+    ],
+    "tag": "ion-input-otp",
+    "attrs": {
+     "size": "small",
+     "type": "text"
+    },
+    "events": [
+     "(ionComplete)=verifyCode()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"otpCode\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.otpLabel"
+    ],
+    "de": [
+     "Code aus der E-Mail"
+    ],
+    "literals": [],
+    "text": "{{ 'login.otpLabel' | transloco }}",
+    "id": "register/tenant-register/tenant-register.page#field-86bd3a26"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:870",
+     "lib/features/auth/presentation/widgets/otp_widgets.dart:286"
+    ],
+    "n": "Nur ohne Anmeldung, Code-Modus nach Versand; 6 Felder mit Beschriftung 'Code aus der E-Mail', Vervollständigen löst Bestätigung aus. Flutter nur Ziffern (Supabase-Codes sind numerisch).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 50,
+    "cond": [
+     "@if (tenantData)",
+     "@if (!db.user)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "email",
+     "autocomplete": "email",
+     "[readonly]": "\"otpMode && otpSent\""
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"email\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#field-8ce1671c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:833"
+    ],
+    "n": "E-Mail-Feld nur ohne Anmeldung, readonly im Code-Modus nach Versand – wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 113,
+    "cond": [
+     "@if (tenantData)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "text",
+     "autocomplete": "given-name"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"firstName\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#field-a282574a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:299",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:307",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1060"
+    ],
+    "n": "Flutter besser: Vorname wird beim Speichern getrimmt (nur Leerzeichen → Toast 'tenantRegister.nameRequired', angehängtes Leerzeichen der Tastatur wird nicht gespeichert) / Ionic prüft !firstName und speichert ungetrimmt. Prefill und Sichtbarkeit gleich.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 133,
+    "cond": [
+     "@if (tenantData)",
+     "@if (tenantData.registration_fields?.includes('phone'))"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "tel",
+     "autocomplete": "tel"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"phone\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#field-d5f04c4f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:332"
+    ],
+    "n": "Gleiche Bedingung, Telefon-Tastatur, Prefill aus Profil.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 39,
+    "cond": [
+     "@if (tenantData)",
+     "@if (!db.user)"
+    ],
+    "tag": "ion-segment",
+    "attrs": {
+     "class": "mode-segment",
+     "[value]": "\"otpMode ? 'otp' : 'password'\""
+    },
+    "events": [
+     "(ionChange)=onModeChange($event)"
+    ],
+    "link": null,
+    "model": "[value]=\"otpMode ? 'otp' : 'password'\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "password",
+      "keys": [
+       "login.modePassword"
+      ],
+      "de": [
+       "Passwort"
+      ],
+      "literals": [],
+      "text": "{{ 'login.modePassword' | transloco }}\"password\""
+     },
+     {
+      "value": "otp",
+      "keys": [
+       "login.modeOtp"
+      ],
+      "de": [
+       "Code per E-Mail"
+      ],
+      "literals": [],
+      "text": "{{ 'login.modeOtp' | transloco }}\"otp\""
+     }
+    ],
+    "keys": [
+     "login.modePassword",
+     "login.modeOtp"
+    ],
+    "de": [
+     "Passwort",
+     "Code per E-Mail"
+    ],
+    "literals": [],
+    "text": "\"password\" {{ 'login.modePassword' | transloco }} \"otp\" {{ 'login.modeOtp' | transloco }}",
+    "id": "register/tenant-register/tenant-register.page#field-e89e2385"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:818",
+     "lib/features/auth/presentation/widgets/otp_widgets.dart:98"
+    ],
+    "n": "Nur ohne Anmeldung; Optionen 'Passwort' / 'Code per E-Mail' in gleicher Reihenfolge; Wechsel setzt Code-Status und Cooldown zurück wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 59,
+    "cond": [
+     "@if (tenantData)",
+     "@if (!db.user)",
+     "@if (!otpMode)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "password",
+     "autocomplete": "new-password"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"confirmPassword\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#field-f2f670d0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:857"
+    ],
+    "n": "Wie field-0ebc2a01: Ionic behält 'Passwort bestätigen' beim Hin- und Herwechseln des Modus / Flutter: Feld nach Moduswechsel leer (kein Controller).",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 227,
+    "cond": [
+     "@if (tenantData)"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"notes\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#field-f6d39eb8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:405-415",
+     "lib/features/registration/data/providers/registration_providers.dart:325"
+    ],
+    "n": "Mehrzeiliges Textfeld, Satz-Großschreibung, gespeichert als notes ('' wenn leer).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart",
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 301,
+    "method": "TenantRegisterPage.register",
+    "cond": [],
+    "message": {
+     "keys": [
+      "registerModal.running"
+     ],
+     "de": [
+      "Registrierung läuft..."
+     ],
+     "literals": [],
+     "expr": "translate('registerModal.running')"
+    },
+    "duration": "45000",
+    "src": "e94fb9c4",
+    "mbody": "dd22fdb7",
+    "roleGuarded": true,
+    "id": "register/tenant-register/tenant-register.page#loading-0e5874c4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1121",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:436"
+    ],
+    "n": "Ionic: blockierendes Overlay 'Registrierung läuft...' (bis 45 s) / Flutter: Button deaktiviert + Spinner unter dem Button, ohne Text und ohne Overlay.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 103,
+    "method": "TenantRegisterPage.checkExistent",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "2a874fb0",
+    "roleGuarded": true,
+    "id": "register/tenant-register/tenant-register.page#loading-c4081e17"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:688"
+    ],
+    "n": "Ionic: blockierendes Loading-Overlay während Bereits-registriert-Prüfung / Flutter: Prüfung im Hintergrund ohne Overlay.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 123,
+    "cond": [
+     "@if (tenantData)",
+     "@if (tenantData.registration_fields?.includes('birthDate'))"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "register/tenant-register/tenant-register.page#modal-4836c219"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:446",
+     "lib/shared/widgets/adaptive/app_pickers.dart:12"
+    ],
+    "n": "Ionic: zentrierte Datetime-Overlay-Karte / Flutter: Kalender-Dialog (md: showDatePicker, iOS: CalendarDatePicker-Dialog); gleiche Funktion.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart",
+    "lib/shared/widgets/adaptive/app_pickers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 373,
+    "method": "TenantRegisterPage.register",
+    "cond": [
+     "!(!isNew && this.db.user)"
+    ],
+    "via": "router.navigate",
+    "to": "['/login']",
+    "src": "67ac1c29",
+    "mbody": "dd22fdb7",
+    "roleGuarded": true,
+    "id": "register/tenant-register/tenant-register.page#nav-32addfec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1179-1184",
+     "lib/features/registration/data/providers/registration_providers.dart:273"
+    ],
+    "n": "Gleiche Bedingung: neues Passwort-Konto oder nicht angemeldet → /login; angemeldet mit bestehendem Konto (Login/Code) → direkt in die Instanz (_enterTenant ≙ routeAfterAuth). isNewAccount = created && !otpMode (Ionic zusätzlich !db.user, bei Pflicht-Mailbestätigung gleich). Instanz-Flag auto_approve_registrations wirkt nur auf Rolle/Text. Flutter navigiert erst nach Schließen des Erfolgsdialogs.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart",
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ]
+  }
+ ]
+}

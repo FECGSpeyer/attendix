@@ -1,0 +1,2525 @@
+{
+ "batch": "zz-verify5-a-opus-02",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "people/import/import.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:51-55",
+     "buildContext:57-63",
+     "buildTargetOptions:65-82",
+     "triggerFilePicker:84-86",
+     "onFileSelect:88-123",
+     "get canProceedFromMapping:125-127",
+     "proceedToPreview:129-148",
+     "backToMapping:150-152",
+     "get importableRows:155-157",
+     "get errorCount:159-161",
+     "get duplicateCount:163-165",
+     "get warningCount:167-169",
+     "rowStatus:171-176",
+     "groupName:178-180",
+     "get groupOptions:183-185",
+     "get unresolvedGroupCount:191-193",
+     "onRowGroupChange:196-198",
+     "startImport:200-246",
+     "showFailureDetails:248-260",
+     "downloadTemplate:262-276",
+     "dismiss:278-280"
+    ],
+    "bodies": {
+     "constructor": "759afdeb",
+     "buildContext": "b84f7c1e",
+     "buildTargetOptions": "c05bc30d",
+     "triggerFilePicker": "56d7f043",
+     "onFileSelect": "f6e57fc8",
+     "get canProceedFromMapping": "c2c3aec9",
+     "proceedToPreview": "7b21b3cd",
+     "backToMapping": "4fa36895",
+     "get importableRows": "43a58d64",
+     "get errorCount": "d71e2b10",
+     "get duplicateCount": "9095fb09",
+     "get warningCount": "29bc1fcc",
+     "rowStatus": "82594102",
+     "groupName": "10cccf04",
+     "get groupOptions": "34849e2c",
+     "get unresolvedGroupCount": "3720cf45",
+     "onRowGroupChange": "b5af3067",
+     "startImport": "c7dd5a52",
+     "showFailureDetails": "a1282adf",
+     "downloadTemplate": "9bf491f9",
+     "dismiss": "69a7489b"
+    },
+    "id": "people/import/import.page#logic-5814da2d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:52",
+     "lib/features/people/presentation/pages/person_import_page.dart:59",
+     "lib/features/people/presentation/pages/person_import_page.dart:108",
+     "lib/features/people/presentation/pages/person_import_page.dart:156",
+     "lib/core/utils/spreadsheet_reader.dart:43"
+    ],
+    "n": "Schritte, Zähler, Duplikat-Prüfung, Rolle, Konten nur mit E-Mail, Fortschritt und Ergebnis wie Ionic. Nachgeprüft: Kontext/Ziele/Vorlage nur aus currentTenant.additionalFields (Ionic getPersonExtraFields inkl. Org-Felder) und .xls wird abgelehnt – extra der Erstprüfung (hoch) treffen zu.",
+    "sev": "hoch",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart",
+    "lib/core/utils/spreadsheet_reader.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "extra": {
+    "id": "x-dce118d389",
+    "title": ".xls-Dateien nicht lesbar",
+    "n": "Real: Ionic readSpreadsheetFile/SheetJS read() liest auch .xls (accept '.xlsx,.xls,.csv'). Flutter: Dateiauswahl erlaubt .xls, readSpreadsheet lehnt ab mit 'Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.' – obwohl der Einleitungstext (wie Ionic) 'Excel- (.xlsx/.xls)' verspricht. Import aus .xls nicht möglich → hoch.",
+    "sev": "hoch",
+    "ionic": "src/app/people/import/import.page.ts:101-104",
+    "f": [
+     "lib/core/utils/spreadsheet_reader.dart:39-50",
+     "lib/core/utils/import_file_io.dart:13",
+     "lib/features/people/presentation/pages/person_import_page.dart:249"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-zz-querschnitt-nachtrag.json",
+    "n": "behoben in #295: .xls wird am Inhalt erkannt (OLE2/BIFF8) und gelesen, wie SheetJS read() (gleicher Befund wie field-bdcf25e7)"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/list/list.page.ts",
+    "line": 589,
+    "method": "ListPage.onFilterChanged",
+    "cond": [
+     "(this.db.tenant().additional_fields?.find(field => (field.type === 'select' || field.type === 'bfecg_church') && this.fi…)",
+     "!(this.db.tenant().additional_fields?.find(field => field.type === 'boolean' && this.filterOpt === field.id))",
+     "!(this.db.tenant().additional_fields?.find(field => field.type === 'number' && this.filterOpt === field.id))",
+     "!(this.filterOpt === 'otherInstance')"
+    ],
+    "header": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "extraField.name"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { this.filterOpt = 'all'; this.onFilterChanged(); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "people.filter"
+       ],
+       "de": [
+        "Filtern"
+       ],
+       "literals": [],
+       "expr": "translate('people.filter')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (value) => { if (!value) { this.filterOpt = 'all'; this.onFilterChanged(); return; } this.playersFiltered = Utils.getModifiedPlayersForList(this.players.filter((player: Player) => { if (extraField.type === 'bfecg_church') { const chu…"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "options.map((t, index) => ({ type: 'radio', label: t, value: t, selected: option ? t === option : index === 0, }))",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "36a31fb1",
+    "mbody": "8c6daf3a",
+    "roleGuarded": true,
+    "id": "people/list/list.page#alert-76ef2f5f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart"
+    ],
+    "n": "behoben in #312",
+    "v": null,
+    "src": "zz-fixed-personen-liste.json",
+    "flutterAt": "6945c13"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "people/list/list.page.ts",
+    "line": 383,
+    "method": "ListPage.savePlayerOrder",
+    "cond": [
+     "(player.sort_order != null)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ sort_order: player.sort_order }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', player.id)"
+    ],
+    "tenantFilter": false,
+    "src": "3a868614",
+    "mbody": "e6f21689",
+    "id": "people/list/list.page#db-a9ead6a0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart"
+    ],
+    "n": "behoben in #312",
+    "v": null,
+    "src": "zz-fixed-personen-liste.json",
+    "flutterAt": "6945c13"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "people/list/list.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:72-93",
+     "onTenantChange:95-102",
+     "ngOnInit:104-116",
+     "initializeData:121-148",
+     "showReleaseNotesAlert:150-170",
+     "subscribe:172-185",
+     "getPlayers:187-208",
+     "computeTodaysBirthdays:210-215",
+     "getBirthdayAge:217-219",
+     "userById:221-223",
+     "handleRefresh:225-228",
+     "openModal:230-246",
+     "onSortChanged:248-318",
+     "onFilterFocused:320-322",
+     "toggleReorderMode:324-331",
+     "get playerGroups:333-342",
+     "handleReorder:344-374",
+     "savePlayerOrder:376-392",
+     "clearFilters:394-397",
+     "onFilterDismissed:399-405",
+     "onFilterChanged:407-666",
+     "onViewChanged:668-689",
+     "getSubText:691-712",
+     "search:714-737",
+     "filter:739-760",
+     "initializeItems:762-764",
+     "remove:766-797",
+     "archivePlayer:799-802",
+     "dismissArchiveModal:804-808",
+     "removePlayer:810-836",
+     "pausePlayer:838-846",
+     "confirmPause:848-899",
+     "askPauseInOtherTenants:901-940",
+     "dismissPauseModal:942-950",
+     "unpausePlayer:952-988",
+     "getTeacherName:990-993",
+     "getChurchName:995-998",
+     "openBulkEditModal:1035-1051",
+     "get churchField:1053-1055",
+     "showChurchOverview:1057-1075",
+     "openImportModal:1077-1090",
+     "ngOnDestroy:1092-1094"
+    ],
+    "bodies": {
+     "constructor": "6e352aab",
+     "onTenantChange": "a99fac6c",
+     "ngOnInit": "9bb9aaf8",
+     "initializeData": "48a0df17",
+     "showReleaseNotesAlert": "06718261",
+     "subscribe": "d36e71dc",
+     "getPlayers": "038e5944",
+     "computeTodaysBirthdays": "387e4f3b",
+     "getBirthdayAge": "748e3470",
+     "userById": "54f92e96",
+     "handleRefresh": "2be078b5",
+     "openModal": "a85d50ca",
+     "onSortChanged": "d93485f1",
+     "onFilterFocused": "c5565932",
+     "toggleReorderMode": "9b5c3257",
+     "get playerGroups": "77797625",
+     "handleReorder": "57b99360",
+     "savePlayerOrder": "e6f21689",
+     "clearFilters": "ac0cfb44",
+     "onFilterDismissed": "ceac8855",
+     "onFilterChanged": "8c6daf3a",
+     "onViewChanged": "8f2befda",
+     "getSubText": "785aa21a",
+     "search": "7f288ff4",
+     "filter": "18d5fb9b",
+     "initializeItems": "df5d0bd4",
+     "remove": "3ce6729d",
+     "archivePlayer": "375f9431",
+     "dismissArchiveModal": "ed43d125",
+     "removePlayer": "53ac8376",
+     "pausePlayer": "2fd9e190",
+     "confirmPause": "ff40e073",
+     "askPauseInOtherTenants": "e836a2fd",
+     "dismissPauseModal": "8de6febb",
+     "unpausePlayer": "561f0f37",
+     "getTeacherName": "ee47d0ac",
+     "getChurchName": "65bf9a07",
+     "openBulkEditModal": "6bd9a622",
+     "get churchField": "20e9c8fc",
+     "showChurchOverview": "1e290767",
+     "openImportModal": "6f5a0acd",
+     "ngOnDestroy": "f3819aab"
+    },
+    "id": "people/list/list.page#logic-9183f2d4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:93",
+     "lib/features/people/presentation/pages/people_list_page.dart:250",
+     "lib/features/people/presentation/pages/people_list_page.dart:1575",
+     "lib/data/models/person/person.dart:141",
+     "lib/features/people/people_list_utils.dart:59",
+     "lib/data/repositories/player_repository.dart:1844"
+    ],
+    "n": "Kern (Realtime, Filter/Sortierung/Ansicht je Instanz gespeichert, Pausieren/Archivieren/Entfernen, Geburtstags-Banner, Reorder) wie Ionic. Nachgeprüft: Person.teacherName ist includeFromJson:false und wird nirgends gesetzt → Ansicht 'Lehrer' immer 'Kein Lehrer' (hoch); sortPeopleByGroup vergleicht toLowerCase().compareTo (Umlaute nach z). Übrige extra der Erstprüfung plausibel.",
+    "sev": "hoch",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart",
+    "lib/features/people/people_list_utils.dart",
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/list/list.page.ts",
+    "line": 233,
+    "method": "ListPage.openModal",
+    "cond": [],
+    "component": "PersonPage",
+    "props": [
+     "existingPlayer",
+     "readOnly"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "e22038b2",
+    "mbody": "a85d50ca",
+    "roleGuarded": true,
+    "id": "people/list/list.page#modal-38ba21ec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart",
+     "lib/features/people/presentation/widgets/person_modal.dart",
+     "lib/shared/widgets/dialogs/ion_modal.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/members/members.page",
+   "ionic": {
+    "ts": "people/members/members.page.ts",
+    "html": "people/members/members.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "people/members/members.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:25-34",
+     "ngOnInit:36-51",
+     "loadPlayers:53-76",
+     "search:78-81",
+     "onEinteilungFilterChange:83-85",
+     "applyFilters:87-109",
+     "recalculateGroupHeaders:115-140",
+     "handleRefresh:142-145",
+     "trackById:147-149"
+    ],
+    "bodies": {
+     "constructor": "ea444ce4",
+     "ngOnInit": "597adc2f",
+     "loadPlayers": "d9ebd048",
+     "search": "a48502a9",
+     "onEinteilungFilterChange": "57003522",
+     "applyFilters": "ab27e3f1",
+     "recalculateGroupHeaders": "e5eee555",
+     "handleRefresh": "740abee1",
+     "trackById": "082f43d3"
+    },
+    "id": "people/members/members.page#logic-a08c75f7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/members/data/providers/members_providers.dart:27",
+     "lib/features/members/data/providers/members_providers.dart:53",
+     "lib/features/members/data/providers/members_providers.dart:98",
+     "lib/features/members/presentation/pages/members_page.dart:35"
+    ],
+    "n": "Laden aktiver Personen (tenantId), Gruppierung ohne Hauptgruppen-Vorrang, 'Ohne Gruppe', Suche (Vor-/Nachname, Gruppe), Einteilungs-Segment ('-' ausgelassen), Neuladen bei Instanzwechsel und Pull-to-Refresh gleich. Abweichungen (extra der Erstprüfung): Einteilungs-Filter ohne aufgefüllten Default (mittel), Umlaute in der Sortierung (mittel), Ladefehler inline statt Toast.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/members/data/providers/members_providers.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 57,
+    "cond": [
+     "@if (player)",
+     "in <ion-modal isOpen=\"isImageViewerOpen\">",
+     "in <app-image-viewer>",
+     "@if (!readOnly)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "viewer-action danger"
+    },
+    "events": [
+     "(click)=removeImgFromViewer()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [
+     "common.remove"
+    ],
+    "de": [
+     "Entfernen"
+    ],
+    "literals": [],
+    "text": "{{ 'common.remove' | transloco }}",
+    "id": "people/person/person.page#action-0a1221be"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 886,
+    "cond": [
+     "@else (not approveMode)",
+     "@if (player)",
+     "@if (!readOnly && existingPlayer && hasChanges)"
+    ],
+    "tag": "ion-fab-button",
+    "attrs": {},
+    "events": [
+     "(click)=updatePlayer()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "save-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-29de3e84"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 896,
+    "cond": [
+     "@else (not approveMode)",
+     "@if (player)",
+     "@if (!readOnly && existingPlayer && !hasChanges && !player.appId && player.email)"
+    ],
+    "tag": "ion-fab-button",
+    "attrs": {},
+    "events": [
+     "(click)=register()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "key-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-77040b65"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 137,
+    "cond": [
+     "@if (player)",
+     "@if (!existingPlayer && !readOnly && nameSuggestions().length > 0)",
+     "@for (m of nameSuggestions(); track m.candidate.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=applyMatchedPerson(m.candidate)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"m.candidate.appId ? 'person-circle' : (m.candidate.email ? 'mail' : 'help-circle-outline')\""
+    ],
+    "keys": [
+     "person.accountBadge",
+     "people.email"
+    ],
+    "de": [
+     "Konto",
+     "E-Mail"
+    ],
+    "literals": [],
+    "text": "{{ m.candidate.firstName }} {{ m.candidate.lastName }} {{ $any(m.candidate).instrument?.name }} · {{ $any(m.candidate).tenantId?.longName }} {{ m.reason }} {{ 'person.accountBadge' | transloco }} {{ …",
+    "id": "people/person/person.page#action-caeb0a85"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_create_page.dart",
+     "lib/features/people/presentation/pages/people_list_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_create_page.dart",
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 53,
+    "cond": [
+     "@if (player)",
+     "in <ion-modal isOpen=\"isImageViewerOpen\">",
+     "in <app-image-viewer>",
+     "@if (!readOnly)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "viewer-action"
+    },
+    "events": [
+     "(click)=replaceImgFromViewer()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "camera-outline"
+    ],
+    "keys": [
+     "person.replace"
+    ],
+    "de": [
+     "Ersetzen"
+    ],
+    "literals": [],
+    "text": "{{ 'person.replace' | transloco }}",
+    "id": "people/person/person.page#action-ea218e71"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "people/person/person.page.ts",
+    "line": 1329,
+    "method": "PersonPage.openMoreMenu",
+    "cond": [],
+    "header": {
+     "keys": [
+      "person.actions"
+     ],
+     "de": [
+      "Aktionen"
+     ],
+     "literals": [],
+     "expr": "translate('person.actions')"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "expr": "buttons",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "be5c1f90",
+    "mbody": "aebbcfa5",
+    "roleGuarded": true,
+    "id": "people/person/person.page#actionsheet-fba9657b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/person/person.page.ts",
+    "line": 1354,
+    "method": "PersonPage.transferPerson",
+    "cond": [],
+    "header": {
+     "keys": [
+      "person.copyPerson",
+      "person.transferPerson"
+     ],
+     "de": [
+      "Person kopieren",
+      "Person übertragen"
+     ],
+     "literals": [],
+     "expr": "this.copy ? translate('person.copyPerson') : translate('person.transferPerson')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "person.copyConfirm",
+      "person.transferConfirm"
+     ],
+     "de": [
+      "Möchtest du die Person wirklich in die andere Instanz kopieren?",
+      "Möchtest du die Person wirklich in die andere Instanz übertragen? Alle zugehörigen Daten (Abwesenheiten, Notizen, etc.) gehen dabei verloren!"
+     ],
+     "literals": [],
+     "expr": "this.copy ? translate('person.copyConfirm') : translate('person.transferConfirm')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.yes"
+       ],
+       "de": [
+        "Ja"
+       ],
+       "literals": [],
+       "expr": "translate('common.yes')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { try { await this.db.handoverPerson(this.player, targetTenant, this.targetGroupId, this.copy, this.isMainGroup ? this.player.instrument : null); this.isTransferModalOpen = false; if (!this.copy) { this.hasChanges = false; awai…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "ac44627f",
+    "mbody": "cf6b8161",
+    "roleGuarded": true,
+    "id": "people/person/person.page#alert-97cf5262"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_transfer_sheet.dart",
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/person/person.page.ts",
+    "line": 556,
+    "method": "PersonPage.updatePlayer",
+    "cond": [
+     "(this.existingPlayer.email !== this.player.email && Utils.validateEmail(this.player.email))"
+    ],
+    "header": {
+     "keys": [
+      "person.emailAdded"
+     ],
+     "de": [
+      "E-Mail Adresse hinzugefügt"
+     ],
+     "literals": [],
+     "expr": "translate('person.emailAdded')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "person.createAccountNow"
+     ],
+     "de": [
+      "Möchtest du gleich ein Konto für die Person anlegen?"
+     ],
+     "literals": [],
+     "expr": "translate('person.createAccountNow')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { loading.dismiss(); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.yes"
+       ],
+       "de": [
+        "Ja"
+       ],
+       "literals": [],
+       "expr": "translate('common.yes')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { loading.present(); await this.continueUpdatingPlayer(true, loading, false); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "3878b687",
+    "mbody": "c9c20fe4",
+    "roleGuarded": true,
+    "id": "people/person/person.page#alert-f1974eb4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 1132,
+    "cond": [
+     "in <ion-modal isOpen=\"isTransferModalOpen\">",
+     "@if (tenantId && tenantGroups.length)"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"targetGroupId\"",
+    "bindings": [
+     "[label]=\"'person.targetGroup' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"grp.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ grp.name }}"
+     }
+    ],
+    "keys": [
+     "person.targetGroup"
+    ],
+    "de": [
+     "Ziel-Gruppe"
+    ],
+    "literals": [],
+    "text": "[label]=\"'person.targetGroup' | transloco\" {{ grp.name }}",
+    "id": "people/person/person.page#field-272c2c28"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_transfer_sheet.dart",
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 181,
+    "cond": [
+     "@if (!readOnly && player?.isCritical)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=onChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"solved\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "person.talkedTo"
+    ],
+    "de": [
+     "Mit Person gesprochen"
+    ],
+    "literals": [],
+    "text": "{{ 'person.talkedTo' | transloco }}",
+    "id": "people/person/person.page#field-fe3a2971"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart",
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "people/person/person.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "nameSuggestions:114-114",
+     "duplicateCandidates:122-122",
+     "constructor:124-130",
+     "trackByHistoryId:133-133",
+     "ngOnInit:135-244",
+     "loadOtherTenants:246-258",
+     "getAttendanceFromOtherTenant:260-267",
+     "getFieldTypeDefaultValue:269-271",
+     "get filteredChurches:273-277",
+     "getChurchLabel:279-285",
+     "openChurchModal:287-290",
+     "selectChurch:292-296",
+     "onTenantChange:298-302",
+     "getRoleText:304-306",
+     "ngAfterViewInit:308-321",
+     "getTypeText:323-325",
+     "getHistoryInfo:327-381",
+     "resetLateCount:388-406",
+     "getGroupName:413-415",
+     "onInstrumentChange:417-432",
+     "formatDate:434-436",
+     "getDateInputValue:438-441",
+     "formatDateForDisplay:443-447",
+     "onManualDateInput:449-499",
+     "dismiss:501-523",
+     "addPerson:525-544",
+     "updatePlayer:546-615",
+     "continueUpdatingPlayer:617-711",
+     "onRoleChange:713-716",
+     "removeUserFromTenant:718-748",
+     "onNameInput:755-789",
+     "dismissNameSuggestions:795-800",
+     "applyMatchedPerson:805-824",
+     "onEmailBlur:831-873",
+     "loadDuplicateCandidates:876-883",
+     "confirmMerge:889-922",
+     "onChange:924-932",
+     "onBirthdayChange:934-947",
+     "onPlaysSinceChange:949-961",
+     "onJoinedChange:963-975",
+     "removeHis:977-1010",
+     "register:1012-1025",
+     "onProfileImageClick:1027-1039",
+     "replaceImgFromViewer:1042-1044",
+     "removeImgFromViewer:1047-1078",
+     "openPassImageViewer:1080-1082",
+     "closePassImageViewer:1084-1086",
+     "onImageSelect:1089-1130",
+     "readFileAsDataUrl:1132-1139",
+     "getAttText:1141-1145",
+     "onHisItemClicked:1147-1158",
+     "searchPerson:1160-1199",
+     "assignMyAccount:1201-1217",
+     "openMoreMenu:1219-1334",
+     "transferPerson:1336-1382",
+     "archivePlayer:1384-1392",
+     "dismissArchiveModal:1394-1397",
+     "confirmPause:1399-1435",
+     "askPauseInOtherTenants:1437-1470",
+     "dismissPauseModal:1472-1477",
+     "openAbsenceModal:1479-1481",
+     "dismissAbsenceModal:1483-1488",
+     "confirmAbsence:1490-1534",
+     "deleteAbsence:1536-1576",
+     "activate:1578-1594",
+     "activateConfirmed:1596-1601",
+     "getExtraFieldDateString:1603-1605",
+     "onExtraFieldDateChange:1607-1617",
+     "onShiftChange:1619-1638",
+     "showApproveActionSheet:1640-1660",
+     "declinePlayer:1662-1714",
+     "approvePlayer:1716-1748",
+     "get hasDutyTypes:1750-1752",
+     "openUnavailability:1754-1764",
+     "function OnInput:316-319"
+    ],
+    "bodies": {
+     "nameSuggestions": "08f7d133",
+     "duplicateCandidates": "97b29e10",
+     "constructor": "22276dc6",
+     "trackByHistoryId": "6a546b39",
+     "ngOnInit": "4d234c57",
+     "loadOtherTenants": "97b2f5f3",
+     "getAttendanceFromOtherTenant": "474457d8",
+     "getFieldTypeDefaultValue": "33ed38b4",
+     "get filteredChurches": "2bec9991",
+     "getChurchLabel": "1349d81a",
+     "openChurchModal": "ef60549c",
+     "selectChurch": "fdf196a5",
+     "onTenantChange": "e3a72f95",
+     "getRoleText": "6fa4ff2e",
+     "ngAfterViewInit": "a2508af6",
+     "getTypeText": "0721c34d",
+     "getHistoryInfo": "61d5d4b0",
+     "resetLateCount": "6e8fb0f2",
+     "getGroupName": "64f1c2db",
+     "onInstrumentChange": "65038b56",
+     "formatDate": "670140b7",
+     "getDateInputValue": "7c0faa21",
+     "formatDateForDisplay": "1f3d94ef",
+     "onManualDateInput": "5868d993",
+     "dismiss": "6abe4dd4",
+     "addPerson": "889b463a",
+     "updatePlayer": "c9c20fe4",
+     "continueUpdatingPlayer": "b1d970d8",
+     "onRoleChange": "689541ef",
+     "removeUserFromTenant": "4ce79c42",
+     "onNameInput": "599db925",
+     "dismissNameSuggestions": "a8334d59",
+     "applyMatchedPerson": "39edeaa8",
+     "onEmailBlur": "22081f9a",
+     "loadDuplicateCandidates": "3e84534a",
+     "confirmMerge": "2bf92a21",
+     "onChange": "e08e0683",
+     "onBirthdayChange": "1ba69962",
+     "onPlaysSinceChange": "0792cd6a",
+     "onJoinedChange": "8a21ea5b",
+     "removeHis": "4f54b019",
+     "register": "a766b36b",
+     "onProfileImageClick": "786ee94e",
+     "replaceImgFromViewer": "c7b5e8ed",
+     "removeImgFromViewer": "0757972d",
+     "openPassImageViewer": "7c14b9f9",
+     "closePassImageViewer": "0d0c630d",
+     "onImageSelect": "41c8a13a",
+     "readFileAsDataUrl": "242ee9a2",
+     "getAttText": "61544f6a",
+     "onHisItemClicked": "7fcef00a",
+     "searchPerson": "bef98da7",
+     "assignMyAccount": "776c959b",
+     "openMoreMenu": "aebbcfa5",
+     "transferPerson": "cf6b8161",
+     "archivePlayer": "cd8c0116",
+     "dismissArchiveModal": "b80221f7",
+     "confirmPause": "2049fc56",
+     "askPauseInOtherTenants": "a23b1252",
+     "dismissPauseModal": "6193183b",
+     "openAbsenceModal": "97903595",
+     "dismissAbsenceModal": "7fb63575",
+     "confirmAbsence": "904627eb",
+     "deleteAbsence": "b78d7bc8",
+     "activate": "badeca4e",
+     "activateConfirmed": "87e8cdda",
+     "getExtraFieldDateString": "a062406d",
+     "onExtraFieldDateChange": "7fdfa2ae",
+     "onShiftChange": "888c22ad",
+     "showApproveActionSheet": "e403e822",
+     "declinePlayer": "e71a6516",
+     "approvePlayer": "58d8b0d3",
+     "get hasDutyTypes": "e3258e01",
+     "openUnavailability": "764a769b",
+     "function OnInput": "c5536566"
+    },
+    "id": "people/person/person.page#logic-8a6cf6df"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:355",
+     "lib/features/people/presentation/pages/person_detail_page.dart:491",
+     "lib/features/people/presentation/pages/person_detail_page.dart:606",
+     "lib/features/people/presentation/pages/person_create_page.dart:238",
+     "lib/features/people/presentation/pages/person_create_page.dart:997"
+    ],
+    "n": "Bestätigt. Alle Erst-extras nachvollzogen: _draft nur in initState gesetzt (kein didUpdateWidget), nach ref.invalidate bleibt die Anzeige veraltet; Notiz-Historie „Keine Notiz“ bei jedem Speichern, wenn notes null ist (Flutter speichert leere Notiz selbst als null); keine Zusatzfeld-Defaults bei bestehenden Personen; Neu-Seite ignoriert field.defaultValue, Gemeinde '', Datum „YYYY-MM-DD“, Geburtstag/Spielt seit leer, strengere E-Mail-Regex; Datenübernahme ohne Passbild. Zusätzlich übersehen: Problemfall-Kasten „Grund“ mit Rohwert und Duplikat-Rückfrage auf der Neu-Seite (siehe extra).",
+    "sev": "hoch",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart",
+    "lib/features/people/presentation/pages/person_create_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/person/person.page.html",
+    "line": 548,
+    "cond": [
+     "@if (player)",
+     "@if (!isParent && !readOnly && !approveMode)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "accountHelpButton",
+     "#": "accountHelpModal"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 0.5, 1]\"",
+     "[initialBreakpoint]=\"0.5\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "people/person/person.page#modal-b80602d8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/account_accordion.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 693,
+    "cond": [
+     "@if (player)",
+     "@if (otherTenants.length)",
+     "@for (tenant of otherTenants; track tenant)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "[color]": "\"tenant.percColor\""
+    },
+    "bindings": [
+     "[color]=\"tenant.percColor\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ tenant.perc ?? \"n/a\" }}"
+    ],
+    "text": "{{ tenant.perc ?? \"n/a\" }}",
+    "id": "people/person/person.page#text-34177970"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart"
+    ],
+    "n": "behoben in #326",
+    "v": null,
+    "src": "zz-fixed-personen-instanzen.json",
+    "flutterAt": "da49473"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 163,
+    "cond": [
+     "@if (player)",
+     "@if (existingPlayer && isAdmin)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.notes"
+    ],
+    "de": [
+     "Notizen"
+    ],
+    "literals": [],
+    "text": "{{ 'people.notes' | transloco }}",
+    "id": "people/person/person.page#text-b133c084"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart",
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/person/person.page.ts",
+    "line": 1211,
+    "method": "PersonPage.assignMyAccount",
+    "cond": [],
+    "message": {
+     "keys": [
+      "person.userAssigned"
+     ],
+     "de": [
+      "Benutzer wurde erfolgreich zugewiesen"
+     ],
+     "literals": [],
+     "expr": "translate('person.userAssigned')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "a0903b98",
+    "mbody": "776c959b",
+    "roleGuarded": true,
+    "id": "people/person/person.page#toast-9e8a666e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #320",
+    "v": null,
+    "src": "zz-fixed-personen-konto.json",
+    "flutterAt": "84c4c44"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "planning/plan-viewer/plan-viewer.component",
+   "ionic": {
+    "ts": "planning/plan-viewer/plan-viewer.component.ts",
+    "html": "planning/plan-viewer/plan-viewer.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "planning/plan-viewer/plan-viewer.component.html",
+    "line": 16,
+    "cond": [
+     "@if (canEdit)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=edit()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'attendance.editRunSheet' | transloco\""
+    ],
+    "icons": [
+     "create-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "planning/plan-viewer/plan-viewer.component#action-705fc86e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+     "lib/features/planning/presentation/attendance_plan_viewer.dart"
+    ],
+    "n": "behoben in #305",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "planning/plan-viewer/plan-viewer.component",
+   "ionic": {
+    "ts": "planning/plan-viewer/plan-viewer.component.ts",
+    "html": "planning/plan-viewer/plan-viewer.component.html"
+   },
+   "extra": {
+    "id": "x-de53b1e39b",
+    "title": "Weitere Ablaufpläne fehlen im Viewer (Terminliste/Selbstservice)",
+    "n": "Befund echt. Ionic att-list/signout übergeben attendance + plan === attendance.plan, extra_plans geladen → Chips je Plan/Tag, Start = heutiger Plan. / Flutter: openAttendancePlanViewer übergibt plan explizit und PlanAttendance ohne extraPlans (Attendance-Modell hat kein extra_plans); Selbstservice: kSignoutAttendanceColumns ohne extra_plans, showPlanViewerSheet ohne extraPlans → nur Plan 1 sichtbar (Eltern-Portal übergibt extraPlans korrekt). Mitglieder sehen in „Meine Termine“ nur Plan 1.",
+    "sev": "hoch",
+    "ionic": "src/app/planning/plan-viewer/plan-viewer.component.ts:53",
+    "f": [
+     "lib/features/planning/presentation/attendance_plan_viewer.dart:37",
+     "lib/features/self_service/presentation/pages/signout_page.dart:716",
+     "lib/data/repositories/sign_in_out_repository.dart:21",
+     "lib/features/planning/presentation/pages/plan_viewer_page.dart:61"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-termine.json",
+    "n": "Terminliste behoben in #305, Selbstservice in #298"
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "planning/planning.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "get rows:79-105",
+     "get isAdmin:107-109",
+     "get showBeamer:112-114",
+     "needsBeamer:116-118",
+     "beamerFileOf:121-124",
+     "get blockTemplates:126-128",
+     "isCollapsed:130-132",
+     "toggleGroup:134-140",
+     "groupMinutes:142-144",
+     "templateMinutes:146-149",
+     "groupRange:152-155",
+     "startOf:157-164",
+     "fieldName:167-169",
+     "get canAddTopics:171-174",
+     "openAgendaPicker:177-200",
+     "get currentAttTypeHasProtocol:202-206",
+     "get hasAgendaPlaceholder:208-210",
+     "get currentAtt:212-214",
+     "get planLabels:219-227",
+     "constructor:229-234",
+     "trackByFieldId:237-237",
+     "ngOnInit:239-303",
+     "calculateTime:305-316",
+     "changeField:318-342",
+     "changeNoteField:345-371",
+     "send:373-396",
+     "resolveOrgPlan:398-403",
+     "onAttChange:405-428",
+     "toggleSharePlan:430-438",
+     "toggleOrgPlan:440-448",
+     "dismiss:450-452",
+     "handleReorder:454-478",
+     "removeField:480-489",
+     "canIndent:494-500",
+     "toggleIndent:502-517",
+     "addGroup:519-548",
+     "addSubItem:550-586",
+     "showGroupOptions:588-608",
+     "editGroup:610-637",
+     "dissolveGroup:640-649",
+     "confirmDeleteGroup:651-675",
+     "saveBlockTemplate:677-686",
+     "insertBlockTemplate:688-692",
+     "deleteBlockTemplate:694-711",
+     "addExtraField:713-755",
+     "addNoteField:757-785",
+     "addAgendaItemsPlaceholder:787-799",
+     "addCurrentSongs:801-831",
+     "onAddSong:833-838",
+     "onSongsChange:840-859",
+     "calculateEnd:861-875",
+     "hasBranding:879-882",
+     "export:884-905",
+     "currentPlanSubtitle:908-911",
+     "exportAllPlans:914-929",
+     "validate:931-947",
+     "getAttTypeText:949-952",
+     "getDefaultPlanTitle:954-958",
+     "getEffectivePlanTitle:960-963",
+     "shareCurrentPlan:965-979",
+     "doShareAttendancePlan:981-1009",
+     "revokeSharePlan:1011-1031",
+     "showOptions:1033-1090",
+     "getDefaultPlanGroups:1092-1099",
+     "loadPlanGroups:1101-1111",
+     "savePlanGroups:1113-1116",
+     "addPlanGroup:1118-1120",
+     "addPlanConductor:1122-1124",
+     "removePlanConductor:1126-1130",
+     "isPlanExportDisabled:1132-1134",
+     "removePlanGroup:1136-1140",
+     "trackByIndex:1142-1144",
+     "createPlan:1146-1207",
+     "shuffle:1209-1215",
+     "getMissingGroups:1217-1226",
+     "nextAtt:1228-1236",
+     "prevAtt:1238-1246",
+     "updateAttendance:1248-1279",
+     "saveOpenPlan:1284-1288",
+     "toHHmm:1291-1293",
+     "loadPlan:1295-1304",
+     "withDays:1307-1310",
+     "savePlans:1312-1316",
+     "selectPlan:1318-1324",
+     "addPlan:1326-1349",
+     "createAdditionalPlan:1351-1377",
+     "showPlanOptions:1379-1405",
+     "renamePlan:1407-1431",
+     "assignPlanDay:1433-1464",
+     "movePlan:1466-1477",
+     "deletePlan:1479-1503",
+     "resetPlan:1505-1523",
+     "addDefaultFieldsFromAttendanceType:1525-1536",
+     "resolvePlaceholderFields:1538-1566",
+     "get availableTemplates:1568-1570",
+     "get orgDefaultFields:1572-1574",
+     "applyTemplate:1576-1581",
+     "addOrgField:1583-1587",
+     "openSongSelector:1589-1591",
+     "closeSongSelector:1593-1596",
+     "selectSong:1598-1601",
+     "onSongSearch:1603-1616",
+     "resetSongSearch:1618-1621"
+    ],
+    "bodies": {
+     "get rows": "75556ffa",
+     "get isAdmin": "8a9ec169",
+     "get showBeamer": "f139431e",
+     "needsBeamer": "d32a0426",
+     "beamerFileOf": "465817c3",
+     "get blockTemplates": "ab1c23cb",
+     "isCollapsed": "5f9e1bba",
+     "toggleGroup": "996e554e",
+     "groupMinutes": "43aaf421",
+     "templateMinutes": "07ea465a",
+     "groupRange": "c658a3e4",
+     "startOf": "0a5bb680",
+     "fieldName": "290c7df8",
+     "get canAddTopics": "00cc88f7",
+     "openAgendaPicker": "df6e99f0",
+     "get currentAttTypeHasProtocol": "4a6a0a86",
+     "get hasAgendaPlaceholder": "9c2e1ab2",
+     "get currentAtt": "88f8097c",
+     "get planLabels": "ebb00864",
+     "constructor": "61ee72c9",
+     "trackByFieldId": "e5c54102",
+     "ngOnInit": "b540813d",
+     "calculateTime": "bb01c14a",
+     "changeField": "ccb90ed2",
+     "changeNoteField": "d521f824",
+     "send": "2fc11ec1",
+     "resolveOrgPlan": "9a6c101a",
+     "onAttChange": "d08def33",
+     "toggleSharePlan": "4bf9da7a",
+     "toggleOrgPlan": "6ac0966a",
+     "dismiss": "69a7489b",
+     "handleReorder": "2a5436b1",
+     "removeField": "091c7e79",
+     "canIndent": "cf1774ae",
+     "toggleIndent": "5e1d54cb",
+     "addGroup": "c2279e11",
+     "addSubItem": "86f025f1",
+     "showGroupOptions": "009531c9",
+     "editGroup": "a9313ce8",
+     "dissolveGroup": "bf47c7de",
+     "confirmDeleteGroup": "229b5d07",
+     "saveBlockTemplate": "d7233798",
+     "insertBlockTemplate": "691b6e13",
+     "deleteBlockTemplate": "d644143f",
+     "addExtraField": "cddabdb2",
+     "addNoteField": "2414c192",
+     "addAgendaItemsPlaceholder": "8685b04d",
+     "addCurrentSongs": "4bf28ee7",
+     "onAddSong": "6441b7fb",
+     "onSongsChange": "4af6f1b2",
+     "calculateEnd": "ff2a711d",
+     "hasBranding": "fb614af4",
+     "export": "e76b18ac",
+     "currentPlanSubtitle": "10d3ee5a",
+     "exportAllPlans": "edd78bff",
+     "validate": "18e769bb",
+     "getAttTypeText": "5d45ccb0",
+     "getDefaultPlanTitle": "63720050",
+     "getEffectivePlanTitle": "f6516c7e",
+     "shareCurrentPlan": "d5fd8899",
+     "doShareAttendancePlan": "573bbdf9",
+     "revokeSharePlan": "899a2569",
+     "showOptions": "06c834a4",
+     "getDefaultPlanGroups": "f63203d2",
+     "loadPlanGroups": "ce4e664a",
+     "savePlanGroups": "1bf869ec",
+     "addPlanGroup": "a04ee82e",
+     "addPlanConductor": "be0adbb5",
+     "removePlanConductor": "682fee1d",
+     "isPlanExportDisabled": "4fe1faf8",
+     "removePlanGroup": "a40064be",
+     "trackByIndex": "2e14e025",
+     "createPlan": "c58817f6",
+     "shuffle": "cd9fd03a",
+     "getMissingGroups": "0b952d2d",
+     "nextAtt": "4d968537",
+     "prevAtt": "0737e1ef",
+     "updateAttendance": "61694565",
+     "saveOpenPlan": "809a2ce7",
+     "toHHmm": "c082c541",
+     "loadPlan": "64c16259",
+     "withDays": "743b6171",
+     "savePlans": "a3fa1c88",
+     "selectPlan": "5578a874",
+     "addPlan": "d228ded4",
+     "createAdditionalPlan": "264ffdcb",
+     "showPlanOptions": "b5e714e0",
+     "renamePlan": "eba7cd43",
+     "assignPlanDay": "bfaf3a4a",
+     "movePlan": "e0708f83",
+     "deletePlan": "fbad80ec",
+     "resetPlan": "e298f597",
+     "addDefaultFieldsFromAttendanceType": "e48dc5e8",
+     "resolvePlaceholderFields": "c2f4a1d3",
+     "get availableTemplates": "a9636a28",
+     "get orgDefaultFields": "16c21015",
+     "applyTemplate": "49a9d085",
+     "addOrgField": "9fa45076",
+     "openSongSelector": "6fc5f0c2",
+     "closeSongSelector": "b2352675",
+     "selectSong": "7e7feed5",
+     "onSongSearch": "29d05bd5",
+     "resetSongSearch": "962183ea"
+    },
+    "id": "planning/planning.page#logic-5522ee54"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:679",
+     "lib/features/planning/presentation/pages/planning_page.dart:759",
+     "lib/features/planning/presentation/pages/planning_page.dart:907",
+     "lib/features/planning/presentation/pages/planning_page.dart:996",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:85",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:585",
+     "lib/core/providers/plan_providers.dart:45"
+    ],
+    "n": "Neu bewertet. Änderung 4.19.9: rows-Getter prüft zusätzlich, ob die gecachten Zeilen noch auf die aktuellen Feldobjekte zeigen (geladener Plan mit gleichen IDs wie die Startzeile). Flutter baut die Zeilen bei jedem Build ohne Cache (PlanFieldsEditor._buildRows: Schlüssel id bzw. id#n, eingeklappte Blöcke ausgeblendet, „Unterpunkt hinzufügen“-Zeile am Blockende), die Minuteneingabe übernimmt neue Werte (didUpdateWidget) – der behobene Fehler kann nicht auftreten, gleich. Übrige Logik wie Ionic: Saison-Termine, Werke, Historie laden; Plan laden mit Dirigent aus der Historie und Tagesordnung 0 min; normalizeGroups/Ende; Speichern plan bzw. plan+extra_plans (splitPlans, Zeit HH:mm, Gemeinde-App-UIDs); Mehrfach-Pläne, Blöcke, Blockvorlagen (Löschen/Speichern nur ADMIN), Org-Vorlagen/-Felder, Platzhalter-Auflösung, Präfix je Termintyp, Themen nur Plan 1 + Teamleitung. Abweichungen als Extras: Standardplan bei Termin ohne Plan (hoch), archivierte Termine für Helfer (hoch), Start-Termin ohne kommenden Termin (mittel), Werke-Reihenfolge, ungültiger Plan beim Wechsel (Flutter besser), Autosave/Entwürfe, Hinweis bei leerem Ablauf (neu, niedrig).",
+    "sev": "hoch",
+    "v": null,
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart",
+    "lib/core/providers/plan_providers.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "extra": {
+    "id": "x-5e1a396117",
+    "title": "Archivierte Termine in der Terminauswahl für Helfer",
+    "n": "Befund gültig (Rollenlücke). Ionic: getAttendance → filterArchivedForRole; Helfer und Stimmführer-Helfer (einzige Nicht-Admin-Rollen mit Editor-Zugang) sehen in Terminauswahl und Vor/Zurück keine archivierten Termine, Admin/Verantwortlich schon. / Flutter: getPlanAttendances lädt archived nicht und filtert nicht; Helfer/SF-Helfer erreichen /planning?attendanceId=… und können archivierte Termine wählen und deren Plan, Teilen- und Org-Schalter schreiben. Admin/Verantwortlich gleich.",
+    "sev": "hoch",
+    "ionic": "src/app/services/db.service.ts:2653",
+    "f": [
+     "lib/data/repositories/plan_repository.dart:44",
+     "lib/data/repositories/plan_repository.dart:13",
+     "lib/core/providers/plan_providers.dart:45",
+     "lib/core/router/route_access.dart:110"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-zz-planung-nachtrag.json",
+    "n": "behoben in #301/#295; Ionic-Änderung 4.19.9 (Zeilen-Cache) betrifft den Befund nicht"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "extra": {
+    "id": "x-7d55a70233",
+    "title": "Standardplan bei Termin ohne Ablaufplan",
+    "n": "Befund weiter gültig (ngOnInit/onAttChange in 4.19.9 unverändert). Ionic: Termin ohne Plan zeigt „Wort “ (id '', 10 min); nur mit kommender Werke-Historie ruft ngOnInit onAttChange → Typ-Vorlage (sofort gespeichert) bzw. leere Liste (nichts gespeichert); ohne Historie wird beim Öffnen nichts geschrieben. Beim Terminwechsel ohne Plan und ohne Historie bleiben Felder/Startzeit des vorigen Termins stehen und werden in den neuen Termin geschrieben. / Flutter _loadAttendance: immer Typ-Vorlage, sonst „Wort“ (id 'Wort') mit Termin-Startzeit, _dirty = true → beim Schließen, Wechsel, Verlassen oder dispose wird attendance.plan geschrieben, auch ohne Nutzeränderung. Andere DB-Schreibung (z. B. „Wort“-Plan allein durchs Öffnen).",
+    "sev": "hoch",
+    "ionic": "src/app/planning/planning.page.ts:43",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:759",
+     "lib/features/planning/presentation/pages/planning_page.dart:803",
+     "lib/features/planning/presentation/pages/planning_page.dart:809",
+     "lib/features/planning/presentation/pages/planning_page.dart:996",
+     "lib/features/planning/presentation/pages/planning_page.dart:255"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-zz-planung-nachtrag.json",
+    "n": "behoben in #301; Ionic-Änderung 4.19.9 (Zeilen-Cache) betrifft den Befund nicht"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "extra": {
+    "id": "x-9b169a1078",
+    "title": "Start-Termin ohne kommenden Termin",
+    "n": "Befund gültig. Ionic: ohne attendanceId upcomingAttendances[0] (Datum > heute 0 Uhr); gibt es keinen, ist kein Termin gewählt und Änderungen werden nicht gespeichert. / Flutter _init: wählt dann den neuesten (vergangenen) Termin der Saison; hat er keinen Plan, bekommt er beim Verlassen den Standardplan (x-7d55a70233). Nachladen einer attendanceId außerhalb der geladenen Liste per ID ist Flutter besser.",
+    "sev": "mittel",
+    "ionic": "src/app/planning/planning.page.ts:268",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:721",
+     "lib/features/planning/presentation/pages/planning_page.dart:700"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-zz-planung-nachtrag.json",
+    "n": "behoben in #301; Ionic-Änderung 4.19.9 (Zeilen-Cache) betrifft den Befund nicht"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "protocols/protocol/protocol-pdf",
+   "ionic": {
+    "ts": "protocols/protocol/protocol-pdf.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "protocols/protocol/protocol-pdf.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function createProtocolPdf:35-159"
+    ],
+    "bodies": {
+     "function createProtocolPdf": "62d55600"
+    },
+    "id": "protocols/protocol/protocol-pdf#logic-3a7d97db"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/pdf_fonts.dart",
+     "lib/features/team_organization/protocol_pdf.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   },
+   "flutterChanged": [
+    "lib/core/services/pdf_fonts.dart",
+    "lib/features/team_organization/protocol_pdf.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "protocols/protocol/protocol.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "get tasks:124-124",
+     "set tasks:125-128",
+     "mediaListener:176-176",
+     "constructor:180-186",
+     "ngOnInit:190-200",
+     "ionViewDidEnter:202-204",
+     "ionViewWillLeave:206-209",
+     "ngOnDestroy:211-216",
+     "get backHref:218-220",
+     "load:222-257",
+     "buildSections:259-275",
+     "refreshTaskSections:277-279",
+     "buildAttendees:281-299",
+     "buildLeftovers:301-319",
+     "get planStart:324-326",
+     "get title:328-330",
+     "get dateLabel:332-335",
+     "get shortDate:337-339",
+     "get timeRange:341-346",
+     "get showFooter:349-351",
+     "get isPublished:353-355",
+     "get statusLine:357-365",
+     "get saveLabel:367-371",
+     "get activeSection:373-375",
+     "get activeLeftover:377-379",
+     "get liveSectionView:381-383",
+     "get liveLabel:385-390",
+     "get hasNext:392-394",
+     "get avatarPreview:397-399",
+     "hasNotes:401-403",
+     "preview:405-407",
+     "sectionMeta:409-411",
+     "tasksFor:413-415",
+     "get unassignedTasks:418-421",
+     "sectionLabelOfTask:423-428",
+     "taskLine:430-435",
+     "outcomeColor:437-444",
+     "trackById:446-448",
+     "onLayoutChange:452-459",
+     "toggleSection:462-470",
+     "activate:472-483",
+     "nextSection:485-488",
+     "previousSection:490-493",
+     "get gridColumns:497-499",
+     "startResize:505-543",
+     "resizeByKey:546-558",
+     "resetWidth:560-563",
+     "setWidth:565-568",
+     "readStoredWidths:570-572",
+     "storeWidths:574-576",
+     "onKeydown:578-589",
+     "updateLive:593-596",
+     "startLiveTimer:598-602",
+     "stopLiveTimer:604-607",
+     "onSectionChange:611-616",
+     "queueSave:618-623",
+     "flushSection:625-645",
+     "showSaveError:647-651",
+     "mergeServerRow:657-671",
+     "applyRow:674-686",
+     "captureEditor:693-705",
+     "captureEditors:707-709",
+     "flushAll:712-716",
+     "setOutcome:718-740",
+     "getEditor:742-744",
+     "ensureProtocol:747-752",
+     "createTask:756-790",
+     "addSpontaneousTopic:794-821",
+     "insertSpontaneousTopic:823-860",
+     "openNotes:864-867",
+     "closeNotes:869-872",
+     "openPublish:876-905",
+     "joinNames:907-909",
+     "publish:911-952",
+     "closeTopics:955-964",
+     "buildPdfData:968-1009",
+     "sharePdf:1011-1026"
+    ],
+    "bodies": {
+     "get tasks": "e6c9689b",
+     "set tasks": "809f2334",
+     "mediaListener": "9a17ce1e",
+     "constructor": "f1398dc8",
+     "ngOnInit": "2d9fbf94",
+     "ionViewDidEnter": "56404fdb",
+     "ionViewWillLeave": "cd07e457",
+     "ngOnDestroy": "401c5883",
+     "get backHref": "a3ac4694",
+     "load": "26554bbe",
+     "buildSections": "02c15bfb",
+     "refreshTaskSections": "8b69f4ea",
+     "buildAttendees": "cd3f70b7",
+     "buildLeftovers": "6cbc4c60",
+     "get planStart": "4fc46c16",
+     "get title": "41c19d3b",
+     "get dateLabel": "dd4146f7",
+     "get shortDate": "4866ba37",
+     "get timeRange": "ffdd09ce",
+     "get showFooter": "452975bc",
+     "get isPublished": "a9e8a726",
+     "get statusLine": "d1b91094",
+     "get saveLabel": "77753695",
+     "get activeSection": "87099ad5",
+     "get activeLeftover": "9f8990a0",
+     "get liveSectionView": "a556d493",
+     "get liveLabel": "1ae9e1c6",
+     "get hasNext": "66f05310",
+     "get avatarPreview": "066d946d",
+     "hasNotes": "590a4587",
+     "preview": "f0669c8b",
+     "sectionMeta": "cddeb842",
+     "tasksFor": "2b80566e",
+     "get unassignedTasks": "4e7b728a",
+     "sectionLabelOfTask": "7eb37691",
+     "taskLine": "6842a66a",
+     "outcomeColor": "2bb6d84f",
+     "trackById": "28b2051a",
+     "onLayoutChange": "8c68bc23",
+     "toggleSection": "24e8c77e",
+     "activate": "1f0e0299",
+     "nextSection": "17dd5c8e",
+     "previousSection": "2099cb4e",
+     "get gridColumns": "fe7afed9",
+     "startResize": "db5ebf7d",
+     "resizeByKey": "c45ddd43",
+     "resetWidth": "bab9178f",
+     "setWidth": "01fc68ad",
+     "readStoredWidths": "094d2ad6",
+     "storeWidths": "95f68f25",
+     "onKeydown": "37269c2e",
+     "updateLive": "d123589e",
+     "startLiveTimer": "b59003fe",
+     "stopLiveTimer": "932bd25b",
+     "onSectionChange": "5caba76f",
+     "queueSave": "fb9159ee",
+     "flushSection": "4a16721d",
+     "showSaveError": "83c63047",
+     "mergeServerRow": "21ddd659",
+     "applyRow": "076419c6",
+     "captureEditor": "a3a20af0",
+     "captureEditors": "dc418d89",
+     "flushAll": "38881ce0",
+     "setOutcome": "4212f120",
+     "getEditor": "55400a94",
+     "ensureProtocol": "9ddeb2bb",
+     "createTask": "5c61f68f",
+     "addSpontaneousTopic": "e752cb2b",
+     "insertSpontaneousTopic": "be5a54d0",
+     "openNotes": "de0495c3",
+     "closeNotes": "e222728a",
+     "openPublish": "ff2b8ee0",
+     "joinNames": "82f7e2c7",
+     "publish": "b39b3660",
+     "closeTopics": "822cf5c3",
+     "buildPdfData": "e1828193",
+     "sharePdf": "44a998d8"
+    },
+    "id": "protocols/protocol/protocol.page#logic-82b3528c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 944,
+    "method": "PublicPlanningPage.persistToDb",
+    "cond": [],
+    "table": "shared_plans",
+    "op": "upsert",
+    "payload": "{ id: this.currentPlanId, edit_key: this.currentEditKey!, plan_title: this.planTitle?.trim() || translate('plans.runSheet'), date: this.date, time: this.time, …",
+    "options": [
+     "{ onConflict: 'id' }"
+    ],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "3afd1ebb",
+    "mbody": "cf7784b0",
+    "id": "public-planning/public-planning.page#db-b17aa9e7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/plan_repository.dart:234"
+    ],
+    "n": "behoben in #300",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/plan_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 775,
+    "method": "PublicPlanningPage.send",
+    "cond": [],
+    "call": "Utils.createPlanExport",
+    "args": "{ time: this.time, end: this.end, fields: this.selectedFields, sideBySide, branding, asBlob: true, asImage }, title",
+    "src": "128a89e5",
+    "mbody": "50a0064d",
+    "id": "public-planning/public-planning.page#effect-1ad39a4e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/public_brandings.dart:1",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+    ],
+    "n": "behoben in #300",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 736,
+    "method": "PublicPlanningPage.exportImage",
+    "cond": [],
+    "call": "Utils.createPlanExport",
+    "args": "{ time: this.time, end: this.end, fields: this.selectedFields, sideBySide, branding, asBlob: true, asImage: true }, title",
+    "src": "2535727e",
+    "mbody": "b5455c4e",
+    "id": "public-planning/public-planning.page#effect-6021ff44"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/public_brandings.dart:1",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+    ],
+    "n": "behoben in #300",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 726,
+    "method": "PublicPlanningPage.export",
+    "cond": [],
+    "call": "Utils.createPlanExport",
+    "args": "{ time: this.time, end: this.end, fields: this.selectedFields, sideBySide, branding }, this.planTitle?.trim() || translate('plans.runSheet')",
+    "src": "d96274ab",
+    "mbody": "b3a57002",
+    "id": "public-planning/public-planning.page#effect-73ff88d2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/public_brandings.dart:1",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+    ],
+    "n": "behoben in #300",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 832,
+    "method": "PublicPlanningPage.doShare",
+    "cond": [
+     "!(navigator.share)",
+     "(this.isLoggedIn)"
+    ],
+    "call": "navigator.clipboard.writeText",
+    "args": "url",
+    "src": "c926664a",
+    "mbody": "75a3fcd1",
+    "id": "public-planning/public-planning.page#effect-9082e8f4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart",
+     "lib/core/services/web_window_web.dart"
+    ],
+    "n": "behoben in #309",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 862,
+    "method": "PublicPlanningPage.doShare",
+    "cond": [
+     "!(navigator.share)"
+    ],
+    "call": "navigator.clipboard.writeText",
+    "args": "url",
+    "src": "c926664a",
+    "mbody": "75a3fcd1",
+    "id": "public-planning/public-planning.page#effect-9082e8f4-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart",
+     "lib/core/services/web_window_web.dart"
+    ],
+    "n": "behoben in #309",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 107,
+    "cond": [
+     "@if (tenantData)",
+     "@if (tenantData.registration_fields?.includes('picture'))",
+     "in <ion-item>"
+    ],
+    "tag": "input",
+    "attrs": {
+     "class": "inputFile",
+     "type": "file",
+     "#": "chooser"
+    },
+    "events": [
+     "(change)=onImageSelect($event)"
+    ],
+    "link": null,
+    "model": "name=file",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#field-9f610a4d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 149,
+    "cond": [
+     "@if (tenantData)",
+     "@else (not noGroupsAvailable)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "#": "select"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"selectedGroupId\"",
+    "bindings": [
+     "[label]=\"((tenantData.type === 'choir' && tenantData.id !== 194) ? 'common.groupLabel.voice' : tenantData.type === 'orchestra' ? 'common.groupLabel.instrument'…"
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"group.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ group.name }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "((tenantData.type === 'choir' && tenantData.id !== 194) ? 'common.groupLabel.voice' : tenantData.type === 'orchestra' ? 'common.groupLabel.instrument' : 'common.groupLabel.group') | transloco"
+    ],
+    "text": "[label]=\"((tenantData.type === 'choir' && tenantData.id !== 194) ? 'common.groupLabel.voice' : tenantData.type === 'orchestra' ? 'common.groupLabel.instrument' : 'common.groupLabel.group') | transloc…",
+    "id": "register/tenant-register/tenant-register.page#field-a9922b49"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/data/providers/registration_providers.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   },
+   "flutterChanged": [
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 165,
+    "cond": [
+     "@if (tenantData)",
+     "@for (field of additionalFields; track field.name)",
+     "@else if (field.type === 'select')"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"field.value\"",
+    "bindings": [
+     "[label]=\"field.name\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"option\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ option }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[label]=\"field.name\" {{ option }}",
+    "id": "register/tenant-register/tenant-register.page#field-ac71b961"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart",
+     "lib/features/registration/data/providers/registration_providers.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   },
+   "flutterChanged": [
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:49-56",
+     "ngOnInit:58-100",
+     "checkExistent:102-115",
+     "prefillFromProfile:117-130",
+     "ngOnDestroy:132-134",
+     "openPrivacy:136-141",
+     "enterOtpMode:143-147",
+     "exitOtpMode:149-154",
+     "onModeChange:157-163",
+     "requestCode:165-187",
+     "resendCode:189-194",
+     "verifyCode:196-225",
+     "startResendCooldown:227-236",
+     "clearCooldown:238-244",
+     "goHome:246-252",
+     "login:254-294",
+     "register:296-387",
+     "validate:389-476",
+     "changeImg:478-495",
+     "onImageSelect:497-524",
+     "get filteredChurches:526-532",
+     "getChurchLabel:534-543",
+     "openChurchModal:545-548",
+     "selectChurch:550-553"
+    ],
+    "bodies": {
+     "constructor": "264273fd",
+     "ngOnInit": "12992831",
+     "checkExistent": "2a874fb0",
+     "prefillFromProfile": "309860fa",
+     "ngOnDestroy": "45eaeae0",
+     "openPrivacy": "be8e7d1f",
+     "enterOtpMode": "cc47c442",
+     "exitOtpMode": "dbdf4f47",
+     "onModeChange": "54cc97a3",
+     "requestCode": "9ba232cc",
+     "resendCode": "64cd82e6",
+     "verifyCode": "1e1dd1b5",
+     "startResendCooldown": "ac783939",
+     "clearCooldown": "36f956cd",
+     "goHome": "a6203d0b",
+     "login": "44ece2f1",
+     "register": "dd22fdb7",
+     "validate": "167c118b",
+     "changeImg": "4e29b9f5",
+     "onImageSelect": "3ad6372f",
+     "get filteredChurches": "e159f5b7",
+     "getChurchLabel": "155d31ae",
+     "openChurchModal": "ef60549c",
+     "selectChurch": "9d2daef9"
+    },
+    "id": "register/tenant-register/tenant-register.page#logic-b461582a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart",
+     "lib/features/registration/data/providers/registration_providers.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   },
+   "flutterChanged": [
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ]
+  }
+ ]
+}

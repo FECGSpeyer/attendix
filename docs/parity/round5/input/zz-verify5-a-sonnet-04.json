@@ -1,0 +1,1880 @@
+{
+ "batch": "zz-verify5-a-sonnet-04",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 660,
+    "cond": [
+     "@if (type)",
+     "@if (type.checklist)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newChecklistText\"",
+    "bindings": [
+     "[label]=\"'typeSettings.newTodo' | transloco\"",
+     "[placeholder]=\"'typeSettings.todoPlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.newTodo",
+     "typeSettings.todoPlaceholder"
+    ],
+    "de": [
+     "Neues To-Do",
+     "To-Do Text eingeben..."
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.newTodo' | transloco\" [placeholder]=\"'typeSettings.todoPlaceholder' | transloco\"",
+    "id": "settings/general/type/type.page#field-4366c1dd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 71,
+    "cond": [
+     "@if (type)",
+     "@if (!isGeneral)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"type.manage_songs\"",
+    "bindings": [
+     "[helperText]=\"'typeSettings.songsHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.songsHelper",
+     "typeSettings.manageSongs"
+    ],
+    "de": [
+     "Wenn du diese Option aktivierst, dann kannst du beim Anlegen einer Anwesenheit von diesem Typ, Werke hinzufügen, die für die kommenden Proben relevant sind und automatisch im Probenplan berücksichtigt werden.",
+     "Werke verwalten"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'typeSettings.songsHelper' | transloco\" {{ 'typeSettings.manageSongs' | transloco }}",
+    "id": "settings/general/type/type.page#field-5028d2f7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 667,
+    "cond": [
+     "@if (type)",
+     "@if (type.checklist)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "action-sheet"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newChecklistDeadline\"",
+    "bindings": [
+     "[label]=\"'typeSettings.deadline' | transloco\"",
+     "[placeholder]=\"'typeSettings.noDeadline' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"null\"",
+      "keys": [
+       "typeSettings.noDeadline"
+      ],
+      "de": [
+       "Keine Deadline"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.noDeadline' | transloco }}"
+     },
+     {
+      "value": "\"option.hours\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ option.label }}"
+     },
+     {
+      "value": "\"-1\"",
+      "keys": [
+       "typeSettings.customDots"
+      ],
+      "de": [
+       "Benutzerdefiniert..."
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.customDots' | transloco }}"
+     }
+    ],
+    "keys": [
+     "typeSettings.deadline",
+     "typeSettings.noDeadline",
+     "typeSettings.customDots"
+    ],
+    "de": [
+     "Deadline",
+     "Keine Deadline",
+     "Benutzerdefiniert..."
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.deadline' | transloco\" [placeholder]=\"'typeSettings.noDeadline' | transloco\" {{ 'typeSettings.noDeadline' | transloco }} {{ option.label }} {{ 'typeSettings.customDots' | trans…",
+    "id": "settings/general/type/type.page#field-557c3624"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 468,
+    "cond": [
+     "@if (type)",
+     "@if (areSelectFieldsAvailable())",
+     "@if (additionalFieldFilter)",
+     "@if (selectedFieldType() === 'boolean')"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"type.additional_fields_filter.option\"",
+    "bindings": [
+     "[label]=\"'typeSettings.value' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"true\"",
+      "keys": [
+       "common.yes"
+      ],
+      "de": [
+       "Ja"
+      ],
+      "literals": [],
+      "text": "{{ 'common.yes' | transloco }}"
+     },
+     {
+      "value": "\"false\"",
+      "keys": [
+       "common.no"
+      ],
+      "de": [
+       "Nein"
+      ],
+      "literals": [],
+      "text": "{{ 'common.no' | transloco }}"
+     }
+    ],
+    "keys": [
+     "typeSettings.value",
+     "common.yes",
+     "common.no"
+    ],
+    "de": [
+     "Wert",
+     "Ja",
+     "Nein"
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.value' | transloco\" {{ 'common.yes' | transloco }} {{ 'common.no' | transloco }}",
+    "id": "settings/general/type/type.page#field-81819267"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 547,
+    "cond": [
+     "@if (type)",
+     "@if (type.default_plan?.fields)"
+    ],
+    "tag": "ion-datetime-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/type/type.page#field-9786b85d-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 603,
+    "cond": [
+     "@if (type)",
+     "@if (type.default_plan?.fields)",
+     "@if (end)"
+    ],
+    "tag": "ion-datetime-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/type/type.page#field-9786b85d-4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 585,
+    "cond": [
+     "@if (type)",
+     "@if (type.default_plan?.fields)",
+     "in <ion-reorder-group>",
+     "@else",
+     "@if (!field.id.includes('noteFld'))"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "required": "true",
+     "type": "number",
+     "slot": "end"
+    },
+    "events": [
+     "(ionBlur)=calculateEnd()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"field.time\"",
+    "bindings": [
+     "[placeholder]=\"'typeSettings.minPh' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.minPh"
+    ],
+    "de": [
+     "min"
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'typeSettings.minPh' | transloco\"",
+    "id": "settings/general/type/type.page#field-ba7f8aa7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 700,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=type.checklist = $event.detail.checked ? [] : null"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"type.checklist\"",
+    "bindings": [
+     "[ngModelOptions]=\"{standalone: true}\"",
+     "[checked]=\"type.checklist !== null && type.checklist !== undefined\"",
+     "[helperText]=\"'typeSettings.checklistHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.checklistHelper",
+     "typeSettings.enableChecklist"
+    ],
+    "de": [
+     "Aktiviere die Checkliste, um To-Dos für diesen Anwesenheitstyp zu definieren. Diese werden automatisch bei neuen Terminen übernommen.",
+     "Checkliste aktivieren"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'typeSettings.checklistHelper' | transloco\" {{ 'typeSettings.enableChecklist' | transloco }}",
+    "id": "settings/general/type/type.page#field-d34df4b8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 439,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "multiple": "true"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"type.relevant_groups\"",
+    "bindings": [
+     "[label]=\"'typeSettings.relevantGroups' | transloco\"",
+     "[helperText]=\"'typeSettings.relevantGroupsHelper' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"group.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ group.name }}"
+     }
+    ],
+    "keys": [
+     "typeSettings.relevantGroups",
+     "typeSettings.relevantGroupsHelper"
+    ],
+    "de": [
+     "Relevante Gruppen",
+     "Nur die relevanten Gruppen werden beim Anlegen einer Anwesenheit von diesem Typ berücksichtigt. Wenn keine Gruppe ausgewählt ist, werden alle Gruppen berücksichtigt."
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.relevantGroups' | transloco\" [helperText]=\"'typeSettings.relevantGroupsHelper' | transloco\" {{ group.name }}",
+    "id": "settings/general/type/type.page#field-e6aa9e5e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 525,
+    "cond": [
+     "@if (type)",
+     "@if (type.default_plan?.fields)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"type.planning_title\"",
+    "bindings": [
+     "[helperText]=\"'typeSettings.titleHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.titleHelper"
+    ],
+    "de": [
+     "Dieser Titel wird beim Exportieren eines Ablaufplans angezeigt. Falls eine Typ-Info vorhanden ist, wird diese in Klammern dahinter angezeigt. (z.B. Probenplan (Kantateprobe))"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'typeSettings.titleHelper' | transloco\"",
+    "id": "settings/general/type/type.page#field-f51fa00c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/general/type/type.page.html",
+    "line": 276,
+    "cond": [
+     "@if (type)",
+     "@if (type.notification)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "reminders-modal-trigger"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 1]\"",
+     "[initialBreakpoint]=\"1\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/general/type/type.page#modal-0895b1d0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/general/type/type.page.html",
+    "line": 548,
+    "cond": [
+     "@if (type)",
+     "@if (type.default_plan?.fields)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/general/type/type.page#modal-8afdfb0b-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/general/type/type.page.ts",
+    "line": 411,
+    "method": "TypePage.openDutyHelp",
+    "cond": [],
+    "via": "navController.navigateForward",
+    "to": "'/tabs/settings/help/article/duty-setup'",
+    "src": "1cbc3c89",
+    "mbody": "d1a9607d",
+    "id": "settings/general/type/type.page#nav-bc1cad79"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "settings/general/type/type.page.html",
+    "line": 500,
+    "cond": [
+     "@if (type)",
+     "@if (type.default_plan?.fields)"
+    ],
+    "inline": true,
+    "tag": "ion-popover",
+    "attrs": {
+     "trigger": "add-field-trigger",
+     "#": "addFieldPopover"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/general/type/type.page#popover-26fe60f8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 436,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.filter"
+    ],
+    "de": [
+     "Filter"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.filter' | transloco }}",
+    "id": "settings/general/type/type.page#text-2c11308c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 496,
+    "cond": [
+     "@if (type)",
+     "@if (type.default_plan?.fields)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.runSheet"
+    ],
+    "de": [
+     "Ablaufplan"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.runSheet' | transloco }}",
+    "id": "settings/general/type/type.page#text-6289c3a9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 544,
+    "cond": [
+     "@if (type)",
+     "@if (type.default_plan?.fields)",
+     "@if (type.all_day)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "typeSettings.startAllDay"
+    ],
+    "de": [
+     "Startzeit für den Ablaufplan bei ganztägigen Terminen"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.startAllDay' | transloco }}",
+    "id": "settings/general/type/type.page#text-80219924"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 524,
+    "cond": [
+     "@if (type)",
+     "@if (type.default_plan?.fields)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.planHeading"
+    ],
+    "de": [
+     "Ablaufplan Überschrift"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.planHeading' | transloco }}",
+    "id": "settings/general/type/type.page#text-8c888e7c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 542,
+    "cond": [
+     "@if (type)",
+     "@if (type.default_plan?.fields)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "typeSettings.startShort"
+    ],
+    "de": [
+     "Start"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.startShort' | transloco }}",
+    "id": "settings/general/type/type.page#text-a94e358b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 602,
+    "cond": [
+     "@if (type)",
+     "@if (type.default_plan?.fields)",
+     "@if (end)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.end"
+    ],
+    "de": [
+     "Ende"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.end' | transloco }}",
+    "id": "settings/general/type/type.page#text-d7a84674-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/types/types.page",
+   "ionic": {
+    "ts": "settings/general/types/types.page.ts",
+    "html": "settings/general/types/types.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/general/types/types.page.ts",
+    "line": 49,
+    "method": "TypesPage.openTypeModal",
+    "cond": [],
+    "component": "TypePage",
+    "props": [
+     "isNew"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "e0d00b9a",
+    "mbody": "7a43c6a5",
+    "id": "settings/general/types/types.page#modal-c0d2c05c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_types_page.dart",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+     "lib/data/repositories/attendance_type_repository.dart",
+     "lib/core/providers/attendance_type_providers.dart"
+    ],
+    "n": "behoben in #302",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/help/article/help-article.page",
+   "ionic": {
+    "ts": "settings/help/article/help-article.page.ts",
+    "html": "settings/help/article/help-article.page.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "settings/help/article/help-article.page.ts",
+    "line": 44,
+    "method": "HelpArticlePage.onBodyClick",
+    "cond": [],
+    "component": "HelpGlossaryPopoverComponent",
+    "src": "becdbdac",
+    "mbody": "03c836df",
+    "id": "settings/help/article/help-article.page#popover-c1b18c0d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/help/presentation/pages/help_article_page.dart",
+     "lib/features/help/presentation/widgets/glossary_term_popover.dart",
+     "lib/features/help/presentation/widgets/help_markdown.dart",
+     "lib/shared/widgets/adaptive/app_popover_menu.dart"
+    ],
+    "n": "behoben in #299",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 954,
+    "cond": [
+     "in <ion-modal isOpen=\"isInstancesModalOpen\" #instancesModal>",
+     "in <ion-modal trigger=instance-settings-button>"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=onTenantSelectionChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"wantInstanceSelection\"",
+    "bindings": [
+     "[helperText]=\"'settings.tenantSelectHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "settings.tenantSelectHelper",
+     "settings.enableTenantSelect"
+    ],
+    "de": [
+     "Wenn diese Option aktiv ist, wirst du vor dem Öffnen der App immer gefragt, welche Instanz du öffnen möchtest.",
+     "Instanzauswahl aktivieren"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'settings.tenantSelectHelper' | transloco\" {{ 'settings.enableTenantSelect' | transloco }}",
+    "id": "settings/settings/settings.page#field-fdb790d6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart",
+     "lib/core/providers/user_preferences_provider.dart"
+    ],
+    "n": "behoben in #294",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.ts",
+    "line": 407,
+    "method": "SettingsPage.openCreateInstanceModal",
+    "cond": [],
+    "component": "RegisterPage",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "31b85276",
+    "mbody": "00cb6b3f",
+    "id": "settings/settings/settings.page#modal-2d9ef553"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart",
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+    ],
+    "n": "behoben in #322",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.ts",
+    "line": 289,
+    "method": "SettingsPage.openPlayerModal",
+    "cond": [],
+    "component": "PersonPage",
+    "props": [
+     "existingPlayer",
+     "readOnly",
+     "hasLeft"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "b24046df",
+    "mbody": "04788e56",
+    "id": "settings/settings/settings.page#modal-35a628ef"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/left_players_page.dart",
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #322",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.ts",
+    "line": 825,
+    "method": "SettingsPage.openApprovePersonModal",
+    "cond": [],
+    "component": "PersonPage",
+    "props": [
+     "existingPlayer",
+     "approveMode"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "1513ca71",
+    "mbody": "6623ffc3",
+    "id": "settings/settings/settings.page#modal-fb3873fe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/pending_players_page.dart",
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #322",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 96,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "in <ion-reorder-group>",
+     "in <ion-item>",
+     "@if (isEditMode)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear",
+     "color": "danger"
+    },
+    "events": [
+     "(click)=$event.stopPropagation(); removeField(i)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared-plan/shared-plan.page#action-a9ede0e6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/shared_plan_edit_list.dart"
+    ],
+    "n": "behoben in #309",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 69,
+    "cond": [
+     "@if (!loading && !notFound)"
+    ],
+    "tag": "ion-reorder-group",
+    "attrs": {
+     "[disabled]": "\"!isEditMode\""
+    },
+    "events": [
+     "(ionItemReorder)=handleReorder($any($event))"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [
+     "planning.minShort"
+    ],
+    "de": [
+     "{min} min"
+    ],
+    "literals": [],
+    "text": "{{ field.name }} {{ calculateTime(field, i) }} {{ field.info }} {{ getActiveCountdown() }} {{ 'planning.minShort' | transloco: { min: (field | planMinutes: fields) } }}",
+    "id": "shared-plan/shared-plan.page#action-ec0c1511"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart",
+     "lib/features/planning/presentation/widgets/shared_plan_edit_list.dart",
+     "lib/features/planning/presentation/widgets/plan_view_list.dart"
+    ],
+    "n": "behoben in #309",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "shared/audio-player/audio-player.component",
+   "ionic": {
+    "ts": "shared/audio-player/audio-player.component.ts",
+    "html": "shared/audio-player/audio-player.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "shared/audio-player/audio-player.component.ts",
+    "line": 36,
+    "method": "AudioPlayerComponent.showError",
+    "cond": [],
+    "message": {
+     "keys": [
+      "audio.playFailed"
+     ],
+     "de": [
+      "Fehler beim Abspielen: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('audio.playFailed', { error: error?.message || error })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "fa206331",
+    "mbody": "1fbcfabf",
+    "id": "shared/audio-player/audio-player.component#toast-8cb59de1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/audio_player/audio_player_widget.dart",
+     "lib/core/services/audio_player/audio_player_service.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "shared/files-folder-picker/files-folder-picker.component",
+   "ionic": {
+    "ts": "shared/files-folder-picker/files-folder-picker.component.ts",
+    "html": "shared/files-folder-picker/files-folder-picker.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/files-folder-picker/files-folder-picker.component.html",
+    "line": 31,
+    "cond": [
+     "in <ion-modal #modal>",
+     "@if (currentPath)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "color": "primary",
+     "[disabled]": "\"isLoading\""
+    },
+    "events": [
+     "(click)=onSelect()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark-circle-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "Diesen Ordner wählen: {{ pathSegments[pathSegments.length - 1] }}",
+    "id": "shared/files-folder-picker/files-folder-picker.component#action-c2019029"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "shared/message-editor/message-editor.component",
+   "ionic": {
+    "ts": "shared/message-editor/message-editor.component.ts",
+    "html": "shared/message-editor/message-editor.component.ts (inline)"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/message-editor/message-editor.component.ts (inline)",
+    "line": 43,
+    "cond": [],
+    "tag": "button",
+    "attrs": {
+     "type": "button"
+    },
+    "events": [
+     "(mousedown)=$event.preventDefault()",
+     "(click)=cmd('undo')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'editor.undo' | transloco\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"↶\"",
+    "id": "shared/message-editor/message-editor.component#action-445826b3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/message_editor_toolbar.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "shared/message-editor/message-editor.component",
+   "ionic": {
+    "ts": "shared/message-editor/message-editor.component.ts",
+    "html": "shared/message-editor/message-editor.component.ts (inline)"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "shared/message-editor/message-editor.component.ts",
+    "line": 181,
+    "method": "MessageEditorComponent.editLink",
+    "cond": [],
+    "header": {
+     "keys": [
+      "editor.link"
+     ],
+     "de": [
+      "Link"
+     ],
+     "literals": [],
+     "expr": "translate('editor.link')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "expr": "...(current ? [{ text: translate('common.remove'), role: 'destructive', handler: () => { this.editor?.chain().focus().e…",
+      "keys": [
+       "common.remove"
+      ],
+      "de": [
+       "Entfernen"
+      ],
+      "literals": []
+     },
+     {
+      "text": {
+       "keys": [
+        "common.apply"
+       ],
+       "de": [
+        "Übernehmen"
+       ],
+       "literals": [],
+       "expr": "translate('common.apply')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(data: { url?: string; text?: string }) => { let url = (data.url ?? '').trim(); if (!url) return; if (!/^(https?:|mailto:|tel:)/i.test(url)) url = `https://${url}`; const chain = this.editor!.chain().focus(); if (hasSelection || current) {…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "url",
+      "label": null,
+      "name": "'url'",
+      "placeholder": {
+       "keys": [],
+       "de": [],
+       "literals": [
+        "https://…"
+       ],
+       "expr": "'https://…'"
+      },
+      "value": "current",
+      "checked": null,
+      "handler": null
+     },
+     {
+      "expr": "...(hasSelection || current ? [] : [{ name: 'text', type: 'text' as const, placeholder: translate('editor.linkText') }])",
+      "keys": [
+       "editor.linkText"
+      ],
+      "de": [
+       "Angezeigter Text (optional)"
+      ],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "74e7a451",
+    "mbody": "9fab09eb",
+    "id": "shared/message-editor/message-editor.component#alert-bc736d27"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/message_editor_toolbar.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/import/import.page",
+   "ionic": {
+    "ts": "songs/import/import.page.ts",
+    "html": "songs/import/import.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/import/import.page.html",
+    "line": 25,
+    "cond": [
+     "@if (step === 'file')",
+     "in <ion-item>"
+    ],
+    "tag": "input",
+    "attrs": {
+     "type": "file",
+     "#": "fileInput"
+    },
+    "events": [
+     "(change)=onFileSelect($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "songs/import/import.page#field-601fe7d3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/utils/xls_reader.dart",
+     "lib/core/utils/spreadsheet_reader.dart"
+    ],
+    "n": "behoben in #295 (.xls-Leser)",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/song/song.page.html",
+    "line": 554,
+    "cond": [
+     "in <ion-modal isOpen=\"isCopyModalOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=isCopyModalOpen = false"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "songs/song/song.page#action-7999bdf1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart"
+    ],
+    "n": "behoben in #293",
+    "v": null,
+    "src": "zz-fixed-werke.json",
+    "flutterAt": "2353b98"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "songs/song/song.page.html",
+    "line": 590,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isCategoryModalOpen\""
+    },
+    "events": [
+     "(didDismiss)=isCategoryModalOpen = false"
+    ],
+    "bindings": [
+     "[isOpen]=\"isCategoryModalOpen\"",
+     "[breakpoints]=\"[0, 1]\"",
+     "[initialBreakpoint]=\"1\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "songs/song/song.page#modal-81e9f13d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart"
+    ],
+    "n": "behoben in #293",
+    "v": null,
+    "src": "zz-fixed-werke.json",
+    "flutterAt": "2353b98"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "songs/song/song.page.ts",
+    "line": 950,
+    "method": "SongPage.printSongFiles",
+    "cond": [
+     "(groupsWithPlayers.length === 0)"
+    ],
+    "message": {
+     "keys": [
+      "songs.noGroupsWithPeople"
+     ],
+     "de": [
+      "Keine Gruppen mit zugewiesenen Personen gefunden"
+     ],
+     "literals": [],
+     "expr": "translate('songs.noGroupsWithPeople')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "500e2271",
+    "mbody": "1e5449ae",
+    "id": "songs/song/song.page#toast-394c8bb6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/group_pdf_print.dart",
+     "lib/data/repositories/player_repository.dart"
+    ],
+    "n": "behoben in #293",
+    "v": null,
+    "src": "zz-fixed-werke.json",
+    "flutterAt": "2353b98"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/songs.page.html",
+    "line": 5,
+    "cond": [
+     "@if (!isStandaloneTab)"
+    ],
+    "tag": "ion-back-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[defaultHref]=\"tenantData ? '/' : 'tabs/settings'\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"\"",
+    "id": "songs/songs.page#action-a3de1883"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart"
+    ],
+    "n": "behoben in #293",
+    "v": null,
+    "src": "zz-fixed-werke.json",
+    "flutterAt": "2353b98"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/songs.page.html",
+    "line": 185,
+    "cond": [
+     "in <ion-popover trigger=filter-trigger-songs>"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "slot": "end",
+     "multiple": "true"
+    },
+    "events": [
+     "(ionChange)=onFilterChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"instrumentsToFilter\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"instrument.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ instrument.name }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ instrument.name }}",
+    "id": "songs/songs.page#field-a0424ef7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+    ],
+    "n": "behoben in #293",
+    "v": null,
+    "src": "zz-fixed-werke.json",
+    "flutterAt": "2353b98"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "songs/songs.page.html",
+    "line": 134,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-popover",
+    "attrs": {
+     "trigger": "filter-trigger-songs"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "songs/songs.page#popover-21a14c45"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+    ],
+    "n": "behoben in #293",
+    "v": null,
+    "src": "zz-fixed-werke.json",
+    "flutterAt": "2353b98"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "stats/stats.page.html",
+    "line": 309,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "modal",
+     "multiple": "true"
+    },
+    "events": [
+     "(ionDismiss)=filterInstances()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"selectedInstances\"",
+    "bindings": [
+     "[label]=\"'stats.filterTenants' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"tenant.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ tenant.longName }}"
+     }
+    ],
+    "keys": [
+     "stats.filterTenants"
+    ],
+    "de": [
+     "Instanzen filtern"
+    ],
+    "literals": [],
+    "text": "[label]=\"'stats.filterTenants' | transloco\" {{ tenant.longName }}",
+    "id": "stats/stats.page#field-2d5da58e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1029"
+    ],
+    "n": "behoben in #298",
+    "v": null,
+    "src": "zz-fixed-uebersicht.json",
+    "flutterAt": "a0550a4"
+   }
+  }
+ ]
+}

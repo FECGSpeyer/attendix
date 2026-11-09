@@ -1,0 +1,522 @@
+{
+  "batch": "zz-verify-b16",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "i18n/locale.service#logic-182b9555": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/locale_provider.dart:29",
+        "lib/core/providers/locale_provider.dart:80",
+        "lib/core/providers/locale_provider.dart:95",
+        "lib/core/providers/locale_provider.dart:120"
+      ],
+      "n": "init/setLanguage/syncWithAccount/saveToAccount gleich (resolveLanguage gespeichert→Gerät→de, nur de/en wählbar; Konto-Sprache notifications.language wird bei Anmeldung abgeglichen). SharedPreferences statt localStorage, Intl.defaultLocale statt dayjs. Ionic speichert in settings.page nach setLanguage aufs Konto, Flutter in setLanguage selbst – gleiches Ergebnis.",
+      "v": "bestätigt"
+    },
+    "i18n/locale.service#db-219e795d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_language_repository.dart:42"
+      ],
+      "n": "update notifications {language} .eq('id', userId); Fehler in beiden nur geloggt. Tabelle ohne tenantId (eine Zeile pro Nutzer).",
+      "v": "bestätigt"
+    },
+    "services/admin/admin.service#db-87770995": {
+      "s": "na",
+      "n": "toter Code: AdminService.removeUserFromTenant wird nirgends aufgerufen – einzige Nutzung von adminSvc ist db.service.ts:3525 (getAdmins); DbService/TenantService haben eigene Implementierungen (geprüft in deren Units).",
+      "v": "bestätigt"
+    },
+    "services/admin/admin.service#db-017f0a88": {
+      "s": "na",
+      "n": "toter Code: AdminService.removeUserFromTenant wird nirgends aufgerufen – einzige Nutzung von adminSvc ist db.service.ts:3525 (getAdmins); DbService/TenantService haben eigene Implementierungen (geprüft in deren Units).",
+      "v": "bestätigt"
+    },
+    "services/admin/admin.service#db-53270bf1": {
+      "s": "na",
+      "n": "toter Code: AdminService.updateTenantUser wird nirgends aufgerufen – einzige Nutzung von adminSvc ist db.service.ts:3525 (getAdmins); DbService/TenantService haben eigene Implementierungen (geprüft in deren Units).",
+      "v": "bestätigt"
+    },
+    "services/admin/admin.service#db-243b5e89": {
+      "s": "na",
+      "n": "toter Code: AdminService.setFavoriteTenant wird nirgends aufgerufen – einzige Nutzung von adminSvc ist db.service.ts:3525 (getAdmins); DbService/TenantService haben eigene Implementierungen (geprüft in deren Units).",
+      "v": "bestätigt"
+    },
+    "services/agenda-item/agenda-item.service#db-601f7ae4": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/agenda_item_repository.dart:85",
+        "lib/data/repositories/agenda_item_repository.dart:198"
+      ],
+      "n": "Insert agenda_items mit tenant_id, Select AGENDA_ITEM_SELECT. Flutter schreibt title/description/status/priority/responsible_person_id/default_duration explizit (nicht gesetzte als null) – Spalten nullable ohne Default (team_org_v2_schema.sql), also gleiches Ergebnis wie Ionic-Picker {tenant_id,title,status:'open',priority:'medium'}.",
+      "v": "bestätigt"
+    },
+    "services/agenda-item/agenda-item.service#db-8a55a371": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/agenda_item_repository.dart:107"
+      ],
+      "n": "Gleiche Spalten tenant_id/title/description/proposed_by + status 'open', priority 'medium', proposal_status 'pending'; ohne Select (RLS).",
+      "v": "bestätigt"
+    },
+    "services/agenda-item/agenda-item.service#db-4e252b96": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/agenda_item_repository.dart:133"
+      ],
+      "n": "Gleiche Bereinigung (id/created_at/responsible_person/proposer entfernt, Flutter zusätzlich tenant_id), Flutter zusätzlich .eq('tenant_id').",
+      "v": "bestätigt"
+    },
+    "services/agenda-item/agenda-item.service#db-2d15f0fb": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/agenda_item_repository.dart:151"
+      ],
+      "n": "delete .eq('id') + .eq('tenant_id'), select('id'); leeres Ergebnis → 'svc.noDeletePermission' in beiden.",
+      "v": "bestätigt"
+    },
+    "services/agenda-item/agenda-item.service#db-de26a68e": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/agenda_item_repository.dart:184"
+      ],
+      "n": "Flutter prüft vorher, ob das Thema zum aktuellen Mandanten gehört (sonst leere Liste).",
+      "v": "bestätigt"
+    },
+    "services/ai.service#db-8841158f": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/ai_service.dart:19"
+      ],
+      "n": "Edge-Function synonyms-gpt, Body {group}, POST (functions_client 2.5.0 Default HttpMethod.post). Aufruf in Ionic instrument.page, in Flutter instruments_list_page.",
+      "v": "bestätigt"
+    },
+    "services/attendance-type/attendance-type.service#logic-f7488593": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/attendance_type_repository.dart:26",
+        "lib/data/repositories/attendance_type_repository.dart:44",
+        "lib/data/repositories/attendance_type_repository.dart:102",
+        "lib/data/repositories/attendance_type_repository.dart:121",
+        "lib/data/repositories/attendance_type_repository.dart:174",
+        "lib/core/providers/attendance_type_providers.dart:40"
+      ],
+      "n": "Laden (tenant_id, nach index), Einzel-Laden, Anlegen, Aktualisieren gleich (nach Mutation neu geladen). Löschen: Flutter verweigert das Löschen eines verwendeten Typs (siehe extra 'Verwendeter Anwesenheitstyp nicht löschbar'). addDefaultAttendanceTypes ist hier toter Code (DbService hat eigene Implementierung).",
+      "sev": "hoch",
+      "v": "bestätigt"
+    },
+    "services/attendance-type/attendance-type.service#db-b47455fe": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_type_repository.dart:124",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1513"
+      ],
+      "n": "Gleiche Operation (update attendance_types per id, Flutter zusätzlich tenant_id); die geschriebenen Spalten liefert der Aufrufer (type.page / types.page, eigene Units).",
+      "v": "bestätigt"
+    },
+    "services/attendance-type/attendance-type.service#db-3dfb8b0f": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_type_repository.dart:107",
+        "lib/data/repositories/attendance_type_repository.dart:67"
+      ],
+      "n": "Insert attendance_types mit tenant_id; Spaltenumfang der Neuanlage gehört zur type.page-Unit.",
+      "v": "bestätigt"
+    },
+    "services/attendance-type/attendance-type.service#db-c4d1a223": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/attendance_type_repository.dart:174",
+        "lib/data/repositories/attendance_type_repository.dart:178",
+        "lib/data/repositories/attendance_type_repository.dart:187"
+      ],
+      "n": "Ionic: deleteAttendanceType löscht den Typ ohne Prüfung (Dialog: 'Alle Anwesenheiten dieses Typs werden ebenfalls gelöscht') / Flutter: deleteType zählt attendance mit type_id und löscht bei >0 NICHT; Repo fängt die Exception, UI zeigt nur 'Fehler beim Löschen des Anwesenheitstyps' – obwohl derselbe Bestätigungstext das Mitlöschen ankündigt.",
+      "sev": "hoch",
+      "v": "bestätigt"
+    },
+    "services/attendance-type/attendance-type.service#db-a1f89eac": {
+      "s": "na",
+      "n": "toter Code: AttendanceTypeService.addDefaultAttendanceTypes wird nie aufgerufen – DbService.addDefaultAttendanceTypes (db.service.ts:3362) hat eine eigene Implementierung.",
+      "v": "bestätigt"
+    },
+    "services/attendance/attendance.service#logic-5d9a8b40": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:149",
+        "lib/data/repositories/attendance_repository.dart:251",
+        "lib/data/repositories/attendance_repository.dart:295",
+        "lib/data/repositories/attendance_repository.dart:545",
+        "lib/data/repositories/attendance_repository.dart:567",
+        "lib/data/repositories/attendance_repository.dart:644",
+        "lib/data/repositories/player_repository.dart:2281",
+        "lib/core/providers/attendance_detail_providers.dart:37",
+        "lib/core/providers/attendance_detail_providers.dart:100",
+        "lib/features/attendance/presentation/person_attendance_writes.dart:97",
+        "lib/core/services/offline_queue_service.dart:445"
+      ],
+      "n": "Lebendige Methoden portiert (Anlegen, Personen hinzufügen/entfernen, Zusammenführen, Laden mit Offline-Cache, Update mit changed_by/changed_at + Dienst-Sync, Offline-Queue). Abweichungen in Randfällen – siehe extra. getCurrentAttDate/setCurrentAttDate/getAttendance/getUpcomingAttendances/getAttendancesByDate/getPersonAttendances/getParentAttendances/signIn/signOut sind hier toter Code.",
+      "sev": "niedrig",
+      "v": "bestätigt"
+    },
+    "services/attendance/attendance.service#db-911d7b6c": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/attendance_create_writes.dart:219",
+        "lib/data/repositories/protocol_repository.dart:265"
+      ],
+      "n": "Insert attendance mit tenantId (Spaltenwerte aus attendance-create, eigene Unit). Zweiter Pfad: Teamorganisation-Schnellanlage über ProtocolRepository.createAttendance, ebenfalls mit tenantId.",
+      "v": "bestätigt"
+    },
+    "services/attendance/attendance.service#db-a93f1d01": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:627",
+        "lib/features/attendance/presentation/attendance_create_writes.dart:387"
+      ],
+      "n": "Gleiche Spalten (attendance_id, person_id, status, notes). Ionic ignoriert Duplicate-Key-Fehler 23505 still, Flutter meldet ihn – siehe extra.",
+      "v": "bestätigt"
+    },
+    "services/attendance/attendance.service#db-f66ab5d4": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:926",
+        "lib/data/repositories/player_repository.dart:2238"
+      ],
+      "n": "Flutter löscht direkt in player_repository (person_id + attendance_id in …), gleiche Bedingung.",
+      "v": "bestätigt"
+    },
+    "services/attendance/attendance.service#db-10ae6c21": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:2301"
+      ],
+      "n": "Gleiche Löschung, Flutter in 200er-Blöcken und zusätzlich .eq('person_id', fromId).",
+      "v": "bestätigt"
+    },
+    "services/attendance/attendance.service#db-47905dba": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:2308"
+      ],
+      "n": "Gleiches Update {person_id: toId}, Flutter in Blöcken und zusätzlich .eq('person_id', fromId).",
+      "v": "bestätigt"
+    },
+    "services/attendance/attendance.service#db-5d15bc79": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:272"
+      ],
+      "n": "Flutter entfernt id/created_at/tenantId/persons, filtert zusätzlich tenantId und prüft Archiv-Rechte.",
+      "v": "bestätigt"
+    },
+    "services/attendance/attendance.service#db-9d206b1f": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:299"
+      ],
+      "n": "Flutter zusätzlich .eq('tenantId'). Fehler: Ionic ignoriert sie, Flutter-Notifier fängt sie ebenfalls ohne Hinweis ab (attendance_providers.dart:405) – gleiches Verhalten; danach lädt Flutter die Liste neu.",
+      "v": "bestätigt"
+    },
+    "services/attendance/attendance.service#db-8bef7f4d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:712",
+        "lib/data/repositories/attendance_repository.dart:676",
+        "lib/core/utils/duty_utils.dart:51"
+      ],
+      "n": "Gleiche Felder + changed_by/changed_at; Ionic syncDutyWithStatus schreibt den Dienststatus in einem zweiten Update, Flutter im selben Update – gleiches Ergebnis.",
+      "v": "bestätigt"
+    },
+    "services/attendance/attendance.service#db-0be3b674": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:556",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2480"
+      ],
+      "n": "Flutter prüft vorher die Mandantenzugehörigkeit.",
+      "v": "bestätigt"
+    },
+    "services/audio-player/audio-player.service#logic-3ca5bbf3": {
+      "s": "diff",
+      "f": [
+        "lib/core/services/audio_player/audio_player_service.dart:170",
+        "lib/core/services/audio_player/audio_player_service.dart:182",
+        "lib/core/services/audio_player/audio_player_service.dart:192",
+        "lib/core/services/audio_player/audio_player_service.dart:212",
+        "lib/core/services/audio_player/audio_player_service.dart:270",
+        "lib/core/services/audio_player/audio_player_service.dart:302",
+        "lib/shared/widgets/audio_player/audio_player_widget.dart:25"
+      ],
+      "n": "Kernverhalten gleich (ein Titel zur Zeit, Warteschlange mit Auto-Weiter, 'Zurück' >3 s = Neustart, m:ss, Lockscreen-Handler, Seek-Schutz beim Ziehen). Abweichungen bei URL-Vorladen, Fehlerfall, Audio-Erkennung und Titelwechsel (Leiste verschwindet kurz) – siehe extra.",
+      "sev": "niedrig",
+      "v": "bestätigt"
+    },
+    "services/auth/auth.service#toast-fe3978a5": {
+      "s": "diff",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:108",
+        "lib/features/auth/presentation/pages/login_page.dart:209"
+      ],
+      "n": "Nur im Teams-Verknüpfungsmodus erreichbar (TeamsService.ssoLink → authSvc.login). Notiz des Erstprüfers korrigiert: ssoLink fängt den Fehler ab (catch → false), daher zeigt Ionic NUR den Toast 'Bitte bestätige zuerst deine E-Mail-Adresse.' und KEINEN Erneut-senden-Dialog / Flutter: kein Toast; die LoginFailure wird bis _login durchgereicht und öffnet den Dialog 'E-Mail nicht bestätigt' mit 'Erneut senden' (Flutter besser).",
+      "sev": "niedrig",
+      "v": "bestätigt"
+    },
+    "services/auth/auth.service#db-c14b8e23": {
+      "s": "na",
+      "n": "toter Code: AuthService.register wird nirgends aufgerufen – DbService nutzt eine eigene Implementierung (db.service.ts:1416), nur checkToken/changePassword/resendConfirmationEmail (DbService) und login (TeamsService.ssoLink) gehen an AuthService.",
+      "v": "bestätigt"
+    },
+    "services/auth/auth.service#toast-29996129": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:424",
+        "lib/features/auth/presentation/pages/login_page.dart:392"
+      ],
+      "n": "Erreichbar über den Login-Dialog 'E-Mail nicht bestätigt' → Erneut senden (normaler Login); gleicher Text 'Fehler beim Senden der Bestätigungs-E-Mail' als Fehler-Toast.",
+      "v": "bestätigt"
+    },
+    "services/auth/auth.service#db-b24d3721": {
+      "s": "na",
+      "n": "toter Code: AuthService.logout wird nirgends aufgerufen – DbService nutzt eine eigene Implementierung (db.service.ts:757), nur checkToken/changePassword/resendConfirmationEmail (DbService) und login (TeamsService.ssoLink) gehen an AuthService.",
+      "v": "bestätigt"
+    },
+    "services/auth/auth.service#db-1b80db04": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/profile/presentation/widgets/account_dialogs.dart:75",
+        "lib/features/settings/presentation/pages/settings_page.dart:527"
+      ],
+      "n": "Flutter besser: gleicher Schreibvorgang auth.updateUser({password}) aus 'Passwort ändern'. Ionic AuthService.changePassword wertet das {error} von supabase-js nicht aus (updateUser wirft nicht) – bei Ablehnung (z. B. gleiches/zu schwaches Passwort) zeigt settings.page trotzdem 'Passwort geändert' / Flutter: gotrue wirft AuthException → Toast 'Fehler beim Ändern des Passworts'. Erstprüfer: ok ohne diesen Unterschied.",
+      "v": "korrigiert"
+    },
+    "services/auth/auth.service#db-f83bbc13": {
+      "s": "na",
+      "n": "toter Code: AuthService.updatePassword wird nirgends aufgerufen – DbService nutzt eine eigene Implementierung (db.service.ts:1660), nur checkToken/changePassword/resendConfirmationEmail (DbService) und login (TeamsService.ssoLink) gehen an AuthService.",
+      "v": "bestätigt"
+    },
+    "services/auth/auth.service#db-b7f174fd": {
+      "s": "na",
+      "n": "toter Code: AuthService.registerUser wird nirgends aufgerufen – DbService nutzt eine eigene Implementierung (db.service.ts:953), nur checkToken/changePassword/resendConfirmationEmail (DbService) und login (TeamsService.ssoLink) gehen an AuthService.",
+      "v": "bestätigt"
+    },
+    "services/auth/auth.service#db-d9bd7d41": {
+      "s": "na",
+      "n": "toter Code: AuthService.registerUser wird nirgends aufgerufen – DbService nutzt eine eigene Implementierung (db.service.ts:953), nur checkToken/changePassword/resendConfirmationEmail (DbService) und login (TeamsService.ssoLink) gehen an AuthService.",
+      "v": "bestätigt"
+    },
+    "services/auth/auth.service#db-928fa6c0": {
+      "s": "na",
+      "n": "toter Code: AuthService.registerUser wird nirgends aufgerufen – DbService nutzt eine eigene Implementierung (db.service.ts:953), nur checkToken/changePassword/resendConfirmationEmail (DbService) und login (TeamsService.ssoLink) gehen an AuthService.",
+      "v": "bestätigt"
+    },
+    "services/auth/auth.service#db-098c5cc1": {
+      "s": "na",
+      "n": "toter Code: AuthService.informUserAboutApproval wird nirgends aufgerufen – DbService nutzt eine eigene Implementierung (UserRegistrationService via db.service.ts:1051), nur checkToken/changePassword/resendConfirmationEmail (DbService) und login (TeamsService.ssoLink) gehen an AuthService.",
+      "v": "bestätigt"
+    },
+    "services/auth/auth.service#db-35243e0a": {
+      "s": "na",
+      "n": "toter Code: AuthService.informUserAboutReject wird nirgends aufgerufen – DbService nutzt eine eigene Implementierung (UserRegistrationService via db.service.ts:1055), nur checkToken/changePassword/resendConfirmationEmail (DbService) und login (TeamsService.ssoLink) gehen an AuthService.",
+      "v": "bestätigt"
+    },
+    "services/auto-message/auto-message.service#db-3aad4500": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/auto_message_repository.dart:76",
+        "lib/data/models/auto_message/auto_message.dart:189"
+      ],
+      "n": "Ionic schreibt das ganze Regelobjekt (inkl. unveränderter tenantId/enabled_at/created_by), Flutter nur die Regelspalten + updated_at (+ enabled_at beim Einschalten) – gleiche Wirkung; Flutter zusätzlich .eq('tenantId').",
+      "v": "bestätigt"
+    },
+    "services/auto-message/auto-message.service#db-a1c568ea": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/auto_message_repository.dart:85"
+      ],
+      "n": "Gleiche Spalten inkl. tenantId, created_by, updated_at, enabled_at beim Einschalten; type_ids/group_ids leer → null wie im Ionic-Editor.",
+      "v": "bestätigt"
+    },
+    "services/auto-message/auto-message.service#db-82e43523": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/auto_message_repository.dart:103"
+      ],
+      "v": "bestätigt"
+    },
+    "services/auto-message/auto-message.service#db-2e687b36": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/auto_message_repository.dart:120"
+      ],
+      "v": "bestätigt"
+    },
+    "services/auto-message/auto-message.service#db-90c67d97": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/auto_message_repository.dart:134",
+        "lib/data/models/auto_message/auto_message.dart:212"
+      ],
+      "n": "Flutter sendet die Regel ohne created_by/created_at/updated_at (für den Dry-Run unerheblich).",
+      "v": "bestätigt"
+    },
+    "services/auto-message/auto-message.service#db-fda0d3f0": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/auto_message_repository.dart:209"
+      ],
+      "n": "Gleiche Spalten; tenantId = aktueller Mandant statt rule.tenantId (identisch); created_by_name aus eigenem Profil (Vor-/Nachname, sonst E-Mail) wie Ionic teamPerson.",
+      "v": "bestätigt"
+    },
+    "services/auto-message/auto-message.service#db-cc42f39d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/auto_message_repository.dart:226"
+      ],
+      "v": "bestätigt"
+    },
+    "services/auto-message/auto-message.service#db-41dcf04c": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/auto_message_repository.dart:412"
+      ],
+      "v": "bestätigt"
+    },
+    "services/auto-message/auto-message.service#db-a2e9b773": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/auto_message_repository.dart:437"
+      ],
+      "v": "bestätigt"
+    },
+    "services/church/church.service#toast-e387c98e": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:644",
+        "lib/core/providers/church_providers.dart:8",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:215"
+      ],
+      "n": "Ionic: Toast 'Fehler beim Laden der Kirchen' (danger) überall, wo getChurches scheitert (Instanz-Laden, Administration, Registrierung, Statistik) / Flutter: kein Toast; nur die Instanz-Registrierung zeigt inline rot 'Fehler beim Laden der Gemeinden' statt der Gemeindeauswahl, sonst still leere Liste (valueOrNull). Erstprüfer: 'missing, überall still' – Registrierungsseite übersehen.",
+      "v": "korrigiert"
+    },
+    "services/church/church.service#db-ab01b0b0": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/church_repository.dart:59"
+      ],
+      "n": "update churches {name} .eq('id') – globale Tabelle ohne tenantId (wie Ionic).",
+      "v": "bestätigt"
+    },
+    "services/church/church.service#toast-a0b536b6": {
+      "s": "diff",
+      "f": [
+        "lib/features/dashboard/presentation/pages/administration_page.dart:127"
+      ],
+      "n": "Ionic: Service-Toast 'Fehler beim Aktualisieren der Gemeinde' und danach 'Fehler beim Umbenennen' / Flutter: nur 'Fehler beim Umbenennen'.",
+      "sev": "niedrig",
+      "v": "bestätigt"
+    },
+    "services/church/church.service#db-dd2888cc": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/church_repository.dart:38"
+      ],
+      "n": "Insert churches {name, created_from: aktueller Nutzer} mit select('id').single() – gleich.",
+      "v": "bestätigt"
+    },
+    "services/church/church.service#toast-014c9654": {
+      "s": "diff",
+      "f": [
+        "lib/features/dashboard/presentation/pages/administration_page.dart:109",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1136"
+      ],
+      "n": "Ionic: 'Fehler beim Erstellen der Kirche' (+ Seiten-Toast mit Rohfehlertext) / Flutter: Administration 'Fehler beim Hinzufügen', Registrierung 'Fehler beim Erstellen der Gemeinde.'",
+      "sev": "niedrig",
+      "v": "bestätigt"
+    },
+    "services/church/church.service#db-3cb26f5e": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/church_repository.dart:151"
+      ],
+      "n": "Ionic lädt alle Personen mit additional_fields (max. 1000 Zeilen) und filtert im Client / Flutter lädt serverseitig gefiltert additional_fields->>bfecg_church = Duplikat, alle Seiten – siehe extra.",
+      "v": "bestätigt"
+    },
+    "services/church/church.service#db-2c27320f": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/church_repository.dart:101"
+      ],
+      "n": "Gleiches Update {additional_fields}, Flutter zusätzlich .eq('tenantId', Zeilen-tenantId) und Ergebnisprüfung.",
+      "v": "bestätigt"
+    },
+    "services/church/church.service#db-e51e3c81": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/church_repository.dart:117",
+        "lib/data/repositories/church_repository.dart:131"
+      ],
+      "n": "Flutter besser: Ionic löscht die doppelte Gemeinde immer, auch wenn Personen-Updates fehlschlugen / Flutter löscht nur, wenn alle Personen umgestellt sind und keine Referenz mehr existiert, sonst Fehler 'Zusammenführen fehlgeschlagen'.",
+      "sev": "niedrig",
+      "v": "bestätigt"
+    },
+    "services/conductor/conductor.service#toast-e679cded": {
+      "s": "missing",
+      "n": "Ionic: Toast 'Fehler beim Laden der Hauptgruppen-Personen' (danger) / Flutter: conductorsProvider (OfflineListCache → PlayerRepository.getConductors) ohne Hinweis; Aufrufer (Werk-Historie, Register-Plan, Termin) fangen den Fehler still bzw. melden ihn nur an ErrorReporter.",
+      "sev": "mittel",
+      "v": "bestätigt"
+    },
+    "services/cross-tenant/cross-tenant.service#db-d0968a48": {
+      "s": "na",
+      "n": "toter Code: CrossTenantService.getPersonAttendancesForTenant wird nirgends aufgerufen – DbService hat eine eigene Implementierung (db.service.ts:4064); von CrossTenantService werden nur getPossiblePersonsByName/-ByEmail, getUserRolesForTenants, getUsersFromTenant und getPersonIdFromTenant genutzt.",
+      "v": "bestätigt"
+    },
+    "services/cross-tenant/cross-tenant.service#db-32748636": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/tenant_providers.dart:184",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:262"
+      ],
+      "n": "Rollen je Instanz kommen in Flutter aus userTenantsProvider (tenantUsers tenantId, favorite, role für userId), genutzt für 'Instanz löschen' nur als Admin.",
+      "v": "bestätigt"
+    },
+    "services/cross-tenant/cross-tenant.service#toast-119dd1e0": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1122",
+        "lib/features/people/presentation/pages/people_list_page.dart:235",
+        "lib/data/repositories/cross_tenant_person_repository.dart:240"
+      ],
+      "n": "Filter 'Mitglied anderer Instanz'. Ionic: Toast 'Fehler beim Laden der Benutzer' (danger) beim Auswählen und beim Wiederherstellen des gespeicherten Filters / Flutter: beim Auswählen Fehler-Toast 'Fehler: <Fehlermeldung>' (anderer Text), beim Wiederherstellen still (Filter bleibt 'Alle anzeigen'). Erstprüfer: 'missing, still ignoriert' – Auswahl-Pfad mit Toast übersehen.",
+      "v": "korrigiert"
+    },
+    "services/cross-tenant/cross-tenant.service#toast-fef13d0b": {
+      "s": "missing",
+      "n": "Ionic: Toast 'Fehler beim Laden der Personen' (danger) bei Namensvorschlägen und beim Button 'In anderer Instanz suchen' / Flutter: Vorschläge still ('Silent — suggestions are optional', person_create_page.dart:176); _searchPersonInOtherInstance fängt den Fehler gar nicht ab (kein Toast).",
+      "sev": "mittel",
+      "v": "bestätigt"
+    },
+    "services/cross-tenant/cross-tenant.service#toast-9e26e97c": {
+      "s": "missing",
+      "n": "Ionic: Toast 'Fehler beim Laden der Personen' (danger) bei der E-Mail-Prüfung (onEmailBlur) / Flutter: person_create_page.dart:200 und person_detail_page.dart:859 fangen den Fehler still ab.",
+      "sev": "mittel",
+      "v": "bestätigt"
+    }
+  },
+  "extra": [
+    {
+      "unit": "services/audio-player/audio-player.service",
+      "title": "Player-Leiste verschwindet beim Titelwechsel",
+      "n": "Ionic: startPlayback setzt currentFile sofort, die Leiste bleibt beim Laden des nächsten Titels sichtbar (0:00) / Flutter: _load ruft zuerst _stopInternal(keepQueue: true) → state = AudioPlayerState() (currentUrl null, hasFile false); die Leiste verschwindet, bis setUrl den neuen Titel geladen hat, und erscheint dann wieder (auch beim ersten Abspielen erst nach dem Laden).",
+      "sev": "niedrig",
+      "ionic": "src/app/services/audio-player/audio-player.service.ts:268",
+      "f": [
+        "lib/core/services/audio_player/audio_player_service.dart:217",
+        "lib/core/services/audio_player/audio_player_service.dart:357",
+        "lib/core/services/audio_player/audio_player_state.dart:25"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2675 @@
+{
+ "batch": "zz-verify5c-sonnet-36",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/songs.page.html",
+    "line": 445,
+    "cond": [
+     "@else (not !loaded)"
+    ],
+    "tag": "ion-infinite-scroll",
+    "attrs": {
+     "[disabled]": "\"displayLimit >= songsFiltered.length\""
+    },
+    "events": [
+     "(ionInfinite)=loadMoreSongs($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "songs/songs.page#action-dc1e2c52"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:521"
+    ],
+    "n": "Ionic: 100er-Blöcke mit Nachladen beim Scrollen (deaktiviert, wenn alle angezeigt) / Flutter: SliverList über alle gefilterten Werke (natives Lazy-Rendering); alle Werke erreichbar. Keine Rollen-/Mandantenabhängigkeit.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/songs.page.html",
+    "line": 72,
+    "cond": [
+     "in <ion-modal #categoriesModal>"
+    ],
+    "tag": "ion-reorder-group",
+    "attrs": {
+     "disabled": "false"
+    },
+    "events": [
+     "(ionItemReorder)=handleReorder($any($event))"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pencil",
+     "trash"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ category.name }}",
+    "id": "songs/songs.page#action-dd312053"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:99",
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:143",
+     "lib/core/providers/song_providers.dart:648"
+    ],
+    "n": "Drag-Handle am Zeilenende; Flutter schreibt je Kategorie nur index (Ionic ganzes Objekt mit index) – gleiches Ergebnis; Flutter aktualisiert danach auch das Segment",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/song_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/songs.page.html",
+    "line": 343,
+    "cond": [
+     "@else (not !loaded)",
+     "in <ion-modal isOpen=\"isGroupDirectoryModalOpen\" #groupDirectoryModal>",
+     "@if (!selectedGroupName)",
+     "@for (group of groupsWithFiles; track group)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=selectGroup(group)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ group.name }}",
+    "id": "songs/songs.page#action-e5aa1038"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/group_files_sheet.dart:107",
+     "lib/core/providers/song_providers.dart:717"
+    ],
+    "n": "Aufbau gleich (Dirigenten, Chor (alle), dann Gruppen mit Dateien). Sortierung der Gruppen: Ionic name.localeCompare (sprachgerecht) / Flutter toLowerCase().compareTo (Codepoint, z. B. „Ö…“ nach „Z…“)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/song_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/songs.page.html",
+    "line": 131,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "filter-trigger-songs",
+     "fill": "none"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "options"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "songs/songs.page#action-f4c583da"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:413",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:430"
+    ],
+    "n": "Öffnet Filter (siehe popover-21a14c45). Icon tune statt options (ähnlich); Flutter zusätzlich Punkt-Badge bei aktiven Filtern",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/songs.page.html",
+    "line": 51,
+    "cond": [
+     "in <ion-popover #songsMenuPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=exportSongsPdf(songsMenuPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "document-text-outline"
+    ],
+    "keys": [
+     "songs.catalogPdf"
+    ],
+    "de": [
+     "Werkverzeichnis als PDF"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.catalogPdf' | transloco }}",
+    "id": "songs/songs.page#action-fe98ea36"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:345"
+    ],
+    "n": "immer sichtbar, auch öffentlich",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "songs/songs.page.ts",
+    "line": 765,
+    "method": "SongsPage.editCategory",
+    "cond": [],
+    "header": {
+     "keys": [
+      "songs.editCategory"
+     ],
+     "de": [
+      "Kategorie bearbeiten"
+     ],
+     "literals": [],
+     "expr": "translate('songs.editCategory')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": "'secondary'",
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data) => { if (data.name && data.name.trim().length > 0) { this.db.updateSongCategory({ name: data.name.trim(), }, category.id).then(() => { Utils.showToast(translate('songs.categorySaved'), 'success'); this.getSongs(); }); } else {…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'name'",
+      "placeholder": {
+       "keys": [
+        "songs.categoryName"
+       ],
+       "de": [
+        "Name der Kategorie"
+       ],
+       "literals": [],
+       "expr": "translate('songs.categoryName')"
+      },
+      "value": "category.name",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "1cf8d8c8",
+    "mbody": "cf7a6b2d",
+    "id": "songs/songs.page#alert-5ae7adcc"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:195",
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:202",
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:233",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+    ],
+    "n": "Flutter besser: Titel „Kategorie bearbeiten“, vorbelegter Name, Platzhalter, „Abbrechen“/„Speichern“, getrimmter Name für Admin/Verantwortlich gleich. Ionic: Menüpunkt „Werk-Kategorien“ (songs.page.html:23) ohne Rollenprüfung → auch Helfer, Stimmführer, Spieler, Eltern, Beobachter (und die Freigabe-Seite) öffnen Sheet und Dialoge; RLS admins_manage_song_categories erlaubt Schreiben nur Rolle 1/5 / Flutter: Sheet nur für Admin/Verantwortlich, nicht öffentlich (songs_list_page.dart:290). Gleiche Ursache wie action-0dba564e. Ionic-Update von Nicht-Admins wird von RLS still verworfen.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "songs/songs.page.ts",
+    "line": 802,
+    "method": "SongsPage.deleteCategory",
+    "cond": [],
+    "header": {
+     "keys": [
+      "songs.deleteCategory"
+     ],
+     "de": [
+      "Kategorie löschen"
+     ],
+     "literals": [],
+     "expr": "translate('songs.deleteCategory')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "songs.deleteCategoryMessage"
+     ],
+     "de": [
+      "Möchten Sie diese Kategorie wirklich löschen? Alle Werke in dieser Kategorie werden keiner neuen Kategorie zugewiesen."
+     ],
+     "literals": [],
+     "expr": "translate('songs.deleteCategoryMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": "'secondary'",
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { this.db.removeSongCategory(categoryId).then(async () => { Utils.showToast(translate('songs.categoryDeleted'), 'success'); await this.getSongs(); }); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "64038b26",
+    "mbody": "f76c0e3a",
+    "id": "songs/songs.page#alert-aba0e0bf"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:240",
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:245",
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:264",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+    ],
+    "n": "Flutter besser: „Kategorie löschen“, Text, „Abbrechen“/„Löschen“ für Admin/Verantwortlich gleich (Löschen in Flutter rot). Ionic: Menüpunkt „Werk-Kategorien“ (songs.page.html:23) ohne Rollenprüfung → auch Helfer, Stimmführer, Spieler, Eltern, Beobachter (und die Freigabe-Seite) öffnen Sheet und Dialoge; RLS admins_manage_song_categories erlaubt Schreiben nur Rolle 1/5 / Flutter: Sheet nur für Admin/Verantwortlich, nicht öffentlich (songs_list_page.dart:290). Gleiche Ursache wie action-0dba564e. Ionic-Delete von Nicht-Admins wird von RLS still verworfen.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "songs/songs.page.ts",
+    "line": 728,
+    "method": "SongsPage.addCategory",
+    "cond": [],
+    "header": {
+     "keys": [
+      "songs.addCategory"
+     ],
+     "de": [
+      "Kategorie hinzufügen"
+     ],
+     "literals": [],
+     "expr": "translate('songs.addCategory')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": "'secondary'",
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.add"
+       ],
+       "de": [
+        "Hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.add')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data) => { if (data.name && data.name.trim().length > 0) { this.db.addSongCategory({ name: data.name.trim(), index: this.db.songCategories().length, }).then(() => { Utils.showToast(translate('songs.categoryAdded'), 'success'); this.…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'name'",
+      "placeholder": {
+       "keys": [
+        "songs.categoryName"
+       ],
+       "de": [
+        "Name der Kategorie"
+       ],
+       "literals": [],
+       "expr": "translate('songs.categoryName')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "fb1df69a",
+    "mbody": "3200da91",
+    "id": "songs/songs.page#alert-f19b0ff1"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:151",
+     "lib/core/providers/song_providers.dart:597"
+    ],
+    "n": "Flutter besser: Titel „Kategorie hinzufügen“, Platzhalter „Name der Kategorie“, „Abbrechen“/„Hinzufügen“, leer → Dialog zu + roter Toast gleich. Ionic: index = Anzahl Kategorien (nach Löschen ohne Neunummerierung doppelte Indizes möglich) / Flutter: index = höchster Index + 1",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/song_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/songs.page.html",
+    "line": 168,
+    "cond": [
+     "in <ion-popover trigger=filter-trigger-songs>"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=onFilterChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"inclSolo\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "songs.solo"
+    ],
+    "de": [
+     "Solo"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.solo' | transloco }}",
+    "id": "songs/songs.page#field-2c010447"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart:107",
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart:112",
+     "lib/core/providers/song_filter_providers.dart:172"
+    ],
+    "n": "Für alle Rollen: Schalter „Solo“, Logik und Speicherung je Tenant gleich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/songs.page.html",
+    "line": 163,
+    "cond": [
+     "in <ion-popover trigger=filter-trigger-songs>"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=onFilterChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"inclChoir\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "songs.choirOrchestra"
+    ],
+    "de": [
+     "Chor & Orchester"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.choirOrchestra' | transloco }}",
+    "id": "songs/songs.page#field-4e8c4d24"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart:100",
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart:105",
+     "lib/core/providers/song_filter_providers.dart:172"
+    ],
+    "n": "Für alle Rollen: Schalter „Chor & Orchester“, Logik (mit Solo zusammen UND) und Speicherung je Tenant gleich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/songs.page.html",
+    "line": 153,
+    "cond": [
+     "in <ion-popover trigger=filter-trigger-songs>"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "slot": "end",
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=onFilterChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"difficulty\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"null\"",
+      "keys": [
+       "common.all"
+      ],
+      "de": [
+       "Alle"
+      ],
+      "literals": [],
+      "text": "{{ 'common.all' | transloco }}"
+     },
+     {
+      "value": "\"1\"",
+      "keys": [
+       "songs.easy"
+      ],
+      "de": [
+       "1 - Leicht"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.easy' | transloco }}"
+     },
+     {
+      "value": "\"2\"",
+      "keys": [
+       "songs.medium"
+      ],
+      "de": [
+       "2 - Mittel"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.medium' | transloco }}"
+     },
+     {
+      "value": "\"3\"",
+      "keys": [
+       "songs.hard"
+      ],
+      "de": [
+       "3 - Schwer"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.hard' | transloco }}"
+     }
+    ],
+    "keys": [
+     "common.all",
+     "songs.easy",
+     "songs.medium",
+     "songs.hard"
+    ],
+    "de": [
+     "Alle",
+     "1 - Leicht",
+     "2 - Mittel",
+     "3 - Schwer"
+    ],
+    "literals": [],
+    "text": "{{ 'common.all' | transloco }} {{ 'songs.easy' | transloco }} {{ 'songs.medium' | transloco }} {{ 'songs.hard' | transloco }}",
+    "id": "songs/songs.page#field-6acb3577"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart:88",
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart:97"
+    ],
+    "n": "Für alle Rollen: Alle/1 - Leicht/2 - Mittel/3 - Schwer, Default Alle, nicht wiederhergestellt (wie Ionic).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/songs.page.html",
+    "line": 139,
+    "cond": [
+     "in <ion-popover trigger=filter-trigger-songs>"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "slot": "end",
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=onFilterChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"sortOpt\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "numberAsc",
+      "keys": [
+       "songs.numberAsc"
+      ],
+      "de": [
+       "Nummer ↑"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.numberAsc' | transloco }}\"numberAsc\""
+     },
+     {
+      "value": "numberDesc",
+      "keys": [
+       "songs.numberDesc"
+      ],
+      "de": [
+       "Nummer ↓"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.numberDesc' | transloco }}\"numberDesc\""
+     },
+     {
+      "value": "nameAsc",
+      "keys": [
+       "songs.nameAsc"
+      ],
+      "de": [
+       "Name ↑"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.nameAsc' | transloco }}\"nameAsc\""
+     },
+     {
+      "value": "nameDesc",
+      "keys": [
+       "songs.nameDesc"
+      ],
+      "de": [
+       "Name ↓"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.nameDesc' | transloco }}\"nameDesc\""
+     },
+     {
+      "value": "lastSungAsc",
+      "keys": [
+       "songs.lastPlayed",
+       "songs.lastSung"
+      ],
+      "de": [
+       "Zuletzt gespielt",
+       "Zuletzt gesungen"
+      ],
+      "literals": [],
+      "text": "{{ (tenantType === 'orchestra' ? 'songs.lastPlayed' : 'songs.lastSung') | trans…"
+     },
+     {
+      "value": "lastSungDesc",
+      "keys": [
+       "songs.lastPlayed",
+       "songs.lastSung"
+      ],
+      "de": [
+       "Zuletzt gespielt",
+       "Zuletzt gesungen"
+      ],
+      "literals": [],
+      "text": "{{ (tenantType === 'orchestra' ? 'songs.lastPlayed' : 'songs.lastSung') | trans…"
+     }
+    ],
+    "keys": [
+     "songs.numberAsc",
+     "songs.numberDesc",
+     "songs.nameAsc",
+     "songs.nameDesc",
+     "songs.lastPlayed",
+     "songs.lastSung"
+    ],
+    "de": [
+     "Nummer ↑",
+     "Nummer ↓",
+     "Name ↑",
+     "Name ↓",
+     "Zuletzt gespielt",
+     "Zuletzt gesungen"
+    ],
+    "literals": [],
+    "text": "\"numberAsc\" {{ 'songs.numberAsc' | transloco }} \"numberDesc\" {{ 'songs.numberDesc' | transloco }} \"nameAsc\" {{ 'songs.nameAsc' | transloco }} \"nameDesc\" {{ 'songs.nameDesc' | transloco }} \"lastSungAs…",
+    "id": "songs/songs.page#field-8b94b50e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart:28",
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart:74",
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart:84",
+     "lib/data/models/song/song_filter.dart:19"
+    ],
+    "n": "Für alle Rollen: Nummer ↑/↓, Name ↑/↓, „Zuletzt gespielt“ (Orchester) bzw. „Zuletzt gesungen“ ↑/↓ nur nicht-öffentlich, Default Nummer ↑, je Tenant gespeichert.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/songs.page.html",
+    "line": 195,
+    "cond": [
+     "in <ion-popover trigger=filter-trigger-songs>"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "multiple": "true",
+     "slot": "end",
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=onViewChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"viewOpts\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "link",
+      "keys": [
+       "songs.link"
+      ],
+      "de": [
+       "Link"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.link' | transloco }}\"link\""
+     },
+     {
+      "value": "difficulty",
+      "keys": [
+       "songs.difficulty"
+      ],
+      "de": [
+       "Schwierigkeitsgrad"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.difficulty' | transloco }}\"difficulty\""
+     },
+     {
+      "value": "withChoir",
+      "keys": [
+       "songs.choirOrchestra"
+      ],
+      "de": [
+       "Chor & Orchester"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.choirOrchestra' | transloco }}\"withChoir\""
+     },
+     {
+      "value": "withSolo",
+      "keys": [
+       "songs.solo"
+      ],
+      "de": [
+       "Solo"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.solo' | transloco }}\"withSolo\""
+     },
+     {
+      "value": "missingInstruments",
+      "keys": [
+       "songs.missingInstruments"
+      ],
+      "de": [
+       "Fehlende Instrumente"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.missingInstruments' | transloco }}\"missingInstruments\""
+     },
+     {
+      "value": "lastSung",
+      "keys": [
+       "songs.lastPlayed"
+      ],
+      "de": [
+       "Zuletzt gespielt"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.lastPlayed' | transloco }}\"lastSung\""
+     },
+     {
+      "value": "lastSung",
+      "keys": [
+       "songs.lastSung"
+      ],
+      "de": [
+       "Zuletzt gesungen"
+      ],
+      "literals": [],
+      "text": "{{ 'songs.lastSung' | transloco }}\"lastSung\""
+     },
+     {
+      "value": "\"field.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ field.name }}"
+     }
+    ],
+    "keys": [
+     "songs.link",
+     "songs.difficulty",
+     "songs.choirOrchestra",
+     "songs.solo",
+     "songs.missingInstruments",
+     "songs.lastPlayed",
+     "songs.lastSung"
+    ],
+    "de": [
+     "Link",
+     "Schwierigkeitsgrad",
+     "Chor & Orchester",
+     "Solo",
+     "Fehlende Instrumente",
+     "Zuletzt gespielt",
+     "Zuletzt gesungen"
+    ],
+    "literals": [],
+    "text": "\"link\" {{ 'songs.link' | transloco }} \"difficulty\" {{ 'songs.difficulty' | transloco }} \"withChoir\" {{ 'songs.choirOrchestra' | transloco }} \"withSolo\" {{ 'songs.solo' | transloco }} \"missingInstrume…",
+    "id": "songs/songs.page#field-d23661dc"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart:32",
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart:170"
+    ],
+    "n": "Optionen/Reihenfolge gleich (Link, Schwierigkeitsgrad, Chor & Orchester, Solo, Fehlende Instrumente, Zuletzt gespielt/gesungen nur nicht-öffentlich, Zusatzfelder), Default und Speicherung gleich. Ionic: Mehrfach-Select im Popover (Auge-Icon) / Flutter: Checkbox-Liste direkt im Sheet unter „Ansicht“. Öffentliche Seite: Ionic listet Zusatzfelder des eingeloggten Tenants, Flutter die des freigebenden",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/songs.page.html",
+    "line": 174,
+    "cond": [
+     "in <ion-popover trigger=filter-trigger-songs>",
+     "@if (categories.length > 0)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "slot": "end",
+     "multiple": "true"
+    },
+    "events": [
+     "(ionChange)=onFilterChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"selectedCategories\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"category.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ category.name }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ category.name }}",
+    "id": "songs/songs.page#field-de9835a0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_filter_sheet.dart:114"
+    ],
+    "n": "Logik (mind. eine gewählte Kategorie), Bedingung und Speicherung gleich. Ionic: Mehrfach-Select (Alert mit Checkboxen) mit Preisschild-Icon ohne Label / Flutter: FilterChips unter Überschrift „Kategorien“",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/songs.page.html",
+    "line": 117,
+    "cond": [
+     "@if (categories.length > 0)"
+    ],
+    "tag": "ion-segment",
+    "attrs": {
+     "mode": "md"
+    },
+    "events": [
+     "(ionChange)=onCategoryChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"selectedCategory\"",
+    "bindings": [
+     "[scrollable]=\"true\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "",
+      "keys": [
+       "common.all"
+      ],
+      "de": [
+       "Alle"
+      ],
+      "literals": [],
+      "text": "{{ 'common.all' | transloco }}\"\""
+     },
+     {
+      "value": "\"category.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ category.name }}"
+     }
+    ],
+    "keys": [
+     "common.all"
+    ],
+    "de": [
+     "Alle"
+    ],
+    "literals": [],
+    "text": "\"\" {{ 'common.all' | transloco }} {{ category.name }}",
+    "id": "songs/songs.page#field-f67e3253"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:377",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:559"
+    ],
+    "n": "scrollbares md-Segment „Alle“ + Kategorien, nur wenn Kategorien vorhanden, Auswahl je Tenant gespeichert",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "songs/songs.page.ts",
+    "line": 376,
+    "method": "SongsPage.openImportModal",
+    "cond": [],
+    "component": "SongImportPage",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "1063c76b",
+    "mbody": "6e774b81",
+    "id": "songs/songs.page#modal-6574191a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:98"
+    ],
+    "n": "Vollbild-Modal SongImportPage, Liste nur bei imported neu geladen",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "songs/songs.page.html",
+    "line": 20,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-popover",
+    "attrs": {
+     "#": "songsMenuPopover"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "songs/songs.page#popover-27f2ff4c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:289"
+    ],
+    "n": "Menü am ⋮-Button, Reihenfolge gleich (Kategorien, Link kopieren, Tab, Import, Org-Suche, PDF); Bedingungen siehe Einträge",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/songs.page.html",
+    "line": 367,
+    "cond": [
+     "@else (not !loaded)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "songs.songsCount"
+    ],
+    "de": [
+     "Werke ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.songsCount' | transloco: { count: songsFiltered.length } }}",
+    "id": "songs/songs.page#text-94263118"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:481"
+    ],
+    "n": "„Werke ({count})“ mit gefilterter Anzahl",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "songs/songs.page.ts",
+    "line": 791,
+    "method": "SongsPage.editCategory",
+    "cond": [
+     "!(data.name && data.name.trim().length > 0)"
+    ],
+    "message": {
+     "keys": [
+      "songs.categoryNameEmpty"
+     ],
+     "de": [
+      "Der Name der Kategorie darf nicht leer sein"
+     ],
+     "literals": [],
+     "expr": "translate('songs.categoryNameEmpty')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "1d8bd44d",
+    "mbody": "cf7a6b2d",
+    "id": "songs/songs.page#toast-0b939d73"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:228",
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:229",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+    ],
+    "n": "Flutter besser: Roter Toast „Der Name der Kategorie darf nicht leer sein“ beim Bearbeiten mit leerem Namen für Admin/Verantwortlich gleich. Ionic: Menüpunkt „Werk-Kategorien“ (songs.page.html:23) ohne Rollenprüfung → auch Helfer, Stimmführer, Spieler, Eltern, Beobachter (und die Freigabe-Seite) öffnen Sheet und Dialoge; RLS admins_manage_song_categories erlaubt Schreiben nur Rolle 1/5 / Flutter: Sheet nur für Admin/Verantwortlich, nicht öffentlich (songs_list_page.dart:290). Gleiche Ursache wie action-0dba564e.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "songs/songs.page.ts",
+    "line": 750,
+    "method": "SongsPage.addCategory",
+    "cond": [
+     "(data.name && data.name.trim().length > 0)"
+    ],
+    "message": {
+     "keys": [
+      "songs.categoryAdded"
+     ],
+     "de": [
+      "Kategorie hinzugefügt"
+     ],
+     "literals": [],
+     "expr": "translate('songs.categoryAdded')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "dfab31aa",
+    "mbody": "3200da91",
+    "id": "songs/songs.page#toast-1a24aa1c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:187",
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:190",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+    ],
+    "n": "Flutter besser: Für Admin/Verantwortlich gleich (grüner Toast „Kategorie hinzugefügt“ nach erfolgreichem Insert). Ionic: Menüpunkt „Werk-Kategorien“ (songs.page.html:23) ohne Rollenprüfung → auch Helfer, Stimmführer, Spieler, Eltern, Beobachter (und die Freigabe-Seite) öffnen Sheet und Dialoge; RLS admins_manage_song_categories erlaubt Schreiben nur Rolle 1/5 / Flutter: Sheet nur für Admin/Verantwortlich, nicht öffentlich (songs_list_page.dart:290). Gleiche Ursache wie action-0dba564e. Ionic-Insert von Nicht-Admins scheitert ohne Toast.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "songs/songs.page.ts",
+    "line": 715,
+    "method": "SongsPage.copyShareLink",
+    "cond": [],
+    "message": {
+     "keys": [
+      "songs.linkCopied"
+     ],
+     "de": [
+      "Der Link wurde in die Zwischenablage kopiert"
+     ],
+     "literals": [],
+     "expr": "translate('songs.linkCopied')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "66b76ccc",
+    "mbody": "ae2cd365",
+    "id": "songs/songs.page#toast-1b92e36e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:132"
+    ],
+    "n": "grüner Toast, Link https://attendix.de/<sharing_id>",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "songs/songs.page.ts",
+    "line": 787,
+    "method": "SongsPage.editCategory",
+    "cond": [
+     "(data.name && data.name.trim().length > 0)"
+    ],
+    "message": {
+     "keys": [
+      "songs.categorySaved"
+     ],
+     "de": [
+      "Kategorie gespeichert"
+     ],
+     "literals": [],
+     "expr": "translate('songs.categorySaved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "e29cd976",
+    "mbody": "cf7a6b2d",
+    "id": "songs/songs.page#toast-5b825f48"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:233",
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:236",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+    ],
+    "n": "Flutter besser: Für Admin/Verantwortlich gleich (grün „Kategorie gespeichert“). Ionic meldet den Toast auch Nicht-Admins, obwohl RLS das Update still verwirft (0 Zeilen, kein Fehler), und bei Fehlern (updateSongCategory ohne Fehlerprüfung) / Flutter: nur Admin/Verantwortlich, Toast nur bei Erfolg. Ursache wie action-0dba564e.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "songs/songs.page.ts",
+    "line": 754,
+    "method": "SongsPage.addCategory",
+    "cond": [
+     "!(data.name && data.name.trim().length > 0)"
+    ],
+    "message": {
+     "keys": [
+      "songs.categoryNameEmpty"
+     ],
+     "de": [
+      "Der Name der Kategorie darf nicht leer sein"
+     ],
+     "literals": [],
+     "expr": "translate('songs.categoryNameEmpty')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "1d8bd44d",
+    "mbody": "3200da91",
+    "id": "songs/songs.page#toast-b63ac699"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:183",
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:184",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+    ],
+    "n": "Flutter besser: Roter Toast „Der Name der Kategorie darf nicht leer sein“ nach leerem Namen (Dialog schließt) für Admin/Verantwortlich gleich. Ionic: Menüpunkt „Werk-Kategorien“ (songs.page.html:23) ohne Rollenprüfung → auch Helfer, Stimmführer, Spieler, Eltern, Beobachter (und die Freigabe-Seite) öffnen Sheet und Dialoge; RLS admins_manage_song_categories erlaubt Schreiben nur Rolle 1/5 / Flutter: Sheet nur für Admin/Verantwortlich, nicht öffentlich (songs_list_page.dart:290). Gleiche Ursache wie action-0dba564e.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "songs/songs.page.ts",
+    "line": 814,
+    "method": "SongsPage.deleteCategory",
+    "cond": [],
+    "message": {
+     "keys": [
+      "songs.categoryDeleted"
+     ],
+     "de": [
+      "Kategorie gelöscht"
+     ],
+     "literals": [],
+     "expr": "translate('songs.categoryDeleted')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "52fc74c1",
+    "mbody": "f76c0e3a",
+    "id": "songs/songs.page#toast-e880762a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:264",
+     "lib/features/songs/presentation/widgets/song_categories_sheet.dart:267",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+    ],
+    "n": "Flutter besser: Für Admin/Verantwortlich gleich (grün „Kategorie gelöscht“). Ionic meldet den Toast auch Nicht-Admins, obwohl RLS nichts löscht, und bei Fehlern (removeSongCategory ohne Fehlerprüfung) / Flutter: nur Admin/Verantwortlich, Toast nur bei Erfolg. Ursache wie action-0dba564e.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "stats/stats.page.html",
+    "line": 5,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "stats/stats.page#action-063ee465"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:149"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "stats/stats.page.html",
+    "line": 317,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=openInstancesAlert()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "stats.tenants",
+     "stats.allCount"
+    ],
+    "de": [
+     "Instanzen",
+     "Alle ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.tenants' | transloco }} {{ 'stats.allCount' | transloco: { count: tenants.length } }} {{ selectedInstances.length }}",
+    "id": "stats/stats.page#action-1729e009"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1349"
+    ],
+    "n": "'Instanzen' mit Badge 'Alle (N)' bzw. Anzahl gewählter Instanzen; Tap zeigt Alert 'Instanzen der Organisation' mit kommagetrennten Namen und OK. Gleiche Rollen-/Org-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "stats/stats.page.ts",
+    "line": 762,
+    "method": "StatsPage.openInstancesAlert",
+    "cond": [],
+    "header": {
+     "keys": [
+      "stats.orgTenants"
+     ],
+     "de": [
+      "Instanzen der Organisation"
+     ],
+     "literals": [],
+     "expr": "translate('stats.orgTenants')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [
+      "${this.tenants.map(t => t.longName).join(', ')}"
+     ],
+     "expr": "`${this.tenants.map(t => t.longName).join(', ')}`"
+    },
+    "buttons": [
+     {
+      "expr": "'OK'",
+      "keys": [],
+      "de": [],
+      "literals": [
+       "OK"
+      ]
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "7aea116a",
+    "mbody": "c1931c93",
+    "id": "stats/stats.page#alert-7c50ef8f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1354",
+     "lib/core/utils/dialog_helper.dart:51"
+    ],
+    "n": "Titel 'Instanzen der Organisation', Langnamen kommagetrennt, Button 'OK'.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart",
+    "lib/core/utils/dialog_helper.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "stats/stats.page.html",
+    "line": 25,
+    "cond": [
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "id": "datetime-stats-from",
+     "presentation": "date"
+    },
+    "events": [
+     "(ionChange)=onDateFilterChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"filterStartDate\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "stats/stats.page#field-0fc2d09f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:325",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:341",
+     "lib/core/providers/statistics_providers.dart:43"
+    ],
+    "n": "Flutter besser: \"Von\" ist auf <= \"Bis\" begrenzt (Ionic: jedes Datum, ggf. leerer Zeitraum). Übernahme bei Auswahl und Neuberechnung wie onDateFilterChange.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "stats/stats.page.html",
+    "line": 22,
+    "cond": [],
+    "tag": "ion-datetime-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "stats/stats.page#field-d9134dd8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:347",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:392"
+    ],
+    "n": "Ionic ion-datetime-button mit locale de-DE zeigt das Intl-Kurzformat ('1. Sept. 2025'; Ionic-Paket nicht im Container) / Flutter '01.09.2025' (DateHelper.getShortDate).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "stats/stats.page.html",
+    "line": 33,
+    "cond": [],
+    "tag": "ion-datetime-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "stats/stats.page#field-d9134dd8-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:347",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:392"
+    ],
+    "n": "Anzeigeformat wie field-d9134dd8: Ionic Intl-Kurzformat ('1. Sept. 2025') / Flutter '01.09.2025'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "stats/stats.page.html",
+    "line": 36,
+    "cond": [
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "id": "datetime-stats-to",
+     "presentation": "date"
+    },
+    "events": [
+     "(ionChange)=onDateFilterChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"filterEndDate\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "stats/stats.page#field-e8b28445"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:325",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:336",
+     "lib/core/providers/statistics_providers.dart:43"
+    ],
+    "n": "Flutter besser: 'Bis' ist auf ≥ 'Von' begrenzt (Obergrenze heute + 2 Jahre), Ionic ohne Grenzen. Ionic Kalender im Modal mit Sofortübernahme / Flutter Datumsdialog; Neuberechnung bei Auswahl gleich.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 119,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "pie"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"statusPieData\"",
+     "[options]=\"statusPieOptions\""
+    ],
+    "id": "stats/stats.page#media-542fed8c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:603",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:692"
+    ],
+    "n": "Zählung gleich (Verspätet inkl. verspätet entschuldigt, gerundete Prozente). Ionic: voller Kreis, Titel 'Statusverteilung (in %)', Legende oben 'Anwesend (x%)', 'Entschuldigt (x%)', 'Verspätet (x%)', 'Abwesend (x%)' / Flutter: Ring mit Prozent auf den Segmenten, Legende rechts nur Statusnamen, kein Titel.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 210,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"ageDistributionData\"",
+     "[options]=\"ageDistributionOptions\""
+    ],
+    "id": "stats/stats.page#media-c58a7f02"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:921",
+     "lib/core/providers/statistics_providers.dart:500"
+    ],
+    "n": "Senkrechte Balken je 3-Jahres-Gruppe 'x-y', Y in 1er-Schritten, nur aktive Personen mit Geburtstag – wie Ionic. Ionic: Titel 'Altersverteilung 🎂' im Diagramm, ohne Geburtstage leeres Diagramm / Flutter: nur gleichlautende Abschnittsüberschrift, Platzhalter 'Keine Geburtsdaten vorhanden'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "stats/stats.page.html",
+    "line": 330,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "persons-button"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 1]\"",
+     "[initialBreakpoint]=\"1\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "stats/stats.page#modal-54866a37"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1365",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1418"
+    ],
+    "n": "Bottom-Sheet in voller Höhe wie Sheet mit Breakpoint 1; gleiche Rollen-/Org-Bedingung des Auslösers.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "stats/stats.page.html",
+    "line": 23,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "stats/stats.page#modal-7a053185"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:325"
+    ],
+    "n": "Datumsauswahl als Plattform-Datepicker statt Inline-ion-modal mit ion-datetime.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "stats/stats.page.html",
+    "line": 34,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "stats/stats.page#modal-7a053185-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:325"
+    ],
+    "n": "Datumsauswahl als Plattform-Datepicker statt Inline-ion-modal.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 142,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "ion-list-header",
+    "attrs": {},
+    "keys": [
+     "stats.perInstrument"
+    ],
+    "de": [
+     "🎻 Anwesenheit pro Instrument"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.perInstrument' | transloco }}",
+    "id": "stats/stats.page#text-0a14e583"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:87",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:242",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:245"
+    ],
+    "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 185,
+    "cond": [],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "color": "warning"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ pausedPlayers?.length }}"
+    ],
+    "text": "{{ pausedPlayers?.length }}",
+    "id": "stats/stats.page#text-0a6c856c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:495",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:507"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 203,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "ion-list-header",
+    "attrs": {},
+    "keys": [
+     "stats.ageDistribution"
+    ],
+    "de": [
+     "🎂 Altersverteilung"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.ageDistribution' | transloco }}",
+    "id": "stats/stats.page#text-0d669f08"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:270"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 53,
+    "cond": [],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ attendances?.length }}"
+    ],
+    "text": "{{ attendances?.length }}",
+    "id": "stats/stats.page#text-11de0c3e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:438",
+     "lib/core/providers/statistics_providers.dart:69"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 85,
+    "cond": [
+     "@if (worstAttendance)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "stats.worst"
+    ],
+    "de": [
+     "Schlechteste Anwesenheit"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.worst' | transloco }}",
+    "id": "stats/stats.page#text-237885aa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:461"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 67,
+    "cond": [],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "[color]": "\"attPerc >= 70 ? 'success' : attPerc >= 50 ? 'warning' : 'danger'\""
+    },
+    "bindings": [
+     "[color]=\"attPerc >= 70 ? 'success' : attPerc >= 50 ? 'warning' : 'danger'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ attPerc }}%"
+    ],
+    "text": "{{ attPerc }}%",
+    "id": "stats/stats.page#text-35abd623"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:428",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:448",
+     "lib/core/utils/statistics_utils.dart:9"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 190,
+    "cond": [],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "color": "medium"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ leftPlayers?.length }}"
+    ],
+    "text": "{{ leftPlayers?.length }}",
+    "id": "stats/stats.page#text-40bebb12"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:493",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:508"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 335,
+    "cond": [
+     "@if (db.organisation())",
+     "in <ion-modal trigger=persons-button>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "stats.personsCount"
+    ],
+    "de": [
+     "Personen ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.personsCount' | transloco: { count: uniquePersons.length } }}",
+    "id": "stats/stats.page#text-4d5d9eb5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1428"
+    ],
+    "n": "'Personen ({count})'.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 78,
+    "cond": [
+     "@if (bestAttendance)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "color": "success"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ bestAttendance.percentage }}%"
+    ],
+    "text": "{{ bestAttendance.percentage }}%",
+    "id": "stats/stats.page#text-55a6afe8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:456",
+     "lib/core/providers/statistics_providers.dart:252"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 236,
+    "cond": [
+     "@if (distributionFields.length)"
+    ],
+    "tag": "ion-list-header",
+    "attrs": {},
+    "keys": [
+     "stats.additionalFields"
+    ],
+    "de": [
+     "🧩 Zusatzfelder"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.additionalFields' | transloco }}",
+    "id": "stats/stats.page#text-5740d423"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:274",
+     "lib/features/statistics/presentation/widgets/field_stats_section.dart:44"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 157,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "ion-list-header",
+    "attrs": {},
+    "keys": [
+     "stats.unexcused"
+    ],
+    "de": [
+     "⚠️ Unentschuldigte Abwesenheiten"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.unexcused' | transloco }}",
+    "id": "stats/stats.page#text-5acf85be"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:87",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:244",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:245"
+    ],
+    "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 327,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "stats.personsAllTenants"
+    ],
+    "de": [
+     "Personen über alle Instanzen"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.personsAllTenants' | transloco }}",
+    "id": "stats/stats.page#text-666d20ee"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1361"
+    ],
+    "n": "'Personen über alle Instanzen'; gleiche Rollen-/Org-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 88,
+    "cond": [
+     "@if (worstAttendance)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "color": "danger"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ worstAttendance.percentage }}%"
+    ],
+    "text": "{{ worstAttendance.percentage }}%",
+    "id": "stats/stats.page#text-6cd906f0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:465"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 348,
+    "cond": [
+     "@if (db.organisation())",
+     "in <ion-modal trigger=persons-button>",
+     "@for (u of uniquePersons; track trackByPersonId($index, u))"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ u.tenants.length }}"
+    ],
+    "text": "{{ u.tenants.length }}",
+    "id": "stats/stats.page#text-70364d9b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1451"
+    ],
+    "n": "Badge = Anzahl Instanzen der Person (nach Filter). Randfall: Flutter zählt Instanznamen als Set (gleichnamige Instanzen/Doppelzeilen in einer Instanz würden zusammenfallen) – praktisch ohne Bedeutung.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,2234 @@
+{
+ "batch": "zz-verify5c-sonnet-38",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "tasks/task-detail/task-detail.page.ts",
+    "line": 149,
+    "method": "TaskDetailPage.deleteTask",
+    "cond": [],
+    "message": {
+     "keys": [
+      "tasks.deleteFailed"
+     ],
+     "de": [
+      "Löschen fehlgeschlagen"
+     ],
+     "literals": [],
+     "expr": "translate('tasks.deleteFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "16071cd4",
+    "mbody": "bd998b2f",
+    "id": "tasks/task-detail/task-detail.page#toast-6ad4cd08"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:59",
+     "lib/data/repositories/task_repository.dart:175"
+    ],
+    "n": "Roter Toast „Löschen fehlgeschlagen“, auch wenn RLS nichts löscht (0 Zeilen → Fehler, wie Ionic); nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-form/task-form.component",
+   "ionic": {
+    "ts": "tasks/task-form/task-form.component.ts",
+    "html": "tasks/task-form/task-form.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "tasks/task-form/task-form.component.html",
+    "line": 55,
+    "cond": [
+     "in <ion-modal #dueDateModal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date",
+     "[value]": "\"dueDate\""
+    },
+    "events": [
+     "(ionChange)=onDueDateChange($event)"
+    ],
+    "link": null,
+    "model": "[value]=\"dueDate\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\"",
+     "[showDefaultButtons]=\"true\"",
+     "[showClearButton]=\"true\"",
+     "[doneText]=\"'common.ok' | transloco\"",
+     "[cancelText]=\"'common.cancel' | transloco\"",
+     "[clearText]=\"'common.delete' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "common.ok",
+     "common.cancel"
+    ],
+    "de": [
+     "OK",
+     "Abbrechen"
+    ],
+    "literals": [],
+    "text": "[doneText]=\"'common.ok' | transloco\" [cancelText]=\"'common.cancel' | transloco\"",
+    "id": "tasks/task-form/task-form.component#field-68caad4a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:127",
+     "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:303",
+     "lib/shared/widgets/adaptive/app_pickers.dart:47"
+    ],
+    "n": "Ionic: ion-datetime mit Buttons OK / Abbrechen / Löschen (Löschen entfernt die Fälligkeit), Woche ab Montag / Flutter: Datumsdialog ohne Löschen-Button (iOS-Look: Tippen auf Tag übernimmt sofort, kein OK/Abbrechen), Entfernen über separates X-Icon neben dem Datum; Auswahl auf 1.1.(Jahr−2) bis 1.1.(Jahr+5) begrenzt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/adaptive/app_pickers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teacher/teacher.page",
+   "ionic": {
+    "ts": "teacher/teacher.page.ts",
+    "html": "teacher/teacher.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "teacher/teacher.page.html",
+    "line": 5,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "teacher/teacher.page#action-1d0733b7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:457"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teacher/teacher.page",
+   "ionic": {
+    "ts": "teacher/teacher.page.ts",
+    "html": "teacher/teacher.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "teacher/teacher.page.html",
+    "line": 53,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block"
+    },
+    "events": [
+     "(click)=editTeacher()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "teachers.update"
+    ],
+    "de": [
+     "Lehrer updaten"
+    ],
+    "literals": [],
+    "text": "{{ 'teachers.update' | transloco }}",
+    "id": "teacher/teacher.page#action-6c1f7380"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:424"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teacher/teacher.page",
+   "ionic": {
+    "ts": "teacher/teacher.page.ts",
+    "html": "teacher/teacher.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "teacher/teacher.page.html",
+    "line": 25,
+    "cond": [],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editedTeacher.private\"",
+    "bindings": [
+     "[attr.label]=\"'teachers.private' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "teachers.private"
+    ],
+    "de": [
+     "Privatlehrer"
+    ],
+    "literals": [],
+    "text": "[attr.label]=\"'teachers.private' | transloco\" {{ 'teachers.private' | transloco }}",
+    "id": "teacher/teacher.page#field-1cbc213b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:392"
+    ],
+    "n": "Schalter „Privatlehrer“ mit gespeichertem Wert vorbelegt, wird als private gespeichert.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teacher/teacher.page",
+   "ionic": {
+    "ts": "teacher/teacher.page.ts",
+    "html": "teacher/teacher.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "teacher/teacher.page.html",
+    "line": 33,
+    "cond": [],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editedTeacher.notes\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "teacher/teacher.page#field-a8b17730"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:404"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teacher/teacher.page",
+   "ionic": {
+    "ts": "teacher/teacher.page.ts",
+    "html": "teacher/teacher.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "teacher/teacher.page.html",
+    "line": 15,
+    "cond": [],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editedTeacher.name\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "teacher/teacher.page#field-fa0a11d8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:380"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teacher/teacher.page",
+   "ionic": {
+    "ts": "teacher/teacher.page.ts",
+    "html": "teacher/teacher.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "teacher/teacher.page.html",
+    "line": 29,
+    "cond": [],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editedTeacher.number\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "teacher/teacher.page#field-fa382e19"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:398"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teacher/teacher.page",
+   "ionic": {
+    "ts": "teacher/teacher.page.ts",
+    "html": "teacher/teacher.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "teacher/teacher.page.html",
+    "line": 18,
+    "cond": [],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "modal",
+     "multiple": "true"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editedTeacher.instruments\"",
+    "bindings": [
+     "[label]=\"'teachers.instruments' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"ins.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ ins.name }}"
+     }
+    ],
+    "keys": [
+     "teachers.instruments"
+    ],
+    "de": [
+     "Instrumente"
+    ],
+    "literals": [],
+    "text": "[label]=\"'teachers.instruments' | transloco\" {{ ins.name }}",
+    "id": "teacher/teacher.page#field-fc1d0925"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:151",
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:308",
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:313"
+    ],
+    "n": "Ladefehler behoben: _openTeacherPage wartet jetzt auf groupsProvider (_loadGroups), Namen und Auswahl immer gefüllt; Mehrfachauswahl aller Gruppen inkl. Hauptgruppe, Label „Instrumente“. Nicht behoben, aber schon vorher als niedrig vermerkt: Ionic ion-select interface=modal (eigene Vollbild-Auswahlseite) / Flutter Dialog mit Checkboxen und „Abbrechen“/„OK“. Der Fix setzte „ok“, die Darstellungsabweichung besteht weiter → diff niedrig.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teacher/teacher.page",
+   "ionic": {
+    "ts": "teacher/teacher.page.ts",
+    "html": "teacher/teacher.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "teacher/teacher.page.html",
+    "line": 45,
+    "cond": [
+     "@if (playersFromTeacher?.length)",
+     "@for (player of playersFromTeacher; track player)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ player.firstName }} {{ player.lastName }}"
+    ],
+    "text": "{{ player.firstName }} {{ player.lastName }}",
+    "id": "teacher/teacher.page#text-1bdd08c1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:446"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teacher/teacher.page",
+   "ionic": {
+    "ts": "teacher/teacher.page.ts",
+    "html": "teacher/teacher.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "teacher/teacher.page.html",
+    "line": 39,
+    "cond": [
+     "@if (playersFromTeacher?.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "teachers.players"
+    ],
+    "de": [
+     "Spieler"
+    ],
+    "literals": [],
+    "text": "{{ 'teachers.players' | transloco }}",
+    "id": "teacher/teacher.page#text-b7c51796"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:413"
+    ],
+    "n": "ExpansionTile „Spieler“, anfangs aufgeklappt wie das Ionic-Akkordeon, nur wenn Schüler vorhanden.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "teachers/teachers.page.html",
+    "line": 59,
+    "cond": [
+     "in <ion-modal trigger=add-teacher-button #modal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "full"
+    },
+    "events": [
+     "(click)=addTeacher(input.value, select.value, notes.value, number.value, private.value, modal)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attendance.add"
+    ],
+    "de": [
+     "Hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.add' | transloco }}",
+    "id": "teachers/teachers.page#action-26f99aac"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:424",
+     "lib/data/repositories/teacher_repository.dart:49"
+    ],
+    "n": "Validiert, legt Lehrer an (name, instruments, notes, number, private, tenantId), schließt und lädt neu; Flutter trimmt die Texte.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart",
+    "lib/data/repositories/teacher_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "teachers/teachers.page.html",
+    "line": 57,
+    "cond": [
+     "in <ion-modal trigger=add-teacher-button #modal>"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {
+     "#": "notes"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "teachers/teachers.page#field-23cb755d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:404"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "teachers/teachers.page.html",
+    "line": 49,
+    "cond": [
+     "in <ion-modal trigger=add-teacher-button #modal>"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "#": "private"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.label]=\"'teachers.private' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "teachers.private"
+    ],
+    "de": [
+     "Privatlehrer"
+    ],
+    "literals": [],
+    "text": "[attr.label]=\"'teachers.private' | transloco\"",
+    "id": "teachers/teachers.page#field-8a21ddb5"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:392",
+     "lib/data/repositories/teacher_repository.dart:57"
+    ],
+    "n": "Flutter besser: Ionic: addTeacher bekommt private.value der ion-toggle (Formularwert, Standard „on“), pri === 'true' ist nie wahr → neue Lehrer immer private = false (Ionic-Paket nicht im Container, Standardwert laut Ionic-API) / Flutter: speichert den Schalterzustand.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart",
+    "lib/data/repositories/teacher_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "teachers/teachers.page.html",
+    "line": 41,
+    "cond": [
+     "in <ion-modal trigger=add-teacher-button #modal>"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "modal",
+     "multiple": "true",
+     "#": "select"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"selInstruments\"",
+    "bindings": [
+     "[label]=\"'teachers.instruments' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"ins.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ ins.name }}"
+     }
+    ],
+    "keys": [
+     "teachers.instruments"
+    ],
+    "de": [
+     "Instrumente"
+    ],
+    "literals": [],
+    "text": "[label]=\"'teachers.instruments' | transloco\" {{ ins.name }}",
+    "id": "teachers/teachers.page#field-cfeef758"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:385",
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:113"
+    ],
+    "n": "Label „Instrumente“, Gruppen ohne Hauptgruppe, Mehrfachauswahl. Ionic: ion-select interface=modal (Vollbild-Auswahlliste), Auswahl bleibt nach dem Anlegen für das nächste Öffnen erhalten (selInstruments) / Flutter: Dialog mit Checkboxen und „Abbrechen“/„OK“, Formular startet jedes Mal leer.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "teachers/teachers.page.html",
+    "line": 38,
+    "cond": [
+     "in <ion-modal trigger=add-teacher-button #modal>"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "#": "input"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "teachers/teachers.page#field-ebd5df11"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:380"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "teachers/teachers.page.html",
+    "line": 53,
+    "cond": [
+     "in <ion-modal trigger=add-teacher-button #modal>"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "#": "number"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "teachers/teachers.page#field-ebd5df11-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:398"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "teachers/teachers.page.html",
+    "line": 56,
+    "cond": [
+     "in <ion-modal trigger=add-teacher-button #modal>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.notes"
+    ],
+    "de": [
+     "Notizen"
+    ],
+    "literals": [],
+    "text": "{{ 'people.notes' | transloco }}",
+    "id": "teachers/teachers.page#text-01272e39"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:407"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "teachers/teachers.page.html",
+    "line": 48,
+    "cond": [
+     "in <ion-modal trigger=add-teacher-button #modal>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "teachers.private"
+    ],
+    "de": [
+     "Privatlehrer"
+    ],
+    "literals": [],
+    "text": "{{ 'teachers.private' | transloco }}",
+    "id": "teachers/teachers.page#text-7cf94b57"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:394"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "teachers/teachers.page.html",
+    "line": 33,
+    "cond": [
+     "in <ion-modal trigger=add-teacher-button #modal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "teachers.add"
+    ],
+    "de": [
+     "Lehrer hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'teachers.add' | transloco }}",
+    "id": "teachers/teachers.page#text-887b3cdf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:376"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "teachers/teachers.page.html",
+    "line": 37,
+    "cond": [
+     "in <ion-modal trigger=add-teacher-button #modal>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.name"
+    ],
+    "de": [
+     "Name"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.name' | transloco }}",
+    "id": "teachers/teachers.page#text-b210d81e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:383"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "teachers/teachers.page.html",
+    "line": 52,
+    "cond": [
+     "in <ion-modal trigger=add-teacher-button #modal>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "teachers.contact"
+    ],
+    "de": [
+     "Kontakt"
+    ],
+    "literals": [],
+    "text": "{{ 'teachers.contact' | transloco }}",
+    "id": "teachers/teachers.page#text-e78eb077"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:401"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teachers/teachers.page",
+   "ionic": {
+    "ts": "teachers/teachers.page.ts",
+    "html": "teachers/teachers.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "teachers/teachers.page.ts",
+    "line": 48,
+    "method": "TeachersPage.addTeacher",
+    "cond": [
+     "(String(name).length < 3 || instruments.length === 0)"
+    ],
+    "message": {
+     "keys": [
+      "teachers.fillAll"
+     ],
+     "de": [
+      "Bitte fülle alle Felder aus..."
+     ],
+     "literals": [],
+     "expr": "translate('teachers.fillAll')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "253f8fca",
+    "mbody": "5f85ce07",
+    "id": "teachers/teachers.page#toast-449601dc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:341"
+    ],
+    "n": "Gleiche Bedingung (ungetrimmter Name < 3 Zeichen oder kein Instrument, nur beim Anlegen), roter Toast „Bitte fülle alle Felder aus...“, Sheet bleibt offen.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/protocols-tab/protocols-tab.component",
+   "ionic": {
+    "ts": "team-organization/protocols-tab/protocols-tab.component.ts",
+    "html": "team-organization/protocols-tab/protocols-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/protocols-tab/protocols-tab.component.html",
+    "line": 20,
+    "cond": [
+     "@else if (!rows.length)",
+     "@else (not isLeader)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "teamOrg.noPublishedHint"
+    ],
+    "de": [
+     "Sobald die Leitung ein Protokoll freigibt, findest du es hier."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.noPublishedHint' | transloco }}",
+    "id": "team-organization/protocols-tab/protocols-tab.component#text-05380ad1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/protocols_tab.dart:125"
+    ],
+    "n": "Nicht-Leitung: Hinweis wortgleich (teamOrgNoPublishedHint).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/protocols-tab/protocols-tab.component",
+   "ionic": {
+    "ts": "team-organization/protocols-tab/protocols-tab.component.ts",
+    "html": "team-organization/protocols-tab/protocols-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/protocols-tab/protocols-tab.component.html",
+    "line": 19,
+    "cond": [
+     "@else if (!rows.length)",
+     "@else (not isLeader)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "teamOrg.noPublished"
+    ],
+    "de": [
+     "Noch keine Protokolle freigegeben"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.noPublished' | transloco }}",
+    "id": "team-organization/protocols-tab/protocols-tab.component#text-2dca94d6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/protocols_tab.dart:125"
+    ],
+    "n": "Alle Nicht-Leitungsrollen: „Noch keine Protokolle freigegeben“ (else-Zweig in beiden).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/protocols-tab/protocols-tab.component",
+   "ionic": {
+    "ts": "team-organization/protocols-tab/protocols-tab.component.ts",
+    "html": "team-organization/protocols-tab/protocols-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/protocols-tab/protocols-tab.component.html",
+    "line": 17,
+    "cond": [
+     "@else if (!rows.length)",
+     "@if (isLeader)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "teamOrg.noProtocolsHint"
+    ],
+    "de": [
+     "Ein Protokoll schreibst du direkt im Termin: Öffne den Termin und tippe auf „Protokoll“."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.noProtocolsHint' | transloco }}",
+    "id": "team-organization/protocols-tab/protocols-tab.component#text-405cf743"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/protocols_tab.dart:124"
+    ],
+    "n": "Hinweis Leitung wortgleich (teamOrgNoProtocolsHint).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/protocols-tab/protocols-tab.component",
+   "ionic": {
+    "ts": "team-organization/protocols-tab/protocols-tab.component.ts",
+    "html": "team-organization/protocols-tab/protocols-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/protocols-tab/protocols-tab.component.html",
+    "line": 16,
+    "cond": [
+     "@else if (!rows.length)",
+     "@if (isLeader)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "teamOrg.noProtocols"
+    ],
+    "de": [
+     "Noch keine Protokolle"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.noProtocols' | transloco }}",
+    "id": "team-organization/protocols-tab/protocols-tab.component#text-53f38ed5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/protocols_tab.dart:123",
+     "lib/features/team_organization/presentation/widgets/protocols_tab.dart:124"
+    ],
+    "n": "Leerzustand Leitung „Noch keine Protokolle“. Rollen: Ionic isLeader = db.isTeamLeader() (ADMIN|RESPONSIBLE), Flutter isTeamLeaderProvider (gleiche Rollen aus tenantUsers.role) – Admin/Verantwortlich ja; Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nein; kein Tenant-Flag. Ladefehler-Abweichung bereits als extra protocols-tab erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/protocols-tab/protocols-tab.component",
+   "ionic": {
+    "ts": "team-organization/protocols-tab/protocols-tab.component.ts",
+    "html": "team-organization/protocols-tab/protocols-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/protocols-tab/protocols-tab.component.html",
+    "line": 33,
+    "cond": [
+     "@else (not isLoading / !rows.length / !groups.length)",
+     "@for (group of groups; track group.key)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ group.label }}"
+    ],
+    "text": "{{ group.label }}",
+    "id": "team-organization/protocols-tab/protocols-tab.component#text-8203da2e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/protocols_tab.dart:132",
+     "lib/features/team_organization/team_org_utils.dart:593"
+    ],
+    "n": "Monatsname + Jahr bzw. „Ohne Datum“.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/protocols-tab/protocols-tab.component",
+   "ionic": {
+    "ts": "team-organization/protocols-tab/protocols-tab.component.ts",
+    "html": "team-organization/protocols-tab/protocols-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/protocols-tab/protocols-tab.component.html",
+    "line": 26,
+    "cond": [
+     "@else if (!groups.length)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "teamOrg.noHits"
+    ],
+    "de": [
+     "Keine Treffer"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.noHits' | transloco }}",
+    "id": "team-organization/protocols-tab/protocols-tab.component#text-bdca479c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/protocols_tab.dart:127"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/protocols-tab/protocols-tab.component",
+   "ionic": {
+    "ts": "team-organization/protocols-tab/protocols-tab.component.ts",
+    "html": "team-organization/protocols-tab/protocols-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/protocols-tab/protocols-tab.component.html",
+    "line": 27,
+    "cond": [
+     "@else if (!groups.length)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "teamOrg.noProtocolMatch"
+    ],
+    "de": [
+     "Kein Protokoll passt zu „{search}“."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.noProtocolMatch' | transloco: { search: search } }}",
+    "id": "team-organization/protocols-tab/protocols-tab.component#text-c43452f8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/protocols_tab.dart:127"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/tasks-tab/tasks-tab.component",
+   "ionic": {
+    "ts": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "html": "team-organization/tasks-tab/tasks-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/tasks-tab/tasks-tab.component.html",
+    "line": 65,
+    "cond": [
+     "@else (not loading)",
+     "@empty of groups",
+     "@if (isLeader && !tasks.length)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=addTask()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add"
+    ],
+    "keys": [
+     "teamOrg.createTask"
+    ],
+    "de": [
+     "Aufgabe anlegen"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.createTask' | transloco }}",
+    "id": "team-organization/tasks-tab/tasks-tab.component#action-82982f92"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:137",
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:141"
+    ],
+    "n": "Leerzustand-Button „Aufgabe anlegen“ (Plus) nur Leitung und nur ohne Aufgaben; öffnet Aufgabenformular, Liste per Invalidierung aktualisiert.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/tasks-tab/tasks-tab.component",
+   "ionic": {
+    "ts": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "html": "team-organization/tasks-tab/tasks-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/tasks-tab/tasks-tab.component.html",
+    "line": 40,
+    "cond": [
+     "@else (not loading)",
+     "@for (group of groups; track group.key)",
+     "@for (task of group.tasks; track task.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "[routerLink]": "\"['/tabs/settings/tasks', task.id]\""
+    },
+    "events": [],
+    "link": "\"['/tabs/settings/tasks', task.id]\"",
+    "model": null,
+    "bindings": [
+     "[class.is-done]=\"task.status === 'completed'\""
+    ],
+    "icons": [
+     "[name]=\"task.status === 'completed' ? 'checkmark-circle' : 'ellipse-outline'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ task.title }} {{ subtitle(task) }} {{ statusLabels.in_progress }} {{ priorityLabels.high }}",
+    "id": "team-organization/tasks-tab/tasks-tab.component#action-82b056e5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:157",
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:211",
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:223",
+     "lib/core/providers/team_org_providers.dart:169"
+    ],
+    "n": "Leitung: alle Aufgaben, Untertitel „Person bzw. „Niemand zugewiesen“ · Fälligkeit“; Mitglieder: nur eigene (getMyTasks), Untertitel „Fälligkeit“ bzw. „Ohne Fälligkeit“ – showPerson = isLeader wie Ionic subtitle(). Badges „In Arbeit“ / „Hoch“ (nur nicht erledigt), öffnet /settings/tasks/:id.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/tasks-tab/tasks-tab.component",
+   "ionic": {
+    "ts": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "html": "team-organization/tasks-tab/tasks-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/tasks-tab/tasks-tab.component.html",
+    "line": 42,
+    "cond": [
+     "@else (not loading)",
+     "@for (group of groups; track group.key)",
+     "@for (task of group.tasks; track task.id)",
+     "in <ion-item>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "start",
+     "fill": "clear",
+     "class": "task-check"
+    },
+    "events": [
+     "(click)=toggle(task, $event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"task.status === 'completed' ? 'Wieder öffnen' : 'Als erledigt markieren'\""
+    ],
+    "icons": [
+     "[name]=\"task.status === 'completed' ? 'checkmark-circle' : 'ellipse-outline'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "team-organization/tasks-tab/tasks-tab.component#action-95de4093"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:225",
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:33"
+    ],
+    "n": "Für alle Rollen mit sichtbaren Aufgaben (Leitung alle, Mitglieder eigene), ohne Rollenprüfung in beiden Apps; Kreis/Häkchen (grün) schaltet erledigt ↔ offen optimistisch, Fehler-Toast „Status konnte nicht geändert werden“. Tooltip „Wieder öffnen“/„Als erledigt markieren“ statt aria-label.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/tasks-tab/tasks-tab.component",
+   "ionic": {
+    "ts": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "html": "team-organization/tasks-tab/tasks-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/tasks-tab/tasks-tab.component.html",
+    "line": 13,
+    "cond": [
+     "@if (isLeader && tasks.length)",
+     "@for (chip of chips; track chip.personId)",
+     "@if (chip.personId !== myPersonId)"
+    ],
+    "tag": "ion-chip",
+    "attrs": {},
+    "events": [
+     "(click)=setFilter(chip.personId)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.is-active]=\"filter === chip.personId\"",
+     "[title]=\"chip.name\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[title]=\"chip.name\" {{ chip.label }} · {{ chip.openCount }}",
+    "id": "team-organization/tasks-tab/tasks-tab.component#action-ad45d8d4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:124",
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:126",
+     "lib/features/planning/presentation/widgets/ion_items.dart:474"
+    ],
+    "n": "Rolle/Label/Filter gleich (nur Leitung, ohne eigene Person, „{Kurzname} · {Anzahl}“). Ionic: [title]=voller Name als Hover-Tooltip / Flutter: IonFilterChip ohne Tooltip. Erstprüfer nannte das Fehlen selbst, wertete aber ok; nur bei Maus-Hover (Web/Desktop) sichtbar. Sortierung siehe extra tasks-tab.utils.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/tasks-tab/tasks-tab.component",
+   "ionic": {
+    "ts": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "html": "team-organization/tasks-tab/tasks-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/tasks-tab/tasks-tab.component.html",
+    "line": 7,
+    "cond": [
+     "@if (isLeader && tasks.length)",
+     "@if (myPersonId)"
+    ],
+    "tag": "ion-chip",
+    "attrs": {},
+    "events": [
+     "(click)=setFilter('mine')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.is-active]=\"filter === 'mine'\""
+    ],
+    "icons": [],
+    "keys": [
+     "teamOrg.mineCount"
+    ],
+    "de": [
+     "Meine · {count}"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.mineCount' | transloco: { count: myOpenCount } }}",
+    "id": "team-organization/tasks-tab/tasks-tab.component#action-da4e5bf3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:122",
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:123"
+    ],
+    "n": "„Meine · {n}“ nur Leitung mit eigener Person (myPersonId); Zählung offene eigene Aufgaben gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/tasks-tab/tasks-tab.component",
+   "ionic": {
+    "ts": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "html": "team-organization/tasks-tab/tasks-tab.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "team-organization/tasks-tab/tasks-tab.component.html",
+    "line": 76,
+    "cond": [
+     "@else (not loading)",
+     "@if (archivedCount > 0 || includeArchived)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=onArchivedToggle()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"includeArchived\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "teamOrg.showOlderDone",
+     "teamOrg.doneDisappear"
+    ],
+    "de": [
+     "Ältere erledigte anzeigen",
+     "Erledigte Aufgaben verschwinden nach 30 Tagen aus der Liste."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.showOlderDone' | transloco }} {{ 'teamOrg.doneDisappear' | transloco }}",
+    "id": "team-organization/tasks-tab/tasks-tab.component#field-cf2e1135"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:165"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/tasks-tab/tasks-tab.component",
+   "ionic": {
+    "ts": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "html": "team-organization/tasks-tab/tasks-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/tasks-tab/tasks-tab.component.html",
+    "line": 37,
+    "cond": [
+     "@else (not loading)",
+     "@for (group of groups; track group.key)"
+    ],
+    "tag": "ion-note",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ group.tasks.length }}"
+    ],
+    "text": "{{ group.tasks.length }}",
+    "id": "team-organization/tasks-tab/tasks-tab.component#text-f28d8b0a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:150"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/tasks-tab/tasks-tab.component",
+   "ionic": {
+    "ts": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "html": "team-organization/tasks-tab/tasks-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/tasks-tab/tasks-tab.component.html",
+    "line": 36,
+    "cond": [
+     "@else (not loading)",
+     "@for (group of groups; track group.key)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ group.label }}"
+    ],
+    "text": "{{ group.label }}",
+    "id": "team-organization/tasks-tab/tasks-tab.component#text-f8c29ade"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:146-153",
+     "lib/features/team_organization/team_org_utils.dart:358-403"
+    ],
+    "n": "Gruppen Überfällig/Woche/Später/Ohne Datum/Erledigt mit gleichen Texten, Reihenfolge und Sortierung; Überfällig rot, Anzahl als Note.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/tasks-tab/tasks-tab.component",
+   "ionic": {
+    "ts": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "html": "team-organization/tasks-tab/tasks-tab.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "line": 154,
+    "method": "TeamTasksTabComponent.toggle",
+    "cond": [],
+    "message": {
+     "keys": [
+      "tasks.statusFailed"
+     ],
+     "de": [
+      "Status konnte nicht geändert werden"
+     ],
+     "literals": [],
+     "expr": "translate('tasks.statusFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f2abddc2",
+    "mbody": "447539d2",
+    "id": "team-organization/tasks-tab/tasks-tab.component#toast-b2f47c86"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:48"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/team-organization.page",
+   "ionic": {
+    "ts": "team-organization/team-organization.page.ts",
+    "html": "team-organization/team-organization.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/team-organization.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-back-button",
+    "attrs": {
+     "defaultHref": "/tabs/settings"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"\"",
+    "id": "team-organization/team-organization.page#action-a5d08482"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/team_organization_page.dart:52"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/team-organization.page",
+   "ionic": {
+    "ts": "team-organization/team-organization.page.ts",
+    "html": "team-organization/team-organization.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "team-organization/team-organization.page.html",
+    "line": 29,
+    "cond": [
+     "@switch (activeSegment) case 'tasks'"
+    ],
+    "tag": "app-team-tasks-tab",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "team-organization/team-organization.page#embed-05e88de7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/team_organization_page.dart:67"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/team-organization.page",
+   "ionic": {
+    "ts": "team-organization/team-organization.page.ts",
+    "html": "team-organization/team-organization.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "team-organization/team-organization.page.html",
+    "line": 31,
+    "cond": [
+     "@switch (activeSegment) case 'protocols'"
+    ],
+    "tag": "app-team-protocols-tab",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "team-organization/team-organization.page#embed-159b52d7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/team_organization_page.dart:69"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/team-organization.page",
+   "ionic": {
+    "ts": "team-organization/team-organization.page.ts",
+    "html": "team-organization/team-organization.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "team-organization/team-organization.page.html",
+    "line": 30,
+    "cond": [
+     "@switch (activeSegment) case 'topics'"
+    ],
+    "tag": "app-team-topics-tab",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "team-organization/team-organization.page#embed-334beee4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/team_organization_page.dart:68"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/team-organization.page",
+   "ionic": {
+    "ts": "team-organization/team-organization.page.ts",
+    "html": "team-organization/team-organization.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "team-organization/team-organization.page.html",
+    "line": 9,
+    "cond": [],
+    "tag": "ion-segment",
+    "attrs": {
+     "[value]": "\"activeSegment\""
+    },
+    "events": [
+     "(ionChange)=onSegmentChange($event)"
+    ],
+    "link": null,
+    "model": "[value]=\"activeSegment\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "tasks",
+      "keys": [
+       "teamOrg.tabTasks"
+      ],
+      "de": [
+       "Aufgaben"
+      ],
+      "literals": [],
+      "text": "{{ 'teamOrg.tabTasks' | transloco }}\"tasks\""
+     },
+     {
+      "value": "topics",
+      "keys": [
+       "teamOrg.tabTopics"
+      ],
+      "de": [
+       "Themen"
+      ],
+      "literals": [],
+      "text": "{{ 'teamOrg.tabTopics' | transloco }}\"topics\""
+     },
+     {
+      "value": "protocols",
+      "keys": [
+       "teamOrg.tabProtocols"
+      ],
+      "de": [
+       "Protokolle"
+      ],
+      "literals": [],
+      "text": "{{ 'teamOrg.tabProtocols' | transloco }}\"protocols\""
+     }
+    ],
+    "keys": [
+     "teamOrg.tabTasks",
+     "teamOrg.tabTopics",
+     "teamOrg.tabProtocols"
+    ],
+    "de": [
+     "Aufgaben",
+     "Themen",
+     "Protokolle"
+    ],
+    "literals": [],
+    "text": "\"tasks\" {{ 'teamOrg.tabTasks' | transloco }} \"topics\" {{ 'teamOrg.tabTopics' | transloco }} \"protocols\" {{ 'teamOrg.tabProtocols' | transloco }}",
+    "id": "team-organization/team-organization.page#field-33021d7d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/team_organization_page.dart:55"
+    ],
+    "n": "Segment Aufgaben/Themen/Protokolle in zweiter Leiste; Flutter zusätzlich wischbar.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 138,
+    "cond": [
+     "@else if (isLeader)",
+     "in <ion-modal isOpen=\"isReviewOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=isReviewOpen = false"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'common.close' | transloco\""
+    ],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "team-organization/topics-tab/topics-tab.component#action-051b8f7f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:257",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:260"
+    ],
+    "n": "Schließen-X (Tooltip „Schließen“) links im Prüf-Sheet.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 226,
+    "cond": [
+     "@else if (inCircle)",
+     "in <ion-modal isOpen=\"isSuggestOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=isSuggestOpen = false"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.cancel"
+    ],
+    "de": [
+     "Abbrechen"
+    ],
+    "literals": [],
+    "text": "{{ 'common.cancel' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-3118994b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:706"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 32,
+    "cond": [
+     "@else if (isLeader)",
+     "@if (nextAttendance)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small"
+    },
+    "events": [
+     "(click)=changeAttendance()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "teamOrg.change"
+    ],
+    "de": [
+     "Ändern"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.change' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-3157cfe0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:418",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:69"
+    ],
+    "n": "„Ändern“ im Listenkopf öffnet Terminauswahl (Inhalt siehe actionsheet-8e3d3c47), nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 244,
+    "cond": [
+     "@else if (inCircle)",
+     "in <ion-modal isOpen=\"isSuggestOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "[disabled]": "\"!suggestTitle.trim() || sending\""
+    },
+    "events": [
+     "(click)=sendSuggestion()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "teamOrg.sendSuggestion"
+    ],
+    "de": [
+     "Vorschlag senden"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.sendSuggestion' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-3d3811bb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:737"
+    ],
+    "n": "Deaktiviert bei leerem Titel/Senden; Insert proposal_status pending, status open, priority medium, proposed_by.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 58,
+    "cond": [
+     "@else if (isLeader)",
+     "@if (nextAttendance)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=openPicker()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [
+     "teamOrg.addTopics"
+    ],
+    "de": [
+     "Themen aufnehmen"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.addTopics' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-5a533757"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:447",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:451"
+    ],
+    "n": "„Themen aufnehmen“ (Plus-Kreis, primary) öffnet Themenauswahl für den gezeigten Termin; Darstellung siehe modal-54dabea2. Nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 166,
+    "cond": [
+     "@else if (isLeader)",
+     "in <ion-modal isOpen=\"isReviewOpen\">",
+     "@for (item of pending; track item.id)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "[disabled]": "\"isDeciding(item)\""
+    },
+    "events": [
+     "(click)=accept(item)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.apply"
+    ],
+    "de": [
+     "Übernehmen"
+    ],
+    "literals": [],
+    "text": "{{ 'common.apply' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-82525c3b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:319",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:160",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:226",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:273"
+    ],
+    "n": "Rollen gleich: das Prüfen-Sheet gibt es nur in der Leitungsansicht (Admin/Verantwortlich; Ionic isTeamLeader ↔ Flutter _LeaderTopics über isTeamLeaderProvider). Dialog „Vorschlag übernehmen“ mit Prioritäts-Radios (Vorbelegung item.priority), Abbrechen/Übernehmen; Schreiben gleich (proposal_status accepted, priority, decision_note null, mit tenant_id) + team-notify proposal_decided, Toast „Übernommen“. Ionic: loadLeader schließt das Sheet nach der letzten Entscheidung automatisch (!pending.length → isReviewOpen=false). / Flutter: das Sheet bleibt offen mit „Alle Vorschläge sind entschieden.“ und muss per X geschlossen werden. Außerdem zeichnet setState des Tabs das Sheet nicht neu, sodass der Button während des Speicherns nicht sichtbar deaktiviert ist; ein Doppelaufruf wird aber durch _deciding abgefangen.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  }
+ ]
+}

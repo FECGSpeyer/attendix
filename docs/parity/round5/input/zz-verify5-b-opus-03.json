@@ -1,0 +1,1899 @@
+{
+ "batch": "zz-verify5-b-opus-03",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 54,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=cat-button>",
+     "in <ion-reorder-group>",
+     "@if (!isCategoryReordering)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "color": "danger"
+    },
+    "events": [
+     "(click)=deleteCategory(cat.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "instruments/instrument-list/instrument-list.page#action-e212c1b4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:399",
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:246",
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:339"
+    ],
+    "n": "Roter Mülleimer, nur außerhalb des Sortiermodus, öffnet die Bestätigung (alert-415386f9). Fehlender Fehler-Toast beim Löschen steht bei services/group-category toast-0eec9127.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "messages/message-detail/message-detail.page.ts",
+    "line": 179,
+    "method": "MessageDetailPage.backHref",
+    "cond": [
+     "?(this.isManager)"
+    ],
+    "call": "Utils.getUrl",
+    "args": "this.db.tenantUser()?.role",
+    "src": "35ab897f",
+    "mbody": "a3e8d323",
+    "roleGuarded": true,
+    "id": "messages/message-detail/message-detail.page#effect-6fdffe28"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:84-90",
+     "lib/core/constants/enums.dart:137-141",
+     "lib/core/router/legacy_routes.dart:42"
+    ],
+    "n": "Zurück ohne Verlauf: Manager → /settings/messages (= /tabs/settings/messages), sonst Startseite der Rolle wie Utils.getUrl: Admin/Verantwortlich/Beobachter /people (= /tabs/player), Eltern /parents, Helfer/Stimmführer(-Helfer)/Spieler/Bewerber/NONE /signout.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart",
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "messages/message-detail/message-detail.page.ts",
+    "line": 201,
+    "method": "MessageDetailPage.onBodyClick",
+    "cond": [
+     "(href)"
+    ],
+    "plugin": "Browser",
+    "call": "open",
+    "args": "{ url: href }",
+    "src": "37531b25",
+    "mbody": "a78d413c",
+    "id": "messages/message-detail/message-detail.page#native-886951c6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:527",
+     "lib/core/services/native/native_file_service.dart:123"
+    ],
+    "n": "Links im Text: In-App-Browser in der App, extern im Web – wie Browser.open.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-list/message-list.page",
+   "ionic": {
+    "ts": "messages/message-list/message-list.page.ts",
+    "html": "messages/message-list/message-list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "messages/message-list/message-list.page.ts",
+    "line": 82,
+    "method": "MessageListPage.compose",
+    "cond": [],
+    "component": "MessageComposeComponent",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "016afc8b",
+    "mbody": "b95f7088",
+    "roleGuarded": true,
+    "id": "messages/message-list/message-list.page#modal-bb949983"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_compose_page.dart:23"
+    ],
+    "n": "Vollbild-Dialog (fullscreenDialog) wie Ionic-Modal ohne presentingElement; nach Versand Öffnen des Details.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-list/message-list.page",
+   "ionic": {
+    "ts": "messages/message-list/message-list.page.ts",
+    "html": "messages/message-list/message-list.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "messages/message-list/message-list.page.ts",
+    "line": 88,
+    "method": "MessageListPage.compose",
+    "cond": [
+     "(role === 'sent' && data)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "`/tabs/messages/${data}`",
+    "src": "f2b8b252",
+    "mbody": "b95f7088",
+    "roleGuarded": true,
+    "id": "messages/message-list/message-list.page#nav-e075183e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_list_page.dart:25-30",
+     "lib/features/messages/presentation/pages/message_compose_page.dart:262-270"
+    ],
+    "n": "Nach erfolgreichem Senden liefert Compose die id → push /messages/:id (Ionic navigateByUrl /tabs/messages/:id). Liste nur Admin/Verantwortlich in beiden (Ionic settings isAdmin, Flutter Guard '/settings/messages' _isAdminOrResponsible).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "notifications/notifications.page.ts",
+    "line": 47,
+    "method": "NotificationsPage.ngOnInit",
+    "cond": [],
+    "table": "realtime",
+    "op": "channel",
+    "payload": "'noti-changes'",
+    "filters": [],
+    "src": "3e24cce0",
+    "mbody": "2d758eee",
+    "roleGuarded": true,
+    "id": "notifications/notifications.page#db-dd73b098"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:82"
+    ],
+    "n": "Kanalname 'noti-changes-<userId>' statt 'noti-changes'; ohne Nutzerwirkung. Rollen wie db-f59556e9.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "notifications/notifications.page.ts",
+    "line": 47,
+    "method": "NotificationsPage.ngOnInit",
+    "cond": [],
+    "table": "realtime",
+    "op": "subscribe",
+    "payload": null,
+    "filters": [],
+    "src": "629008b6",
+    "mbody": "2d758eee",
+    "roleGuarded": true,
+    "id": "notifications/notifications.page#db-f59556e9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:79",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:82"
+    ],
+    "n": "Realtime auf 'notifications' (Filter id = eigene User-Id), übernimmt die neue Zeile. Läuft für jede Rolle, die die Seite öffnet: Ionic Einstellungen → 'Benachrichtigungen' ohne Rollenbedingung (isAdmin aus ngOnInit steuert nur Schalter), Flutter Eintrag ebenfalls immer, Route ohne Guard – gleich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 145,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.enabled)",
+     "@if (db.tenants().length)",
+     "@for (tenant of db.tenants(); track tenant.id; let idx = $index)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [
+     "(ionChange)=toggleTenant(tenant.id)"
+    ],
+    "link": null,
+    "model": "[checked]=\"isTenantEnabled(tenant.id)\"",
+    "bindings": [
+     "[checked]=\"isTenantEnabled(tenant.id)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "notifications/notifications.page#field-fbc6770a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:329-337",
+     "lib/core/services/telegram_service.dart:150-162",
+     "lib/core/services/telegram_service.dart:207-212",
+     "lib/core/providers/tenant_providers.dart:176-226"
+    ],
+    "n": "Schalter je Instanz (Langname, Favoriten zuerst), an = enabled_tenants enthält id; Umschalten fügt hinzu/entfernt und speichert die notifications-Zeile des Nutzers (update per id). Flutter fällt bei leerem longName auf shortName zurück (kosmetisch).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/core/services/telegram_service.dart",
+    "lib/core/providers/tenant_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-attendance/open-attendance.page",
+   "ionic": {
+    "ts": "open-attendance/open-attendance.page.ts",
+    "html": "open-attendance/open-attendance.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "open-attendance/open-attendance.page.ts",
+    "line": 43,
+    "method": "OpenAttendancePage.ngOnInit",
+    "cond": [
+     "(!this.db.tenantUser())",
+     "(!idParam)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/login'",
+    "src": "bd94d0e7",
+    "mbody": "6e692538",
+    "roleGuarded": true,
+    "id": "open-attendance/open-attendance.page#nav-e5a2e051"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:309-314",
+     "lib/features/planning/presentation/pages/open_attendance_page.dart:65-68"
+    ],
+    "n": "Ohne id und ohne Sitzung → /login in beiden; Bedingung hängt nicht an der Rolle (nur: kein tenantUser). Flutter merkt sich den Link und setzt ihn nach dem Login fort (Wechsel in tenantId), Ionic verwirft tenantId – schon als Extra \"Fortsetzen nach Login\" (Flutter besser) erfasst. Sonderfall angemeldet ohne Instanz: Ionic /login, Flutter /tenants.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-attendance/open-attendance.page",
+   "ionic": {
+    "ts": "open-attendance/open-attendance.page.ts",
+    "html": "open-attendance/open-attendance.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "open-attendance/open-attendance.page.ts",
+    "line": 67,
+    "method": "OpenAttendancePage.ngOnInit",
+    "cond": [
+     "(!this.db.tenantUser())"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/login'",
+    "src": "bd94d0e7",
+    "mbody": "6e692538",
+    "roleGuarded": true,
+    "id": "open-attendance/open-attendance.page#nav-e5a2e051-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:309-314",
+     "lib/core/router/app_router.dart:340-345"
+    ],
+    "n": "Mit id und ohne Sitzung → Termin merken + /login in beiden. Danach öffnet Flutter den Link vollständig (Instanzwechsel, Admin/Verantwortlich/Helfer/Stimmführer-Helfer → Termin-Detail, sonst Aktionsblatt), Ionic nur über pendingAttendanceId (Signout-/Eltern-Seite öffnet das Blatt, Admin/Verantwortlich landen ohne Termin auf ihrer Startseite) – schon als Extra \"Fortsetzen nach Login\" (Flutter besser) erfasst. Sonderfall angemeldet ohne Instanz: Ionic /login, Flutter /tenants.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-file/open-file.page",
+   "ionic": {
+    "ts": "open-file/open-file.page.ts",
+    "html": "open-file/open-file.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "open-file/open-file.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:24-29",
+     "ngOnInit:31-39",
+     "resolveLink:41-89"
+    ],
+    "bodies": {
+     "constructor": "1ad70012",
+     "ngOnInit": "922a2171",
+     "resolveLink": "146c44ea"
+    },
+    "id": "open-file/open-file.page#logic-76562f6f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/public_links/presentation/pages/open_file_page.dart:58-125"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-file/open-file.page",
+   "ionic": {
+    "ts": "open-file/open-file.page.ts",
+    "html": "open-file/open-file.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "open-file/open-file.page.ts",
+    "line": 57,
+    "method": "OpenFilePage.resolveLink",
+    "cond": [
+     "(!this.db.tenantUser())"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/login'",
+    "src": "bd94d0e7",
+    "mbody": "146c44ea",
+    "roleGuarded": true,
+    "id": "open-file/open-file.page#nav-e132ddd2-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/public_links/presentation/pages/open_file_page.dart:75-85",
+     "lib/core/router/app_router.dart:340-345"
+    ],
+    "n": "Ohne Sitzung: Link (tenantId, path, folder) merken, /login, nach dem Login fortsetzen – wie Ionic setPendingLink/routeAfterAuth; rollenunabhängig. Sonderfall angemeldet ohne Instanz: Ionic merkt Link + /login, Flutter Toast \"Du hast keinen Zugriff auf diese Instanz.\" + /tenants.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 111,
+    "method": "OrgPlanPublicPage.loadPlans",
+    "cond": [
+     "?(this.tenantIds.length)"
+    ],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, date, plan, typeInfo, tenantId'",
+    "filters": [
+     "in('tenantId', this.tenantIds)",
+     "eq('is_org_plan', true)",
+     "eq('archived', false)",
+     "not('plan', 'is', null)",
+     "order('date', { ascending: true })"
+    ],
+    "tenantFilter": false,
+    "src": "9159c3d4",
+    "mbody": "e50f2770",
+    "id": "org-plan-public/org-plan-public.page#db-f11d79f7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/public_plan_repository.dart:256",
+     "lib/data/repositories/public_plan_repository.dart:259",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:104"
+    ],
+    "n": "Gleiche Abfrage auf attendance (id, date, plan, typeInfo, tenantId; tenantId in den Instanzen der Organisation aus tenant_group_tenants, is_org_plan, archived=false, plan not null, order date) und nur wenn Instanzen vorhanden (names.isNotEmpty ↔ tenantIds.length). Öffentliche Seite per Schlüssel ohne Rollenbezug; der tenantId-Filter ist wie in Ionic die Instanzliste der Organisation.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "org-plans/org-plans.page.ts",
+    "line": 104,
+    "method": "OrgPlansPage.loadAdHocPlans",
+    "cond": [],
+    "table": "shared_plans",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [],
+    "tenantFilter": false,
+    "src": "6de63adb",
+    "mbody": "714ddb22",
+    "id": "org-plans/org-plans.page#db-ca5619e2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:167",
+     "lib/core/providers/plan_providers.dart:157"
+    ],
+    "n": "shared_plans select('*') eq org_id order date; Fehler → leere Liste wie Ionic",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/plan_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "org-plans/org-plans.page.ts",
+    "line": 184,
+    "method": "OrgPlansPage.deleteAdHocPlan",
+    "cond": [],
+    "table": "shared_plans",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', entry.sharedPlan.id)"
+    ],
+    "tenantFilter": false,
+    "src": "90f83bad",
+    "mbody": "8d8cea1f",
+    "id": "org-plans/org-plans.page#db-d2b74a95"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:185",
+     "lib/core/providers/plan_providers.dart:279"
+    ],
+    "n": "shared_plans delete eq id; Flutter zusätzlich eq org_id (aktuelle Organisation) – gleiche Wirkung; Fehler-Toast „plans.deleteFailed“ wie Ionic, danach Liste neu (invalidate orgPlansProvider).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/plan_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "org-plans/org-plans.page.ts",
+    "line": 230,
+    "method": "OrgPlansPage.showCalendarAlert",
+    "cond": [],
+    "call": "navigator.clipboard.writeText",
+    "args": "link",
+    "src": "475d213d",
+    "mbody": "36822c19",
+    "id": "org-plans/org-plans.page#effect-35b5f6e6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:213",
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:97",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:158"
+    ],
+    "n": "Kalender-Button nur bei vorhandenem public_plan_key (Ionic @if (publicKey) + Guard, Flutter if key != null); Clipboard.setData(link), Dialog bleibt offen. Rollen Admin/Verantwortlich in beiden.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-plans/org-plans.page.ts",
+    "line": 285,
+    "method": "OrgPlansPage.managePublicLink",
+    "cond": [
+     "!(this.publicKey)"
+    ],
+    "message": {
+     "keys": [
+      "plans.linkCreated"
+     ],
+     "de": [
+      "Link erstellt und kopiert"
+     ],
+     "literals": [],
+     "expr": "translate('plans.linkCreated')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "50dc3f2d",
+    "mbody": "df7e1a51",
+    "roleGuarded": true,
+    "id": "org-plans/org-plans.page#toast-95142758"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:144"
+    ],
+    "n": "Ohne Key: neuer 16-Zeichen-Key in tenant_groups.public_plan_key, Link kopiert, „Link erstellt und kopiert“ success; nur mit Organisation in beiden.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 75,
+    "method": "OrgPersonFieldsPage.addField",
+    "cond": [
+     "(!field.options.length)",
+     "(field.type === FieldType.SELECT)"
+    ],
+    "message": {
+     "keys": [
+      "orgFields.addOption"
+     ],
+     "de": [
+      "Bitte füge mindestens eine Auswahloption hinzu."
+     ],
+     "literals": [],
+     "expr": "translate('orgFields.addOption')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "b6fa6750",
+    "mbody": "a559d72d",
+    "roleGuarded": true,
+    "id": "org-settings/org-person-fields/org-person-fields.page#toast-04d937da"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:309"
+    ],
+    "n": "Nur Admin; Auswahlfeld ohne (nicht-leere) Option → „Bitte füge mindestens eine Auswahloption hinzu.“ danger, Sheet bleibt offen.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 56,
+    "method": "OrgPersonFieldsPage.addField",
+    "cond": [
+     "(!organisationId || !name)"
+    ],
+    "message": {
+     "keys": [
+      "extraFields.invalidName"
+     ],
+     "de": [
+      "Bitte gib einen gültigen Namen für das Zusatzfeld ein."
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.invalidName')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "67b9ce9f",
+    "mbody": "a559d72d",
+    "roleGuarded": true,
+    "id": "org-settings/org-person-fields/org-person-fields.page#toast-77469d60"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:304",
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:154"
+    ],
+    "n": "Nur Admin (isSuperAdmin = Role.ADMIN; „+“ für Verantwortlich deaktiviert in beiden). Leerer Name → „Bitte gib einen gültigen Namen für das Zusatzfeld ein.“ danger, Sheet bleibt offen. Fall „ohne Organisation“ unerreichbar (Link nur im Org-Block).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 189,
+    "method": "OrgPersonFieldsPage.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "orgFields.saved"
+     ],
+     "de": [
+      "Organisations-Zusatzfelder gespeichert."
+     ],
+     "literals": [],
+     "expr": "translate('orgFields.saved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "846a01eb",
+    "mbody": "3d81f814",
+    "roleGuarded": true,
+    "id": "org-settings/org-person-fields/org-person-fields.page#toast-ffb36bd8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:114",
+     "lib/core/providers/plan_providers.dart:252"
+    ],
+    "n": "Nur Admin; Update tenant_groups.additional_fields + Löschen tenant_group_person_fields (tenant_group, field_id in entfernte) in beiden, dann „Organisations-Zusatzfelder gespeichert.“ success.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/providers/plan_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 227,
+    "method": "OrgSettingsPage.deleteOrganisation",
+    "cond": [],
+    "header": {
+     "keys": [
+      "org.unlink"
+     ],
+     "de": [
+      "Organisation von Instanz trennen?"
+     ],
+     "literals": [],
+     "expr": "translate('org.unlink')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "org.unlinkMessage"
+     ],
+     "de": [
+      "Möchtest du die Organisation „{name}“ wirklich von der Instanz trennen?"
+     ],
+     "literals": [],
+     "expr": "translate('org.unlinkMessage', { name: org.name })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "org.unlinkButton"
+       ],
+       "de": [
+        "Trennen"
+       ],
+       "literals": [],
+       "expr": "translate('org.unlinkButton')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { await this.db.unlinkTenantFromOrganisation(org.id); this.db.organisation.set(null); Utils.showToast(translate('org.unlinked'), 'success'); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "77b7a89d",
+    "mbody": "c9637f85",
+    "roleGuarded": true,
+    "id": "org-settings/org-settings.page#alert-49a6136a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:47",
+     "lib/data/repositories/organisation_repository.dart:91"
+    ],
+    "n": "Nur Admin (Eintrag nur bei isSuperAdmin in beiden). „Organisation von Instanz trennen?“, „Möchtest du die Organisation „{name}“ wirklich…“, „Abbrechen“/„Trennen“ (destruktiv); löscht tenant_group_tenants (tenant_id + tenant_group) und die leere Organisation in beiden.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 63,
+    "method": "OrgSettingsPage.openOrganisationAlert",
+    "cond": [
+     "(data)",
+     "(organisations.length)"
+    ],
+    "message": {
+     "keys": [
+      "org.selected"
+     ],
+     "de": [
+      "Die Organisation wurde erfolgreich ausgewählt."
+     ],
+     "literals": [],
+     "expr": "translate('org.selected')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "b678c083",
+    "mbody": "ad849673",
+    "roleGuarded": true,
+    "id": "org-settings/org-settings.page#toast-5c26b059"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:73"
+    ],
+    "n": "„Die Organisation wurde erfolgreich ausgewählt.“ success nach Insert tenant_group_tenants; nur Admin.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 212,
+    "method": "OrgSettingsPage.renameOrg",
+    "cond": [],
+    "message": {
+     "keys": [
+      "org.renamed"
+     ],
+     "de": [
+      "Organisation umbenannt"
+     ],
+     "literals": [],
+     "expr": "translate('org.renamed')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "eb70d579",
+    "mbody": "76b2378e",
+    "roleGuarded": true,
+    "id": "org-settings/org-settings.page#toast-d99388c2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:44"
+    ],
+    "n": "„Organisation umbenannt“ success; Umbenennen nur für Admin (Tap nur bei isSuperAdmin in beiden).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 463,
+    "cond": [
+     "@else if (loaded && !players?.length && !playersFiltered?.length)",
+     "@if (isAdmin)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "outline"
+    },
+    "events": [
+     "(click)=openImportModal()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "people.importPeople"
+    ],
+    "de": [
+     "Personen importieren"
+    ],
+    "literals": [],
+    "text": "{{ 'people.importPeople' | transloco }}",
+    "id": "people/list/list.page#action-3afbca69"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:565",
+     "lib/features/people/presentation/pages/people_list_page.dart:566"
+    ],
+    "n": "Leerzustand: 'Personen importieren' nur Admin/Verantwortlicher (Beobachter nicht), wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 168,
+    "cond": [
+     "in <ion-popover #filterPopover>",
+     "@if (isAdmin)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=openBulkEditModal()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pencil"
+    ],
+    "keys": [
+     "people.bulkEdit"
+    ],
+    "de": [
+     "Bulk-Bearbeitung"
+    ],
+    "literals": [],
+    "text": "{{ 'people.bulkEdit' | transloco }}",
+    "id": "people/list/list.page#action-67e74d37"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:484",
+     "lib/features/people/presentation/pages/people_list_page.dart:944",
+     "lib/features/people/presentation/pages/people_list_page.dart:948",
+     "lib/features/people/presentation/pages/people_list_page.dart:1280"
+    ],
+    "n": "Nur Admin/Verantwortlicher (isAdmin wie Ionic), Beobachter nicht; Stift-Icon, 'Bulk-Bearbeitung'; übergibt die gefilterte/gesuchte Liste, lädt bei Änderung neu.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 318,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@if (sortOpt === 'instrument')",
+     "@for (group of playerGroups; track group.groupId)",
+     "in <ion-reorder-group>",
+     "@if (isAdmin)"
+    ],
+    "tag": "ion-item-options",
+    "attrs": {},
+    "events": [
+     "(ionSwipe)=player.paused ? unpausePlayer(player, slider) : pausePlayer(player, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash",
+     "pause",
+     "play"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-8a40dbb1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:605",
+     "lib/features/people/presentation/pages/people_list_page.dart:1682",
+     "lib/features/people/presentation/pages/people_list_page.dart:1687",
+     "lib/features/people/presentation/pages/people_list_page.dart:1692"
+    ],
+    "n": "Nur Admin/Verantwortlicher (Callbacks nur bei isAdmin, sonst keine Slidable); Beobachter ohne Wisch-Optionen wie Ionic; voller Wisch → pausieren bzw. aktivieren.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 494,
+    "cond": [
+     "@if (isAdmin)"
+    ],
+    "tag": "ion-fab-button",
+    "attrs": {},
+    "events": [
+     "(click)=openModal()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-e4ea4870"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:661",
+     "lib/features/people/presentation/pages/people_list_page.dart:664"
+    ],
+    "n": "FAB '+' nur Admin/Verantwortlicher (Beobachter nicht); öffnet Neuanlage (Darstellung siehe modal-38ba21ec).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "people/list/list.page.ts",
+    "line": 811,
+    "method": "ListPage.removePlayer",
+    "cond": [],
+    "plugin": "Haptics",
+    "call": "impact",
+    "args": "{ style: ImpactStyle.Medium }",
+    "src": "d4b48ada",
+    "mbody": "53ac8376",
+    "id": "people/list/list.page#native-79bc7764"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1471",
+     "lib/core/utils/haptic_helper.dart:15"
+    ],
+    "n": "Haptik Medium (try/catch) vor der Entfernen-Bestätigung; nur über das Admin/Verantwortlicher-Sheet erreichbar.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "people/list/list.page.ts",
+    "line": 839,
+    "method": "ListPage.pausePlayer",
+    "cond": [],
+    "plugin": "Haptics",
+    "call": "impact",
+    "args": "{ style: ImpactStyle.Light }",
+    "src": "77085ebb",
+    "mbody": "2fd9e190",
+    "id": "people/list/list.page#native-fae6edc2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1332",
+     "lib/core/utils/haptic_helper.dart:8"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 848,
+    "cond": [
+     "@if (existingPlayer && !readOnly && canManagePlannedAbsences)",
+     "@for (absence of playerAbsences; track absence.id)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "slot": "end",
+     "color": "danger"
+    },
+    "events": [
+     "(click)=deleteAbsence(absence)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-99512786"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:296",
+     "lib/features/people/presentation/widgets/planned_absences.dart:248"
+    ],
+    "n": "Roter Papierkorb; Bestätigung „Abwesenheit löschen“ mit gleichem Text, Löschen (destruktiv); löscht und setzt entschuldigte Termine zurück, Toast „Abwesenheit gelöscht“.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 901,
+    "cond": [
+     "@else (not approveMode)",
+     "@if (player)",
+     "@if (!readOnly && existingPlayer && !hasChanges && (player.appId || !player.email))"
+    ],
+    "tag": "ion-fab-button",
+    "attrs": {},
+    "events": [
+     "(click)=openMoreMenu()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "ellipsis-horizontal"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-a75ff037"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1737",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1351"
+    ],
+    "n": "„…“-FAB nur bei canEdit, ohne Änderungen, nicht pending und (Konto vorhanden oder keine E-Mail) wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/person/person.page.ts",
+    "line": 582,
+    "method": "PersonPage.updatePlayer",
+    "cond": [
+     "(!this.isGeneral && this.player.appId && !this.existingPlayer.isLeader && this.player.isLeader)"
+    ],
+    "header": {
+     "keys": [
+      "person.enableVoiceLeader"
+     ],
+     "de": [
+      "Stimmführer aktivieren"
+     ],
+     "literals": [],
+     "expr": "translate('person.enableVoiceLeader')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "person.voiceLeaderMessage"
+     ],
+     "de": [
+      "Mit der Stimmführer-Rolle kann {name} die Kontaktdaten und anstehenden Termine aller Personen in der Stimme einsehen. Soll die Rolle vergeben werden?"
+     ],
+     "literals": [
+      "${this.player.firstName} ${this.player.lastName}"
+     ],
+     "expr": "translate('person.voiceLeaderMessage', { name: `${this.player.firstName} ${this.player.lastName}` })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { this.player.isLeader = false; }"
+     },
+     {
+      "text": {
+       "keys": [
+        "person.voiceLeaderStatusOnly"
+       ],
+       "de": [
+        "Nur Stimmführer-Status"
+       ],
+       "literals": [],
+       "expr": "translate('person.voiceLeaderStatusOnly')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { loading.present(); await this.continueUpdatingPlayer(false, loading, false); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "person.saveWithRole"
+       ],
+       "de": [
+        "Mit Rolle speichern"
+       ],
+       "literals": [],
+       "expr": "translate('person.saveWithRole')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { loading.present(); await this.continueUpdatingPlayer(false, loading, true); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "b6633a07",
+    "mbody": "c9c20fe4",
+    "roleGuarded": true,
+    "id": "people/person/person.page#alert-77f37654"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:568",
+     "lib/features/people/presentation/pages/person_detail_page.dart:754",
+     "lib/features/people/presentation/pages/person_detail_page.dart:807"
+    ],
+    "n": "Bedingung gleich (!general, Person hat Konto, Stimmführer neu eingeschaltet); Titel „Stimmführer aktivieren“, Text mit Name, Buttons Abbrechen (setzt Schalter zurück, speichert nicht) / „Nur Stimmführer-Status“ / „Mit Rolle speichern“ (Helfer→Stimmführer & Helfer, sonst Stimmführer). Erreichbar nur für Admin/Verantwortliche (canEdit) wie Ionic (!readOnly).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/person/person.page.ts",
+    "line": 1297,
+    "method": "PersonPage.openMoreMenu",
+    "cond": [
+     "(this.player.appId !== this.db.tenantUser().userId)"
+    ],
+    "header": {
+     "keys": [
+      "attendance.removePerson"
+     ],
+     "de": [
+      "Person entfernen"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.removePerson')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "person.removePersonMessage"
+     ],
+     "de": [
+      "Möchtest du die Person wirklich entfernen? Alle zugehörigen Daten (Abwesenheiten, Notizen, etc.) gehen dabei verloren!"
+     ],
+     "literals": [],
+     "expr": "translate('person.removePersonMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.yes"
+       ],
+       "de": [
+        "Ja"
+       ],
+       "literals": [],
+       "expr": "translate('common.yes')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { this.modalController.dismiss(); try { await this.db.removePlayer(this.player); Utils.showToast(translate('person.removed'), 'success'); } catch (error) { Utils.showToast(error, 'danger'); } }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "ebeb7865",
+    "mbody": "aebbcfa5",
+    "roleGuarded": true,
+    "id": "people/person/person.page#alert-b55317e3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1393",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1454",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1476"
+    ],
+    "n": "Option „Entfernen“ nur wenn Person nicht der eigene Account (isSelf über auth-User-ID) wie Ionic; Menü nur Admin/Verantwortliche. Dialog „Person entfernen“, Text gleich, Abbrechen/Ja; löscht player (id + tenantId) und entzieht Konto-Zugang wie db.removePlayer.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 185,
+    "cond": [
+     "@if (!readOnly && player?.isCritical)",
+     "*ngIf=\"solved\""
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [
+     "(ionChange)=onChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"notes\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-36a3bcfe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:100",
+     "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:108"
+    ],
+    "n": "Mehrzeiliges Textfeld (zusätzlicher Hinweis „Was wurde besprochen?“), nur wenn gelöst; Text wird als Historien-Eintrag Typ 3 gespeichert. Abweichender Speicherweg (eigener Button statt Speichern-FAB) ist bei field-fe3a2971 erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 7,
+    "cond": [
+     "@if (!approveMode && !readOnly && existingPlayer)"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "person.editPerson"
+    ],
+    "de": [
+     "Person bearbeiten"
+    ],
+    "literals": [],
+    "text": "{{ 'person.editPerson' | transloco }}",
+    "id": "people/person/person.page#text-14657460"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1766"
+    ],
+    "n": "Titel nur bei canEdit (Admin/Verantwortliche, nicht archiviert) und nicht pending; Beobachter/archivierte Person ohne Titel wie Ionic readOnly.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 690,
+    "cond": [
+     "@if (player)",
+     "@if (otherTenants.length)",
+     "@for (tenant of otherTenants; track tenant)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ tenant.longName }}"
+    ],
+    "text": "{{ tenant.longName }}",
+    "id": "people/person/person.page#text-408e4921"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:215",
+     "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:28",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1890"
+    ],
+    "n": "Fix #284 trägt: Instanzen des Personen-Accounts (tenantUsers.userId = appId), nur mit der aktuellen über tenant_group verknüpfte, ohne Rolle Beobachter (wie Ionic getTenantsFromUser/getLinkedTenants); h2 = longName. Sichtbar für jede Rolle, die die Person öffnen kann, nur mit Account – wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 552,
+    "cond": [
+     "@if (player)",
+     "@if (!isParent && !readOnly && !approveMode)",
+     "in <ion-modal trigger=accountHelpButton #accountHelpModal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "person.help"
+    ],
+    "de": [
+     "Hilfe"
+    ],
+    "literals": [],
+    "text": "{{ 'person.help' | transloco }}",
+    "id": "people/person/person.page#text-569fac2e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:282"
+    ],
+    "n": "Titel „Hilfe“; Darstellung als Dialog mit „Schließen“ statt Sheet (50 %) betrifft das Modal, nicht den Text.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 567,
+    "cond": [
+     "@if (player)",
+     "@if (!isParent && !readOnly && !approveMode)",
+     "in <ion-modal trigger=accountHelpButton #accountHelpModal>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "person.existingUserHint"
+    ],
+    "de": [
+     "Falls schon ein Benutzer für die E-Mail Adresse existiert, wird dieser automatisch der Instanz zugewiesen."
+    ],
+    "literals": [],
+    "text": "{{ 'person.existingUserHint' | transloco }}",
+    "id": "people/person/person.page#text-67d8ca5f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:291"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 691,
+    "cond": [
+     "@if (player)",
+     "@if (otherTenants.length)",
+     "@for (tenant of otherTenants; track tenant)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getRoleText(tenant.role) }}"
+    ],
+    "text": "{{ getRoleText(tenant.role) }}",
+    "id": "people/person/person.page#text-a48aa58c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:104",
+     "lib/data/repositories/user_registration_repository.dart:47"
+    ],
+    "n": "Fix #284 trägt: Rollentext wie Utils.getRoleText (Admin, Mitglied, Beobachter, Helfer, Verantwortlicher, Elternteil, Stimmführer, Stimmführer & Helfer; NONE → Mitglied; Bewerber → Unbekannt).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 563,
+    "cond": [
+     "@if (player)",
+     "@if (!isParent && !readOnly && !approveMode)",
+     "in <ion-modal trigger=accountHelpButton #accountHelpModal>",
+     "@if (!player.appId)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "person.accountHelp"
+    ],
+    "de": [
+     "Sobald die E-Mail Adresse eingeben wurde, kann ein Account erstellt werden. Der Benutzer wird per E-Mail über die Erstellung benachrichtigt. Das Passwort wird automatisch generiert und an die E-Mail Adresse gesendet."
+    ],
+    "literals": [],
+    "text": "{{ 'person.accountHelp' | transloco }}",
+    "id": "people/person/person.page#text-b4cb386f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:288"
+    ],
+    "n": "Nur ohne Konto (appId null) wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart"
+   ]
+  }
+ ]
+}

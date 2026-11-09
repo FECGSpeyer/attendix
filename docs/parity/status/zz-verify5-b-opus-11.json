@@ -1,0 +1,370 @@
+{
+ "batch": "zz-verify5-b-opus-11",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "services/push/push.service#native-95ceae7e-2": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/firebase_push_messaging_client.dart:99",
+    "lib/core/services/push/push_service.dart:361"
+   ],
+   "n": "Weiter gleich: firebase_messaging übernimmt die APNs-Registrierung; getToken wartet bis 10 s (20×500 ms) auf das APNs-Token, sonst null + Log 'Registration timeout' (Ionic: reject → catch → console.error). Keine Nutzeranzeige in beiden.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#native-95ceae7e-3": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart:361",
+    "lib/core/services/push/push_service.dart:376",
+    "lib/data/repositories/device_token_repository.dart:50"
+   ],
+   "n": "Android: FCM-Token nach Berechtigung → _saveToken → DeviceTokenRepository.saveToken (Token anderer Nutzer löschen, andere Tokens des Nutzers löschen, upsert user_id/token/platform/updated_at) wie Ionic registration-Listener; neue Generation-Checks verhindern nur Schreiben nach Logout.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#native-95ceae7e-4": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/firebase_push_messaging_client.dart:116",
+    "lib/core/services/push/push_service.dart:367"
+   ],
+   "n": "Registrierungsfehler nur geloggt (getToken-catch bzw. 'no FCM token'), wie Ionic console.error; keine Nutzeranzeige.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#native-bb512112": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/firebase_push_messaging_client.dart:181",
+    "lib/core/services/push/push_service.dart:547",
+    "lib/core/providers/push_providers.dart:95"
+   ],
+   "n": "Badge.clear → AppBadgePlus.updateBadge(0) in try/catch; aufgerufen nach initPush, beim Push-Tap und bei jedem App-Resume (Ionic Badge autoClear: true). Verweis push_providers.dart:81 ist jetzt :95.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#native-ce80f086": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart:355",
+    "lib/core/services/push/firebase_push_messaging_client.dart:139"
+   ],
+   "n": "Token-Erneuerung: onTokenRefresh → _saveToken (nicht-leeres Token, aktuelle Push-Generation), in Flutter auch auf Android. Keine Rollenbeschränkung in beiden.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#native-d16c5044": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart:216",
+    "lib/core/services/push/firebase_push_messaging_client.dart:159",
+    "lib/core/services/push/firebase_push_messaging_client.dart:169"
+   ],
+   "n": "Ein Pfad für Tap (onMessageOpenedApp) und Kaltstart (getInitialMessage): clearBadge, pendingPushData, handlePendingPushNavigation wie Ionic-Fallback-Listener (Flutter trackt dabei zusätzlich PushOpened).",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#native-eaa8c988": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart:204",
+    "lib/core/services/push/push_navigation.dart:49",
+    "lib/core/providers/push_providers.dart:261"
+   ],
+   "n": "Vordergrund-Push: live_plan still übersprungen, PushReceived getrackt, Alert Titel (sonst 'Benachrichtigung') / Text mit 'OK' / 'Anzeigen' → navigateFromData. Hinweis bleibt: iOS-Systembanner im Vordergrund in Flutter unterdrückt (alert:false), Ionic presentationOptions badge/sound/alert – Gerätetest.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#native-eaa8c988-2": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart:216",
+    "lib/core/services/push/push_service.dart:224"
+   ],
+   "n": "Tap: clearBadge, track PushOpened, pendingPushData, handlePendingPushNavigation (wartet auf Startup-Redirect, dann navigateFromData) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#native-fdd6118b": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/firebase_push_messaging_client.dart:83",
+    "lib/core/services/push/push_service.dart:346"
+   ],
+   "n": "iOS: requestPermission(alert/badge/sound) im prompt-Fall; bei bereits erteilter Berechtigung ist der zusätzliche Ionic-Aufruf ein No-op.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#nav-afe2b2de": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_navigation.dart:71",
+    "lib/core/router/route_access.dart:72",
+    "lib/features/self_service/presentation/pages/signout_page.dart:74"
+   ],
+   "n": "canAddAttendance = Admin/Verantwortlich/Helfer/StF-Helfer → Termin; Eltern → /parents; übrige (Spieler, Stimmführer, Bewerber) → /signout mit pendingAttendanceId. signout_page öffnet ihn wie Ionic openAttendanceById (Dienst-Ansicht: Scroll zu 'Bitte bestätigen'/'Meine Dienste', offener Dienst → 'Offene Dienste', sonst Aktionsblatt). Randfall Beobachter unverändert (Flutter leitet von /signout um).",
+   "v": "bestätigt"
+  },
+  "services/register.guard#logic-238147e4": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:466",
+    "lib/core/router/app_router.dart:372",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:398"
+   ],
+   "n": "Flutter /register → /login → angemeldet: Startseite der offenen Instanz bzw. /tenants, das ohne Instanz die nicht schließbare Seite 'Neue Instanz anlegen' zeigt (TenantCreatePage canDismiss:false; Beta-Zweig zählt nicht); abgemeldet → /login. Entspricht RegisterGuard. Flutter verlangt vorher die AGB-Zustimmung.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-4e51e062": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:373"
+   ],
+   "n": "person_attendances id, person_id, attendance_id, status mit person_id in (zugewiesene Zielpersonen) und attendance_id in (kommende Termine); Flutter zusätzlich Inner-Join attendance.tenantId = Ziel-Instanz; notes nicht gelesen (nicht benötigt).",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-71d6160b": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:298"
+   ],
+   "n": "Gleich: player id, appId mit tenantId = Ziel, appId in (...), left is null.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-75386190": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/shift_repository.dart:109",
+    "lib/core/providers/shift_providers.dart:149"
+   ],
+   "n": "Delete shifts nach id + tenant_id. Vorher wie DbService.deleteShift: alle nicht-pending Personen des Plans (getPlayersByShift) per updateShiftAssignmentsForPerson mit shift_id null zurückgesetzt; Demo-Sperre davor.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-8236c105": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/shift_repository.dart:53",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:281"
+   ],
+   "n": "Insert shifts mit name, description, tenant_id, definition, shifts (Neu: ShiftPlan.toJson ohne id/created_at, tenant_id aktuell; Kopie: '<Name> (Kopie)', tenant_id der Ziel-Instanz, Segmente ohne IDs). Kleinigkeiten: Flutter trimmt Name/Beschreibung beim Anlegen.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-9d620c6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:389",
+    "lib/core/utils/shift_utils.dart:338"
+   ],
+   "n": "Gleiche Bedingung (Ergebnis Entschuldigt und Status = default_status; ganztägige Typen übersprungen; Start/Ende-Fallback auf Typ) und gleiche Spalten status/notes nach id. Unbekannter Schichtname: Ionic bricht ab, Flutter überspringt (Randfall).",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-a9051ad6": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:366"
+   ],
+   "n": "attendance id, date, type_id, start_time, end_time der Ziel-Instanz; Ionic date > heute 00:00 (ISO), Flutter date >= heutiges Datum – Termine liegen auf 12:00 normalisiert, also gleiche Termine ab heute.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-ad58aa81": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:323"
+   ],
+   "n": "shift_id = neue Schicht, shift_name/shift_start aus Quellperson (leer → null) für Zielpersonen gleicher appId (aktiv), Flutter zusätzlich .eq('tenantId', Ziel). Nur Fehlerfall anders: Ionic überspringt fehlgeschlagene Einzel-Updates still, Flutter bricht mit Fehler-Toast 'Kopieren fehlgeschlagen' ab.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-b2e7460e": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:361"
+   ],
+   "n": "attendance_types der Ziel-Instanz (tenant_id); Flutter liest nur die benötigten Spalten id, all_day, start_time, end_time, default_status.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-eb72dd6f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/shift_repository.dart:141",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:96",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:222"
+   ],
+   "n": "getShiftUsageCount (player.shift_id, zusätzlich tenantId), 'benutzt' = Anzahl > 0; sperrt wie Ionic isUsed Löschen/Name/Datum der festen Schichten. Fehler-Toast ist eigenes toast-Item.",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#effect-2f74a4fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:149",
+    "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+   ],
+   "n": "Genau eine Datei (Instrument; bei Mandant type=choir plus 'Chor (alle)', Dubletten nach fileName entfernt): 'Noten anzeigen' → openSongFileExternally wie Utils.openFileNative (installierte Web-App In-App-Viewer, sonst neuer Tab; nativ Download + Systemviewer; iOS-App auf Mac Browser).",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#effect-2f74a4fe-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:159",
+    "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+   ],
+   "n": "Mehrere Dateien: Auswahl-Sheet 'Noten für … auswählen' (Dateinamen + Abbrechen), dann Datei öffnen wie Ionic; gleiche choir-Logik.",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#effect-2f74a4fe-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:183",
+    "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+   ],
+   "n": "Eine Liedtext-Datei (instrumentId 2): 'Liedtext ansehen' öffnet sie direkt.",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#effect-2f74a4fe-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:185",
+    "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+   ],
+   "n": "Mehrere Liedtext-Dateien: Auswahl-Sheet (chooseLyricsFor), dann öffnen.",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#native-83bc9aed": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:143",
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:18",
+    "lib/core/services/native/native_file_service.dart:123"
+   ],
+   "n": "Nur mit song.link: 'Notenlink öffnen' → openLinkInApp (nativ In-App-Browser, Web/iOS-App auf Mac extern). Keine Rollenprüfung in der Methode; Eltern bekommen in beiden Apps nur den Link (linkOnly, parents_portal_page.dart:108). Flutter zusätzlich Fehler-Toast, wenn der Link nicht aufgeht.",
+   "v": "bestätigt"
+  },
+  "services/song-category/song-category.service#db-1d35ec20": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:484",
+    "lib/core/providers/song_providers.dart:624",
+    "lib/core/providers/song_providers.dart:657"
+   ],
+   "n": "Umbenennen schreibt name, Umsortieren index 0..n (Ionic schreibt beim Sortieren das ganze Objekt mit neuem index – gleiche Wirkung); Flutter zusätzlich .eq('tenant_id', songTenantId) = effektive Werk-Instanz wie Ionic effectiveSongTenantId.",
+   "v": "bestätigt"
+  },
+  "services/task/task.service#db-2e575b30": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/task_repository.dart:40",
+    "lib/core/providers/team_org_providers.dart:151"
+   ],
+   "n": "Gleicher TASK_SELECT, tenant_id, responsible_person_id in [eigene Team-Person], order due_date ascending nullsFirst:false (explizit).",
+   "v": "bestätigt"
+  },
+  "services/task/task.service#logic-5ad9225f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/task_repository.dart:13",
+    "lib/data/repositories/task_repository.dart:24",
+    "lib/data/repositories/task_repository.dart:106",
+    "lib/data/repositories/task_repository.dart:137",
+    "lib/data/repositories/task_repository.dart:165",
+    "lib/core/providers/team_org_providers.dart:151"
+   ],
+   "n": "Gleicher TASK_SELECT, gleiche Sortierungen (due_date asc nulls last bzw. created_at asc), Schreibfelder ohne berechnete/Join-Felder, updated_at beim Update, Fehler 'svc.noDeletePermission' bei 0 gelöschten Zeilen. Flutter filtert alle Abfragen zusätzlich nach tenant_id. getTasksForProtocol toter Code.",
+   "v": "bestätigt"
+  },
+  "services/teacher/teacher.service#db-5ebbb21d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/teacher_repository.dart:49"
+   ],
+   "n": "Insert teachers mit name, instruments, notes, number, private, tenantId (wie pickTeacherFields beim Anlegen).",
+   "v": "bestätigt"
+  },
+  "services/teacher/teacher.service#db-b8a7ca5e": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/teacher_repository.dart:14"
+   ],
+   "n": "teachers * mit tenantId, order name ascending: true (explizit).",
+   "v": "bestätigt"
+  },
+  "services/teacher/teacher.service#db-f81643f4": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/teacher_repository.dart:75",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:161"
+   ],
+   "n": "Update name, number, notes, private, instruments nach id; Flutter zusätzlich .eq('tenantId').",
+   "v": "bestätigt"
+  },
+  "services/telegram/telegram.service#db-0c03f7c6": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:117"
+   ],
+   "n": "quick-processor mit {attId, type, reason, isParents, notes, isSelf} nach An-/Abmelden/Notiz; Fehler werden wie in Ionic nicht gemeldet (Flutter wartet auf den Aufruf, Ionic fire-and-forget; reason null statt fehlend beim Anmelden).",
+   "v": "bestätigt"
+  },
+  "services/telegram/telegram.service#db-13c32112": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/telegram_service.dart:357"
+   ],
+   "n": "send-document mit {url, sendAsUrl: !url.contains('.pdf'), chat_id}.",
+   "v": "bestätigt"
+  },
+  "services/telegram/telegram.service#db-218b5340": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/telegram_service.dart:286"
+   ],
+   "n": "send-photo bzw. send-document mit {url (+ ?download=<bereinigter Name+Endung>), chat_id}; Chat-ID aus notifications-Konfiguration (Ionic tenantUser.telegram_chat_id stammt ebenfalls aus notifications).",
+   "v": "bestätigt"
+  },
+  "services/telegram/telegram.service#db-4db390b0": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/telegram_service.dart:280",
+    "lib/core/services/telegram_service.dart:314"
+   ],
+   "n": "Öffentliche URL des Buckets attendances + ?download=<cleanName + Endung> (encodeComponent).",
+   "v": "bestätigt"
+  },
+  "services/telegram/telegram.service#db-6baa9f4d": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/telegram_service.dart:296"
+   ],
+   "n": "Entfernen nach 10 s im finally, auch wenn der Versand fehlschlug; scheitert schon der Upload, wird in beiden Apps nichts entfernt.",
+   "v": "bestätigt"
+  },
+  "services/telegram/telegram.service#db-9f610e10": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/telegram_service.dart:241",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:140"
+   ],
+   "n": "type playerPaused, playerId, tenantId, reason (ohne 'bis …'-Zusatz wie Ionic), pauseUntil (yyyy-MM-dd; ohne Datum weggelassen statt ''); nach erfolgreichem Pausieren, Fehler still.",
+   "v": "bestätigt"
+  },
+  "services/telegram/telegram.service#db-f7e0ba0e": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/telegram_service.dart:267"
+   ],
+   "n": "Bucket attendances, Dateiname wie encodeFilename (NFD-Nachbildung, Fallback 'file', _<100-999>+Endung), upsert, contentType image/png bzw. application/pdf.",
+   "v": "bestätigt"
+  },
+  "services/tenant/tenant.service#db-397565f1": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2102",
+    "lib/data/repositories/player_repository.dart:2166",
+    "lib/data/repositories/sign_in_out_repository.dart:563"
+   ],
+   "n": "Zusatzfelder (additional_fields) der Ziel-Instanz beim Eintragen in Termine einer anderen Instanz bzw. seasonStart je Instanz für 'Meine Termine'; Flutter liest dieselben tenants-Zeilen per id, nur die benötigten Spalten.",
+   "v": "bestätigt"
+  },
+  "services/tenant/tenant.service#db-5c587087": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/tenant_providers.dart:303",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:754"
+   ],
+   "n": "userTenantsProvider liest tenantUsers per userId (tenantId, favorite, role) für Instanzliste/setTenant; Registrierung prüft gezielt tenantId + userId ('Bereits registriert' → /login) – gleiche Daten/Entscheidung.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

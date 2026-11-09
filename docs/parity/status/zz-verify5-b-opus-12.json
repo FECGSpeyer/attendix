@@ -1,0 +1,370 @@
+{
+ "batch": "zz-verify5-b-opus-12",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "services/tenant/tenant.service#db-e8782084": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/data/providers/registration_providers.dart:20-31"
+   ],
+   "n": "Unverändert: tenants select('*') eq register_id (maybeSingle statt single, null → nicht gefunden wie Ionic data=null). Öffentlicher Lookup ohne tenantId wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/terms.guard#logic-12641baa": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:357-384",
+    "lib/core/router/app_router.dart:333-339",
+    "lib/data/repositories/account_repository.dart:44-48"
+   ],
+   "n": "Weiterhin: eingeloggt ohne user_metadata.terms_accepted_at → /terms; /legal, /teams-config, Song-/open-file-Links, /plan(ung), /org-plan und /register/:id bleiben frei; auf /terms mit Zustimmung → Startseite der Rolle bzw. /register ohne Instanz (wie Ionic accept). Randfall: Flutter sperrt auch die Instanz-Auswahl ohne Instanz (Ionic /register ohne TermsGuard) – Zustimmung kommt nur früher, Ergebnis gleich.",
+   "v": "bestätigt"
+  },
+  "services/user-notification/user-notification.service#db-751a177d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/user_notification_repository.dart:155-172",
+    "lib/core/providers/push_providers.dart:315-330",
+    "lib/core/services/push/push_navigation.dart:89-104"
+   ],
+   "n": "update read=true mit user_id, tenantId, type, read=false, optional data->>attendanceId; nicht bei type 'message' mit messageId. tenantId = aktueller Tenant nach Wechsel auf data.tenantId (Ionic übergibt data.tenantId direkt) – gleiches Ergebnis, Fehler werden wie Ionic nur geloggt.",
+   "v": "bestätigt"
+  },
+  "services/user-notification/user-notification.service#logic-528bc807": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/user_notification_repository.dart:33-229",
+    "lib/core/providers/push_providers.dart:315-330",
+    "lib/features/planning/presentation/pages/open_attendance_page.dart:70-80"
+   ],
+   "n": "Alle 12 Methoden mit gleichen Filtern/Sortierung (created_at absteigend, limit 50; Zählung exact). markRead/markUnread/deleteOne filtern zusätzlich user_id+tenantId (strenger, gleiches Ergebnis per RLS). markMatchingRead/markReadByAttendance im aktuellen Tenant nach dem Wechsel auf den Push-/Link-Tenant.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-0d33b3ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:992-997",
+    "lib/features/settings/presentation/pages/files_page.dart:666-684"
+   ],
+   "n": "„Löschen“ (delete_outline) nur bei canEdit (Admin/Verantwortlich) im ⋯-Popover, jetzt wie Ionic als normaler (nicht roter) Eintrag; öffnet die Lösch-Bestätigung.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-1e396038": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:975-980",
+    "lib/features/settings/presentation/pages/files_page.dart:478-495"
+   ],
+   "n": "„Umbenennen“ nur bei canEdit im ⋯-Popover (⋯ im Auswahlmodus ausgeblendet wie Ionic); öffnet den Umbenennen-Dialog mit dem alten Namen.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-331d5d6d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:986-991",
+    "lib/features/settings/presentation/pages/files_page.dart:524-534"
+   ],
+   "n": "„Mehrere auswählen“ nur bei canEdit; startet die Auswahl mit diesem Eintrag (Rechte im Handler erneut geprüft, Warn-Toast files.noEditRights).",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-6c4bf952": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1110-1113",
+    "lib/features/settings/presentation/pages/files_page.dart:456-476"
+   ],
+   "n": "„Ordner erstellen“ nur bei canEdit im ⋯-Menü des Kopfs; Namensdialog, Recht im Handler erneut geprüft. Icon create_new_folder statt folder-open-outline (nur Optik).",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-d05fb9ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:969-974",
+    "lib/features/settings/presentation/pages/files_page.dart:382-402"
+   ],
+   "n": "„Per Telegram senden“ nur für Dateien mit telegram_chat_id der eigenen tenantUsers-Zeile, alle Rollen mit Dateizugriff; signierte URL 600 s an die eigene Chat-ID. Menü ist jetzt ein Popover wie Ionic; Info-Toast statt Lade-Overlay siehe loading-d65a6193.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-ea539710": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:980-985",
+    "lib/features/settings/presentation/pages/files_page.dart:611-615"
+   ],
+   "n": "„Verschieben“ nur bei canEdit; öffnet die Zielordner-Auswahl, _moveEntries prüft das Recht erneut.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#alert-1b4d7bd6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:666-684",
+    "lib/core/utils/dialog_helper.dart:12-48"
+   ],
+   "n": "„Ordner löschen?“/„Datei löschen?“, „Möchtest du {name} wirklich löschen?“, Abbrechen / Löschen (destruktiv); nur Admin/Verantwortlich (Eintrag nur bei canEdit). Danach „files.deleted“ bzw. Fehler-Toast; fehlendes Lade-Overlay siehe loading-cdff1a47.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#effect-c48b9ee3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:430-452"
+   ],
+   "n": "Link in die Zwischenablage als Fallback; Flutter nutzt jetzt wie Ionic zuerst das System-Teilen (canUseSystemShareSheet, Abbruch = nichts), sonst Kopieren, sonst Link im Toast. Keine Rollenbedingung (alle mit Dateizugriff) in beiden.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-33795926": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:449-450"
+   ],
+   "n": "„Link in Zwischenablage kopiert“ grün nach dem Kopieren (nur wenn kein Teilen-Sheet verfügbar, wie Ionic).",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-a9d4ec9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:870-871"
+   ],
+   "n": "„{ok} hochgeladen, {skipped} übersprungen, {failed} fehlgeschlagen.“ als Warnung bei Übersprungenen/Fehlern; Upload nur canEdit.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-ce962bb5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:867-869"
+   ],
+   "n": "„Datei wurde hochgeladen.“ bzw. „{count} Dateien wurden hochgeladen.“ grün, nur wenn alle erfolgreich.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-590eef57": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:365-388",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:550-556"
+   ],
+   "n": "Nach Bestätigung „Alle Werte zurücksetzen“ immer „{count} Personen aktualisiert“ (auch 0), nur bei Personenfeldern im Bearbeiten-Sheet; Seite nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-72645316": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:319-361"
+   ],
+   "n": "„{count} Personen aktualisiert“ nur bei count > 0, nur Personenfelder, nur für gespeicherte Option nach Bestätigung; neuer Standard = erste bzw. zweite Option wie Ionic; bei Fehler bleibt die Option. Seite nur Admin/Verantwortlich (Route-Guard /settings/general).",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#db-dd1f5988": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:266-271"
+   ],
+   "n": "functions.invoke('evaluate-critical-rules') direkt nach dem Tenant-Update; Fehler wird ignoriert wie Ionic. Seite nur Admin/Verantwortlich (Route-Guard).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#alert-0d2e84fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1009-1037",
+    "lib/data/repositories/duty_repository.dart:227-238"
+   ],
+   "n": "Nach Speichern/Anlegen: nur wenn Dienst-Modus neu an, tenant.duty_view aus und kein anderer Dienst-Typ; Titel/Text, „Nein, normale Ansicht“ / „Ja, verwenden“; schreibt tenants.duty_view=true (eq id=aktueller Tenant) wie updateTenantData. Seite nur Admin/Verantwortlich in beiden.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#toast-307c76ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1033"
+   ],
+   "n": "„Dienstplan-Ansicht ist aktiv“ grün nach erfolgreichem Schreiben; Seite nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#toast-e2f0301d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1034-1036"
+   ],
+   "n": "„Konnte die Ansicht nicht umstellen“ rot bei Fehler; im Demo-Konto in beiden nicht erreichbar (Speichern scheitert vorher). Seite nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#toast-3db15108": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:103-113",
+    "lib/data/repositories/organisation_repository.dart:312-330"
+   ],
+   "n": "Gleiche Datenquelle (tenant_group_tenants der Organisation ohne aktuelle Instanz; ohne Organisation leer) → einmal roter Toast „Es sind keine weiteren Instanzen vorhanden…“. Bei Ladefehler in beiden nicht dieser Toast. Seite nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "settings/help/article/help-article.page#logic-aa7d58b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:24-64",
+    "lib/features/help/data/help_content_service.dart:30-57"
+   ],
+   "n": "Artikel per Route-ID, Titel-Fallback „Hilfe“, „Dieser Artikel wurde nicht gefunden.“; Markdown-Renderer; Glossar-Link → Begriff per Name/Alias (unbekannt → nichts), jetzt Popover am Link wie Ionic. Zurück (Ionic immer /tabs/settings/help, Flutter pop) siehe eigenes Item.",
+   "v": "bestätigt"
+  },
+  "settings/help/glossary-popover/help-glossary-popover.component#logic-a30427dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/widgets/glossary_term_popover.dart:12-59",
+    "lib/features/help/presentation/widgets/help_markdown.dart:110-115"
+   ],
+   "n": "glossary_term_dialog.dart ersetzt durch glossary_term_popover.dart: Karte mit Begriff als Titel, Definition per HelpMarkdown ohne onGlossaryTap → [[Begriff]] kursiv, nicht verlinkt (wie renderGlossaryDefinitionHtml).",
+   "v": "bestätigt"
+  },
+  "settings/help/glossary/help-glossary.page#logic-024095b3": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_glossary_page.dart:34-38",
+    "lib/features/help/presentation/pages/help_glossary_page.dart:93",
+    "lib/features/help/data/help_content_service.dart:37-38"
+   ],
+   "n": "Alle Begriffe sortiert (Kollationsschlüssel; für alle 34 DE- und EN-Begriffe gleiche Reihenfolge wie localeCompare de-DE/en-GB geprüft); Suche getrimmt+klein → Glossar-Treffer der Fuse-Suche; Definition mit Glossar-Markdown.",
+   "v": "bestätigt"
+  },
+  "settings/help/help-markdown.util#logic-1614d5eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/widgets/help_markdown.dart:173-220",
+    "lib/features/help/presentation/widgets/help_markdown.dart:240-284",
+    "lib/features/help/presentation/widgets/help_markdown.dart:110-141"
+   ],
+   "n": "Eigener Renderer statt marked: Absätze, Zeilenumbrüche (breaks), -/1.-Listen (auch direkt nach Absatz), **fett**, *kursiv*, `code`, [[Begriff|Text]] (Artikel: Link, Definition: kursiv). Ionic-4.19.9-Inhalte (88 Artikel, 34 Begriffe, DE+EN) erneut geprüft: keine Überschriften, Links, Zitate, Tabellen, verschachtelten/lockeren Listen, Listen-Start ≠ 1 → gleiche Darstellung.",
+   "v": "bestätigt"
+  },
+  "settings/help/help.page#logic-59c167a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:34-42",
+    "lib/features/help/presentation/pages/help_page.dart:118-162",
+    "lib/features/help/data/help_content_service.dart:24-28",
+    "lib/features/help/data/help_content_service.dart:61-76"
+   ],
+   "n": "Kategorien nach order, Artikel je Kategorie, Suche nur bei nicht-leerem getrimmtem Begriff; Suche jetzt Dart-Port von Fuse.js (gleiche Gewichte, threshold 0.35, ignoreLocation) – Details im Service-Batch.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-96f2fe49": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:451-457",
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:30-61",
+    "lib/core/services/certificate_service.dart:16-19"
+   ],
+   "n": "Nur Admin/Verantwortlich (isAdmin im !isApplicant-Abschnitt) in Instanzen mit „vorkurs“ im Kurz- oder Langnamen; „Urkunden generieren“ öffnet die Gruppenauswahl (alle vorausgewählt).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-a2970ae5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart:119-129",
+    "lib/features/people/presentation/pages/person_detail_page.dart:227-238",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1906-1911"
+   ],
+   "n": "Name + E-Mail; Tippen öffnet die Person als Karten-Modal mit Genehmigen/Ablehnen (canEdit = Admin/Verantwortlich, Laden per id+tenantId). Liste folgt dem Realtime-Provider statt Neuladen nach approved – gleiches Ergebnis.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-a468909d": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:545-567",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:260-276",
+    "lib/core/providers/tenant_providers.dart:400-417"
+   ],
+   "n": "Für alle Rollen; gelbe Wisch-Aktion (auch Voll-Wisch), Stern bzw. Stern-Umriss je nach Favorit; schreibt tenantUsers.favorite nur für eigenen Eintrag (tenantId+userId), Toast „favoriteSet/Removed“ wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#db-d18f91fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:639-652",
+    "lib/core/providers/user_preferences_provider.dart:87-135"
+   ],
+   "n": "auth.updateUser mit data.wantInstanceSelection (übrige Metadaten inkl. currentTenantId übernommen). Schreibvorgänge jetzt serialisiert, der Schalter zeigt den gewünschten Wert; Fehler-Toast nur in Flutter.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#effect-4e3df8e4": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:232-243",
+    "lib/core/constants/enums.dart:137-141",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:405"
+   ],
+   "n": "Wechsel im Instanz-Sheet (normales Design) → role.defaultRoute = Utils.getUrl(role): Admin/Verantwortlich/Beobachter → Personen, Eltern → Eltern, übrige → Meine Termine; aktuelle Instanz antippen tut nichts.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-3a4ca14e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:85-86",
+    "lib/features/settings/presentation/pages/settings_page.dart:192",
+    "lib/features/settings/presentation/pages/settings_page.dart:610",
+    "lib/features/settings/presentation/pages/pending_players_page.dart:19-23"
+   ],
+   "n": "Tippen auf die Warn-Karte öffnet das Sheet in voller Höhe; Karte nur für Admin/Verantwortlich mit ausstehenden Personen.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-bdb71a9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:458-467",
+    "lib/features/settings/presentation/pages/left_players_page.dart:39-43"
+   ],
+   "n": "Nur Admin/Verantwortlich; Sheet initial halbe Höhe, auf volle Höhe ziehbar.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-142fcb20": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart:42-46"
+   ],
+   "n": "Titel „Ausstehende Personen“; nur über die Admin/Verantwortlich-Karte erreichbar.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#toast-68b1e36d": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:293-312"
+   ],
+   "n": "„Die Profildaten wurden erfolgreich aktualisiert.“ grün nach dem Speichern; das Sheet bleibt jetzt wie Ionic offen.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#db-19ab5fbe": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:371-375",
+    "lib/data/repositories/public_plan_repository.dart:297-310"
+   ],
+   "n": "Nur nach geprüftem Bearbeitungsschlüssel; Kanal shared-att-{id}, UPDATE attendance id=eq.{id}, übernimmt plan/extra_plans. Zusätzliches Polling im Nur-Lesen-Modus ist als Extra „Aktualisierung bei Nur-Lesen-Links“ erfasst.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#db-21ceecec": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:455-458",
+    "lib/data/repositories/public_plan_repository.dart:314-325"
+   ],
+   "n": "Nur nach geprüftem Bearbeitungsschlüssel; Kanal shared-plan-{key}, UPDATE shared_plans id=eq.{key}; Titel/Zeit/Ende nur bei Wert überschrieben wie Ionic.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#db-63498014": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:447-459",
+    "lib/data/repositories/public_plan_repository.dart:129-161"
+   ],
+   "n": "shared_plans per id=key (maybeSingle); Flutter liest edit_key nicht mit, prüft den Bearbeitungsschlüssel per Filter (id+edit_key) – gleiche Daten, gleicher Modus.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#db-c07797b1": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:355-376",
+    "lib/data/repositories/public_plan_repository.dart:56-94"
+   ],
+   "n": "attendance per id, share_key, archived=false (maybeSingle), gleiche Plan-Spalten ohne share_key/share_edit_key; Bearbeitungsschlüssel per Filter geprüft (verifySharedAttendanceEditKey) – gleiche Daten, gleicher Modus.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

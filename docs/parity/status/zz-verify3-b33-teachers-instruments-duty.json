@@ -1,0 +1,228 @@
+{
+  "batch": "zz-verify3-b33-teachers-instruments-duty",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "duty/duty-distribute-modal/duty-distribute-modal.component#toast-2f70fc41": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/duty_distribute_page.dart:108"
+      ],
+      "n": "Gelber Toast „Bitte wähle mindestens einen Termintyp“, wenn kein Typ gewählt. Rolle: Modal in beiden nur für Admin/Verantwortlicher bei vorhandenen Dienst-Typen (Ionic att-list isConductor && hasDutyTypes / Flutter attendance_list_page:314), im Modal keine weitere Prüfung.",
+      "v": "bestätigt"
+    },
+    "duty/duty-distribute-modal/duty-distribute-modal.component#toast-fb615d29": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/duty_distribute_page.dart:231"
+      ],
+      "n": "Gelber Toast „Niemand sonst ist für diesen Termin verfügbar“ nur bei leerer Auswahl ohne aktuelle Person (Ionic: inputs leer). Rolle: Modal in beiden nur für Admin/Verantwortlicher bei vorhandenen Dienst-Typen (Ionic att-list isConductor && hasDutyTypes / Flutter attendance_list_page:314), im Modal keine weitere Prüfung.",
+      "v": "bestätigt"
+    },
+    "duty/duty-distribute-modal/duty-distribute-modal.component#toast-79fe0ace": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/duty_distribute_page.dart:291"
+      ],
+      "n": "Grüner Toast mit gleichem Plural-Text nach dem Einteilen, danach Schließen mit Ergebnis; Dauer 3 s statt 4 s. Rolle: Modal in beiden nur für Admin/Verantwortlicher bei vorhandenen Dienst-Typen (Ionic att-list isConductor && hasDutyTypes / Flutter attendance_list_page:314), im Modal keine weitere Prüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#toast-08cde731": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:104"
+      ],
+      "n": "Gelber Toast „Bitte wähle mindestens einen Wochentag“ beim Speichern ohne Wochentag, Bearbeitung bleibt offen. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#toast-b910e419": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:127"
+      ],
+      "n": "Grüner Toast „Gespeichert“, wenn keine geplanten Termine passen (countFutureMatches mit sichtbaren Typen, Fehler → 0 in beiden). Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#alert-b577ca37": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:131",
+        "lib/core/utils/dialog_helper.dart:12",
+        "lib/data/repositories/duty_repository.dart:463"
+      ],
+      "n": "Titel, Text (selbst / für andere mit Vorname, Vorschau max. 4 Daten „DD.MM.“ + „ …“), „Nur neue Termine“ / „Auch geplante“; Übernehmen schreibt person_attendances status Entschuldigt, notes, changed_by/at für dieselben Zeilen (Mandant über attendance.tenantId). Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#toast-872ca16f": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:150"
+      ],
+      "n": "Grüner Toast „{n} Termine angepasst“ nach „Auch geplante“. Fehlerfall (Flutter grün „0 …“ statt rot) ist bei services/duty/duty.service#toast-b8016997 erfasst. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#alert-7cb35beb": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:153",
+        "lib/data/repositories/duty_repository.dart:407"
+      ],
+      "n": "„Regel löschen?“ / „Bereits eingetragene Abmeldungen bleiben bestehen.“, „Abbrechen“ / „Löschen“ (rot); löscht person_unavailability (Flutter zusätzlich mit tenant_id-Filter) und lädt neu. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#action-0f45da39": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:204"
+      ],
+      "n": "Text-Button „Zurück“ links nur beim Bearbeiten, verwirft die Bearbeitung. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#action-fa621d1e": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:209"
+      ],
+      "n": "X-Button (Tooltip „Schließen“) links außerhalb der Bearbeitung, schließt. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#action-ab8ecfb1": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:216"
+      ],
+      "n": "„Speichern“ fett rechts nur beim Bearbeiten, während des Speicherns deaktiviert. Schreibt tenant_id, person_id, weekdays, type_ids, reason, valid_until, created_by = aktueller Nutzer wie Ionic. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#text-61239cdf": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:293"
+      ],
+      "n": "Listenkopf „Wochentage“. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#action-ee9ebd0b": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:301"
+      ],
+      "n": "Chips „Mo“…„So“ (ISO 1–7), gewählt primary gefüllt, sonst medium outline, Langname als Tooltip, Liste sortiert. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#text-c25a5821": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:322"
+      ],
+      "n": "Listenkopf „Für welche Termintypen?“. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#field-845c170b": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:325"
+      ],
+      "n": "Checkbox links je sichtbarem Typ (visible), Neu mit Vorauswahl der Dienst-Typen, Umschalten wie Ionic. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#text-190b3c0b": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:336"
+      ],
+      "n": "Kleiner grauer Hinweis „Ohne Auswahl gilt die Regel für alle Termintypen.“ Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#field-b539df20": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:345",
+        "lib/features/duty/presentation/pages/unavailability_page.dart:111"
+      ],
+      "n": "Gestapeltes Feld „Grund (optional)“, Platzhalter „z. B. Kinderstunde“; Flutter speichert getrimmt (Ionic ungetrimmt), praktisch nicht sichtbar. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#text-c5d27b76": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:364"
+      ],
+      "n": "Hinweis „Neue Termine an diesen Tagen …“ in beiden auch bei „für andere“ in Du-Form. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#action-9aa27fbe": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:253"
+      ],
+      "n": "Titel „Mo, Mi · Grund“, Untertitel „Typen · bis DD.MM.YYYY / unbefristet“, Chevron, Tipp öffnet Bearbeitung. Typnamen unsichtbarer Typen: siehe Extra „Typnamen in der Regel-Liste“ (niedrig). Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#action-c445913a": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:262"
+      ],
+      "n": "Roter Mülleimer rechts (Tooltip „Regel löschen“), öffnet nur die Lösch-Bestätigung, nicht die Bearbeitung. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#text-7f458e30": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:237"
+      ],
+      "n": "Leertext je nach „für andere“ (noRuleOther / noRuleSelf) wie Ionic; Ladefehler siehe Extra „Ladefehler der Regeln“. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#action-0e2193da": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:273"
+      ],
+      "n": "Volle Breite „Regel hinzufügen“ mit Plus-Icon unter der Liste/dem Leertext, öffnet neue Regel. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument/instrument.page#text-c378b60d": {
+      "s": "ok",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:643"
+      ],
+      "n": "Label „Tonumfang“ nur bei Nicht-Chor, Nicht-Allgemein, Nicht-Hauptgruppe (Flutter showMusicFields :580). Rolle/Mandant: Seite nur für Admin/Verantwortlicher (Ionic openModal isAdmin / Flutter onEdit isAdmin, instruments_list_page:152), Mandantentyp aus tenant.type.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument/instrument.page#field-47841cc6": {
+      "s": "ok",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:641"
+      ],
+      "n": "Textfeld Tonumfang, gleiche Bedingung (Chor/Allgemein/Hauptgruppe ausgeblendet). Flutter ohne Satzanfang-Großschreibung der Tastatur; geschriebene Werte siehe Extra „Geschriebene Werte beim Aktualisieren“. Rolle/Mandant: Seite nur für Admin/Verantwortlicher (Ionic openModal isAdmin / Flutter onEdit isAdmin, instruments_list_page:152), Mandantentyp aus tenant.type.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument/instrument.page#text-ba9457df": {
+      "s": "ok",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:680"
+      ],
+      "n": "Label „Synonyme“ nur bei Nicht-Allgemein und Nicht-Hauptgruppe (auch bei Chor) wie Ionic. Rolle/Mandant: Seite nur für Admin/Verantwortlicher (Ionic openModal isAdmin / Flutter onEdit isAdmin, instruments_list_page:152), Mandantentyp aus tenant.type.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument/instrument.page#field-34f95dcc": {
+      "s": "ok",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:676"
+      ],
+      "n": "Textfeld Synonyme mit Hilfetext „Definiere Synonyme …“, gleiche Bedingung. Rolle/Mandant: Seite nur für Admin/Verantwortlicher (Ionic openModal isAdmin / Flutter onEdit isAdmin, instruments_list_page:152), Mandantentyp aus tenant.type.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument/instrument.page#action-ed85ded8": {
+      "s": "ok",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:692"
+      ],
+      "n": "Icons.auto_awesome_outlined statt sparkles-outline rechts im Feld, gleiche Sichtbarkeit; ohne Namen roter Toast „nameFirst“, ruft synonyms-gpt. Rolle/Mandant: Seite nur für Admin/Verantwortlicher (Ionic openModal isAdmin / Flutter onEdit isAdmin, instruments_list_page:152), Mandantentyp aus tenant.type.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

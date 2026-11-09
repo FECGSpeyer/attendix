@@ -1,0 +1,415 @@
+{
+ "batch": "zz-verify6-sonnet-32",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "settings/general/type/type.page#field-fc88ba9f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:105-109",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "„Feldbezeichnung“, Platzhalter „z.B. Instrument mitbringen?“, nach Hinzufügen geleert. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#field-fe789c4f": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:925-941",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1932"
+   ],
+   "n": "Ionic: Zahlenfeld (min 1, frei eintippbar; leer/0 wird auf 1 gesetzt) / Flutter: −/+-Stepper ab 1, speichert mind. 1. Gleiche Funktion, nur Bedienung anders. Rollen wie Ionic.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#popover-31d23755": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:706-740"
+   ],
+   "n": "Ionic: Popover am Farb-Eintrag mit 3er-Raster / Flutter: zentrierter Dialog; gleiche 9 Farben, Auswahl grau markiert, Tippen übernimmt und schließt. Nur Optik.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-0103bbc7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:508-510"
+   ],
+   "v": "bestätigt",
+   "n": "Nur bei nicht ganztägig. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-05a7cbcf": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:97-100",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "Typ-Label + „ · “ + Optionen (Flutter trennt Optionen mit „, “ wie Ionic). Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-2dca20de": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:96",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "Feldbezeichnung als Titel. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-31685302": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1626-1632"
+   ],
+   "v": "korrigiert",
+   "n": "Früher diff: jetzt gibt es den Schalter „Checkliste aktivieren“ (ab 665), Abschnitt nur bei aktivierter Checkliste, Leer-Hinweis mit checkbox-Icon, zentriert, medium."
+  },
+  "settings/general/type/type.page#text-39727779": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:80-88",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "„Keine Anmeldefelder konfiguriert“ zentriert, nur ohne Felder. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-4074ac4b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:125",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "„{count} Stunde(n) vor Terminbeginn“. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-44f5a998": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:397"
+   ],
+   "v": "bestätigt",
+   "n": "Abschnitt „Optionen\" Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-4d1722d2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:888"
+   ],
+   "v": "bestätigt",
+   "n": "Abschnitt „Dienstplan“. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-7128bb80": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:105-109",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "Badge „n/3“, auch bei 0. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-90aaada7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:482"
+   ],
+   "v": "bestätigt",
+   "n": "Nur bei ganztägig; Text links neben dem Feld. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-b4f5731a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:104",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "„Aktive Erinnerungen“. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-c8d8274e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:997"
+   ],
+   "v": "korrigiert",
+   "n": "Früher diff: Abschnitt heißt jetzt „Filter“ (typeSettingsFilter) und der Filter bietet Ja/Nein-Zusatzfelder (boolean) an; Text und Bedingung (nur Dienst-Modus) gleich."
+  },
+  "settings/general/type/type.page#text-ca2ec236": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:160"
+   ],
+   "v": "bestätigt",
+   "n": "Hinweistext nur bei aktiviertem Protokoll. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-d7a84674": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:518"
+   ],
+   "v": "bestätigt",
+   "n": "Nur bei nicht ganztägig. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-e30ee4ee": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:124",
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:26-31",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "getFormattedReminder gleich: 0 → „Zur gleichen Zeit“, <24 → Stunde(n), sonst Tag(e). Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-e35b5a32": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:599",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "Abschnitt „Terminerinnerungen“. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#text-ed93279a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1579-1585",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:665-680"
+   ],
+   "v": "korrigiert",
+   "n": "Früher diff: jetzt Schalter „Checkliste aktivieren“, Abschnitt nur bei aktivierter Checkliste, mit Zähler-Badge wie Ionic."
+  },
+  "settings/general/type/type.page#text-fca1a1c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:510"
+   ],
+   "v": "bestätigt",
+   "n": "Nur bei nicht ganztägig. Rolle: Seite nur Admin/Verantwortlich, Route-Guard /settings/types (und Unterpfade) wie Ionic isUrlAccessAllowed."
+  },
+  "settings/general/type/type.page#toast-28259494": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1943-1966",
+    "lib/data/repositories/attendance_type_repository.dart:195",
+    "lib/core/utils/toast_helper.dart:28-31"
+   ],
+   "n": "Flutter besser: Demo-Konto – Ionic zeigt Demo-Hinweis plus roten „Fehler beim Löschen des Anwesenheitstyps“ / Flutter nur Demo-Hinweis. Sonst gleicher Text und Farbe (rot) bei Fehler.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#toast-d7abd52a": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:803-806",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1807-1809",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1847"
+   ],
+   "n": "Ionic: roter Toast „Bitte einen Namen für den Anwesenheitstyp eingeben.“ beim Speichern/Anlegen / Flutter Bearbeiten: gleicher Text als Validierungsfehler unter dem Namensfeld (kein Toast); beim Anlegen roter Toast wie Ionic. Nutzer erfährt dasselbe.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/general/types/types.page#action-2545cec1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:51-57"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/types/types.page#action-2a71cf91": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:58-68"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/types/types.page#action-87895685": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:45-48"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/types/types.page#action-aac5889a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:87-113"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/types/types.page#action-d4d32824": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:126-142"
+   ],
+   "n": "Ionic: „+“-FAB auch im Sortiermodus sichtbar / Flutter: im Sortiermodus grauer „X“-FAB (Sortieren abbrechen), „+“ erst danach. Funktion bleibt erreichbar.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/general/types/types.page#loading-b4bbe04a": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:146-176",
+    "lib/data/repositories/attendance_type_repository.dart:209-218"
+   ],
+   "n": "Ionic: blockierendes Loading „Speichere Reihenfolge...“ / Flutter: kein Overlay; reorderTypes schreibt nur index (id + tenant_id-Filter). Erfolgs-Toast gleich.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/general/types/types.page#toast-675faa13": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:162-164"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#action-0467769e": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:137-160"
+   ],
+   "n": "Flutter besser: Ionic aktiviert den FAB, sobald irgendeine Person ausgewählt ist (auch wenn per Filter ausgeblendet) und navigiert dann mit leerer Liste / Flutter aktiviert nur bei ausgewählter sichtbarer Person.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#action-5dfd8fdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:255-257"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#action-6e5c82dd": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:214-219"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#action-7abd5de8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:214-219"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#action-9a8d9ded": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:229-236"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#action-cc05caae": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:288-295"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#action-f380e665": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:221-222"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#field-20427ab9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:183-188"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#field-4656433f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:245-258"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#field-4f89e8e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:198-211"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#field-52ec26b9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:303-320"
+   ],
+   "v": "bestätigt",
+   "n": "Name, Geburtstag dd.MM.yyyy | Gruppe. Ohne Geburtstag zeigt Ionic „ | Gruppe“, Flutter nur „Gruppe“ (Satzzeichen-Nuance)."
+  },
+  "settings/handover/handover.page#field-ad9ffa44": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:230-233"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: readonly-Input dd.MM.yyyy / Flutter: Untertitel der Zeile, Tippen öffnet Datumsauswahl."
+  },
+  "settings/handover/handover.page#field-d58ec07f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:189-194"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#field-de4639bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:84-94"
+   ],
+   "v": "bestätigt",
+   "n": "Max = heute, Filter wird nach Auswahl neu berechnet."
+  },
+  "settings/handover/handover.page#modal-6a6f8076": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:84-94",
+    "lib/features/settings/presentation/pages/handover_page.dart:233"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: ion-modal mit ion-datetime / Flutter: showAppDatePicker."
+  },
+  "settings/handover/handover.page#popover-df1d98a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:214-224"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: ion-popover / Flutter: PopupMenuButton, gleiche Einträge und Reihenfolge."
+  },
+  "settings/handover/handover.page#text-2d600236": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:286"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#text-3ddcbed1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:231"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#text-5ed16866": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:252"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#text-6b3fef02": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:275-281"
+   ],
+   "v": "bestätigt",
+   "n": "Während des Ladens zeigt Flutter einen Spinner statt der Meldung."
+  }
+ },
+ "extra": []
+}

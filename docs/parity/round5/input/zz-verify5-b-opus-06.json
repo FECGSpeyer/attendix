@@ -1,0 +1,1570 @@
+{
+ "batch": "zz-verify5-b-opus-06",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance-type/attendance-type.service",
+   "ionic": {
+    "ts": "services/attendance-type/attendance-type.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance-type/attendance-type.service.ts",
+    "line": 46,
+    "method": "AttendanceTypeService.updateAttendanceType",
+    "cond": [],
+    "table": "attendance_types",
+    "op": "update",
+    "payload": "attType as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "daf74e34",
+    "mbody": "5a656f6f",
+    "id": "services/attendance-type/attendance-type.service#db-b47455fe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_type_repository.dart:124",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1513"
+    ],
+    "n": "Gleiche Operation (update attendance_types per id, Flutter zusätzlich tenant_id); die geschriebenen Spalten liefert der Aufrufer (type.page / types.page, eigene Units).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_type_repository.dart",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance-type/attendance-type.service",
+   "ionic": {
+    "ts": "services/attendance-type/attendance-type.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance-type/attendance-type.service.ts",
+    "line": 13,
+    "method": "AttendanceTypeService.getAttendanceTypes",
+    "cond": [],
+    "table": "attendance_types",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenant_id', tenantId)",
+     "order('index', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "029d6fde",
+    "mbody": "8f3e9f91",
+    "id": "services/attendance-type/attendance-type.service#db-e2de15bb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_type_repository.dart:28"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_type_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 525,
+    "method": "AttendanceService.deletePersonAttendanceById",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "a4c67c43",
+    "mbody": "c063ff6e",
+    "id": "services/attendance/attendance.service#db-0be3b674"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:556",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2480"
+    ],
+    "n": "Flutter prüft vorher die Mandantenzugehörigkeit.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 111,
+    "method": "AttendanceService.reassignPersonAttendances",
+    "cond": [
+     "(conflictingIds.length)"
+    ],
+    "table": "person_attendances",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "in('id', conflictingIds)"
+    ],
+    "tenantFilter": false,
+    "src": "54da32c5",
+    "mbody": "3485faf0",
+    "id": "services/attendance/attendance.service#db-10ae6c21"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2301"
+    ],
+    "n": "Gleiche Löschung, Flutter in 200er-Blöcken und zusätzlich .eq('person_id', fromId).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 89,
+    "method": "AttendanceService.reassignPersonAttendances",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, attendance_id'",
+    "filters": [
+     "eq('person_id', fromId)"
+    ],
+    "tenantFilter": false,
+    "src": "f070acc6",
+    "mbody": "3485faf0",
+    "id": "services/attendance/attendance.service#db-171db1c8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2282",
+     "lib/data/repositories/player_repository.dart:2320"
+    ],
+    "n": "Flutter lädt alle Seiten (order id, range) statt max. 1000 Zeilen.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 98,
+    "method": "AttendanceService.reassignPersonAttendances",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'attendance_id'",
+    "filters": [
+     "eq('person_id', toId)"
+    ],
+    "tenantFilter": false,
+    "src": "261f62d4",
+    "mbody": "3485faf0",
+    "id": "services/attendance/attendance.service#db-171db1c8-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2287",
+     "lib/data/repositories/player_repository.dart:2320"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 116,
+    "method": "AttendanceService.reassignPersonAttendances",
+    "cond": [
+     "(movableIds.length)"
+    ],
+    "table": "person_attendances",
+    "op": "update",
+    "payload": "{ person_id: toId }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "in('id', movableIds)"
+    ],
+    "tenantFilter": false,
+    "src": "b02a4da8",
+    "mbody": "3485faf0",
+    "id": "services/attendance/attendance.service#db-47905dba"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2308"
+    ],
+    "n": "Gleiches Update {person_id: toId}, Flutter in Blöcken und zusätzlich .eq('person_id', fromId).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 411,
+    "method": "AttendanceService.updateAttendance",
+    "cond": [],
+    "table": "attendance",
+    "op": "update",
+    "payload": "att as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "cf075355",
+    "mbody": "9c3b3bf8",
+    "id": "services/attendance/attendance.service#db-5d15bc79"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:272"
+    ],
+    "n": "Flutter entfernt id/created_at/tenantId/persons, filtert zusätzlich tenantId und prüft Archiv-Rechte.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 500,
+    "method": "AttendanceService.writePersonAttendanceToDb",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "update",
+    "payload": "dbFields as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "f002479a",
+    "mbody": "bbcee647",
+    "id": "services/attendance/attendance.service#db-8bef7f4d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:712",
+     "lib/data/repositories/attendance_repository.dart:676",
+     "lib/core/utils/duty_utils.dart:51"
+    ],
+    "n": "Gleiche Felder + changed_by/changed_at; Ionic syncDutyWithStatus schreibt den Dienststatus in einem zweiten Update, Flutter im selben Update – gleiches Ergebnis.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 41,
+    "method": "AttendanceService.addAttendance",
+    "cond": [],
+    "table": "attendance",
+    "op": "insert",
+    "payload": "{ ...attendance, tenantId } as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "1a4b50c9",
+    "mbody": "de4123ac",
+    "id": "services/attendance/attendance.service#db-911d7b6c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/attendance_create_writes.dart:219",
+     "lib/data/repositories/protocol_repository.dart:265"
+    ],
+    "n": "Insert attendance mit tenantId (Spaltenwerte aus attendance-create, eigene Unit). Zweiter Pfad: Teamorganisation-Schnellanlage über ProtocolRepository.createAttendance, ebenfalls mit tenantId.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/attendance_create_writes.dart",
+    "lib/data/repositories/protocol_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 426,
+    "method": "AttendanceService.removeAttendance",
+    "cond": [],
+    "table": "attendance",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "c714b161",
+    "mbody": "980e63a8",
+    "id": "services/attendance/attendance.service#db-9d206b1f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:299"
+    ],
+    "n": "Flutter zusätzlich .eq('tenantId'). Fehler: Ionic ignoriert sie, Flutter-Notifier fängt sie ebenfalls ohne Hinweis ab (attendance_providers.dart:405) – gleiches Verhalten; danach lädt Flutter die Liste neu.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 55,
+    "method": "AttendanceService.addPersonAttendances",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "insert",
+    "payload": "personAttendances as any",
+    "options": [],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "075286a4",
+    "mbody": "2491ab4f",
+    "id": "services/attendance/attendance.service#db-a93f1d01"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:627",
+     "lib/features/attendance/presentation/attendance_create_writes.dart:387"
+    ],
+    "n": "Gleiche Spalten (attendance_id, person_id, status, notes). Ionic ignoriert Duplicate-Key-Fehler 23505 still, Flutter meldet ihn – siehe extra.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart",
+    "lib/features/attendance/presentation/attendance_create_writes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 195,
+    "method": "AttendanceService.getAttendanceById",
+    "cond": [],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "attendanceSelect",
+    "filters": [
+     "match({ id })",
+     "order('date', { ascending: false })",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "57b4d921",
+    "mbody": "0860a624",
+    "id": "services/attendance/attendance.service#db-d97eeb61"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:152"
+    ],
+    "n": "Gleicher Select (persons mit person:firstName,lastName,img,instrument(id,name),joined,appId,additional_fields), Flutter zusätzlich .eq('tenantId').",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 71,
+    "method": "AttendanceService.deletePersonAttendances",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "in('attendance_id', attendanceIds)",
+     "eq('person_id', personId)"
+    ],
+    "tenantFilter": false,
+    "src": "591bf9d3",
+    "mbody": "bcd1367c",
+    "id": "services/attendance/attendance.service#db-f66ab5d4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:926",
+     "lib/data/repositories/player_repository.dart:2238"
+    ],
+    "n": "Flutter löscht direkt in player_repository (person_id + attendance_id in …), gleiche Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auth/auth.service",
+   "ionic": {
+    "ts": "services/auth/auth.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auth/auth.service.ts",
+    "line": 62,
+    "method": "AuthService.login",
+    "cond": [],
+    "table": "auth",
+    "op": "signInWithPassword",
+    "payload": "{ email, password, }",
+    "filters": [],
+    "src": "28092044",
+    "mbody": "c825b586",
+    "id": "services/auth/auth.service#db-5e5596ce"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:334",
+     "lib/features/auth/presentation/pages/login_page.dart:239"
+    ],
+    "n": "Nur im Teams-Verknüpfungsmodus erreichbar (TeamsService.ssoLink → authSvc.login); der normale Login läuft über DbService.login (eigene Unit).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 76,
+    "method": "AutoMessageService.getRule",
+    "cond": [],
+    "table": "auto_message_rules",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('id', id)",
+     "maybeSingle()"
+    ],
+    "tenantFilter": false,
+    "src": "7f073f79",
+    "mbody": "029d8492",
+    "id": "services/auto-message/auto-message.service#db-1ea71540"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:50"
+    ],
+    "n": "Flutter zusätzlich .eq('tenantId').",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 66,
+    "method": "AutoMessageService.getRules",
+    "cond": [],
+    "table": "auto_message_rules",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "order('created_at', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "0e60b73a",
+    "mbody": "573a0019",
+    "id": "services/auto-message/auto-message.service#db-28b2b0cb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:33"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 118,
+    "method": "AutoMessageService.deleteRule",
+    "cond": [],
+    "table": "auto_message_rules",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', id)"
+    ],
+    "tenantFilter": false,
+    "src": "991f222a",
+    "mbody": "5798d3bf",
+    "id": "services/auto-message/auto-message.service#db-2e687b36"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:120"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 152,
+    "method": "AutoMessageService.getRecentRuns",
+    "cond": [],
+    "table": "auto_message_runs",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "gte('created_at', since)",
+     "limit(500)"
+    ],
+    "tenantFilter": true,
+    "src": "760d0231",
+    "mbody": "b39f7a48",
+    "id": "services/auto-message/auto-message.service#db-2ed1fa7f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:189"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 97,
+    "method": "AutoMessageService.saveRule",
+    "cond": [
+     "?(rule.id)"
+    ],
+    "table": "auto_message_rules",
+    "op": "update",
+    "payload": "row as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', rule.id)"
+    ],
+    "tenantFilter": false,
+    "src": "fb76f95e",
+    "mbody": "7af9e246",
+    "id": "services/auto-message/auto-message.service#db-3aad4500"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:76",
+     "lib/data/models/auto_message/auto_message.dart:189"
+    ],
+    "n": "Ionic schreibt das ganze Regelobjekt (inkl. unveränderter tenantId/enabled_at/created_by), Flutter nur die Regelspalten + updated_at (+ enabled_at beim Einschalten) – gleiche Wirkung; Flutter zusätzlich .eq('tenantId').",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 235,
+    "method": "AutoMessageService.submitResponse",
+    "cond": [],
+    "table": "edge:attendance-response",
+    "op": "invoke",
+    "payload": "{ body: { action: 'submit', messageId, kind, reasonCode, text }, }",
+    "filters": [],
+    "src": "ef13f7de",
+    "mbody": "76f7f4ee",
+    "id": "services/auto-message/auto-message.service#db-41dcf04c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:412"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 225,
+    "method": "AutoMessageService.getOwnResponse",
+    "cond": [],
+    "table": "attendance_responses",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('person_attendance_id', personAttendanceId)",
+     "maybeSingle()"
+    ],
+    "tenantFilter": false,
+    "src": "62282800",
+    "mbody": "8c86b9d7",
+    "id": "services/auto-message/auto-message.service#db-654c7b03"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:369"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 194,
+    "method": "AutoMessageService.getRecipientsOf",
+    "cond": [],
+    "table": "message_recipients",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, message_id, player_id, user_id, name, email, push_sent_at, telegram_sent_at, push_enabled, email_sent_at, email_opened_at, read_at, person_attendance_id'",
+    "filters": [
+     "in('message_id', messageIds)",
+     "range(0, 4999)"
+    ],
+    "tenantFilter": false,
+    "src": "944f7f21",
+    "mbody": "fbd9627b",
+    "id": "services/auto-message/auto-message.service#db-747469e9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:269"
+    ],
+    "n": "Flutter ohne person_attendance_id (im Regelverlauf ungenutzt), lädt alle Seiten statt max. 5000 Zeilen.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 215,
+    "method": "AutoMessageService.getResponsesForMessages",
+    "cond": [],
+    "table": "attendance_responses",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "in('message_id', messageIds)"
+    ],
+    "tenantFilter": false,
+    "src": "3df58788",
+    "mbody": "79cb4378",
+    "id": "services/auto-message/auto-message.service#db-763723bb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:352"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 107,
+    "method": "AutoMessageService.setEnabled",
+    "cond": [],
+    "table": "auto_message_rules",
+    "op": "update",
+    "payload": "row as any",
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('id', rule.id!)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "041f84f1",
+    "mbody": "1c52c9f0",
+    "id": "services/auto-message/auto-message.service#db-82e43523"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:103"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 123,
+    "method": "AutoMessageService.preview",
+    "cond": [],
+    "table": "edge:send-auto-messages",
+    "op": "invoke",
+    "payload": "{ body: { dryRun: true, tenantId, rule }, }",
+    "filters": [],
+    "src": "6181d9f8",
+    "mbody": "0d68b96b",
+    "id": "services/auto-message/auto-message.service#db-90c67d97"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:134",
+     "lib/data/models/auto_message/auto_message.dart:212"
+    ],
+    "n": "Flutter sendet die Regel ohne created_by/created_at/updated_at (für den Dry-Run unerheblich).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 98,
+    "method": "AutoMessageService.saveRule",
+    "cond": [
+     "?(rule.id)"
+    ],
+    "table": "auto_message_rules",
+    "op": "insert",
+    "payload": "row as any",
+    "options": [],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "5959340b",
+    "mbody": "7af9e246",
+    "id": "services/auto-message/auto-message.service#db-a1c568ea"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:85"
+    ],
+    "n": "Gleiche Spalten inkl. tenantId, created_by, updated_at, enabled_at beim Einschalten; type_ids/group_ids leer → null wie im Ionic-Editor.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 243,
+    "method": "AutoMessageService.decideResponse",
+    "cond": [],
+    "table": "edge:attendance-response",
+    "op": "invoke",
+    "payload": "{ body: { action: 'decide', responseId, accept }, }",
+    "filters": [],
+    "src": "54eb225d",
+    "mbody": "fd269915",
+    "id": "services/auto-message/auto-message.service#db-a2e9b773"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:437"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 142,
+    "method": "AutoMessageService.getRunsForAttendance",
+    "cond": [],
+    "table": "auto_message_runs",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('attendance_id', attendanceId)"
+    ],
+    "tenantFilter": false,
+    "src": "4cc21572",
+    "mbody": "3f934119",
+    "id": "services/auto-message/auto-message.service#db-b03b7913"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:172"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 131,
+    "method": "AutoMessageService.getRuns",
+    "cond": [],
+    "table": "auto_message_runs",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('rule_id', ruleId)",
+     "order('created_at', { ascending: false })",
+     "limit(limit)"
+    ],
+    "tenantFilter": false,
+    "src": "27fb12e7",
+    "mbody": "11b6d790",
+    "id": "services/auto-message/auto-message.service#db-c39e19de"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:154"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 204,
+    "method": "AutoMessageService.getResponsesForAttendance",
+    "cond": [],
+    "table": "attendance_responses",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('attendance_id', attendanceId)",
+     "order('created_at', { ascending: true })"
+    ],
+    "tenantFilter": false,
+    "src": "a6f2cbaa",
+    "mbody": "0cbe9356",
+    "id": "services/auto-message/auto-message.service#db-cc224704"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:334"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 176,
+    "method": "AutoMessageService.unsuspend",
+    "cond": [],
+    "table": "auto_message_runs",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', runId)",
+     "eq('status', 'suspended')"
+    ],
+    "tenantFilter": false,
+    "src": "7be5f1bd",
+    "mbody": "3075cef3",
+    "id": "services/auto-message/auto-message.service#db-cc42f39d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:226"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 251,
+    "method": "AutoMessageService.getPersonAttendanceStatus",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'status'",
+    "filters": [
+     "eq('id', personAttendanceId)",
+     "maybeSingle()"
+    ],
+    "tenantFilter": false,
+    "src": "c1299cfc",
+    "mbody": "9d634090",
+    "id": "services/auto-message/auto-message.service#db-e1ebf9d7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:388"
+    ],
+    "n": "Flutter zusätzlich Mandantenprüfung über attendance!inner(tenantId).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 164,
+    "method": "AutoMessageService.suspend",
+    "cond": [],
+    "table": "auto_message_runs",
+    "op": "insert",
+    "payload": "{ rule_id: rule.id, tenantId: rule.tenantId, attendance_id: attendanceId, status: 'suspended', created_by: userId, created_by_name: userName, } as any",
+    "options": [],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "3f75227b",
+    "mbody": "787b1501",
+    "id": "services/auto-message/auto-message.service#db-fda0d3f0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:209"
+    ],
+    "n": "Gleiche Spalten; tenantId = aktueller Mandant statt rule.tenantId (identisch); created_by_name aus eigenem Profil (Vor-/Nachname, sonst E-Mail) wie Ionic teamPerson.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/conductor/conductor.service",
+   "ionic": {
+    "ts": "services/conductor/conductor.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/conductor/conductor.service.ts",
+    "line": 31,
+    "method": "ConductorService.getConductors",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('instrument', mainGroupId)",
+     "is('pending', false)",
+     "eq('tenantId', tenantId)",
+     "order('lastName')"
+    ],
+    "tenantFilter": true,
+    "src": "28c08c91",
+    "mbody": "3d2b4e0a",
+    "id": "services/conductor/conductor.service#db-36e64412"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:224"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/conductor/conductor.service",
+   "ionic": {
+    "ts": "services/conductor/conductor.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/conductor/conductor.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getConductors:17-49"
+    ],
+    "bodies": {
+     "getConductors": "3d2b4e0a"
+    },
+    "id": "services/conductor/conductor.service#logic-f1c154da"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/conductor_providers.dart:10",
+     "lib/core/providers/conductor_providers.dart:34",
+     "lib/data/repositories/player_repository.dart:222",
+     "lib/core/services/offline_list_cache.dart:20"
+    ],
+    "n": "Gleiche Abfrage (Hauptgruppe, nicht pending, Mandant, nach Nachname), Offline-Cache der letzten Liste, Ausgetretene per activeConductorsProvider. Ohne Hauptgruppe: Ionic wirft 'db.mainGroupNotFound', Flutter liefert leere Liste (Aufrufer fangen den Fehler in Ionic ab).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/conductor_providers.dart",
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/conductor/conductor.service",
+   "ionic": {
+    "ts": "services/conductor/conductor.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/conductor/conductor.service.ts",
+    "line": 23,
+    "method": "ConductorService.getConductors",
+    "cond": [],
+    "plugin": "Network",
+    "call": "getStatus",
+    "args": "",
+    "src": "a6015b27",
+    "mbody": "3d2b4e0a",
+    "id": "services/conductor/conductor.service#native-2dd86017"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/offline_list_cache.dart:37",
+     "lib/core/providers/conductor_providers.dart:18"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/conductor_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/cross-tenant/cross-tenant.service",
+   "ionic": {
+    "ts": "services/cross-tenant/cross-tenant.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/cross-tenant/cross-tenant.service.ts",
+    "line": 244,
+    "method": "CrossTenantService.getPersonIdFromTenant",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, left'",
+    "filters": [
+     "eq('appId', userId)",
+     "eq('tenantId', tenantId)",
+     "is('pending', false)"
+    ],
+    "tenantFilter": true,
+    "src": "0cda91b5",
+    "mbody": "85607eac",
+    "id": "services/cross-tenant/cross-tenant.service#db-303aa5ce"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/cross_tenant_person_repository.dart:270",
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:254"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/cross-tenant/cross-tenant.service",
+   "ionic": {
+    "ts": "services/cross-tenant/cross-tenant.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/cross-tenant/cross-tenant.service.ts",
+    "line": 196,
+    "method": "CrossTenantService.getUserRolesForTenants",
+    "cond": [],
+    "table": "tenantUsers",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'tenantId, role'",
+    "filters": [
+     "eq('userId', userId)"
+    ],
+    "tenantFilter": false,
+    "src": "2197e6fc",
+    "mbody": "49b0745c",
+    "roleGuarded": true,
+    "id": "services/cross-tenant/cross-tenant.service#db-32748636"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/tenant_providers.dart:184",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:262"
+    ],
+    "n": "Rollen je Instanz kommen in Flutter aus userTenantsProvider (tenantUsers tenantId, favorite, role für userId), genutzt für 'Instanz löschen' nur als Admin.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/tenant_providers.dart",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/cross-tenant/cross-tenant.service",
+   "ionic": {
+    "ts": "services/cross-tenant/cross-tenant.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/cross-tenant/cross-tenant.service.ts",
+    "line": 229,
+    "method": "CrossTenantService.getUsersFromTenant",
+    "cond": [],
+    "table": "tenantUsers",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "neq('role', Role.VIEWER)"
+    ],
+    "tenantFilter": true,
+    "src": "c893cdb2",
+    "mbody": "ca932b7e",
+    "roleGuarded": true,
+    "id": "services/cross-tenant/cross-tenant.service#db-598f27a3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/cross_tenant_person_repository.dart:238-258",
+     "lib/features/people/presentation/pages/people_list_page.dart:214-236"
+    ],
+    "n": "Nur Filter „Mitglied anderer Instanz“ der Personenliste (Dirigenten): tenantId der verknüpften Instanz, role ≠ Beobachter; Flutter liest nur userId und nur für verknüpfte Instanzen – gleiches Ergebnis.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  }
+ ]
+}

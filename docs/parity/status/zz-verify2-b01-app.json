@@ -1,0 +1,177 @@
+{
+ "batch": "zz-verify2-b01-app",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "app-redirect/app-redirect.page#media-478f5f25": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/app_redirect_page.dart:83-94"
+   ],
+   "n": "Gleiches App-Icon (assets/icons/app_icon.png, gleiches Motiv wie icon-192.webp), 96px, Radius 22, nur auf der Fallback-Landing im Web (weder iOS noch Android). Kein semanticLabel (Ionic alt=\"Attendix\"), die Überschrift \"Attendix\" folgt direkt."
+  },
+  "login/login.page#media-5a220f2e": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:610-635",
+    "lib/shared/widgets/display/attendix_logo.dart:14-19"
+   ],
+   "n": "Runder 115px-Avatar mit dem App-Logo über der Login-Karte, immer sichtbar; Flutter zeichnet favicon.png als Vektor in den Originalfarben (andere Farben nur im Beta). Kein Tap-Effekt in beiden."
+  },
+  "open-attendance/open-attendance.page#nav-e5a2e051": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:309-314",
+    "lib/features/planning/presentation/pages/open_attendance_page.dart:65-68"
+   ],
+   "v": "bestätigt",
+   "n": "Ohne id und ohne Sitzung → /login in beiden; Bedingung hängt nicht an der Rolle (nur: kein tenantUser). Flutter merkt sich den Link und setzt ihn nach dem Login fort (Wechsel in tenantId), Ionic verwirft tenantId – schon als Extra \"Fortsetzen nach Login\" (Flutter besser) erfasst. Sonderfall angemeldet ohne Instanz: Ionic /login, Flutter /tenants."
+  },
+  "open-attendance/open-attendance.page#nav-e5a2e051-3": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:309-314",
+    "lib/core/router/app_router.dart:340-345"
+   ],
+   "v": "bestätigt",
+   "n": "Mit id und ohne Sitzung → Termin merken + /login in beiden. Danach öffnet Flutter den Link vollständig (Instanzwechsel, Admin/Verantwortlich/Helfer/Stimmführer-Helfer → Termin-Detail, sonst Aktionsblatt), Ionic nur über pendingAttendanceId (Signout-/Eltern-Seite öffnet das Blatt, Admin/Verantwortlich landen ohne Termin auf ihrer Startseite) – schon als Extra \"Fortsetzen nach Login\" (Flutter besser) erfasst. Sonderfall angemeldet ohne Instanz: Ionic /login, Flutter /tenants."
+  },
+  "open-file/open-file.page#nav-e132ddd2": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:69-73",
+    "lib/core/router/app_router.dart:1342-1347"
+   ],
+   "v": "bestätigt",
+   "n": "Fehlende/ungültige tenantId → /login in beiden (angemeldet leitet /login auf die Startseite weiter); rollenunabhängig."
+  },
+  "open-file/open-file.page#nav-e132ddd2-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:75-85",
+    "lib/core/router/app_router.dart:340-345"
+   ],
+   "v": "bestätigt",
+   "n": "Ohne Sitzung: Link (tenantId, path, folder) merken, /login, nach dem Login fortsetzen – wie Ionic setPendingLink/routeAfterAuth; rollenunabhängig. Sonderfall angemeldet ohne Instanz: Ionic merkt Link + /login, Flutter Toast \"Du hast keinen Zugriff auf diese Instanz.\" + /tenants."
+  },
+  "open-file/open-file.page#toast-0367da77": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:87-97"
+   ],
+   "v": "bestätigt",
+   "n": "Link-Instanz nicht unter den eigenen tenantUsers (jede Rolle inkl. Bewerber/Beobachter zählt, Flutter userTenantsProvider liest ebenfalls alle tenantUsers-Zeilen): roter Toast \"Du hast keinen Zugriff auf diese Instanz.\", dann Startseite der aktuellen Instanz (Dashboard-Logik über homeRouteFor)."
+  },
+  "register/register.page#toast-dc5bddf6": {
+   "s": "na",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:561-564"
+   ],
+   "v": "korrigiert",
+   "n": "toter Code: createInstance() wird nur vom Button im @if (tenant.longName && tenant.shortName && mainGroupName) aufgerufen, die Prüfung greift nie. Flutter hat dieselbe, ebenso unerreichbare Prüfung (Button bei unvollständigem Formular deaktiviert) mit gleichem Text. Erstreviewer: ok statt na."
+  },
+  "register/register.page#text-f594a3e2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:387-393"
+   ],
+   "v": "korrigiert",
+   "n": "Kürzel \" (MV)\" gleich. Ionic: die ganze erste Summary-Zeile ist ein ion-label-<p> und damit grau (iOS step-400 #999, md step-600 #666) / Flutter: Standard-Textfarbe (schwarz), nur Zeilen 2–3 grau. Text und Daten gleich; Bedingung ist Formularzustand, kein Rollen-/Mandantenbezug."
+  },
+  "register/register.page#text-0d484e0a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:387-393"
+   ],
+   "v": "korrigiert",
+   "n": "Name fett wie Ionic. Ionic: die ganze erste Summary-Zeile ist ein ion-label-<p> und damit grau (iOS step-400 #999, md step-600 #666) / Flutter: Standard-Textfarbe (schwarz), nur Zeilen 2–3 grau. Text und Daten gleich; Bedingung ist Formularzustand, kein Rollen-/Mandantenbezug."
+  },
+  "register/register.page#text-6f9b8d26": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:396-398"
+   ],
+   "v": "bestätigt",
+   "n": "\"Typ: Allgemeine Gruppe/Chor/Orchester\" (getTypeLabel = registerType*), grau. Bedingung ist Formularzustand, keine Rolle."
+  },
+  "register/register.page#text-89093a58": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:400-404"
+   ],
+   "v": "bestätigt",
+   "n": "\"Hauptgruppe: {name}\", grau. Bedingung ist Formularzustand, keine Rolle."
+  },
+  "register/register.page#text-9349f4dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:405-419"
+   ],
+   "v": "bestätigt",
+   "n": "\"Bitte fülle alle Felder aus, um fortzufahren.\" mit Warn-Icon in medium, solange ein Feld fehlt (Flutter wertet getrimmt, siehe Extra \"Namen werden getrimmt\")."
+  },
+  "register/register.page#text-ed5b440c": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:421-424"
+   ],
+   "v": "bestätigt"
+  },
+  "register/register.page#text-1f43fa56": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:425-426"
+   ],
+   "v": "bestätigt"
+  },
+  "register/register.page#text-79616fca": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:427-428"
+   ],
+   "v": "bestätigt"
+  },
+  "register/register.page#action-78b871cb": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:446-460",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:560-600"
+   ],
+   "v": "bestätigt",
+   "n": "Nur bei vollständigem Formular aktiv, \"Instanz jetzt erstellen\" mit add-circle-outline; legt Instanz an (Admin + Super-Developer, Hauptgruppe, Standard-Termintypen), Toast \"Instanz wurde erfolgreich erstellt!\", Wechsel in die neue Instanz, Admin-Startseite. Keine Rollenbedingung. Trimmen: Extra \"Namen werden getrimmt\"; Ladeanzeige: eigenes Item."
+  },
+  "register/register.page#text-e5c14cf9": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:446-460"
+   ],
+   "v": "bestätigt",
+   "n": "Bei unvollständigem Formular derselbe Button deaktiviert (gleicher Text und Icon)."
+  },
+  "x-d8a12e46b9": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "bestätigt",
+   "f": [
+    "lib/core/router/legacy_routes.dart:86-91",
+    "lib/core/router/app_router.dart:1074-1078",
+    "lib/core/router/app_router.dart:1122-1136"
+   ],
+   "n": "Echt: Ionic /tabs/settings/general/shifts(/:id) öffnet Schichten bzw. Schicht (general-routing → shifts-routing) / Flutter: legacyRouteRedirect → /settings/general/shifts (ID fällt weg), keine solche Route (Schichten liegen unter /settings/shifts) → Fehlerseite \"Seite nicht gefunden\" für Admin/Verantwortlich. Betrifft nur Lesezeichen/alte PWA-URLs, in der App wird /settings/shifts direkt geöffnet; keine Edge-Function verschickt diese URL. Zeilenangaben des Erstbefunds veraltet."
+  },
+  "x-fde4d51685": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:28-32",
+    "lib/features/auth/data/auth_link_listener.dart:118-120",
+    "lib/features/auth/presentation/pages/new_password_page.dart:34-115"
+   ],
+   "n": "Echt: Ionic: Recovery-Link/PASSWORD_RECOVERY öffnet Alert \"Neues Passwort eingeben\" (Passwortfeld, \"Abbrechen\"/\"Passwort ändern\") über der aktuellen Seite (nach /login leitet LoginGuard angemeldete Nutzer auf ihre Startseite); Abbrechen/Erfolg lässt den Nutzer dort / Flutter: eigene Seite /new-password (Feld mit Anzeigen-Schalter, \"Passwort ändern\", \"Abbrechen\"), Erfolg und Abbrechen führen auf /tenants. Funktion (min. 6 Zeichen, updatePassword, Toasts) gleich."
+  }
+ },
+ "extra": []
+}

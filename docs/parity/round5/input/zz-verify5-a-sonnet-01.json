@@ -1,0 +1,2787 @@
+{
+ "batch": "zz-verify5-a-sonnet-01",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 167,
+    "cond": [
+     "@if (isLeader && item)"
+    ],
+    "tag": "ion-fab-button",
+    "attrs": {},
+    "events": [
+     "(click)=save()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'common.save' | transloco\""
+    ],
+    "icons": [
+     "save-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#action-288e4f1d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "app.component",
+   "ionic": {
+    "ts": "app.component.ts",
+    "html": "app.component.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "app.component.ts",
+    "line": 113,
+    "method": "AppComponent.presentPasswordRecoveryAlert",
+    "cond": [],
+    "header": {
+     "keys": [
+      "app.newPassword"
+     ],
+     "de": [
+      "Neues Passwort eingeben"
+     ],
+     "literals": [],
+     "expr": "translate('app.newPassword')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "app.changePassword"
+       ],
+       "de": [
+        "Passwort ändern"
+       ],
+       "literals": [],
+       "expr": "translate('app.changePassword')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (values: any) => { const password = values?.password ?? ''; if (password.length < 6) { Utils.showToast(translate('app.passwordMin'), 'danger'); return false; } const result = await this.db.updatePassword(password); if (result.success…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "password",
+      "label": null,
+      "name": "'password'",
+      "placeholder": {
+       "keys": [
+        "app.minSixPlaceholder"
+       ],
+       "de": [
+        "Min. 6 Zeichen eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('app.minSixPlaceholder')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "255b18f8",
+    "mbody": "93fc25e5",
+    "id": "app.component#alert-df60fa5d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/widgets/password_recovery_alert.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "app.component",
+   "ionic": {
+    "ts": "app.component.ts",
+    "html": "app.component.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "app.component.ts",
+    "line": 352,
+    "method": "AppComponent.handleAuthUrl",
+    "cond": [
+     "(isRecovery)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/login'",
+    "src": "bd94d0e7",
+    "mbody": "17a7738e",
+    "id": "app.component#nav-3a7bceb6-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_link_listener.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/att-list/att-list.page.ts",
+    "line": 621,
+    "method": "AttListPage.onConChange",
+    "cond": [
+     "(this.historyEntry.person_id === this.otherConductor)"
+    ],
+    "header": {
+     "keys": [
+      "attList.enterConductor"
+     ],
+     "de": [
+      "Dirigent eingeben"
+     ],
+     "literals": [],
+     "expr": "translate('attList.enterConductor')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "expr": "translate('common.cancel')",
+      "keys": [
+       "common.cancel"
+      ],
+      "de": [
+       "Abbrechen"
+      ],
+      "literals": []
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(data: any) => { this.historyEntry.otherConductor = data.conductor; }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'conductor'",
+      "placeholder": {
+       "keys": [
+        "attList.conductor"
+       ],
+       "de": [
+        "Dirigent"
+       ],
+       "literals": [],
+       "expr": "translate('attList.conductor')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "bc77dd5f",
+    "mbody": "a6a41166",
+    "id": "attendance/att-list/att-list.page#alert-c973a254"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+    ],
+    "n": "behoben in #306",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 309,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "info-button"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 0.5, 1]\"",
+     "[initialBreakpoint]=\"0.5\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "attendance/att-list/att-list.page#modal-f5836528"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+    ],
+    "n": "behoben in #306",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 5,
+    "cond": [
+     "@if (isModal)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=navigateBack()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#action-64b05ba6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart",
+     "lib/shared/widgets/dialogs/ion_modal.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1400,
+    "method": "AttendancePage.sharePlan",
+    "cond": [],
+    "header": {
+     "keys": [
+      "attendance.shareRunSheet"
+     ],
+     "de": [
+      "Ablaufplan teilen"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.shareRunSheet')"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "attendance.exportPdf"
+       ],
+       "de": [
+        "Exportieren (PDF)"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.exportPdf')"
+      },
+      "role": null,
+      "icon": "document-outline",
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.exportPlan()"
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.exportPdfA5"
+       ],
+       "de": [
+        "Exportieren (PDF 2x A5)"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.exportPdfA5')"
+      },
+      "role": null,
+      "icon": "documents-outline",
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.exportPlan(true)"
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.telegramPdf"
+       ],
+       "de": [
+        "Per Telegram senden (PDF)"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.telegramPdf')"
+      },
+      "role": null,
+      "icon": "paper-plane-outline",
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.send(false)"
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.telegramPdfA5"
+       ],
+       "de": [
+        "Per Telegram senden (PDF 2x A5)"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.telegramPdfA5')"
+      },
+      "role": null,
+      "icon": "paper-plane-outline",
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.send(false, true)"
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.telegramImage"
+       ],
+       "de": [
+        "Per Telegram senden (Bild)"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.telegramImage')"
+      },
+      "role": null,
+      "icon": "image-outline",
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.send(true)"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "src": "b1766020",
+    "mbody": "7cce1f69",
+    "id": "attendance/attendance/attendance.page#actionsheet-19467990"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+    ],
+    "n": "behoben in #306",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1852,
+    "method": "AttendancePage.showRegFieldAlert",
+    "cond": [],
+    "header": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "field.label"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(data) => { const answer = field.type === 'multi_select' ? (Array.isArray(data) ? data : []) : data?.answer ?? data; this.saveRegFieldAnswers({ [field.id]: answer }, player); }"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "inputs",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "bbe09206",
+    "mbody": "391d62ed",
+    "id": "attendance/attendance/attendance.page#alert-9b3e485d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart",
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+    ],
+    "n": "behoben in #306",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1692,
+    "method": "AttendancePage.onConChange",
+    "cond": [
+     "(this.historyEntry.person_id === this.otherConductor)"
+    ],
+    "header": {
+     "keys": [
+      "attList.enterConductor"
+     ],
+     "de": [
+      "Dirigent eingeben"
+     ],
+     "literals": [],
+     "expr": "translate('attList.enterConductor')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "expr": "translate('common.cancel')",
+      "keys": [
+       "common.cancel"
+      ],
+      "de": [
+       "Abbrechen"
+      ],
+      "literals": []
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(data: any) => { this.historyEntry.otherConductor = data.conductor; }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'conductor'",
+      "placeholder": {
+       "keys": [
+        "attList.conductor"
+       ],
+       "de": [
+        "Dirigent"
+       ],
+       "literals": [],
+       "expr": "translate('attList.conductor')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "bc77dd5f",
+    "mbody": "a6a41166",
+    "id": "attendance/attendance/attendance.page#alert-aadedcba"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+    ],
+    "n": "behoben in #306",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 282,
+    "cond": [
+     "@if (attendance)",
+     "@if (attendance.deadline)",
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date-time",
+     "id": "datetimedeadlineatt",
+     "[min]": "\"minDeadlineDate\"",
+     "[max]": "\"maxDeadlineDate\""
+    },
+    "events": [
+     "(ionChange)=onInfoChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"attendance.deadline\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-7e76e2fd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1774",
+     "lib/shared/widgets/adaptive/app_pickers.dart:79"
+    ],
+    "n": "behoben in #291",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "history/history.page.html",
+    "line": 93,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "add-his-button",
+     "#": "addHisModal"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 0.7]\"",
+     "[initialBreakpoint]=\"0.7\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "history/history.page#modal-0bbf542e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:301"
+    ],
+    "n": "behoben in #298",
+    "v": null,
+    "src": "zz-fixed-uebersicht.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "line": 112,
+    "method": "NextEventCardComponent.openAttendance",
+    "cond": [],
+    "component": "AttendancePage",
+    "props": [
+     "attendanceId",
+     "isModal"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "e0886fed",
+    "mbody": "b901e858",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#modal-29087654"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart",
+     "lib/shared/widgets/dialogs/ion_modal.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 53,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (hasLiveActivity)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=toggleLiveActivity($event.detail.checked)"
+    ],
+    "link": null,
+    "model": "[checked]=\"notificationConfig.live_activity !== false\"",
+    "bindings": [
+     "[checked]=\"notificationConfig.live_activity !== false\"",
+     "[attr.label]=\"'notif.liveActivity' | transloco\"",
+     "[helperText]=\"(isIos ? 'notif.liveActivityHelperIos' : 'notif.liveActivityHelper') | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "notif.liveActivity",
+     "notif.liveActivityHelperIos",
+     "notif.liveActivityHelper"
+    ],
+    "de": [
+     "Laufender Ablaufplan",
+     "Zeigt den aktuellen Punkt eines laufenden Ablaufplans auf dem Sperrbildschirm und in der Dynamic Island.",
+     "Zeigt den aktuellen Punkt eines laufenden Ablaufplans auf dem Sperrbildschirm."
+    ],
+    "literals": [],
+    "text": "[attr.label]=\"'notif.liveActivity' | transloco\" [helperText]=\"(isIos ? 'notif.liveActivityHelperIos' : 'notif.liveActivityHelper') | transloco\" {{ 'notif.liveActivity' | transloco }}",
+    "id": "notifications/notifications.page#field-05b9f833"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:228"
+    ],
+    "n": "behoben in #298",
+    "v": null,
+    "src": "zz-fixed-uebersicht.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 342,
+    "method": "OrgPlanPublicPage.showCalendarAlert",
+    "cond": [],
+    "header": {
+     "keys": [
+      "plans.subscribeCalendar"
+     ],
+     "de": [
+      "Kalender abonnieren"
+     ],
+     "literals": [],
+     "expr": "translate('plans.subscribeCalendar')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "plans.calendarLinkMessage"
+     ],
+     "de": [
+      "Kopiere den folgenden Link in deine Kalender-App:\n\n{link}"
+     ],
+     "literals": [],
+     "expr": "translate('plans.calendarLinkMessage', { link })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "plans.copyLink"
+       ],
+       "de": [
+        "Link kopieren"
+       ],
+       "literals": [],
+       "expr": "translate('plans.copyLink')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { navigator.clipboard.writeText(link); Utils.showToast(translate('plans.linkCopied'), 'success'); return false; }"
+     },
+     {
+      "text": {
+       "keys": [
+        "plans.openGuide"
+       ],
+       "de": [
+        "Anleitung öffnen"
+       ],
+       "literals": [],
+       "expr": "translate('plans.openGuide')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { Browser.open({ url: isPlatform('ios') ? 'https://support.apple.com/de-de/102301' : 'https://support.google.com/calendar/answer/37100?hl=de&co=GENIE.Platform%3DAndroid' }); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.close"
+       ],
+       "de": [
+        "Schließen"
+       ],
+       "literals": [],
+       "expr": "translate('common.close')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "c88485dc",
+    "mbody": "36822c19",
+    "id": "org-plan-public/org-plan-public.page#alert-c3af9876"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+    ],
+    "n": "behoben in #307",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plans/org-plans.page.html",
+    "line": 148,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">",
+     "@for (entry of pastPlans; track $index)",
+     "in <ion-item>",
+     "@if (entry.kind === 'adhoc')"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear",
+     "color": "medium"
+    },
+    "events": [
+     "(click)=$event.stopPropagation(); deleteAdHocPlan(entry)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-plans/org-plans.page#action-07229903-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart"
+    ],
+    "n": "behoben in #307",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 197,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditModalOpen\">",
+     "@if (editingField)",
+     "@else (not editingField.type === fieldTypes.SELECT)",
+     "@else (not editingField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editingField.defaultValue\"",
+    "bindings": [
+     "[label]=\"'extraFields.defaultValue' | transloco\"",
+     "[type]=\"editingField.type === fieldTypes.NUMBER ? 'number' : editingField.type === fieldTypes.DATE ? 'date' : 'text'\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.defaultValue"
+    ],
+    "de": [
+     "Standardwert"
+    ],
+    "literals": [],
+    "text": "[label]=\"'extraFields.defaultValue' | transloco\"",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-3207b9c2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+    ],
+    "n": "behoben in #307",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 49,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [
+     "(ionChange)=onNewFieldTypeChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"newField.type\"",
+    "bindings": [
+     "[label]=\"'typeSettings.type' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"fieldTypes.TEXT\"",
+      "keys": [
+       "typeSettings.text"
+      ],
+      "de": [
+       "Text"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.text' | transloco }}"
+     },
+     {
+      "value": "\"fieldTypes.TEXTAREA\"",
+      "keys": [
+       "extraFields.textarea"
+      ],
+      "de": [
+       "Textbereich"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.textarea' | transloco }}"
+     },
+     {
+      "value": "\"fieldTypes.NUMBER\"",
+      "keys": [
+       "extraFields.number"
+      ],
+      "de": [
+       "Zahl"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.number' | transloco }}"
+     },
+     {
+      "value": "\"fieldTypes.DATE\"",
+      "keys": [
+       "attendance.date"
+      ],
+      "de": [
+       "Datum"
+      ],
+      "literals": [],
+      "text": "{{ 'attendance.date' | transloco }}"
+     },
+     {
+      "value": "\"fieldTypes.BOOLEAN\"",
+      "keys": [
+       "extraFields.yesNo"
+      ],
+      "de": [
+       "Ja/Nein"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.yesNo' | transloco }}"
+     },
+     {
+      "value": "\"fieldTypes.SELECT\"",
+      "keys": [
+       "extraFields.select"
+      ],
+      "de": [
+       "Auswahl"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.select' | transloco }}"
+     }
+    ],
+    "keys": [
+     "typeSettings.type",
+     "typeSettings.text",
+     "extraFields.textarea",
+     "extraFields.number",
+     "attendance.date",
+     "extraFields.yesNo",
+     "extraFields.select"
+    ],
+    "de": [
+     "Typ",
+     "Text",
+     "Textbereich",
+     "Zahl",
+     "Datum",
+     "Ja/Nein",
+     "Auswahl"
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.type' | transloco\" {{ 'typeSettings.text' | transloco }} {{ 'extraFields.textarea' | transloco }} {{ 'extraFields.number' | transloco }} {{ 'attendance.date' | transloco }} {{ …",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-64695ee6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+    ],
+    "n": "behoben in #307",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "line": 142,
+    "method": "OrgPlanningTemplatesPage.addTemplate",
+    "cond": [],
+    "header": {
+     "keys": [
+      "orgTemplates.addTemplate"
+     ],
+     "de": [
+      "Vorlage hinzufügen"
+     ],
+     "literals": [],
+     "expr": "translate('orgTemplates.addTemplate')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.add"
+       ],
+       "de": [
+        "Hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.add')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (evt: any) => { if (!evt.title?.trim()) { alert.message = translate('orgTemplates.enterName'); return false; } this.templates.push({ title: evt.title.trim(), time: '', end: '', fields: [] }); this.templateEnds.push(''); this.selected…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'title'",
+      "placeholder": {
+       "keys": [
+        "orgTemplates.templateNamePh"
+       ],
+       "de": [
+        "Name der Vorlage..."
+       ],
+       "literals": [],
+       "expr": "translate('orgTemplates.templateNamePh')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "0a476ba1",
+    "mbody": "2ae0ff48",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#alert-ce98be7f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart",
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+    ],
+    "n": "behoben in #307",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "line": 170,
+    "method": "OrgPlanningTemplatesPage.renameTemplate",
+    "cond": [],
+    "header": {
+     "keys": [
+      "orgTemplates.renameTemplate"
+     ],
+     "de": [
+      "Vorlage umbenennen"
+     ],
+     "literals": [],
+     "expr": "translate('orgTemplates.renameTemplate')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (evt: any) => { if (!evt.title?.trim()) { alert.message = translate('orgTemplates.enterName'); return false; } template.title = evt.title.trim(); await this.saveTemplates(); }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'title'",
+      "placeholder": {
+       "keys": [
+        "orgTemplates.templateNamePh"
+       ],
+       "de": [
+        "Name der Vorlage..."
+       ],
+       "literals": [],
+       "expr": "translate('orgTemplates.templateNamePh')"
+      },
+      "value": "template.title",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "ce2a7c4e",
+    "mbody": "ff77062f",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#alert-e458236c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart",
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+    ],
+    "n": "behoben in #307",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.html",
+    "line": 41,
+    "cond": [
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number",
+     "slot": "end"
+    },
+    "events": [
+     "(ionBlur)=saveDefaultFields()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"field.time\"",
+    "bindings": [
+     "[placeholder]=\"'typeSettings.minPh' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.minPh"
+    ],
+    "de": [
+     "min"
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'typeSettings.minPh' | transloco\"",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#field-d3412616"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+    ],
+    "n": "behoben in #307",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.html",
+    "line": 154,
+    "cond": [
+     "@for (tpl of templates; track trackByIndex(i); let i = $index)",
+     "@if (selectedTemplateIndex === i)"
+    ],
+    "inline": true,
+    "tag": "ion-popover",
+    "attrs": {
+     "[trigger]": "\"'add-tpl-' + i\"",
+     "#": "addTplPopover"
+    },
+    "events": [],
+    "bindings": [
+     "[trigger]=\"'add-tpl-' + i\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#popover-21e36ab9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart",
+     "lib/shared/widgets/adaptive/app_popover_menu.dart"
+    ],
+    "n": "behoben in #307",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart",
+    "lib/shared/widgets/adaptive/app_popover_menu.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 91,
+    "method": "OrgSettingsPage.openCreateOrganisationAlert",
+    "cond": [],
+    "header": {
+     "keys": [
+      "org.create"
+     ],
+     "de": [
+      "Organisation erstellen"
+     ],
+     "literals": [],
+     "expr": "translate('org.create')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.add"
+       ],
+       "de": [
+        "Hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.add')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data: { name: string }) => { if (data.name.length) { const loading = await Utils.getLoadingElement(); loading.present(); try { await this.db.createOrganisation(data.name); Utils.showToast(translate('org.created'), 'success'); await …"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'name'",
+      "placeholder": {
+       "keys": [
+        "org.namePh"
+       ],
+       "de": [
+        "Name eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('org.namePh')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "862cc957",
+    "mbody": "53b08e21",
+    "id": "org-settings/org-settings.page#alert-8c221091"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart"
+    ],
+    "n": "behoben in #307",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 63,
+    "cond": [
+     "@if (selectedField)",
+     "@else if (selectedField.fieldType === FieldType.NUMBER)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"bulkValue\"",
+    "bindings": [
+     "[placeholder]=\"selectedField.label\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[placeholder]=\"selectedField.label\"",
+    "id": "people/bulk-edit/bulk-edit.page#field-523de84f-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart"
+    ],
+    "n": "behoben in #312",
+    "v": null,
+    "src": "zz-fixed-personen-liste.json",
+    "flutterAt": "6945c13"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 65,
+    "cond": [
+     "@if (selectedField)",
+     "@else if (selectedField.fieldType === FieldType.BOOLEAN)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"bulkValue\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ selectedField.label }}",
+    "id": "people/bulk-edit/bulk-edit.page#field-817de781"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart"
+    ],
+    "n": "behoben in #312",
+    "v": null,
+    "src": "zz-fixed-personen-liste.json",
+    "flutterAt": "6945c13"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 75,
+    "cond": [
+     "@if (selectedField)",
+     "@else if (selectedField.fieldType === FieldType.BFECG_CHURCH)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"bulkValue\"",
+    "bindings": [
+     "[placeholder]=\"selectedField.label\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"church.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ church.name }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[placeholder]=\"selectedField.label\" {{ church.name }}",
+    "id": "people/bulk-edit/bulk-edit.page#field-fc367be8-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart"
+    ],
+    "n": "behoben in #312",
+    "v": null,
+    "src": "zz-fixed-personen-liste.json",
+    "flutterAt": "6945c13"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/import/import.page.html",
+    "line": 27,
+    "cond": [
+     "@if (step === 'file')"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=downloadTemplate()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "download-outline"
+    ],
+    "keys": [
+     "people.downloadTemplate"
+    ],
+    "de": [
+     "Vorlage herunterladen"
+    ],
+    "literals": [],
+    "text": "{{ 'people.downloadTemplate' | transloco }}",
+    "id": "people/import/import.page#action-2d35c2c8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart"
+    ],
+    "n": "behoben in #325",
+    "v": null,
+    "src": "zz-fixed-personen-import.json",
+    "flutterAt": "40d2b43"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/import/import.page.html",
+    "line": 44,
+    "cond": [
+     "@if (step === 'mapping')",
+     "@for (header of fileHeaders; track header)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"mapping[header]\"",
+    "bindings": [
+     "[label]=\"header\"",
+     "[placeholder]=\"'people.chooseFieldPlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"opt.key\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ opt.label }}"
+     }
+    ],
+    "keys": [
+     "people.chooseFieldPlaceholder"
+    ],
+    "de": [
+     "Feld wählen..."
+    ],
+    "literals": [],
+    "text": "[label]=\"header\" [placeholder]=\"'people.chooseFieldPlaceholder' | transloco\" {{ opt.label }}",
+    "id": "people/import/import.page#field-2d96b151"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart"
+    ],
+    "n": "behoben in #325",
+    "v": null,
+    "src": "zz-fixed-personen-import.json",
+    "flutterAt": "40d2b43"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/import/import.page.html",
+    "line": 25,
+    "cond": [
+     "@if (step === 'file')",
+     "in <ion-item>"
+    ],
+    "tag": "input",
+    "attrs": {
+     "type": "file",
+     "#": "fileInput"
+    },
+    "events": [
+     "(change)=onFileSelect($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/import/import.page#field-bdcf25e7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/utils/xls_reader.dart",
+     "lib/core/utils/spreadsheet_reader.dart"
+    ],
+    "n": "behoben in #295 (.xls-Leser)",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 342,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@else (not sortOpt === 'instrument')",
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=openModal(player)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "people.teacherName",
+     "people.noTeacher",
+     "people.voiceLeader",
+     "people.new",
+     "people.problemCase",
+     "people.paused",
+     "people.candidate"
+    ],
+    "de": [
+     "Lehrer: {name}",
+     "Kein Lehrer",
+     "Stimmführer",
+     "Neu",
+     "Problemfall",
+     "Pausiert",
+     "Prüfling"
+    ],
+    "literals": [],
+    "text": "{{ player.firstName }} {{ player.lastName }} {{ player.text }} {{ player.groupName }} {{ 'people.teacherName' | transloco: { name: getTeacherName(player.teacher) } }} {{ 'people.noTeacher' | transloc…",
+    "id": "people/list/list.page#action-0df20264"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart",
+     "lib/features/people/people_list_utils.dart"
+    ],
+    "n": "behoben in #312",
+    "v": null,
+    "src": "zz-fixed-personen-liste.json",
+    "flutterAt": "6945c13"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 461,
+    "cond": [
+     "@else if (loaded && !players?.length && !playersFiltered?.length)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "outline"
+    },
+    "events": [
+     "(click)=openModal()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attendance.addPerson"
+    ],
+    "de": [
+     "Person hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.addPerson' | transloco }}",
+    "id": "people/list/list.page#action-4792cae3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 233,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@if (sortOpt === 'instrument')",
+     "@for (group of playerGroups; track group.groupId)",
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=!isReordering && openModal(player)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "people.teacherName",
+     "people.noTeacher",
+     "people.voiceLeader",
+     "people.new",
+     "people.problemCase",
+     "people.paused",
+     "people.candidate"
+    ],
+    "de": [
+     "Lehrer: {name}",
+     "Kein Lehrer",
+     "Stimmführer",
+     "Neu",
+     "Problemfall",
+     "Pausiert",
+     "Prüfling"
+    ],
+    "literals": [],
+    "text": "{{ player.firstName }} {{ player.lastName }} {{ player.text }} {{ player.groupName }} {{ 'people.teacherName' | transloco: { name: getTeacherName(player.teacher) } }} {{ 'people.noTeacher' | transloc…",
+    "id": "people/list/list.page#action-982a1154"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart",
+     "lib/features/people/people_list_utils.dart"
+    ],
+    "n": "behoben in #312",
+    "v": null,
+    "src": "zz-fixed-personen-liste.json",
+    "flutterAt": "6945c13"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/list/list.page.html",
+    "line": 499,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isArchiveModalOpen\""
+    },
+    "events": [],
+    "bindings": [
+     "[isOpen]=\"isArchiveModalOpen\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "people/list/list.page#modal-11a551b4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/list/list.page.ts",
+    "line": 1062,
+    "method": "ListPage.showChurchOverview",
+    "cond": [],
+    "component": "ChurchOverviewComponent",
+    "props": [
+     "churchIds",
+     "churches",
+     "subtitle"
+    ],
+    "sheet": true,
+    "breakpoints": "[0, 0.5, 0.75, 1]",
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "62f36455",
+    "mbody": "1e290767",
+    "id": "people/list/list.page#modal-99a2d84a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart",
+     "lib/features/people/people_list_utils.dart"
+    ],
+    "n": "behoben in #312",
+    "v": null,
+    "src": "zz-fixed-personen-liste.json",
+    "flutterAt": "6945c13"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/members/members.page",
+   "ionic": {
+    "ts": "people/members/members.page.ts",
+    "html": "people/members/members.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/members/members.page.html",
+    "line": 30,
+    "cond": [
+     "@if (einteilungField && einteilungOptions.length)"
+    ],
+    "tag": "ion-segment",
+    "attrs": {
+     "mode": "md"
+    },
+    "events": [
+     "(ionChange)=onEinteilungFilterChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"einteilungFilter\"",
+    "bindings": [
+     "[scrollable]=\"true\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "all",
+      "keys": [
+       "common.all"
+      ],
+      "de": [
+       "Alle"
+      ],
+      "literals": [],
+      "text": "{{ 'common.all' | transloco }}\"all\""
+     },
+     {
+      "value": "\"option\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ option }}"
+     }
+    ],
+    "keys": [
+     "common.all"
+    ],
+    "de": [
+     "Alle"
+    ],
+    "literals": [],
+    "text": "\"all\" {{ 'common.all' | transloco }} {{ option }}",
+    "id": "people/members/members.page#field-f9de5b80"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/members/data/providers/members_providers.dart",
+     "lib/features/people/people_list_utils.dart"
+    ],
+    "n": "behoben in #312",
+    "v": null,
+    "src": "zz-fixed-personen-liste.json",
+    "flutterAt": "6945c13"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 25,
+    "cond": [
+     "@if (player)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "profile-avatar-wrapper"
+    },
+    "events": [
+     "(click)=onProfileImageClick()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.editable]=\"!readOnly\""
+    ],
+    "icons": [
+     "camera"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-40313396"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 723,
+    "cond": [
+     "@if (personAttendance.length || history.length)",
+     "@for (att of history; track trackByHistoryId($index, att))"
+    ],
+    "tag": "ion-item",
+    "attrs": {},
+    "events": [
+     "(click)=onHisItemClicked(att)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "person.talkedToAt",
+     "common.ngDate",
+     "person.noteChangedAt",
+     "person.pausedAt",
+     "person.activeSince",
+     "person.archivedAt",
+     "person.reactivatedAt",
+     "person.transferredAt",
+     "person.copiedAt",
+     "person.noComment"
+    ],
+    "de": [
+     "Mit Person gesprochen ({date})",
+     "dd.MM.yyyy",
+     "Notiz geändert am {date}",
+     "Pausiert am {date}",
+     "Wieder aktiv seid {date}",
+     "Archiviert am {date}",
+     "Reaktiviert am {date}",
+     "Übertragen am {date}",
+     "Kopiert am {date}",
+     "Keine Anmerkung"
+    ],
+    "literals": [],
+    "text": "{{ 'person.talkedToAt' | transloco: { date: (att.date | date: ('common.ngDate' | transloco) + ' HH:mm') } }} {{ 'person.noteChangedAt' | transloco: { date: (att.date | date: ('common.ngDate' | transl…",
+    "id": "people/person/person.page#action-53209882"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart",
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 877,
+    "cond": [
+     "@if (approveMode)",
+     "@if (player)"
+    ],
+    "tag": "ion-fab-button",
+    "attrs": {},
+    "events": [
+     "(click)=showApproveActionSheet()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "ellipsis-horizontal-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-bf4fde99"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 987,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "class": "ion-margin-top",
+     "[disabled]": "\"!pauseReason\""
+    },
+    "events": [
+     "(click)=confirmPause()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pause-outline"
+    ],
+    "keys": [
+     "people.pause"
+    ],
+    "de": [
+     "Pausieren"
+    ],
+    "literals": [],
+    "text": "{{ 'people.pause' | transloco }}",
+    "id": "people/person/person.page#action-c704728e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart",
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/person/person.page.ts",
+    "line": 1663,
+    "method": "PersonPage.declinePlayer",
+    "cond": [],
+    "header": {
+     "keys": [
+      "person.declinePerson"
+     ],
+     "de": [
+      "Person ablehnen"
+     ],
+     "literals": [],
+     "expr": "translate('person.declinePerson')"
+    },
+    "subHeader": {
+     "keys": [
+      "person.giveReasonShort"
+     ],
+     "de": [
+      "Gib einen Grund an."
+     ],
+     "literals": [],
+     "expr": "translate('person.giveReasonShort')"
+    },
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "person.decline"
+       ],
+       "de": [
+        "Ablehnen"
+       ],
+       "literals": [],
+       "expr": "translate('person.decline')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (evt: { reason: string }) => { if (!evt.reason) { alert.message = translate('signout.giveReason'); return false; } const loading: HTMLIonLoadingElement = await Utils.getLoadingElement(10000, translate('person.declining')); loading.pr…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'reason'",
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "2457eaed",
+    "mbody": "e71a6516",
+    "id": "people/person/person.page#alert-692c7626"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/person/person.page.ts",
+    "line": 719,
+    "method": "PersonPage.removeUserFromTenant",
+    "cond": [],
+    "header": {
+     "keys": [
+      "person.removeAccount"
+     ],
+     "de": [
+      "Account entfernen"
+     ],
+     "literals": [],
+     "expr": "translate('person.removeAccount')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "person.removeAccountMessage"
+     ],
+     "de": [
+      "Möchtest du den Account wirklich aus der Instanz entfernen? Die Personendaten bleiben erhalten."
+     ],
+     "literals": [],
+     "expr": "translate('person.removeAccountMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.yes"
+       ],
+       "de": [
+        "Ja"
+       ],
+       "literals": [],
+       "expr": "translate('common.yes')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { try { await this.db.removeUserFromTenant(this.player.appId, false, this.player.id); await this.db.updatePlayer({ ...this.player, email: null, appId: null, }); this.hasChanges = false; await this.dismiss(); Utils.showToast(tra…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "f4a5da37",
+    "mbody": "4ce79c42",
+    "id": "people/person/person.page#alert-75bf15c2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart"
+    ],
+    "n": "behoben in #324",
+    "v": null,
+    "src": "zz-fixed-personen-seite.json",
+    "flutterAt": "3cdaaa1"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  }
+ ]
+}

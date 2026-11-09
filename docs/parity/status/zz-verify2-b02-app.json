@@ -1,0 +1,351 @@
+{
+  "batch": "zz-verify2-b02-app",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "register/tenant-register/tenant-register.page#toast-51ea8218": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:704",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:688",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:195"
+      ],
+      "n": "Öffentliche Seite ohne Rollenprüfung (Ionic wie Flutter); gleiche Bedingung: tenantUsers-Zeile für tenantId+userId (jede Rolle, auch Bewerber); Prüfung beim Laden (angemeldet), nach Login-Dialog (:789) und nach Codebestätigung (:1002) wie Ionic. Text gleich, Farbe warning; Anzeigedauer 3–4 s statt 5 s.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#nav-bda70e96": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:706",
+        "lib/core/router/app_router.dart:337"
+      ],
+      "n": "context.go('/login'); Router leitet Angemeldete wie Ionic-LoginGuard weiter (Terms-Gate → Startseite der aktuellen Instanz bzw. /tenants).",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#nav-e95f0182": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:165",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:158"
+      ],
+      "n": "Nicht angemeldet oder ohne Tenant-User → /login in beiden. Einzige Abweichung: Tenant-User mit Rolle 'none' geht in Flutter nach /login statt /tabs/signout – bereits bei nav-daa5b1d7 erfasst.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#toast-4ef3175e": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1064"
+      ],
+      "n": "Gleiche Bedingung (registration_fields enthält 'picture', kein Bild gewählt), gleiche Position in der Prüfreihenfolge, Text gleich, rot.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#toast-9de040da": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1067",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:79"
+      ],
+      "n": "Gleiche Bedingung (registration_fields enthält 'birthDate'); in beiden praktisch unerreichbar, da Geburtsdatum mit heute-18 Jahre vorbelegt ist.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#toast-33d6e4ed": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1070",
+        "lib/features/auth/data/auth_flow_service.dart:28"
+      ],
+      "n": "Gleiche Bedingung (registration_fields enthält 'phone'), gleiche Regex /^(\\+?[1-9]\\d{1,14}|0\\d+)$/ nach Entfernen der Leerzeichen, Text gleich.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-ee3a0a59": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:255"
+      ],
+      "n": "longName in der Karte; Flutter fällt bei leerem longName auf shortName zurück.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-3e7afcd9": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:265"
+      ],
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-fecdb4cb": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:274"
+      ],
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#action-8b405cb0": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:812",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:715"
+      ],
+      "n": "Öffentliche Seite ohne Rollenprüfung (Ionic wie Flutter); nur ohne Anmeldung sichtbar (Ionic !db.user / Flutter !_isLoggedIn), verschwindet nach Login. Dialog-Unterschiede bei alert-d3091b10.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-e89e2385": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:818",
+        "lib/features/auth/presentation/widgets/otp_widgets.dart:98"
+      ],
+      "n": "Nur ohne Anmeldung; Optionen 'Passwort' / 'Code per E-Mail' in gleicher Reihenfolge; Wechsel setzt Code-Status und Cooldown zurück wie Ionic.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-6e5a14fd": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:839"
+      ],
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-8ce1671c": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:833"
+      ],
+      "n": "E-Mail-Feld nur ohne Anmeldung, readonly im Code-Modus nach Versand – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-5e6eb63c": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:850"
+      ],
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-0ebc2a01": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:846",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:845"
+      ],
+      "n": "Sichtbarkeit (ohne Anmeldung, Passwort-Modus) gleich. Übersehen: Ionic bindet [(ngModel)]=\"password\", nach Wechsel zu 'Code per E-Mail' und zurück steht das Passwort wieder im Feld / Flutter: TextFormField ohne Controller wird beim Moduswechsel neu aufgebaut, Feld ist danach leer.",
+      "v": "korrigiert"
+    },
+    "register/tenant-register/tenant-register.page#text-585b0932": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:861"
+      ],
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-f2f670d0": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:857"
+      ],
+      "n": "Wie field-0ebc2a01: Ionic behält 'Passwort bestätigen' beim Hin- und Herwechseln des Modus / Flutter: Feld nach Moduswechsel leer (kein Controller).",
+      "v": "korrigiert"
+    },
+    "register/tenant-register/tenant-register.page#field-86bd3a26": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:870",
+        "lib/features/auth/presentation/widgets/otp_widgets.dart:286"
+      ],
+      "n": "Nur ohne Anmeldung, Code-Modus nach Versand; 6 Felder mit Beschriftung 'Code aus der E-Mail', Vervollständigen löst Bestätigung aus. Flutter nur Ziffern (Supabase-Codes sind numerisch).",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#action-178ca27d": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:878",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:985"
+      ],
+      "n": "Deaktiviert ohne Code; danach Anmeldung, terms_accepted_at stempeln, Bereits-registriert-Prüfung + Prefill, Seite bleibt – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#action-5df1dc21": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:887",
+        "lib/features/auth/presentation/widgets/otp_widgets.dart:108",
+        "lib/features/auth/data/auth_flow_service.dart:32"
+      ],
+      "n": "30 s Cooldown, Texte 'Erneut senden ({seconds}s)' / 'Code erneut senden'; erneuter Versand prüft E-Mail und Zustimmung wie Ionic.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#action-73928114": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:895",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:957",
+        "lib/features/auth/data/auth_flow_service.dart:353"
+      ],
+      "n": "Prüft E-Mail, dann Zustimmung (gleiche Toasts), signInWithOtp mit shouldCreateUser=true und signup_method/terms_accepted_at; Erfolgs-/Fehlertoasts wie Ionic.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-45cdc765": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:924",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:940"
+      ],
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#action-a45c8322": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:929",
+        "lib/features/legal/presentation/widgets/legal_content_view.dart:139"
+      ],
+      "n": "Öffnet Rechtliches-Modal (Titel, Schließen-Button, gleicher Inhalt) wie LegalModalComponent.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-39166ec9": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:805"
+      ],
+      "n": "Öffentliche Seite ohne Rollenprüfung (Ionic wie Flutter); nur angemeldet sichtbar, mit E-Mail des aktuellen Nutzers.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-9b17d1d9": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:278"
+      ],
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-6e76de7c": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:306"
+      ],
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-a282574a": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:299",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:307",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1060"
+      ],
+      "n": "Flutter besser: Vorname wird beim Speichern getrimmt (nur Leerzeichen → Toast 'tenantRegister.nameRequired', angehängtes Leerzeichen der Tastatur wird nicht gespeichert) / Ionic prüft !firstName und speichert ungetrimmt. Prefill und Sichtbarkeit gleich.",
+      "v": "korrigiert"
+    },
+    "register/tenant-register/tenant-register.page#text-52f381d7": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:317"
+      ],
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-3669e571": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:310",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:318",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1060"
+      ],
+      "n": "Flutter besser: Nachname wird getrimmt (nur Leerzeichen → Toast 'tenantRegister.nameRequired') / Ionic speichert ungetrimmt. Prefill und Sichtbarkeit gleich.",
+      "v": "korrigiert"
+    },
+    "register/tenant-register/tenant-register.page#text-af1fd87d": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:323"
+      ],
+      "n": "Nur wenn registration_fields 'birthDate' enthält – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-3bbd0e84": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:324",
+        "lib/l10n/languages.dart:65"
+      ],
+      "n": "Bedingung und Vorbelegung gleich. Anzeigeformat: Ionic ion-datetime-button (locale de-DE, Standard-formatOptions month:'short') → '4. Nov. 2008' / Flutter DateFormat('dd.MM.yyyy') → '04.11.2008'. Ionic-Paket nicht im Container, Standardformat aus Ionic 9 datetime-button.",
+      "v": "korrigiert"
+    },
+    "register/tenant-register/tenant-register.page#modal-4836c219": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:446",
+        "lib/shared/widgets/adaptive/app_pickers.dart:12"
+      ],
+      "n": "Ionic: zentrierte Datetime-Overlay-Karte / Flutter: Kalender-Dialog (md: showDatePicker, iOS: CalendarDatePicker-Dialog); gleiche Funktion.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-61311198": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:446",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:79"
+      ],
+      "n": "Kalender mit Datumsauswahl, Vorbelegung heute-18 Jahre bzw. Profil-Geburtstag. Bereich: Ionic-Standard 100 Jahre zurück bis Jahresende / Flutter 1900 bis heute – für Geburtsdaten unerheblich.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-e0756481": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:339"
+      ],
+      "n": "Nur wenn registration_fields 'phone' enthält – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-d5f04c4f": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:332"
+      ],
+      "n": "Gleiche Bedingung, Telefon-Tastatur, Prefill aus Profil.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-b64d7643": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:347"
+      ],
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-0a9708a5": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:363",
+        "lib/features/registration/data/providers/registration_providers.dart:40"
+      ],
+      "n": "Warnung (Farbe warning, Warn-Icon) wenn keine Nicht-Hauptgruppen; Text gleich. Randfall maingroup = NULL (Flutter filtert = false) bei field-a9922b49 erfasst; Flutter legt Gruppen mit maingroup=false an.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-1e23f15b": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:480"
+      ],
+      "n": "Feldname als Label für Text-Zusatzfelder aus registration_fields; Reihenfolge-Abweichung bereits als Extra erfasst.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-3d36f520": {
+      "s": "ok",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:476"
+      ],
+      "n": "Texteingabe mit defaultValue vorbelegt, Pflichtprüfung (nicht leer) gleich.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-3d36f520-2": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:494",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:498",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:502"
+      ],
+      "n": "Label/Default gleich. Ionic: type=number (Dezimal/Minus eingebbar), NumericValueAccessor speichert parseFloat-Zahl / Flutter: TextInputType.number ohne Dezimal/Vorzeichen (Mobil kein ',' '.' '-'), int.tryParse – Dezimalwerte (z. B. Web) werden als String gespeichert. Leer-Prüfung bei toast-b918f4e0.",
+      "v": "korrigiert"
+    }
+  },
+  "extra": []
+}

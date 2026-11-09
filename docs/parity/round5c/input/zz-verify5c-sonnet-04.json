@@ -1,0 +1,2099 @@
+{
+ "batch": "zz-verify5c-sonnet-04",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 962,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isAddPersonModalOpen\"",
+     "#": "addPersonModal"
+    },
+    "events": [
+     "(ionModalDidDismiss)=isAddPersonModalOpen = false"
+    ],
+    "bindings": [
+     "[isOpen]=\"isAddPersonModalOpen\"",
+     "[initialBreakpoint]=\"0.8\"",
+     "[breakpoints]=\"[0, 0.8, 1]\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "attendance/attendance/attendance.page#modal-80e7e739"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:72",
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:77"
+    ],
+    "n": "Bottom-Sheet 0.8.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 481,
+    "cond": [
+     "@if (attendance)",
+     "@if (manageSongs && !isGeneral)",
+     "@if (manageSongs)",
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "song-select-trigger-att",
+     "#": "songSelectModal"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "attendance/attendance/attendance.page#modal-8e3ed7fa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:237"
+    ],
+    "n": "Vollbild-Seite.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 460,
+    "cond": [
+     "@if (attendance)",
+     "@if (manageSongs && !isGeneral)",
+     "@if (manageSongs)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "add-his-button",
+     "#": "addHisModal"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 0.7]\"",
+     "[initialBreakpoint]=\"0.7\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "attendance/attendance/attendance.page#modal-a9aad035"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:133"
+    ],
+    "n": "Sheet wie Ionic (0.7); Flutter hat zusätzlich ein X oben.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 110,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>"
+    ],
+    "inline": true,
+    "tag": "ion-popover",
+    "attrs": {
+     "trigger": "attendance-view-trigger",
+     "side": "start"
+    },
+    "events": [],
+    "bindings": [
+     "[dismissOnSelect]=\"false\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "attendance/attendance/attendance.page#popover-0b27f205"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1314"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 35,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-popover",
+    "attrs": {
+     "trigger": "attendance-options-trigger",
+     "#": "optionsPopover"
+    },
+    "events": [],
+    "bindings": [
+     "[dismissOnSelect]=\"false\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "attendance/attendance/attendance.page#popover-99a14383"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:525",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1072"
+    ],
+    "n": "Einträge in Ionic-Reihenfolge; Rollenunterschiede bei einzelnen Einträgen siehe dort.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 47,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>"
+    ],
+    "inline": true,
+    "tag": "ion-popover",
+    "attrs": {
+     "trigger": "attendance-filter-trigger",
+     "side": "start"
+    },
+    "events": [],
+    "bindings": [
+     "[dismissOnSelect]=\"false\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "attendance/attendance/attendance.page#popover-e3d9c11a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1203"
+    ],
+    "n": "Ohne aufgelösten Typ zeigt Flutter alle Status (Ionic keine).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 882,
+    "cond": [
+     "@if (attendance)",
+     "@for (player of filteredPlayers; track player.id)",
+     "@if (attendanceViewMode === AttendanceViewMode.SELECT)",
+     "@if (showRegFields && getRegistrationAnswerSummary(player))"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getRegistrationAnswerSummary(player) }}"
+    ],
+    "text": "{{ getRegistrationAnswerSummary(player) }}",
+    "id": "attendance/attendance/attendance.page#text-07fede6f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:120",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2218"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 885,
+    "cond": [
+     "@if (attendance)",
+     "@for (player of filteredPlayers; track player.id)",
+     "@if (attendanceViewMode === AttendanceViewMode.SELECT)",
+     "@if (extraFieldSortId)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getActiveExtraSortValue(player) }} · {{ player.groupName }}"
+    ],
+    "text": "{{ getActiveExtraSortValue(player) }} · {{ player.groupName }}",
+    "id": "attendance/attendance/attendance.page#text-22c2052b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:592"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 712,
+    "cond": [
+     "@if (attendance)",
+     "@if (type?.enable_protocol)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "attendance.protocol"
+    ],
+    "de": [
+     "Protokoll"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.protocol' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-25ce998f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:116",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:712"
+    ],
+    "n": "Bei type.enable_protocol für alle Rollen mit Terminzugriff, ohne Rollenprüfung (Inhalt per RLS) – gleich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 851,
+    "cond": [
+     "@if (attendance)",
+     "@if (personsLoadFailed && players.length === 0)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "attendance.tryAgain"
+    ],
+    "de": [
+     "Bitte versuche es erneut."
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.tryAgain' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-346c2e34"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1475"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1000,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddPersonModalOpen\" #addPersonModal>",
+     "@if (!isLoadingPersons)",
+     "@if (filteredAvailablePersons.length > 0 || availablePersons.length > 0)",
+     "@if (filteredAvailablePersons.length > 0)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "color": "primary"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ filteredAvailablePersons.length }}"
+    ],
+    "text": "{{ filteredAvailablePersons.length }}",
+    "id": "attendance/attendance/attendance.page#text-4e8f7d2c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:176"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 503,
+    "cond": [
+     "@if (attendance)",
+     "@if (manageSongs && !isGeneral)",
+     "@if (manageSongs)",
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger-att #songSelectModal>",
+     "@if (filteredSongs.length === 0 && songSearchTerm)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "attList.noSongsFound"
+    ],
+    "de": [
+     "Keine Werke gefunden"
+    ],
+    "literals": [],
+    "text": "{{ 'attList.noSongsFound' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-5c344678"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:350"
+    ],
+    "n": "Ionic: „Keine Werke gefunden“ nur bei Suchbegriff ohne Treffer / Flutter: auch ohne Suchbegriff, wenn keine Werke existieren.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 850,
+    "cond": [
+     "@if (attendance)",
+     "@if (personsLoadFailed && players.length === 0)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "attendance.loadFailed"
+    ],
+    "de": [
+     "Anwesenheitsliste konnte nicht geladen werden"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.loadFailed' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-7001ac88"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1472",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:737"
+    ],
+    "n": "„Anwesenheitsliste konnte nicht geladen werden“ + „Neu laden“, nur ohne Gruppenbeschränkung wie Ionic (helperGroupId == null).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1094,
+    "cond": [
+     "in <ion-modal isOpen=\"isRegFieldsModalOpen\">",
+     "@if (regFieldsPlayer)",
+     "@for (field of type?.registration_fields; track field.id)",
+     "@else if (field.type === 'boolean')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.label }}"
+    ],
+    "text": "{{ field.label }}",
+    "id": "attendance/attendance/attendance.page#text-79b0837f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:316"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1108,
+    "cond": [
+     "in <ion-modal isOpen=\"isRegFieldsModalOpen\">",
+     "@if (regFieldsPlayer)",
+     "@for (field of type?.registration_fields; track field.id)",
+     "@else if (field.type === 'multi_select')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.label }}"
+    ],
+    "text": "{{ field.label }}",
+    "id": "attendance/attendance/attendance.page#text-79b0837f-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:336"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 235,
+    "cond": [
+     "@if (attendance)",
+     "@if (attendance.archived)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "attendance.archivedBannerHint"
+    ],
+    "de": [
+     "Für Mitglieder unsichtbar. Nur Admins und Verantwortliche sehen diesen Termin."
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.archivedBannerHint' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-7a75323d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2603"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1075,
+    "cond": [
+     "in <ion-modal isOpen=\"isRegFieldsModalOpen\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "attendance.regFields"
+    ],
+    "de": [
+     "Anmeldefelder"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.regFields' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-7abb2645"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:389"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1024,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddPersonModalOpen\" #addPersonModal>",
+     "@if (!isLoadingPersons)",
+     "@if (filteredAvailablePersons.length > 0 || availablePersons.length > 0)",
+     "@if (availablePersons.length > 0)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "color": "medium"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ availablePersons.length }}"
+    ],
+    "text": "{{ availablePersons.length }}",
+    "id": "attendance/attendance/attendance.page#text-820294e1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:182"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 23,
+    "cond": [
+     "@if (!isOnline)",
+     "@else (not offlineQueue.pendingCount() > 0)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "attendance.offline"
+    ],
+    "de": [
+     "Offline"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.offline' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-828d786f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:498"
+    ],
+    "n": "„Offline“ im selben Chip, wenn nichts aussteht.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 987,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddPersonModalOpen\" #addPersonModal>",
+     "@if (!isLoadingPersons)",
+     "@if (filteredAvailablePersons.length === 0 && availablePersons.length === 0)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "attendance.allAlreadyIncluded"
+    ],
+    "de": [
+     "Alle Personen sind bereits in dieser Anwesenheit enthalten."
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.allAlreadyIncluded' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-860f54c8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:166"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 967,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddPersonModalOpen\" #addPersonModal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "attendance.addPerson"
+    ],
+    "de": [
+     "Person hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.addPerson' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-8a34dabe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:157"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 465,
+    "cond": [
+     "@if (attendance)",
+     "@if (manageSongs && !isGeneral)",
+     "@if (manageSongs)",
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "attList.addSongs"
+    ],
+    "de": [
+     "Werk(e) hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attList.addSongs' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-904249c9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:128"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 622,
+    "cond": [
+     "@if (attendance)",
+     "@if (isDuty)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "attendance.staffing"
+    ],
+    "de": [
+     "Besetzung"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.staffing' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-a90978d4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/duty_staffing_section.dart:100",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:705"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 998,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddPersonModalOpen\" #addPersonModal>",
+     "@if (!isLoadingPersons)",
+     "@if (filteredAvailablePersons.length > 0 || availablePersons.length > 0)",
+     "@if (filteredAvailablePersons.length > 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.matchingPeople"
+    ],
+    "de": [
+     "Passende Personen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.matchingPeople' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-ba04e59c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:176"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 485,
+    "cond": [
+     "@if (attendance)",
+     "@if (manageSongs && !isGeneral)",
+     "@if (manageSongs)",
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger-att #songSelectModal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "attList.chooseSongs"
+    ],
+    "de": [
+     "Werke auswählen"
+    ],
+    "literals": [],
+    "text": "{{ 'attList.chooseSongs' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-bbc3b99a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:318"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 234,
+    "cond": [
+     "@if (attendance)",
+     "@if (attendance.archived)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "attendance.archivedBanner"
+    ],
+    "de": [
+     "Archiviert"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.archivedBanner' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-bd06fd9a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2603",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:624"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 442,
+    "cond": [
+     "@if (attendance)",
+     "@if (manageSongs && !isGeneral)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.songsCount"
+    ],
+    "de": [
+     "Werke ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.songsCount' | transloco: { count: historyEntries.length } }}",
+    "id": "attendance/attendance/attendance.page#text-c838c3fb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:31",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:683"
+    ],
+    "n": "„Werke (n)“ bei manage_songs und Mandant ≠ general, ohne Rollenbedingung wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1022,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddPersonModalOpen\" #addPersonModal>",
+     "@if (!isLoadingPersons)",
+     "@if (filteredAvailablePersons.length > 0 || availablePersons.length > 0)",
+     "@if (availablePersons.length > 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.otherPeople"
+    ],
+    "de": [
+     "Andere Personen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.otherPeople' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-dd2e2f27"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:180",
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:187"
+    ],
+    "n": "Flutter besser: „Andere Personen“ ist aufgeklappt, wenn es keine passenden Personen gibt / Ionic: immer eingeklappt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 21,
+    "cond": [
+     "@if (!isOnline)",
+     "@if (offlineQueue.pendingCount() > 0)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "attendance.pending"
+    ],
+    "de": [
+     "{count} ausstehend"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.pending' | transloco: { count: offlineQueue.pendingCount() } }}",
+    "id": "attendance/attendance/attendance.page#text-f0a03b1c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:498"
+    ],
+    "n": "Offline-Chip (Warnfarbe, Wolken-Icon) mit „{count} ausstehend“ aus der Offline-Queue, für alle Rollen.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2046,
+    "method": "AttendancePage.addChecklistItem",
+    "cond": [
+     "(!data.text?.trim())"
+    ],
+    "message": {
+     "keys": [
+      "attendance.enterText"
+     ],
+     "de": [
+      "Bitte einen Text eingeben"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.enterText')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "873532ea",
+    "mbody": "afe9f1e2",
+    "id": "attendance/attendance/attendance.page#toast-010be423"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1559"
+    ],
+    "n": "„Bitte einen Text eingeben“ (Warnung), Dialog bleibt offen. Erreichbar wie Ionic: Menü „Checkliste starten“ ohne HELPER (canMutate), Akkordeon-Button für alle mit Checklisten-Sicht (HELPER nur mit checklist_view).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2094,
+    "method": "AttendancePage.restoreChecklist",
+    "cond": [
+     "(!this.type?.checklist?.length)"
+    ],
+    "message": {
+     "keys": [
+      "attendance.noDefaultChecklist"
+     ],
+     "de": [
+      "Keine Standard-Checkliste vorhanden"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.noDefaultChecklist')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "c4fb4ad5",
+    "mbody": "cfd50b25",
+    "id": "attendance/attendance/attendance.page#toast-37612561"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1630"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1785,
+    "method": "AttendancePage.getModifierInfo",
+    "cond": [
+     "(!player.changed_by)"
+    ],
+    "message": {
+     "keys": [
+      "attendance.statusNotChanged"
+     ],
+     "de": [
+      "Der Status wurde bisher nicht verändert"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.statusNotChanged')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "cae79edf",
+    "mbody": "75edb284",
+    "id": "attendance/attendance/attendance.page#toast-66ebc374"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:876"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1768,
+    "method": "AttendancePage.removeFromAttendance",
+    "cond": [],
+    "message": {
+     "keys": [
+      "attendance.personRemoved"
+     ],
+     "de": [
+      "Person aus Anwesenheit entfernt"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.personRemoved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "e37dc7cf",
+    "mbody": "fc4ff18d",
+    "id": "attendance/attendance/attendance.page#toast-68ebef24"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2503"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 544,
+    "method": "AttendancePage.reloadAttendance",
+    "cond": [],
+    "message": {
+     "keys": [
+      "attendance.reloadFailed"
+     ],
+     "de": [
+      "Neu laden fehlgeschlagen — bitte erneut versuchen."
+     ],
+     "literals": [],
+     "expr": "translate('attendance.reloadFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "6473ddac",
+    "mbody": "1289e678",
+    "id": "attendance/attendance/attendance.page#toast-87a629e9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1461",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1486"
+    ],
+    "n": "Ionic: Toast (danger) „Neu laden fehlgeschlagen — bitte erneut versuchen.“ / Flutter: „Neu laden“ invalidiert nur die Provider; bei erneutem Fehler kein Toast, Banner/Fehlerseite bleibt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 676,
+    "method": "AttendancePage.onPersonAttRealtimeChanges",
+    "cond": [
+     "(payload.old && this.players.find((p: PersonAttendance) => p.id === (payload.old as { id: string }).id))",
+     "(!Object.keys(payload.new).length)"
+    ],
+    "message": {
+     "keys": [
+      "attendance.deletedByOther"
+     ],
+     "de": [
+      "Die Anwesenheit wurde soeben von einem anderen Nutzer gelöscht"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.deletedByOther')"
+    },
+    "color": "danger",
+    "duration": "3000",
+    "src": "96910ce0",
+    "mbody": "def11d9f",
+    "id": "attendance/attendance/attendance.page#toast-961d3c4c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1436"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 661,
+    "method": "AttendancePage.onAttRealtimeChanges",
+    "cond": [
+     "(!Object.keys(payload.new).length && payload.old && (payload.old as { id: number }).id === this.attendance.id)"
+    ],
+    "message": {
+     "keys": [
+      "attendance.deletedByOther"
+     ],
+     "de": [
+      "Die Anwesenheit wurde soeben von einem anderen Nutzer gelöscht"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.deletedByOther')"
+    },
+    "color": "danger",
+    "duration": "3000",
+    "src": "96910ce0",
+    "mbody": "295c9887",
+    "id": "attendance/attendance/attendance.page#toast-af8f3320"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1451"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1771,
+    "method": "AttendancePage.removeFromAttendance",
+    "cond": [],
+    "message": {
+     "keys": [
+      "attendance.personRemoveFailed"
+     ],
+     "de": [
+      "Fehler beim Entfernen der Person"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.personRemoveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "89b8c20c",
+    "mbody": "fc4ff18d",
+    "id": "attendance/attendance/attendance.page#toast-d1c36dcb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2506"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 34,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@for (s of rules; track s.rule.id)",
+     "@if (!s.run && isFuture(s))"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "outline"
+    },
+    "events": [
+     "(click)=suspend(s)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "autoMessages.suspend"
+    ],
+    "de": [
+     "Diesmal aussetzen"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.suspend' | transloco }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#action-32eb1cf7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:165",
+     "lib/data/repositories/auto_message_repository.dart:206"
+    ],
+    "n": "Button, Bedingung (Admin/Verantwortliche, Regel noch nicht gelaufen, Sendezeit in der Zukunft) und Insert in auto_message_runs (status suspended, created_by) gleich. Aber created_by_name: Ionic nimmt db.teamPerson() – nur geladen mit Teamorganisation (Einstellungen/Teamorg/Meine Aufgaben), sonst E-Mail / Flutter nimmt ownProfileProvider – nur geladen nach Besuch der Einstellungen oder mit Seitenleiste (Tablet), sonst E-Mail. „Ausgesetzt von …“ zeigt daher je nach Situation Name statt E-Mail oder umgekehrt.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart",
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 9,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@for (s of rules; track s.rule.id)",
+     "@if (!s.run)",
+     "@if (isFuture(s))"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "autoMessages.panelWillSendHint"
+    ],
+    "de": [
+     "Bis dahin kannst du die Anwesenheit noch korrigieren."
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.panelWillSendHint' | transloco }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-40b5ed17"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:302"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 12,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@for (s of rules; track s.rule.id)",
+     "@if (!s.run)",
+     "@else (not isFuture(s))"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "autoMessages.panelPendingHint"
+    ],
+    "de": [
+     "Die Nachricht geht nur raus, wenn die Anwesenheit erfasst ist."
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.panelPendingHint' | transloco }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-552f8f68"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:303"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 25,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@for (s of rules; track s.rule.id)",
+     "@else (not !s.run)",
+     "@switch (s.run.status) case 'none'"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [
+     "autoMessages.panelNone"
+    ],
+    "de": [
+     "„{rule}“: niemand passte"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.panelNone' | transloco: { rule: s.rule.name } }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-604d5e9c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:299"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 22,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@for (s of rules; track s.rule.id)",
+     "@else (not !s.run)",
+     "@switch (s.run.status) case 'suspended'"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "autoMessages.histRowSuspended",
+     "common.unknown"
+    ],
+    "de": [
+     "Ausgesetzt von {name}",
+     "Unbekannt"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.histRowSuspended' | transloco: { name: s.run.created_by_name || ('common.unknown' | transloco) } }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-9a24a550"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:306"
+    ],
+    "n": "Randfall: leerer created_by_name zeigt in Ionic „Unbekannt“, in Flutter (nur bei null) „Ausgesetzt von “ – praktisch nie.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "line": 122,
+    "method": "AutoMessagePanelComponent.unsuspend",
+    "cond": [],
+    "message": {
+     "keys": [
+      "autoMessages.saveFailed"
+     ],
+     "de": [
+      "Speichern fehlgeschlagen"
+     ],
+     "literals": [],
+     "expr": "translate('autoMessages.saveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f2486862",
+    "mbody": "8fb0704c",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#toast-14f8cca5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:184"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "line": 111,
+    "method": "AutoMessagePanelComponent.suspend",
+    "cond": [],
+    "message": {
+     "keys": [
+      "autoMessages.saveFailed"
+     ],
+     "de": [
+      "Speichern fehlgeschlagen"
+     ],
+     "literals": [],
+     "expr": "translate('autoMessages.saveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f2486862",
+    "mbody": "66231d7c",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#toast-68e701d5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:175"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "line": 158,
+    "method": "AutoMessagePanelComponent.doDecide",
+    "cond": [],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "translate(accept ? 'autoMessages.decidedAccepted' : 'autoMessages.decidedRejected')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "82adf6a6",
+    "mbody": "e510d296",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#toast-6d42c5cf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:235"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "line": 161,
+    "method": "AutoMessagePanelComponent.doDecide",
+    "cond": [],
+    "message": {
+     "keys": [
+      "autoMessages.saveFailed"
+     ],
+     "de": [
+      "Speichern fehlgeschlagen"
+     ],
+     "literals": [],
+     "expr": "translate('autoMessages.saveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f2486862",
+    "mbody": "e510d296",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#toast-cd2bb0ad"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:240"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "dashboard/dashboard.page",
+   "ionic": {
+    "ts": "dashboard/dashboard.page.ts",
+    "html": "dashboard/dashboard.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "dashboard/dashboard.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-back-button",
+    "attrs": {
+     "defaultHref": "/tabs/settings"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"\"",
+    "id": "dashboard/dashboard.page#action-ebca8aeb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:56",
+     "lib/features/dashboard/presentation/pages/administration_page.dart:251"
+    ],
+    "n": "AppBar-Zurück-Pfeil ohne Text; Seite wird aus der Administration gepusht, Zurück führt dorthin wie in Ionic.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "dashboard/dashboard.page",
+   "ionic": {
+    "ts": "dashboard/dashboard.page.ts",
+    "html": "dashboard/dashboard.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "dashboard/dashboard.page.html",
+    "line": 64,
+    "cond": [
+     "*ngIf=\"!loading && hasData\""
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"topTenantsData\"",
+     "[options]=\"topTenantsOptions\""
+    ],
+    "id": "dashboard/dashboard.page#media-236b1c5b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:181",
+     "lib/core/router/app_router.dart:1305",
+     "lib/core/providers/dashboard_providers.dart:31"
+    ],
+    "n": "Rolle: Seite in beiden nur für den Super-Developer (Ionic SuperDeveloperGuard = E-Mail developer@attendix.de; Flutter Route-Redirect + Provider isSuperDeveloperProvider, Einstieg über Administration). Diagramm: senkrechte Balken, Label '#<tenant_id>', Top 10, gleiche Palette, ohne Legende; nur Höhe 280 statt 360 px.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 82,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block"
+    },
+    "events": [
+     "(click)=calculate()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "duty.calculate"
+    ],
+    "de": [
+     "Vorschlag berechnen"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.calculate' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#action-167c9b56"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:440"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 106,
+    "cond": [
+     "@else (not step === 'rules')",
+     "@else (not !rows.length)",
+     "@for (row of rows; track row.termin.attendance.id)",
+     "@for (n of range(row.missing); track $index)"
+    ],
+    "tag": "ion-chip",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=change(row)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "duty.open"
+    ],
+    "de": [
+     "offen"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.open' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#action-17a84369"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:499"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  }
+ ]
+}

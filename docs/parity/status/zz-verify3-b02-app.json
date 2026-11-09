@@ -1,0 +1,235 @@
+{
+  "batch": "zz-verify3-b02-app",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "register/tenant-register/tenant-register.page#nav-32addfec": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1179-1184",
+        "lib/features/registration/data/providers/registration_providers.dart:273"
+      ],
+      "n": "Gleiche Bedingung: neues Passwort-Konto oder nicht angemeldet → /login; angemeldet mit bestehendem Konto (Login/Code) → direkt in die Instanz (_enterTenant ≙ routeAfterAuth). isNewAccount = created && !otpMode (Ionic zusätzlich !db.user, bei Pflicht-Mailbestätigung gleich). Instanz-Flag auto_approve_registrations wirkt nur auf Rolle/Text. Flutter navigiert erst nach Schließen des Erfolgsdialogs."
+    },
+    "register/tenant-register/tenant-register.page#alert-7152356e": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1164-1176",
+        "lib/features/registration/data/providers/registration_providers.dart:368-383"
+      ],
+      "n": "„Registrierung erfolgreich“, gleiche vier Texte je auto_approve_registrations × neues Konto, Knopf „OK“. Dialog erscheint in Flutter vor der Navigation (Ionic danach über der Zielseite)."
+    },
+    "register/tenant-register/tenant-register.page#toast-b1bce191": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1043-1045",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:428-432"
+      ],
+      "n": "In beiden praktisch unerreichbar (Knopf bei fehlenden Gruppen deaktiviert). Hinweis Gruppenladen: Flutter .eq('maingroup', false), Ionic maingroup !== true (auch null) – nur relevant bei Altzeilen mit maingroup null."
+    },
+    "register/tenant-register/tenant-register.page#toast-c0b51c1d": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1046-1049"
+      ],
+      "n": "Nur ohne Anmeldung (Ionic !db.user / Flutter !_isLoggedIn), erste Prüfung, rot. Im Code-Modus vor der Bestätigung ist der Registrieren-Knopf in Flutter deaktiviert (Ionic: Knopf aktiv → dieser Toast bzw. „Passwort zu kurz“); betrifft den Knopf, nicht den Toast."
+    },
+    "register/tenant-register/tenant-register.page#toast-84240372": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1050-1052"
+      ],
+      "n": "Nur ohne Anmeldung, nach der Zustimmungsprüfung, „Bitte eine gültige E-Mail Adresse eingeben.“"
+    },
+    "register/tenant-register/tenant-register.page#toast-c871f0d4": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1056-1058"
+      ],
+      "n": "Nur ohne Anmeldung, nach Längenprüfung, „Die Passwörter stimmen nicht überein.“"
+    },
+    "register/tenant-register/tenant-register.page#toast-f19a42f8": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1060-1062"
+      ],
+      "n": "Für angemeldet und nicht angemeldet; Flutter trimmt die Namen (nur Leerzeichen gilt als leer)."
+    },
+    "register/tenant-register/tenant-register.page#toast-bd259c1e": {
+      "s": "diff",
+      "sev": "niedrig",
+      "v": "korrigiert",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:482-486",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1080-1084"
+      ],
+      "n": "Grundfall gleich (Text-/Textarea-Feld der Anmeldefelder leer → „Bitte füllen Sie das Feld \\\"{field}\\\" aus.“). Erstprüfung übersah: onSaved schreibt nur nicht-leere Werte in _formData. Ionic: Feld nach einem fehlgeschlagenen Absenden geleert → Toast / Flutter: alter Wert bleibt in additionalFields, kein Toast, der gelöschte Wert wird gespeichert. Seltener Randfall."
+    },
+    "register/tenant-register/tenant-register.page#toast-2f09fbd9": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1093-1100"
+      ],
+      "n": "Ja/Nein-Feld mit „einverständnis“ im Namen und Wert false → Toast. Ohne gesetzten Wert wertet Flutter den Schalter als false (Ionic zeigt dort den fieldValue-Toast) – betrifft jenen Toast."
+    },
+    "register/tenant-register/tenant-register.page#toast-f6feb7fb": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1101-1102"
+      ],
+      "n": "Gemeinde nicht gewählt (Wert kein String) → „Bitte wählen Sie eine Gemeinde aus.“; nur wenn bfecg_church in registration_fields."
+    },
+    "register/tenant-register/tenant-register.page#toast-cad3c644": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:1103-1107",
+        "lib/features/registration/presentation/pages/tenant_registration_page.dart:680-682"
+      ],
+      "n": "„Nicht gelistet“ (leerer Wert) und eigener Name getrimmt < 5 Zeichen → Toast, wie Ionic."
+    },
+    "tabs/side-nav/side-nav.component#nav-8a63e2cc": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/shared/widgets/layout/side_nav/side_nav.dart:128-131",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:389-405",
+        "lib/core/constants/enums.dart:137-141"
+      ],
+      "n": "Nach Instanzwechsel Startseite der Rolle in der neuen Instanz: Admin/Verantwortlich/Beobachter → /people (≙ /tabs/player, auch bei aktivem Dashboard-Tab), Eltern → /parents, alle anderen (Helfer, Stimmführer, Spieler, Bewerber) → /signout. Gleiche Instanz: nichts. Ionic zeigt dabei ein Lade-Overlay."
+    },
+    "tabs/side-nav/side-nav.component#effect-81b5e180": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:405",
+        "lib/core/constants/enums.dart:137-141"
+      ],
+      "n": "role.defaultRoute entspricht Utils.getUrl für alle Rollen (gleiches Urteil wie nav-8a63e2cc)."
+    },
+    "tabs/side-nav/side-nav.component#media-8fae1184": {
+      "s": "missing",
+      "sev": "niedrig",
+      "v": "bestätigt",
+      "f": [
+        "lib/shared/widgets/layout/side_nav/side_nav.dart:614-626"
+      ],
+      "n": "Ionic: mit tenants.logo_url zeigt der Instanz-Knopf im Sidepanel das Logo-Bild / Flutter: Tenant-Modell hat kein logo_url, immer Initialen. Nur Tablet/Desktop, alle Rollen."
+    },
+    "tabs/side-nav/side-nav.component#text-9e2fb11a": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/shared/widgets/layout/side_nav/side_nav.dart:650-652"
+      ],
+      "n": "„# Instanz/Instanzen“ nur bei mehr als einer Instanz und ausgeklapptem Panel; rollenunabhängig in beiden."
+    },
+    "tabs/side-nav/side-nav.component#popover-bfa8543b": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/shared/widgets/layout/side_nav/side_nav.dart:667-698"
+      ],
+      "n": "Nur bei mehreren Instanzen: Liste aller Instanzen, aktuelle mit Badge „Aktuell“, Breite 240, eingeklappt seitlich. Rollenunabhängig."
+    },
+    "tabs/side-nav/side-nav.component#text-5522586b": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/shared/widgets/layout/side_nav/nav_items.dart:215-225",
+        "lib/shared/widgets/layout/side_nav/side_nav.dart:189-194"
+      ],
+      "n": "Admin/Verantwortlich: drei Überschriften (Übersicht/Team/Verwaltung), alle anderen Rollen nur „Konto“; im eingeklappten Panel Trenner statt Überschrift. Wie Ionic."
+    },
+    "tabs/side-nav/side-nav.component#action-b52e84d3": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/shared/widgets/layout/side_nav/nav_items.dart:70-226",
+        "lib/shared/widgets/layout/side_nav/side_nav.dart:150-205",
+        "lib/core/providers/role_permission_providers.dart:116-120"
+      ],
+      "n": "Einträge je Rolle identisch zu buildNavGroups (Dashboard/Ablaufpläne/Mitteilungen/Statistik nur Admin+Verantw., Personen für Admin/Verantw./Beobachter, Termine für diese + Helfer/Helfer-Stimmführer, Meine Termine außer Leitung/Beobachter/Eltern, Mitglieder bei showMembersList für Helfer/Stimmführer/Spieler/NONE, Werke nicht bei general/Bewerber/Eltern, Meine Stimme Stimmführer, Übersicht Spieler/Helfer mit >1 Instanz). Mandant: Dateiablage (files_shared), Organisation, Teamorganisation (Leitung/Kreis/eigene Aufgaben) gleich. Badges: offene Anträge nur Admin/Verantw., offene Aufgaben, „99+“."
+    },
+    "tabs/tabs.page#effect-179a0567": {
+      "s": "diff",
+      "sev": "niedrig",
+      "v": "korrigiert",
+      "f": [
+        "lib/core/router/app_router.dart:212-243",
+        "lib/core/router/app_router.dart:428-442",
+        "lib/core/constants/enums.dart:137-141"
+      ],
+      "n": "Flutter besser: Ziel gleich (defaultRoute = Utils.getUrl je Rolle). Erstprüfung übersah die Regel effect=nav: gleiches Urteil wie nav-0ccaf6f8 (zz-verify2). Ionic leitet beim Laden/Instanzwechsel per isUrlAccessAllowed um, dessen Liste Lücken hat: Helfer/Helfer-Stimmführer landen beim Neuladen von /tabs/attendance auf „Meine Termine“, Spieler/Helfer beim Neuladen von /tabs/overview / Flutter lässt beide passend zu den sichtbaren Tabs zu."
+    },
+    "tabs/tabs.page#action-bc38dad9": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/shared/widgets/layout/main_shell.dart:73-80",
+        "lib/core/providers/dashboard_providers.dart:211-215"
+      ],
+      "n": "Nur Admin/Verantwortlich mit user_metadata showDashboardTab_<tenantId>, erster Tab „Dashboard“; alle anderen Rollen nie."
+    },
+    "tabs/tabs.page#action-4846e761": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/shared/widgets/layout/main_shell.dart:104-112"
+      ],
+      "n": "Helfer, Stimmführer, Helfer-Stimmführer, Spieler, NONE und nur bei tenant.showMembersList; Leitung/Beobachter/Eltern/Bewerber nie. Wie Ionic."
+    },
+    "terms/terms.page#nav-8447fd12": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/core/router/app_router.dart:335-337",
+        "lib/core/router/app_router.dart:375-376"
+      ],
+      "n": "Ohne Sitzung leitet der Router /terms auf /login um (Ionic ngOnInit nach checkToken)."
+    },
+    "terms/terms.page#db-d9bee59a": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/account_repository.dart:54-60"
+      ],
+      "n": "refreshSession vor dem Stempeln, bei Fehler signOut."
+    },
+    "terms/terms.page#nav-efbc7cef": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/legal/presentation/pages/terms_page.dart:59-61"
+      ],
+      "n": "Refresh-Fehler → Abmelden und /login."
+    },
+    "terms/terms.page#toast-f7e63a46": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/legal/presentation/pages/terms_page.dart:62-63"
+      ],
+      "n": "„Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.“ als Warn-Toast."
+    },
+    "terms/terms.page#toast-be2dc843": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/legal/presentation/pages/terms_page.dart:64-68",
+        "lib/data/repositories/account_repository.dart:61-70"
+      ],
+      "n": "updateUser-Fehler → „Fehler beim Speichern. Bitte versuche es erneut.“ rot."
+    }
+  },
+  "extra": []
+}

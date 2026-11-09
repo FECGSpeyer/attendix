@@ -1,0 +1,731 @@
+{
+  "batch": "zz-verify-overview-people",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "dashboard/dashboard.page#db-b3d10dca": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/administration_repository.dart:94",
+        "lib/core/providers/dashboard_providers.dart:318"
+      ],
+      "n": "Gleiche RPC usage_kpis mit p_since (jetzt − 7/30/90 Tage, ISO-UTC) und p_events (dieselben 28 TrackingEvent-Namen wie Ionic KNOWN_EVENTS); bewusst ohne tenantId wie Ionic (serverseitig assert_usage_dashboard_access).",
+      "v": "bestätigt"
+    },
+    "dashboard/dashboard.page#db-98608218": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/administration_repository.dart:95"
+      ],
+      "v": "bestätigt"
+    },
+    "dashboard/dashboard.page#db-1ab98808": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/administration_repository.dart:96"
+      ],
+      "v": "bestätigt"
+    },
+    "dashboard/dashboard.page#db-6985c91d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/administration_repository.dart:97"
+      ],
+      "v": "bestätigt"
+    },
+    "dashboard/dashboard.page#db-5b0cea53": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/administration_repository.dart:98"
+      ],
+      "v": "bestätigt"
+    },
+    "dashboard/dashboard.page#text-294b907e": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:79",
+        "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:86"
+      ],
+      "n": "'Keine Events im gewählten Zeitraum.' bei total_events = 0 und (wie Ionic hasData=false) auch bei RPC-Fehler.",
+      "v": "bestätigt"
+    },
+    "dashboard/dashboard.page#text-c0b6e0d4": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:122"
+      ],
+      "n": "Erster Eintrag von usage_events_by_name (absteigend sortiert), sonst '—'.",
+      "v": "bestätigt"
+    },
+    "export/export.page#action-affb31d3": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/export/presentation/pages/export_page.dart:200",
+        "lib/features/export/presentation/pages/export_page.dart:236"
+      ],
+      "n": "Ziehen am Griff rechts und Wischen zum Entfernen (Papierkorb) gleich. Flutter zeigt bei selbst hinzugefügten Feldern zusätzlich den Untertitel 'Eigenes Feld (leer)' (Flutter-Text), Ionic nur den Feldnamen.",
+      "v": "bestätigt"
+    },
+    "history/history.page#alert-6e1a25c4": {
+      "s": "ok",
+      "f": [
+        "lib/features/history/presentation/pages/history_page.dart:367",
+        "lib/features/history/presentation/pages/history_page.dart:479"
+      ],
+      "n": "Titel 'Dirigent eingeben', Textfeld 'Dirigent' (Flutter als Label statt Platzhalter), 'Abbrechen'/'Speichern'. Randfälle: leerer Name bzw. Abbrechen lässt in Flutter die vorige Auswahl stehen (Ionic: 'Anderer Dirigent' ohne Namen).",
+      "v": "bestätigt"
+    },
+    "history/history.page#toast-a7d10e87": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/history/presentation/pages/history_page.dart:445"
+      ],
+      "n": "Text 'Bitte wähle mindestens ein Werk an' gleich. Ionic: Farbe danger (rot) / Flutter: ToastHelper.showWarning (orange). Zudem startet Flutter ohne vorausgewähltes Werk (Ionic: selectedSongs = [songs[0].id]), der Hinweis kommt in Flutter also schon beim ersten 'Hinzufügen' ohne Auswahl.",
+      "v": "bestätigt"
+    },
+    "history/history.page#modal-0bbf542e": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/history/presentation/pages/history_page.dart:223",
+        "lib/features/history/presentation/pages/history_page.dart:260",
+        "lib/features/history/presentation/pages/history_page.dart:280",
+        "lib/core/providers/history_providers.dart:72"
+      ],
+      "n": "Sheet (70 %) per FAB wie Ionic. Aber: _showAddDialog liest planSongsProviderHistory nur per ref.read (einzige Verwendung, nirgends gewatcht); der FutureProvider ist beim ersten Lesen AsyncLoading → songs leer → Warn-Toast 'Keine Werke gefunden', das Sheet öffnet nicht. Erst ein weiterer Tipp nach dem Laden (bzw. nach Instanzwechsel erneut) funktioniert. Ionic lädt die Werke beim Seitenstart und öffnet sofort, mit dem ersten Werk vorausgewählt (Flutter: keine Vorauswahl).",
+      "v": "bestätigt"
+    },
+    "history/history.page#field-c1a5fc20": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/history/presentation/pages/history_page.dart:812",
+        "lib/features/history/presentation/pages/history_page.dart:829",
+        "lib/data/models/song/song.dart:150"
+      ],
+      "n": "Platzhalter 'Werk suchen...' gleich. Ionic sucht in '{prefix}{nummer} {name}' (Anzeige ebenso) / Flutter in displayName '{prefix}{nummer} - {name}' (Anzeige mit ' - '); Suchbegriffe über Nummer und Name hinweg ('12 Ave') finden in Flutter nichts.",
+      "v": "bestätigt"
+    },
+    "history/history.page#field-1bf71ecb": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/history/presentation/pages/history_page.dart:388"
+      ],
+      "n": "Ionic: eingegebener Name als editierbares ion-input / Flutter: nur als Textzeile; Korrektur nur über erneute Auswahl 'Anderer Dirigent'.",
+      "v": "bestätigt"
+    },
+    "home-dashboard/components/absences-card/absences-card.component#modal-6daf3e85": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/dashboard/presentation/widgets/people_cards.dart:14"
+      ],
+      "n": "Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten.",
+      "v": "bestätigt"
+    },
+    "home-dashboard/components/birthdays-card/birthdays-card.component#modal-388a556f": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/dashboard/presentation/widgets/people_cards.dart:14"
+      ],
+      "n": "Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten.",
+      "v": "bestätigt"
+    },
+    "home-dashboard/components/critical-persons-card/critical-persons-card.component#modal-160799e3": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/dashboard/presentation/widgets/people_cards.dart:14"
+      ],
+      "n": "Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten.",
+      "v": "bestätigt"
+    },
+    "home-dashboard/components/member-changes-card/member-changes-card.component#modal-04f3c3d5": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/dashboard/presentation/widgets/people_cards.dart:14"
+      ],
+      "n": "Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten.",
+      "v": "bestätigt"
+    },
+    "home-dashboard/components/next-event-card/next-event-card.component#modal-29087654": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/dashboard/presentation/widgets/event_cards.dart:48"
+      ],
+      "n": "Ionic: AttendancePage als Modal (isModal, iOS Karten-Modal, md Vollbild) / Flutter: context.push('/attendance/<id>') als normale Seite. Rollenbedingung (Admin, Verantwortlicher, Helfer, Stimmführer-Helfer) und Neuladen danach gleich.",
+      "v": "bestätigt"
+    },
+    "home-dashboard/components/next-event-card/next-event-card.component#text-120492fb": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/widgets/event_cards.dart:251"
+      ],
+      "v": "bestätigt"
+    },
+    "home-dashboard/home-dashboard.page#nav-1c9dc137": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:188",
+        "lib/core/utils/dashboard_logic.dart:56"
+      ],
+      "n": "Ionic: nach Instanzwechsel immer Utils.getUrl(role) → Admin/Verantwortlicher/Betrachter '/tabs/player', Eltern '/tabs/parents', sonst '/tabs/signout' / Flutter: homeRouteFor → '/home-dashboard', wenn im neuen Tenant der Dashboard-Tab aktiv ist (showDashboardTab_<id>, Admin/Verantwortlicher), sonst role.defaultRoute. Admin bleibt dann auf dem Dashboard statt in 'Personen'.",
+      "v": "bestätigt"
+    },
+    "home-dashboard/home-dashboard.page#effect-e221ccc5": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:188",
+        "lib/core/utils/dashboard_logic.dart:56"
+      ],
+      "n": "Ionic: nach Instanzwechsel immer Utils.getUrl(role) → Admin/Verantwortlicher/Betrachter '/tabs/player', Eltern '/tabs/parents', sonst '/tabs/signout' / Flutter: homeRouteFor → '/home-dashboard', wenn im neuen Tenant der Dashboard-Tab aktiv ist (showDashboardTab_<id>, Admin/Verantwortlicher), sonst role.defaultRoute. Admin bleibt dann auf dem Dashboard statt in 'Personen'. (gleiches Urteil wie nav-1c9dc137)",
+      "v": "bestätigt"
+    },
+    "messages/message-compose/message-compose.component#text-70022f65": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/message_compose_page.dart:543"
+      ],
+      "n": "'Die Empfänger konnten nicht geladen werden.' in Fehlerfarbe mit 'Erneut versuchen' wie Ionic.",
+      "v": "bestätigt"
+    },
+    "messages/message-detail/message-detail.page#logic-9a7e9461": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/messages/presentation/pages/message_detail_page.dart:56",
+        "lib/features/messages/presentation/pages/message_detail_page.dart:78",
+        "lib/features/messages/presentation/pages/message_detail_page.dart:116",
+        "lib/features/messages/presentation/pages/message_detail_page.dart:247",
+        "lib/core/providers/message_providers.dart:58",
+        "lib/data/repositories/message_repository.dart:48",
+        "lib/data/repositories/auto_message_repository.dart:241",
+        "lib/features/messages/presentation/widgets/message_termin_section.dart:62"
+      ],
+      "n": "Kernlogik gleich (Instanzwechsel zur Mitteilung, Manager = Admin/Verantwortlicher der aktuellen Instanz, Inhalt eingeklappt für Manager, markRead mit ignorierten Fehlern, Personalisierung, Zähler/Chips/Filter, Termin-Karte und canRespond, frühere Mitteilungen max. 5, Löschen → /settings/messages). Nachgeprüft: getMessageById filtert auf aktuelle + eigene Instanzen (Ionic getMessage ohne Filter) und getAttendanceInfo verwirft archivierte Termine für Nicht-Admins (Ionic ohne Archiv-Filter) – beide extra-Befunde der Erstprüfung (mittel) treffen zu.",
+      "v": "bestätigt"
+    },
+    "messages/message-detail/message-detail.page#toast-264998c7": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/messages/presentation/pages/message_detail_page.dart:143",
+        "lib/features/messages/presentation/pages/message_detail_page.dart:252",
+        "lib/features/messages/presentation/pages/message_detail_page.dart:600"
+      ],
+      "n": "Ionic: roter Toast 'Mitteilung konnte nicht geladen werden' bei jedem Ladefehler in load() (Mitteilung, Instanzwechsel, Empfängerliste, frühere Mitteilungen) / Flutter: kein Toast; Fehler der Mitteilung → zentrierter Text mit demselben Wortlaut, Fehler der Empfängerliste → stumm 0/0-Kacheln und 'Keine Personen in dieser Ansicht.', Fehler der früheren Mitteilungen → Liste fehlt stumm.",
+      "v": "bestätigt"
+    },
+    "messages/message-detail/message-detail.page#action-0dd41e66": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/widgets/message_termin_section.dart:84",
+        "lib/features/messages/presentation/widgets/message_termin_section.dart:183"
+      ],
+      "n": "'Grund nachtragen' bzw. 'Rückmeldung ändern', gleiche Bedingung (Mitglied, Termin, allow_responses, eigene Zeile, bis Termin + 8 Tage, keine/offene Rückmeldung), öffnet Antwort-Dialog, Erfolgs-Toast und Neuladen wie Ionic (Abweichung bei archivierten Terminen siehe logic).",
+      "v": "bestätigt"
+    },
+    "messages/message-list/message-list.page#logic-90f4604f": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/message_list_page.dart:34",
+        "lib/core/providers/message_providers.dart:44",
+        "lib/data/repositories/message_repository.dart:31",
+        "lib/data/repositories/message_repository.dart:97",
+        "lib/core/providers/auto_message_providers.dart:44"
+      ],
+      "n": "Laden (tenantId, max. 100, neueste zuerst), Gelesen/Probleme je Mitteilung (read_at|email_opened_at bzw. push_failed|email_failed), readPercent, aktive Regeln, Neuladen nach Rückkehr vom Detail, Löschen mit Bestätigung – gleich. Ladefehler-Toast eigenes Item.",
+      "v": "bestätigt"
+    },
+    "messages/message-list/message-list.page#modal-bb949983": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/message_compose_page.dart:23"
+      ],
+      "n": "Vollbild-Dialog (fullscreenDialog) wie Ionic-Modal ohne presentingElement; nach Versand Öffnen des Details.",
+      "v": "bestätigt"
+    },
+    "messages/message-list/message-list.page#action-4c1cdd16": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/messages/presentation/pages/message_list_page.dart:313"
+      ],
+      "n": "Text 'Erste Mitteilung schreiben', runde Form und Aktion gleich. Icon: Ionic create-outline / Flutter Icons.edit_note.",
+      "v": "bestätigt"
+    },
+    "notifications/notifications.page#logic-4cbdd102": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/notifications/presentation/pages/notifications_page.dart:60",
+        "lib/features/notifications/presentation/pages/notifications_page.dart:103",
+        "lib/features/notifications/presentation/pages/notifications_page.dart:119",
+        "lib/features/notifications/presentation/pages/notifications_page.dart:125",
+        "lib/core/services/telegram_service.dart:181",
+        "lib/core/services/telegram_service.dart:207"
+      ],
+      "n": "Gleich: Konfiguration per Benutzer-Id (fehlende Zeile mit denselben Defaults angelegt), Realtime-Abo, jede Änderung schreibt die ganze Zeile (eq id), Telegram trennen → telegram_chat_id '', enabled_tenants als Zahlen, Live Activity speichern + setEnabled, Push über togglePush (push_enabled + initPush), Dienste-Schalter nur bei duty_mode. Abweichungen nur bei Fehlern/Laden (extra der Erstprüfung, niedrig).",
+      "v": "bestätigt"
+    },
+    "notifications/notifications.page#field-05b9f833": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/notifications/presentation/pages/notifications_page.dart:223",
+        "lib/core/services/live_activity_service.dart:149"
+      ],
+      "n": "Sichtbarkeit (native App mit Live-Activity-Plugin; Ionic hat das Plugin auch unter Android) und Wirkung gleich. Helfertext: Ionic iOS '…auf dem Sperrbildschirm und in der Dynamic Island.', Android '…auf dem Sperrbildschirm.' / Flutter: Bedingung isSupportedPlatform ist auf iOS UND Android true → Android zeigt den iOS-Text mit Dynamic Island.",
+      "v": "bestätigt"
+    },
+    "notifications/notifications.page#text-809405e4": {
+      "s": "ok",
+      "f": [
+        "lib/features/notifications/presentation/pages/notifications_page.dart:332"
+      ],
+      "n": "Flutter fällt bei leerem longName auf shortName zurück.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#logic-49d4b21b": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/core/providers/statistics_providers.dart:54",
+        "lib/core/providers/statistics_providers.dart:69",
+        "lib/core/providers/statistics_providers.dart:200",
+        "lib/features/statistics/presentation/pages/statistics_page.dart:127",
+        "lib/features/statistics/presentation/pages/statistics_page.dart:759",
+        "lib/features/statistics/presentation/pages/statistics_page.dart:787",
+        "lib/features/statistics/presentation/pages/statistics_page.dart:849",
+        "lib/features/statistics/presentation/pages/statistics_page.dart:877"
+      ],
+      "n": "Datenbasis und Berechnungen wie Erstprüfung beschrieben gleich (Zeitraum Saisonstart bzw. 2023-01-01 bis heute, nur Termine bis heute, Prozent je Termin neu berechnet, Ø nur include_in_average, Aggregationen über aktive Personen, Organisation). Nachgeprüft: fl_chart 0.69.2 (pub-cache) kennt keine Drehung; die Balkendiagramme sind senkrecht, untere Achse leer, Namen über leftTitles an den Y-Wert-Teilstrichen (data[0], data[20] …) → Namen stehen nicht an ihren Balken (extra 'Balkendiagramme ohne zuordenbare Namen', hoch, trifft zu).",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#field-d9134dd8": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/statistics/presentation/pages/statistics_page.dart:347",
+        "lib/features/statistics/presentation/pages/statistics_page.dart:392"
+      ],
+      "n": "Ionic ion-datetime-button mit locale de-DE zeigt das Intl-Kurzformat ('1. Sept. 2025'; Ionic-Paket nicht im Container) / Flutter '01.09.2025' (DateHelper.getShortDate).",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#field-e8b28445": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/statistics/presentation/pages/statistics_page.dart:325",
+        "lib/features/statistics/presentation/pages/statistics_page.dart:336",
+        "lib/core/providers/statistics_providers.dart:43"
+      ],
+      "n": "Flutter besser: 'Bis' ist auf ≥ 'Von' begrenzt (Obergrenze heute + 2 Jahre), Ionic ohne Grenzen. Ionic Kalender im Modal mit Sofortübernahme / Flutter Datumsdialog; Neuberechnung bei Auswahl gleich.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#text-f8479cf2": {
+      "s": "ok",
+      "f": [
+        "lib/features/statistics/presentation/pages/statistics_page.dart:454",
+        "lib/data/models/attendance/attendance.dart:332"
+      ],
+      "v": "bestätigt"
+    },
+    "stats/stats.page#text-0d669f08": {
+      "s": "ok",
+      "f": [
+        "lib/features/statistics/presentation/pages/statistics_page.dart:270"
+      ],
+      "v": "bestätigt"
+    },
+    "stats/stats.page#field-2d5da58e": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/statistics/presentation/pages/statistics_page.dart:1254",
+        "lib/features/statistics/presentation/pages/statistics_page.dart:1307"
+      ],
+      "n": "Ionic: ion-select multiple interface='modal' (Auswahlliste als Modal, Übernahme beim Schließen, kein Abbrechen) / Flutter: AlertDialog mit Checkboxen und 'Abbrechen'/'OK'. Anzeige der gewählten Namen und Filterwirkung (Personen und deren Instanzen nur aus der Auswahl) gleich.",
+      "v": "bestätigt"
+    },
+    "people/bulk-edit/bulk-edit.page#logic-84c1649d": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:77",
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:115",
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:136",
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:166",
+        "lib/features/people/presentation/pages/people_list_page.dart:1280"
+      ],
+      "n": "Feldliste, Wertermittlung, changedCount, Speichern (player-Update bzw. tenant_group_person_fields für Org-Felder) und Termin-Sync wie Ionic. Abweichungen: Startwert 'Für alle setzen', Sichtbarkeit Zusatzfelder, Zahlentyp, Org-Fehler-Toast (extra der Erstprüfung) sowie zusätzlich: Personenwerte ohne aufgefüllte Defaults (siehe extra).",
+      "v": "bestätigt"
+    },
+    "people/bulk-edit/bulk-edit.page#field-399cfe3f": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:521"
+      ],
+      "v": "bestätigt"
+    },
+    "people/bulk-edit/bulk-edit.page#field-523de84f-2": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:531",
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:115"
+      ],
+      "n": "Zahlenfeld mit Platzhalter = Feldname gleich. Startwert: Ionic 0 (Feld-Standardwert ignoriert) / Flutter Feld-Standardwert, sonst leer (null) → 'Für alle setzen' ohne Eingabe schreibt null statt 0.",
+      "v": "bestätigt"
+    },
+    "people/bulk-edit/bulk-edit.page#field-817de781": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:537",
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:115"
+      ],
+      "n": "Ionic: ion-toggle mit Beschriftung = Feldname, Startwert true / Flutter: Schalter ohne Beschriftung, Startwert Feld-Standardwert, sonst false → 'Für alle setzen' ohne Änderung schreibt false statt true.",
+      "v": "bestätigt"
+    },
+    "people/bulk-edit/bulk-edit.page#field-fc367be8-2": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:546",
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:115"
+      ],
+      "n": "Gemeinde-Auswahl gleich. Startwert: Ionic erste Gemeinde (churches[0].id) / Flutter Feld-Standardwert, sonst '' → Auswahl leer, 'Für alle setzen' schreibt ''.",
+      "v": "bestätigt"
+    },
+    "people/bulk-edit/bulk-edit.page#field-523de84f-3": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:552",
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:115"
+      ],
+      "n": "Ionic: natives input type=date (leerbar), Startwert new Date().toISOString() (nicht angezeigt, aber von 'Für alle setzen' geschrieben) / Flutter: Button mit Datumsdialog ('Kein Datum gewählt'), nicht leerbar, Startwert Standardwert oder '' → schreibt ''.",
+      "v": "bestätigt"
+    },
+    "people/bulk-edit/bulk-edit.page#field-40247d7a": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:514"
+      ],
+      "v": "bestätigt"
+    },
+    "people/bulk-edit/bulk-edit.page#action-a2a2fcd3": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:433"
+      ],
+      "n": "Texte 'Speichern...' / '# Änderung(en) speichern' / 'Keine Änderungen' und Deaktivierung gleich. Ionic: Spinner vor 'Speichern...' / Flutter: nur Text.",
+      "v": "bestätigt"
+    },
+    "people/import/import.page#logic-5814da2d": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/people/presentation/pages/person_import_page.dart:52",
+        "lib/features/people/presentation/pages/person_import_page.dart:59",
+        "lib/features/people/presentation/pages/person_import_page.dart:108",
+        "lib/features/people/presentation/pages/person_import_page.dart:156",
+        "lib/core/utils/spreadsheet_reader.dart:43"
+      ],
+      "n": "Schritte, Zähler, Duplikat-Prüfung, Rolle, Konten nur mit E-Mail, Fortschritt und Ergebnis wie Ionic. Nachgeprüft: Kontext/Ziele/Vorlage nur aus currentTenant.additionalFields (Ionic getPersonExtraFields inkl. Org-Felder) und .xls wird abgelehnt – extra der Erstprüfung (hoch) treffen zu.",
+      "v": "bestätigt"
+    },
+    "people/import/import.page#toast-9635ec11": {
+      "s": "na",
+      "f": [
+        "lib/features/people/presentation/pages/person_import_page.dart:292"
+      ],
+      "n": "toter Code: 'Weiter' ist bei !canProceedFromMapping deaktiviert (import.page.html:128), proceedToPreview läuft sonst nicht in den Zweig. Flutter hat denselben Guard.",
+      "v": "bestätigt"
+    },
+    "people/import/import.page#text-da6273ad": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/people/presentation/pages/person_import_page.dart:245",
+        "lib/features/people/presentation/widgets/import_widgets.dart:30"
+      ],
+      "n": "Text gleich. Ionic: grau (.intro medium, 0.9rem) / Flutter: normale Textfarbe. Der Text nennt .xls, das Flutter ablehnt (siehe field-bdcf25e7).",
+      "v": "bestätigt"
+    },
+    "people/import/import.page#field-bdcf25e7": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/core/utils/import_file_io.dart:10",
+        "lib/core/utils/spreadsheet_reader.dart:43"
+      ],
+      "n": "Auswahl .xlsx/.xls/.csv gleich. Ionic: SheetJS liest auch .xls / Flutter: .xls wird mit 'Das alte Excel-Format (.xls) wird nicht unterstützt…' abgelehnt, obwohl der Einleitungstext .xls nennt.",
+      "v": "bestätigt"
+    },
+    "people/import/import.page#action-2d35c2c8": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/widgets/import_widgets.dart:42",
+        "lib/features/people/presentation/pages/person_import_page.dart:108",
+        "lib/core/services/zip_service_io.dart:9"
+      ],
+      "n": "Datei 'Personen_Import_Vorlage.xlsx', Blatt 'Import', Beispielzeile gleich. Ionic: Spalten inkl. Org-Zusatzfelder; nativ Datei öffnen (FileViewer), mobiles Web Share-Sheet / Flutter: nur Tenant-Zusatzfelder; nativ Share-Sheet mit Text 'Song-Dateien', Web immer Download.",
+      "v": "bestätigt"
+    },
+    "people/import/import.page#field-2d96b151": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/people/presentation/widgets/import_widgets.dart:92",
+        "lib/features/people/presentation/pages/person_import_page.dart:63"
+      ],
+      "n": "Dropdown je Spalte (Label = Spaltenname, Platzhalter 'Feld wählen...', Standardoptionen in gleicher Reihenfolge) gleich. Ionic: danach alle Zusatzfelder inkl. Org-Felder / Flutter: nur Tenant-Zusatzfelder → Spalten für Org-Felder lassen sich nicht zuordnen, ihre Werte gehen beim Import verloren. Erstprüfung: mittel – fehlende Funktion/Daten ist hoch (wie das zugehörige extra).",
+      "v": "korrigiert"
+    },
+    "people/list/list.page#logic-9183f2d4": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:93",
+        "lib/features/people/presentation/pages/people_list_page.dart:250",
+        "lib/features/people/presentation/pages/people_list_page.dart:1575",
+        "lib/data/models/person/person.dart:141",
+        "lib/features/people/people_list_utils.dart:59",
+        "lib/data/repositories/player_repository.dart:1844"
+      ],
+      "n": "Kern (Realtime, Filter/Sortierung/Ansicht je Instanz gespeichert, Pausieren/Archivieren/Entfernen, Geburtstags-Banner, Reorder) wie Ionic. Nachgeprüft: Person.teacherName ist includeFromJson:false und wird nirgends gesetzt → Ansicht 'Lehrer' immer 'Kein Lehrer' (hoch); sortPeopleByGroup vergleicht toLowerCase().compareTo (Umlaute nach z). Übrige extra der Erstprüfung plausibel.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#modal-38ba21ec": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:604",
+        "lib/features/people/presentation/pages/people_list_page.dart:563",
+        "lib/features/people/presentation/pages/people_list_page.dart:664",
+        "lib/core/router/app_router.dart:799",
+        "lib/core/router/app_router.dart:804",
+        "lib/features/people/presentation/pages/person_detail_page.dart:1702"
+      ],
+      "n": "Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') bzw. '/people/new' als normale Seite im Shell. Leserecht für Betrachter in der Detailseite gleich.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#db-a9ead6a0": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1163",
+        "lib/features/people/presentation/pages/people_list_page.dart:1171",
+        "lib/data/repositories/player_repository.dart:1844"
+      ],
+      "n": "Ionic: update player.sort_order nur für Personen mit sort_order != null (verschobene Gruppe + schon gesetzte Werte), Filter nur id / Flutter: schreibt sort_order 1..n für alle angezeigten Personen aller Gruppen, mit id + tenantId. Folge: auch nie sortierte Gruppen werden dauerhaft eingefroren; später angelegte oder umbenannte Personen stehen dort am Gruppenende statt alphabetisch. Erstprüfung: niedrig – dauerhaft andere Reihenfolge ist mittel.",
+      "v": "korrigiert"
+    },
+    "people/list/list.page#toast-9a849d38": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1176"
+      ],
+      "n": "Flutter besser: Ionic prüft das {error} der Supabase-Updates nicht; postgrest-js wirft ohne throwOnError auch bei Netzfehlern nicht (geprüft an @supabase/postgrest-js 2.x im npx-Cache, Ionic-Version selbst nicht im Container) → der Catch mit 'Fehler beim Speichern der Reihenfolge' ist praktisch unerreichbar, Ionic meldet auch bei Fehlschlag 'Reihenfolge gespeichert'. Flutter zeigt den roten Fehler-Toast, wenn ein Update scheitert. Erstprüfung: ok.",
+      "v": "korrigiert"
+    },
+    "people/list/list.page#alert-76ef2f5f": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:993",
+        "lib/features/people/presentation/pages/people_list_page.dart:1044",
+        "lib/features/people/presentation/pages/people_list_page.dart:296"
+      ],
+      "n": "Ionic: Alert mit Radio-Liste (Optionen bzw. Gemeindenamen, gespeicherte bzw. erste Option vorausgewählt) und 'Abbrechen' (→ Alle) / 'Filtern' / Flutter: Auswahl-Dialog ohne Buttons und Vorauswahl, Tipp filtert sofort (Wegtippen → Alle). Ionic trifft Personen ohne Wert über den aufgefüllten Default, Flutter nicht (extra 'Zusatzfeld-Defaults'). Flutter wertet auch Org-Felder aus (Ionic nur tenant.additional_fields).",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#loading-93ed0021": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/people/presentation/widgets/pause_person_sheet.dart:211",
+        "lib/features/people/presentation/widgets/pause_person_sheet.dart:221"
+      ],
+      "n": "Ionic: blockierendes Overlay 'Wird pausiert...' / Flutter: kein Overlay; danach zusätzlich grüne Snackbar '<Vorname> wurde pausiert' (Ionic: keine Meldung).",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#modal-a495856e": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1280",
+        "lib/features/people/presentation/pages/people_list_page.dart:1289"
+      ],
+      "n": "Gefilterte Personen übergeben, Neuladen bei Rückgabe true gleich. Ionic: Modal mit presentingElement → auf iOS Karten-Modal (Seite dahinter sichtbar, Wischen schließt), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) auf allen Plattformen. Erstprüfung: ok – Darstellung auf iOS weicht ab (wie instrument-list modal-1bead9c9 bewertet).",
+      "v": "korrigiert"
+    },
+    "people/list/list.page#modal-99a2d84a": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1128",
+        "lib/features/people/presentation/pages/people_list_page.dart:1139",
+        "lib/shared/widgets/sheets/church_overview_sheet.dart:61",
+        "lib/shared/widgets/sheets/church_overview_sheet.dart:70"
+      ],
+      "n": "Trigger, Sheet (Start 0.5) und Untertitel 'Personen' gleich. Daten: Ionic zählt Personen ohne Gemeinde-Wert über den aufgefüllten Default (defaultValue bzw. erste Gemeinde) / Flutter als 'ohne Gemeinde' (churchIdOf → null).",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-15041222": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:503",
+        "lib/features/people/presentation/pages/people_list_page.dart:648",
+        "lib/features/people/presentation/pages/people_list_page.dart:670"
+      ],
+      "n": "Ionic: Pull-to-Refresh lädt Personen und Termine (Prozente) neu und wartet / Flutter: invalidiert nur realtimePlayersProvider, Spinner endet sofort; Prozente kommen aus playerAttendancePercentagesProvider (nur per Realtime-Zähler aktualisiert).",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#field-ed9d9a10": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:93",
+        "lib/features/people/presentation/pages/people_list_page.dart:909"
+      ],
+      "n": "Mehrfachauswahl mit gleichen Optionen, Reihenfolge und Bedingungen (Instrumente nur Chor, VoS-Optionen, Stimmführer nicht 'general', Lehrer nur maintainTeachers, Zusatzfelder boolean/text/select/Gemeinde/Zahl); Default Gruppe/Stimmführer/Anwesenheit/Problemfälle/Pausiert; je Instanz gespeichert.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-e7b7f732": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1189",
+        "lib/features/people/presentation/pages/people_list_page.dart:1147"
+      ],
+      "n": "Ionic: Reihenfolge direkt in der normalen Liste (ion-reorder-Griffe in den vollen Zeilen, Gruppen-Trenner) / Flutter: eigene vereinfachte Liste (Karten nur mit Name + Ziehgriff, Gruppentitel als Text) plus X zum Verwerfen. Zeileninhalt siehe action-982a1154.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-982a1154": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:604",
+        "lib/features/people/presentation/pages/people_list_page.dart:1575",
+        "lib/data/models/person/person.dart:141"
+      ],
+      "n": "Tipp öffnet die Person (Darstellung siehe modal-38ba21ec); Name, Untertext (Gruppe | Geburtsdatum | Testergebnis | Instrumente | Sonstige Dienste), Notizen und Badges (Stimmführer/Neu/Problemfall/Pausiert/Prüfling, Prozent 75/50) in Ionic-Reihenfolge. Nachgeprüft: Ansicht 'Lehrer' zeigt in Flutter immer 'Kein Lehrer', weil Person.teacherName nie befüllt wird (Ionic 'Lehrer: <Name>'); Zusatzfeld-Badges/-Zeilen ohne aufgefüllte Defaults; kein '0%'-Badge ohne gezählte Termine.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-0df20264": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:604",
+        "lib/features/people/presentation/pages/people_list_page.dart:1575",
+        "lib/data/models/person/person.dart:141"
+      ],
+      "n": "Tipp öffnet die Person (Darstellung siehe modal-38ba21ec); Name, Untertext (Gruppe | Geburtsdatum | Testergebnis | Instrumente | Sonstige Dienste), Notizen und Badges (Stimmführer/Neu/Problemfall/Pausiert/Prüfling, Prozent 75/50) in Ionic-Reihenfolge. Nachgeprüft: Ansicht 'Lehrer' zeigt in Flutter immer 'Kein Lehrer', weil Person.teacherName nie befüllt wird (Ionic 'Lehrer: <Name>'); Zusatzfeld-Badges/-Zeilen ohne aufgefüllte Defaults; kein '0%'-Badge ohne gezählte Termine.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-4792cae3": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:563",
+        "lib/core/router/app_router.dart:187",
+        "lib/core/router/app_router.dart:799"
+      ],
+      "n": "Ionic: Button für alle Rollen der Liste, öffnet PersonPage mit readOnly = nicht Admin (Betrachter sieht gesperrtes Formular) / Flutter: push '/people/new' ohne Rollenprüfung (Route nur canSeePeopleTab, PersonCreatePage prüft keine Rolle) → Betrachter erhält bei leerer Instanz das editierbare Anlageformular; Speichern scheitert laut RLS (admins_manage_player nur Rolle 1/5).",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#modal-11a551b4": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1385",
+        "lib/features/people/presentation/pages/people_list_page.dart:1392"
+      ],
+      "n": "Ionic: eigenes Vollbild-Modal (Titel + X, Datumsfeld, Notiz, FAB unten rechts, backdropDismiss false) / Flutter: AlertDialog (nicht wegtippbar) mit Datum-Zeile, Notizfeld und 'Abbrechen'/'Archivieren'. Geschriebene Daten (left, Historie, Zugang entziehen) gleich.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-64a96898": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1430"
+      ],
+      "n": "Ionic: FAB mit Archiv-Icon unten rechts im Modal / Flutter: Button 'Archivieren' mit Archiv-Icon in der Dialog-Aktionsleiste.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#field-315040b9": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/people/presentation/widgets/pause_person_sheet.dart:141",
+        "lib/features/people/presentation/widgets/pause_person_sheet.dart:150"
+      ],
+      "n": "Ionic: Inline-Kalender im Akkordeon (ab heute, ohne Obergrenze, keine Vorauswahl) / Flutter: Datumsdialog (ab heute, bis +3 Jahre, Start heute + 30 Tage).",
+      "v": "bestätigt"
+    },
+    "people/members/members.page#logic-a08c75f7": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/members/data/providers/members_providers.dart:27",
+        "lib/features/members/data/providers/members_providers.dart:53",
+        "lib/features/members/data/providers/members_providers.dart:98",
+        "lib/features/members/presentation/pages/members_page.dart:35"
+      ],
+      "n": "Laden aktiver Personen (tenantId), Gruppierung ohne Hauptgruppen-Vorrang, 'Ohne Gruppe', Suche (Vor-/Nachname, Gruppe), Einteilungs-Segment ('-' ausgelassen), Neuladen bei Instanzwechsel und Pull-to-Refresh gleich. Abweichungen (extra der Erstprüfung): Einteilungs-Filter ohne aufgefüllten Default (mittel), Umlaute in der Sortierung (mittel), Ladefehler inline statt Toast.",
+      "v": "bestätigt"
+    },
+    "people/members/members.page#action-3e04d426": {
+      "s": "ok",
+      "f": [
+        "lib/features/members/presentation/pages/members_page.dart:35",
+        "lib/features/members/presentation/pages/members_page.dart:53"
+      ],
+      "v": "bestätigt"
+    },
+    "people/members/members.page#field-f9de5b80": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/members/presentation/pages/members_page.dart:72",
+        "lib/features/members/data/providers/members_providers.dart:116"
+      ],
+      "n": "Segment (md, scrollbar) mit 'Alle' + Optionen ohne '-' gleich. Filterwirkung: Ionic vergleicht mit dem durch getModifiedPlayersForList aufgefüllten Default (defaultValue bzw. erste Option) → Personen ohne Wert erscheinen unter der Default-Option / Flutter: nur Personen mit gespeichertem Wert.",
+      "v": "bestätigt"
+    },
+    "people/members/members.page#text-bf9d77ea": {
+      "s": "ok",
+      "f": [
+        "lib/features/members/presentation/pages/members_page.dart:166"
+      ],
+      "v": "bestätigt"
+    }
+  },
+  "extra": [
+    {
+      "unit": "people/bulk-edit/bulk-edit.page",
+      "title": "Personenwerte der Zusatzfelder ohne aufgefüllte Defaults",
+      "n": "Ionic: BulkEditPage bekommt playersFiltered der Liste, deren additional_fields getModifiedPlayersForList mit Defaults gefüllt hat (defaultValue, sonst Boolean true, Auswahl erste Option, Gemeinde erste Gemeinde) → Personen ohne gespeicherten Wert zeigen z. B. Schalter an bzw. die Default-Option, 'Für alle setzen' auf den Default zählt sie nicht als Änderung; beim Speichern wird das aufgefüllte Objekt zurückgeschrieben / Flutter: _openBulkEdit übergibt nur mergeSharedPersonFieldValues (ohne Defaults) → Schalter aus bzw. Auswahl leer, andere Änderungszahl, schreibt nur Rohwerte + Feld.",
+      "sev": "mittel",
+      "ionic": "src/app/people/list/list.page.ts:1040",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1280",
+        "lib/features/people/presentation/pages/bulk_edit_page.dart:102"
+      ]
+    }
+  ]
+}

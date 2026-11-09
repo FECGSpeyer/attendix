@@ -1,0 +1,209 @@
+{
+  "batch": "zz-verify3-b14-selfService",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "selfService/overview/overview.page#alert-0041e6ba": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:345-353",
+        "lib/shared/widgets/event_list/excuse_reason_sheet.dart:451-480",
+        "lib/core/providers/self_service_providers.dart:176-190"
+      ],
+      "n": "Kopf „Notiz für Anmeldung“, Platzhalter „Gib hier deine Notiz ein“, Abbrechen/Anmelden; schreibt status=1 + notes, Eigentum per appId geprüft (Termine anderer Instanzen). Seite nur für Spieler/NONE/Helfer/Stimmführer-Helfer mit >1 Instanz (Stimmführer nicht) – Tab (main_shell.dart:115) und Route (route_access.dart:77) wie tabs.page. Erreichbarkeit bei Entschuldigt: x-9e43a66882; Dienst-Sync anderer Instanzen: Extra b14.",
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#alert-855b4ce2": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:355-370",
+        "lib/core/providers/self_service_providers.dart:210-220"
+      ],
+      "n": "Nur bei Status Anwesend (text X) in beiden; Notiz vorbelegt, Speichern schreibt notes + noteUpdate-Benachrichtigung, Toast „Notiz aktualisiert“. Seite nur für Spieler/NONE/Helfer/Stimmführer-Helfer mit >1 Instanz (Stimmführer nicht) – Tab (main_shell.dart:115) und Route (route_access.dart:77) wie tabs.page.",
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-493f8cb7": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:194-198",
+        "lib/core/providers/self_service_providers.dart:63-100",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:875-925"
+      ],
+      "n": "Prozent über beendete Termine mit include_in_average (?? true), shift_excused_as_present der aktuellen Instanz – gleich. Archivierte Termine (Ionic lädt archived nicht, Filter wirkungslos; Flutter blendet sie je Mitgliedsrolle aus) sind als Extra „Archivierte Termine“ (b14, Flutter besser) erfasst.",
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-974360b0": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:194-198",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:917"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-c972a7fe": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/event_list/event_list_widgets.dart:918-921",
+        "lib/core/providers/self_service_providers.dart:80-90"
+      ],
+      "n": "Nur wenn ein Termin für den Schnitt zählt, sonst 0 – gleich. Archivierte Termine (Ionic lädt archived nicht, Filter wirkungslos; Flutter blendet sie je Mitgliedsrolle aus) sind als Extra „Archivierte Termine“ (b14, Flutter besser) erfasst.",
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-4d129a6f": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:302-304"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-f4e81eb6": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:302-304"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-d21b10c5": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:305",
+        "lib/data/repositories/sign_in_out_repository.dart:860-868"
+      ],
+      "n": "typeInfo, sonst Typname der eigenen Instanz (hide_name beachtet), sonst Datum – gleich.",
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-6562636b": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:306",
+        "lib/data/repositories/sign_in_out_repository.dart:876-888"
+      ],
+      "n": "Datum (außer = Titel) + Zeitspanne, ohne Ort wie Ionic eventMeta der Übersicht.",
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-fdfa7967": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:307",
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:227-259",
+        "lib/data/repositories/sign_in_out_repository.dart:615-618"
+      ],
+      "n": "longName || shortName || „Unbekannt“ je Mitgliedschaft.",
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-ff6e340b": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:308"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-1d8f9c50": {
+      "s": "na",
+      "n": "toter Code: place fehlt im Select von getPersonAttendancesForTenant (db.service.ts:4065); Flutter kOverviewAttendanceColumns (sign_in_out_repository.dart:29-32) ebenfalls ohne place → Ort wird in beiden nie angezeigt.",
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#action-71931241": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:312",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:794-808",
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:375-425"
+      ],
+      "n": "Immer sichtbar, öffnet Aktionsblatt ohne Schnellaktionen/Chips; Inhaltsunterschiede siehe actionsheet-1394033e bzw. x-9e43a66882.",
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-bae710dc": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:315"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-ed538238": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:182",
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:315"
+      ],
+      "n": "Anzahl ohne aktuellen Termin wie Ionic.",
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-c97a7272": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:316-317"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-b3037697": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:323"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-b6a0cab7": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:324-325"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#text-0c273104": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:325"
+      ],
+      "n": "Archivierte Termine (Ionic lädt archived nicht, Filter wirkungslos; Flutter blendet sie je Mitgliedsrolle aus) sind als Extra „Archivierte Termine“ (b14, Flutter besser) erfasst.",
+      "v": "bestätigt"
+    },
+    "selfService/overview/overview.page#action-cd83d22c": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:328-334"
+      ],
+      "n": "Vorschau 3, „Alle N anzeigen“/„Weniger anzeigen“.",
+      "v": "bestätigt"
+    },
+    "selfService/parents/parents.page#nav-5a071c33": {
+      "s": "ok",
+      "f": [
+        "lib/features/parents/presentation/widgets/parents_header_widgets.dart:86-104",
+        "lib/core/router/route_access.dart:70"
+      ],
+      "n": "Nur Eltern (Route /parents) mit >1 Instanz; gleiche Instanz → nichts; sonst Startseite der Rolle in der neuen Instanz (context.go statt navigateByUrl).",
+      "v": "bestätigt"
+    },
+    "selfService/parents/parents.page#effect-dfaa55b4": {
+      "s": "ok",
+      "f": [
+        "lib/core/constants/enums.dart:137-141"
+      ],
+      "n": "Utils.getUrl ↔ Role.defaultRoute: Admin/Verantwortlich/Beobachter → Personen, Eltern → Eltern-Seite, Helfer/Stimmführer/Spieler/Bewerber/NONE → Meine Termine. Unbekannte Rolle: Ionic /register, Flutter /signout (Randfall).",
+      "v": "bestätigt"
+    },
+    "selfService/parents/parents.page#effect-11be3cc2": {
+      "s": "ok",
+      "f": [
+        "lib/features/parents/presentation/pages/parents_portal_page.dart:438",
+        "lib/features/parents/presentation/pages/parents_portal_page.dart:456-457",
+        "lib/shared/widgets/event_list/event_list_widgets.dart:1108-1137",
+        "lib/data/repositories/attendance_repository.dart:394"
+      ],
+      "n": "place wird geladen; Eintrag nur bei Ort; iOS Auswahl Apple Karten/Google Maps, sonst direkt.",
+      "v": "bestätigt"
+    },
+    "selfService/parents/parents.page#modal-0f0e45d3": {
+      "s": "ok",
+      "f": [
+        "lib/features/parents/presentation/pages/parents_portal_page.dart:101-111",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:447-470",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:367-369"
+      ],
+      "n": "Nur Eltern-Seite; Sheet 0.75 mit Titel, Datum, Werken (nur Links) und „Ablaufplan öffnen“ bei hasPlan; Titel bei hide_name siehe Extra b14.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

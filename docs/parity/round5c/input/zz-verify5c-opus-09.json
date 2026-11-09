@@ -1,0 +1,1941 @@
+{
+ "batch": "zz-verify5c-opus-09",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 37,
+    "cond": [
+     "@else (not isReordering)",
+     "@else (not (db.tenants()?.length ?? 0) > 1)"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ db.tenant()?.longName }}"
+    ],
+    "text": "{{ db.tenant()?.longName }}",
+    "id": "people/list/list.page#text-93340ccf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:487",
+     "lib/features/people/presentation/pages/people_list_page.dart:749",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:51",
+     "lib/features/people/presentation/widgets/ion/ion_widgets.dart:540"
+    ],
+    "n": "≤1 Instanz: Titel = longName (Material: AppBar-Titel; iOS: kleiner Titel des Condense-Headers beim Scrollen), alle Rollen der Personenliste.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/list/list.page.html",
+    "line": 53,
+    "cond": [
+     "@if ((db.tenants()?.length ?? 0) <= 1)"
+    ],
+    "tag": "ion-title",
+    "attrs": {
+     "size": "large"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ db.tenant()?.longName }}"
+    ],
+    "text": "{{ db.tenant()?.longName }}",
+    "id": "people/list/list.page#text-93340ccf-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:491",
+     "lib/features/people/presentation/pages/people_list_page.dart:495"
+    ],
+    "n": "iOS + ≤1 Instanz: großer Condense-Titel mit longName.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/list/list.page.ts",
+    "line": 768,
+    "method": "ListPage.remove",
+    "cond": [
+     "(player.appId && player.appId === this.db.tenantUser().userId)"
+    ],
+    "message": {
+     "keys": [
+      "people.cannotRemoveSelf"
+     ],
+     "de": [
+      "Du kannst dich nicht selbst entfernen!"
+     ],
+     "literals": [],
+     "expr": "translate('people.cannotRemoveSelf')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f0ae5f00",
+    "mbody": "3ce6729d",
+    "id": "people/list/list.page#toast-1106dfab"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1366",
+     "lib/features/people/presentation/pages/people_list_page.dart:1368",
+     "lib/features/people/presentation/pages/people_list_page.dart:1369"
+    ],
+    "n": "Erreichbar nur über die Wisch-Option 'Papierkorb' (Admin/Verantwortlicher, beide Apps); Vergleich appId mit eigener User-ID wie tenantUser().userId; roter Toast 'Du kannst dich nicht selbst entfernen!'; Slidable schließt (autoClose).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/list/list.page.ts",
+    "line": 930,
+    "method": "ListPage.askPauseInOtherTenants",
+    "cond": [],
+    "message": {
+     "keys": [
+      "people.errorAt"
+     ],
+     "de": [
+      "Fehler bei {tenant}: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('people.errorAt', { tenant: tenant.shortName, error: String(error) })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "a86cad38",
+    "mbody": "e836a2fd",
+    "roleGuarded": true,
+    "id": "people/list/list.page#toast-f68d8cd2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:271"
+    ],
+    "n": "'Fehler bei {Kurzname}: {Fehler}' rot je fehlgeschlagener Instanz. Angebotene Instanzen (nur verwaltbare) siehe alert-86b4fbec.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "extra": {
+    "id": "x-325647b4ef",
+    "title": "Reorder-Modus",
+    "n": "Ionic: Griffe in der normalen Liste, kein Abbrechen, Overlay beim Speichern, schreibt nur Personen mit sort_order / Flutter: separate Kartenliste, zusätzliches X zum Verwerfen, kein Overlay, schreibt sort_order für alle gefilterten Personen aller Gruppen (mit tenantId).",
+    "sev": "niedrig",
+    "ionic": "src/app/people/list/list.page.ts:324",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:448",
+     "lib/features/people/presentation/pages/people_list_page.dart:1148",
+     "lib/features/people/presentation/pages/people_list_page.dart:1189",
+     "lib/data/repositories/player_repository.dart:1844"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart",
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "extra": {
+    "id": "x-56b7f726f5",
+    "title": "Flutter-Zusatz: Personen übertragen",
+    "n": "Ionic: kein Mehrfachauswahl-Modus in der Personenliste / Flutter: Optionsmenü-Eintrag 'Personen übertragen' (Admin/Verantwortlicher) mit Auswahlmodus, AppBar 'n ausgewählt' und Übergabe-Sheet.",
+    "sev": "niedrig",
+    "ionic": "src/app/people/list/list.page.html:166",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:963",
+     "lib/features/people/presentation/pages/people_list_page.dart:651",
+     "lib/features/people/presentation/pages/people_list_page.dart:1255"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "extra": {
+    "id": "x-5d4cb428e1",
+    "title": "Flutter besser: Suche/Filter/Sortierung kombiniert",
+    "n": "Ionic: search() setzt die Liste auf alle Personen zurück (aktiver Filter verloren) und sortiert nach Gruppe; onFilterChanged sortiert ebenfalls nach Gruppe trotz anderer Sortierung; ein gespeicherter Filter wird beim Laden nur bei Sortierung 'Gruppe' angewendet / Flutter: Filter, Suche und Sortierung werden immer zusammen angewendet.",
+    "sev": "niedrig",
+    "ionic": "src/app/people/list/list.page.ts:714",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:250",
+     "lib/features/people/presentation/pages/people_list_page.dart:316"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "extra": {
+    "id": "x-c1c5493cd5",
+    "title": "Flutter besser: schmalere Pausen-Schreibvorgänge",
+    "n": "Ionic: Pausieren/Aktivieren über updatePlayer schreibt den ganzen Listen-Datensatz zurück (inkl. mit Defaults aufgefüllter additional_fields); Pausieren in anderen Instanzen überschreibt dort die Historie mit der Quell-Historie / Flutter: schreibt nur paused, paused_until, history (+ tenantId-Filter); in anderen Instanzen wird der Eintrag an deren Historie angehängt.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/db.service.ts:2219",
+    "f": [
+     "lib/data/repositories/player_repository.dart:816",
+     "lib/data/repositories/player_repository.dart:861",
+     "lib/data/repositories/cross_tenant_person_repository.dart:288"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "extra": {
+    "id": "x-dac55a9bd1",
+    "title": "Anwesenheits-Badge / Prozentbasis",
+    "n": "Ionic: Personen ohne gezählte Termine zeigen roten '0%'-Badge; Basis ab seasonStart bzw. 2023-01-01 bis jetzt+24 h, für Nicht-Admins ohne archivierte Termine / Flutter: kein Badge, wenn keine gezählten Termine; Basis ab seasonStart (ohne Fallback) bis jetzt, archivierte Termine mitgezählt.",
+    "sev": "niedrig",
+    "ionic": "src/app/utilities/Utils.ts:129",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1629",
+     "lib/core/providers/attendance_providers.dart:286"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart",
+    "lib/core/providers/attendance_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "extra": {
+    "id": "x-f6927de895",
+    "title": "Auto-Entpausieren nur beim ersten Öffnen",
+    "n": "Ionic: checkAndUnpausePlayers (Admin/Verantwortlicher) in jedem initializeData, also auch nach Instanzwechsel, vor dem Laden der Liste / Flutter: nur im initState per Post-Frame-Callback; ein Instanzwechsel bei offener Seite löst es nicht erneut aus.",
+    "sev": "niedrig",
+    "ionic": "src/app/people/list/list.page.ts:140",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:125",
+     "lib/features/people/presentation/pages/people_list_page.dart:128"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 514,
+    "cond": [
+     "@if (player)",
+     "@if (!isParent && !readOnly && !approveMode)",
+     "@if (!player.appId && !readOnly)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "[disabled]": "\"!player.email?.trim()\""
+    },
+    "events": [
+     "(click)=searchPerson()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "search"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-06c55240"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:94"
+    ],
+    "n": "Ionic: Lupen-Icon-Button rechts im E-Mail-Feld, deaktiviert ohne E-Mail / Flutter: Textbutton „In anderer Instanz suchen“ unter dem Feld, nur sichtbar mit E-Mail",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 202,
+    "cond": [
+     "@if (!readOnly && isAdmin && lateCount >= lateThreshold)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "solid",
+     "size": "small",
+     "color": "dark"
+    },
+    "events": [
+     "(click)=resetLateCount()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark-circle-outline"
+    ],
+    "keys": [
+     "person.resetTalked"
+    ],
+    "de": [
+     "Zurücksetzen (Gespräch geführt)"
+    ],
+    "literals": [],
+    "text": "{{ 'person.resetTalked' | transloco }}",
+    "id": "people/person/person.page#action-0de19419"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:78",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1148"
+    ],
+    "n": "Label/Icon gleich; setzt lastSolve, Toast „Verspätungszähler zurückgesetzt“, Karte verschwindet. Fehlendes Loading und kleinerer Schreibumfang sind separat erfasst (loading-be5cc2f1, Extra „Flutter besser“).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 519,
+    "cond": [
+     "@if (player)",
+     "@if (!isParent && !readOnly && !approveMode)",
+     "@if (player.appId && !readOnly)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "color": "danger",
+     "slot": "end"
+    },
+    "events": [
+     "(click)=removeUserFromTenant()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-0de62271"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:127"
+    ],
+    "n": "Ionic: roter Papierkorb-Icon-Button rechts im E-Mail-Feld / Flutter: Outlined-Button „Account-Verknüpfung aufheben“ unter der Rollenauswahl",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 554,
+    "cond": [
+     "@if (player)",
+     "@if (!isParent && !readOnly && !approveMode)",
+     "in <ion-modal trigger=accountHelpButton #accountHelpModal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=accountHelpModal.dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-36a985b0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:296"
+    ],
+    "n": "Ionic: X-Icon in der Toolbar / Flutter: Textbutton „Schließen“",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 858,
+    "cond": [
+     "@if (existingPlayer && !readOnly && canManagePlannedAbsences)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=openAbsenceModal()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [
+     "person.addAbsence"
+    ],
+    "de": [
+     "Abwesenheit hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'person.addAbsence' | transloco }}",
+    "id": "people/person/person.page#action-9ebb72e0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:359",
+     "lib/features/people/presentation/widgets/planned_absences.dart:362"
+    ],
+    "n": "Eintrag mit Plus-Icon (primär) öffnet „Abwesenheit eintragen“ für die Person (Hinweis für andere Person).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 786,
+    "cond": [
+     "@if (personAttendance.length || history.length)",
+     "@for (att of history; track trackByHistoryId($index, att))",
+     "@if (att.type !== 4 && !readOnly)"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=removeHis(att, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-a6446ca3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:226",
+     "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:257",
+     "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:275"
+    ],
+    "n": "Wischaktion (Papierkorb, rot) nur canEdit und kein Termin-Eintrag; Bestätigung „Eintrag unwiderruflich entfernen?“ Abbrechen/Ja, entfernt den Eintrag (Datum+Typ+Text statt nur Datum) aus history, Toasts gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 863,
+    "cond": [
+     "@if (existingPlayer && !readOnly && canManagePlannedAbsences)",
+     "@if (hasDutyTypes)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "true"
+    },
+    "events": [
+     "(click)=openUnavailability()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "calendar-clear-outline"
+    ],
+    "keys": [
+     "signout.regularlyUnavailable"
+    ],
+    "de": [
+     "Regelmäßig verhindert"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.regularlyUnavailable' | transloco }}",
+    "id": "people/person/person.page#action-c210ff08"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1915",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1920"
+    ],
+    "n": "Nur wenn Dienst-Typen (duty_mode) existieren, letzter Eintrag der Liste; öffnet „Regelmäßig verhindert“ (personId, Name, forOther) als Vollbild-Dialog.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 544,
+    "cond": [
+     "@if (player)",
+     "@if (!isParent && !readOnly && !approveMode)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "accountHelpButton",
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "help-circle-outline"
+    ],
+    "keys": [
+     "person.help"
+    ],
+    "de": [
+     "Hilfe"
+    ],
+    "literals": [],
+    "text": "{{ 'person.help' | transloco }}",
+    "id": "people/person/person.page#action-eec7f233"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:182"
+    ],
+    "n": "Button „Hilfe“ mit Hilfe-Icon im Account-Bereich (nur dort sichtbar, canEdit).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/person/person.page.html",
+    "line": 40,
+    "cond": [
+     "@if (player)",
+     "@if (player.firstName || player.lastName || (existingPlayer && !readOnly))",
+     "@if (existingPlayer && !readOnly && !editingName)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "class": "profile-name-edit",
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=editingName = true"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'person.editName' | transloco\""
+    ],
+    "icons": [
+     "create-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#action-f2320b9a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart:147",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1806"
+    ],
+    "n": "Stift nur bei canEdit && !editingName (Ionic existingPlayer && !readOnly && !editingName); öffnet Vor-/Nachname + „Fertig“. Icon edit_note statt create-outline (gleiche Bedeutung).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/person/person.page.ts",
+    "line": 1439,
+    "method": "PersonPage.askPauseInOtherTenants",
+    "cond": [],
+    "header": {
+     "keys": [
+      "people.pauseOthers"
+     ],
+     "de": [
+      "Auch in anderen Instanzen pausieren?"
+     ],
+     "literals": [],
+     "expr": "translate('people.pauseOthers')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [
+      "${this.player.firstName} ${this.player.lastName} ist auch in anderen Instanzen aktiv. In welchen soll die Person ebenfalls pausiert werden?"
+     ],
+     "expr": "`${this.player.firstName} ${this.player.lastName} ist auch in anderen Instanzen aktiv. In welchen soll die Person ebenfalls pausiert werden?`"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "people.skip"
+       ],
+       "de": [
+        "Überspringen"
+       ],
+       "literals": [],
+       "expr": "translate('people.skip')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => resolve()"
+     },
+     {
+      "text": {
+       "keys": [
+        "people.pause"
+       ],
+       "de": [
+        "Pausieren"
+       ],
+       "literals": [],
+       "expr": "translate('people.pause')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (selected: Tenant[]) => { for (const tenant of selected) { try { const personRef = await this.db.getPersonIdFromTenant(this.player.appId, tenant.id); if (personRef) { await this.db.pausePlayerInOtherTenant(personRef.id, tenant.id, tr…"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "this.otherTenants.map((t) => ({ type: 'checkbox' as const, label: t.longName || t.shortName, value: t, checked: false, …",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "e21e842b",
+    "mbody": "a23b1252",
+    "roleGuarded": true,
+    "id": "people/person/person.page#alert-71956f19"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:236",
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:284"
+    ],
+    "n": "Texte/Buttons gleich (Überspringen/Pausieren, Checkboxen). Flutter besser: bietet nur Instanzen an, in denen der Nutzer Personen verwalten darf; Ionic listet alle verknüpften Instanzen",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/person/person.page.ts",
+    "line": 1297,
+    "method": "PersonPage.openMoreMenu",
+    "cond": [
+     "(this.player.appId !== this.db.tenantUser().userId)"
+    ],
+    "header": {
+     "keys": [
+      "attendance.removePerson"
+     ],
+     "de": [
+      "Person entfernen"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.removePerson')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "person.removePersonMessage"
+     ],
+     "de": [
+      "Möchtest du die Person wirklich entfernen? Alle zugehörigen Daten (Abwesenheiten, Notizen, etc.) gehen dabei verloren!"
+     ],
+     "literals": [],
+     "expr": "translate('person.removePersonMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.yes"
+       ],
+       "de": [
+        "Ja"
+       ],
+       "literals": [],
+       "expr": "translate('common.yes')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { this.modalController.dismiss(); try { await this.db.removePlayer(this.player); Utils.showToast(translate('person.removed'), 'success'); } catch (error) { Utils.showToast(error, 'danger'); } }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "ebeb7865",
+    "mbody": "aebbcfa5",
+    "roleGuarded": true,
+    "id": "people/person/person.page#alert-b55317e3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1549-1551",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1603-1636",
+     "lib/data/repositories/player_repository.dart:814-829"
+    ],
+    "n": "„Entfernen“ nur wenn Person nicht der eigene Account; Menü nur Admin/Verantwortliche. „Person entfernen“, Text gleich, Abbrechen/Ja; löscht player (id + tenantId) und entzieht Konto-Zugang wie db.removePlayer, Toast „person.removed“. Ionic schließt die Seite vor dem Löschen, Flutter danach – ohne Unterschied im Ergebnis.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 164,
+    "cond": [
+     "@if (player)",
+     "@if (existingPlayer && isAdmin)"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {
+     "[disabled]": "\"readOnly\""
+    },
+    "events": [
+     "(ionChange)=onChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"player.notes\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-05790430"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:273",
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:278"
+    ],
+    "n": "Ionic: Inline-Textarea (autoGrow) / Flutter: Zeile („Keine Notizen“ wenn leer), Tipp öffnet Editor-Sheet; leere Notiz wird als null gespeichert.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 350,
+    "cond": [
+     "@if (player)",
+     "@if (parentsEnabled && !isMainGroup && !isParent)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "modal",
+     "[disabled]": "\"readOnly\""
+    },
+    "events": [
+     "(ionChange)=onChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"player.parent_id\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"null\"",
+      "keys": [
+       "person.notSet"
+      ],
+      "de": [
+       "Nicht festgelegt"
+      ],
+      "literals": [],
+      "text": "{{ 'person.notSet' | transloco }}"
+     },
+     {
+      "value": "\"parent.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ parent.firstName }} {{ parent.lastName }}"
+     }
+    ],
+    "keys": [
+     "person.notSet"
+    ],
+    "de": [
+     "Nicht festgelegt"
+    ],
+    "literals": [],
+    "text": "{{ 'person.notSet' | transloco }} {{ parent.firstName }} {{ parent.lastName }}",
+    "id": "people/person/person.page#field-06ab1bbe"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:599"
+    ],
+    "n": "Ionic: Modal-Select, ohne Auswahl „Nicht festgelegt“ / Flutter: Auswahl-Sheet mit Option „Nicht festgelegt“, Anzeige ohne Auswahl aber „Nicht zugewiesen“",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 530,
+    "cond": [
+     "@if (player)",
+     "@if (!isParent && !readOnly && !approveMode)",
+     "@if (player.email && player.appId)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "type": "number",
+     "[disabled]": "\"readOnly || isMainGroup\""
+    },
+    "events": [
+     "(ionChange)=onRoleChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"role\"",
+    "bindings": [
+     "[label]=\"'person.role' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"PLAYER\"",
+      "keys": [
+       "common.roles.member"
+      ],
+      "de": [
+       "Mitglied"
+      ],
+      "literals": [],
+      "text": "{{ 'common.roles.member' | transloco }}"
+     },
+     {
+      "value": "\"RESPONSIBLE\"",
+      "keys": [
+       "common.roles.responsible"
+      ],
+      "de": [
+       "Verantwortlicher"
+      ],
+      "literals": [],
+      "text": "{{ 'common.roles.responsible' | transloco }}"
+     },
+     {
+      "value": "\"HELPER\"",
+      "keys": [
+       "common.roles.helper"
+      ],
+      "de": [
+       "Helfer"
+      ],
+      "literals": [],
+      "text": "{{ 'common.roles.helper' | transloco }}"
+     },
+     {
+      "value": "\"VOICE_LEADER_HELPER\"",
+      "keys": [
+       "common.roles.voiceLeaderHelper"
+      ],
+      "de": [
+       "Stimmführer & Helfer"
+      ],
+      "literals": [],
+      "text": "{{ 'common.roles.voiceLeaderHelper' | transloco }}"
+     },
+     {
+      "value": "\"VOICE_LEADER\"",
+      "keys": [
+       "people.voiceLeader"
+      ],
+      "de": [
+       "Stimmführer"
+      ],
+      "literals": [],
+      "text": "{{ 'people.voiceLeader' | transloco }}"
+     }
+    ],
+    "keys": [
+     "person.role",
+     "common.roles.member",
+     "common.roles.responsible",
+     "common.roles.helper",
+     "common.roles.voiceLeaderHelper",
+     "people.voiceLeader"
+    ],
+    "de": [
+     "Rolle",
+     "Mitglied",
+     "Verantwortlicher",
+     "Helfer",
+     "Stimmführer & Helfer",
+     "Stimmführer"
+    ],
+    "literals": [],
+    "text": "[label]=\"'person.role' | transloco\" {{ 'common.roles.member' | transloco }} {{ 'common.roles.responsible' | transloco }} {{ 'common.roles.helper' | transloco }} {{ 'common.roles.voiceLeaderHelper' | …",
+    "id": "people/person/person.page#field-280cafd6"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:211",
+     "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:225",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1492"
+    ],
+    "n": "Optionen/Reihenfolge, Stimmführer-Optionen nur bei isLeader, Sperre bei Hauptgruppe, sofortiges Schreiben + Toast „Die Rolle wurde erfolgreich aktualisiert.“ gleich. Flutter besser: aktuelle Rolle außerhalb der Liste (z. B. Admin) wird angezeigt statt leerem Select; Bedingung nur appId (Ionic email && appId).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 410,
+    "cond": [
+     "@if (player)",
+     "@if (!isMainGroup && isVoS && (!readOnly || (player.otherOrchestras ?? []).length))"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "multiple": "true",
+     "[disabled]": "\"readOnly\""
+    },
+    "events": [
+     "(ionChange)=onChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"player.otherOrchestras\"",
+    "bindings": [
+     "[label]=\"'person.otherOrchestras' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "",
+      "keys": [],
+      "de": [],
+      "literals": [
+       "SoS"
+      ],
+      "text": "\"SoS\""
+     },
+     {
+      "value": "",
+      "keys": [],
+      "de": [],
+      "literals": [
+       "GoS"
+      ],
+      "text": "\"GoS\""
+     },
+     {
+      "value": "",
+      "keys": [],
+      "de": [],
+      "literals": [
+       "BoS"
+      ],
+      "text": "\"BoS\""
+     }
+    ],
+    "keys": [
+     "person.otherOrchestras"
+    ],
+    "de": [
+     "Andere Orchester"
+    ],
+    "literals": [
+     "SoS",
+     "GoS",
+     "BoS"
+    ],
+    "text": "[label]=\"'person.otherOrchestras' | transloco\" \"SoS\" \"GoS\" \"BoS\"",
+    "id": "people/person/person.page#field-8d1cf99a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:210",
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:662"
+    ],
+    "n": "Bedingung gleich (VoS, nicht Hauptgruppe, bearbeitbar oder Wert vorhanden); Mehrfachauswahl SoS/GoS/BoS per Checkbox-Dialog, markiert Änderung, gespeichert in otherOrchestras; leer „Keine“.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 424,
+    "cond": [
+     "@if (player)",
+     "@if (isVoS && !isMainGroup && (!readOnly || player.examinee))"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "[disabled]": "\"readOnly\""
+    },
+    "events": [
+     "(ionChange)=onChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"player.examinee\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "people.candidate"
+    ],
+    "de": [
+     "Prüfling"
+    ],
+    "literals": [],
+    "text": "{{ 'people.candidate' | transloco }}",
+    "id": "people/person/person.page#field-be17a89b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:214",
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:870"
+    ],
+    "n": "Bedingung gleich (VoS, nicht Hauptgruppe, canEdit oder examinee); Schalter „Prüfling“ markiert Änderung, nur bei canEdit änderbar.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 510,
+    "cond": [
+     "@if (player)",
+     "@if (!isParent && !readOnly && !approveMode)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "[disabled]": "\"player.appId || readOnly\""
+    },
+    "events": [
+     "(ionBlur)=onEmailBlur()",
+     "(ionChange)=onChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"player.email\"",
+    "bindings": [
+     "[debounce]=\"500\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-d1e5b0ca"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:84",
+     "lib/features/people/presentation/pages/person_detail_page.dart:852"
+    ],
+    "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; Prüfung im Sheet nur auf „@“; Suche in anderen Instanzen nach Änderung statt bei Blur; gesperrt wenn appId wie Ionic",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 491,
+    "cond": [
+     "@if (player)",
+     "@if (!readOnly || player.otherExercise)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "[disabled]": "\"readOnly\""
+    },
+    "events": [
+     "(ionChange)=onChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"player.otherExercise\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-eb1656da"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:641"
+    ],
+    "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/person/person.page.ts",
+    "line": 1717,
+    "method": "PersonPage.approvePlayer",
+    "cond": [],
+    "message": {
+     "keys": [
+      "person.approving"
+     ],
+     "de": [
+      "Die Person wird genehmigt..."
+     ],
+     "literals": [],
+     "expr": "translate('person.approving')"
+    },
+    "duration": "10000",
+    "src": "a1e9b0e6",
+    "mbody": "58d8b0d3",
+    "roleGuarded": true,
+    "id": "people/person/person.page#loading-00357310"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1210",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1233"
+    ],
+    "n": "Ionic: blockierendes Loading „Die Person wird genehmigt...“ / Flutter: kein Ladeindikator (vorher zusätzlicher Bestätigungsdialog „Person genehmigen?“).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/person/person.page.ts",
+    "line": 532,
+    "method": "PersonPage.addPerson",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "889b463a",
+    "roleGuarded": true,
+    "id": "people/person/person.page#loading-b5454ced"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_create_page.dart:334",
+     "lib/features/people/presentation/pages/person_create_page.dart:989"
+    ],
+    "n": "Ionic: blockierendes Loading (3 s) beim Hinzufügen / Flutter: nur Speichern-Button deaktiviert, kein Overlay",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/person/person.page.ts",
+    "line": 1496,
+    "method": "PersonPage.confirmAbsence",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "904627eb",
+    "roleGuarded": true,
+    "id": "people/person/person.page#loading-cd6c7935"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:230"
+    ],
+    "n": "Ionic: blockierendes Loading beim Eintragen der Abwesenheit / Flutter: kein Ladeindikator",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/person/person.page.ts",
+    "line": 553,
+    "method": "PersonPage.updatePlayer",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ff7fc50a",
+    "mbody": "c9c20fe4",
+    "roleGuarded": true,
+    "id": "people/person/person.page#loading-d68742ec"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:587",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1733"
+    ],
+    "n": "Ionic: blockierendes Loading beim Speichern / Flutter: nur Speichern-FAB deaktiviert (_isSaving), kein Overlay",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/person/person.page.ts",
+    "line": 1203,
+    "method": "PersonPage.assignMyAccount",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ff7fc50a",
+    "mbody": "776c959b",
+    "roleGuarded": true,
+    "id": "people/person/person.page#loading-fc02b5d4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:962"
+    ],
+    "n": "Ionic: blockierendes Loading während „Meinen Benutzer zuweisen“ / Flutter: kein Ladeindikator.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 490,
+    "cond": [
+     "@if (player)",
+     "@if (!readOnly || player.otherExercise)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.otherDuties"
+    ],
+    "de": [
+     "Sonstige Dienste"
+    ],
+    "literals": [],
+    "text": "{{ 'people.otherDuties' | transloco }}",
+    "id": "people/person/person.page#text-79d104bf"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:223",
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:644"
+    ],
+    "n": "Bedingung nicht ganz gleich. Ionic: !readOnly || otherExercise (leerer String gilt als leer) / Flutter: otherExercise != null || canEdit → Beobachter und archivierte Personen sehen bei gespeichertem '' eine leere Zeile „Sonstige Dienste“.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 838,
+    "cond": [
+     "@if (existingPlayer && !readOnly && canManagePlannedAbsences)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "person.absencesCount",
+     "person.absences"
+    ],
+    "de": [
+     "Abwesenheiten ({count})",
+     "Abwesenheiten"
+    ],
+    "literals": [],
+    "text": "{{ playerAbsences.length ? ('person.absencesCount' | transloco: { count: playerAbsences.length }) : ('person.absences' | transloco) }}",
+    "id": "people/person/person.page#text-9102c4ae"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:328",
+     "lib/features/people/presentation/widgets/planned_absences.dart:337",
+     "lib/features/people/presentation/pages/person_detail_page.dart:1911"
+    ],
+    "n": "Nur canEdit und canManagePlannedAbsences (Admin/Verantwortliche oder Rechte-Flag) – effektiv Admin/Verantwortliche wie Ionic (!readOnly ⇒ Admin); „Abwesenheiten ({n})“ bzw. „Abwesenheiten“.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 845,
+    "cond": [
+     "@if (existingPlayer && !readOnly && canManagePlannedAbsences)",
+     "@for (absence of playerAbsences; track absence.id)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ absence.from_date | date: ('common.ngDate' | transloco) }} – {{ absence.until_date | date: ('common.ngDate' | transloco) }}",
+    "id": "people/person/person.page#text-9bed7686-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:291"
+    ],
+    "n": "„dd.MM.yyyy – dd.MM.yyyy“, gleiche Datenquelle (player_absences der Person, tenant_id, order from_date).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 509,
+    "cond": [
+     "@if (player)",
+     "@if (!isParent && !readOnly && !approveMode)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.email"
+    ],
+    "de": [
+     "E-Mail"
+    ],
+    "literals": [],
+    "text": "{{ 'people.email' | transloco }}",
+    "id": "people/person/person.page#text-a6284510"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:86"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 683,
+    "cond": [
+     "@if (player)",
+     "@if (otherTenants.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "person.otherInstances"
+    ],
+    "de": [
+     "Andere Instanzen"
+    ],
+    "literals": [],
+    "text": "{{ 'person.otherInstances' | transloco }}",
+    "id": "people/person/person.page#text-ac60eb1f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:174",
+     "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:42"
+    ],
+    "n": "'Andere Instanzen' nur bei nicht leerer Liste, für alle Rollen. Liste jetzt wie Ionic getTenantsFromUser: nur über die Organisation verknüpfte Instanzen, ohne aktuelle, ohne Rolle Beobachter.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 349,
+    "cond": [
+     "@if (player)",
+     "@if (parentsEnabled && !isMainGroup && !isParent)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "person.parents"
+    ],
+    "de": [
+     "Eltern"
+    ],
+    "literals": [],
+    "text": "{{ 'person.parents' | transloco }}",
+    "id": "people/person/person.page#text-c617e6c6"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:194",
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:599"
+    ],
+    "n": "Label „Eltern“ gleich; Flutter-Bedingung ohne „!isParent“ (Ionic blendet das Feld für Benutzer mit Rolle Elternteil aus)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 855,
+    "cond": [
+     "@if (existingPlayer && !readOnly && canManagePlannedAbsences)",
+     "@if (!playerAbsences.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium"
+    },
+    "keys": [
+     "person.noAbsences"
+    ],
+    "de": [
+     "Keine Abwesenheiten eingetragen"
+    ],
+    "literals": [],
+    "text": "{{ 'person.noAbsences' | transloco }}",
+    "id": "people/person/person.page#text-d7650994"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:352"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  }
+ ]
+}

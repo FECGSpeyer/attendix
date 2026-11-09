@@ -1,0 +1,1026 @@
+{
+  "batch": "b03-attendance",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "attendance/att-list/att-list.page#logic-d52a9296": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:269",
+        "lib/core/providers/attendance_providers.dart:193",
+        "lib/core/providers/attendance_providers.dart:252",
+        "lib/core/providers/realtime_providers.dart:144",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:817",
+        "lib/features/attendance/presentation/attendance_create_writes.dart:115",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart:18"
+      ],
+      "n": "Laden (ab Saisonstart, Offline-Cache), Typfilter, Archiv-Filter (nur Admin/Verantwortliche), Sortierung, aktueller/kommende/vergangene Termine, Durchschnitt (ohne unbesetzte Dienste), Prozent (inkl. shift_excused_as_present), Rollenflags, Löschen, Anlegen (Personen, Abwesenheiten, Schichten, Verhinderungen, Checkliste, Werke, Dienst-Bedarf) entsprechen Ionic. Abweichungen siehe extra: Ablaufplan-Viewer ohne Bearbeiten/Zusatzpläne/Werk-Aktionen, Info-Sheet zeigt beim ersten Öffnen nur Spinner, Dienst-Pill bei vergangenen Terminen, \"Deine Dienste\"-Quelle/Format, Meta-Zeit bei ganztägigen Typen, Formular-Zustand, mehrere \"Flutter besser\"-Punkte.",
+      "sev": "hoch"
+    },
+    "attendance/att-list/att-list.page#db-a6c8d43f": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/realtime_providers.dart:279",
+        "lib/core/providers/realtime_providers.dart:153"
+      ],
+      "n": "Flutter: ein Kanal \"attendance_list_changes_<tenantId>\" mit tenantId-Filter plus ungefiltertem DELETE (nur geladene IDs); Effekt wie Ionic: Liste lädt bei Termin-Änderungen neu."
+    },
+    "attendance/att-list/att-list.page#db-8ec23cab": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/realtime_providers.dart:279"
+      ],
+      "n": "Kanalname \"attendance_list_changes_<tenantId>\" statt \"att-changes\"; Funktion gleich."
+    },
+    "attendance/att-list/att-list.page#db-563bc99b": {
+      "s": "diff",
+      "f": [
+        "lib/core/providers/realtime_providers.dart:308"
+      ],
+      "n": "Flutter besser: Ionic-Handler lädt nur bei event.new.tenantId === Instanz neu, person_attendances hat aber keine tenantId-Spalte (Inserts ohne tenantId, alle Abfragen joinen attendance.tenantId) → Ionic aktualisiert die Liste bei Statusänderungen nie. Flutter lädt bei jedem person_attendances-UPDATE neu (INSERT/DELETE nicht).",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#db-4719045d": {
+      "s": "diff",
+      "f": [
+        "lib/core/providers/realtime_providers.dart:308"
+      ],
+      "n": "Flutter besser: Ionic-Kanal \"person-att-changes\" (event *) greift wegen fehlender tenantId-Spalte in person_attendances nie / Flutter: UPDATE-Listener im selben Kanal \"attendance_list_changes_<tenantId>\" lädt neu.",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#loading-e1caea8b": {
+      "s": "diff",
+      "f": [
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:389"
+      ],
+      "n": "Ionic: blockierendes Loading-Overlay (3 s) während setTenant + Navigation / Flutter: switchTenant ohne Overlay oder Ladeanzeige.",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#nav-ebedf641": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:405",
+        "lib/core/constants/enums.dart:137"
+      ],
+      "n": "Ziel nach Rolle: Admin/Verantw./Beobachter → /people (≙ /tabs/player), Eltern → /parents, sonst /signout. Unbekannte Rolle: Ionic /register, Flutter /signout (Randfall)."
+    },
+    "attendance/att-list/att-list.page#effect-bbc763c2": {
+      "s": "ok",
+      "f": [
+        "lib/core/constants/enums.dart:137",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:397"
+      ]
+    },
+    "attendance/att-list/att-list.page#native-27beb711": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/realtime_providers.dart:190"
+      ],
+      "n": "connectivityCheckProvider; offline wird die gecachte Liste gezeigt (Cache je Benutzer+Instanz)."
+    },
+    "attendance/att-list/att-list.page#native-e5abdba5": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:72"
+      ]
+    },
+    "attendance/att-list/att-list.page#alert-c140caf7": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:71",
+        "lib/core/providers/attendance_providers.dart:405",
+        "lib/data/repositories/attendance_repository.dart:295"
+      ],
+      "n": "Header \"Möchtest du den Termin wirklich entfernen?\", Buttons \"Abbrechen\"/\"Fortfahren\"; Löschen mit id+tenantId, danach Liste neu geladen."
+    },
+    "attendance/att-list/att-list.page#toast-e7112c48": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:829"
+      ]
+    },
+    "attendance/att-list/att-list.page#loading-64f98ca9": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:850",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:491",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:443"
+      ],
+      "n": "Ionic: blockierendes Loading-Overlay beim Anlegen / Flutter: kein Overlay; Spinner im Absenden-Button, Sheet nicht schließbar (PopScope), übrige Felder bleiben bedienbar.",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#toast-2921a95c": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:821"
+      ],
+      "n": "Ionic: Toast (danger) \"Ungültiger Anwesenheitstyp ausgewählt\", wenn kein Typ gefunden / Flutter: SnackBar ohne Farbe \"Bitte wähle einen Veranstaltungstyp\" (attList.invalidType ungenutzt).",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#toast-ec2c10b2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:877"
+      ]
+    },
+    "attendance/att-list/att-list.page#modal-9df27ec0": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:318",
+        "lib/features/duty/presentation/pages/duty_distribute_page.dart:20"
+      ],
+      "n": "Vollbild-Modal (fullscreenDialog); nach Speichern wird die Liste neu geladen."
+    },
+    "attendance/att-list/att-list.page#toast-ffa03a05": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_actions.dart:79"
+      ]
+    },
+    "attendance/att-list/att-list.page#alert-0c061d4b": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_actions.dart:94",
+        "lib/core/providers/duty_providers.dart:256"
+      ],
+      "n": "Header \"Kann nicht\", Textfeld \"Grund (optional)\", \"Abbrechen\"/\"Bestätigen\"; Abmelden (Entschuldigt, isSelf) + duty-notify understaffed wie Ionic."
+    },
+    "attendance/att-list/att-list.page#toast-a71d4842": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_actions.dart:118"
+      ]
+    },
+    "attendance/att-list/att-list.page#toast-b8563c8d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:670"
+      ],
+      "n": "Neutraler Standard-Toast statt Ionic-Farbe \"light\"."
+    },
+    "attendance/att-list/att-list.page#nav-35a3dbc0": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:59"
+      ],
+      "n": "/attendance/:id per push, nur für Dirigent/Helfer (canAddAttendance); Liste wird nach Rückkehr neu geladen."
+    },
+    "attendance/att-list/att-list.page#alert-c973a254": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:161",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:190"
+      ],
+      "n": "Ionic: Auswahl \"Anderer Dirigent\" öffnet Alert \"Dirigent eingeben\" (Input-Placeholder \"Dirigent\", \"Abbrechen\"/\"Speichern\") / Flutter: kein Dialog, Inline-Textfeld mit Hinweis \"Dirigent eingeben\" unter der Auswahl.",
+      "sev": "mittel"
+    },
+    "attendance/att-list/att-list.page#modal-c5dfef61": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:103",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart:18",
+        "lib/features/planning/presentation/pages/plan_viewer_page.dart:223"
+      ],
+      "n": "Ionic: PlanViewer mit attendance (inkl. extra_plans → Tages-Chips), songs (Werk-Zeilen öffnen Notenaktionen), defaultLive und canEdit (Bearbeiten-Stift für Dirigent/Helfer) / Flutter: Vollbild-Viewer nur mit dem Hauptplan (Attendance-Modell ohne extra_plans, plan explizit übergeben), ohne onEdit und ohne songAction → kein Bearbeiten, keine weiteren Tagespläne, keine Werk-Aktionen. defaultLive gleich.",
+      "sev": "hoch"
+    },
+    "attendance/att-list/att-list.page#modal-66d0050c": {
+      "s": "missing",
+      "n": "Ionic: \"Bearbeiten\" im Ablaufplan-Viewer schließt mit role \"edit\" und öffnet PlanningPage (attendanceId, initialPlanIndex) / Flutter: openAttendancePlanViewer übergibt kein onEdit, der Editor ist aus der Liste nicht erreichbar (nur über die Termin-Detailseite).",
+      "sev": "hoch"
+    },
+    "attendance/att-list/att-list.page#action-e400eac1": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:295"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-558f18b9": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:299",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:44"
+      ],
+      "n": "Nur bei >1 Instanz: Langname + Chevron links (centerTitle false); Material in Großbuchstaben (Plattform-Optik)."
+    },
+    "attendance/att-list/att-list.page#popover-7554a4bb": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:99",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:118"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-b4391da5": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:124",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:332",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:389"
+      ],
+      "n": "Langname je Instanz, Badge \"Aktuell\" bei der aktuellen; gleiche Instanz → nichts."
+    },
+    "attendance/att-list/att-list.page#text-6a3aa5b0": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:301",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:51"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-558f18b9-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:113"
+      ],
+      "n": "Icon tune statt \"options\", primär gefärbt bei aktivem Filter/Archiv."
+    },
+    "attendance/att-list/att-list.page#popover-93db939c": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:113"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-56ed352d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:125"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-be681377": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:141"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-8b549b85": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:160",
+        "lib/core/utils/archived_attendance.dart:6"
+      ],
+      "n": "Nur Admin/Verantwortliche; Zähler \"{n} archivierte(r) Termin(e)\" nur bei >0."
+    },
+    "attendance/att-list/att-list.page#action-437c32e5": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:314"
+      ],
+      "n": "Nur Admin/Verantwortliche bei vorhandenen Dienst-Typen; Icon shuffle, Tooltip \"Dienste verteilen\"."
+    },
+    "attendance/att-list/att-list.page#embed-d876cfe4": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:323"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-f97565d6": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:621"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-6a3aa5b0-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:634",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:277"
+      ],
+      "n": "Großer Titel nur im iOS-Look (Plattform-Optik), nur bei ≤1 Instanz."
+    },
+    "attendance/att-list/att-list.page#text-11163db2": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:29"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-d02e9e23": {
+      "s": "diff",
+      "f": [
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:42",
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:71",
+        "lib/data/repositories/duty_repository.dart:41"
+      ],
+      "n": "Ionic: Titel getEventTitle (typeInfo / Typname außer hide_name / Datum), Meta \"Di., 20.10.2026 · 19:00–21:00\"; Tap öffnet Termin nur für Dirigent/Helfer / Flutter: Titel typeInfo / Typname / \"Dienst\" (hide_name ignoriert), Meta \"Di, 20.10. · 19:00\" (ohne Jahr, ohne Endzeit); Tap ohne Rollenprüfung.",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#action-4c70a5da": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:53",
+        "lib/features/duty/presentation/widgets/duty_actions.dart:87"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-5affa11e": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:58",
+        "lib/features/duty/presentation/widgets/duty_actions.dart:70",
+        "lib/data/repositories/duty_repository.dart:153"
+      ],
+      "n": "duty_state confirmed, status Anwesend, notes \"\", changed_by/at wie Ionic."
+    },
+    "attendance/att-list/att-list.page#text-ffabfdf3": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:488"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-c806441b": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:493",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:195",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:405"
+      ],
+      "n": "Gefüllte Karte mit Datumskachel, Titel, Ort mit Icon, Dienst-Besetzung bzw. \"% · anwesend · entschuldigt · abwesend\", CTAs und Tap wie Ionic. Abweichung Meta: Flutter lässt die Uhrzeit bei ganztägigen Typen weg (Ionic zeigt start_time, z. B. Plan-Start) und nimmt für den Datumsbereich duration_days des Termins statt des Typs.",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#action-3ec5afc7": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:505"
+      ],
+      "n": "\"Anwesenheit\" mit Ablaufplan, sonst \"Anwesenheit erfassen\"."
+    },
+    "attendance/att-list/att-list.page#action-2a77a09b": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:513"
+      ],
+      "n": "Button gleich; Inhalt des Viewers weicht ab, siehe modal-c5dfef61."
+    },
+    "attendance/att-list/att-list.page#action-a3616f18": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:447",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:493"
+      ],
+      "n": "Wischen/Voll-Wischen löscht mit Bestätigung; Dirigent und Helfer."
+    },
+    "attendance/att-list/att-list.page#action-bf238f2d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:466"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-326ff95d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:525"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-c90cc320": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:526"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-cfdf6516": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:528",
+        "lib/core/utils/event_list_utils.dart:106"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-15811e3a": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:531",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:405"
+      ],
+      "n": "Zeile wie Ionic (Kachel mit Hervorhebung, Headset-Icon, Titel, Meta, Dienst-Namen, Ablaufplan-Button, Besetzung bzw. %-Pill, Tap). Abweichung: bei ganztägigen Typen fehlt in Flutter die Uhrzeit in der Meta-Zeile (Ionic zeigt start_time, falls gesetzt).",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#action-b495283c": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:555"
+      ],
+      "n": "Nicht für Beobachter; Tooltip \"Ablaufplan anzeigen\"."
+    },
+    "attendance/att-list/att-list.page#action-fcf40bb8": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:447"
+      ],
+      "n": "Nur Admin/Verantwortliche wie Ionic isConductor."
+    },
+    "attendance/att-list/att-list.page#action-609bdff2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:466"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-788af3c8": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:574"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-8664b4a7": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:575"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-4b25b852": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:578"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-1083fd67": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:580",
+        "lib/core/providers/attendance_providers.dart:252"
+      ],
+      "n": "Durchschnitt über beendete Termine des Typfilters inkl. archivierter, ohne unbesetzte Dienste; gerundet."
+    },
+    "attendance/att-list/att-list.page#action-15811e3a-2": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:585",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:433"
+      ],
+      "n": "Ionic: vergangene Zeilen zeigen immer \"{percentage}%\" / Flutter: percentPill zeigt bei Dienst-Terminen (letzte 180 Tage) die Besetzung \"1/2\" statt Prozent. Rest (Archiv-Icon, \"Datum · x von y anwesend\", Tap nur Dirigent/Helfer) gleich.",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#action-fcf40bb8-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:586",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:450"
+      ],
+      "n": "Nur Admin/Verantwortliche (Ionic [disabled]=\"!isConductor\")."
+    },
+    "attendance/att-list/att-list.page#action-609bdff2-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:466"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-ed4d02b3": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:612"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-7b86b1bd": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:238"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-4fff8ad6": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:239"
+      ],
+      "n": "Flutter besser: Button \"Termin hinzufügen\" im Leerzustand nur mit Anlegerecht (canCreate) / Ionic zeigt ihn allen Rollen (auch Beobachter und Helfer ohne attendance_create) und öffnet das Anlege-Sheet.",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#modal-3dd9b5f6": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:29"
+      ],
+      "n": "Sheet initial 0.8, max 1, Griff; Sheet je Öffnen neu (siehe extra Formularzustand)."
+    },
+    "attendance/att-list/att-list.page#text-f384ea6e": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:498"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-85c4ff72": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:179",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:531"
+      ]
+    },
+    "attendance/att-list/att-list.page#field-0e2e617a": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:172",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:692",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:665"
+      ],
+      "n": "Anzeige \"dd.MM.yyyy\" / \"{n} Termine ausgewählt\" / \"Kein Datum ausgewählt\"; Tap mit nur heute → abwählen + Toast, dann Kalender."
+    },
+    "attendance/att-list/att-list.page#action-558f18b9-3": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:189",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:542"
+      ]
+    },
+    "attendance/att-list/att-list.page#modal-f5836528": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:726",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:744"
+      ],
+      "n": "Ionic: Sheet (0.5) mit Typen-Legende, Ferien, Feiertagen / Flutter: _showHolidayInfo liest holidaysProvider per ref.read als Momentaufnahme und baut den ganzen Inhalt in dessen data-Zweig → beim ersten Öffnen (Feiertage noch nicht geladen, z. B. Datumsauswahl vorher nicht geöffnet) zeigt das Sheet dauerhaft nur einen Spinner, auch ohne Typen-Legende; erst beim nächsten Öffnen erscheint der Inhalt. maxChildSize 0.9 statt 1.",
+      "sev": "mittel"
+    },
+    "attendance/att-list/att-list.page#text-e2495367": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:759"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-510775a7": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:763"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-16ffe6c1": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:772"
+      ],
+      "n": "Text gleich; Punktfarbe Flutter rot (AppColors.danger) statt Ionic \"holiday\" (#9f6073).",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#text-64289559": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:778"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-984b2adc": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:783"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-eda8e24c": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:784",
+        "lib/core/services/holiday_service.dart:168"
+      ],
+      "n": "Format \"dd.MM.yyyy - dd.MM.yyyy: Name\" gleich. Ionic blendet Ferien aus, sobald sie begonnen haben (gone = startDate < heute) / Flutter erst nach dem Ende (isPast = endDate < jetzt) → laufende Ferien stehen in Flutter noch in der Liste.",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#text-1d217a94": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:789"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-eda8e24c-2": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:790",
+        "lib/core/services/holiday_service.dart:122"
+      ],
+      "n": "Format \"dd.MM.yyyy: Name\" gleich. Ionic zeigt einen Feiertag am Tag selbst noch (gone = startDate < heute) / Flutter blendet ihn am Tag selbst aus (isPast = endDate 00:00 < jetzt).",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#modal-c5f95b6f": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:702",
+        "lib/features/attendance/presentation/widgets/multi_date_calendar.dart:347"
+      ],
+      "n": "Ionic: kleines Karten-Modal (290×382) nur mit dem Kalender, Auswahl wirkt sofort, Schließen per Hintergrund / Flutter: Dialog mit Titel \"Datum auswählen\", X, Legende und \"Abbrechen\"/\"Übernehmen\"; Schließen ohne \"Übernehmen\" verwirft die Auswahl.",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#field-6afb28e4": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/widgets/multi_date_calendar.dart:58",
+        "lib/features/attendance/presentation/widgets/multi_date_calendar.dart:195",
+        "lib/features/attendance/presentation/widgets/multi_date_calendar.dart:67"
+      ],
+      "n": "Mehrfachauswahl, Montag als Wochenstart, Hervorhebung von Terminen (Typfarbe), Feiertagen und Ferien vorhanden. Abweichungen: Feiertagsfarbe rot statt #9f6073; Termine unsichtbarer Typen nicht hervorgehoben (visibleAttendanceTypesProvider statt aller Typen); wählbar nur heute−365 bis heute+730 Tage.",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#field-aa8f98a9": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:201",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:225",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:159",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:675"
+      ],
+      "n": "Label \"Typ\", nur sichtbare Typen, Vorauswahl erster sichtbarer Typ; Wechsel setzt Dauer und Dienst-Bedarf zurück."
+    },
+    "attendance/att-list/att-list.page#text-2eda2c9b": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:260",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:277"
+      ]
+    },
+    "attendance/att-list/att-list.page#field-b83547ff": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:259",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:675"
+      ],
+      "n": "Flutter besser: beim automatisch gewählten ersten Typ ist die Dauer mit duration_days des Typs vorbelegt / Ionic zeigt dort 1 (onTypeChange läuft für den Default-Typ nicht) und legt dann einen 1-Tages-Termin an.",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#text-eba80bc1": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:291",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:304"
+      ]
+    },
+    "attendance/att-list/att-list.page#field-283fff29": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:290",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:302"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-61e1c75b": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:316"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-ae092621": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:317"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-9cfb5a90": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:321"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-c6ee8b66": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:329"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-0ad7d998": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:330"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-37cb62f9": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:342",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:357"
+      ]
+    },
+    "attendance/att-list/att-list.page#field-ca655798": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:341",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:351"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-03f304ab": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:375",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:387"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-558f18b9-4": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:381",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:392"
+      ]
+    },
+    "attendance/att-list/att-list.page#modal-b795ad26": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:56",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:114"
+      ],
+      "n": "Bottom-Sheet bis 70 % Höhe mit Titel; zusätzlich X-Button."
+    },
+    "attendance/att-list/att-list.page#text-d26956cf": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:128"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-6e0d681b": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:151"
+      ]
+    },
+    "attendance/att-list/att-list.page#modal-aff28de3": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:234",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:300"
+      ],
+      "n": "Vollbildseite wie Ionic, aber die Auswahl wird nur mit ✓ übernommen; Zurück/Schließen verwirft sie (Ionic: Auswahl wirkt sofort, jedes Schließen behält sie).",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#text-3c05a1f7": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:318"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-f0f69b82": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:320"
+      ]
+    },
+    "attendance/att-list/att-list.page#field-098f8ed3": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:330",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:343"
+      ],
+      "n": "Placeholder \"Werk suchen...\", Suche in \"{prefix}{number} {name}\" (klein), ohne Debounce."
+    },
+    "attendance/att-list/att-list.page#text-55882df1": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:350"
+      ],
+      "n": "Ionic: \"Keine Werke gefunden\" nur bei leerem Ergebnis UND Suchbegriff / Flutter: auch ohne Suchbegriff, wenn die Instanz gar keine Werke hat.",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#action-3436fb43": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:360"
+      ]
+    },
+    "attendance/att-list/att-list.page#field-acdfacba": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:360"
+      ]
+    },
+    "attendance/att-list/att-list.page#field-57f0740a": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:161",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:95"
+      ],
+      "n": "Label \"Dirigent\", aktive Dirigenten (Vor- + Nachname) + \"Anderer Dirigent\", Vorauswahl erster Dirigent."
+    },
+    "attendance/att-list/att-list.page#field-2fb88a59": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:190"
+      ],
+      "n": "Eingabefeld für den anderen Dirigenten vorhanden; erscheint sofort bei \"Anderer Dirigent\" (Ionic erst nach Alert-Eingabe), siehe alert-c973a254."
+    },
+    "attendance/att-list/att-list.page#action-4ef97afb": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:214",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:250"
+      ],
+      "n": "Flutter besser: \"Werk(e) hinzufügen\" erst aktiv mit ≥1 Werk und Dirigent bzw. Namen / Ionic immer aktiv; bei \"Anderer Dirigent\" ohne Namen (Alert abgebrochen) übernimmt Ionic person_id = 9999999999 (Platzhalter).",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#text-8babe4ac": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:413",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:284",
+        "lib/data/models/song/song.dart:150"
+      ],
+      "n": "Ionic: \"{number} {name}\" bzw. \"Unbekanntes Lied\" / Flutter: \"{prefix}{number} - {name}\" bzw. \"Unbekannt\".",
+      "sev": "niedrig"
+    },
+    "attendance/att-list/att-list.page#text-d3bdc91d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:414",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:36"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-562aaa0e": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:418"
+      ]
+    },
+    "attendance/att-list/att-list.page#text-f66256e1": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:402"
+      ]
+    },
+    "attendance/att-list/att-list.page#action-c404e4de": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:165",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:427",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:464"
+      ],
+      "n": "\"Termin hinzufügen\"/\"Termine hinzufügen\", gesperrt ohne Datum oder während des Speicherns."
+    },
+    "attendance/att-list/att-list.page#action-cac10456": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:262",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:650"
+      ],
+      "n": "Nur bei Anlegerecht (Admin/Verantw., Helfer mit attendance_create) wie Ionic canCreate."
+    },
+    "attendance/attendance/ad-hoc-reminder-modal/ad-hoc-reminder-modal.component#logic-c6b395f1": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:93",
+        "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:52"
+      ],
+      "n": "Vorbelegung Betreff/Nachricht, neutralOnly=false, Abbrechen → null, Versenden → {title, message, neutralOnly}."
+    },
+    "attendance/attendance/ad-hoc-reminder-modal/ad-hoc-reminder-modal.component#text-3c151487": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:117"
+      ]
+    },
+    "attendance/attendance/ad-hoc-reminder-modal/ad-hoc-reminder-modal.component#action-bd4f009d": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:59"
+      ],
+      "n": "Ionic: Schließen-Button (X) in der Toolbar / Flutter: kein X; Schließen nur per Wischen, Tippen außerhalb oder Zurück.",
+      "sev": "niedrig"
+    },
+    "attendance/attendance/ad-hoc-reminder-modal/ad-hoc-reminder-modal.component#text-a5143993": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:119"
+      ]
+    },
+    "attendance/attendance/ad-hoc-reminder-modal/ad-hoc-reminder-modal.component#field-d0e6e5fa": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:124"
+      ]
+    },
+    "attendance/attendance/ad-hoc-reminder-modal/ad-hoc-reminder-modal.component#field-fab74a51": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:137"
+      ]
+    },
+    "attendance/attendance/ad-hoc-reminder-modal/ad-hoc-reminder-modal.component#field-f2ad49a6": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:149"
+      ]
+    },
+    "attendance/attendance/ad-hoc-reminder-modal/ad-hoc-reminder-modal.component#text-56c8e035": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:157"
+      ]
+    },
+    "attendance/attendance/ad-hoc-reminder-modal/ad-hoc-reminder-modal.component#action-a496bc4d": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:163"
+      ],
+      "n": "Ionic: Link antippbar (<a target=\"_blank\"> öffnet den Browser) / Flutter: nur SelectableText, nicht antippbar.",
+      "sev": "niedrig"
+    },
+    "attendance/attendance/ad-hoc-reminder-modal/ad-hoc-reminder-modal.component#action-157dde33": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:167"
+      ],
+      "n": "Aktiv nur mit nicht-leerem Betreff oder Nachricht, Icon Glocke, \"Versenden\"."
+    }
+  },
+  "extra": [
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Ablaufplan-Viewer aus der Liste unvollständig",
+      "n": "Ionic: openPlanViewer übergibt attendance (mit extra_plans), songs und canEdit=Dirigent/Helfer; role \"edit\" öffnet PlanningPage / Flutter: openAttendancePlanViewer zeigt nur den Hauptplan, ohne Tages-Chips weiterer Pläne, ohne Werk-Aktionen und ohne Bearbeiten-Knopf (kein onEdit).",
+      "sev": "hoch",
+      "ionic": "src/app/attendance/att-list/att-list.page.ts:718",
+      "f": [
+        "lib/features/planning/presentation/attendance_plan_viewer.dart:18",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:103"
+      ]
+    },
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Info-Sheet beim ersten Öffnen nur Spinner",
+      "n": "Ionic: Info-Modal zeigt sofort Typen-Legende, Ferien, Feiertage / Flutter: ref.read(holidaysProvider) liefert beim ersten Mal AsyncLoading und das Sheet beobachtet den Provider nicht → nur Spinner, bis das Sheet erneut geöffnet wird (außer die Datumsauswahl war schon offen).",
+      "sev": "mittel",
+      "ionic": "src/app/attendance/att-list/att-list.page.html:309",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:727",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:749"
+      ]
+    },
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Vergangene Dienst-Termine mit Besetzungs-Pill",
+      "n": "Ionic: vergangene Termine immer mit \"{percentage}%\" / Flutter: Dienst-Termine der letzten 180 Tage zeigen die Besetzung (\"1/2\", \"1/2 ?\").",
+      "sev": "niedrig",
+      "ionic": "src/app/attendance/att-list/att-list.page.html:263",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:433",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:608"
+      ]
+    },
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "\"Deine Dienste: bitte bestätigen\" – Quelle und Anzeige",
+      "n": "Ionic: aus allen geladenen Terminen, nicht beendet (auch laufende mehrtägige), nur mit myPersonId (Dirigent/Helfer); Titel getEventTitle, Meta mit Jahr und Endzeit / Flutter: myDutyOverviewProvider ab heute 00:00 (laufende mehrtägige Dienste fehlen), für jede Rolle mit eigener Person (z. B. Beobachter), Titel ohne hide_name-Logik, Meta \"Di, 20.10. · 19:00\".",
+      "sev": "niedrig",
+      "ionic": "src/app/attendance/att-list/att-list.page.ts:485",
+      "f": [
+        "lib/core/providers/duty_providers.dart:148",
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:71",
+        "lib/data/repositories/duty_repository.dart:254"
+      ]
+    },
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Meta-Zeile: Uhrzeit bei ganztägigen Typen",
+      "n": "Ionic getEventMeta zeigt eventTimeRange(start_time/end_time) auch bei ganztägigen Typen (z. B. Plan-Start) / Flutter lässt die Uhrzeit bei allDay-Typen weg.",
+      "sev": "niedrig",
+      "ionic": "src/app/attendance/att-list/att-list.page.ts:699",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:412"
+      ]
+    },
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Datumsbereich mehrtägiger ganztägiger Termine",
+      "n": "Flutter besser: Ionic Utils.getReadableDate nutzt duration_days des Typs, auch wenn der Termin eine andere Dauer hat / Flutter nutzt duration_days des Termins (Fallback Typ).",
+      "sev": "niedrig",
+      "ionic": "src/app/utilities/Utils.ts:1594",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:387"
+      ]
+    },
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Realtime für person_attendances",
+      "n": "Flutter besser: Ionic-Handler prüft event.new.tenantId, die Tabelle hat keine tenantId → Liste wird nie aktualisiert / Flutter lädt bei jedem person_attendances-UPDATE neu.",
+      "sev": "niedrig",
+      "ionic": "src/app/attendance/att-list/att-list.page.ts:230",
+      "f": [
+        "lib/core/providers/realtime_providers.dart:308"
+      ]
+    },
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Typauswahl springt bei Neuladen zurück (Ionic)",
+      "n": "Flutter besser: Ionic applyAttendances setzt type_id bei jedem Neuladen (z. B. Realtime-Ereignis) auf den ersten sichtbaren Typ, auch bei offenem Anlege-Modal / Flutter behält die gewählte Auswahl.",
+      "sev": "niedrig",
+      "ionic": "src/app/attendance/att-list/att-list.page.ts:311",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:155"
+      ]
+    },
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Dauer-Vorbelegung beim Default-Typ",
+      "n": "Flutter besser: Ionic ruft onTypeChange für den vorausgewählten Typ nicht auf → allDayDuration 1 statt duration_days des Typs / Flutter ruft _onTypeChanged auch für die Vorauswahl.",
+      "sev": "niedrig",
+      "ionic": "src/app/attendance/att-list/att-list.page.ts:139",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:159",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:675"
+      ]
+    },
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Formular-Zustand nach Schließen ohne Speichern",
+      "n": "Ionic: Eingaben (Daten, Info-Text, Ort, Werke, Werk-Auswahl) bleiben im Modal erhalten, zurückgesetzt wird nur nach erfolgreichem Anlegen / Flutter: Sheet wird jedes Mal neu aufgebaut (heute, erster Typ, leere Felder).",
+      "sev": "niedrig",
+      "ionic": "src/app/attendance/att-list/att-list.page.ts:426",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:29"
+      ]
+    },
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Anlegen: Rechteprüfung und Fehlermeldung",
+      "n": "Flutter besser: Flutter prüft vor dem Schreiben erneut das Anlegerecht (Toast \"Keine Berechtigung\") und zeigt Schreibfehler als SnackBar / Ionic prüft nicht und bleibt bei Fehlern stumm (Overlay endet nach 3 s).",
+      "sev": "niedrig",
+      "ionic": "src/app/attendance/att-list/att-list.page.ts:370",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:841",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:894"
+      ]
+    }
+  ]
+}

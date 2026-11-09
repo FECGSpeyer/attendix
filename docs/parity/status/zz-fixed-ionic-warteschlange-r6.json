@@ -1,0 +1,19 @@
+{
+ "batch": "zz-fixed-ionic-warteschlange-r6",
+ "ionic": "1923d203",
+ "afterRound": 6,
+ "flutter": "447c007",
+ "items": {
+  "x-6d9a24bfe2": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/native/ionic_offline_queue_takeover.dart",
+    "lib/core/services/offline_queue_service.dart",
+    "ios/Runner/AppDelegate.swift",
+    "android/app/src/main/kotlin/de/attendix/attendix/ionic/IonicOfflineQueueReader.kt"
+   ],
+   "n": "Weitgehend behoben: Anmeldung und gewählte Instanz seit PR #285, ungesendete Offline-Änderungen (offline_writes_v1) seit PR #358 (einmalig, nur Instanzen des Nutzers, keine Duplikate, nur person_attendances-Spalten). Übrig: Sortier- und Ansichtsoptionen aus Ionic Storage und push_prompt_shown werden nicht übernommen; nach dem Update einmal neu einstellen bzw. einmal erneut nach Push gefragt → niedrig. Swift/Kotlin nicht in CI gebaut, Gerätetest offen (Checkliste Nr. 66).",
+   "sev": "niedrig"
+  }
+ }
+}

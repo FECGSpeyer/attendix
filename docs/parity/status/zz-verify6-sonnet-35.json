@@ -1,0 +1,468 @@
+{
+ "batch": "zz-verify6-sonnet-35",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "shared/notification-bell/notification-bell.component#alert-e3402013": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:230-241",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:315",
+    "lib/data/repositories/user_notification_repository.dart:197-229"
+   ],
+   "n": "Bestätigt: Titel, Text je Segment, Abbrechen/Löschen (rot); delete user_notifications per user_id (+ tenantId nur aktuelle Instanz), alle Instanzen nur user_id (RLS).",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#field-6a120234": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:200",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:326-340",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:47"
+   ],
+   "n": "Segment „Aktuelle Instanz“/„Alle“; Start auf Alle, wenn aktuelle Instanz leer, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#loading-5bd47fec": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:326-340",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:437-440"
+   ],
+   "n": "Ionic: blockierendes Overlay beim Segmentwechsel / Flutter: Spinner nur im Listenbereich. Gleiche Funktion, nur Ladeanzeige.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#loading-603fb6e6": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:39-58"
+   ],
+   "n": "Ionic: blockierendes Overlay nach Tipp auf die Glocke / Flutter: keine Ladeanzeige, Sheet/Toast erscheint nach dem Laden. Nur Ladeanzeige.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#modal-1aef5bd5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:71-92"
+   ],
+   "n": "Sheet Start 75 %, bis 100 % ziehbar.",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#text-4bda2e83": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:446-450"
+   ],
+   "n": "Icon notifications-off + „Keine Benachrichtigungen“.",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#text-b40affdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:360",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:407"
+   ],
+   "n": "Titel „Benachrichtigungen“ im Sheet-Kopf (iOS und Material).",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#toast-2da5fd16": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:54-58"
+   ],
+   "n": "„Keine Benachrichtigungen vorhanden.“ wenn in keiner Instanz etwas da ist; Info-Toast in Standardfarbe statt Ionic medium (nur Optik).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-236ba42c": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1250-1258"
+   ],
+   "n": "Dateizeile öffnet das Aktionsblatt (openActions) wie Ionic; Zeilen-Referenz aktualisiert (alte Zeilen stimmten nicht mehr).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-435a6b69": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1238-1262",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1107-1139",
+    "lib/features/songs/presentation/widgets/file_drop/file_drop_target.dart:48-71"
+   ],
+   "n": "Rollen-Einschränkung gleich (Drop nur Admin/Verantwortlich, 1 Datei → Einzel-Sheet, mehrere → Upload-Sheet). Ionic: Drop für andere Rollen wirkungslos (preventDefault) / Flutter Web: bei readOnly kein Drop-Ziel, Browser kann die Datei öffnen. Nur Web-Randfall, keine Funktion fehlt.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-87555086": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1217-1224"
+   ],
+   "n": "Popup-Eintrag „Alle herunterladen“ (nur !readOnly mit Dateien) wie Ionic-Popover.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-95293b64": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:408-410",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:445-453"
+   ],
+   "n": "FAB Play nur wenn Aufnahme-Datei (instrumentId 1 + Audio) vorhanden; spielt sie ab. Zeilen-Referenz korrigiert.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-ba85a1db": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1358-1385",
+    "lib/core/utils/choir_file_utils.dart:33-45",
+    "lib/core/services/song_file_service.dart:426-476"
+   ],
+   "n": "Speichern: Chor(alle) → instrumentId null/note „Chor“, Freitext → null/Text, Gruppe → note null; songs.files + instrument_ids (ohne 1, 2, Hauptgruppe) mit tenantId-Filter wie saveFileChange. f korrigiert (choir_file_utils hat nur 45 Zeilen; Referenz war ungültig).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-bf5c32af": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:391-397",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1128-1136"
+   ],
+   "n": "Ionic: wechselt ins Mehrfach-Upload-Modal mit gewählter Kategorie / Flutter: öffnet Upload-Sheet mit der Datei neu, Kategorie wird neu erkannt. Funktion gleich, Auswahl muss ggf. neu getroffen werden.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-c5ecb144": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1225-1231"
+   ],
+   "n": "Popup-Eintrag „Alle löschen“ (nur !readOnly) wie Ionic; Bestätigung mit Titel/Text, löscht Dateien und leert instrument_ids.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-e1a26f45": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1195-1200"
+   ],
+   "n": "Ellipsis-Menü nur bei Dateien und !readOnly; readOnly zeigt nur Download-Button (1183-1188) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-f4482020": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:261-370",
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:375-430"
+   ],
+   "n": "Insert ohne Kategorie/instrument_ids, Dateien kopieren, instrument_ids ohne null/1/2, Toasts gleich (tenantId der Ziel-Instanz). Gruppen-Mapping: Ionic nur über Orchester-Gruppen ohne Hauptgruppe (Chor: Gruppe wird null) / Flutter mappt über alle Gruppen der Ziel-Instanz per Name/Synonym. Flutter besser, Ionic verliert dort die Zuordnung.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#actionsheet-de68e818": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1266-1340"
+   ],
+   "n": "Header, Buttons, Reihenfolge, readOnly-Bedingungen gleich. Unterschiede: Herunterladen auf iOS nur in nativer App ausgeblendet (Ionic auch iOS-PWA); „Abbrechen“ nicht rot; Drucken ohne Overlay, bei 0 Seiten „Datei konnte nicht gedruckt werden“ statt „Keine druckbaren Noten …“; Telegram in Freigabe-Ansicht (eingeloggt) nie. Alles Randfälle/Optik, Funktionen vorhanden.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#alert-68e471fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:47-52",
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:125-175"
+   ],
+   "n": "Druckoptionen-Dialog: Titel, Text, 5 Optionen (1 pro Person vorgewählt), Abbrechen/Drucken; Kopien ceil(aktive/Verhältnis) bzw. 1; Zählung aktiv (nicht left/paused/pending).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#alert-877b5429": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:331-356",
+    "lib/core/providers/song_providers.dart:545-557",
+    "lib/data/repositories/song_repository.dart:311-345"
+   ],
+   "n": "Titel, Text (Sync-Namen / „Soll das Werk wirklich gelöscht werden?“), Abbrechen/Löschen, Ziel /settings/songs gleich. Ionic: Abbrechen rot, Löschen normal / Flutter: Löschen rot. Flutter löscht zusätzlich Storage-Dateien mit korrektem Pfad und meldet Fehler per Toast. Nur Optik.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#alert-d42250e4": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1282",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1322-1340",
+    "lib/core/services/song_file_service.dart:332-382"
+   ],
+   "n": "„Datei löschen“ nur bei !readOnly; Titel, Text mit Dateiname, Abbrechen/Löschen (rot); entfernt Datei aus files, instrument_ids ohne null/1/Hauptgruppe, tenantId-Filter.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-4636e7d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:96-125"
+   ],
+   "n": "Überschrift „Ziel-Instanz“ über Dropdown (longName) mit den Instanzen, in denen Admin/Verantwortlich; erste vorausgewählt.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-f08105ca": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1518-1545"
+   ],
+   "n": "Korrigiert: Freitext-Feld im Kategorie-Sheet hat jetzt einen Leeren-Button (suffixIcon, sichtbar bei Text) und gleichen Platzhalter wie Ionic clearInput. Erstreview-Abweichung ist durch die Codeänderung behoben.",
+   "v": "korrigiert"
+  },
+  "songs/song/song.page#loading-2199f93e": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1148-1162",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1236"
+   ],
+   "n": "Ionic: blockierendes Overlay „Dateien werden gelöscht...“ / Flutter: dünner Fortschrittsbalken, Dateiaktionen gesperrt (_busy). Nur Ladeanzeige.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#loading-49593403": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:261-275",
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:215-230",
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:64-69"
+   ],
+   "n": "Ionic: blockierendes Overlay „Werk wird kopiert...“ → „Datei x von y“ / Flutter: Fortschritt im Sheet; Schließen (X, Ziehen, Zurück) ist während des Kopierens gesperrt (PopScope/shouldCloseOnMinExtent), Kopie läuft auch bei geschlossenem Sheet zu Ende. Früherer Hinweis auf Teilkopie ist veraltet. Nur Ladeanzeige.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#loading-a35a4f12": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:346-355"
+   ],
+   "n": "Ionic: Overlay „Werk wird gelöscht...“ / Flutter: kein Ladehinweis; bei Fehler Toast „Werk konnte nicht gelöscht werden“ (Ionic hängt). Nur Ladeanzeige.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#loading-be5a432a": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1316-1322",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1236"
+   ],
+   "n": "Ionic: Overlay „Datei wird versendet...“ / Flutter: dünner Fortschrittsbalken, Erfolgs-Toast. Nur Ladeanzeige.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#loading-f3d45d0c": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1141-1146",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1236"
+   ],
+   "n": "Ionic: Overlay „Dateien werden heruntergeladen...“ / Flutter: dünner Fortschrittsbalken. Nur Ladeanzeige.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#modal-8a15334b": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1107-1139"
+   ],
+   "n": "Einzel-Datei-Sheet bei Drop einer Datei (Datei > 20 MB: Fehler-Toast); Konflikt-Buttons Hinzufügen/Ersetzen/Hochladen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#popover-645c446e": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1195-1233"
+   ],
+   "n": "PopupMenu statt ion-popover, gleiche drei Einträge (Drucken nur !readOnly).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-22be956c": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1180"
+   ],
+   "n": "Listenüberschrift „Dateien“.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-304223cf": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:787"
+   ],
+   "n": "Überschrift „Historie (n)“ nur wenn Einträge vorhanden (Zeile 497); History nur für !readOnly geladen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-3cb4b466": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:504",
+    "lib/features/songs/presentation/widgets/song_beamer_file_section.dart:20-35"
+   ],
+   "n": "Bedingung beamerActive(Org, true) gleich. Ionic: auch eingeloggt über Freigabe-Link sichtbar / Flutter: bei Freigabe-Link immer ausgeblendet. Randfall.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-9e854d49": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:794-797",
+    "lib/data/repositories/song_repository.dart:539-556",
+    "lib/data/repositories/song_repository.dart:711-722"
+   ],
+   "n": "Titel „Datum · Typ“ (typeInfo, sonst Typname) wie Ionic getHistoryEntryTitle; tenantId-Filter.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-b9605891-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1518-1545",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1358-1385"
+   ],
+   "n": "„Freitext“-Überschrift/Feld im Kategorie-Dialog bei Auswahl Sonstige; Aktion nur bei !readOnly.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-bd449c13": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:138-175",
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:177-215"
+   ],
+   "n": "Text gleich; Flutter zeigt ihn in Info-Karte „Hinweis“ plus Karte „n Dateien werden kopiert“. Nur Optik.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-e2f24353": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:798-801"
+   ],
+   "n": "Dirigent/Name als Zweitzeile nur wenn vorhanden.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-fb8d752f": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:794-797"
+   ],
+   "n": "dd.MM.yyyy (Termindatum, sonst Eintragsdatum) + „ · Typ“.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#toast-394c8bb6": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:40-44",
+    "lib/data/repositories/player_repository.dart:1365-1388"
+   ],
+   "n": "Warn-Toast „Keine Gruppen mit zugewiesenen Personen gefunden“; zählt aktive Personen (nicht ausgetreten, nicht pausiert, nicht pending), tenantId-Filter.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#toast-50abc710": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:96-115"
+   ],
+   "n": "Erfolgs-Toast „printPrepared“ mit „Name: Nx“; zusätzlich Warn-Toasts bei 0 Seiten/übersprungenen Dateien.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#toast-9f66f9f2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:325-329"
+   ],
+   "n": "Link kopiert, Erfolgs-Toast „Der Link wurde in die Zwischenablage kopiert“, Tracking SongShared.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#toast-ba50d7ca": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:22-29"
+   ],
+   "n": "Warn-Toast „keine Gruppen-PDFs“ wenn kein PDF mit Gruppe > 2.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-0dba564e": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:304-312",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:281-282"
+   ],
+   "n": "Flutter besser: Ionic zeigt „Werk-Kategorien“ allen Rollen (Ändern scheitert für Nicht-Admins an RLS) / Flutter nur Admin/Verantwortlicher. Nicht-Admins verlieren nur die schreibgeschützte Ansicht; Leon entscheidet.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-303682fd": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:88-97",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:384"
+   ],
+   "n": "Flutter besser: Pull-to-Refresh lädt auch aktuelle Werke und Kategorien neu.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-3ecba25c": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:243-246",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:475-481",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:606-640"
+   ],
+   "n": "Link „Aktuelle Werke anzeigen“ nur mit aktuellen Werken und ohne Kategorie-Auswahl, Primärfarbe.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-80f8f4a3": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:643-775",
+    "lib/features/songs/presentation/utils/song_utils.dart:108-157",
+    "lib/core/providers/player_providers.dart:107-121"
+   ],
+   "n": "Titel, Zuletzt gespielt/Geplant, Zusatzfelder, Badges, Ziel-Route gleich. „Ohne …“: Flutter zählt für Dirigent/Helfer nur Gruppen mit aktiven Personen (gewollt, besser); fasst kategorielose Gruppen zu „Sonstige“ zusammen (Ionic nennt sie einzeln); Reihenfolge nach Gruppenreihenfolge statt Kategorie-ID. Gleiche Information, andere Formulierung.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-9e4f3c09": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:312-317",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:304-312"
+   ],
+   "n": "Flutter besser: Stift → „Kategorie bearbeiten“ (Abbrechen/Speichern, leer → Toast) gleich. Ionic zeigt Stift allen Rollen (Update scheitert still an RLS, Ionic meldet trotzdem „gespeichert“) / Flutter nur Admin/Verantwortlicher. Leon entscheidet.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-b6c27476": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:238-246",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:477-489"
+   ],
+   "n": "„Gruppenverzeichnis“ nur wenn Gruppen mit Dateien existieren.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-cda4f15d": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:106-120",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:112-120"
+   ],
+   "n": "Text „Präfix Nr Name“, Sheet schließen und Werk öffnen gleich. Ionic öffnet eingeloggt immer /tabs/settings/songs/<id> / Flutter im Werke-Tab /songs-tab/<id>; öffentlich beide /<sharingId>/<id>. Gleiche Seite.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-cfab610a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:311-319",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:283-284",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:130-133",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:248"
+   ],
+   "n": "Nur wenn song_sharing_id gesetzt, für alle Rollen und auf der Freigabe-Seite; Icon Link, „Link kopieren“, kopiert https://attendix.de/<id>, grüner Toast.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

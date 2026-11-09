@@ -1,0 +1,63 @@
+{
+  "batch": "zz-verify4-b13-planning-org",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "public-planning/public-planning.page#logic-f87732cd": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:221",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:301",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:335",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:384",
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:85"
+      ],
+      "n": "Neu bewertet. Änderung 4.19.9: rows-Getter prüft zusätzlich die Feldobjekte (Fehlerbehebung für geladene Pläne mit gleichen IDs). Flutter nutzt den gemeinsamen PlanFieldsEditor ohne Zeilen-Cache (Schlüssel id bzw. id#n, eingeklappte Blöcke, „Unterpunkt hinzufügen“-Zeile), Minuteneingabe übernimmt neue Werte – gleich. Sonst wie Ionic: 5 Vorlagen mit gleichen IDs/Startzeiten, neue IDs beim Klonen, Platzhalter „Chor/Orchester“/„Werk N“ und song-placeholder (Präfix „Nr. “), Org-Vorlagen/-Felder und Blockvorlagen nur eingeloggt, Zeiten/Ende, Validierung, lokale Sicherung mit denselben Feldern, shared_plans-Upsert nach 500 ms nur eingeloggt, Teilen (anonym einmaliges Insert), Org-Zuordnung, Neuer Plan/Plan laden. Abweichungen als Extras (alle niedrig): Werke-Quelle/Reihenfolge, keine Speicherung beim Öffnen, Hinweis bei leerem Ablauf, Entwurf je Konto (Flutter besser)."
+    },
+    "x-baf4e996fa": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:376",
+        "lib/data/repositories/song_repository.dart:738"
+      ],
+      "n": "Befund gültig. Ionic getUpcomingHistory: alle Historie-Einträge der Instanz, deren Termindatum (sonst history.date) nach heute 0 Uhr liegt, unsortiert (DB-Reihenfolge) / Flutter currentSongsProvider: Server-Filter history.date > heute 0 Uhr, nach Datum gruppiert und sortiert. Platzhalter „Chor/Orchester“/„Werk N“ und „Aktuelle Werke hinzufügen“ können andere Werke bzw. Reihenfolge ergeben; Ionic-Reihenfolge ist nicht definiert.",
+      "v": "bestätigt"
+    },
+    "x-ad78dde98b": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:252",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:828",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:301"
+      ],
+      "n": "Befund gültig, präzisiert: Ionic ngOnInit ruft nach Vorlage/Wiederherstellen und nochmals nach Laden von Werken/Historie (Platzhalter-Auflösung) calculateEnd → lokale Sicherung und, eingeloggt, shared_plans-Upsert nach 500 ms – auch ohne Änderung; ein frischer Entwurf bekommt so sofort eine Zeile (erscheint in „Meine Pläne“). / Flutter: Startvorlage mit persist: false, Platzhalter nur im Speicher ersetzt; lokal und in der DB erst bei der nächsten Änderung gespeichert (Teilen/Org-Zuordnung speichern vorher). Kein Datenverlust, daher niedrig.",
+      "v": "bestätigt"
+    },
+    "x-8685373170": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:346",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:973"
+      ],
+      "n": "Bestätigt. Ionic: ohne Felder (z. B. Vorlage „Leerer Ablauf“, „Neuer Plan“) ist die Liste leer / Flutter: grauer Text „Keine Programmpunkte“.",
+      "v": "bestätigt"
+    },
+    "x-d381b2c451": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:147",
+        "lib/features/planning/presentation/pages/public_planning_page.dart:226",
+        "lib/core/services/public_plan_draft_storage.dart:28",
+        "lib/core/services/public_plan_draft_storage.dart:45"
+      ],
+      "n": "Flutter besser: bestätigt. Ionic: ein gemeinsamer localStorage-Eintrag „attendix-public-plan“ für anonym und alle Konten (Entwurf samt Plan-ID/Bearbeitungsschlüssel wandert zwischen /planung und App bzw. Konten) / Flutter: Entwurf je Auth-Nutzer bzw. anonym getrennt, alter globaler Eintrag wird verworfen, beim Abmelden/Kontowechsel gelöscht.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

@@ -1,0 +1,404 @@
+{
+ "batch": "zz-verify6-opus-02",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "app-routing.module#route-f4856f09": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:184",
+    "lib/core/router/app_router.dart:1198-1202",
+    "lib/core/router/app_router.dart:238-245"
+   ],
+   "n": "Flutter besser: Ionic: Unterseite nur per In-App-Navigation aus Org-Einstellungen (Admin/Verantwortlich); bei Reload/Deep-Link lässt der AuthGuard ADMIN/RESPONSIBLE/VIEWER durch, danach leitet TabsPage-effect (isUrlAccessAllowed kennt die URL nicht) jede Rolle auf getUrl(role) um. Flutter: Route existiert unter /settings/org-settings/…, Rollenprüfung Admin/Verantwortlich bei jeder Navigation, andere Rollen → role.defaultRoute; /tabs/… wird per legacyRouteRedirect gemappt. f auf aktuelle Zeilen gesetzt.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-f65b270a": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:184",
+    "lib/core/router/app_router.dart:1203-1210",
+    "lib/core/router/app_router.dart:238-245"
+   ],
+   "n": "Flutter besser: Ionic: Unterseite nur per In-App-Navigation aus Org-Einstellungen (Admin/Verantwortlich); bei Reload/Deep-Link lässt der AuthGuard ADMIN/RESPONSIBLE/VIEWER durch, danach leitet TabsPage-effect (isUrlAccessAllowed kennt die URL nicht) jede Rolle auf getUrl(role) um. Flutter: Route existiert (mit ?q=) unter /settings/org-settings/…, Rollenprüfung Admin/Verantwortlich bei jeder Navigation, andere Rollen → role.defaultRoute; /tabs/… wird per legacyRouteRedirect gemappt. f auf aktuelle Zeilen gesetzt.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-e01a452bb2": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:214-247",
+    "lib/core/router/app_router.dart:436-449",
+    "lib/core/router/route_access.dart:127-139"
+   ],
+   "n": "Flutter besser: weiterhin gültig. Ionic: AuthGuard nur beim Betreten von /tabs, TabsPage-effect leitet nicht gelistete URLs (messages, team-organization, tasks/:id, org-settings/person-fields, …) bei Reload auf getUrl(role) um. Flutter: roleRouteRedirect prüft bei jeder Navigation (_protectedRoutes + route_access-Gates), abgelehnte Rollen → role.defaultRoute.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "app.component#effect-330e1045": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/dialogs/native_app_ad.dart:77-87",
+    "lib/shared/widgets/dialogs/native_app_ad.dart:44-50",
+    "lib/core/router/app_router.dart:145",
+    "lib/shared/widgets/layout/main_shell.dart:336"
+   ],
+   "n": "Unverändert: Ionic showNativeAppAd nur Web, nicht in Teams (teams.isInTeams() → return), einmalig (localStorage) → Alert, Button öffnet Store-URL (window.open _blank). Flutter NativeAppAdGate: Web (kIsWeb) + einmalig + nach SIGNED_IN, öffnet Store per launchUrl extern, aber weiterhin ohne Teams-Prüfung (isInTeamsProvider existiert, wird hier nicht genutzt) → Hinweis und Store-Öffnen auch im Teams-Tab. Nur ein überflüssiger Hinweis, keine Daten/Rechte.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "app.component#nav-0040c935": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:140-147",
+    "lib/core/router/app_router.dart:328-331"
+   ],
+   "n": "SIGNED_OUT: AuthChangeNotifier ruft notifyListeners, Redirect schickt jede nicht-öffentliche Route (≙ /tabs/…) auf /login; öffentliche Routen (legal, Song-Links, Plan-Links, teams-config) bleiben wie in Ionic. f aktualisiert (alte Zeilen 333-336 = Login-Route→Tenants).",
+   "v": "bestätigt"
+  },
+  "x-0cf36be089": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:125-134",
+    "lib/features/auth/data/auth_link_listener.dart:155-166"
+   ],
+   "n": "Flutter besser: Ionic zeigt error_description (englisch, decodeURIComponent) als danger-Toast und geht auf /login / Flutter übersetzt (expired/invalid → „Link ungültig“-Text je Recovery/Bestätigung, denied, sonst generischer Text), danger-SnackBar, /login.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "app.module#logic-0c401cb7": {
+   "s": "diff",
+   "f": [
+    "lib/main.dart:101-107",
+    "lib/main.dart:71-76",
+    "lib/main.dart:114-117",
+    "lib/main.dart:167-177"
+   ],
+   "n": "initAuth ≙ await SupabaseConfig.initialize (Session-Restore vor runApp), initLocale ≙ loadInitialLanguage vor runApp. Abweichung unverändert: Ionic initTeams als APP_INITIALIZER (App startet erst nach Teams-Erkennung) / Flutter TeamsService.init() unawaited, SSO nach Erkennung; sichtbar höchstens als kurzer Zwischenstand im Teams-Tab. SW im iframe ist in web/index.html wie Ionic deaktiviert.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#action-15811e3a": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:606-649",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:486-500"
+   ],
+   "n": "Zeile wie Ionic (nur Dirigent/Helfer, Datumskachel mit Hervorhebung, Headset-Icon + Dienst-Namen bei Dienst-Terminen, Titel inkl. hide_name, Meta, Ablaufplan-Button außer Beobachter, Besetzungs- bzw. %-Pill, Tap → Detail). Abweichung weiter vorhanden: meta() lässt bei ganztägigen Typen die Uhrzeit weg (if !type.allDay), Ionic zeigt eventTimeRange(start_time) auch dort (Termine bekommen type.start_time beim Anlegen).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#action-15811e3a-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:666-692",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:514-523"
+   ],
+   "n": "Ionic: vergangene Zeilen zeigen immer \"{percentage}%\" / Flutter: percentPill zeigt bei Dienst-Terminen (dutyTermineByIdProvider, letzte 180 Tage) die Besetzung \"1/2\" statt Prozent. „x von y anwesend“ in der Unterzeile bleibt, daher niedrig. Rest gleich: Archiv-Icon + abgeblendet, „Datum · x von y anwesend“, Tap nur Dirigent/Helfer (onTap: staff).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#action-437c32e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:393-403",
+    "lib/core/providers/duty_providers.dart:49-58"
+   ],
+   "n": "Nur Admin/Verantwortlich ((role.isAdmin || role.isResponsible)) und nur wenn ein Termintyp (alle, auch unsichtbare) duty_mode hat – wie Ionic isConductor && hasDutyTypes; Beobachter/Helfer nicht. Icon shuffle, Tooltip „Dienste verteilen“, nach Speichern Liste neu. f aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-558f18b9": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:376-386",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:38-79"
+   ],
+   "n": "Nur bei >1 Instanz, keine Rollenprüfung (beide Apps): Langname + Chevron links (centerTitle false), Material in Großbuchstaben wie Ionic-md-Toolbar-Button. Seite nur für Admin, Verantwortlich, Beobachter, Helfer, Stimmführer-Helfer (Ionic AuthGuard / Flutter canSeeAttendanceTab). f aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-609bdff2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:611-613",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:528-556",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:90-112"
+   ],
+   "n": "Mülleimer-Option (rot, icon-only) in kommenden Zeilen nur Admin/Verantwortlich (slidable ohne helperToo), Bestätigung „Möchtest du den Termin wirklich entfernen?“ Abbrechen/Fortfahren, Haptik, DELETE attendance id + tenantId.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-609bdff2-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:666-668",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:528-556",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:90-112"
+   ],
+   "n": "Vergangene Zeilen: Option nur Admin/Verantwortlich (Ionic [disabled]=\"!isConductor\"), gleicher Bestätigungsdialog und DELETE (id + tenantId).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-8b549b85": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:215-242",
+    "lib/core/utils/archived_attendance.dart:6-7",
+    "lib/core/providers/attendance_providers.dart:72-79",
+    "lib/core/providers/attendance_providers.dart:199-204"
+   ],
+   "n": "Nur Admin/Verantwortlich (Ionic isConductor = ADMIN||RESPONSIBLE; Flutter canSeeArchivedAttendances). Helfer, Stimmführer-Helfer, Beobachter sehen den Eintrag nicht und bekommen archivierte Termine gar nicht geladen. Zähler „{n} archivierte(r) Termin(e)“ nur bei >0, Häkchen/Primärfarbe bei aktiv, Filter-Icon eingefärbt.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-a3616f18": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:568-578",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:528-545",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:90-112"
+   ],
+   "n": "Karte „Heute/Nächster Termin“: Voll-Wischen löscht für Admin, Verantwortlich, Helfer, Stimmführer-Helfer (slidable helperToo → canAddAttendance) – Ionic ebenso (Karte nur isConductor||isHelper, kein [disabled]). Bestätigung „Möchtest du den Termin wirklich entfernen?“ Abbrechen/Fortfahren, dann DELETE attendance (id + tenantId).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-bf238f2d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:568-578",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:546-553",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:90-112"
+   ],
+   "n": "Mülleimer-Option auf der Karte, gleiche Rollen wie das Wischen (Dirigent + Helfer), gleicher Dialog/DELETE.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-c806441b": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:568-604",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:250-265",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:486-500",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:468-475"
+   ],
+   "n": "Gefüllte Karte nur Dirigent/Helfer mit Datumskachel, Titel, Ort mit Icon, Dienst-Besetzung „{text} besetzt“ + Namen bzw. „% · x anwesend · x entschuldigt · x abwesend“ (Verspätet→anwesend, Verspätet entsch.→entschuldigt), CTA „Anwesenheit“/„Anwesenheit erfassen“ + „Ablaufplan“ (nicht Beobachter), Tap → Detail. Abweichung unverändert: Meta ohne Uhrzeit bei ganztägigen Typen (Ionic zeigt start_time); Datumsbereich nach duration_days des Termins statt des Typs.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#action-ed4d02b3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:693-697",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:458-464"
+   ],
+   "n": "„Alle {n} anzeigen“/„Weniger anzeigen“ ab >3 Einträgen; Liste je Rolle wie Ionic (Beobachter inkl. nächstem Termin).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-fcf40bb8": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:611-613",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:528-545"
+   ],
+   "n": "Wischen-Löschen in kommenden Zeilen nur Admin/Verantwortlich (Ionic @if isConductor); Helfer/Stimmführer-Helfer nicht, Beobachter sieht den Abschnitt nicht.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-fcf40bb8-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:666-668",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:528-545"
+   ],
+   "n": "Vergangene Zeilen: Wischen-Löschen nur Admin/Verantwortlich (Ionic [disabled]=\"!isConductor\"); Helfer, Stimmführer-Helfer, Beobachter nicht.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#loading-64f98ca9": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:862-863",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:475-480",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:491-492",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:30-61"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay (Utils.getLoadingElement, endet spätestens nach 3 s) / Flutter: kein Overlay, Spinner im Absenden-Eintrag, Eintrag deaktiviert, Doppeltipp-Sperre, Sheet per PopScope/shouldCloseOnMinExtent nicht schließbar; übrige Felder bleiben bedienbar.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#modal-9df27ec0": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:395-402",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:19-26"
+   ],
+   "n": "Nur Admin/Verantwortlich und nur mit Dienst-Typ (duty_mode) – Beobachter/Helfer in beiden nicht. Vollbild-Dialog (fullscreenDialog), nach Speichern (pop true ≙ role confirm) Liste neu.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#nav-ebedf641": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:380-386",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:389-407",
+    "lib/core/constants/enums.dart:137-141"
+   ],
+   "n": "Umschalter nur bei mehreren Instanzen; gleiche Instanz → nichts; Ziel je Rolle in der neuen Instanz: Admin/Verantw./Beobachter → /people (≙ /tabs/player), Eltern → /parents, sonst /signout. Ionic-Default /register nur bei undefinierter Rolle (Randfall).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-1083fd67": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:659-665",
+    "lib/core/providers/attendance_providers.dart:252-268",
+    "lib/core/providers/realtime_providers.dart:237-257",
+    "lib/core/utils/attendance_percentage_utils.dart:41-58"
+   ],
+   "n": "Durchschnitt über beendete Termine des Typfilters (inkl. archivierter, die nur Admin/Verantwortlich geladen bekommen) ohne Dienst-Termine ohne Eingeteilte (percentage null ≙ Ionic-Filter duty_state), gerundet, Farbe ≥75/≥50. Randfall: Ionic behält bei leerer Grundmenge den alten Wert, Flutter zeigt 0 %.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-326ff95d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:606-607"
+   ],
+   "n": "„Anstehend“ nur für Dirigent/Helfer (staff = canAddAttendance) und nur mit weiteren kommenden Terminen; Beobachter nicht.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-4b25b852": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:659-661"
+   ],
+   "n": "„Durchschnitt“ im Abschnitt für alle Rollen der Seite.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-6a3aa5b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:380-386",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:51-53"
+   ],
+   "n": "Bei ≤1 Instanz Titel „Termine“ (iOS zusätzlich Large Title), für alle Rollen der Seite.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-788af3c8": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:655-656",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:458-461"
+   ],
+   "n": "Dirigent/Helfer: „Vergangen“ (beendete Termine); Beobachter: „Termine“ (nächster Termin + beendete) – staff = canAddAttendance wie Ionic isConductor||isHelper.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-8664b4a7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:655-656",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:458-461"
+   ],
+   "n": "Anzahl je Rolle wie Ionic (Beobachter inkl. nächstem Termin).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-c90cc320": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:607",
+    "lib/core/providers/attendance_providers.dart:232-240"
+   ],
+   "n": "Anzahl der kommenden Termine ohne den aktuellen (Ionic attendances nach splice); Archiv-Filter wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-cfdf6516": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:608-609",
+    "lib/core/utils/event_list_utils.dart:105-107",
+    "lib/core/utils/event_list_utils.dart:136-156"
+   ],
+   "n": "Monatskopf „MMMM yyyy“ in der App-Sprache (z. B. „November 2026“), nur im Dirigent/Helfer-Abschnitt.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-ffabfdf3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:568-573",
+    "lib/core/utils/event_list_utils.dart:75-81"
+   ],
+   "n": "„Heute“ (Termin läuft heute, inkl. mehrtägiger) bzw. „Nächster Termin“; nur Admin, Verantwortlich, Helfer, Stimmführer-Helfer (Ionic isConductor||isHelper = Flutter canAddAttendance). Beobachter bekommt den nächsten Termin oben in der Liste „Termine“ – in beiden Apps.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#toast-2921a95c": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:833-843"
+   ],
+   "n": "Ionic: Toast (danger) „Ungültiger Anwesenheitstyp ausgewählt“, wenn type_id keinem Typ entspricht (z. B. kein sichtbarer Typ), geprüft nach der Datumsprüfung / Flutter: neutrale SnackBar „Bitte wähle einen Veranstaltungstyp“ (attListInvalidType ungenutzt), Prüfung vor der Datumsprüfung. Meldung vorhanden, gleiche Aussage → niedrig.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#toast-ec2c10b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:888-892"
+   ],
+   "n": "„Termin hinzugefügt“ / „Termine hinzugefügt“ je Anzahl eindeutiger Tage (uniqueDays ≙ uniqueDates), grün, danach Sheet zu und Liste neu. Anlege-Sheet nur mit Anlegerecht (Admin/Verantw., Helfer mit attendance_create) wie Ionic-FAB; Ionic-Leerzustand öffnet es für alle (eigenes Item). Flutter prüft zusätzlich vor dem Schreiben (Extra x-8a16c9ab3f).",
+   "v": "bestätigt"
+  },
+  "x-57163c321f": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:514-523",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:689"
+   ],
+   "n": "Unverändert: Ionic vergangene Termine immer \"{percentage}%\" / Flutter: Dienst-Termine der letzten 180 Tage zeigen die Besetzung (\"1/2\", \"1/2 ?\"); „x von y anwesend“ bleibt sichtbar.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-62e5886e11": {
+   "s": "diff",
+   "f": [
+    "lib/core/providers/duty_providers.dart:148-190",
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:23-30",
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:79-85",
+    "lib/data/repositories/duty_repository.dart:42-46",
+    "lib/data/repositories/duty_repository.dart:254-275"
+   ],
+   "n": "Rollen-Teil inzwischen behoben: Abschnitt jetzt nur für Admin, Verantwortlich, Helfer, Stimmführer-Helfer (Ionic myPersonId nur bei isConductor||isHelper), Beobachter nicht mehr. Verbleibend: Ionic aus allen geladenen, nicht beendeten Terminen (auch laufende mehrtägige) / Flutter getUpcomingDutyTermine ab heute 00:00 (vor heute begonnene, noch laufende Dienste fehlen); Titel ohne hide_name-Logik (DutyTermin.title: typeInfo, sonst Typname); Meta „Di, 20.10. · 19:00“ statt „Di., 20.10.2026 · 19:00–21:00“.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-70670a344b": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:157-162",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:675-689",
+    "lib/features/attendance/presentation/attendance_create_writes.dart:233-234"
+   ],
+   "n": "Flutter besser: Ionic ruft onTypeChange für den vorausgewählten Typ nicht auf → Feld „Dauer (Tage)“ zeigt 1 und schreibt duration_days 1 statt duration_days des Typs / Flutter ruft _onTypeChanged auch für die Vorauswahl (Feld vorbelegt mit Typ-Dauer). Wert ist in beiden Apps im sichtbaren Feld änderbar; nicht-ganztägige Typen schreiben in beiden 1.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-8a16c9ab3f": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:850-860",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:903-907"
+   ],
+   "n": "Flutter besser: Flutter prüft vor dem Schreiben erneut das Anlegerecht (Fehler-Toast „Keine Berechtigung“, Ladefehler verweigert) und zeigt Schreibfehler als SnackBar / Ionic prüft nicht und bleibt bei Fehlern stumm (Overlay endet nach 3 s).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-9a86a96938": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:486-500"
+   ],
+   "n": "Unverändert: Ionic getEventMeta zeigt eventTimeRange(start_time/end_time) auch bei ganztägigen Typen (z. B. Plan-Start; Anlegen übernimmt type.start_time) / Flutter lässt die Uhrzeit bei allDay-Typen weg (Zeile 493).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-ad2ef27978": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:468-475"
+   ],
+   "n": "Flutter besser: Ionic Utils.getReadableDate nutzt duration_days des Typs, auch wenn der Termin eine andere Dauer hat / Flutter nutzt duration_days des Termins (Fallback Typ).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  }
+ },
+ "extra": []
+}

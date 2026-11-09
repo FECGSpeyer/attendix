@@ -1,0 +1,357 @@
+{
+ "batch": "zz-verify5-a-sonnet-02",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "people/person/person.page#field-0755eef9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:161",
+    "lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51"
+   ],
+   "n": "Beigetreten am: getipptes TT.MM.JJJJ (Blur) + Kalender-Button, Platzhalter personDatePlaceholder, ungültiges Format wird zurückgesetzt, UTC-Mitternacht-ISO wie Ionic. Nur-Lesen zeigt Textzeile statt deaktiviertem Input (gleiche Info).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-0a2daf88": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_transfer_sheet.dart:150",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1559"
+   ],
+   "n": "Ziel-Instanz-Select mit Instanzen der Organisation (getTenantsFromOrganisation), erste vorgewählt, Wechsel lädt Gruppen und setzt Ziel-Gruppe zurück; Aktionen nur bei Organisation + Instanzen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-247f92a0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:790"
+   ],
+   "n": "Zahlenfeld: Eingabe über Editor-Sheet mit Zahlentastatur statt Inline-Input (Darstellung), Wert wird als Zahl gespeichert (parseExtraFieldNumber), nur Bearbeitung wenn canEdit.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-3abdeaf8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:161",
+    "lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51"
+   ],
+   "n": "Geburtstag: getippt + Kalender, Platzhalter TT.MM.JJJJ, correctBirthday=true bei Änderung (person_detail_page:632), Warnfarbe wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-528d183b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:417",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:438"
+   ],
+   "n": "Lehrer-Auswahl nur bei maintainTeachers && !Hauptgruppe && hasTeacher, Liste auf Lehrer der gewählten Gruppe gefiltert (wie onInstrumentChange), keine Leer-Option.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-6c24372b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:176",
+    "lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51"
+   ],
+   "n": "Spielt seit: Bedingung !general && !choir && !mainGroup, getippt + Kalender, Platzhalter TT.MM.JJJJ.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-7b7c2d2d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:487",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:523"
+   ],
+   "n": "Schichtplan-Select nur wenn Schichtpläne existieren, Option 'Keine Schicht zugewiesen', onShiftChange-Logik (erste Schicht bzw. Startdatum heute) nachgebaut.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-8438f479": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:760",
+    "lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51"
+   ],
+   "n": "Datum-Zusatzfeld: getippt + Kalender (max heute), UTC-Mitternacht-ISO wie Ionic, Platzhalter TT.MM.JJJJ.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-8adac9da": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:417",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:199"
+   ],
+   "n": "Toggle 'Spielt beim Lehrer' nur bei maintainTeachers && !Hauptgruppe; Ausschalten lässt Lehrer gespeichert wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-a9ab8c88": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_image_picker.dart:1",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:150"
+   ],
+   "n": "Datei-Auswahl hinter Avatar: kein Bild + editierbar öffnet Picker direkt, sonst Viewer mit Ersetzen/Entfernen. 2-MB-Grenze (nach Verkleinerung auf 800px), Upload via updateImage inkl. appId, Entfernen mit Bestätigung. Plattform-Picker statt <input type=file>.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-b8f6d19b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:775"
+   ],
+   "n": "Boolean-Zusatzfeld als Toggle, Änderung markiert Person als geändert; Flutter sperrt es zusätzlich bei Nur-Lesen (Ionic nicht).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#modal-75561fb4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1298",
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:15"
+   ],
+   "n": "Archiv-Modal (Vollbild, kein Backdrop-Dismiss): Titel '{Name} Archivieren', X, Austrittsdatum (Standard heute), Notiz, FAB; archivePlayer schreibt left + History 'Kein Grund angegeben', löscht appId, Toast 'archiviert', schließt Seite.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#modal-ecac8535": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:134"
+   ],
+   "n": "Bild-Viewer-Modal: Tipp auf Avatar mit Bild öffnet Viewer, nur bei editierbar mit Ersetzen/Entfernen (Entfernen mit Bestätigungsdialog); ohne Bild + editierbar direkt Datei-Auswahl.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#modal-f11c7cfb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1559",
+    "lib/features/people/presentation/widgets/person_transfer_sheet.dart:28"
+   ],
+   "n": "Transfer-Modal als Bottom-Sheet: Titel 'Übertragen/Kopieren von {Name}', X, Ziel-Instanz, Ziel-Gruppe (nur wenn Gruppen), Button erst aktiv mit Instanz+Gruppe. Flutter ergänzt Doppel-Check und Bestätigung (besser).",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#action-a5b1e6d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:122",
+    "lib/features/planning/presentation/attendance_plan_viewer.dart:68",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:149"
+   ],
+   "n": "Werk-Zeile öffnet Noten-Optionen (showSongOptionsSheet) mit Zeile 'Noten öffnen'; Terminliste übergibt wie Ionic keine Spieler-Instrument-ID, daher keine 'Keine Noten'-Warnung. Notizen/Gruppenköpfe ohne Aktion.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#actionsheet-0c53b41c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1927"
+   ],
+   "n": "Aktionsblatt 'Link teilen' mit 'Nur-Lesen-Link' / 'Bearbeitungs-Link' + Abbrechen (automatisch); share_key/share_edit_key werden wie Ionic bei Bedarf erzeugt und gespeichert.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#alert-75ab0ccf": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1416"
+   ],
+   "n": "Radio-Alert 'Tag zuordnen' mit Tagesoptionen, Abbrechen/Speichern; Plan wird mit neuem day gespeichert und nach Tag sortiert, Index folgt dem Plan.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-9e2bdbdb": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1335"
+   ],
+   "n": "Notizen-Sheet 'Allgemeine Notizen' hat Button 'Aufgabe' (add-circle) -> _createTask(general): Protokoll anlegen, Aufgabenformular, Referenz in Notizen, Liste neu laden.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#alert-53b00c7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:182",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:307"
+   ],
+   "n": "Feld-bearbeiten-Dialog der öffentlichen Planung: Löschen/Abbrechen/Speichern, Programmpunkt/Ausführender/Info (Notiz nur Text), leerer Name zeigt 'Bitte gib einen Punkt ein' und bleibt offen.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#field-2ffcb596": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/public_brandings.dart:15",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:915"
+   ],
+   "n": "Branding-Select mit Kein Branding / FECG Speyer / FECG Schwegenheim, gespeichert als branding_id (none -> null), wirkt auf PDF/Bild-Export.",
+   "v": "bestätigt"
+  },
+  "register/register.page#popover-f947f492": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:362",
+    "lib/shared/widgets/adaptive/app_popover_menu.dart:177"
+   ],
+   "n": "Hilfe-Button im Schritt-3-Header öffnet Popover mit registerMainGroupInfoHtml (gleicher Text, Überschrift/Absätze/Liste/fett/kursiv gerendert).",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#actionsheet-ab6f737a": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:595"
+   ],
+   "n": "Mit gewähltem Bild erst Aktionsblatt 'Passbild ersetzen'/Abbrechen, sonst direkt Auswahl. Label wechselt in Flutter zu 'Passbild ersetzen' (Look).",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#modal-44ffacb0": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:431",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:221"
+   ],
+   "n": "Beschreibungs-Sheet (0.6 / bis voll, Titel 'Beschreibung', X, formatierter Text mit Links) aus Info-Chip und Aktionsmenü.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#modal-fc6bc685": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:431",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:125"
+   ],
+   "n": "Beschreibungs-Sheet im Eltern-Portal identisch zu Ionic (Chip 'Infos' und Aktion).",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-afd4ff21": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:150",
+    "lib/data/repositories/player_repository.dart:235"
+   ],
+   "n": "Kinder-Chips mit kid.firstName + Prozent-Badge; Kinder wie Ionic getPlayers(PARENT): parent_id, pending=false, left null, Sortierung instrument/isLeader desc/lastName, tenantId-gefiltert.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#alert-cf2e9968": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:249",
+    "lib/data/repositories/player_absence_repository.dart:245"
+   ],
+   "n": "Alert 'Abwesenheit löschen' mit Originaltext, Abbrechen/Löschen (destruktiv); löscht Abwesenheit, setzt entschuldigte Termine mit gleichem Grund im Zeitraum auf Standardstatus des Termintyps + leere Notiz zurück, Toast 'Abwesenheit gelöscht', Fehlerfall mit Toast.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#modal-ef7b9f1b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/plan_viewer_sheet.dart:384",
+    "lib/features/self_service/presentation/pages/signout_page.dart:770",
+    "lib/data/repositories/sign_in_out_repository.dart:849"
+   ],
+   "n": "Plan-Viewer aus Meine Termine nur bei share_plan + Feldern, mit Spieler-Instrument (Warnung 'Keine Noten für dein Instrument'), Werke öffnen Noten-Optionen, ohne defaultLive wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/church/church.service#toast-e387c98e": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/church_providers.dart:10",
+    "lib/core/utils/global_toast.dart:17"
+   ],
+   "n": "Ladefehler der Kirchenliste zeigt roten Toast 'Fehler beim Laden der Kirchen' (GlobalToast, Resolver in main.dart gesetzt) und wirft weiter.",
+   "v": "bestätigt"
+  },
+  "services/conductor/conductor.service#toast-e679cded": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/conductor_providers.dart:30"
+   ],
+   "n": "Fehler beim Laden der Hauptgruppen-Personen: roter Toast mit Ionic-Text, Fehler wird weitergereicht; Filter pending=false/tenantId wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/cross-tenant/cross-tenant.service#toast-9e26e97c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:216",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1091"
+   ],
+   "n": "Fehler bei E-Mail-Suche in anderen Instanzen: roter Toast 'Fehler beim Laden der Personen' an beiden Aufrufstellen.",
+   "v": "bestätigt"
+  },
+  "services/cross-tenant/cross-tenant.service#toast-fef13d0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:192",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1145"
+   ],
+   "n": "Fehler bei Namenssuche in anderen Instanzen: roter Toast 'Fehler beim Laden der Personen' an beiden Aufrufstellen.",
+   "v": "bestätigt"
+  },
+  "services/db.service#alert-f27cc642": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:167",
+    "lib/core/providers/user_preferences_provider.dart:12"
+   ],
+   "n": "Radio-Alert 'Instanz auswählen' / 'Bitte wähle die Instanz aus...' ohne Backdrop-Dismiss, Abbrechen (destruktiv) = gespeicherte/erste Instanz, Öffnen = Auswahl; nur nach echtem Login mit wantInstanceSelection. Der Verweis des ersten Prüfers (login_page) ist nur der Auslöser.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#toast-b8016997": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/duty_providers.dart:308",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:148"
+   ],
+   "n": "Fehler beim Übernehmen in geplante Termine: Update-Fehler liefert null, roter Toast 'Fehler beim Übernehmen in geplante Termine', kein Erfolgstoast; Lookup-Fehler gibt wie Ionic 0 zurück.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#toast-0eec9127": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:379"
+   ],
+   "n": "Löschen der Kategorie: bei Fehler roter Toast 'Fehler beim Löschen der Kategorie'.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#toast-2822515a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:299"
+   ],
+   "n": "Hinzufügen der Kategorie: bei Fehler roter Toast 'Fehler beim Hinzufügen der Kategorie'.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#toast-913649c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:346"
+   ],
+   "n": "Ändern der Kategorie: bei Fehler roter Toast 'Fehler beim Aktualisieren der Kategorie'.",
+   "v": "bestätigt"
+  },
+  "services/live-activity/live-activity.service#modal-9b4e9fd5": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/live_activity_service.dart:771",
+    "lib/core/services/live_activity_service.dart:830"
+   ],
+   "n": "attendix://live-plan öffnet den Plan-Viewer im Live-Modus (defaultLive) ohne Werke wie Ionic; Termin ohne Plan bleibt still; ORG-Ad-hoc-Plan und Cold-Start werden ebenfalls behandelt.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#toast-7f0bc6eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:75",
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:143"
+   ],
+   "n": "Fehler beim Verknüpfen mit der Organisation: roter Toast 'Fehler beim Verknüpfen der Organisation' bei Auswahl und Neuanlage.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#alert-8fd4640e": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:93"
+   ],
+   "n": "Alert 'Gemeinde hinzufügen' mit Feld 'Name der Gemeinde', Abbrechen/Hinzufügen; leerer Name zeigt 'Bitte gib gültige Werte ein.' und bleibt offen; Spinner, Toast 'Gemeinde hinzugefügt', Fehler als Toast. churches-Insert mit created_from wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#popover-92206ccb": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:942"
+   ],
+   "n": "⋯-Popover pro Eintrag mit gleichen Einträgen/Reihenfolge/Texten; Telegram nur mit chat_id und nur Dateien; Umbenennen/Verschieben/Mehrere auswählen/Löschen nur Admin/Verantwortlich (canEditFiles).",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

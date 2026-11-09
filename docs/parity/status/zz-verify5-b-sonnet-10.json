@@ -1,0 +1,353 @@
+{
+ "batch": "zz-verify5-b-sonnet-10",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "settings/general/type/type.page#text-71ea0fce": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:417",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:753"
+   ],
+   "n": "Label „Verfügbare Anwesenheitsstatus“ weiter vorhanden (Wert-Zeile + Checkbox-Dialog). Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-77016ef0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:644"
+   ],
+   "n": "Abschnitt „Darstellung“ weiter vorhanden. Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-79b4c15e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:96",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1190"
+   ],
+   "n": "„Maximal 3 Erinnerungen…“ (fett) in Erinnerungs-Sheet, nur bei aktiver Terminerinnerung (_notification). Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-bcc05107": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:814",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:822"
+   ],
+   "n": "Label „Name“ (Android mit „*“); Validierung weiter vorhanden. Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-c9c25629": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:93",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1190"
+   ],
+   "n": "„Die Erinnerung wird versendet, sobald die verbleibende Zeit…“ weiter vorhanden, nur bei notification. Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-d58b9b25": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:91",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1190"
+   ],
+   "n": "„Erinnerungen werden alle 5 Minuten geprüft…“ weiter vorhanden, nur bei notification. Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-d9788b1c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:647"
+   ],
+   "n": "„Farbe“ weiter vorhanden (mit Hinweis, Farbpunkt). Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#toast-69addb3f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1830"
+   ],
+   "n": "Erfolgs-Toast „Anwesenheitstyp erstellt“ (typeSettingsCreated) nach Anlegen; Anlegen läuft jetzt über Modal der Typ-Seite (_create), nicht mehr über Namensdialog der Liste – Effekt gleich (Toast, Duty-Angebot, schließen).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#toast-6ffc1cbe": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1812",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1852"
+   ],
+   "n": "Rot „twoStatus“ bei <2 Status, nach Namensprüfung, in Anlegen und Speichern (Flutter prüft <2 statt ==1, fängt auch 0 ab). Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#toast-bfb92172": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1958"
+   ],
+   "n": "Erfolgs-Toast nach Löschen, dann zurück; Fehler-Toast deleteFailed. Keine Vorprüfung „Typ verwendet“ mehr (Provider-Kommentar: wie Ionic), Hinweis der Erstprüfung zu verwendeten Typen ist überholt. Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#toast-ccbc1d13": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1874"
+   ],
+   "n": "Erfolgs-Toast „typeSettingsUpdated“ nach Speichern, danach Duty-Angebot wie Ionic. Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#toast-d47c0363": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1868",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1883"
+   ],
+   "n": "Fehler-Toast typeSettingsUpdateFailed bei null-Ergebnis und bei Exception; Demo-Modus eigener Toast. Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#toast-f110531e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1839"
+   ],
+   "n": "Fehler-Toast typeSettingsCreateFailed beim Anlegen (Anlegen jetzt im Modal der Typ-Seite). Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/general/types/types.page#action-86cf2354": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:114",
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:181"
+   ],
+   "n": "Zeile je Typ (Name) öffnet /settings/types/{id}; im Sortiermodus nicht antippbar wie Ionic. Rolle unverändert: Seite nur Admin/Verantwortlich (Route-Guard /settings/types).",
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#action-1fedb4c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:136",
+    "lib/core/router/app_router.dart:1283"
+   ],
+   "n": "AppBar-Zurück automatisch, Seite ist Unterroute von /settings (Stack bleibt auch bei Direktaufruf). Admin/Verantwortlich-Guard /settings/handover.",
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#nav-42b92fe4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:136",
+    "lib/core/router/app_router.dart:1283"
+   ],
+   "n": "Ionic navigateBack(/tabs/settings) / Flutter AppBar-Zurück auf Elternroute /settings.",
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#text-00d1539c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:136"
+   ],
+   "n": "Titel „Personenübergabe“ (handoverTitle) in AppBar und Großtitel.",
+   "v": "bestätigt"
+  },
+  "settings/help/article/help-article.page#action-bb7dd385": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:50",
+    "lib/features/help/presentation/widgets/help_markdown.dart:54",
+    "lib/features/help/presentation/widgets/glossary_term_popover.dart:12",
+    "lib/features/help/data/help_content_service.dart:51"
+   ],
+   "n": "Artikeltext als Markdown mit Listen/fett/kursiv/Code; [[Begriff]] antippbar, Suche per Name/Alias (trim, klein), unbekannt → nichts; öffnet jetzt Popover an der Tippstelle wie Ionic (nicht mehr Dialog). Keine Rollenbedingung.",
+   "v": "bestätigt"
+  },
+  "settings/help/glossary-popover/help-glossary-popover.component#text-038f5429": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/widgets/glossary_term_popover.dart:12"
+   ],
+   "n": "Begriff als Kartentitel im Popover (Datei glossary_term_dialog.dart ist durch glossary_term_popover.dart ersetzt, näher an Ionic).",
+   "v": "bestätigt"
+  },
+  "settings/help/glossary/help-glossary.page#text-b394e1ee": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_glossary_page.dart:84",
+    "lib/features/help/presentation/widgets/help_markdown.dart:107",
+    "lib/features/help/data/help_content.dart"
+   ],
+   "n": "Definition als Markdown, [[Begriff]] kursiv und nicht verlinkt (onGlossaryTap null) wie renderGlossaryDefinitionHtml; per Skript geprüft: alle 34 Definitionen wortgleich zu Ionic glossary.ts.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-da0472bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:421",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:425"
+   ],
+   "n": "„+“ links in der Leiste (leading), ruft createInstance (Sheet schließen, Registrierungs-Modal). Sheet-Variante des Tenant-Auswahl-Screens.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#field-09a32184": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:433",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:88"
+   ],
+   "n": "Boolean als Switch (== true), Vorbelegung defaultValue nur wenn Schlüssel fehlt wie Ionic; nur bei editableByPlayers, sonst Label+Wert. Rollen/Mandant unverändert (Felder nach visibleToPlayers).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#field-509e17fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:487",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:262"
+   ],
+   "n": "Number: Zahlentastatur, beim Speichern num.tryParse → Zahl bzw. null bei leer. Nur bei editableByPlayers, sonst Label+Wert. Rollen unverändert.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-1225d656": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:250",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:665"
+   ],
+   "n": "Zahnrad öffnet kleines Bottom-Sheet mit Schalter „Instanzauswahl aktivieren“ + Hilfetext, schreibt wantInstanceSelection.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-2a88fd25": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:154",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:436"
+   ],
+   "n": "„Passbild ansehen“ öffnet Vollbild-Betrachter mit URL ohne ?quality=20; Aktion nur bei eigenem Bild (hasImg).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-2182762d": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:345"
+   ],
+   "n": "Titel „Meine Stammdaten“ (settingsMyData).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-d6dc4517": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:421"
+   ],
+   "n": "Titel „Instanzen ({count})“ (settingsTenantsCount); beim Laden Fallback „Instanzen“ ohne Zahl – Look.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#action-32fa8823": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:826",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:101"
+   ],
+   "n": "„Start“ + „{time} Uhr“; Tippen → Startzeit nur im Bearbeitungsmodus (Ionic button=isEditMode). In Live-Ansicht zeigt Flutter zusätzlich „beginnt in … Min.“ unter Start (Extra, Look).",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#action-5e0affc3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:806"
+   ],
+   "n": "Titel im Listenkopf, im Bearbeitungsmodus Stift-Icon und Tippen → Titel bearbeiten.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#alert-cbcf9904": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:638",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:324"
+   ],
+   "n": "Nur im Bearbeitungsmodus; „Titel bearbeiten“, Feld mit aktuellem Titel, Platzhalter „Titel“, Abbrechen/Speichern; leer → Dialog bleibt offen; getrimmt gespeichert.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#text-aa963fc4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:746",
+    "lib/core/utils/plan_utils.dart:547"
+   ],
+   "n": "„Wochentag, TT.MM.JJJJ“ (longDate), ohne Datum der Titel.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#text-d2f87d03": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:843",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:205"
+   ],
+   "n": "Ionic: Ende-Zeile nur wenn end_time gesetzt (@if (end)). Flutter: Ansicht (PlanViewList) berechnet bei leerem end Start+Summe der Minuten und zeigt trotzdem „{time} Uhr“; Bearbeitungsmodus wie Ionic (nur wenn end gesetzt). Extra-Info, Funktion gleich.",
+   "v": "korrigiert"
+  },
+  "shared/audio-player/audio-player.component#action-79c00bc9": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:84"
+   ],
+   "n": "Zurück-Skip nur bei Queue, primary 22px, ruft previous (Neustart >Schwelle wie Ionic); Fehler-Toast audioPlayFailed.",
+   "v": "bestätigt"
+  },
+  "shared/audio-player/audio-player.component#action-9bbdb2ac": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:89"
+   ],
+   "n": "Play/Pause-Kreis-Icon 36px, togglePlayPause.",
+   "v": "bestätigt"
+  },
+  "shared/audio-player/audio-player.component#action-c346ccde": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:95"
+   ],
+   "n": "Weiter-Skip nur bei Queue; ohne nächsten Titel deaktiviert (onTap null, 35 %).",
+   "v": "bestätigt"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-630a0002": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:325"
+   ],
+   "n": "„Übergeordneter Ordner“ nur bei Pfad nicht leer; navigiert eine Ebene höher.",
+   "v": "bestätigt"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-7349d8ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:295"
+   ],
+   "n": "Home-Icon springt zum Hauptordner (Breadcrumb scrollbar statt Einklappen – Look).",
+   "v": "bestätigt"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-c1e8afee": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:296"
+   ],
+   "n": "Pfadsegmente mit Chevron; Tippen navigiert zum Teilpfad.",
+   "v": "bestätigt"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-d009a6e6": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:349"
+   ],
+   "n": "„Wählen“ rechts je Unterordner wählt direkt und schließt; Zeilentipp navigiert hinein.",
+   "v": "bestätigt"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#text-ba5048f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:357"
+   ],
+   "n": "„Keine Unterordner vorhanden.“ in Medium-Farbe, nur wenn leer und kein Fehler.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

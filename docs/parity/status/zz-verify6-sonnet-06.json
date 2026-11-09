@@ -1,0 +1,451 @@
+{
+ "batch": "zz-verify6-sonnet-06",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "duty/unavailability-modal/unavailability-modal.component#toast-08cde731": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:104"
+   ],
+   "n": "Toast „Bitte wähle mindestens einen Wochentag“ (warning) bei leeren Wochentagen, Bearbeitung bleibt offen (_save, Zeile 104-106). Erreichbarkeit wie Ionic (Selbst über Termine/Abmelden, Admin/Verantwortlicher über Person).",
+   "v": "bestätigt"
+  },
+  "history/history.page#action-6dccb9eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:347",
+    "lib/features/history/presentation/pages/history_page.dart:304"
+   ],
+   "n": "Zeile „Werk(e)“ mit „N Werk(e) ausgewählt“/„Keine Werke ausgewählt“ + Chevron öffnet Auswahl. Nachgebessert: erstes Werk der Bibliothek wird einmalig vorausgewählt, Auswahl bleibt nach Schließen erhalten und wird nach Hinzufügen geleert (_selectedSongIds) wie Ionic selectedSongs. Frühere Abweichung entfällt.",
+   "v": "korrigiert"
+  },
+  "history/history.page#action-74b628bd": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:763",
+    "lib/features/history/presentation/pages/history_page.dart:596"
+   ],
+   "n": "Slidable-Papierkorb (rot) im Suchmodus → Bestätigungsdialog → Löschen.",
+   "v": "bestätigt"
+  },
+  "history/history.page#action-85678212": {
+   "s": "diff",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:185"
+   ],
+   "n": "Ionic: Pull-to-Refresh immer / Flutter: RefreshIndicator nur um gefüllte Liste, nicht im Leer-/Keine-Treffer-Zustand. Gleiche Funktion, nur Randfall.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "history/history.page#action-8f1945e2": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:441"
+   ],
+   "n": "Kalender-Button am Datumsfeld öffnet Datumsauswahl (showAppDatePicker). f-Zeilen korrigiert (Datei hat sich verschoben).",
+   "v": "bestätigt"
+  },
+  "history/history.page#action-a34c7dc7": {
+   "s": "diff",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:878",
+    "lib/features/history/presentation/pages/history_page.dart:881",
+    "lib/data/models/song/song.dart:150"
+   ],
+   "n": "Checkbox-Zeile mit Komponist, Tippen schaltet um. Ionic Titel „{prefix}{nummer} {name}“ / Flutter „{prefix}{nummer} - {name}“ (Bindestrich).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "history/history.page#action-a4e47659": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:94"
+   ],
+   "n": "Schließen-Button (X) rechts in der Kopfzeile, pop/zurück zu Einstellungen.",
+   "v": "bestätigt"
+  },
+  "history/history.page#action-a6f939ed": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:472",
+    "lib/features/history/presentation/pages/history_page.dart:543",
+    "lib/data/repositories/attendance_repository.dart:907"
+   ],
+   "n": "Hinzufügen: je Werk history-Zeile (songId, person_id/otherConductor, date YYYY-MM-DD, visible=true), tenantId im Repo erzwungen, Demo-Guard; Prüfung „mind. ein Werk“ (Flutter Warn- statt Danger-Toast, niedrig). Selektion wird danach geleert wie Ionic.",
+   "v": "bestätigt"
+  },
+  "history/history.page#action-ac09cfa7": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:763",
+    "lib/features/history/presentation/pages/history_page.dart:596"
+   ],
+   "n": "Slidable-Papierkorb in Suchliste.",
+   "v": "bestätigt"
+  },
+  "history/history.page#action-ada537fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:845",
+    "lib/features/history/presentation/pages/history_page.dart:847"
+   ],
+   "n": "Häkchen-Button schließt „Werke auswählen“ und übernimmt die Auswahl.",
+   "v": "bestätigt"
+  },
+  "history/history.page#alert-2038761e": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:596",
+    "lib/features/history/presentation/pages/history_page.dart:614",
+    "lib/data/repositories/attendance_repository.dart:935"
+   ],
+   "n": "Header „Möchtest du den Eintrag wirklich entfernen?“, Abbrechen/Ja; Ja löscht (Flutter zusätzlich mit tenantId-Filter), lädt neu, Haptik vorher.",
+   "v": "bestätigt"
+  },
+  "history/history.page#field-1bf71ecb": {
+   "s": "diff",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:411"
+   ],
+   "n": "Ionic: Name des anderen Dirigenten als editierbares Eingabefeld / Flutter: nur Textzeile; Korrektur über erneute Auswahl. Gleiche Funktion erreichbar.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "history/history.page#field-1d1fb30d": {
+   "s": "diff",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:415",
+    "lib/features/history/presentation/pages/history_page.dart:431",
+    "lib/features/history/presentation/pages/history_page.dart:318"
+   ],
+   "n": "Platzhalter „TT.MM.JJJJ“, Übernahme beim Verlassen, ungültig → letzter gültiger Wert. Ionic: zuletzt gewähltes Datum bleibt für nächsten Eintrag / Flutter: jedes Öffnen startet mit heute. Flutter besser: 31.02. wird verworfen (Ionic rollt über).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "history/history.page#field-2be7f50e": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:878"
+   ],
+   "n": "Checkbox vorne in der Werkzeile, Tippen schaltet um.",
+   "v": "bestätigt"
+  },
+  "history/history.page#field-85282cc3": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:372",
+    "lib/features/history/history_utils.dart:70"
+   ],
+   "n": "Label „Dirigent“, Optionen aktive Dirigenten (left==null) + „Anderer Dirigent“ (Name-Dialog), Default erster aktiver Dirigent (defaultHistoryConductorId). Alte Referenz history_utils.dart:83 ungültig (Datei hat 71 Zeilen), korrigiert auf :70.",
+   "v": "bestätigt"
+  },
+  "history/history.page#field-aa62edcf": {
+   "s": "diff",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:441",
+    "lib/shared/widgets/adaptive/app_pickers.dart:12"
+   ],
+   "n": "Ionic: ion-datetime Datumsrad, unbegrenzt / Flutter: Kalender-Datepicker, Bereich 2000 bis heute+365 Tage; Datum kann zusätzlich getippt werden.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "history/history.page#field-ac79647a": {
+   "s": "diff",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:112",
+    "lib/features/history/presentation/pages/history_page.dart:238",
+    "lib/features/history/presentation/pages/history_page.dart:179"
+   ],
+   "n": "Platzhalter „Werk suchen...“ gleich. Ionic: nur Werkname / Flutter: zusätzlich Werknummer und Dirigent, bei 0 Treffern „Keine Werke gefunden“ mit Icon.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "history/history.page#field-c1a5fc20": {
+   "s": "diff",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:836",
+    "lib/features/history/presentation/pages/history_page.dart:853",
+    "lib/data/models/song/song.dart:150"
+   ],
+   "n": "Platzhalter gleich. Ionic sucht in „{prefix}{nummer} {name}“ / Flutter in „{prefix}{nummer} - {name}“; Begriffe über Nummer und Name hinweg („12 Ave“) finden nichts.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "history/history.page#modal-83362f58": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:441"
+   ],
+   "n": "Datumsauswahl öffnet per Kalender-Button.",
+   "v": "bestätigt"
+  },
+  "history/history.page#modal-9b3d2b28": {
+   "s": "diff",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:534",
+    "lib/features/history/presentation/pages/history_page.dart:537",
+    "lib/features/history/presentation/pages/history_page.dart:845"
+   ],
+   "n": "Vollbild-Seite „Werke auswählen“ (fullscreenDialog). Ionic übernimmt Auswahl live, Schließen per Backdrop/Wischen behält sie / Flutter: Auswahl nur mit ✓, Zurück verwirft Änderungen. Gleiche Funktion.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "history/history.page#text-0ad9679c": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:863"
+   ],
+   "n": "„Keine Werke gefunden“ bei leerem Filter.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-12c0b16e": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:780",
+    "lib/core/providers/history_providers.dart:49"
+   ],
+   "n": "Suchmodus: Datum (Termin-Datum gewinnt) | Dirigent als dd.MM.yyyy.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-12c0b16e-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:780",
+    "lib/core/providers/history_providers.dart:49"
+   ],
+   "n": "Dasselbe ohne Termin: eigenes Datum | Dirigent.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-12c0b16e-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:780"
+   ],
+   "n": "Gruppenmodus: Datum | Dirigent.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-12c0b16e-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:780"
+   ],
+   "n": "Gruppenmodus ohne Termin: eigenes Datum | Dirigent.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-28f39b12": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:341"
+   ],
+   "n": "Titel „Werk(e) hinzufügen“.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-49ced4d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:773",
+    "lib/features/history/presentation/pages/history_page.dart:208"
+   ],
+   "n": "Suchmodus: flache Liste, nur Werkname (showCount false), kein Proben-Badge.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-913595c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:841"
+   ],
+   "n": "Titel „Werke auswählen“.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-a2c9f652": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:160"
+   ],
+   "n": "„Noch keine Werke gespielt“ bei leerer Historie.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-af3f8717": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:417"
+   ],
+   "n": "Label „Datum“.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-be8b6a49": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:773"
+   ],
+   "n": "Titel „Nr Name“ im Gruppenmodus.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-decdb8ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:795",
+    "lib/features/history/history_utils.dart:65"
+   ],
+   "n": "Badge „N Probe(n)“ nur bei count != 0.",
+   "v": "bestätigt"
+  },
+  "history/history.page#text-dff66123": {
+   "s": "diff",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:672",
+    "lib/features/history/presentation/pages/history_page.dart:653"
+   ],
+   "n": "Datums-Akkordeon vorhanden, anfangs zu. Ionic: nur ein Datum gleichzeitig offen / Flutter: mehrere gleichzeitig offen.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "history/history.page#toast-a7d10e87": {
+   "s": "diff",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:467"
+   ],
+   "n": "Text „Bitte wähle mindestens ein Werk an“ gleich. Ionic danger (rot) / Flutter warning (orange). Der frühere Zusatz (Flutter ohne Vorauswahl) entfällt: Flutter wählt jetzt das erste Werk vor, Toast erscheint nur nach Abwahl wie Ionic.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "history/history.page#toast-cafe4207": {
+   "s": "diff",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:622"
+   ],
+   "n": "Ionic: Fehlertext „Fehler beim Löschen des Eintrags“ (danger) / Flutter: „Fehler: <Meldung>“ (danger). Fehler wird gemeldet, gleiche Aussage.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "home-dashboard/components/absences-card/absences-card.component#action-dc318865": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:163",
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:181"
+   ],
+   "n": "Zeile mit Datumskachel (orange/grau, Pause-Icon ohne Datum), Name, Untertitel, Chip „Pause“/„Abwesend“; Tippen öffnet Person im Modal, Bearbeitbarkeit nach Rolle (Admin/Verantwortlicher, sonst lesend) wie Ionic readOnly.",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/absences-card/absences-card.component#text-775a5bf4": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:157"
+   ],
+   "n": "„Keine Abwesenheiten im Zeitraum.“",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#action-9374f372": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:66"
+   ],
+   "n": "Kachel pink (heute solid, vergangen grau, gedimmt), Zeile hervorgehoben heute, „Wochentag · Alterstext“, Chip „Heute“ mit Sparkles bzw. relative Tage; Tippen öffnet Person (Rolle→readOnly wie Ionic).",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#text-17c34187": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:44"
+   ],
+   "n": "„Keine Geburtstage im Zeitraum.“",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#text-b3d3eb43": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:53",
+    "lib/features/dashboard/presentation/widgets/dashboard_card.dart:191"
+   ],
+   "n": "Trenner „Zuletzt“ vor vergangenen Geburtstagen.",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#action-fb7def79": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:217"
+   ],
+   "n": "Rote Initialen-Kachel, Name, Grund bzw. „Problemfall“; Tippen öffnet Person, danach Neuladen (Provider invalidiert).",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#text-2a682321": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:211"
+   ],
+   "n": "„Keine Problemfälle vorhanden.“",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/current-plan-card/current-plan-card.component#action-337f2999": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:490",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:511"
+   ],
+   "n": "Karte tippbar → Planansicht; Titel „Aktueller Ablaufplan“, Typname, Badge „Live“, Datum/Heute, Zeiten+Positionen, Chevron, Punkte mit Nummer/Name/Dirigent, Startzeit/Countdown. Sichtbarkeit: nur Admin/Verantwortlicher oder share_plan wie Ionic (dashboard_logic.dart:253).",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/current-plan-card/current-plan-card.component#modal-0f9e8264": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:406",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:418",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:240"
+   ],
+   "n": "Vollbild-Planansicht (fullscreenDialog) mit Termin inkl. extra_plans; Fallback auf Termin, wenn Plan nicht parsebar.",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/current-songs-card/current-songs-card.component#action-b43ba01c": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:333"
+   ],
+   "n": "Lila Nummernkachel (klein ab >3 Zeichen), Werkname, Untertitel (Dirigent · Typ bzw. Wochentag, Datum), relative Tage; Tippen öffnet Werk (/songs-tab/:id bzw. /settings/songs/:id für Rollen ohne Werke-Tab).",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/current-songs-card/current-songs-card.component#text-830f9c8d": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:309"
+   ],
+   "n": "„Keine geplanten Werke.“",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/member-changes-card/member-changes-card.component#action-cd789740": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:114"
+   ],
+   "n": "Kachel grün/rot, Name, relative Tage, Chip „Beitritt“/„Austritt“ mit Pfeil; Max. 5, 60 Tage wie Ionic.",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/member-changes-card/member-changes-card.component#text-eab120a3": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:108"
+   ],
+   "n": "„Keine Veränderungen im Zeitraum.“",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#action-debeb343": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:110",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:111"
+   ],
+   "n": "Zeile Letzter Termin: onTap nur bei canOpen (Admin, Verantwortlicher, Helfer, Stimmführer-Helfer) wie Ionic; Kachel grau, Typinfo, „{present}/{total} anwesend · {excused} entschuldigt“, Prozent-Chip grün ≥75 / orange ≥50 / rot.",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#modal-0aa79f4a": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:192",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:237"
+   ],
+   "n": "Tippen auf „Abgemeldet“ (nur bei >0) öffnet Bottom-Sheet „Abmeldungen“, Start 75 %, bis Vollhöhe; Liste sortiert nach Gruppe, Nachname; Badge Entschuldigt/Verspätet entschuldigt (+ Schicht).",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

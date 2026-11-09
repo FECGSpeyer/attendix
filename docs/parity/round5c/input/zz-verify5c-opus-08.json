@@ -1,0 +1,2066 @@
+{
+ "batch": "zz-verify5c-opus-08",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 142,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (isAdmin)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "org.handover"
+    ],
+    "de": [
+     "Übergabe"
+    ],
+    "literals": [],
+    "text": "{{ 'org.handover' | transloco }}",
+    "id": "org-settings/org-settings.page#text-5a3b837f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:259"
+    ],
+    "n": "Admin + Verantwortlich (Ionic isAdmin / Flutter role.isAdmin || role.isResponsible) – gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 210,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (linkedTenants.length > 0)",
+     "@for (tenant of linkedTenants; track tenant.id)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ tenant.longName }}"
+    ],
+    "text": "{{ tenant.longName }}",
+    "id": "org-settings/org-settings.page#text-8614316a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:293"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 209,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (linkedTenants.length > 0)",
+     "@for (tenant of linkedTenants; track tenant.id)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ tenant.shortName }}"
+    ],
+    "text": "{{ tenant.shortName }}",
+    "id": "org-settings/org-settings.page#text-874018a8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:292"
+    ],
+    "n": "Für alle Rollen der Seite (Admin/Verantwortlich) bei verknüpften Instanzen.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 196,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (linkedTenants.length > 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "org.tenants"
+    ],
+    "de": [
+     "Instanzen"
+    ],
+    "literals": [],
+    "text": "{{ 'org.tenants' | transloco }}",
+    "id": "org-settings/org-settings.page#text-9f03cb0c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:283"
+    ],
+    "n": "„Instanzen“ für alle, die die Seite öffnen (Admin/Verantwortlich), sobald weitere Instanzen verknüpft sind (Flutter linkedTenantsProvider ohne aktuelle Instanz).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 201,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (linkedTenants.length > 0)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ db.tenant().shortName }}"
+    ],
+    "text": "{{ db.tenant().shortName }}",
+    "id": "org-settings/org-settings.page#text-b41bd762"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:286"
+    ],
+    "n": "shortName der aktuellen Instanz; gleiche Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 155,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (isAdmin && linkedTenants.length > 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "orgSongs.section"
+    ],
+    "de": [
+     "Werke"
+    ],
+    "literals": [],
+    "text": "{{ 'orgSongs.section' | transloco }}",
+    "id": "org-settings/org-settings.page#text-bbfd5f0d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:269",
+     "lib/core/providers/organisation_providers.dart:39"
+    ],
+    "n": "Admin + Verantwortlich und mindestens eine andere Instanz der Organisation (eigene ausgeschlossen) – gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 270,
+    "method": "OrgSettingsPage.saveSongSync",
+    "cond": [],
+    "message": {
+     "keys": [
+      "org.syncSaved"
+     ],
+     "de": [
+      "Werk-Synchronisierung gespeichert."
+     ],
+     "literals": [],
+     "expr": "translate('org.syncSaved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "76f2a472",
+    "mbody": "e2a28fa6",
+    "roleGuarded": true,
+    "id": "org-settings/org-settings.page#toast-2193dd25"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:68",
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:280"
+    ],
+    "n": "Nur Admin + weitere Instanzen in der Org (beide); schreibt tenants.song_source_tenant_id der aktuellen Instanz, dann „Werk-Synchronisierung gespeichert.“ success.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 163,
+    "method": "OrgSettingsPage.createGemeindeAppKey",
+    "cond": [],
+    "message": {
+     "keys": [
+      "org.gaCopied"
+     ],
+     "de": [
+      "Schlüssel kopiert"
+     ],
+     "literals": [],
+     "expr": "translate('org.gaCopied')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "f743f489",
+    "mbody": "ed1b85c6",
+    "roleGuarded": true,
+    "id": "org-settings/org-settings.page#toast-89e49671"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:112"
+    ],
+    "n": "„Schlüssel kopiert“ success, Dialog bleibt offen; nur Admin + fecg_link_enabled.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 238,
+    "method": "OrgSettingsPage.deleteOrganisation",
+    "cond": [],
+    "message": {
+     "keys": [
+      "org.unlinked"
+     ],
+     "de": [
+      "Die Organisation wurde erfolgreich von der Instanz getrennt."
+     ],
+     "literals": [],
+     "expr": "translate('org.unlinked')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "74c36a06",
+    "mbody": "c9637f85",
+    "roleGuarded": true,
+    "id": "org-settings/org-settings.page#toast-9381748b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:59"
+    ],
+    "n": "„Die Organisation wurde erfolgreich von der Instanz getrennt.“ success nach erfolgreichem Trennen; nur Admin.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 66,
+    "method": "OrgSettingsPage.openOrganisationAlert",
+    "cond": [
+     "(data)",
+     "(organisations.length)"
+    ],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "error.message"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "1d391e0d",
+    "mbody": "ad849673",
+    "roleGuarded": true,
+    "id": "org-settings/org-settings.page#toast-eaca6962"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:74"
+    ],
+    "n": "Ionic: Service-Toast „Fehler beim Verknüpfen der Organisation“, danach Toast mit error.message (danger) / Flutter: Toast „Fehler beim Verknüpfen“ (danger).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "extra": {
+    "id": "x-6ff50ffb32",
+    "title": "Fehlertexte Umbenennen/Trennen/Synchronisierung",
+    "n": "Ionic: „Fehler beim Umbenennen der Organisation“, „Fehler beim Entfernen der Organisation“, „Fehler beim Aktualisieren der Einstellungen“-Toast aus den Services / Flutter: „Fehler beim Speichern“ (Umbenennen, Werk-Sync) bzw. „Fehler beim Trennen“.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/organisation/organisation.service.ts:388",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:44",
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:60",
+     "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:70"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-songs/org-songs.page",
+   "ionic": {
+    "ts": "org-settings/org-songs/org-songs.page.ts",
+    "html": "org-settings/org-songs/org-songs.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-songs/org-songs.page.html",
+    "line": 20,
+    "cond": [
+     "@if (!isAdmin || !db.organisation())"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "class": "ion-text-wrap"
+    },
+    "keys": [
+     "orgSongs.noPermission"
+    ],
+    "de": [
+     "Nur Admins und Verantwortliche einer Instanz mit Organisation können Werke organisationsweit suchen."
+    ],
+    "literals": [],
+    "text": "{{ 'orgSongs.noPermission' | transloco }}",
+    "id": "org-settings/org-songs/org-songs.page#text-8eba480d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_songs_page.dart:224",
+     "lib/features/organisation/presentation/pages/org_songs_page.dart:243",
+     "lib/core/router/app_router.dart:181"
+    ],
+    "n": "Bedingung !isAdmin || !Organisation gleich (isAdmin = Admin/Verantwortlich). Andere Rollen erreichen die Seite in Flutter nicht (Redirect über /settings/org-settings), in Ionic nur per URL – praktisch gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/bulk-edit/bulk-edit.page.ts",
+    "line": 224,
+    "method": "BulkEditPage.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "people.saveFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern"
+     ],
+     "literals": [],
+     "expr": "translate('people.saveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "53f4e76f",
+    "mbody": "9efcf3b8",
+    "roleGuarded": true,
+    "id": "people/bulk-edit/bulk-edit.page#toast-2d9620c7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:242"
+    ],
+    "n": "'Fehler beim Speichern' (danger), Seite bleibt offen. Rollen: Massenbearbeitung/Import nur Admin/Verantwortlich (Ionic list.page isAdmin, list.page.html:167; Flutter people_list_page isAdmin = admin||responsible, Menü :943, Leerzustand :565) – Beobachter sieht die Personenliste, aber in beiden keinen Einstieg.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/bulk-edit/bulk-edit.page.ts",
+    "line": 220,
+    "method": "BulkEditPage.save",
+    "cond": [],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [
+      "${changedCount} Person(en) aktualisiert"
+     ],
+     "expr": "`${changedCount} Person(en) aktualisiert`"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "e479762c",
+    "mbody": "9efcf3b8",
+    "roleGuarded": true,
+    "id": "people/bulk-edit/bulk-edit.page#toast-797d2d80"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:235"
+    ],
+    "n": "'{n} Person(en) aktualisiert' (grün), danach schließen mit Aktualisierung. Rollen: Massenbearbeitung/Import nur Admin/Verantwortlich (Ionic list.page isAdmin, list.page.html:167; Flutter people_list_page isAdmin = admin||responsible, Menü :943, Leerzustand :565) – Beobachter sieht die Personenliste, aber in beiden keinen Einstieg.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/bulk-edit/bulk-edit.page.ts",
+    "line": 154,
+    "method": "BulkEditPage.save",
+    "cond": [
+     "(this.db.isDemo())"
+    ],
+    "message": {
+     "keys": [
+      "people.demoUnavailable"
+     ],
+     "de": [
+      "Diese Funktion ist im Demo-Modus nicht verfügbar."
+     ],
+     "literals": [],
+     "expr": "translate('people.demoUnavailable')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "e6301beb",
+    "mbody": "9efcf3b8",
+    "roleGuarded": true,
+    "id": "people/bulk-edit/bulk-edit.page#toast-a80bef04"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:170",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:171",
+     "lib/core/utils/toast_helper.dart:65"
+    ],
+    "n": "Warn-Toast 'Diese Funktion ist im Demo-Modus nicht verfügbar.' (orange), nichts gespeichert. Demo = Konto-E-Mail ist die Demo-Mail (Ionic db.isDemo, Flutter isDemoProvider/DemoGuard.isDemoEmail). Rollen: Massenbearbeitung/Import nur Admin/Verantwortlich (Ionic list.page isAdmin, list.page.html:167; Flutter people_list_page isAdmin = admin||responsible, Menü :943, Leerzustand :565) – Beobachter sieht die Personenliste, aber in beiden keinen Einstieg.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "extra": {
+    "id": "x-1aab272cf3",
+    "title": "Zahlen-Zusatzfeld pro Person als String",
+    "n": "Flutter besser: Ionic: Einzelwert aus ionChange ist String (\"5\"), Sammelwert über NumericValueAccessor Zahl; changedCount vergleicht strikt / Flutter: immer num (oder null).",
+    "sev": "niedrig",
+    "ionic": "src/app/people/bulk-edit/bulk-edit.page.html:135-138",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:475-479"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "extra": {
+    "id": "x-5b376c7a36",
+    "title": "Fehler beim Org-Feld-Speichern: zusätzlicher Toast",
+    "n": "Ionic: orgSvc.updatePersonFieldValues zeigt bei Fehler zusätzlich 'Fehler beim Speichern der gemeinsamen Zusatzfelder' (danger), danach 'Fehler beim Speichern' / Flutter: nur 'Fehler beim Speichern'.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/organisation/organisation.service.ts:88-91",
+    "f": [
+     "lib/data/repositories/profile_repository.dart:281-319",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:240-243"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/profile_repository.dart",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "extra": {
+    "id": "x-a485e4b055",
+    "title": "Zusatzfelder-Abschnitt Sichtbarkeit",
+    "n": "Flutter besser: Ionic: Zusatzfelder (inkl. Org-Felder) nur im Auswahlfeld, wenn der Tenant selbst additional_fields hat / Flutter: immer, wenn Org- oder Tenant-Felder existieren.",
+    "sev": "niedrig",
+    "ionic": "src/app/people/bulk-edit/bulk-edit.page.html:24",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:255",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:306-319"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/import/import.page.ts",
+    "line": 213,
+    "method": "ImportPage.startImport",
+    "cond": [],
+    "message": {
+     "keys": [
+      "people.importProgress"
+     ],
+     "de": [
+      "{done} / {total} importiert..."
+     ],
+     "literals": [],
+     "expr": "translate('people.importProgress', { done: 0, total: toImport.length })"
+    },
+    "duration": "0",
+    "src": "d387c708",
+    "mbody": "c7dd5a52",
+    "roleGuarded": true,
+    "id": "people/import/import.page#loading-bab0752f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:174-177",
+     "lib/features/people/presentation/pages/person_import_page.dart:200-202",
+     "lib/features/people/presentation/pages/person_import_page.dart:262-284"
+    ],
+    "n": "Fortschritt '{done} / {total} importiert...' wird angezeigt und aktualisiert, aber Ionic blockiert den ganzen Bildschirm / Flutter: Overlay nur über dem Inhalt, 'Zurück' in der unteren Leiste bleibt während des Imports bedienbar.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/import/import.page.ts",
+    "line": 131,
+    "method": "ImportPage.proceedToPreview",
+    "cond": [
+     "(!this.canProceedFromMapping)"
+    ],
+    "message": {
+     "keys": [
+      "people.mapNames"
+     ],
+     "de": [
+      "Bitte Spalten für Vor- und Nachnamen zuordnen."
+     ],
+     "literals": [],
+     "expr": "translate('people.mapNames')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "02645482",
+    "mbody": "7b21b3cd",
+    "id": "people/import/import.page#toast-9635ec11"
+   },
+   "first": {
+    "s": "na",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:292"
+    ],
+    "n": "toter Code: 'Weiter' ist bei !canProceedFromMapping deaktiviert (import.page.html:128), proceedToPreview läuft sonst nicht in den Zweig. Flutter hat denselben Guard.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/import/import.page.ts",
+    "line": 208,
+    "method": "ImportPage.startImport",
+    "cond": [
+     "(this.db.isDemo())"
+    ],
+    "message": {
+     "keys": [
+      "people.demoUnavailable"
+     ],
+     "de": [
+      "Diese Funktion ist im Demo-Modus nicht verfügbar."
+     ],
+     "literals": [],
+     "expr": "translate('people.demoUnavailable')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "e6301beb",
+    "mbody": "c7dd5a52",
+    "roleGuarded": true,
+    "id": "people/import/import.page#toast-b3bb9f9f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:180",
+     "lib/features/people/presentation/pages/person_import_page.dart:181",
+     "lib/core/utils/toast_helper.dart:65"
+    ],
+    "n": "Warn-Toast 'Diese Funktion ist im Demo-Modus nicht verfügbar.' vor dem Import. Demo = Konto-E-Mail ist die Demo-Mail (Ionic db.isDemo, Flutter isDemoProvider/DemoGuard.isDemoEmail). Rollen: Massenbearbeitung/Import nur Admin/Verantwortlich (Ionic list.page isAdmin, list.page.html:167; Flutter people_list_page isAdmin = admin||responsible, Menü :943, Leerzustand :565) – Beobachter sieht die Personenliste, aber in beiden keinen Einstieg.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/import/import.page.ts",
+    "line": 230,
+    "method": "ImportPage.startImport",
+    "cond": [],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "parts.join(' ')"
+    },
+    "color": "failed.length ? warning : success",
+    "duration": null,
+    "src": "9c2ef9e1",
+    "mbody": "c7dd5a52",
+    "roleGuarded": true,
+    "id": "people/import/import.page#toast-e3036216"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:243",
+     "lib/features/people/presentation/pages/person_import_page.dart:248",
+     "lib/features/people/presentation/pages/person_import_page.dart:250"
+    ],
+    "n": "'N Person(en) importiert.' + ggf. 'M fehlgeschlagen.', grün bzw. orange. Rollen: Massenbearbeitung/Import nur Admin/Verantwortlich (Ionic list.page isAdmin, list.page.html:167; Flutter people_list_page isAdmin = admin||responsible, Menü :943, Leerzustand :565) – Beobachter sieht die Personenliste, aber in beiden keinen Einstieg.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "extra": {
+    "id": "x-281b9c9094",
+    "title": "Liste wird auch ohne Import neu geladen",
+    "n": "Flutter besser: Ionic: Personenliste nur neu geladen, wenn mindestens eine Person importiert wurde / Flutter: invalidiert playersProvider immer (auch teilweise gespeicherte, fehlgeschlagene Zeilen erscheinen).",
+    "sev": "niedrig",
+    "ionic": "src/app/people/import/import.page.ts:236-238",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:207-210"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "extra": {
+    "id": "x-ab5b4f49ad",
+    "title": "Fehlergrund im Fehlerdialog technisch",
+    "n": "Ionic: reason = error.message ?? 'Unbekannter Fehler' / Flutter: '$e' inkl. Klassenname/Operation/Code (z. B. 'RepositoryException: … (operation: createPlayer, code: 23505)').",
+    "sev": "niedrig",
+    "ionic": "src/app/services/db.service.ts:3638-3640",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:197-199"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 172,
+    "cond": [
+     "in <ion-popover #filterPopover>",
+     "@if (isAdmin)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=openImportModal()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "cloud-upload-outline"
+    ],
+    "keys": [
+     "people.importPeople"
+    ],
+    "de": [
+     "Personen importieren"
+    ],
+    "literals": [],
+    "text": "{{ 'people.importPeople' | transloco }}",
+    "id": "people/list/list.page#action-09d8ea9a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:950",
+     "lib/features/people/presentation/pages/people_list_page.dart:954",
+     "lib/features/people/presentation/pages/people_list_page.dart:1298"
+    ],
+    "n": "Nur Admin/Verantwortlicher; Upload-Icon, 'Personen importieren' → Import, Neuladen bei Erfolg.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 17,
+    "cond": [
+     "@else (not isReordering)",
+     "@if ((db.tenants()?.length ?? 0) > 1)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "tenant-switcher-list"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "chevron-down-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ db.tenant()?.longName }}",
+    "id": "people/list/list.page#action-49667e4f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:485",
+     "lib/features/people/presentation/pages/people_list_page.dart:722",
+     "lib/features/people/presentation/pages/people_list_page.dart:749",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:51",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:61"
+    ],
+    "n": "Bedingung >1 Instanz gleich (userTenantsProvider = alle tenantUsers des Nutzers wie db.tenants()); für alle Rollen der Personenliste (Admin/Verantwortlicher/Beobachter) '<longName> ⌄' links, kein Titel (iOS AppBar :722, Material centerTitle false :750).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 323,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@if (sortOpt === 'instrument')",
+     "@for (group of playerGroups; track group.groupId)",
+     "in <ion-reorder-group>",
+     "@if (isAdmin)",
+     "in <ion-item-options>",
+     "@if (!player.paused)"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "warning"
+    },
+    "events": [
+     "(click)=pausePlayer(player, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pause"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-4e3685b7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1711",
+     "lib/features/people/presentation/pages/people_list_page.dart:1716",
+     "lib/features/people/presentation/pages/people_list_page.dart:1331"
+    ],
+    "n": "Nur Admin/Verantwortlicher, nicht pausierte Person; gelb, Pause-Icon → Haptik leicht + Pausieren-Sheet.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 429,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@else (not sortOpt === 'instrument')",
+     "in <ion-reorder-group>",
+     "@if (isAdmin)",
+     "in <ion-item-options>",
+     "@if (!player.paused)"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "warning"
+    },
+    "events": [
+     "(click)=pausePlayer(player, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pause"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-4e3685b7-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1711",
+     "lib/features/people/presentation/pages/people_list_page.dart:1716"
+    ],
+    "n": "Wie action-4e3685b7.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 319,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@if (sortOpt === 'instrument')",
+     "@for (group of playerGroups; track group.groupId)",
+     "in <ion-reorder-group>",
+     "@if (isAdmin)",
+     "in <ion-item-options>"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=remove(player, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-7d1d1666"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1704",
+     "lib/features/people/presentation/pages/people_list_page.dart:1708"
+    ],
+    "n": "Nur Admin/Verantwortlicher; rot, Papierkorb → _remove (Selbst-Check, Archivieren/Entfernen).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 425,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@else (not sortOpt === 'instrument')",
+     "in <ion-reorder-group>",
+     "@if (isAdmin)",
+     "in <ion-item-options>"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=remove(player, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-7d1d1666-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1704",
+     "lib/features/people/presentation/pages/people_list_page.dart:1708"
+    ],
+    "n": "Wie action-7d1d1666.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 424,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@else (not sortOpt === 'instrument')",
+     "in <ion-reorder-group>",
+     "@if (isAdmin)"
+    ],
+    "tag": "ion-item-options",
+    "attrs": {},
+    "events": [
+     "(ionSwipe)=player.paused ? unpausePlayer(player, slider) : pausePlayer(player, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash",
+     "pause",
+     "play"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-8a40dbb1-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:629",
+     "lib/features/people/presentation/pages/people_list_page.dart:1687",
+     "lib/features/people/presentation/pages/people_list_page.dart:1692"
+    ],
+    "n": "Wie action-8a40dbb1 (gleiche Zeile bei Sortierung ≠ Gruppe).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 328,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@if (sortOpt === 'instrument')",
+     "@for (group of playerGroups; track group.groupId)",
+     "in <ion-reorder-group>",
+     "@if (isAdmin)",
+     "in <ion-item-options>",
+     "@if (player.paused)"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "success"
+    },
+    "events": [
+     "(click)=unpausePlayer(player, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "play"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-c9c70280"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1711",
+     "lib/features/people/presentation/pages/people_list_page.dart:1716",
+     "lib/features/people/presentation/pages/people_list_page.dart:1337"
+    ],
+    "n": "Nur Admin/Verantwortlicher, pausierte Person; grün, Play-Icon → 'Person wieder aktivieren?'.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 434,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@else (not sortOpt === 'instrument')",
+     "in <ion-reorder-group>",
+     "@if (isAdmin)",
+     "in <ion-item-options>",
+     "@if (player.paused)"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "success"
+    },
+    "events": [
+     "(click)=unpausePlayer(player, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "play"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#action-c9c70280-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1711",
+     "lib/features/people/presentation/pages/people_list_page.dart:1716"
+    ],
+    "n": "Wie action-c9c70280.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 177,
+    "cond": [
+     "in <ion-popover #filterPopover>",
+     "@if (isAdmin)",
+     "@if (sortOpt === 'instrument')"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=toggleReorderMode(filterPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "swap-vertical"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Reihenfolge speichern",
+     "Reihenfolge anpassen"
+    ],
+    "text": "{{ isReordering ? 'Reihenfolge speichern' : 'Reihenfolge anpassen' }}",
+    "id": "people/list/list.page#action-d74a8ace"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:956",
+     "lib/features/people/presentation/pages/people_list_page.dart:961"
+    ],
+    "n": "Nur Admin/Verantwortlicher und Sortierung 'Gruppe'; Label 'Reihenfolge anpassen' (Ionic-Variante 'Reihenfolge speichern' unerreichbar, Popover im Reorder-Modus ausgeblendet). Speichern-Unterschiede siehe db-a9ead6a0.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/list/list.page.ts",
+    "line": 437,
+    "method": "ListPage.onFilterChanged",
+    "cond": [
+     "(this.filterOpt === 'otherInstance')"
+    ],
+    "header": {
+     "keys": [
+      "people.chooseInstance"
+     ],
+     "de": [
+      "Instanz wählen"
+     ],
+     "literals": [],
+     "expr": "translate('people.chooseInstance')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { this.filterOpt = 'all'; this.onFilterChanged(); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "people.filter"
+       ],
+       "de": [
+        "Filtern"
+       ],
+       "literals": [],
+       "expr": "translate('people.filter')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (value) => { if (!value) { this.filterOpt = 'all'; this.onFilterChanged(); return; } const usersPerTenant = await this.db.getUsersFromTenant(value); this.playersFiltered = Utils.getModifiedPlayersForList(this.players.filter((player: …"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "this.linkedTenants.map((t) => ({ type: 'radio', label: t.longName, value: t.id, selected: t.longName === option, }))",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "56c5ad10",
+    "mbody": "8c6daf3a",
+    "roleGuarded": true,
+    "id": "people/list/list.page#alert-0eb34b23"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1084",
+     "lib/features/people/presentation/pages/people_list_page.dart:1095"
+    ],
+    "n": "Ionic: Alert 'Instanz wählen' mit Radio-Liste (gespeicherte Instanz vorausgewählt) und Buttons 'Abbrechen' (setzt Filter auf Alle) / 'Filtern' / Flutter: Auswahl-Dialog 'Instanz wählen' ohne Buttons, Tipp auf eine Instanz filtert sofort, Schließen lässt den bisherigen Filter stehen. Gefilterte Daten gleich (Nicht-Betrachter-Konten der Instanz).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/list/list.page.ts",
+    "line": 538,
+    "method": "ListPage.onFilterChanged",
+    "cond": [
+     "(this.db.tenant().additional_fields?.find(field => field.type === 'boolean' && this.filterOpt === field.id))",
+     "!(this.db.tenant().additional_fields?.find(field => field.type === 'number' && this.filterOpt === field.id))",
+     "!(this.filterOpt === 'otherInstance')"
+    ],
+    "header": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "extraField.name"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { this.filterOpt = 'all'; this.onFilterChanged(); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "people.filter"
+       ],
+       "de": [
+        "Filtern"
+       ],
+       "literals": [],
+       "expr": "translate('people.filter')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (value: string) => { if (!value) { this.filterOpt = 'all'; this.onFilterChanged(); return; } const filterValue = value === 'true'; this.playersFiltered = Utils.getModifiedPlayersForList( this.players.filter((player: Player) => { cons…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "radio",
+      "label": {
+       "keys": [
+        "common.yes"
+       ],
+       "de": [
+        "Ja"
+       ],
+       "literals": [],
+       "expr": "translate('common.yes')"
+      },
+      "name": null,
+      "placeholder": null,
+      "value": "'true'",
+      "checked": "option !== 'false'",
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "radio",
+      "label": {
+       "keys": [
+        "common.no"
+       ],
+       "de": [
+        "Nein"
+       ],
+       "literals": [],
+       "expr": "translate('common.no')"
+      },
+      "name": null,
+      "placeholder": null,
+      "value": "'false'",
+      "checked": "option === 'false'",
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "ea04a63e",
+    "mbody": "8c6daf3a",
+    "roleGuarded": true,
+    "id": "people/list/list.page#alert-1081984d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1027",
+     "lib/features/people/presentation/pages/people_list_page.dart:1029",
+     "lib/features/people/presentation/pages/people_list_page.dart:1036"
+    ],
+    "n": "Ionic: Alert mit Radio 'Ja'/'Nein' (Ja bzw. gespeicherter Wert vorausgewählt) und 'Abbrechen' (→ Alle) / 'Filtern' / Flutter: einfacher Auswahl-Dialog 'Ja'/'Nein' ohne Buttons, Tipp filtert sofort, Schließen → Alle. Default true für leere Werte gleich.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/list/list.page.ts",
+    "line": 909,
+    "method": "ListPage.askPauseInOtherTenants",
+    "cond": [],
+    "header": {
+     "keys": [
+      "people.pauseOthers"
+     ],
+     "de": [
+      "Auch in anderen Instanzen pausieren?"
+     ],
+     "literals": [],
+     "expr": "translate('people.pauseOthers')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "people.pauseOthersMessage"
+     ],
+     "de": [
+      "{name} ist auch in anderen Instanzen aktiv. In welchen soll die Person ebenfalls pausiert werden?"
+     ],
+     "literals": [
+      "${player.firstName} ${player.lastName}"
+     ],
+     "expr": "translate('people.pauseOthersMessage', { name: `${player.firstName} ${player.lastName}` })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "people.skip"
+       ],
+       "de": [
+        "Überspringen"
+       ],
+       "literals": [],
+       "expr": "translate('people.skip')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => resolve()"
+     },
+     {
+      "text": {
+       "keys": [
+        "people.pause"
+       ],
+       "de": [
+        "Pausieren"
+       ],
+       "literals": [],
+       "expr": "translate('people.pause')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (selected: Tenant[]) => { for (const tenant of selected) { try { const personRef = await this.db.getPersonIdFromTenant(player.appId, tenant.id); if (personRef) { await this.db.pausePlayerInOtherTenant(personRef.id, tenant.id, true, p…"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "otherTenants.map((t) => ({ type: 'checkbox' as const, label: t.longName || t.shortName, value: t, checked: false, }))",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "8c3f5c5e",
+    "mbody": "e836a2fd",
+    "roleGuarded": true,
+    "id": "people/list/list.page#alert-86b4fbec"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:229",
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:236",
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:284"
+    ],
+    "n": "Flutter besser: Titel, Text, Checkboxen (Instanzname), 'Überspringen'/'Pausieren' gleich; Ionic bietet aber alle verknüpften Instanzen an, in denen die Person (nicht als Betrachter) Mitglied ist, Flutter nur jene, in denen der angemeldete Nutzer Admin/Verantwortlicher ist (Ionic scheitert dort sonst mit 'Fehler bei …').",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/list/list.page.ts",
+    "line": 489,
+    "method": "ListPage.onFilterChanged",
+    "cond": [
+     "(this.db.tenant().additional_fields?.find(field => field.type === 'number' && this.filterOpt === field.id))",
+     "!(this.filterOpt === 'otherInstance')"
+    ],
+    "header": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "extraField.name"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { this.filterOpt = 'all'; this.onFilterChanged(); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "people.filter"
+       ],
+       "de": [
+        "Filtern"
+       ],
+       "literals": [],
+       "expr": "translate('people.filter')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data) => { const value = data[0]; if (value === '' || value === null || value === undefined) { this.filterOpt = 'all'; this.onFilterChanged(); return; } this.playersFiltered = Utils.getModifiedPlayersForList( this.players.filter((pl…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "number",
+      "label": null,
+      "name": null,
+      "placeholder": {
+       "keys": [
+        "people.enterValue"
+       ],
+       "de": [
+        "Wert eingeben"
+       ],
+       "literals": [],
+       "expr": "translate('people.enterValue')"
+      },
+      "value": "option ?? ''",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "75b3daff",
+    "mbody": "8c6daf3a",
+    "roleGuarded": true,
+    "id": "people/list/list.page#alert-eeaa4fb8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:986",
+     "lib/features/people/presentation/pages/people_list_page.dart:1002",
+     "lib/features/people/presentation/pages/people_list_page.dart:1013",
+     "lib/features/people/presentation/pages/people_list_page.dart:1016",
+     "lib/features/people/presentation/pages/people_list_page.dart:1019",
+     "lib/core/providers/profile_providers.dart:67"
+    ],
+    "n": "Flutter besser: Für Zahlenfelder der Instanz gleich (Titel = Feldname, Zahlenfeld 'Wert eingeben', 'Abbrechen' → Alle, 'Filtern', leer → Alle; sichtbar für alle Rollen der Personenliste = Admin/Verantwortlicher/Beobachter, in beiden). Erstprüfer übersah den Mandanten-Fall Organisationsfelder: Ionic listet Org-Zahlenfelder im Filter (getPersonExtraFields), öffnet den Alert aber nur für tenant().additional_fields (list.page.ts:474) → kein Dialog, Filter wirkungslos (alle Personen, Icon trotzdem farbig) / Flutter: Dialog und Filter auch für Org-Zahlenfelder (personListExtraFieldsProvider). Vorbelegung: Ionic letzter gespeicherter Zusatzwert, Flutter nur bei gleichem aktivem Filter (kosmetisch). Treffer für Personen ohne Wert (Ionic-Default 0) siehe x-122934c2b4.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "people/list/list.page.ts",
+    "line": 383,
+    "method": "ListPage.savePlayerOrder",
+    "cond": [
+     "(player.sort_order != null)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ sort_order: player.sort_order }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', player.id)"
+    ],
+    "tenantFilter": false,
+    "src": "3a868614",
+    "mbody": "e6f21689",
+    "id": "people/list/list.page#db-a9ead6a0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1207-1250",
+     "lib/data/repositories/player_repository.dart:1883-1897"
+    ],
+    "n": "savePlayerOrder schreibt sort_order nur für umsortierte Gruppen, Filter id + tenantId.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "people/list/list.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:72-93",
+     "onTenantChange:95-102",
+     "ngOnInit:104-116",
+     "initializeData:121-148",
+     "showReleaseNotesAlert:150-170",
+     "subscribe:172-185",
+     "getPlayers:187-208",
+     "computeTodaysBirthdays:210-215",
+     "getBirthdayAge:217-219",
+     "userById:221-223",
+     "handleRefresh:225-228",
+     "openModal:230-246",
+     "onSortChanged:248-318",
+     "onFilterFocused:320-322",
+     "toggleReorderMode:324-331",
+     "get playerGroups:333-342",
+     "handleReorder:344-374",
+     "savePlayerOrder:376-392",
+     "clearFilters:394-397",
+     "onFilterDismissed:399-405",
+     "onFilterChanged:407-666",
+     "onViewChanged:668-689",
+     "getSubText:691-712",
+     "search:714-737",
+     "filter:739-760",
+     "initializeItems:762-764",
+     "remove:766-797",
+     "archivePlayer:799-802",
+     "dismissArchiveModal:804-808",
+     "removePlayer:810-836",
+     "pausePlayer:838-846",
+     "confirmPause:848-899",
+     "askPauseInOtherTenants:901-940",
+     "dismissPauseModal:942-950",
+     "unpausePlayer:952-988",
+     "getTeacherName:990-993",
+     "getChurchName:995-998",
+     "openBulkEditModal:1035-1051",
+     "get churchField:1053-1055",
+     "showChurchOverview:1057-1075",
+     "openImportModal:1077-1090",
+     "ngOnDestroy:1092-1094"
+    ],
+    "bodies": {
+     "constructor": "6e352aab",
+     "onTenantChange": "a99fac6c",
+     "ngOnInit": "9bb9aaf8",
+     "initializeData": "48a0df17",
+     "showReleaseNotesAlert": "06718261",
+     "subscribe": "d36e71dc",
+     "getPlayers": "038e5944",
+     "computeTodaysBirthdays": "387e4f3b",
+     "getBirthdayAge": "748e3470",
+     "userById": "54f92e96",
+     "handleRefresh": "2be078b5",
+     "openModal": "a85d50ca",
+     "onSortChanged": "d93485f1",
+     "onFilterFocused": "c5565932",
+     "toggleReorderMode": "9b5c3257",
+     "get playerGroups": "77797625",
+     "handleReorder": "57b99360",
+     "savePlayerOrder": "e6f21689",
+     "clearFilters": "ac0cfb44",
+     "onFilterDismissed": "ceac8855",
+     "onFilterChanged": "8c6daf3a",
+     "onViewChanged": "8f2befda",
+     "getSubText": "785aa21a",
+     "search": "7f288ff4",
+     "filter": "18d5fb9b",
+     "initializeItems": "df5d0bd4",
+     "remove": "3ce6729d",
+     "archivePlayer": "375f9431",
+     "dismissArchiveModal": "ed43d125",
+     "removePlayer": "53ac8376",
+     "pausePlayer": "2fd9e190",
+     "confirmPause": "ff40e073",
+     "askPauseInOtherTenants": "e836a2fd",
+     "dismissPauseModal": "8de6febb",
+     "unpausePlayer": "561f0f37",
+     "getTeacherName": "ee47d0ac",
+     "getChurchName": "65bf9a07",
+     "openBulkEditModal": "6bd9a622",
+     "get churchField": "20e9c8fc",
+     "showChurchOverview": "1e290767",
+     "openImportModal": "6f5a0acd",
+     "ngOnDestroy": "f3819aab"
+    },
+    "id": "people/list/list.page#logic-9183f2d4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:331-350",
+     "lib/features/people/presentation/pages/people_list_page.dart:476-480",
+     "lib/features/people/presentation/utils/people_list_utils.dart:59-139"
+    ],
+    "n": "hoch/mittel behoben: Zusatzfeld-Defaults (withExtraFieldDefaults), Sortierung nach Gruppe mit deutschem Vergleich (localeCompareDe), Lehrernamen aus teachersProvider, Umsortieren speichert nur geänderte Gruppen. Rest nur Darstellung/Anordnung (niedrig). Erstreviewer: hoch nicht mehr zutreffend.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/utils/people_list_utils.dart (Referenz ungültig)"
+   ]
+  }
+ ]
+}

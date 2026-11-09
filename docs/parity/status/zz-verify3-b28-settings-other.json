@@ -1,0 +1,46 @@
+{
+ "batch": "zz-verify3-b28-settings-other",
+ "ionic": "9f9b82af",
+ "flutter": "b218510",
+ "items": {
+  "settings/help/article/help-article.page#action-bb7dd385": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:50-60",
+    "lib/features/help/presentation/widgets/help_markdown.dart:54-92",
+    "lib/features/help/presentation/widgets/help_markdown.dart:107-125",
+    "lib/features/help/data/help_content_service.dart:51-60"
+   ],
+   "n": "Neu bewertet mit Inhalt: Artikeltext als Markdown (Absätze mit Zeilenumbrüchen, -/1.-Listen, fett/kursiv) – die Artikel nutzen nur diese Syntax (keine Überschriften, Links, Tabellen, Code), Darstellung daher gleich. [[Begriff]] als antippbarer Link (Primärfarbe, gepunktet unterstrichen wie .glossary-term); Tippen sucht Begriff per Name/Alias (trim, klein), unbekannt → nichts. Keine Rollenbedingung. Popover vs. Dialog siehe popover-c1b18c0d.",
+   "v": "bestätigt"
+  },
+  "settings/help/glossary/help-glossary.page#text-b394e1ee": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_glossary_page.dart:72-94",
+    "lib/features/help/presentation/widgets/help_markdown.dart:108-112",
+    "lib/features/help/data/help_content.dart"
+   ],
+   "n": "Aufgeklappte Definition als Markdown, [[Begriff]] darin kursiv und nicht verlinkt wie renderGlossaryDefinitionHtml; alle 34 Definitionen wortgleich übernommen. Innenabstand 16 (oben 0) statt ion-padding – unerheblich."
+  },
+  "settings/role-permissions/role-permissions.page#toast-e9051e56": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:73-89",
+    "lib/core/router/app_router.dart:174",
+    "lib/features/settings/presentation/pages/settings_page.dart:212-237"
+   ],
+   "n": "„Rollenberechtigungen gespeichert“ grün. Rollen gleich: Seite nur Admin/Verantwortlich (Ionic isUrlAccessAllowed + Einstellungen isAdmin / Flutter Route-Guard + isAdmin), files_shared nur für Admin geschrieben (beide). Flutter schreibt nur geänderte Zeilen statt aller – gleiche Werte.",
+   "v": "bestätigt"
+  },
+  "settings/role-permissions/role-permissions.page#toast-b7aee864": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:90-91"
+   ],
+   "n": "„Fehler beim Speichern der Rollenberechtigungen“ rot bei jedem Fehler; zusätzlicher Service-Toast von Ionic gehört zum Service-Batch. Rollen wie toast-e9051e56.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

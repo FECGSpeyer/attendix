@@ -1,0 +1,46 @@
+{
+ "batch": "zz-verify2-b27-settings-other",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "settings/files/files.page#toast-f38f08f1": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:381-391",
+    "lib/core/providers/tenant_providers.dart:241-253"
+   ],
+   "n": "Bedingung ist keine Rolle, sondern telegram_chat_id der eigenen tenantUsers-Zeile (beide gleich, keine Rollenprüfung; Dateiablage selbst per canAccessFiles gleich). Toast „Bitte verbinde zuerst Telegram in den Benachrichtigungen.“ (warning) praktisch nur bei Race erreichbar, da der Menüpunkt ohne Chat-ID ausgeblendet ist."
+  },
+  "settings/files/files.page#media-53111c26": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:155-156",
+    "lib/features/settings/presentation/pages/files_page.dart:297-315",
+    "lib/features/settings/presentation/pages/files_page.dart:1294-1309"
+   ],
+   "n": "Vorschaubild (38px, Radius 6) statt Ordner/Dokument-Icon für Bilddateien (gleiche Endungen png/jpe?g/gif/webp/bmp/svg/heic/heif/avif), signierte URL 3600 s, vor dem Anzeigen der Liste geladen; ohne URL Fallback-Icon wie Ionic. Kein alt-Text (nur Barrierefreiheit)."
+  },
+  "settings/files/files.page#action-d05fb9ea": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:907-914",
+    "lib/features/settings/presentation/pages/files_page.dart:386-401"
+   ],
+   "n": "„Per Telegram senden“ nur für Dateien (nicht Ordner) und nur mit telegram_chat_id der eigenen tenantUsers-Zeile; für alle Rollen mit Dateizugriff, keine weitere Rollenbedingung in beiden. Sendet signierte URL (600 s) an die eigene Chat-ID. Action-Sheet statt Popover unter popover-92206ccb, Lade-Overlay unter loading-d65a6193."
+  },
+  "x-6fbc5fbd93": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1568-1582",
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:26-36",
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:72-78"
+   ],
+   "n": "Echt: Ionic GroupService.getGroups sortiert nach category, sort_order (nulls last), name / Flutter getTargetTenantGroups nur nach name. Die Zuordnung nimmt die erste Gruppe mit gleichem Namen oder Teiltreffer in dieser Reihenfolge, sonst die erste Gruppe → andere Reihenfolge im Auswahldialog und ggf. andere vorbelegte Zielgruppe (z. B. „Bb Trompete“ vor „Trompete“). Die Vorbelegung ist vor dem Übertragen sichtbar und änderbar → mittel."
+  }
+ },
+ "extra": []
+}

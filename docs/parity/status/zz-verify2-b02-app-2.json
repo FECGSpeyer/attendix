@@ -1,0 +1,193 @@
+{
+  "batch": "zz-verify2-b02-app-2",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "register/tenant-register/tenant-register.page#text-1e23f15b-3": {
+      "s": "ok",
+      "f": ["lib/features/registration/presentation/pages/tenant_registration_page.dart:510-523"],
+      "n": "Öffentliche Seite, keine Rollenabhängigkeit. Mandantenbedingung gleich: Feld steht in registration_fields und additional_fields, Typ boolean; Label = field.name.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-25aab0fb": {
+      "s": "ok",
+      "f": ["lib/features/registration/presentation/pages/tenant_registration_page.dart:510-523", "lib/features/registration/presentation/pages/tenant_registration_page.dart:1093-1100"],
+      "n": "Schalter mit defaultValue vorbelegt (Flutter Fallback false), Wert landet in additional_fields[id] (Flutter setzt ihn in _validate). Gleiche Mandantenbedingung. Validierungsunterschied nur bei fehlendem Default, siehe toast-23c76f81.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-1e23f15b-4": {
+      "s": "ok",
+      "f": ["lib/features/registration/presentation/pages/tenant_registration_page.dart:628-642"],
+      "n": "Label field.name bei Typ bfecg_church, gleiche Bedingung (registration_fields). Flutter nimmt nur bei leerem Namen 'Gemeinde' als Ersatz.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#action-af297b3b": {
+      "s": "ok",
+      "f": ["lib/features/registration/presentation/pages/tenant_registration_page.dart:631-667"],
+      "n": "Beschriftung wie getChurchLabel ('Bitte auswählen' / 'Nicht gelistet' / Gemeindename), Tap öffnet die Gemeindesuche mit leerem Suchbegriff. Flutter: während des Ladens deaktiviert, bei Ladefehler Fehlertext. Darstellung des Modals siehe modal-6f647b7b.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-3463a358": {
+      "s": "ok",
+      "f": ["lib/features/profile/presentation/widgets/church_picker.dart:81-84", "lib/features/registration/presentation/pages/tenant_registration_page.dart:650-653"],
+      "n": "Titel = Feldname.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#action-8a905f52": {
+      "s": "ok",
+      "f": ["lib/features/profile/presentation/widgets/church_picker.dart:85-90"],
+      "n": "'Schließen' rechts, schließt ohne Änderung.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-8ca795b4": {
+      "s": "ok",
+      "f": ["lib/features/profile/presentation/widgets/church_picker.dart:92-124", "lib/features/profile/presentation/widgets/church_picker.dart:72-77"],
+      "n": "Platzhalter 'Gemeinde suchen', sofortige Filterung auf Namen (Teilstring, ohne Groß/Klein), bei jedem Öffnen leer.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#action-702ca9a0": {
+      "s": "ok",
+      "f": ["lib/features/profile/presentation/widgets/church_picker.dart:132-136", "lib/features/registration/presentation/pages/tenant_registration_page.dart:659-665"],
+      "n": "'Nicht gelistet' immer oben, Häkchen bei Wert '', Auswahl setzt '' und schließt.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#action-64e5e51e": {
+      "s": "ok",
+      "f": ["lib/features/profile/presentation/widgets/church_picker.dart:137-142", "lib/data/repositories/church_repository.dart:18-32"],
+      "n": "Gemeinden aus churches nach Name sortiert (beide), Häkchen bei gewählter Gemeinde, Auswahl setzt die id und schließt.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-1b40c5cb": {
+      "s": "ok",
+      "f": ["lib/features/profile/presentation/widgets/church_picker.dart:143-147"],
+      "n": "'Keine Gemeinde gefunden.' in Grau, wenn die gefilterte Liste leer ist ('Nicht gelistet' bleibt sichtbar).",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-cec7e3b3": {
+      "s": "ok",
+      "f": ["lib/features/registration/presentation/pages/tenant_registration_page.dart:670-679"],
+      "n": "Nur bei Wert '' (Nicht gelistet), Label 'Gemeinde nicht gelistet? Bitte Namen eingeben'.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-2818a621": {
+      "s": "ok",
+      "f": ["lib/features/registration/presentation/pages/tenant_registration_page.dart:670-683", "lib/features/registration/presentation/pages/tenant_registration_page.dart:1101-1107", "lib/features/registration/presentation/pages/tenant_registration_page.dart:1124-1139"],
+      "n": "Platzhalter 'Name deiner Gemeinde', Wortgroßschreibung, Mindestlänge 5 nach Trim, bei Registrierung wird die Gemeinde angelegt (Flutter mit getrimmtem Namen).",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#text-64a3929d": {
+      "s": "ok",
+      "f": ["lib/features/registration/presentation/pages/tenant_registration_page.dart:405-415"],
+      "n": "'Bemerkungen (optional)' immer bei gültigem Link, keine Rollen-/Mandantenbedingung.",
+      "v": "bestätigt"
+    },
+    "register/tenant-register/tenant-register.page#field-f6d39eb8": {
+      "s": "ok",
+      "f": ["lib/features/registration/presentation/pages/tenant_registration_page.dart:405-415", "lib/features/registration/data/providers/registration_providers.dart:325"],
+      "n": "Mehrzeiliges Textfeld, Satz-Großschreibung, gespeichert als notes ('' wenn leer).",
+      "v": "bestätigt"
+    },
+    "tabs/side-nav/side-nav.component#media-8fae1184": {
+      "s": "missing",
+      "sev": "niedrig",
+      "f": ["lib/shared/widgets/layout/side_nav/side_nav.dart:614-626"],
+      "n": "Ionic: ist tenants.logo_url gesetzt (Alt-Branding je Instanz), zeigt der Instanz-Button im Sidepanel das Logo-Bild statt der Initialen / Flutter: Tenant-Modell kennt logo_url nicht, Sidepanel zeigt immer Initialen. Nur Tablet/Desktop, alle Rollen."
+    },
+    "tabs/side-nav/side-nav.component#text-2e5c2fe9": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/layout/side_nav/side_nav.dart:614-626", "lib/shared/widgets/layout/side_nav/side_nav.dart:741-750"],
+      "n": "Initialen gleich (shortName, sonst longName; ein Wort -> 2 Buchstaben, sonst erster+letzter Anfangsbuchstabe), alle Rollen. Flutter zeigt sie auch bei gesetztem logo_url, siehe media-8fae1184.",
+      "v": "bestätigt"
+    },
+    "tabs/side-nav/side-nav.component#action-58669ad9": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/layout/side_nav/side_nav.dart:661-700", "lib/shared/widgets/layout/side_nav/side_nav.dart:128-131", "lib/shared/widgets/tenant/tenant_switcher_title.dart:389-407"],
+      "n": "Nur bei mehr als einer Instanz (alle tenantUsers-Instanzen, jede Rolle) in beiden Apps; Einträge longName + Badge 'Aktuell'; aktuelle Instanz -> nichts; sonst Wechsel und Startseite der neuen Rolle (role.defaultRoute = Utils.getUrl). Fehlendes Loading siehe loading-e9133cc5.",
+      "v": "bestätigt"
+    },
+    "tabs/tabs.page#nav-0ccaf6f8": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/core/router/app_router.dart:212-239", "lib/core/router/app_router.dart:192", "lib/core/router/route_access.dart:76-88", "lib/core/router/attendance_detail_guard.dart:23-28", "lib/core/constants/enums.dart:137-141"],
+      "n": "Flutter besser: Prinzip und Ziel gleich (nicht erlaubte URL -> Startseite der Rolle, defaultRoute = Utils.getUrl). Ionic prüft nur beim Laden/Instanzwechsel mit isUrlAccessAllowed, dessen Liste Lücken hat: '/tabs/attendance' nur Admin/Verantw./Beobachter -> Helfer und Helfer-Stimmführer landen beim Neuladen der Termine-Liste auf 'Meine Termine'; '/tabs/overview' fehlt ganz -> Spieler/Helfer verlieren beim Neuladen die 'Übersicht'. Flutter (Redirect bei jeder Navigation) lässt beides passend zu den sichtbaren Tabs zu. Strenger in Flutter: Beobachter wird bei Direkt-URL /attendance/<id> auf /people umgeleitet (Ionic erlaubt die URL, per UI aber nicht erreichbar); /members verlangt zusätzlich showMembersList.",
+      "v": "korrigiert"
+    },
+    "tabs/tabs.page#action-1a5f7288": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/layout/main_shell.dart:82-90"],
+      "n": "Nur Eltern (Rolle 6) in beiden Apps; 'Termine', person-outline, Ziel /parents.",
+      "v": "bestätigt"
+    },
+    "tabs/tabs.page#action-8f179464": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/layout/main_shell.dart:92-100", "lib/core/constants/enums.dart:79-83", "lib/core/constants/enums.dart:101"],
+      "n": "!isConductor && !isParent = Spieler, Helfer, Stimmführer, Helfer-Stimmführer, Bewerber, none; Flutter canSeeSelfServiceTab ergibt dieselbe Menge (nicht Admin/Verantw./Beobachter/Eltern).",
+      "v": "bestätigt"
+    },
+    "tabs/tabs.page#action-a15df102": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/layout/main_shell.dart:114-122", "lib/shared/widgets/layout/main_shell.dart:314-316"],
+      "n": "Spieler/none und Helfer/Helfer-Stimmführer, nur bei mehr als einer Instanz (Zahl aller tenantUsers-Instanzen) in beiden Apps; Stimmführer, Bewerber, Eltern und Dirigenten-Rollen ohne Tab.",
+      "v": "bestätigt"
+    },
+    "tabs/tabs.page#action-75b96733": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/layout/main_shell.dart:124-132", "lib/core/constants/enums.dart:72-73"],
+      "n": "Admin, Verantwortlich, Beobachter in beiden Apps; 'Personen', people-outline.",
+      "v": "bestätigt"
+    },
+    "tabs/tabs.page#action-2b04f29c": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/layout/main_shell.dart:134-142", "lib/core/constants/enums.dart:98"],
+      "n": "Admin, Verantwortlich, Beobachter, Helfer, Helfer-Stimmführer in beiden Apps; 'Termine', checkbox-outline.",
+      "v": "bestätigt"
+    },
+    "teams-config/teams-config.page#text-14e4215c": {
+      "s": "ok",
+      "f": ["lib/features/team_organization/presentation/pages/teams_config_page.dart:88-110"],
+      "n": "Keine Rollenbedingung; Liste = alle Instanzen des Kontos (beide). Flutter zeigt den Text auch bei Ladefehler (Ionic: Spinner bleibt).",
+      "v": "bestätigt"
+    },
+    "teams-config/teams-config.page#field-a99d60a2": {
+      "s": "ok",
+      "f": ["lib/features/team_organization/presentation/pages/teams_config_page.dart:38-73", "lib/features/team_organization/presentation/pages/teams_config_page.dart:131-175"],
+      "n": "Radio je Instanz (longName, sonst shortName), einzige Instanz vorausgewählt, Auswahl setzt Teams-Gültigkeit; Speichern mit contentUrl /open-attendance?tenantId= und shortName.",
+      "v": "bestätigt"
+    },
+    "teams-config/teams-config.page#text-b3a87b26": {
+      "s": "ok",
+      "f": ["lib/features/team_organization/presentation/pages/teams_config_page.dart:117-122"],
+      "n": "Hinweis nur bei mindestens einer Instanz.",
+      "v": "bestätigt"
+    },
+    "x-72494b483e": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/registration/data/providers/registration_providers.dart:33-47", "lib/features/registration/presentation/pages/tenant_registration_page.dart:376-377"],
+      "n": "Echt: Ionic order(category), sort_order, name, Filter maingroup !== true / Flutter nur nach Name, .eq('maingroup', false) blendet Gruppen mit maingroup NULL aus (Spalte ist nullable). Folge auch: andere vorausgewählte erste Gruppe. Gleicher Befund wie Item field-a9922b49.",
+      "v": "bestätigt"
+    },
+    "x-18e88de740": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/registration/presentation/pages/tenant_registration_page.dart:461-470"],
+      "n": "Flutter besser: Abweichung nur nach Umsortieren der Zusatzfelder. Ionic speichert registration_fields in Optionsreihenfolge (= additional_fields-Reihenfolge beim Speichern, ion-select multiple), das Umsortieren auf der Zusatzfelder-Seite passt registration_fields nicht an -> Ionic zeigt die alte Reihenfolge. Flutter folgt der aktuellen additional_fields-Reihenfolge. Erstreviewer: mittel.",
+      "v": "korrigiert"
+    },
+    "x-fc8b0a67b8": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": ["lib/features/registration/presentation/pages/tenant_registration_page.dart:525-549", "lib/features/registration/data/providers/registration_providers.dart:334", "lib/features/people/presentation/pages/people_list_page.dart:301-302"],
+      "n": "Echt: Auswahlfeld ohne aktive Auswahl fehlt in additional_fields (Ionic speichert defaultValue). Sichtbare Folge: Personenfilter nach Zusatzfeld findet die Person in Flutter nicht (kein Default-Fallback für select), Ionic füllt Defaults beim Laden. Gleicher Befund wie Item field-ac71b961.",
+      "v": "bestätigt"
+    },
+    "x-7daa6d5e06": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/legal/presentation/pages/terms_page.dart:58", "lib/core/router/app_router.dart:368-370", "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:76-78"],
+      "n": "Echt: Ionic geht nach Zustimmung zu Utils.getUrl(role) (TermsGuard sitzt auf /tabs, Instanz ist geladen) / Flutter: gemerkter Link oder /tenants; ist schon eine Instanz gesetzt (z. B. Kaltstart mit gespeicherter Instanz), bleibt die Instanzauswahl stehen und der Nutzer muss tippen. Gleicher Befund wie Item nav-4df0f2ac.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

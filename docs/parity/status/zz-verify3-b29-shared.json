@@ -1,0 +1,74 @@
+{
+ "batch": "zz-verify3-b29-shared",
+ "ionic": "9f9b82af",
+ "flutter": "b218510",
+ "items": {
+  "shared/attendance-songs/attendance-songs.component#text-104c73fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:366",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:382"
+   ],
+   "n": "Untertitel „Titel · Datum“; Trenner „ · “ nur wenn beide gesetzt (join der nicht leeren Teile)."
+  },
+  "shared/attendance-songs/attendance-songs.component#action-874165f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:391-396",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:336-358",
+    "lib/features/self_service/presentation/pages/signout_page.dart:724-738",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:101-110"
+   ],
+   "n": "Druck-Icon nur ohne linkOnly und mit Werken (Einträge haben in beiden immer ein Werk → canPrint gleich). Rollen gleich: Mitglieder-Seite „Meine Termine“ ohne linkOnly → Icon; Elternportal linkOnly → kein Icon. Druckt die Noten fürs eigene Instrument (Chor: Chor-alle-Datei) als ein PDF, sonst Warnung „keine Noten“ wie printScores.",
+   "v": "bestätigt"
+  },
+  "shared/attendance-songs/attendance-songs.component#action-d8f3a11f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:419-432",
+    "lib/features/self_service/presentation/pages/signout_page.dart:729-736",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:109",
+    "lib/data/repositories/sign_in_out_repository.dart:837-841",
+    "lib/features/parents/data/providers/parents_providers.dart:103-107"
+   ],
+   "n": "„Ablaufplan öffnen“ in eigener Inset-Liste (Icon + Text primary, Chevron) nur wenn hasPlan (share_plan und Plan mit Feldern) – für Mitglieder und Eltern gleich; schließt das Sheet und öffnet den Ablaufplan.",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#db-f8a48025": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/message_providers.dart:223-252",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:157"
+   ],
+   "n": "postgres_changes auf user_notifications, Filter user_id=eq.{userId}, alle Events; Guard ohne Nutzer/Instanz kein Abo wie Ionic; Glocke für alle Rollen. Flutter lädt Badge und Listen bei jeder Änderung neu (Ionic gezielter) – gleiches sichtbares Ergebnis.",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#db-f8a48025-2": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/message_providers.dart:232"
+   ],
+   "n": "Eigenes Topic je Abo: user-notif-{userId}-{eindeutiger Suffix}; Neuabo bei Instanz-/Nutzerwechsel.",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#alert-e3402013": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:219-229",
+    "lib/data/repositories/user_notification_repository.dart:197-229"
+   ],
+   "n": "„Alle Benachrichtigungen löschen?“, Text je Segment (Alle → bell.deleteAllMessage, sonst common.cannotUndo), „Abbrechen“ / „Löschen“ (rot) → delete user_notifications per user_id (+ tenantId nur im Segment aktuelle Instanz) wie Ionic; keine Rollenbedingung. Fehler-Toast in Flutter ist als Extra „Fehler bei Markieren/Löschen“ erfasst.",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#nav-a59d7530": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:98-114",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:268-275"
+   ],
+   "n": "Nachrichten-Benachrichtigung: als gelesen markieren, Sheet schließen, Nachricht öffnen (Ionic /tabs/messages/{id}, Flutter /messages/{id}, Route für alle Rollen). Flutter wechselt die Instanz vorher selbst, Ionic auf der Nachrichtenseite – gleiches Ergebnis. Randfall verlassene Instanz (Flutter: nichts passiert) ist in x-d204a080f2 erfasst.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

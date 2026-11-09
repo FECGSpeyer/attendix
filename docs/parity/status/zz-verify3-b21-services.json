@@ -1,0 +1,109 @@
+{
+  "batch": "zz-verify3-b21-services",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "utilities/attendance-date-dialog#toast-37694bad": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_date_change.dart:88",
+        "lib/features/attendance/presentation/widgets/attendance_date_change.dart:110"
+      ],
+      "n": "Roter Toast „Termin konnte nicht geladen werden“ wie Ionic. Keine Rollenprüfung in der Funktion; Aufrufer gleich beschränkt: Termin-Detail (Admin/Verantwortlich/Helfer/Stimmführer-Helfer; Ionic att-list openAttendance + Dashboard canOpenAttendance, Flutter attendanceDetailRedirect canAddAttendance; Beobachter/Spieler/Eltern/Bewerber nicht) und Themen-Tab „Ändern“ → „Datum ändern“ nur Leitung (isTeamLeader = Admin/Verantwortlich, beide Apps). Flutter lädt den Termin vor dem Datumsdialog (Ionic danach) – gleicher Fehlerfall; Abwesenheiten-Ladefehler ist als b20-Extra erfasst."
+    },
+    "utilities/attendance-date-dialog#alert-9dc8e8c5": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_date_change.dart:117"
+      ],
+      "n": "Titel „Status zurücksetzen?“, Text mit Standardstatus, Buttons Abbrechen/Behalten/Zurücksetzen wie Ionic; Bedingung hasNonDefaultStatus über alle Personen (Detailseite: ungefilterte person_attendances, Themen-Tab: frisch geladen). Rollen wie beim Aufrufer (s. toast-37694bad)."
+    },
+    "utilities/attendance-date-dialog#toast-8b40658d": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_date_change.dart:214"
+      ],
+      "n": "Grüner Toast „Termin auf {Datum} verschoben“; Wochentag Flutter „Mo.“ (EE) statt Ionic „Mo“ (dd) – nur Punkt. Rollen wie Aufrufer."
+    },
+    "utilities/attendance-date-dialog#toast-45a99bdc": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_date_change.dart:221"
+      ],
+      "n": "Roter Toast „Datum konnte nicht geändert werden“ bei Fehler beim Schreiben. Rollen wie Aufrufer."
+    },
+    "utilities/attendance-date-dialog#toast-2ca18d28": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:186"
+      ],
+      "n": "Gelber Toast „Kein Termintyp mit Protokoll & Tagesordnung vorhanden“ (sichtbare Typen mit Protokoll). Aufrufer in beiden Apps nur Leitung (Admin/Verantwortlich): Themen-Tab „Termin anlegen“/„Neuer Termin“ und Thema-Detail „Einplanen“ → „Neuer Termin“ (isLeader, Status offen)."
+    },
+    "utilities/attendance-date-dialog#alert-222957a0": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:194"
+      ],
+      "n": "„Welcher Termintyp?“ als Radio-Liste, erster Eintrag vorausgewählt, Abbrechen/Weiter; nur bei mehreren Protokoll-Typen. Rollen wie toast-2ca18d28."
+    },
+    "utilities/attendance-date-dialog#toast-0f4733be": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:296"
+      ],
+      "n": "Grüner Toast „Termin am {TT.MM.} angelegt“ (dateFmt dayMonth). Rollen wie toast-2ca18d28."
+    },
+    "utilities/Utils#effect-ac49a0f3": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/core/services/export_service.dart:706",
+        "lib/core/services/native/native_file_service.dart:167",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2407"
+      ],
+      "n": "Excel „{Info|Typ}_{TT_MM_JJJJ}_Anwesenheit.xlsx“ wird gespeichert. Nativ (Cache + Systemansicht) und Desktop-Browser (Download) wie Ionic. Ionic Mobile-Web (iOS/Android-Browser/PWA): Teilen-Dialog (navigator.share) / Flutter: Printing.sharePdf → nur Anchor-Download (Blob-Typ application/pdf), kein Teilen-Dialog."
+    },
+    "utilities/Utils#effect-c9b53196": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/shared/widgets/event_list/event_list_widgets.dart:1116"
+      ],
+      "n": "Nativ: Ionic window.open(url, '_system') / Flutter launchUrl externalApplication, gleiche URLs (maps://?q=…, Google-Maps-Suche). Bedingung ist nur die Plattform, keine Rolle; Aufrufer (Termin-Detail, Abmeldeseite, Elternportal) haben eigene Batches."
+    },
+    "utilities/Utils#effect-e71503f7": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/event_list/event_list_widgets.dart:1113",
+        "lib/core/services/native/native_file_service.dart:103",
+        "lib/core/services/web_window_web.dart:36"
+      ],
+      "n": "Web: Google-Maps-Link über openInNewTab (window.open, in installierter Web-App Link-Klick) wie Ionic. Nuance: „Apple Karten“ (maps://) im iOS-Browser öffnet Flutter über url_launcher_web window.open statt Link-Klick – nur in installierter iOS-Web-App denkbar relevant."
+    },
+    "utilities/Utils#actionsheet-62ce72e1": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/shared/widgets/event_list/event_list_widgets.dart:1123"
+      ],
+      "n": "Ohne Titel: „Apple Karten“, „Google Maps“, Abbrechen; nur iOS nativ (auch iOS-App auf Mac) und iOS/iPadOS-Browser (Flutter defaultTargetPlatform aus Browserkennung), sonst direkt Google Maps. Keine Rollenbedingung."
+    },
+    "utilities/Utils#effect-cf6a6016": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_file_opener.dart:56",
+        "lib/core/services/native/native_file_service.dart:142",
+        "lib/core/services/web_window_web.dart:36"
+      ],
+      "n": "Web (nicht installiert): Datei-URL in neuem Tab (window.open, sonst Link-Klick) wie Ionic, für alle Dateien, die Flutter extern öffnet (openSongFileExternally → NativeFileService.openUrl). Dass Flutter PDFs/Bilder im In-App-Viewer zeigt, ist an den Aufrufstellen (song.page, songs.page) als diff bewertet."
+    }
+  },
+  "extra": []
+}

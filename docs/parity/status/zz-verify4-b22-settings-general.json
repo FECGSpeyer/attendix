@@ -1,0 +1,18 @@
+{
+  "batch": "zz-verify4-b22-settings-general",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "settings/general/extra-fields/extra-fields.page#action-2a285919": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:603",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:156",
+        "lib/core/router/app_router.dart:168"
+      ],
+      "n": "Werk-Zusatzfelder: Name, „Typ: …“, „Anzeige: Unter dem Namen/Als Chip“, Stift/Papierkorb, Sortieren erst ab 2 Feldern ([disabled]=length < 2, Flutter Griff nur bei > 1) – gleich; Reihenfolge nur lokal, gespeichert mit „Speichern“ (beide). Keine Rollen-/Mandantenbedingung im Abschnitt; Seite nur über Allgemeine Einstellungen (Admin/Verantwortlich), Flutter /settings/general gleich.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

@@ -1,0 +1,2479 @@
+{
+ "batch": "zz-verify5c-sonnet-01",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 142,
+    "cond": [
+     "@else if (item)",
+     "@if (!isNew)",
+     "@for (task of tasks; track task.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=openTask(task)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"task.status === 'completed' ? 'checkmark-circle' : 'ellipse-outline'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ task.title }} {{ taskSubtitle(task) }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#action-6584c187"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:461",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:474"
+    ],
+    "n": "Aufgabenzeile für alle Rollen (Liste per RLS): Kreis/Häkchen-Icon, Titel (durchgestrichen wenn erledigt), Untertitel „Person · fällig/erledigt am“; öffnet /settings/tasks/:id.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 108,
+    "cond": [
+     "@else if (item)",
+     "@if (!isNew && isLeader && item.status === 'open')"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block"
+    },
+    "events": [
+     "(click)=planIntoAttendance()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "calendar-outline"
+    ],
+    "keys": [
+     "agenda.planIn"
+    ],
+    "de": [
+     "Einplanen"
+    ],
+    "literals": [],
+    "text": "{{ 'agenda.planIn' | transloco }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#action-6d6140de"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:260",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:133"
+    ],
+    "n": "Rollen gleich (nur Admin/Verantwortlich). Ionic: Bedingung nutzt das per ngModel gebundene item.status – ein ungespeicherter Wechsel im Status-Dropdown blendet „Einplanen“ sofort aus bzw. ein, eingeplant werden die ungespeicherten Titel/Dauer. / Flutter: prüft den gespeicherten Status (item?.status statt _status) und plant den gespeicherten Stand ein – der Button bleibt bis zum Speichern sichtbar bzw. erscheint erst danach. Sheet (bis 6 Termine, „ (bereits eingeplant)“ gesperrt, „Neuen Termin anlegen“, Abbrechen) und Toast „Eingeplant für …“ sonst gleich; veraltete Terminliste siehe x-c0aa3c047c. Die Erstprüfung hat die Status-Bindung übersehen.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 121,
+    "cond": [
+     "@else if (item)",
+     "@if (!isNew)",
+     "@for (entry of history; track entry.attendance_id + entry.field_id; let last = $last)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "true"
+    },
+    "events": [
+     "(click)=openHistory(entry)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[lines]=\"last ? 'none' : 'full'\""
+    ],
+    "icons": [],
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ historyTypeName(entry) }} · {{ entry.date | date: ('common.ngDate' | transloco) }} {{ historyStatus(entry).label }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#action-7ec0a004"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:391",
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:283"
+    ],
+    "n": "Zeile „Typ · dd.MM.yyyy“ mit Status-Badge und Navigation gleich. Ionic: Badge „Besprochen“ grau (medium) / Flutter: outcomeColor('discussed') = primary (blau).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 156,
+    "cond": [
+     "@else if (item)",
+     "@if (!isNew)",
+     "@if (isLeader)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=createTask()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [
+     "agenda.addTask"
+    ],
+    "de": [
+     "Aufgabe hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'agenda.addTask' | transloco }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#action-991adfdd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:477"
+    ],
+    "n": "Nur Admin/Verantwortlich, nur bei bestehendem Thema – in beiden gleich. Öffnet das Aufgaben-Sheet (volle Höhe) mit agendaItemId, Kontext = Thema-Titel, vorbelegter verantwortlicher Person; die neue Aufgabe erscheint per Invalidierung von tasksForAgendaItemProvider.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "line": 211,
+    "method": "AgendaItemDetailPage.planIntoAttendance",
+    "cond": [],
+    "header": {
+     "keys": [
+      "agenda.whichEvent",
+      "agenda.noProtocolEvent"
+     ],
+     "de": [
+      "In welchen Termin einplanen?",
+      "Noch kein Termin mit Tagesordnung geplant"
+     ],
+     "literals": [],
+     "expr": "upcoming.length ? translate('agenda.whichEvent') : translate('agenda.noProtocolEvent')"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "expr": "buttons",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "6639d116",
+    "mbody": "f84b5034",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#actionsheet-d593da5c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:260",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:151",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:157",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:164",
+     "lib/core/providers/team_org_providers.dart:129"
+    ],
+    "n": "Rollen: „Einplanen“ nur Leitung (isTeamLeaderRole = Admin/Verantwortlich) bei gespeichertem, offenem Thema – Flutter gleiche Bedingung (!_isNew && isLeader && status open). Kopf „In welchen Termin einplanen?“/„Noch kein Termin mit Tagesordnung geplant“, bis 6 Termine „Di, 21.10. · Titel“, bereits eingeplante mit „ (bereits eingeplant)“ deaktiviert, „Neuen Termin anlegen“ mit Plus-Icon, Abbrechen.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 26,
+    "cond": [
+     "@else if (item)",
+     "@if (isLeader)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"item.title\"",
+    "bindings": [
+     "[label]=\"'plans.title' | transloco\"",
+     "[placeholder]=\"'agenda.titlePlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "plans.title",
+     "agenda.titlePlaceholder"
+    ],
+    "de": [
+     "Titel",
+     "Worum geht es?"
+    ],
+    "literals": [],
+    "text": "[label]=\"'plans.title' | transloco\" [placeholder]=\"'agenda.titlePlaceholder' | transloco\"",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#field-219c0bba"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:290"
+    ],
+    "n": "Nur Admin/Verantwortlich in beiden (isTeamLeaderRole ↔ isTeamLeaderProvider), alle anderen Rollen bekommen die Nur-Lese-Ansicht. Label „Titel“, Platzhalter „Worum geht es?“, Satzanfang groß.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 38,
+    "cond": [
+     "@else if (item)",
+     "@if (isLeader)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"item.status\"",
+    "bindings": [
+     "[label]=\"'agenda.status' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"opt.value\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ opt.label }}"
+     }
+    ],
+    "keys": [
+     "agenda.status"
+    ],
+    "de": [
+     "Status"
+    ],
+    "literals": [],
+    "text": "[label]=\"'agenda.status' | transloco\" {{ opt.label }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#field-2f9c0ed7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:302"
+    ],
+    "n": "Nur Admin/Verantwortlich in beiden. Dropdown statt Popover-Select; Offen/Erledigt/Verworfen in gleicher Reihenfolge, gleiche Werte (open/completed/dropped).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 30,
+    "cond": [
+     "@else if (item)",
+     "@if (isLeader)"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"item.description\"",
+    "bindings": [
+     "[label]=\"'agenda.description' | transloco\"",
+     "[placeholder]=\"'agenda.descriptionPlaceholder' | transloco\"",
+     "[autoGrow]=\"true\""
+    ],
+    "icons": [],
+    "keys": [
+     "agenda.description",
+     "agenda.descriptionPlaceholder"
+    ],
+    "de": [
+     "Beschreibung",
+     "Hintergrund, Ziel, offene Fragen …"
+    ],
+    "literals": [],
+    "text": "[label]=\"'agenda.description' | transloco\" [placeholder]=\"'agenda.descriptionPlaceholder' | transloco\"",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#field-39a93a68"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:291"
+    ],
+    "n": "Nur Admin/Verantwortlich in beiden. „Beschreibung“ / „Hintergrund, Ziel, offene Fragen …“, mehrzeilig ab 3 Zeilen (Flutter max. 10 Zeilen sichtbar statt autoGrow).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 45,
+    "cond": [
+     "@else if (item)",
+     "@if (isLeader)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"item.priority\"",
+    "bindings": [
+     "[label]=\"'agenda.priority' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"opt.value\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ opt.label }}"
+     }
+    ],
+    "keys": [
+     "agenda.priority"
+    ],
+    "de": [
+     "Priorität"
+    ],
+    "literals": [],
+    "text": "[label]=\"'agenda.priority' | transloco\" {{ opt.label }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#field-3a89b9b2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:310"
+    ],
+    "n": "Nur Admin/Verantwortlich in beiden. Dropdown statt Popover-Select; Hoch/Mittel/Niedrig in gleicher Reihenfolge.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 52,
+    "cond": [
+     "@else if (item)",
+     "@if (isLeader)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "modal"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"item.responsible_person_id\"",
+    "bindings": [
+     "[label]=\"'agenda.responsible' | transloco\"",
+     "[cancelText]=\"'common.cancel' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"null\"",
+      "keys": [
+       "agenda.nobody"
+      ],
+      "de": [
+       "Niemand"
+      ],
+      "literals": [],
+      "text": "{{ 'agenda.nobody' | transloco }}"
+     },
+     {
+      "value": "\"person.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ person.firstName }} {{ person.lastName }}"
+     }
+    ],
+    "keys": [
+     "agenda.responsible",
+     "common.cancel",
+     "agenda.nobody"
+    ],
+    "de": [
+     "Verantwortlich",
+     "Abbrechen",
+     "Niemand"
+    ],
+    "literals": [],
+    "text": "[label]=\"'agenda.responsible' | transloco\" [cancelText]=\"'common.cancel' | transloco\" {{ 'agenda.nobody' | transloco }} {{ person.firstName }} {{ person.lastName }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#field-42aad74c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:279",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:318"
+    ],
+    "n": "Optionen „Niemand“ + aktive, nicht ausstehende Personen gleich. Ionic: Select als Vollbild-Modal mit „Abbrechen“, Sortierung localeCompare('de') / Flutter: Dropdown ohne Abbrechen, Sortierung per toLowerCase().compareTo (Umlaute wie „Ä…“ landen hinter Z).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 61,
+    "cond": [
+     "@else if (item)",
+     "@if (isLeader)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number",
+     "class": "ion-text-end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"item.default_duration\"",
+    "bindings": [
+     "[label]=\"'agenda.durationPerSession' | transloco\"",
+     "[placeholder]=\"'agenda.default' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "agenda.durationPerSession",
+     "agenda.default"
+    ],
+    "de": [
+     "Dauer pro Sitzung (Min.)",
+     "Standard"
+    ],
+    "literals": [],
+    "text": "[label]=\"'agenda.durationPerSession' | transloco\" [placeholder]=\"'agenda.default' | transloco\"",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#field-75815c26"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:79",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:327"
+    ],
+    "n": "Label „Dauer pro Sitzung (Min.)“, Platzhalter „Standard“, rechtsbündig, nur Leitung gleich. Ionic: NumericValueAccessor (parseFloat) + Math.round – „12.5“ wird 13 / Flutter: int.tryParse ohne Eingabefilter – „12.5“ (Android-Zifferntastatur/Web erlauben Punkt) wird still als null = Standard gespeichert.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 78,
+    "cond": [
+     "@else if (item)",
+     "@else (not isLeader)",
+     "@if (responsibleName)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "agenda.responsible"
+    ],
+    "de": [
+     "Verantwortlich"
+    ],
+    "literals": [],
+    "text": "{{ 'agenda.responsible' | transloco }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#text-048e6c66"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:363"
+    ],
+    "n": "Nur-Lese-Ansicht (Nicht-Leitung) in beiden gleich; „Verantwortlich“ nur wenn ein Name vorhanden ist. Ionic-Fallback auf persons greift für Nicht-Leitung nie (persons nur für Leitung geladen), beide nutzen den gejointen responsible_person.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 85,
+    "cond": [
+     "@else if (item)",
+     "@else (not isLeader)",
+     "@if (item.description)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "description"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ item.description }}"
+    ],
+    "text": "{{ item.description }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#text-073edee5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:368"
+    ],
+    "n": "Nur-Lese-Ansicht (Nicht-Leitung) in beiden gleich; Beschreibung grau, Zeilenumbrüche bleiben erhalten (pre-wrap ↔ Text).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 79,
+    "cond": [
+     "@else if (item)",
+     "@else (not isLeader)",
+     "@if (responsibleName)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ responsibleName }}"
+    ],
+    "text": "{{ responsibleName }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#text-24277623"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:366"
+    ],
+    "n": "Nur-Lese-Ansicht (Nicht-Leitung) in beiden gleich; „Vorname Nachname“ als Note rechts.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 138,
+    "cond": [
+     "@else if (item)",
+     "@if (!isNew)",
+     "@if (tasks.length)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "class": "list-header-note"
+    },
+    "keys": [
+     "agenda.tasksDone"
+    ],
+    "de": [
+     "{done} von {total} erledigt"
+    ],
+    "literals": [],
+    "text": "{{ 'agenda.tasksDone' | transloco: { done: completedTaskCount, total: tasks.length } }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#text-440e3b32"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:453"
+    ],
+    "n": "„{done} von {total} erledigt“ rechts im Kopf, nur bei Aufgaben; alle Rollen.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 71,
+    "cond": [
+     "@else if (item)",
+     "@else (not isLeader)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "[color]": "\"getStatusColor(item.status)\""
+    },
+    "bindings": [
+     "[color]=\"getStatusColor(item.status)\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ statusLabel }}"
+    ],
+    "text": "{{ statusLabel }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#text-8b87f4b2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:350"
+    ],
+    "n": "Nur-Lese-Ansicht (Nicht-Leitung) in beiden gleich. Status-Badge Offen/Erledigt/Verworfen, Farben primary/success/medium wie getStatusColor.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 118,
+    "cond": [
+     "@else if (item)",
+     "@if (!isNew)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "agenda.history"
+    ],
+    "de": [
+     "Verlauf"
+    ],
+    "literals": [],
+    "text": "{{ 'agenda.history' | transloco }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#text-935a7b7b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:269",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:398"
+    ],
+    "n": "„Verlauf“ für alle Rollen bei bestehendem Thema. Nicht-Leitung: RPC get_agenda_item_history prüft serverseitig Leitung → Ionic catch → [], Flutter Fehler → valueOrNull ?? [] – beide zeigen den Leertext.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 136,
+    "cond": [
+     "@else if (item)",
+     "@if (!isNew)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "agenda.tasks"
+    ],
+    "de": [
+     "Aufgaben"
+    ],
+    "literals": [],
+    "text": "{{ 'agenda.tasks' | transloco }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#text-a7db4909"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:452"
+    ],
+    "n": "„Aufgaben“ für alle Rollen bei bestehendem Thema.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 72,
+    "cond": [
+     "@else if (item)",
+     "@else (not isLeader)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "class": "badge-gap",
+     "[color]": "\"getPriorityColor(item.priority)\""
+    },
+    "bindings": [
+     "[color]=\"getPriorityColor(item.priority)\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ priorityLabel }}"
+    ],
+    "text": "{{ priorityLabel }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#text-c1d2d5c0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:358"
+    ],
+    "n": "Nur-Lese-Ansicht (Nicht-Leitung) in beiden gleich. Prioritäts-Badge Hoch/Mittel/Niedrig, Farben danger/warning/medium wie getPriorityColor.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 99,
+    "cond": [
+     "@else if (item)",
+     "@if (proposerName)",
+     "@if (item.decision_note)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ item.decision_note }}"
+    ],
+    "text": "{{ item.decision_note }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#text-dc327713"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:255"
+    ],
+    "n": "decision_note unter „Vorschlag von …“, alle Rollen, nur wenn gesetzt.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 129,
+    "cond": [
+     "@else if (item)",
+     "@if (!isNew)",
+     "@empty of history"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium",
+     "class": "ion-text-wrap"
+    },
+    "keys": [
+     "agenda.notDiscussed"
+    ],
+    "de": [
+     "Noch in keinem Termin besprochen."
+    ],
+    "literals": [],
+    "text": "{{ 'agenda.notDiscussed' | transloco }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#text-ee00217d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:421"
+    ],
+    "n": "„Noch in keinem Termin besprochen.“ grau bei leerem Verlauf; für Nicht-Leitung immer (s. text-935a7b7b), in beiden Apps gleich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.html",
+    "line": 152,
+    "cond": [
+     "@else if (item)",
+     "@if (!isNew)",
+     "@empty of tasks"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium"
+    },
+    "keys": [
+     "agenda.noTasks"
+    ],
+    "de": [
+     "Keine Aufgaben"
+    ],
+    "literals": [],
+    "text": "{{ 'agenda.noTasks' | transloco }}",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#text-f4245346"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:476"
+    ],
+    "n": "„Keine Aufgaben“ grau; alle Rollen.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "line": 248,
+    "method": "AgendaItemDetailPage.deleteItem",
+    "cond": [],
+    "message": {
+     "keys": [
+      "agenda.deleted"
+     ],
+     "de": [
+      "Gelöscht"
+     ],
+     "literals": [],
+     "expr": "translate('agenda.deleted')"
+    },
+    "color": null,
+    "duration": null,
+    "src": "1cd4089e",
+    "mbody": "5cfcdbcf",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-06ae98b4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:126"
+    ],
+    "n": "Grüner Toast „Gelöscht“; nur über den Leitungs-Löschdialog erreichbar (beide Apps).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "line": 228,
+    "method": "AgendaItemDetailPage.insertInto",
+    "cond": [],
+    "message": {
+     "keys": [
+      "agenda.plannedFor"
+     ],
+     "de": [
+      "Eingeplant für {date}"
+     ],
+     "literals": [],
+     "expr": "translate('agenda.plannedFor', { date: dayjs(att.date).format(dateFmt('dayMonth')) })"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "31c4a854",
+    "mbody": "29077692",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-f79a99f3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:196",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:198"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app.component",
+   "ionic": {
+    "ts": "app.component.ts",
+    "html": "app.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "app.component.ts",
+    "line": 312,
+    "method": "AppComponent.handleAuthUrl",
+    "cond": [
+     "(errorDescription)"
+    ],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "decodeURIComponent(errorDescription)"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "69050ca2",
+    "mbody": "17a7738e",
+    "id": "app.component#toast-499d9f2d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_link_listener.dart:124-165"
+    ],
+    "n": "Flutter besser: Ionic zeigt error_description der Supabase-URL roh (englisch) / Flutter übersetzt bekannte Fehler in deutschen Text.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/data/auth_link_listener.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 406,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>",
+     "@if (isDutyTypeSelected())",
+     "@for (wd of dutyWeekdays; track wd.weekday)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=changeDutyRequired(wd.weekday, 1)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'attList.more' | transloco\""
+    ],
+    "icons": [
+     "add"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-0ad7d998"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:330"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 481,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>",
+     "@if (showSongsSelection())",
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger #songSelectModal>",
+     "@if (filteredSongs.length > 0)",
+     "@for (song of filteredSongs; track song.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=toggleSongSelection(song.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ song.prefix }}{{ song.number }} {{ song.name }} {{ song.composer }}",
+    "id": "attendance/att-list/att-list.page#action-3436fb43"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:360-374"
+    ],
+    "n": "„{prefix}{number} {name}“ und Komponist als Unterzeile, Tippen schaltet die Auswahl.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 119,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (myDutyRequests.length)",
+     "@for (r of myDutyRequests; track r.pa.id)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "size": "small",
+     "fill": "outline",
+     "color": "medium"
+    },
+    "events": [
+     "(click)=declineMyDuty(r.att, r.pa)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "signout.cannot"
+    ],
+    "de": [
+     "Kann nicht"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.cannot' | transloco }}",
+    "id": "attendance/att-list/att-list.page#action-4c70a5da"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:53",
+     "lib/features/duty/presentation/widgets/duty_actions.dart:87"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 520,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>",
+     "@if (showSongsSelection())",
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=addSong(addHisModal)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attList.addSongs"
+    ],
+    "de": [
+     "Werk(e) hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attList.addSongs' | transloco }}",
+    "id": "attendance/att-list/att-list.page#action-4ef97afb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:214",
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:250"
+    ],
+    "n": "Flutter besser: „Werk(e) hinzufügen“ erst aktiv mit ≥1 Werk und Dirigent bzw. Namen / Ionic immer aktiv (ohne Werk nur Schließen); bei „Anderer Dirigent“ ohne Namen übernimmt Ionic person_id 9999999999. Achtung: ohne aktive Dirigenten erlaubt Ionic Werke ohne Dirigent, Flutter nur mit „Anderer Dirigent“ + Name.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 287,
+    "cond": [
+     "@else (not !loaded / loaded && allAttendances.length)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small"
+    },
+    "events": [
+     "(click)=isAddModalOpen = true"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attList.addEvent"
+    ],
+    "de": [
+     "Termin hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attList.addEvent' | transloco }}",
+    "id": "attendance/att-list/att-list.page#action-4fff8ad6"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:239"
+    ],
+    "n": "Flutter besser: Button „Termin hinzufügen“ im Leerzustand nur mit Anlegerecht (canCreateAttendanceProvider, wie der FAB) / Ionic zeigt ihn allen Rollen der Seite (auch Beobachter und Helfer ohne attendance_create) und öffnet das Anlege-Sheet.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 306,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "info-button",
+     "fill": "clear",
+     "slot": "end"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "information"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-558f18b9-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:189",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:542"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 423,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>",
+     "@if (showSongsSelection())"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "id": "add-his-button"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-558f18b9-4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:381",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:392"
+    ],
+    "n": "„+“ neben „Werke“ öffnet das Sheet „Werk(e) hinzufügen“ (max. 70 % Höhe).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 536,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>",
+     "@if (showSongsSelection())",
+     "@for (entry of historyEntries; track entry; let i = $index)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "slot": "end"
+    },
+    "events": [
+     "(click)=historyEntries.splice(i, 1)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-562aaa0e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:417-423"
+    ],
+    "n": "X entfernt den Eintrag.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 36,
+    "cond": [
+     "in <ion-popover trigger=att-filter-trigger>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=setFilter('all')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark"
+    ],
+    "keys": [
+     "attList.showAll"
+    ],
+    "de": [
+     "Alle anzeigen"
+    ],
+    "literals": [],
+    "text": "{{ 'attList.showAll' | transloco }}",
+    "id": "attendance/att-list/att-list.page#action-56ed352d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:125"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 120,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (myDutyRequests.length)",
+     "@for (r of myDutyRequests; track r.pa.id)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "size": "small",
+     "color": "success"
+    },
+    "events": [
+     "(click)=confirmMyDuty(r.pa)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.confirm"
+    ],
+    "de": [
+     "Bestätigen"
+    ],
+    "literals": [],
+    "text": "{{ 'common.confirm' | transloco }}",
+    "id": "attendance/att-list/att-list.page#action-5affa11e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:58",
+     "lib/features/duty/presentation/widgets/duty_actions.dart:70",
+     "lib/data/repositories/duty_repository.dart:153"
+    ],
+    "n": "duty_state confirmed, status Anwesend, notes \"\", changed_by/at wie Ionic.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart",
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 436,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>",
+     "@if (showSongsSelection())",
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "true",
+     "id": "song-select-trigger"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attList.songsLabel",
+     "attList.songsSelected",
+     "attList.noSongsSelected"
+    ],
+    "de": [
+     "Werk(e)",
+     "{count} Werk(e) ausgewählt",
+     "Keine Werke ausgewählt"
+    ],
+    "literals": [],
+    "text": "{{ 'attList.songsLabel' | transloco }} {{ 'attList.songsSelected' | transloco: { count: selectedSongs.length } }} {{ 'attList.noSongsSelected' | transloco }}",
+    "id": "attendance/att-list/att-list.page#action-6e0d681b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:151-158"
+    ],
+    "n": "„Werk(e)“ mit „{count} Werk(e) ausgewählt“ / „Keine Werke ausgewählt“, öffnet „Werke auswählen“.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 402,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>",
+     "@if (isDutyTypeSelected())",
+     "@for (wd of dutyWeekdays; track wd.weekday)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small",
+     "[disabled]": "\"wd.required <= 1\""
+    },
+    "events": [
+     "(click)=changeDutyRequired(wd.weekday, -1)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'attList.less' | transloco\""
+    ],
+    "icons": [
+     "remove"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-9cfb5a90"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:321"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 43,
+    "cond": [
+     "in <ion-popover trigger=att-filter-trigger>",
+     "@for (type of db.attendanceTypes(); track type.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=setFilter(type.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "ellipse",
+     "checkmark"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ type.name }}",
+    "id": "attendance/att-list/att-list.page#action-be681377"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:141"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 550,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "color": "primary",
+     "button": "",
+     "detail": "false",
+     "[disabled]": "\"dates.length === 0 || creatingAttendance\""
+    },
+    "events": [
+     "(click)=addAttendance(addAttModal)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attList.addEvent",
+     "attList.addEvents"
+    ],
+    "de": [
+     "Termin hinzufügen",
+     "Termine hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attList.addEvent' | transloco }} {{ 'attList.addEvents' | transloco }} {{ 'attList.addEvent' | transloco }}",
+    "id": "attendance/att-list/att-list.page#action-c404e4de"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:165",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:427",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:464"
+    ],
+    "n": "\"Termin hinzufügen\"/\"Termine hinzufügen\", gesperrt ohne Datum oder während des Speicherns.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 115,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (myDutyRequests.length)",
+     "@for (r of myDutyRequests; track r.pa.id)"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "class": "ion-text-wrap"
+    },
+    "events": [
+     "(click)=openAttendance(r.att)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ getEventTitle(r.att) }} {{ getEventMeta(r.att, true, false) }}",
+    "id": "attendance/att-list/att-list.page#action-d02e9e23"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:42",
+     "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:71",
+     "lib/data/repositories/duty_repository.dart:41"
+    ],
+    "n": "Ionic: Titel getEventTitle (typeInfo / Typname außer hide_name / Datum), Meta \"Di., 20.10.2026 · 19:00–21:00\"; Tap öffnet Termin nur für Dirigent/Helfer / Flutter: Titel typeInfo / Typname / \"Dienst\" (hide_name ignoriert), Meta \"Di, 20.10. · 19:00\" (ohne Jahr, ohne Endzeit); Tap ohne Rollenprüfung.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart",
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-menu-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-e400eac1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:295"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 453,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>",
+     "@if (showSongsSelection())",
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger #songSelectModal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=songSelectModal.dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-f0f69b82"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:320-324"
+    ],
+    "n": "Haken übernimmt die Auswahl und schließt. Abweichend nur beim Schließen ohne Haken: Flutter verwirft die Änderungen, Ionic behält sie (live gebunden).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 79,
+    "cond": [],
+    "tag": "ion-refresher",
+    "attrs": {
+     "slot": "fixed"
+    },
+    "events": [
+     "(ionRefresh)=handleRefresh($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-f97565d6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:621"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/att-list/att-list.page.ts",
+    "line": 319,
+    "method": "AttListPage.remove",
+    "cond": [],
+    "header": {
+     "keys": [
+      "attList.removeConfirm"
+     ],
+     "de": [
+      "Möchtest du den Termin wirklich entfernen?"
+     ],
+     "literals": [],
+     "expr": "translate('attList.removeConfirm')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attList.continue"
+       ],
+       "de": [
+        "Fortfahren"
+       ],
+       "literals": [],
+       "expr": "translate('attList.continue')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (): Promise<void> => { slider.close(); await this.db.removeAttendance(id); this.attendances = this.attendances.filter(a => a.id !== id); this.oldAttendances = this.oldAttendances.filter(a => a.id !== id); this.viewerAttendances = thi…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "0f724e03",
+    "mbody": "0d5f3691",
+    "id": "attendance/att-list/att-list.page#alert-c140caf7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:71",
+     "lib/core/providers/attendance_providers.dart:405",
+     "lib/data/repositories/attendance_repository.dart:295"
+    ],
+    "n": "Header \"Möchtest du den Termin wirklich entfernen?\", Buttons \"Abbrechen\"/\"Fortfahren\"; Löschen mit id+tenantId, danach Liste neu geladen.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+    "lib/core/providers/attendance_providers.dart",
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 73,
+    "cond": [],
+    "tag": "app-notification-bell",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "attendance/att-list/att-list.page#embed-d876cfe4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:323"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 459,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>",
+     "@if (showSongsSelection())",
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger #songSelectModal>"
+    ],
+    "tag": "ion-searchbar",
+    "attrs": {},
+    "events": [
+     "(ionInput)=onSongSearch($event)",
+     "(ionClear)=resetSongSearch()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"songSearchTerm\"",
+    "bindings": [
+     "[placeholder]=\"'attList.searchSong' | transloco\"",
+     "[debounce]=\"250\""
+    ],
+    "icons": [],
+    "keys": [
+     "attList.searchSong"
+    ],
+    "de": [
+     "Werk suchen..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'attList.searchSong' | transloco\"",
+    "id": "attendance/att-list/att-list.page#field-098f8ed3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:330-335",
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:343-349"
+    ],
+    "n": "Platzhalter „Werk suchen...“, Suche in „{prefix}{number} {name}“ (klein), ohne Debounce, getrimmt.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 305,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "readonly": "",
+     "id": "att-date-modal"
+    },
+    "events": [
+     "(click)=onDateClick()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"dateString\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#field-0e2e617a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:172",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:692",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:665"
+    ],
+    "n": "Anzeige \"dd.MM.yyyy\" / \"{n} Termine ausgewählt\" / \"Kein Datum ausgewählt\"; Tap mit nur heute → abwählen + Toast, dann Kalender.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 391,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"typeInfo\"",
+    "bindings": [
+     "[helperText]=\"'attList.infoTextHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "attList.infoTextHelper"
+    ],
+    "de": [
+     "Dieser Text wird anstelle des Typs angezeigt."
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'attList.infoTextHelper' | transloco\"",
+    "id": "attendance/att-list/att-list.page#field-283fff29"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:290",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:302"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 375,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [
+     "(ionChange)=onTypeChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"type_id\"",
+    "bindings": [
+     "[label]=\"'attList.type' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"type.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ type.name }}"
+     }
+    ],
+    "keys": [
+     "attList.type"
+    ],
+    "de": [
+     "Typ"
+    ],
+    "literals": [],
+    "text": "[label]=\"'attList.type' | transloco\" {{ type.name }}",
+    "id": "attendance/att-list/att-list.page#field-aa8f98a9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:201",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:225",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:159",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:675"
+    ],
+    "n": "Label \"Typ\", nur sichtbare Typen, Vorauswahl erster sichtbarer Typ; Wechsel setzt Dauer und Dienst-Bedarf zurück.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 482,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddModalOpen\" #addAttModal>",
+     "@if (showSongsSelection())",
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger #songSelectModal>",
+     "@if (filteredSongs.length > 0)",
+     "@for (song of filteredSongs; track song.id)",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"selectedSongs.includes(song.id)\"",
+    "bindings": [
+     "[checked]=\"selectedSongs.includes(song.id)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#field-acdfacba"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:360-362"
+    ],
+    "n": "Checkbox links, zeigt die Auswahl.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  }
+ ]
+}

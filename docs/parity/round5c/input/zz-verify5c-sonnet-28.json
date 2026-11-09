@@ -1,0 +1,2108 @@
+{
+ "batch": "zz-verify5c-sonnet-28",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 207,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (rule.allow_responses)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "autoMessages.responsesHint"
+    ],
+    "de": [
+     "Antworten sind bis {days} Tage nach dem Termin möglich. „Ich war doch da“ wird immer erst geprüft."
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.responsesHint' | transloco: { days: 7 } }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-0e19135e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:739",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:740"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 245,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (preview)",
+     "@for (p of preview; track p.attendanceId; let first = $first)",
+     "@else (not !p.recorded)",
+     "@if (first)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "autoMessages.previewAt",
+     "common.ngDate"
+    ],
+    "de": [
+     "Versand wäre am {time} gewesen",
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.previewAt' | transloco: { time: (p.sendAt | date: ('common.ngDate' | transloco) + ', HH:mm') } }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-0f142178"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:830",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:832",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:833"
+    ],
+    "n": "Nur beim ersten Termin und nur wenn erfasst; 'TT.MM.JJJJ, HH:mm' in Ortszeit.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 170,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@else (not rule.use_template)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "autoMessages.customHint"
+    ],
+    "de": [
+     "Eigener Text geht in allen Sprachen so raus, wie du ihn schreibst. Tippe auf einen Platzhalter, um ihn einzufügen."
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.customHint' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-0feada82"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:670",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:671"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 173,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "autoMessages.channels"
+    ],
+    "de": [
+     "Kanäle"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.channels' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-115b7e1e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:688"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 243,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (preview)",
+     "@for (p of preview; track p.attendanceId; let first = $first)",
+     "@else (not !p.recorded)"
+    ],
+    "tag": "h3",
+    "attrs": {
+     "class": "big"
+    },
+    "keys": [
+     "autoMessages.previewWould"
+    ],
+    "de": [
+     "{count, plural, =0 {Niemand hätte die Nachricht bekommen} one {# Person hätte die Nachricht bekommen} other {# Personen hätten die Nachricht bekommen}}"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.previewWould' | transloco: { count: p.people.length } }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-15e0e4b5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:824",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:825"
+    ],
+    "n": "Gleiche Pluralformen (=0 / one / other).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 155,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (rule.use_template)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "autoMessages.templateHint"
+    ],
+    "de": [
+     "Die Vorlage gibt es in mehreren Sprachen. Jedes Mitglied bekommt sie in seiner App-Sprache."
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.templateHint' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-1df8701c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:593"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 219,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "autoMessages.copyHint"
+    ],
+    "de": [
+     "Eine Sammelinfo pro Termin, wer angeschrieben wurde."
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.copyHint' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-1fd81b04"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:761"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 110,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "autoMessages.typesSome",
+     "autoMessages.typesAll"
+    ],
+    "de": [
+     "Gilt nur für die ausgewählten Termintypen.",
+     "Nichts ausgewählt: gilt für alle Termintypen."
+    ],
+    "literals": [],
+    "text": "{{ (rule.type_ids?.length ? 'autoMessages.typesSome' : 'autoMessages.typesAll') | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-2676777b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:480",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:481",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:482",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:483"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 221,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "autoMessages.preview"
+    ],
+    "de": [
+     "Vorschau"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.preview' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-2d04584b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:764"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 210,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "autoMessages.copy"
+    ],
+    "de": [
+     "Kopie (optional)"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.copy' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-2ea3e80a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:744"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 28,
+    "cond": [
+     "@else if (tab === 'history')",
+     "@if (history.length === 0)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "autoMessages.histEmpty"
+    ],
+    "de": [
+     "Diese Regel hat noch nichts verschickt."
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.histEmpty' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-36aa01c2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:902",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:903"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 74,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "autoMessages.howOften"
+    ],
+    "de": [
+     "Wie oft?"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.howOften' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-3f080ffa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:410"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 241,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (preview)",
+     "@for (p of preview; track p.attendanceId; let first = $first)",
+     "@if (!p.recorded)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "autoMessages.previewNotRecorded"
+    ],
+    "de": [
+     "Übersprungen: Anwesenheit nicht erfasst"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.previewNotRecorded' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-4eef9834"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:818",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:820"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 23,
+    "cond": [
+     "@else if (tab === 'history')"
+    ],
+    "tag": "small",
+    "attrs": {},
+    "keys": [
+     "autoMessages.histSent"
+    ],
+    "de": [
+     "Personen angeschrieben"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.histSent' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-5e0e3b93"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:892"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 152,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (rule.use_template)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ sample.body }}"
+    ],
+    "text": "{{ sample.body }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-5e3550a7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:193",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:582",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:583"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 253,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (preview)",
+     "@for (p of preview; track p.attendanceId; let first = $first)",
+     "@for (person of p.people; track person.id)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ groupName(person.groupId) }}"
+    ],
+    "text": "{{ groupName(person.groupId) }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-5f839d06"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:843",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:845",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:352"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 24,
+    "cond": [
+     "@else if (tab === 'history')"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ totals.read }}"
+    ],
+    "text": "{{ totals.read }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-605dd4f0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:877",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:893"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 253,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (preview)",
+     "@for (p of preview; track p.attendanceId; let first = $first)",
+     "@for (person of p.people; track person.id)",
+     "@if (!person.app && person.email)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "autoMessages.onlyEmail"
+    ],
+    "de": [
+     "nur E-Mail"
+    ],
+    "literals": [],
+    "text": "· {{ 'autoMessages.onlyEmail' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-648a41a3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:843",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:846"
+    ],
+    "n": "„· nur E-Mail“ hinter dem Gruppennamen bei !app && email (Vorschau im Regel-Tab). Bei leerem Gruppennamen ohne führenden Punkt (Ionic „ · nur E-Mail“) – unerheblich. Rollen: Regel-Seite in Ionic nur über Einstellungen › Kommunikation › Nachrichten (isAdmin = Admin/Verantwortlich, nicht im Seitenpanel) und über das Termin-Panel (nur Admin/Verantwortlich) erreichbar / Flutter: Route-Guard /settings/auto-messages nur Admin/Verantwortlich (app_router.dart:181), gleiche Einstiege.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 25,
+    "cond": [
+     "@else if (tab === 'history')"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ totals.responses }}"
+    ],
+    "text": "{{ totals.responses }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-67638bdf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:878",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:894"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 258,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (preview)",
+     "@for (p of preview; track p.attendanceId; let first = $first)",
+     "@if (p.recorded)"
+    ],
+    "tag": "ion-note",
+    "attrs": {},
+    "keys": [
+     "autoMessages.previewExcluded"
+    ],
+    "de": [
+     "Nicht angeschrieben: {excused} abgemeldet, {paused} pausiert"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.previewExcluded' | transloco: { excused: p.excused, paused: p.paused } }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-6ad37b5c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:851",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:854"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 118,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "autoMessages.groupsSome",
+     "autoMessages.groupsAll"
+    ],
+    "de": [
+     "Gilt nur für Personen aus den ausgewählten Gruppen.",
+     "Nichts ausgewählt: gilt für alle Gruppen."
+    ],
+    "literals": [],
+    "text": "{{ (rule.group_ids?.length ? 'autoMessages.groupsSome' : 'autoMessages.groupsAll') | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-7ad6028c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:502",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:503",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:504",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:505"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 233,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (preview)",
+     "@if (preview.length === 0)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "autoMessages.previewNoTermine"
+    ],
+    "de": [
+     "Keine passenden Termine in den letzten 60 Tagen."
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.previewNoTermine' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-8c5c58ad"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:805"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 252,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (preview)",
+     "@for (p of preview; track p.attendanceId; let first = $first)",
+     "@for (person of p.people; track person.id)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ person.name }}"
+    ],
+    "text": "{{ person.name }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-946e1029"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:840",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:842"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 239,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (preview)",
+     "@for (p of preview; track p.attendanceId; let first = $first)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ p.title }} · {{ p.date | date: ('common.ngDate' | transloco) }}{{ p.startTime ? ' · ' + p.startTime : '' }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-98712f30"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:799",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:801",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:812"
+    ],
+    "n": "'Titel · TT.MM.JJJJ' + ' · Startzeit' nur mit Startzeit (Edge Function liefert sonst null).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 86,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (rule.frequency !== 'each')"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ rule.frequency_count }}×"
+    ],
+    "text": "{{ rule.frequency_count }}×",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-99a9cfb0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:433",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:964"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 112,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "autoMessages.groups"
+    ],
+    "de": [
+     "Gruppen"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.groups' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-9c429bcd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:487"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 95,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (rule.frequency !== 'each')",
+     "@if (rule.frequency === 'window')"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [
+     "autoMessages.days"
+    ],
+    "de": [
+     "{count, plural, one {# Tag} other {# Tage}}"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.days' | transloco: { count: rule.frequency_days } }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-9dc55767"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:448"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 129,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "autoMessages.delayHint"
+    ],
+    "de": [
+     "In dieser Zeit kannst du die Anwesenheit noch korrigieren oder die Nachricht für den Termin aussetzen."
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.delayHint' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-a48abb79"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:523"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 151,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (rule.use_template)"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ sample.title }}"
+    ],
+    "text": "{{ sample.title }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-ad39a8c9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:174",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:574",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:580"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 49,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "autoMessages.general"
+    ],
+    "de": [
+     "Allgemein"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.general' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-ad6a48bc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:359"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 104,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "autoMessages.whichTermine"
+    ],
+    "de": [
+     "Für welche Termine?"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.whichTermine' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-b069a66d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:465"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 23,
+    "cond": [
+     "@else if (tab === 'history')"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ totals.sent }}"
+    ],
+    "text": "{{ totals.sent }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-b324328d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:876",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:892",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:897"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 253,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (preview)",
+     "@for (p of preview; track p.attendanceId; let first = $first)",
+     "@for (person of p.people; track person.id)",
+     "@if (!person.app && !person.email)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "autoMessages.unreachable"
+    ],
+    "de": [
+     "nicht erreichbar"
+    ],
+    "literals": [],
+    "text": "· {{ 'autoMessages.unreachable' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-bcc226f6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:843",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:847"
+    ],
+    "n": "„· nicht erreichbar“ bei !app && !email, sonst wie text-648a41a3 (gleiche Rollenbeschränkung).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 60,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "autoMessages.when"
+    ],
+    "de": [
+     "Wann wird geschickt?"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.when' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-d31f0533"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:386"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 263,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (preview)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "autoMessages.previewHint"
+    ],
+    "de": [
+     "Die Vorschau verschickt nichts. Mit Häufigkeit „In Folge“ zählen auch frühere Termine."
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.previewHint' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-d67231b2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:860"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 133,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "autoMessages.safety"
+    ],
+    "de": [
+     "Es wird nur geschickt, wenn bei dem Termin Anwesenheit erfasst wurde. Abgemeldete, Pausierte und Ausgetretene bekommen nie eine Nachricht."
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.safety' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-f169770b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:526",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:536",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:540"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 183,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "autoMessages.responses"
+    ],
+    "de": [
+     "Grund nachtragen"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.responses' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-f57382c1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:713"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 136,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "autoMessages.message"
+    ],
+    "de": [
+     "Nachricht"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.message' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-f6a959cd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:549"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 92,
+    "cond": [
+     "@else (not loading / tab === 'history')",
+     "@if (rule.frequency !== 'each')",
+     "@if (rule.frequency === 'window')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "autoMessages.freqDays"
+    ],
+    "de": [
+     "Zeitraum"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.freqDays' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-f6ee86c6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:445",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:447"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 24,
+    "cond": [
+     "@else if (tab === 'history')"
+    ],
+    "tag": "small",
+    "attrs": {},
+    "keys": [
+     "autoMessages.histRead"
+    ],
+    "de": [
+     "gelesen"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.histRead' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-f8541de1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:893"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 58,
+    "cond": [
+     "@else (not loading / tab === 'history')"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "autoMessages.activeHint"
+    ],
+    "de": [
+     "Eine eingeschaltete Regel gilt ab jetzt. Vergangene Termine werden nicht nachgeschickt. Schau dir vorher unten die Vorschau an."
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.activeHint' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-fc73bc02"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:382"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.html",
+    "line": 25,
+    "cond": [
+     "@else if (tab === 'history')"
+    ],
+    "tag": "small",
+    "attrs": {},
+    "keys": [
+     "autoMessages.histResponses"
+    ],
+    "de": [
+     "Antworten"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.histResponses' | transloco }}",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#text-fd68f1a2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:894"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "line": 281,
+    "method": "AutoMessageRulePage.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "autoMessages.saved"
+     ],
+     "de": [
+      "Regel gespeichert"
+     ],
+     "literals": [],
+     "expr": "translate('autoMessages.saved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "ac653979",
+    "mbody": "5969427e",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#toast-34d74721"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:263"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "line": 285,
+    "method": "AutoMessageRulePage.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "autoMessages.saveFailed"
+     ],
+     "de": [
+      "Speichern fehlgeschlagen"
+     ],
+     "literals": [],
+     "expr": "translate('autoMessages.saveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f2486862",
+    "mbody": "5969427e",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#toast-3fda15ec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:265",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:266"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "line": 307,
+    "method": "AutoMessageRulePage.remove",
+    "cond": [],
+    "message": {
+     "keys": [
+      "autoMessages.saveFailed"
+     ],
+     "de": [
+      "Speichern fehlgeschlagen"
+     ],
+     "literals": [],
+     "expr": "translate('autoMessages.saveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f2486862",
+    "mbody": "992863fd",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#toast-6aab2a50"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:289",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:290"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "ionic": {
+    "ts": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "html": "settings/auto-messages/rule/auto-message-rule.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/auto-messages/rule/auto-message-rule.page.ts",
+    "line": 272,
+    "method": "AutoMessageRulePage.save",
+    "cond": [
+     "(this.problems.length)"
+    ],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "this.problems[0]"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "b0a3bbfc",
+    "mbody": "5969427e",
+    "id": "settings/auto-messages/rule/auto-message-rule.page#toast-6b7dde03"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:252",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:253",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:254",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:235",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:236",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:237",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:238",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:239",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:240",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:241",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:242",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:243",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:244",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:245"
+    ],
+    "n": "Flutter besser: gleiche Prüfungen/Reihenfolge, erster Fehler als Warn-Toast. Ionic akzeptiert beim eigenen Text einen Body, der nur Leerzeichen enthält (prüft nur auf \"text\"-Knoten) / Flutter verlangt nicht-leeren Text (TiptapConverter.hasText).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 96,
+    "cond": [],
+    "tag": "ion-breadcrumb",
+    "attrs": {
+     "href": "#"
+    },
+    "events": [
+     "(click)=$event.preventDefault(); openRoot()"
+    ],
+    "link": "#",
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "files.root"
+    ],
+    "de": [
+     "Root"
+    ],
+    "literals": [],
+    "text": "{{ 'files.root' | transloco }}",
+    "id": "settings/files/files.page#action-14d154d9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1151-1170",
+     "lib/features/settings/presentation/pages/files_page.dart:317-323"
+    ],
+    "n": "„Root“ führt zur Wurzel. Ionic: openRoot behält den Suchbegriff / Flutter: _navigateTo leert das Suchfeld.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 30,
+    "cond": [
+     "@else (not selectionMode)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=filesMenuPopover.present($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "ellipsis-vertical"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/files/files.page#action-26c5be9a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1041-1043"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 57,
+    "cond": [
+     "in <ion-popover #filesMenuPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=filesMenuPopover.dismiss(); shareEntry()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "share-social-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Link zu diesem Ordner teilen",
+     "Link zur Dateiablage teilen"
+    ],
+    "text": "{{ currentPath ? 'Link zu diesem Ordner teilen' : 'Link zur Dateiablage teilen' }}",
+    "id": "settings/files/files.page#action-2b16d7a4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1061-1068"
+    ],
+    "n": "Text und Bedingung gleich; Teilen-Verhalten siehe effect-c39ff4df.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 181,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not !entries.length / !filteredEntries.length)",
+     "@for (entry of filteredEntries; track entry.path; let last = $last; let i = $index)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=onEntryClick(entry)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[lines]=\"last ? 'none' : 'inset'\"",
+     "[class.entry-selected]=\"selectionMode && isSelected(entry)\""
+    ],
+    "icons": [
+     "[name]=\"entry.isFolder ? 'folder-outline' : 'document-outline'\"",
+     "ellipsis-horizontal",
+     "[name]=\"isAudioEntry(entry) ? 'play-circle-outline' : 'open-outline'\"",
+     "download-outline",
+     "link-outline",
+     "paper-plane-outline"
+    ],
+    "keys": [
+     "files.changedAt",
+     "files.download",
+     "files.shareLink",
+     "files.sendTelegram",
+     "files.rename",
+     "files.move",
+     "files.selectMultiple",
+     "common.delete"
+    ],
+    "de": [
+     "· Geändert: {date}",
+     "Datei herunterladen",
+     "Link teilen",
+     "Per Telegram senden",
+     "Umbenennen",
+     "Verschieben",
+     "Mehrere auswählen",
+     "Löschen"
+    ],
+    "literals": [
+     "Ordner öffnen",
+     "Aufnahme abspielen",
+     "Datei öffnen/downloaden"
+    ],
+    "text": "{{ entry.name }} {{ formatFileSize(entry.size) }} {{ 'files.changedAt' | transloco: { date: formatUpdatedAt(entry.updatedAt) } }} {{ entry.isFolder ? 'Ordner öffnen' : isAudioEntry(entry) ? 'Aufnahme…",
+    "id": "settings/files/files.page#action-37361b16"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1294-1358",
+     "lib/features/settings/presentation/pages/files_page.dart:329-343"
+    ],
+    "n": "Anzeige (Icon/Vorschaubild, Name, Größe „· Geändert: dd.MM.yyyy, HH:mm“), Tap öffnet/zeigt/spielt bzw. wählt aus – gleich. Ionic behält beim Öffnen eines Ordners den Suchbegriff / Flutter leert ihn.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  }
+ ]
+}

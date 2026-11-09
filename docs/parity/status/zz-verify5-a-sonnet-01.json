@@ -1,0 +1,353 @@
+{
+ "batch": "zz-verify5-a-sonnet-01",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-288e4f1d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:146"
+   ],
+   "n": "Speichern-FAB nur isLeader (Admin/Verantwortlicher) und item/neu; Titel-Pflicht-Toast, Dauer gerundet/null, Lade-Toast \"gespeichert\"/\"saveFailed\" wie Ionic; URL-Sync nach Neuanlage.",
+   "v": "bestätigt"
+  },
+  "app.component#alert-df60fa5d": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/widgets/password_recovery_alert.dart:20"
+   ],
+   "n": "Alert \"Neues Passwort\", Platzhalter, Abbrechen/Passwort ändern, <6 Zeichen Toast und bleibt offen, Fehler bleibt offen, Erfolg schließt – wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app.component#nav-3a7bceb6-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:105"
+   ],
+   "n": "Recovery: /login als Host, danach Alert; Einzelalert-Schutz; Fehlerfall Toast + /login wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#alert-c973a254": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:106"
+   ],
+   "n": "Alert „Dirigent eingeben“ (Platzhalter „Dirigent“, Abbrechen/Speichern) gleich. Flutter besser: bei Abbrechen oder leerem Namen wird die vorherige Dirigentenauswahl wiederhergestellt; Ionic lässt „Anderer Dirigent“ ohne Namen stehen bzw. speichert leeren Namen.",
+   "v": "korrigiert"
+  },
+  "attendance/att-list/att-list.page#modal-f5836528": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:724"
+   ],
+   "n": "Info-Sheet (0.5 Breakpoint): Veranstaltungstypen-Legende, Ferien/Feiertage der Region, nur nicht vergangene; Texte wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-64b05ba6": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:497",
+    "lib/shared/widgets/dialogs/ion_modal.dart:109"
+   ],
+   "n": "Im Modal (Dashboard) X statt Zurück, schließt das Modal; sonst Zurück-Pfeil.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#actionsheet-19467990": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:170"
+   ],
+   "n": "Ein Plan: Sheet \"Ablaufplan teilen\" mit PDF, PDF 2x A5, 3 Telegram-Einträgen (immer sichtbar). Mehrere Pläne: Plan-Share-Sheet mit Scope. Wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#alert-9b3e485d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2329",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:568"
+   ],
+   "n": "Genau ein Anmeldefeld: Alert mit Feldlabel, Text \"...\", Ja/Nein-Radios, Optionen Radio/Checkbox, Abbrechen/Speichern; merge in registration_answers, kein Toast – wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#alert-aadedcba": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:106"
+   ],
+   "n": "Alert „Dirigent eingeben“ (Platzhalter „Dirigent“, Abbrechen/Speichern) gleich. Flutter besser: bei Abbrechen oder leerem Namen wird die vorherige Dirigentenauswahl wiederhergestellt; Ionic lässt „Anderer Dirigent“ ohne Namen stehen bzw. speichert leeren Namen.",
+   "v": "korrigiert"
+  },
+  "attendance/attendance/attendance.page#field-7e76e2fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1842",
+    "lib/shared/widgets/adaptive/app_pickers.dart:79"
+   ],
+   "n": "Frist-Datum+Zeit, max = Termintag zur Typ-Startzeit (19:30 Default), 5-Minuten-Raster, readonly wenn Termin vorbei, Toggle ausgeblendet bei readonly. Min = heute 00:00 statt jetzt (unerheblich).",
+   "v": "bestätigt"
+  },
+  "history/history.page#modal-0bbf542e": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:301"
+   ],
+   "n": "Sheet 0.7: Titel, Werke-Auswahl (Suche, Checkboxen), Dirigent inkl. Anderer Dirigent, Datum tippbar+Kalender, Hinzufügen mit Toast \"mindestens ein Werk\"; Schreiben mit songId/person_id/otherConductor/date/visible.",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#modal-29087654": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:50",
+    "lib/shared/widgets/dialogs/ion_modal.dart:109"
+   ],
+   "n": "Attendance als Modal (isModal), nur Admin/Verantwortlicher/Helfer/Stimmführer-Helfer wie canOpenAttendance; Neuladen nach Schließen.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-05b9f833": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:222"
+   ],
+   "n": "Toggle nur mit nativem Live-Activity-Plugin; Titel/Helper (iOS vs. sonst) wie Ionic; Default an (!= false); schreibt live_activity und setEnabled.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#alert-c3af9876": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:161"
+   ],
+   "n": "ActionSheet einfach/detailliert, Alert mit Link-Text, \"Link kopieren\" lässt Dialog offen + Toast, \"Anleitung öffnen\" (iOS/Android-URL) schließt, \"Schließen\".",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#action-07229903-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:64"
+   ],
+   "n": "Papierkorb nur bei Ad-hoc-Plänen im Verlauf; Sheet mit Planname und \"Plan löschen\" destruktiv, Fehler-Toast; löscht shared_plans per id (zusätzlich org_id-Filter).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-3207b9c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:287"
+   ],
+   "n": "Edit-Sheet: \"Standardwert\" je Typ (Text/Zahl/Datum/Ja-Nein, Auswahl über Optionen). Nebenbei: Zahl wird bei Änderung als String gespeichert (Ionic number) – nicht sichtbar.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-64695ee6": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:403"
+   ],
+   "n": "Typ-Auswahl mit 6 Optionen in gleicher Reihenfolge/Texten; Typwechsel setzt Default (Ja/Nein false, Zahl 0, Datum heute, sonst leer) wie onNewFieldTypeChanged.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-ce98be7f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:113",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:326"
+   ],
+   "n": "Alert \"Vorlage hinzufügen\": Platzhalter, Abbrechen/Hinzufügen, leerer Name zeigt Meldung im Alert und bleibt offen, speichert.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-e458236c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:140",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:326"
+   ],
+   "n": "Umbenennen: Vorbelegung, Abbrechen/Speichern, Leer-Meldung im Alert, speichert Templates.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#field-d3412616": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:559"
+   ],
+   "n": "Inline-Minutenfeld mit Platzhalter, speichert bei Blur/Dispose (zusätzlich debounce); nur Ziffern.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#popover-21e36ab9": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:196",
+    "lib/shared/widgets/adaptive/app_popover_menu.dart"
+   ],
+   "n": "Popover: Feld, Notizfeld, Song-Platzhalter (nicht bei general), Standardfelder mit Min-Hinweis; Effekte (neue id, noteFld-/song-placeholder-IDs) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-8c221091": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:79"
+   ],
+   "n": "Alert \"Organisation erstellen\": Platzhalter, Abbrechen/Hinzufügen, leer = adminInvalidValues im Alert, Ladeoverlay, Toasts; Erstellen + Verknüpfen. Fehlertext generisch statt error.message (niedrig).",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-523de84f-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:534"
+   ],
+   "n": "Zahl-Feld mit Platzhalter = Feldlabel, numerische Tastatur, Wert als Zahl; Default 0 wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-817de781": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:540"
+   ],
+   "n": "Toggle mit Feldlabel für \"Für alle setzen\", Default true wie getFieldTypeDefaultValue.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-fc367be8-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:558"
+   ],
+   "n": "Gemeinde-Auswahl mit Platzhalter = Feldlabel, Optionen = Kirchennamen, Wert = church.id; Default erste Gemeinde.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#action-2d35c2c8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:137",
+    "lib/core/utils/spreadsheet_reader.dart:257"
+   ],
+   "n": "\"Vorlage herunterladen\" nur im Schritt Datei; Header (8 Standardspalten + Zusatzfelder Org+Instanz), Beispielzeile mit erster Gruppe, Blatt \"Import\", Datei Personen_Import_Vorlage.xlsx.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#field-2d96b151": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:93",
+    "lib/features/people/presentation/pages/person_import_page.dart:76"
+   ],
+   "n": "Pro Spaltenkopf Auswahl mit Platzhalter \"Feld wählen...\", Optionen in Ionic-Reihenfolge inkl. Zusatzfelder.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#field-bdcf25e7": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/xls_reader.dart:1",
+    "lib/core/utils/spreadsheet_reader.dart:38",
+    "lib/core/utils/import_file_io.dart:10"
+   ],
+   "n": "Dateiauswahl .xlsx/.xls/.csv; .xls über eigenen BIFF8-Leser (SST+CONTINUE, RK, Datum), CSV UTF-8/Windows-1252. Handgeschriebener Leser ungetestet an echten Dateien (kein Test im Repo gefunden).",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-0df20264": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1580",
+    "lib/features/people/people_list_utils.dart"
+   ],
+   "n": "Zeile: Name, Untertext, Lehrer/Kein Lehrer (nicht Hauptgruppe), andere Instanz, Notizen, Zusatzfelder (underneath/Badge), Badges Stimmführer/Neu/Problemfall/Pausiert/Prüfling/% mit gleichen Bedingungen.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-4792cae3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:603"
+   ],
+   "n": "Leerzustand: \"Person hinzufügen\" für alle Rollen, öffnet Erstellseite (für Nicht-Admin schreibgeschützt wie readOnly); Import nur Admin.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-982a1154": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1580",
+    "lib/features/people/people_list_utils.dart"
+   ],
+   "n": "Gleiche Zeile in Gruppierung nach Instrument; im Reihenfolge-Modus eigene Ansicht ohne Öffnen.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#modal-11a551b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:19",
+    "lib/features/people/presentation/pages/people_list_page.dart:1449",
+    "lib/data/repositories/player_repository.dart:605"
+   ],
+   "n": "Archiv-Modal \"{Name} Archivieren\" mit Austrittsdatum (Default heute), Notiz, FAB; schreibt left (lokale Mitternacht als ISO), History \"Kein Grund angegeben\", appId löschen + Zugang entfernen, Termine entfernen.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#modal-99a2d84a": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart",
+    "lib/features/people/presentation/pages/people_list_page.dart:1189"
+   ],
+   "n": "Gemeinde-Übersicht-Sheet mit gefilterten Personen, Untertitel \"Personen\".",
+   "v": "bestätigt"
+  },
+  "people/members/members.page#field-f9de5b80": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/data/providers/members_providers.dart:92",
+    "lib/features/members/presentation/pages/members_page.dart:65"
+   ],
+   "n": "Segment \"Alle\" + Optionen des Select-Zusatzfelds \"einteilung\" (ohne \"-\"), Filter auf additional_fields.einteilung inkl. Defaults.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-40313396": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:150"
+   ],
+   "n": "Foto vorhanden: Viewer (Ersetzen/Entfernen nur editierbar, Entfernen mit Bestätigung); sonst editierbar: Dateiauswahl direkt; read-only ohne Foto: nichts.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-53209882": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:229",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:346"
+   ],
+   "n": "Tipp auf Notiz-Eintrag: Alert \"Notiz geändert\", Datum, \"Alte Notiz: …\", OK; Titel/Texte aller Typen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-bf4fde99": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1484",
+    "lib/data/repositories/player_repository.dart:1211",
+    "lib/core/providers/player_providers.dart:231"
+   ],
+   "n": "Ausstehende Person: FAB \"…\" mit Genehmigen/Ablehnen; Genehmigen: pending=false, History, Rolle PLAYER, Mail, Termine hinzufügen; Ablehnen: Grund Pflicht, left, History, Zugang entfernen, Ablehnungsmail. Ladeoverlay fehlt (niedrig).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-c704728e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:55",
+    "lib/data/repositories/player_repository.dart:837"
+   ],
+   "n": "Pausieren-Sheet: Grund Pflicht (Button deaktiviert), ab/bis, History \"Grund (ab … bis …)\", paused/paused_until, Termine ab pauseFrom entfernen, Nachfrage andere Instanzen.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#alert-692c7626": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1411",
+    "lib/data/repositories/player_repository.dart:1260"
+   ],
+   "n": "Ablehnen-Alert: Titel, Untertitel \"Gib einen Grund an.\", Textarea, leer = signout.giveReason im Alert; Schreiben wie Ionic. Ladeoverlay \"Person wird abgelehnt\" fehlt (niedrig).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#alert-75bf15c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1678",
+    "lib/data/repositories/player_repository.dart:1510"
+   ],
+   "n": "Alert \"Account entfernen\" Abbrechen/Ja; entfernt tenantUsers-Zugang (Admin/anderer aktiver Person bleibt), email+appId null, Toast, schließt.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

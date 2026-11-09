@@ -1,0 +1,1255 @@
+{
+  "batch": "b18-services",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "services/duty/duty.service#logic-75953b4f": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:96",
+        "lib/data/repositories/duty_repository.dart:264",
+        "lib/data/repositories/duty_repository.dart:313",
+        "lib/data/repositories/duty_repository.dart:427",
+        "lib/core/providers/duty_providers.dart:176",
+        "lib/core/providers/duty_providers.dart:306"
+      ],
+      "n": "Methoden entsprechen DutyRepository/DutyNotifier (assign/unassign/confirm/take/notify, Verfügbarkeiten, Übernehmen in künftige Termine). Abweichungen siehe Items (Paging getDutyCounts, Lade-Fehler Verfügbarkeit, Übernehmen-Fehler) und Extra (Fehler beim Laden der Dienst-Termine). getOpenDutiesForPerson ist in Ionic ungenutzt; Flutter hat Gleichwertiges in myDutyOverviewProvider.",
+      "sev": "niedrig"
+    },
+    "services/duty/duty.service#db-807d7b5e": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:96"
+      ],
+      "n": "Gleiche Spalten (status present, Dienst-Zuordnung); Flutter prüft die IDs vorab über attendance.tenantId."
+    },
+    "services/duty/duty.service#toast-6d512f3f": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:252"
+      ]
+    },
+    "services/duty/duty.service#db-807d7b5e-2": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:108"
+      ],
+      "n": "Requested-Zweig gleich; Benachrichtigung mit validIdsRequested wie Ionic."
+    },
+    "services/duty/duty.service#toast-6d512f3f-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/duty_distribute_page.dart:287"
+      ]
+    },
+    "services/duty/duty.service#db-08f908d3": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:135"
+      ],
+      "n": "keepStatus wird gleich behandelt."
+    },
+    "services/duty/duty.service#toast-f8410f5b": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:268"
+      ]
+    },
+    "services/duty/duty.service#db-7067bf2c": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:160"
+      ]
+    },
+    "services/duty/duty.service#toast-9890851b": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_actions.dart:81"
+      ]
+    },
+    "services/duty/duty.service#db-55cf5d45": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:185"
+      ],
+      "n": "RPC duty_take mit gleichen Parametern; Flutter prüft den Tenant vorab und wartet auf notify (Ionic 'void')."
+    },
+    "services/duty/duty.service#toast-54305d07": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_actions.dart:166"
+      ]
+    },
+    "services/duty/duty.service#db-9a8744f6": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:213"
+      ],
+      "n": "Edge Function duty-notify mit gleichem Body (type, tenantId, attendanceId, personAttendanceIds)."
+    },
+    "services/duty/duty.service#db-67423715": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:264"
+      ],
+      "n": "Gleiche Daten; Fehlerverhalten siehe Extra."
+    },
+    "services/duty/duty.service#db-37def78d": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:313"
+      ],
+      "n": "Flutter besser: Ionic lädt die Dienst-Zählung mit .range(0,9999), PostgREST kappt bei max-rows (1000) → bei vielen Einteilungen zu niedrige Zähler / Flutter paginiert per fetchAllPages und filtert zusätzlich nach tenantId.",
+      "sev": "niedrig"
+    },
+    "services/duty/duty.service#db-7ef6118a": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:344"
+      ]
+    },
+    "services/duty/duty.service#toast-14e51b33": {
+      "s": "diff",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:233"
+      ],
+      "n": "Ionic: Toast 'Fehler beim Laden der Verfügbarkeit' (danger) und leere Liste / Flutter: kein Toast, die Verfügbarkeits-Seite zeigt inline 'Fehler: {Fehler}'.",
+      "sev": "niedrig"
+    },
+    "services/duty/duty.service#db-7d46abd1": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:362"
+      ]
+    },
+    "services/duty/duty.service#db-0f54bc54": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:390"
+      ],
+      "n": "Gleiche Spalten; created_by = aktueller Nutzer wie beim Ionic-Aufrufer (db.user?.id); Flutter filtert zusätzlich nach tenant_id."
+    },
+    "services/duty/duty.service#db-02bd826b": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:398"
+      ]
+    },
+    "services/duty/duty.service#toast-0685f722": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:117"
+      ]
+    },
+    "services/duty/duty.service#db-8bd7fb45": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:409"
+      ]
+    },
+    "services/duty/duty.service#toast-6ffa5539": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:163"
+      ]
+    },
+    "services/duty/duty.service#db-976ff62c": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:427"
+      ]
+    },
+    "services/duty/duty.service#db-8727fa30": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:468"
+      ],
+      "n": "Gleiche Spalten; unavailabilityNote identisch (lib/core/utils/duty_utils.dart:218)."
+    },
+    "services/duty/duty.service#toast-b8016997": {
+      "s": "diff",
+      "f": [
+        "lib/core/providers/duty_providers.dart:306",
+        "lib/features/duty/presentation/pages/unavailability_page.dart:148"
+      ],
+      "n": "Ionic: bei DB-Fehler Toast 'Fehler beim Übernehmen in geplante Termine' (danger) / Flutter: DutyNotifier.applyUnavailabilityToFuture fängt den Fehler ab und gibt 0 zurück, die Seite zeigt dann den Erfolgs-Toast dutyEventsAdjusted(0) ('0 Termine angepasst').",
+      "sev": "mittel"
+    },
+    "services/duty/duty.service#db-851bf368": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:427"
+      ]
+    },
+    "services/feedback/feedback.service#logic-d28a0798": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/feedback_repository.dart:30",
+        "lib/data/repositories/feedback_repository.dart:57"
+      ],
+      "n": "Logik gleich (anonym, tenant_id, Felder); einziger Unterschied (Telefon null statt '') steht bei den db-Items."
+    },
+    "services/feedback/feedback.service#db-d7adec93": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/feedback_repository.dart:30",
+        "lib/shared/widgets/sheets/feedback_sheet.dart:90",
+        "lib/features/settings/presentation/pages/files_page.dart:708"
+      ],
+      "n": "Flutter besser: Tabelle questions, gleiche Spalten inkl. tenant_id / Ionic schreibt eine leere Telefonnummer als '', Flutter als null (Telegram-Funktion send-telegram-on-question zeigt dann '(keine Nummer)' statt leer).",
+      "sev": "niedrig"
+    },
+    "services/feedback/feedback.service#toast-1a78dc16": {
+      "s": "diff",
+      "f": [
+        "lib/shared/widgets/sheets/feedback_sheet.dart:103",
+        "lib/features/settings/presentation/pages/files_page.dart:714"
+      ],
+      "n": "Flutter besser: im Feedback-Sheet gleicher Toast 'Fehler beim Senden der Frage' (danger) / bei der Datei-Anfrage (Dateien-Seite) zeigt Ionic diesen und den Seiten-Toast übereinander, Flutter nur den Seiten-Toast.",
+      "sev": "niedrig"
+    },
+    "services/feedback/feedback.service#db-ccd0a966": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/feedback_repository.dart:57",
+        "lib/shared/widgets/sheets/feedback_sheet.dart:90"
+      ],
+      "n": "Flutter besser: Tabelle feedback, gleiche Spalten, anonym gleich / leere Telefonnummer wird als null statt '' geschrieben. Präfix '[Neues Design]' nur im Beta.",
+      "sev": "niedrig"
+    },
+    "services/feedback/feedback.service#toast-a29d141e": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/sheets/feedback_sheet.dart:135"
+      ]
+    },
+    "services/files/files.service#logic-efa4d0f6": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/files_repository.dart:85",
+        "lib/data/repositories/files_repository.dart:180",
+        "lib/features/public_links/presentation/pages/open_file_page.dart:15",
+        "lib/features/settings/presentation/pages/files_page.dart:147"
+      ],
+      "n": "Bucket, Pfade, Upload/Download/Verschieben/Löschen entsprechen FilesRepository. Abweichungen: Namensbereinigung und Paging siehe db-Items; ausstehender Datei-Link nicht persistiert und Sortierung nach Name (Extras).",
+      "sev": "mittel"
+    },
+    "services/files/files.service#db-95cedfe5": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/files_repository.dart:180"
+      ],
+      "n": "Flutter besser: Ionic listet mit limit 1000 und hört dort auf (Löschen/Verschieben großer Ordner unvollständig) / Flutter listAllPages blättert alle Einträge durch.",
+      "sev": "niedrig"
+    },
+    "services/files/files.service#db-6f807a3a": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/files_repository.dart:250"
+      ]
+    },
+    "services/files/files.service#db-b377e15a": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/files_repository.dart:257",
+        "lib/data/repositories/files_repository.dart:266"
+      ]
+    },
+    "services/files/files.service#db-c711efdc": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/files_repository.dart:306"
+      ],
+      "n": ".keep-Upload in gleichem Bucket/Pfad. Ordner-/Dateiname wird anders bereinigt: Ionic NFKD-Normalisierung und Entfernen aller Kombinationszeichen / Flutter feste Umlaut-/Akzent-Tabelle (files_repository.dart:85-93). Zeichen wie ę ą ś ź ż ć ń ő ă ș ț ě ů ň ť ď ğ werden in Flutter zu '-' statt zum Grundbuchstaben ('Wędrówka' → Ionic 'Wedrowka', Flutter 'W-drowka'); deutsche Umlaute gleich.",
+      "sev": "mittel"
+    },
+    "services/files/files.service#db-7f0c9e3b": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/files_repository.dart:320"
+      ]
+    },
+    "services/files/files.service#db-68243270": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/files_repository.dart:340",
+        "lib/features/settings/presentation/pages/files_page.dart:838"
+      ],
+      "n": "Upload in gleichen Bucket mit gleichem Pfadschema, contentType aus der Dateiendung (storage_client), Tracking gleich. Ordner-/Dateiname wird anders bereinigt: Ionic NFKD-Normalisierung und Entfernen aller Kombinationszeichen / Flutter feste Umlaut-/Akzent-Tabelle (files_repository.dart:85-93). Zeichen wie ę ą ś ź ż ć ń ő ă ș ț ě ů ň ť ď ğ werden in Flutter zu '-' statt zum Grundbuchstaben ('Wędrówka' → Ionic 'Wedrowka', Flutter 'W-drowka'); deutsche Umlaute gleich.",
+      "sev": "mittel"
+    },
+    "services/files/files.service#db-f1c9ca0e": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:407"
+      ],
+      "n": "Flutter lädt über eine signierte URL mit downloadName und öffnet sie per NativeFileService.openUrl statt Blob-Download; gleiche Datei."
+    },
+    "services/files/files.service#db-2c06e09a": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/files_repository.dart:356"
+      ]
+    },
+    "services/files/files.service#db-77218a19": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/files_repository.dart:409"
+      ],
+      "n": "Umbenennen per move wie Ionic. Ordner-/Dateiname wird anders bereinigt: Ionic NFKD-Normalisierung und Entfernen aller Kombinationszeichen / Flutter feste Umlaut-/Akzent-Tabelle (files_repository.dart:85-93). Zeichen wie ę ą ś ź ż ć ń ő ă ș ț ě ů ň ť ď ğ werden in Flutter zu '-' statt zum Grundbuchstaben ('Wędrówka' → Ionic 'Wedrowka', Flutter 'W-drowka'); deutsche Umlaute gleich.",
+      "sev": "mittel"
+    },
+    "services/files/files.service#db-0e5d3df4": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/files_repository.dart:435"
+      ]
+    },
+    "services/group-category/group-category.service#logic-519c274b": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/group_repository.dart:270",
+        "lib/data/repositories/group_repository.dart:294",
+        "lib/data/repositories/group_repository.dart:325",
+        "lib/data/repositories/group_repository.dart:370",
+        "lib/data/repositories/group_repository.dart:386",
+        "lib/core/providers/group_providers.dart:98"
+      ],
+      "n": "CRUD und Sortierung entsprechen GroupRepository; Abweichungen (kein Offline-Cache, fehlende/andere Fehler-Toasts) stehen bei den Items."
+    },
+    "services/group-category/group-category.service#native-d88b5602": {
+      "s": "missing",
+      "f": [
+        "lib/core/providers/group_providers.dart:98"
+      ],
+      "n": "Ionic: offline (Network.getStatus) werden Kategorien aus dem Cache geladen / Flutter: groupCategoriesProvider nutzt kein OfflineListCache (anders als groupsProvider) – offline keine Kategorien, Reihenfolge im Ablaufplan-Akkordeon und in der Werkliste ändert sich.",
+      "sev": "mittel"
+    },
+    "services/group-category/group-category.service#db-bab11025": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/group_repository.dart:270"
+      ]
+    },
+    "services/group-category/group-category.service#toast-e1869ba2": {
+      "s": "diff",
+      "f": [
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:144"
+      ],
+      "n": "Ionic: Toast 'Fehler beim Laden der Kategorien' (danger) überall / Flutter: im Kategorien-Sheet inline 'Fehler: {Fehler}' mit Erneut-Button, an anderen Stellen still.",
+      "sev": "niedrig"
+    },
+    "services/group-category/group-category.service#db-0dccc13f": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/group_repository.dart:294"
+      ]
+    },
+    "services/group-category/group-category.service#toast-2822515a": {
+      "s": "missing",
+      "f": [
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:294"
+      ],
+      "n": "Flutter: Fehler wird im Notifier verschluckt, das Kategorien-Sheet zeigt keinen Toast 'Fehler beim Hinzufügen der Kategorie'.",
+      "sev": "mittel"
+    },
+    "services/group-category/group-category.service#db-e5a432a0": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/group_repository.dart:325",
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:334"
+      ]
+    },
+    "services/group-category/group-category.service#toast-913649c9": {
+      "s": "missing",
+      "f": [
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:334"
+      ],
+      "n": "Flutter: Fehler wird im Notifier verschluckt, kein Toast 'Fehler beim Aktualisieren der Kategorie'.",
+      "sev": "mittel"
+    },
+    "services/group-category/group-category.service#db-bbeac978": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/group_repository.dart:370"
+      ]
+    },
+    "services/group-category/group-category.service#toast-ec60df9e": {
+      "s": "diff",
+      "f": [
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:62"
+      ],
+      "n": "Ionic: Service-Toast 'Fehler beim Aktualisieren der Kategoriereihenfolge' plus Seiten-Toast / Flutter: nur 'Fehler beim Speichern der Reihenfolge'.",
+      "sev": "niedrig"
+    },
+    "services/group-category/group-category.service#db-4913a14b": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/group_repository.dart:386"
+      ]
+    },
+    "services/group-category/group-category.service#toast-0eec9127": {
+      "s": "missing",
+      "f": [
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:364"
+      ],
+      "n": "Flutter: Fehler wird im Notifier verschluckt, kein Toast 'Fehler beim Löschen der Kategorie'.",
+      "sev": "mittel"
+    },
+    "services/group/group.service#logic-66f1135a": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/group_repository.dart:20",
+        "lib/data/repositories/group_repository.dart:109",
+        "lib/data/repositories/group_repository.dart:143",
+        "lib/data/repositories/group_repository.dart:254"
+      ],
+      "n": "getGroups/addGroup/updateGroup/removeGroup entsprechen GroupRepository (pickGroupFields gleich). Kategorie-/Lehrer-Methoden und getMainGroup sind toter Code. Toast-Abweichungen siehe Items."
+    },
+    "services/group/group.service#db-799fb770": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/group_repository.dart:20"
+      ]
+    },
+    "services/group/group.service#db-5235a536": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/group_repository.dart:109",
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:378",
+        "lib/data/repositories/tenant_create_repository.dart:59",
+        "lib/features/tenant_selection/tenant_defaults.dart:65"
+      ],
+      "n": "Instrument anlegen: {name, maingroup:false, category?} plus tuning/clefs-Defaults; Hauptgruppe bei Tenant-Erstellung über buildMainGroupPayload (name, tuning C, clefs [g], tenantId, maingroup true)."
+    },
+    "services/group/group.service#db-1b7059eb": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/group_repository.dart:143"
+      ]
+    },
+    "services/group/group.service#toast-0fbc7e49": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/group_repository.dart:143",
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:477"
+      ],
+      "n": "Ionic: 'Es kann nur eine Hauptgruppe existieren' / Flutter: Repository wirft svcOnlyOneMainGroup, die Instrumente-Seite zeigt aber immer 'Fehler beim Speichern'. Kaum erreichbar, da der Bearbeiten-Dialog maingroup nicht ändert.",
+      "sev": "niedrig"
+    },
+    "services/group/group.service#toast-eff6b54e": {
+      "s": "diff",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:477"
+      ],
+      "n": "Ionic: 'Fehler beim updaten des Instruments' / Flutter: 'Fehler beim Speichern'.",
+      "sev": "niedrig"
+    },
+    "services/group/group.service#db-9bbeb42c": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/group_repository.dart:254"
+      ]
+    },
+    "services/group/group.service#db-20fab4b5": {
+      "s": "na",
+      "n": "toter Code: GroupService.getGroupCategories wird nie aufgerufen; db.service.ts nutzt nur groupSvc.getGroups/addGroup/updateGroup/removeGroup (db.service.ts:509, 2568-2595), Kategorien laufen über groupCategorySvc, Lehrer über teacherSvc (db.service.ts:2861-2872)."
+    },
+    "services/group/group.service#db-36d6ba81": {
+      "s": "na",
+      "n": "toter Code: GroupService.addGroupCategory wird nie aufgerufen; db.service.ts nutzt nur groupSvc.getGroups/addGroup/updateGroup/removeGroup (db.service.ts:509, 2568-2595), Kategorien laufen über groupCategorySvc, Lehrer über teacherSvc (db.service.ts:2861-2872)."
+    },
+    "services/group/group.service#db-5d7315b8": {
+      "s": "na",
+      "n": "toter Code: GroupService.updateGroupCategory wird nie aufgerufen; db.service.ts nutzt nur groupSvc.getGroups/addGroup/updateGroup/removeGroup (db.service.ts:509, 2568-2595), Kategorien laufen über groupCategorySvc, Lehrer über teacherSvc (db.service.ts:2861-2872)."
+    },
+    "services/group/group.service#db-8f040e8c": {
+      "s": "na",
+      "n": "toter Code: GroupService.removeGroupCategory wird nie aufgerufen; db.service.ts nutzt nur groupSvc.getGroups/addGroup/updateGroup/removeGroup (db.service.ts:509, 2568-2595), Kategorien laufen über groupCategorySvc, Lehrer über teacherSvc (db.service.ts:2861-2872)."
+    },
+    "services/group/group.service#db-cff34198": {
+      "s": "na",
+      "n": "toter Code: GroupService.getTeachers wird nie aufgerufen; db.service.ts nutzt nur groupSvc.getGroups/addGroup/updateGroup/removeGroup (db.service.ts:509, 2568-2595), Kategorien laufen über groupCategorySvc, Lehrer über teacherSvc (db.service.ts:2861-2872)."
+    },
+    "services/group/group.service#db-c7f994e3": {
+      "s": "na",
+      "n": "toter Code: GroupService.addTeacher wird nie aufgerufen; db.service.ts nutzt nur groupSvc.getGroups/addGroup/updateGroup/removeGroup (db.service.ts:509, 2568-2595), Kategorien laufen über groupCategorySvc, Lehrer über teacherSvc (db.service.ts:2861-2872)."
+    },
+    "services/group/group.service#db-9b65f2ff": {
+      "s": "na",
+      "n": "toter Code: GroupService.updateTeacher wird nie aufgerufen; db.service.ts nutzt nur groupSvc.getGroups/addGroup/updateGroup/removeGroup (db.service.ts:509, 2568-2595), Kategorien laufen über groupCategorySvc, Lehrer über teacherSvc (db.service.ts:2861-2872)."
+    },
+    "services/handover/handover.service#logic-61846fcf": {
+      "s": "na",
+      "n": "toter Code: HandoverService wird in db.service.ts:117 injiziert, aber nirgends aufgerufen."
+    },
+    "services/help/help-content.service#logic-93285162": {
+      "s": "diff",
+      "f": [
+        "lib/features/help/data/help_content_service.dart:62",
+        "lib/features/help/data/help_content_service.dart:123"
+      ],
+      "n": "Artikel/Glossar-Zugriff und Glossar-Sortierung gleich; die Suche unterscheidet sich (Extra).",
+      "sev": "mittel"
+    },
+    "services/history/history.service#logic-c395b5b7": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:523",
+        "lib/data/repositories/attendance_repository.dart:883",
+        "lib/data/repositories/attendance_repository.dart:901",
+        "lib/data/repositories/attendance_repository.dart:914",
+        "lib/data/repositories/attendance_repository.dart:929"
+      ],
+      "n": "Methoden entsprechen Song-/AttendanceRepository; Abweichungen (Reihenfolge, visible-Sync, Paging, Toast) stehen bei den Items. getUpcomingHistory/getCurrentSongs sind toter Code."
+    },
+    "services/history/history.service#db-fd5d2861": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/history_providers.dart:31",
+        "lib/data/repositories/song_repository.dart:523"
+      ]
+    },
+    "services/history/history.service#db-1c319cab": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:883"
+      ],
+      "n": "Ionic: Historie eines Termins order('songId') / Flutter getHistoryForAttendance order('id') – die Werke auf der Termin-Seite erscheinen in anderer Reihenfolge (Eintragsreihenfolge statt Werk-ID).",
+      "sev": "mittel"
+    },
+    "services/history/history.service#db-a47f9039": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/song_repository.dart:614"
+      ],
+      "n": "Flutter besser: Ionic lädt mit fester range (durch PostgREST max-rows gekappt) / Flutter paginiert alle Einträge.",
+      "sev": "niedrig"
+    },
+    "services/history/history.service#db-1996dec2": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:914",
+        "lib/features/attendance/presentation/attendance_song_history.dart:85"
+      ],
+      "n": "Dirigent-Änderung gleich (person_id, otherConductor). Ionic ruft updateHistoryEntry zusätzlich beim Speichern eines Termins mit {visible: attendance.save_in_history} auf, wenn die Einträge abweichen (attendance.page.ts:1521-1524; betrifft Alt-Termine mit save_in_history false/null → Werke verschwinden aus der Historie) / Flutter schreibt visible nie.",
+      "sev": "mittel"
+    },
+    "services/history/history.service#toast-2c4284b3": {
+      "s": "diff",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2102"
+      ],
+      "n": "Ionic: 'Fehler beim Updaten des Eintrags' / Flutter: 'Fehler beim Speichern: {Fehler}'.",
+      "sev": "niedrig"
+    },
+    "services/history/history.service#db-e0dfe811": {
+      "s": "ok",
+      "f": [
+        "lib/features/history/presentation/pages/history_page.dart:538",
+        "lib/data/repositories/attendance_repository.dart:901"
+      ],
+      "n": "Gleiche Spalten inkl. tenantId; Datum wird als 'YYYY-MM-DD' statt ISO-Zeitstempel geschrieben (gleicher Tag)."
+    },
+    "services/history/history.service#db-bf7ab02d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:929",
+        "lib/features/history/presentation/pages/history_page.dart:590"
+      ]
+    },
+    "services/history/history.service#db-3f68f645": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/attendance_song_history.dart:92",
+        "lib/data/repositories/attendance_repository.dart:901",
+        "lib/features/attendance/presentation/attendance_create_writes.dart:413"
+      ]
+    },
+    "services/history/history.service#db-efc64758": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:542"
+      ]
+    },
+    "services/history/history.service#db-7ca9956f": {
+      "s": "na",
+      "n": "toter Code: HistoryService.getUpcomingHistory wird nie aufgerufen; db.service.ts:3109 hat eine eigene Implementierung."
+    },
+    "services/history/history.service#db-05338fff": {
+      "s": "na",
+      "n": "toter Code: HistoryService.getCurrentSongs wird nie aufgerufen; db.service.ts:3189 hat eine eigene Implementierung."
+    },
+    "services/holiday/holiday.service#logic-ca1c3edf": {
+      "s": "diff",
+      "f": [
+        "lib/core/services/holiday_service.dart:122",
+        "lib/core/services/holiday_service.dart:168",
+        "lib/core/providers/holiday_providers.dart:13",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:784"
+      ],
+      "n": "Laden der Feiertage/Ferien ab Jahresbeginn gleich; die Vergangen-Markierung unterscheidet sich (Extra).",
+      "sev": "mittel"
+    },
+    "services/image/image.service#logic-48858de3": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:420",
+        "lib/data/repositories/player_repository.dart:452",
+        "lib/data/repositories/profile_repository.dart:413",
+        "lib/data/repositories/profile_repository.dart:451",
+        "lib/data/repositories/organisation_settings_repository.dart:98",
+        "lib/data/repositories/attendance_repository.dart:1094"
+      ],
+      "n": "Upload/Entfernen/Kopieren von Profilbild, Org-Logo und Termin-Bild entsprechen den Repositories; der appId-Zweig (alle Tenants) weicht ab, siehe db-a8a5f597 und db-58f14585. Tenant-Logo-Methoden sind toter Code."
+    },
+    "services/image/image.service#db-a8a5f597": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/profile_repository.dart:451",
+        "lib/features/people/presentation/widgets/person_detail/person_header.dart:314"
+      ],
+      "n": "Ionic removeImage mit appId: update {img:''} für alle player-Zeilen des Nutzers (alle Tenants) – im Profil und auf der Personen-Seite bei Selbstbearbeitung (person.page.ts:1067) / Flutter: Profil gleichwertig (removeOwnImage + _syncOwnPersonalData), die Personen-Seite (person_header.dart) leert img aber nur in dieser einen Zeile (id + tenantId); in den anderen Tenants bleibt das alte Bild.",
+      "sev": "hoch"
+    },
+    "services/image/image.service#db-a8a5f597-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/widgets/person_detail/person_header.dart:314"
+      ]
+    },
+    "services/image/image.service#db-7a9f2e5f": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/widgets/person_detail/person_header.dart:320",
+        "lib/data/repositories/profile_repository.dart:469"
+      ]
+    },
+    "services/image/image.service#db-a5100067": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:424",
+        "lib/data/repositories/profile_repository.dart:424"
+      ],
+      "n": "Gleicher Bucket, Key <id>, upsert."
+    },
+    "services/image/image.service#db-12611d90": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:424",
+        "lib/data/repositories/profile_repository.dart:424"
+      ]
+    },
+    "services/image/image.service#db-58f14585": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/profile_repository.dart:441",
+        "lib/data/repositories/player_repository.dart:436",
+        "lib/features/registration/data/providers/registration_providers.dart:241"
+      ],
+      "n": "Ionic updateImage mit appId: update {img} für alle player-Zeilen des Nutzers (alle Tenants) – Profil, Personen-Seite bei Selbstbearbeitung (person.page.ts:1116) und Registrierung (tenant-register.page.ts:351) / Flutter: Profil gleichwertig (uploadOwnImage + Sync), Personen-Seite (PlayerRepository.updateImage: eq id + tenantId) und Registrierung schreiben nur die eine Zeile; in den anderen Tenants bleibt das alte Bild.",
+      "sev": "hoch"
+    },
+    "services/image/image.service#db-58f14585-2": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:436"
+      ]
+    },
+    "services/image/image.service#db-a7577189": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:452",
+        "lib/data/repositories/player_repository.dart:1754"
+      ]
+    },
+    "services/image/image.service#db-0414a654": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:452",
+        "lib/data/repositories/player_repository.dart:1754"
+      ]
+    },
+    "services/image/image.service#db-4cfbc031": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:452",
+        "lib/data/repositories/player_repository.dart:1754"
+      ]
+    },
+    "services/image/image.service#db-99d7e9b8": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:452",
+        "lib/data/repositories/player_repository.dart:1754"
+      ]
+    },
+    "services/image/image.service#db-6acf3561": {
+      "s": "na",
+      "n": "toter Code: ImageService.updateTenantLogo hat keine Aufrufer im Ionic-Code."
+    },
+    "services/image/image.service#db-9bd3c8b6": {
+      "s": "na",
+      "n": "toter Code: ImageService.updateTenantLogo hat keine Aufrufer im Ionic-Code."
+    },
+    "services/image/image.service#db-4db4aa1d": {
+      "s": "na",
+      "n": "toter Code: ImageService.removeTenantLogo hat keine Aufrufer im Ionic-Code."
+    },
+    "services/image/image.service#db-78b1f1f9": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/organisation_settings_repository.dart:98",
+        "lib/features/settings/presentation/pages/branding_page.dart:58"
+      ]
+    },
+    "services/image/image.service#db-76af091b": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/organisation_settings_repository.dart:103"
+      ]
+    },
+    "services/image/image.service#db-3bdc051a": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/organisation_settings_repository.dart:116"
+      ]
+    },
+    "services/image/image.service#db-04a84907": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:1094",
+        "lib/features/attendance/presentation/attendance_extra_actions.dart:80"
+      ]
+    },
+    "services/image/image.service#db-dd0a299b": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:1099"
+      ]
+    },
+    "services/image/image.service#db-7913e521": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:1101"
+      ]
+    },
+    "services/instance/instance.service#logic-a24a32de": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/instance/instance.service#db-a05dc648": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/instance/instance.service#toast-1056aed1": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/instance/instance.service#toast-7ab4e937": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/instance/instance.service#db-0cb84e49": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/instance/instance.service#toast-b2b6e511": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/instance/instance.service#db-5398b132": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/instance/instance.service#toast-0ba0bad8": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/instance/instance.service#toast-1d3e2d74": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/instance/instance.service#db-a174cac6": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/instance/instance.service#toast-c3174b3e": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/instance/instance.service#db-8839f8db": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/instance/instance.service#toast-582c7c9c": {
+      "s": "na",
+      "n": "toter Code: InstanceService wird in db.service.ts:119 injiziert, aber nie aufgerufen; deleteInstance/createInstance sind in db.service.ts:3275/3314 selbst implementiert, getTenantBy* laufen über tenantSvc (db.service.ts:3896-3901)."
+    },
+    "services/layout/layout.service#logic-e1e06d78": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/layout/side_nav/side_nav_layout.dart:14",
+        "lib/shared/widgets/layout/side_nav/side_nav.dart:88",
+        "lib/shared/widgets/layout/main_shell.dart:338"
+      ],
+      "n": "Gleiche Breakpoints (768/992/1200), Einklapp-Zustand unter 'sidePanelCollapsed' (SharedPreferences statt localStorage) und Umschalter."
+    },
+    "services/legal/legal.service#logic-ad58def4": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/legal_repository.dart:23",
+        "lib/core/providers/legal_providers.dart:13"
+      ]
+    },
+    "services/legal/legal.service#db-2505bef7": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/legal_repository.dart:23"
+      ]
+    },
+    "services/live-activity/live-activity.service#logic-4792c201": {
+      "s": "diff",
+      "f": [
+        "lib/core/services/live_activity_service.dart:392",
+        "lib/core/services/live_activity_service.dart:565",
+        "lib/core/services/live_activity_service.dart:679",
+        "lib/core/services/live_activity_service.dart:915"
+      ],
+      "n": "Start/Update/Ende, Token-Registrierung und Sync entsprechen LiveActivityService; Öffnen per Tap siehe modal-9b4e9fd5; Zeitzonen-Fallback weicht ab (Extra).",
+      "sev": "niedrig"
+    },
+    "services/live-activity/live-activity.service#native-d5cbbf48": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:392"
+      ]
+    },
+    "services/live-activity/live-activity.service#native-3a9fbadc": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:416"
+      ]
+    },
+    "services/live-activity/live-activity.service#db-1fe3e0da": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/live_activity_repository.dart:53"
+      ]
+    },
+    "services/live-activity/live-activity.service#native-c934f51c": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:449"
+      ]
+    },
+    "services/live-activity/live-activity.service#native-72f0d353": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:496"
+      ]
+    },
+    "services/live-activity/live-activity.service#native-09b70352": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:515"
+      ]
+    },
+    "services/live-activity/live-activity.service#native-0534809b": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:522"
+      ]
+    },
+    "services/live-activity/live-activity.service#native-aeb702b8": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:530"
+      ]
+    },
+    "services/live-activity/live-activity.service#native-09b70352-2": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:545"
+      ]
+    },
+    "services/live-activity/live-activity.service#db-142faef7": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/live_activity_repository.dart:32"
+      ]
+    },
+    "services/live-activity/live-activity.service#db-58d62735": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/org_plan_repository.dart:92"
+      ]
+    },
+    "services/live-activity/live-activity.service#native-f31c300f": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:751"
+      ]
+    },
+    "services/live-activity/live-activity.service#native-f31c300f-2": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:755"
+      ]
+    },
+    "services/live-activity/live-activity.service#native-134664fe": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:679"
+      ]
+    },
+    "services/live-activity/live-activity.service#native-13900c1d": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:686"
+      ]
+    },
+    "services/live-activity/live-activity.service#db-818eac03": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:834"
+      ],
+      "n": "Nutzer-ID aus currentUser statt auth.getUser()."
+    },
+    "services/live-activity/live-activity.service#db-26911823": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/live_activity_repository.dart:80"
+      ],
+      "n": "Gleiche Spalten und onConflict."
+    },
+    "services/live-activity/live-activity.service#modal-9b4e9fd5": {
+      "s": "diff",
+      "f": [
+        "lib/core/services/live_activity_service.dart:915",
+        "lib/data/repositories/plan_repository.dart:69"
+      ],
+      "n": "Präsentation (Vollbild) gleich. Ionic lädt den Termin per getAttendanceById ohne Tenant-Filter / Flutter per planRepository.getPlanAttendanceById mit Filter auf den aktuellen Tenant – Tap auf die Live Activity eines ORG-Plans oder eines Termins aus einem anderen Tenant öffnet in Flutter nichts.",
+      "sev": "mittel"
+    },
+    "services/live-activity/live-activity.service#modal-e1ddab08": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/live_activity_service.dart:935"
+      ]
+    },
+    "services/live-update/live-update.service#logic-2b61e241": {
+      "s": "diff",
+      "f": [
+        "lib/core/services/native/store_update_service.dart:52",
+        "lib/features/auth/presentation/pages/login_page.dart:660",
+        "lib/features/settings/presentation/pages/settings_page.dart:552"
+      ],
+      "n": "OTA-Bundles gibt es in Flutter nicht; Ersatz StoreUpdateService (Extra).",
+      "sev": "mittel"
+    },
+    "services/live-update/live-update.service#native-8495540e": {
+      "s": "na",
+      "n": "nicht anwendbar: OTA-Bundles (Capawesome Live Update) gibt es in der AOT-kompilierten Flutter-App nicht; Ersatz StoreUpdateService (siehe Extra)."
+    },
+    "services/live-update/live-update.service#native-9f8e1f2e": {
+      "s": "na",
+      "n": "nicht anwendbar: OTA-Bundles (Capawesome Live Update) gibt es in der AOT-kompilierten Flutter-App nicht; Ersatz StoreUpdateService (siehe Extra)."
+    },
+    "services/live-update/live-update.service#native-189398af": {
+      "s": "na",
+      "n": "nicht anwendbar: OTA-Bundles (Capawesome Live Update) gibt es in der AOT-kompilierten Flutter-App nicht; Ersatz StoreUpdateService (siehe Extra)."
+    },
+    "services/live-update/live-update.service#native-9fd73650": {
+      "s": "na",
+      "n": "nicht anwendbar: OTA-Bundles (Capawesome Live Update) gibt es in der AOT-kompilierten Flutter-App nicht; Ersatz StoreUpdateService (siehe Extra)."
+    },
+    "services/live-update/live-update.service#native-a2a59a80": {
+      "s": "na",
+      "n": "nicht anwendbar: OTA-Bundles (Capawesome Live Update) gibt es in der AOT-kompilierten Flutter-App nicht; Ersatz StoreUpdateService (siehe Extra)."
+    },
+    "services/live-update/live-update.service#native-56a65c64": {
+      "s": "na",
+      "n": "nicht anwendbar: OTA-Bundles (Capawesome Live Update) gibt es in der AOT-kompilierten Flutter-App nicht; Ersatz StoreUpdateService (siehe Extra)."
+    },
+    "services/live-update/live-update.service#native-e8b8c8ca": {
+      "s": "na",
+      "n": "nicht anwendbar: OTA-Bundles (Capawesome Live Update) gibt es in der AOT-kompilierten Flutter-App nicht; Ersatz StoreUpdateService (siehe Extra)."
+    },
+    "services/live-update/live-update.service#native-2a53346c": {
+      "s": "na",
+      "n": "nicht anwendbar: OTA-Bundles (Capawesome Live Update) gibt es in der AOT-kompilierten Flutter-App nicht; Ersatz StoreUpdateService (siehe Extra)."
+    },
+    "services/live-update/live-update.service#native-16006555": {
+      "s": "na",
+      "n": "nicht anwendbar: OTA-Bundles (Capawesome Live Update) gibt es in der AOT-kompilierten Flutter-App nicht; Ersatz StoreUpdateService (siehe Extra)."
+    },
+    "services/live-update/live-update.service#native-f179749c": {
+      "s": "na",
+      "n": "nicht anwendbar: OTA-Bundles (Capawesome Live Update) gibt es in der AOT-kompilierten Flutter-App nicht; Ersatz StoreUpdateService (siehe Extra)."
+    },
+    "services/live-update/live-update.service#db-461a9e8f": {
+      "s": "na",
+      "n": "nicht anwendbar: OTA-Manifest aus Bucket ota-bundles wird nur für Live-Update-Bundles gebraucht; Flutter prüft stattdessen die Store-Version."
+    },
+    "services/login.guard#logic-7db01f48": {
+      "s": "ok",
+      "f": [
+        "lib/core/router/app_router.dart:342",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:92",
+        "lib/core/utils/dashboard_logic.dart:56"
+      ],
+      "n": "Eingeloggt auf /login → Startseite der Rolle bzw. /tenants (Tenant-Auswahl leitet automatisch weiter)."
+    },
+    "services/login.guard#effect-45cebb67": {
+      "s": "ok",
+      "f": [
+        "lib/core/router/app_router.dart:342",
+        "lib/core/constants/enums.dart:137"
+      ]
+    },
+    "services/login.guard#nav-2cb09388": {
+      "s": "ok",
+      "f": [
+        "lib/core/router/app_router.dart:342",
+        "lib/core/constants/enums.dart:137"
+      ]
+    },
+    "services/message/message.service#logic-4bfd1c49": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/message_repository.dart:33",
+        "lib/data/repositories/message_repository.dart:77",
+        "lib/data/repositories/message_repository.dart:103",
+        "lib/data/repositories/message_repository.dart:217"
+      ],
+      "n": "Methoden entsprechen MessageRepository; einziger Unterschied (Paging) steht bei den db-Items."
+    },
+    "services/message/message.service#db-84286336": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/message_repository.dart:33"
+      ]
+    },
+    "services/message/message.service#db-d5158325": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/message_repository.dart:54"
+      ]
+    },
+    "services/message/message.service#db-5d66a01e": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/message_repository.dart:77"
+      ],
+      "n": "Flutter besser: Ionic .range(0,4999) wird von PostgREST max-rows (1000) gekappt – bei mehr Empfängern fehlen Zeilen / Flutter paginiert alle Empfänger.",
+      "sev": "niedrig"
+    },
+    "services/message/message.service#db-7eb181ae": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/message_repository.dart:103"
+      ],
+      "n": "Flutter besser: Ionic .range(0,49999) wird bei 1000 Zeilen gekappt – Gelesen-/Problem-Zähler der Liste zu niedrig / Flutter paginiert.",
+      "sev": "niedrig"
+    },
+    "services/message/message.service#db-ba5b0a71": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/message_repository.dart:144"
+      ]
+    },
+    "services/message/message.service#db-dcd228fa": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/message_repository.dart:156"
+      ]
+    },
+    "services/message/message.service#db-00f528eb": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/message_repository.dart:180"
+      ]
+    },
+    "services/message/message.service#db-4ce43881": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/message_repository.dart:217"
+      ],
+      "n": "Gleicher Body für send-message; Schlüssel mit null werden weggelassen."
+    },
+    "services/message/message.service#db-84009f6a": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/message_repository.dart:246"
+      ]
+    },
+    "services/message/message.service#db-035e0eec": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/message_repository.dart:256"
+      ]
+    },
+    "services/notification/notification.service#logic-fbcbe895": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/telegram_service.dart:183",
+        "lib/core/services/telegram_service.dart:196",
+        "lib/core/services/telegram_service.dart:209"
+      ],
+      "n": "Laden/Anlegen/Ändern der Benachrichtigungs-Konfiguration entspricht TelegramService; notifyPerTelegram/sendPlanPerTelegram/sendSongPerTelegram sind toter Code (db.service.ts:3082-3091 nutzt telegramSvc)."
+    },
+    "services/notification/notification.service#db-a9921eda": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/telegram_service.dart:183"
+      ]
+    },
+    "services/notification/notification.service#db-8470a157": {
+      "s": "diff",
+      "f": [
+        "lib/core/services/telegram_service.dart:196"
+      ],
+      "n": "Gleiche Default-Flags. Ionic created_at = new Date().toISOString() (UTC) / Flutter DateTime.now().toIso8601String() ohne 'Z' (lokale Zeit, als UTC gespeichert, 1–2 h verschoben) und enabled_tenants explizit null. Keine sichtbare Auswirkung bekannt.",
+      "sev": "niedrig"
+    },
+    "services/notification/notification.service#db-9e3d4549": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/telegram_service.dart:209",
+        "lib/features/notifications/presentation/pages/notifications_page.dart:108"
+      ]
+    },
+    "services/notification/notification.service#toast-29a202cf": {
+      "s": "diff",
+      "f": [
+        "lib/features/notifications/presentation/pages/notifications_page.dart:112"
+      ],
+      "n": "Ionic: 'Fehler beim Updaten der Konfiguration, bitte versuche es später erneut.' / Flutter: 'Fehler beim Aktualisieren der Konfiguration' (ohne Hinweis, es später erneut zu versuchen); Schalter wird zurückgesetzt.",
+      "sev": "niedrig"
+    },
+    "services/notification/notification.service#db-247b8e5d": {
+      "s": "na",
+      "n": "toter Code: NotificationService.notifyPerTelegram wird nie aufgerufen; db.service.ts:3082-3091 nutzt dafür telegramSvc."
+    },
+    "services/notification/notification.service#loading-744a09fd": {
+      "s": "na",
+      "n": "toter Code: NotificationService.sendPlanPerTelegram wird nie aufgerufen; db.service.ts:3082-3091 nutzt dafür telegramSvc."
+    },
+    "services/notification/notification.service#db-49e365f9": {
+      "s": "na",
+      "n": "toter Code: NotificationService.sendPlanPerTelegram wird nie aufgerufen; db.service.ts:3082-3091 nutzt dafür telegramSvc."
+    },
+    "services/notification/notification.service#db-9b15ee3b": {
+      "s": "na",
+      "n": "toter Code: NotificationService.sendPlanPerTelegram wird nie aufgerufen; db.service.ts:3082-3091 nutzt dafür telegramSvc."
+    },
+    "services/notification/notification.service#db-fd0431a8": {
+      "s": "na",
+      "n": "toter Code: NotificationService.sendPlanPerTelegram wird nie aufgerufen; db.service.ts:3082-3091 nutzt dafür telegramSvc."
+    },
+    "services/notification/notification.service#toast-4dcab1c6": {
+      "s": "na",
+      "n": "toter Code: NotificationService.sendPlanPerTelegram wird nie aufgerufen; db.service.ts:3082-3091 nutzt dafür telegramSvc."
+    },
+    "services/notification/notification.service#toast-3b9e0779": {
+      "s": "na",
+      "n": "toter Code: NotificationService.sendPlanPerTelegram wird nie aufgerufen; db.service.ts:3082-3091 nutzt dafür telegramSvc."
+    },
+    "services/notification/notification.service#db-46b0c60d": {
+      "s": "na",
+      "n": "toter Code: NotificationService.sendSongPerTelegram wird nie aufgerufen; db.service.ts:3082-3091 nutzt dafür telegramSvc."
+    },
+    "services/notification/notification.service#db-fb2f398e": {
+      "s": "na",
+      "n": "toter Code: NotificationService.sendSongPerTelegram wird nie aufgerufen; db.service.ts:3082-3091 nutzt dafür telegramSvc."
+    },
+    "services/notification/notification.service#toast-799e10d5": {
+      "s": "na",
+      "n": "toter Code: NotificationService.sendSongPerTelegram wird nie aufgerufen; db.service.ts:3082-3091 nutzt dafür telegramSvc."
+    },
+    "services/notification/notification.service#toast-2eb6abbc": {
+      "s": "na",
+      "n": "toter Code: NotificationService.sendSongPerTelegram wird nie aufgerufen; db.service.ts:3082-3091 nutzt dafür telegramSvc."
+    }
+  },
+  "extra": [
+    {
+      "unit": "services/duty/duty.service",
+      "title": "Fehler beim Laden der Dienst-Termine wird gemeldet",
+      "n": "Flutter besser: Ionic getUpcomingDutyTermine fängt DB-Fehler ab und liefert still [] (Dienstverteilung wirkt leer) / Flutter wirft den Fehler weiter, die Dienstverteilung zeigt den Fehler-Toast 'Fehler: …'.",
+      "sev": "niedrig",
+      "ionic": "src/app/services/duty/duty.service.ts:165",
+      "f": [
+        "lib/data/repositories/duty_repository.dart:264",
+        "lib/features/duty/presentation/pages/duty_distribute_page.dart:146"
+      ]
+    },
+    {
+      "unit": "services/files/files.service",
+      "title": "Ausstehender Datei-Link übersteht keinen Reload",
+      "n": "Ionic: setPendingLink speichert den geteilten Datei-Link in localStorage und öffnet ihn nach dem Login auch nach Seiten-Reload/App-Neustart (z. B. E-Mail-Bestätigung, OAuth-Redirect im Web) / Flutter: PendingFileLink nur im Speicher, nach Reload oder Neustart geht der Link verloren und der Nutzer landet auf der Startseite.",
+      "sev": "mittel",
+      "ionic": "src/app/services/files/files.service.ts:152",
+      "f": [
+        "lib/features/public_links/presentation/pages/open_file_page.dart:15"
+      ]
+    },
+    {
+      "unit": "services/files/files.service",
+      "title": "Sortierung nach Name",
+      "n": "Ionic: a.name.localeCompare(b.name) (sprachrichtige Reihenfolge) / Flutter: toLowerCase().compareTo (Codepoint-Reihenfolge). Unterschied nur bei Alt-Namen mit Nicht-ASCII-Zeichen oder Satzzeichen.",
+      "sev": "niedrig",
+      "ionic": "src/app/services/files/files.service.ts:285",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:147"
+      ]
+    },
+    {
+      "unit": "services/help/help-content.service",
+      "title": "Hilfe-Suche: andere Treffer und Reihenfolge",
+      "n": "Ionic: Fuse.js-Fuzzy-Suche (gewichtete Felder, threshold 0.35, ignoreLocation, ganze Eingabe als ein Muster) / Flutter: eigene Token-UND-Suche mit Editierdistanz ≤1 (Tokens ab 4 Zeichen) und eigener Bewertung – Trefferliste und Reihenfolge weichen ab.",
+      "sev": "mittel",
+      "ionic": "src/app/services/help/help-content.service.ts:18",
+      "f": [
+        "lib/features/help/data/help_content_service.dart:62",
+        "lib/features/help/data/help_content_service.dart:123"
+      ]
+    },
+    {
+      "unit": "services/holiday/holiday.service",
+      "title": "Vergangen-Markierung von Feiertagen/Ferien",
+      "n": "Ionic: gone = startDate vor heute (Tagesgenauigkeit) / Flutter: isPast = endDate (Mitternacht lokal) vor jetzt. Folge: ein Feiertag heute ist in Flutter schon 'vergangen' (ausgeblendet), in Ionic sichtbar; laufende Schulferien sind in Flutter sichtbar, in Ionic ausgeblendet.",
+      "sev": "mittel",
+      "ionic": "src/app/services/holiday/holiday.service.ts:20",
+      "f": [
+        "lib/core/services/holiday_service.dart:122",
+        "lib/core/services/holiday_service.dart:168",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:784"
+      ]
+    },
+    {
+      "unit": "services/live-activity/live-activity.service",
+      "title": "Zeitzonen-Fallback der Live Activity",
+      "n": "Ionic: tenant.timezone, sonst Geräte-Zeitzone, sonst Europe/Berlin / Flutter: tenant.timezone, sonst fest Europe/Berlin – bei leerer Tenant-Zeitzone und Gerät in anderer Zeitzone andere Uhrzeiten.",
+      "sev": "niedrig",
+      "ionic": "src/app/services/live-activity/live-activity.service.ts:156",
+      "f": [
+        "lib/core/services/live_activity_service.dart:565",
+        "lib/core/services/live_activity_service.dart:828"
+      ]
+    },
+    {
+      "unit": "services/live-update/live-update.service",
+      "title": "Updates nur über den Store statt OTA",
+      "n": "Ionic: lädt neue Web-Bundles still im Hintergrund, aktiviert sie beim nächsten Kaltstart bzw. sofort auf /login oder /register, plus manueller 'Update'-Button / Flutter: kein OTA; StoreUpdateService prüft die Store-Version und bietet 'Update installieren' auf Login- und Einstellungsseite an – der Nutzer muss aktiv über Store/In-App-Update aktualisieren.",
+      "sev": "mittel",
+      "ionic": "src/app/services/live-update/live-update.service.ts:117",
+      "f": [
+        "lib/core/services/native/store_update_service.dart:52",
+        "lib/features/auth/presentation/pages/login_page.dart:660",
+        "lib/features/settings/presentation/pages/settings_page.dart:552"
+      ]
+    }
+  ]
+}

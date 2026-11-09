@@ -1,0 +1,17 @@
+{
+ "batch": "zz-fixed-ota-r6",
+ "ionic": "1923d203",
+ "afterRound": 6,
+ "flutter": "96b8284",
+ "items": {
+  "x-6fc37335ce": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/native/shorebird_patch_service.dart",
+    "scripts/store_build.sh",
+    "docs/release/shorebird.md"
+   ],
+   "n": "OTA wie Ionic-Live-Updates: Shorebird Code Push (#352) lädt Patches still beim Start bzw. beim Zurückkommen und aktiviert sie beim nächsten Start; Store-Builds sind über scripts/store_build.sh Shorebird-Releases (#361). Grenze: nur Dart-Code und Assets, native Änderungen brauchen ein Store-Update (wie bei Ionic Capacitor-Plugins). PR #352/#361."
+  }
+ }
+}

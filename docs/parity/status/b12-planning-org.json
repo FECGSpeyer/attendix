@@ -1,0 +1,1137 @@
+{
+ "batch": "b12-planning-org",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "planning/plan-viewer/plan-viewer.component#logic-46c421ae": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:71",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:97"
+   ],
+   "n": "Live-Modus, Countdown, Chips, Ende-Berechnung und Export entsprechen Ionic; Unterschied siehe extra (kein Auto-Scroll zur aktiven Zeile).",
+   "sev": "niedrig"
+  },
+  "planning/plan-viewer/plan-viewer.component#toast-41712142": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:126",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:132"
+   ],
+   "n": "Ionic: „Plan wird per Telegram gesendet...“ sofort, dazu Lade-Overlay des TelegramService und danach „Nachricht wurde erfolgreich gesendet!“ bzw. Fehler-Toast / Flutter: kein Overlay, nur ein Erfolgs-Toast „Plan wird per Telegram gesendet...“ nach erfolgreichem Senden; bei Fehler „Fehler beim Export: …“.",
+   "sev": "niedrig"
+  },
+  "planning/plan-viewer/plan-viewer.component#actionsheet-3a04c7a8": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:106",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:33"
+   ],
+   "n": "Ionic: Export-Sheet ohne Icons, Abbrechen mit role „destructive“ / Flutter: gleiche Einträge und Reihenfolge, aber mit Icons; Abbrechen nicht destruktiv (rot).",
+   "sev": "niedrig"
+  },
+  "planning/plan-viewer/plan-viewer.component#toast-b048fc61": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:100"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#effect-2dd21155": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:106",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:111"
+   ],
+   "n": "Ionic: PDF wird per downloadFileNative heruntergeladen (Desktop) / per Web-Share bzw. Datei-Viewer (mobil); Dateiname-Fallback getPlanningTitle / Flutter: Druckdialog (Printing.layoutPdf); Titel-Fallback plan.title bzw. Typname oder „Ablaufplan“.",
+   "sev": "niedrig"
+  },
+  "planning/plan-viewer/plan-viewer.component#toast-f47f3c2c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:100"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#effect-2cc43a4d": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:114",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:126"
+   ],
+   "n": "Ionic: Telegram-Versand mit Lade-Overlay; Dateiname-Fallback getPlanningTitle / Flutter: Versand ohne Overlay; Titel-Fallback plan.title bzw. Typname oder „Ablaufplan“.",
+   "sev": "niedrig"
+  },
+  "planning/plan-viewer/plan-viewer.component#toast-dd66afe1": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:132",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:135"
+   ],
+   "n": "Ionic: „Plan wird per Telegram gesendet...“ sofort, dazu Lade-Overlay des TelegramService und danach „Nachricht wurde erfolgreich gesendet!“ bzw. Fehler-Toast / Flutter: kein Overlay, nur ein Erfolgs-Toast „Plan wird per Telegram gesendet...“ nach erfolgreichem Senden; bei Fehler „Fehler beim Export: …“.",
+   "sev": "niedrig"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-628d3333": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:152"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#action-38e50abc": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:145"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#action-7acce3ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:155"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#action-705fc86e": {
+   "s": "missing",
+   "n": "Ionic: Bearbeiten-Button im Plan-Viewer für Dirigent/Helfer (att-list übergibt canEdit) öffnet den Ablaufplan-Editor / Flutter: Button existiert nur bei onEdit != null, kein Aufrufer (openAttendancePlanViewer) übergibt onEdit – im Viewer fehlt der Button; Bearbeiten nur über die Termin-Detailseite.",
+   "sev": "mittel",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:163",
+    "lib/features/planning/presentation/attendance_plan_viewer.dart:18"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#action-f23d47df": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:172"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#action-adebf7d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:183",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:232"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#text-d24cd7da": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:204"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#text-5d50b365": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:98"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#text-2b1d776d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:99"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#text-5103dc28": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:102"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#text-eeca2ac6": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:118"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#text-f89a1a83": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:130"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#text-1ca27ce8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:138"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#text-6a2e9a3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:150"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#action-a5b1e6d4": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:118",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:122",
+    "lib/features/planning/presentation/attendance_plan_viewer.dart:25"
+   ],
+   "n": "Ionic: aus der Terminliste übergibt att-list die Werke (songs), Werk-Zeilen zeigen „♪ Noten öffnen“ und sind antippbar / Flutter: openAttendancePlanViewer übergibt keine songAction – Werk-Zeilen im Viewer aus der Terminliste sind nicht antippbar (nur im Self-Service-Viewer).",
+   "sev": "mittel"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-d513c68c": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:207",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:213"
+   ],
+   "n": "Ionic: Ende-Zeile nur wenn plan.end gesetzt / Flutter: Ende wird bei fehlendem plan.end aus Start + Minuten berechnet und angezeigt.",
+   "sev": "niedrig"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-5103dc28-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:214"
+   ]
+  },
+  "planning/plan-viewer/plan-viewer.component#text-b60f09db": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:198"
+   ]
+  },
+  "planning/planning.page#logic-5522ee54": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:679",
+    "lib/features/planning/presentation/pages/planning_page.dart:759",
+    "lib/features/planning/presentation/pages/planning_page.dart:873",
+    "lib/features/planning/presentation/pages/planning_page.dart:970"
+   ],
+   "n": "Laden, Speichern, Mehrfach-Pläne, Blöcke, Vorlagen, Export und Freigabe portiert; Unterschiede siehe extra (Standardplan bei Termin ohne Plan, Start-Termin, Reihenfolge aktueller Werke, Validierung beim Wechsel, lokale Entwürfe).",
+   "sev": "hoch"
+  },
+  "planning/planning.page#modal-5f3c6ffd": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1775",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart"
+   ],
+   "n": "Ionic: Tagesordnungs-Auswahl als Vollbild-Modal / Flutter: Bottom-Sheet mit 90 % Höhe.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#modal-bbd6596e": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40"
+   ],
+   "n": "Ionic: Feld bearbeiten als Vollbild-Modal PlanFieldEditComponent / Flutter: AlertDialog (showPlanFieldDialog).",
+   "sev": "mittel"
+  },
+  "planning/planning.page#alert-1b3d0c36": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:326"
+   ]
+  },
+  "planning/planning.page#effect-cba63ea5": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:126",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:132"
+   ],
+   "n": "Ionic: nach Versand Toast „Nachricht wurde erfolgreich gesendet!“ (TelegramService) mit Lade-Overlay / Flutter: Toast „Plan wird per Telegram gesendet...“ nach Versand, kein Overlay.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#alert-70a7354c": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1465",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40"
+   ],
+   "n": "Ionic: Eingaben nur mit Platzhaltern / Flutter: gleiche Eingaben und Buttons, zusätzlich Feldbeschriftungen.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#alert-4f031d78": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:222",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40"
+   ],
+   "n": "Ionic: Eingaben nur mit Platzhaltern / Flutter: zusätzlich Feldbeschriftungen; Dirigent-Wert wird getrimmt.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#actionsheet-0f4e0ac3": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:246"
+   ],
+   "n": "Ionic: Block-Optionen ohne Icons / Flutter: gleiche Einträge mit Icons.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#alert-e2e08e47": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:281"
+   ]
+  },
+  "planning/planning.page#alert-54b86574": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:303"
+   ]
+  },
+  "planning/planning.page#toast-141f0770": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1569"
+   ]
+  },
+  "planning/planning.page#toast-a4629d9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1569"
+   ]
+  },
+  "planning/planning.page#alert-7d28e1b3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1558"
+   ]
+  },
+  "planning/planning.page#alert-43003bc8": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1438",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40"
+   ],
+   "n": "Flutter besser: leerer Name wird abgelehnt (Ionic fügt ein leeres Feld hinzu); zusätzlich Feldbeschriftungen.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#alert-84b74bbf": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1450"
+   ],
+   "n": "Flutter besser: leere Notiz wird mit „Bitte eine Notiz eingeben.“ abgelehnt (Ionic fügt ein leeres Notizfeld hinzu).",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#toast-435087dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1761"
+   ]
+  },
+  "planning/planning.page#toast-68f53270": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1509"
+   ]
+  },
+  "planning/planning.page#alert-28ec2e49": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1509"
+   ]
+  },
+  "planning/planning.page#effect-53794f7b": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1928",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:111"
+   ],
+   "n": "Ionic: PDF-Download per downloadFileNative, Dateiname „{Titel}_{dddd, DD.MM.YYYY}“; Untertitel bei Tagesplänen ohne eigenes Label ohne Zusatz / Flutter: Druckdialog (Printing.layoutPdf), Dateiname „{Titel}_DD_MM_YYYY“, bei mehreren Plänen immer „ · Label“ im Untertitel.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#toast-0eda0832": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:917"
+   ]
+  },
+  "planning/planning.page#toast-49787446": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:917"
+   ]
+  },
+  "planning/planning.page#toast-35bdc992": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1870"
+   ]
+  },
+  "planning/planning.page#actionsheet-0c53b41c": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1870",
+    "lib/features/planning/presentation/pages/planning_page.dart:1884"
+   ],
+   "n": "Ionic: „Nur-Lesen-Link“, „Bearbeitungs-Link“, „Abbrechen“ / Flutter: zusätzlich „Freigabe aufheben“ wenn bereits ein shareKey existiert, dazu Icons.",
+   "sev": "mittel"
+  },
+  "planning/planning.page#effect-cc0f301b": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:144",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:166"
+   ],
+   "n": "Ionic: Link immer https://attendix.de/plan?… / Flutter (Web): aktuelle Origin + „#/plan?…“ (native Apps: attendix.de wie Ionic).",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#effect-af3bb049": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:151"
+   ]
+  },
+  "planning/planning.page#toast-7ad4ec64": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:152"
+   ]
+  },
+  "planning/planning.page#alert-a1e2ff95": {
+   "s": "na",
+   "n": "toter Code: revokeSharePlan() wird in planning.page.ts/html nirgends aufgerufen (Flutter bietet „Freigabe aufheben“ trotzdem an, siehe actionsheet-0c53b41c).",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1884"
+   ]
+  },
+  "planning/planning.page#toast-676200b9": {
+   "s": "na",
+   "n": "toter Code: gehört zu revokeSharePlan(), das nirgends aufgerufen wird."
+  },
+  "planning/planning.page#actionsheet-d52e80e4": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1949"
+   ],
+   "n": "Ionic: Aktionen-Sheet ohne Icons / Flutter: gleiche Einträge mit Icons.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#effect-160cbfb2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:328",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:372"
+   ]
+  },
+  "planning/planning.page#effect-c1658399": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:328"
+   ],
+   "n": "Bild über Printing.raster als PNG."
+  },
+  "planning/planning.page#effect-d8aa5cb2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:377"
+   ],
+   "n": "Ionic: Registerprobenplan per downloadFileNative heruntergeladen / Flutter: Druckdialog (Printing.layoutPdf).",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#effect-160cbfb2-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:377"
+   ],
+   "n": "Ionic: PDF-Blob für Download / Flutter: PDF geht in den Druckdialog (Printing.layoutPdf).",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#toast-096e3af1": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1191"
+   ]
+  },
+  "planning/planning.page#toast-b7e0e2e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1191"
+   ]
+  },
+  "planning/planning.page#toast-1e88b54e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1248"
+   ]
+  },
+  "planning/planning.page#toast-179f4ddc": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1248"
+   ]
+  },
+  "planning/planning.page#alert-c2d6f9d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1261"
+   ]
+  },
+  "planning/planning.page#actionsheet-5a0aa6c6": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1306"
+   ],
+   "n": "Ionic: Plan-Optionen ohne Icons / Flutter: gleiche Einträge mit Icons.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#alert-b54330ab": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1350"
+   ]
+  },
+  "planning/planning.page#alert-75ab0ccf": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1368"
+   ],
+   "n": "Ionic: Radio-Alert „Tag zuordnen“ mit Abbrechen/Speichern / Flutter: Action-Sheet, Auswahl wird sofort übernommen.",
+   "sev": "mittel"
+  },
+  "planning/planning.page#alert-e644d562": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1401"
+   ]
+  },
+  "planning/planning.page#alert-183c84e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2010"
+   ]
+  },
+  "planning/planning.page#text-8468abd8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2098"
+   ]
+  },
+  "planning/planning.page#action-582ffbd8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2102"
+   ]
+  },
+  "planning/planning.page#action-cd40d93a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2105"
+   ]
+  },
+  "planning/planning.page#text-70f205a3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2205"
+   ]
+  },
+  "planning/planning.page#action-2f7f8cb6": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2210"
+   ]
+  },
+  "planning/planning.page#field-181f005d": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1206",
+    "lib/features/planning/presentation/pages/planning_page.dart:2217"
+   ],
+   "n": "Ionic: ion-select als Modal, Label mit hide_name-Logik der Typen / Flutter: Dropdown, Label aus Typname ohne hide_name; bei leerer Liste zusätzlicher Text „Keine Termine vorhanden“.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#text-7cfe3610": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2231"
+   ]
+  },
+  "planning/planning.page#field-219cb90c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2231"
+   ]
+  },
+  "planning/planning.page#field-e6429340": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2238"
+   ]
+  },
+  "planning/planning.page#field-fe37eb3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2251"
+   ]
+  },
+  "planning/planning.page#field-0c644b5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2264"
+   ]
+  },
+  "planning/planning.page#field-db353430": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2272",
+    "lib/core/providers/branding_providers.dart"
+   ],
+   "n": "Ionic: Sichtbarkeit nach Tenant-Branding, Wert nur für diese Seite / Flutter: hasBranding prüft Org-Branding zuerst; Schalterzustand gilt sitzungsweit.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#action-a889bd7d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2283"
+   ]
+  },
+  "planning/planning.page#action-73acf9c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2291"
+   ]
+  },
+  "planning/planning.page#text-1f153b56": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2134"
+   ]
+  },
+  "planning/planning.page#action-a24dc177": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2140"
+   ]
+  },
+  "planning/planning.page#popover-e86b26e7": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1615"
+   ],
+   "n": "Popover als showMenu."
+  },
+  "planning/planning.page#action-1f4d1515": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1662"
+   ]
+  },
+  "planning/planning.page#action-0732e4a5": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1663"
+   ]
+  },
+  "planning/planning.page#action-332ea66c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1664"
+   ]
+  },
+  "planning/planning.page#action-d8619c2b": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1665"
+   ]
+  },
+  "planning/planning.page#action-09d2cf03": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1666"
+   ]
+  },
+  "planning/planning.page#action-748cb97a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1668"
+   ]
+  },
+  "planning/planning.page#action-2ef02082": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1671"
+   ]
+  },
+  "planning/planning.page#text-c14e181a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1674"
+   ]
+  },
+  "planning/planning.page#action-6b842de4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1674",
+    "lib/features/planning/presentation/pages/planning_page.dart:1553"
+   ]
+  },
+  "planning/planning.page#action-2a8d020c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1683",
+    "lib/features/planning/presentation/pages/planning_page.dart:1558"
+   ]
+  },
+  "planning/planning.page#text-92612b82": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1695"
+   ]
+  },
+  "planning/planning.page#action-c9cebc20": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1695",
+    "lib/features/planning/presentation/pages/planning_page.dart:1579"
+   ]
+  },
+  "planning/planning.page#text-feff39c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1699"
+   ]
+  },
+  "planning/planning.page#action-8653a152": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1699",
+    "lib/features/planning/presentation/pages/planning_page.dart:1590"
+   ]
+  },
+  "planning/planning.page#action-6f76d26d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1705",
+    "lib/features/planning/presentation/pages/planning_page.dart:1248"
+   ]
+  },
+  "planning/planning.page#action-e8f75e46": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2145"
+   ]
+  },
+  "planning/planning.page#action-50b70669": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2153"
+   ]
+  },
+  "planning/planning.page#modal-ffaa7230": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1542",
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:95"
+   ]
+  },
+  "planning/planning.page#text-655ac921": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:124"
+   ]
+  },
+  "planning/planning.page#action-46b53fca": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:126"
+   ]
+  },
+  "planning/planning.page#field-1a6d6339": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:118",
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:135"
+   ],
+   "n": "Ionic: Suche nach Nummer/Name / Flutter: Suche trifft zusätzlich den Komponisten.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#text-33709800": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:146"
+   ]
+  },
+  "planning/planning.page#action-4929436e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:158"
+   ]
+  },
+  "planning/planning.page#text-5ddd98b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2160"
+   ]
+  },
+  "planning/planning.page#field-6e765eaa": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2161"
+   ]
+  },
+  "planning/planning.page#modal-42d9d843": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2022"
+   ]
+  },
+  "planning/planning.page#field-f33048e7": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2022"
+   ]
+  },
+  "planning/planning.page#action-ab4a027d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:360",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:391"
+   ]
+  },
+  "planning/planning.page#action-72e84a9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:644",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:662"
+   ]
+  },
+  "planning/planning.page#action-9c4fc925": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:404"
+   ]
+  },
+  "planning/planning.page#action-be594a20": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:492"
+   ]
+  },
+  "planning/planning.page#action-e0026e3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:515",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:246"
+   ]
+  },
+  "planning/planning.page#action-62a2b6ee": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:515",
+    "lib/core/utils/song_utils.dart:115"
+   ],
+   "n": "Ionic: „Ohne …“ zählt alle Nicht-Haupt-Gruppen ohne Stimme / Flutter: für Dirigent/Helfer nur Gruppen, die Spieler haben (missingGroupsPlayerCountsProvider).",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#field-908d6fcd": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:569",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:610"
+   ]
+  },
+  "planning/planning.page#action-45191162": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:537"
+   ],
+   "n": "Ionic: voller Wisch (ionSwipe, expandable) löscht das Feld / Flutter: kein Full-Swipe-Löschen, nur Tippen auf die Option.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#action-9ddba146": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:554"
+   ]
+  },
+  "planning/planning.page#action-6c9b4483": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:560",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:197"
+   ]
+  },
+  "planning/planning.page#text-ea874fbd": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2179"
+   ],
+   "n": "Ionic: Ende-Zeile sobald end gesetzt (@if end) / Flutter: nur wenn der Plan Felder hat.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#field-6e765eaa-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2179"
+   ],
+   "n": "Ionic: Ende-Zeile sobald end gesetzt / Flutter: nur wenn der Plan Felder hat.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#modal-42d9d843-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2179"
+   ],
+   "n": "Ionic: Ende-Chip öffnet einen deaktivierten Zeit-Picker / Flutter: Chip ohne Aktion.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#field-2174584b": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2179"
+   ],
+   "n": "Ionic: deaktiviertes ion-datetime im Modal / Flutter: nur Anzeige-Chip ohne Picker.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#modal-744bb40f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1993",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:33"
+   ]
+  },
+  "planning/planning.page#text-18279507": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:170"
+   ]
+  },
+  "planning/planning.page#action-85b27656": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:174"
+   ]
+  },
+  "planning/planning.page#text-6c5f535b": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:183"
+   ]
+  },
+  "planning/planning.page#action-672f5288": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:183"
+   ]
+  },
+  "planning/planning.page#field-74e4ebf9": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:190"
+   ]
+  },
+  "planning/planning.page#action-7d1b99e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:190"
+   ]
+  },
+  "planning/planning.page#text-69ed5195": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:196"
+   ]
+  },
+  "planning/planning.page#action-4a3f975d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:196"
+   ]
+  },
+  "planning/planning.page#field-9f5fc570": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:203"
+   ]
+  },
+  "planning/planning.page#action-adbe4668": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:203"
+   ]
+  },
+  "planning/planning.page#field-0f4d0d97": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:211"
+   ]
+  },
+  "planning/planning.page#action-fa7d7f11": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:240"
+   ]
+  },
+  "planning/planning.page#action-2935ce6a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:247",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:372"
+   ]
+  },
+  "planning/planning.page#action-0e411c55": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:253",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:372"
+   ]
+  },
+  "planning/planning.page#action-e299f9d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2111"
+   ]
+  },
+  "public-planning/my-plans/my-plans.component#logic-42314d12": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1006",
+    "lib/data/repositories/plan_repository.dart:202"
+   ],
+   "n": "Laden, Sortierung (created_at absteigend), Löschen und Öffnen wie Ionic; Unterschied siehe extra (Ladefehler wird angezeigt).",
+   "sev": "niedrig"
+  },
+  "public-planning/my-plans/my-plans.component#db-7410a6fd": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:202"
+   ]
+  },
+  "public-planning/my-plans/my-plans.component#db-2f715edb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:207"
+   ],
+   "n": "shared_plans, eq creator_user_id, order created_at desc."
+  },
+  "public-planning/my-plans/my-plans.component#alert-c33e32bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1056"
+   ]
+  },
+  "public-planning/my-plans/my-plans.component#db-65684aa5": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:245"
+   ],
+   "n": "Flutter besser: delete auf shared_plans filtert zusätzlich .eq('creator_user_id', userId) (Ionic nur eq id, RLS).",
+   "sev": "niedrig"
+  },
+  "public-planning/my-plans/my-plans.component#toast-16f262e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1068"
+   ]
+  },
+  "public-planning/my-plans/my-plans.component#text-5d04b38d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1015"
+   ]
+  },
+  "public-planning/my-plans/my-plans.component#action-471438e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1017"
+   ]
+  },
+  "public-planning/my-plans/my-plans.component#action-580d78c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1098"
+   ]
+  },
+  "public-planning/my-plans/my-plans.component#action-0e9f07d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1087"
+   ]
+  },
+  "public-planning/my-plans/my-plans.component#text-8b159228": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1034"
+   ]
+  },
+  "public-planning/public-planning-templates#logic-d95ba1f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:69",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:120"
+   ],
+   "n": "Vorlagen und cloneTemplateFields 1:1 portiert."
+  }
+ },
+ "extra": [
+  {
+   "unit": "planning/plan-viewer/plan-viewer.component",
+   "title": "Kein Auto-Scroll zur aktiven Zeile",
+   "sev": "niedrig",
+   "n": "Ionic: im Live-Modus scrollt der Viewer automatisch zur aktuell laufenden Zeile (scrollToActive beim Öffnen und bei jedem Tick) / Flutter: aktive Zeile wird markiert, aber nicht in den sichtbaren Bereich gescrollt.",
+   "ionic": "src/app/planning/plan-viewer/plan-viewer.component.ts:159",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:71",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:97"
+   ]
+  },
+  {
+   "unit": "planning/planning.page",
+   "title": "Standardplan bei Termin ohne Ablaufplan",
+   "sev": "hoch",
+   "n": "Ionic: Startfeld „Wort “ (id '', 10 min); die Vorlage des Termintyps wird nur übernommen, wenn kommende Werke-Historie existiert (onAttChange → addDefaultFieldsFromAttendanceType), ohne Typ-Vorlage dann leere Liste; ohne Historie bleibt „Wort “ stehen und beim Öffnen wird nichts gespeichert (beim Terminwechsel bleiben ohne Historie sogar die Felder des vorigen Termins stehen und werden gespeichert) / Flutter: wendet immer die Typ-Vorlage an, sonst Feld „Wort“ (id 'Wort', 10 min), setzt _dirty und schreibt diesen Plan beim Verlassen in attendance.plan – auch ohne Nutzeränderung und auch ohne Historie.",
+   "ionic": "src/app/planning/planning.page.ts:43",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:759",
+    "lib/features/planning/presentation/pages/planning_page.dart:873"
+   ]
+  },
+  {
+   "unit": "planning/planning.page",
+   "title": "Start-Termin ohne kommenden Termin",
+   "sev": "mittel",
+   "n": "Ionic: ohne attendanceId wird upcomingAttendances[0] gewählt; gibt es keinen kommenden Termin, ist kein Termin ausgewählt / Flutter: wählt dann den neuesten Termin aus; eine attendanceId außerhalb der geladenen Liste wird per ID nachgeladen (Flutter besser).",
+   "ionic": "src/app/planning/planning.page.ts:268",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:679"
+   ]
+  },
+  {
+   "unit": "planning/planning.page",
+   "title": "Reihenfolge der aktuellen Werke",
+   "sev": "niedrig",
+   "n": "Ionic: getUpcomingHistory liefert unsortiert, gefiltert über das Termin-Datum (attendance_id.date) – „Aktuelle Werke hinzufügen“ fügt in DB-Reihenfolge ein / Flutter: currentSongsProvider sortiert nach Datum aufsteigend und filtert serverseitig auf history.date.",
+   "ionic": "src/app/services/db.service.ts:3189",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1509",
+    "lib/core/providers/song_providers.dart:171"
+   ]
+  },
+  {
+   "unit": "planning/planning.page",
+   "title": "Ungültiger Plan beim Wechsel/Schließen",
+   "sev": "niedrig",
+   "n": "Flutter besser: Ionic: updateAttendance/saveOpenPlan verwerfen einen ungültigen Plan beim Termin-/Planwechsel oder Schließen still (validate(false) → return) / Flutter: Wechsel und Schließen werden mit Validierungs-Toast blockiert; fehlgeschlagenes Speichern lässt die Seite mit Fehler-Toast offen.",
+   "ionic": "src/app/planning/planning.page.ts:1247",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:917",
+    "lib/features/planning/presentation/pages/planning_page.dart:970",
+    "lib/features/planning/presentation/pages/planning_page.dart:2073"
+   ]
+  },
+  {
+   "unit": "planning/planning.page",
+   "title": "Lokale Entwürfe und Konfliktdialoge",
+   "sev": "niedrig",
+   "n": "Ionic: speichert jede Änderung sofort (calculateEnd → updateAttendance), keine Entwürfe / Flutter: 400-ms-Autosave mit Schreib-Warteschlange (PlanningWriteSync), lokale Entwürfe (PlanningDraftStore) mit Wiederherstellung und Konfliktdialog bei parallelen Änderungen.",
+   "ionic": "src/app/planning/planning.page.ts:871",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:551",
+    "lib/features/planning/presentation/pages/planning_page.dart:970"
+   ]
+  },
+  {
+   "unit": "public-planning/my-plans/my-plans.component",
+   "title": "Ladefehler „Meine Pläne“",
+   "sev": "niedrig",
+   "n": "Flutter besser: Ionic: Fehler beim Laden ergibt still eine leere Liste („Keine Pläne“) / Flutter: zeigt „Fehler: …“.",
+   "ionic": "src/app/public-planning/my-plans/my-plans.component.ts:36",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1022"
+   ]
+  }
+ ]
+}

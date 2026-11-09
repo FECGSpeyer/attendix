@@ -1,0 +1,205 @@
+{
+ "batch": "zz-verify2-b11-planning-org",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "org-settings/org-settings.page#text-cb7ad407": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:154",
+    "lib/core/router/app_router.dart:181",
+    "lib/features/settings/presentation/pages/settings_page.dart:411"
+   ],
+   "n": "Rollen geprüft: Seite nur Admin/Verantwortlich (Ionic Einstellungen isAdmin + isUrlAccessAllowed / Flutter settings isAdmin + _protectedRoutes). Text nur Admin (isSuperAdmin = role == admin), Verantwortliche sehen noneAdminOnly – gleich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-2df945fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:156"
+   ],
+   "n": "Verantwortliche (nicht Admin) ohne Organisation sehen „Nur Administratoren können Organisationen verwalten.“ – gleich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-77cfad47": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:158",
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:15"
+   ],
+   "n": "Nur Admin (role == admin) in beiden; Tippen öffnet Org-Auswahl bzw. direkt „Organisation erstellen“ wie openOrganisationAlert.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-034c64fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:183"
+   ],
+   "n": "Nur Admin; destruktive Bestätigung, entfernt die Verknüpfung, Toast „getrennt“. Icon link_off statt unlink-outline (kosmetisch).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-1a2c91b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:240"
+   ],
+   "n": "Abschnitt „Personen“ nur Admin (isSuperAdmin) in beiden.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-79ded874": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:243"
+   ],
+   "n": "Nur Admin, Texte gleich; einziger Einstieg zu Personen verknüpfen in beiden Apps. Präsentation (Seite statt Sheet) siehe modal-fd2da8e9.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-8ea841f2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:250"
+   ],
+   "n": "Nur Admin; Ziel /settings/org-settings/person-fields (Route admin/verantwortlich geschützt).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-5a3b837f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:259"
+   ],
+   "n": "Admin + Verantwortlich (Ionic isAdmin / Flutter role.isAdmin || role.isResponsible) – gleich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-973a2bad": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:261",
+    "lib/core/router/app_router.dart:177"
+   ],
+   "n": "Admin + Verantwortlich; /settings/handover ebenso admin/verantwortlich-geschützt.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-bbfd5f0d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:269",
+    "lib/core/providers/organisation_providers.dart:39"
+   ],
+   "n": "Admin + Verantwortlich und mindestens eine andere Instanz der Organisation (eigene ausgeschlossen) – gleich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-fd83ac3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:271"
+   ],
+   "n": "Admin + Verantwortlich mit verknüpften Instanzen; Ziel /settings/org-settings/songs.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-372954be": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:280",
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:117"
+   ],
+   "n": "Nur Admin + verknüpfte Instanzen (OrgSongSyncSection) – gleich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-62272383": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:84"
+   ],
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-7af04a0a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:87"
+   ],
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#field-cfa42488": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:94",
+    "lib/data/repositories/song_repository.dart:402"
+   ],
+   "n": "Nur Admin. Optionen „Keine (eigene Werke)“ + Kurznamen, Action-Sheet (iOS), Bestätigung beim Deaktivieren, schreibt tenants.song_source_tenant_id (id = eigene Instanz), Toast „gespeichert“. Speichern zeigt Inline-Spinner statt Overlay (eigenes loading-Item).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-874018a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:292"
+   ],
+   "n": "Für alle Rollen der Seite (Admin/Verantwortlich) bei verknüpften Instanzen.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-8614316a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:293"
+   ],
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#text-8eba480d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:224",
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:243",
+    "lib/core/router/app_router.dart:181"
+   ],
+   "n": "Bedingung !isAdmin || !Organisation gleich (isAdmin = Admin/Verantwortlich). Andere Rollen erreichen die Seite in Flutter nicht (Redirect über /settings/org-settings), in Ionic nur per URL – praktisch gleich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#action-8b39a07c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:269"
+   ],
+   "n": "Nur Admin/Verantwortlich mit Organisation; FilterChip statt ion-chip (Plattform-Look), Umschalten startet neue Suche.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#action-868aa115": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:275",
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:88"
+   ],
+   "n": "Chips = Instanzen der Organisation ohne eigene Werkquelle und ohne eigene Bibliothek; „keine gewählt“ wählt alle – gleich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#text-9f743d93": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:280"
+   ],
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#action-aa6f0fbd": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:292"
+   ],
+   "n": "„Präfix+Nummer Name“, Instanz (primary) · „n Dateien“ · Kategorien, Badge „Schon bei dir“, Kopier-Icon; Kopierziele nur Instanzen mit Rolle Admin/Verantwortlich (buildOrgSongCopyTargets) wie Ionic buildTargets.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#text-51119188": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:328"
+   ],
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#action-e81797bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:165"
+   ],
+   "n": "Nachladen beim Scrollen ans Ende (300 px) statt ion-infinite-scroll, gleiche Seitengröße 50.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

@@ -1,0 +1,395 @@
+{
+ "batch": "zz-verify6-opus-22",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "services/organisation/organisation.service#toast-f9193a09": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:17",
+    "lib/data/repositories/organisation_repository.dart:271"
+   ],
+   "n": "Schwere korrigiert (fehlende Fehlermeldung ist nie niedrig). Ionic: Ladefehler der eigenen Instanzen (tenantUsers role 1/5) zeigt Toast \"Fehler beim Laden der Mandanten\" und es öffnet sich kein Dialog. / Flutter: showOrganisationLinkDialog fängt den Fehler ab, macht daraus eine leere Liste und öffnet direkt \"Organisation erstellen\" ohne jede Fehlermeldung; der Nutzer erfährt nicht, dass vorhandene Organisationen nicht geladen wurden, und legt ggf. eine neue an.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "x-0ad62f2775": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/organisation_repository.dart:50",
+    "lib/data/repositories/organisation_repository.dart:66",
+    "lib/data/repositories/organisation_repository.dart:190",
+    "lib/data/repositories/organisation_repository.dart:237"
+   ],
+   "n": "Weiter zutreffend, Stellen unverändert. Flutter besser: Rollenprüfung 1/5 vor Verknüpfen/Trennen, Mitgliedsprüfung vor dem Laden; die Ionic-UI erlaubt Verknüpfen/Trennen ohnehin nur Admin (isSuperAdmin), der besteht die Prüfung. Doppelte Verknüpfung still ignoriert ist über die UI nicht erreichbar (Verknüpfen nur ohne Organisation).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-2885ebb729": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/shared_person_fields.dart:86",
+    "lib/data/repositories/shared_person_fields.dart:99"
+   ],
+   "n": "Weiter zutreffend; f korrigiert (Zeile 66 ist jetzt mergeSharedFieldValuesIntoRows). Flutter besser: fetchSharedFieldValuesForPeople lädt tenant_group_person_fields in 100er-Blöcken der person_keys und seitenweise (order id), Ionic in einer Abfrage (max-rows).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/player-absence/player-absence.service#db-7fbdf33d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:72",
+    "lib/core/providers/player_absence_providers.dart:87"
+   ],
+   "n": "insert player_absences {person_id, from_date, until_date, reason, tenant_id = aktuelle Instanz} .select().single() wie Ionic (Personendetail und Meine Termine); Demo-Sperre wie checkDemoRestriction.",
+   "v": "bestätigt"
+  },
+  "services/player-absence/player-absence.service#db-936de012": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:102"
+   ],
+   "n": "delete player_absences .eq(id), Flutter zusätzlich .eq(tenant_id); Demo-Sperre wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/player-absence/player-absence.service#db-99111af5": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:35"
+   ],
+   "n": "Fix bestätigt: select * .eq(person_id).eq(tenant_id).order('from_date', ascending: true) = Ionic order('from_date') (älteste zuerst).",
+   "v": "bestätigt"
+  },
+  "services/player-absence/player-absence.service#db-d999637c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:50",
+    "lib/data/repositories/dashboard_repository.dart:124"
+   ],
+   "n": "select * .eq(tenant_id) wie Ionic; Flutter seitenweise mit stabiler Sortierung nach id (Ionic unsortiert, Verbraucher sortieren selbst).",
+   "v": "bestätigt"
+  },
+  "services/player-absence/player-absence.service#logic-e07a19b4": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:28",
+    "lib/data/repositories/player_absence_repository.dart:50",
+    "lib/data/repositories/player_absence_repository.dart:102"
+   ],
+   "n": "Laden pro Person (jetzt aufsteigend nach from_date wie Ionic), Laden der Instanz, Anlegen und Löschen gleich. Einziger Unterschied siehe x-f64ec4c4ee (Flutter besser).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-f64ec4c4ee": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:50",
+    "lib/data/repositories/player_absence_repository.dart:109"
+   ],
+   "n": "Weiter zutreffend. Flutter besser: getAbsencesForTenant seitenweise (fetchAllPages, order id), deleteAbsence zusätzlich .eq('tenant_id').",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/player/player.service#db-08cf0e97": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:139"
+   ],
+   "n": "select * .eq(appId).eq(tenantId); bei mehreren Zeilen die aktive (nicht pending, nicht ausgetreten) bevorzugt, sonst die erste – wie Ionic. Nicht gefunden: Flutter null, Ionic Fehler mit Toast (eigenes toast-Item).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-4b96ef3d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:814",
+    "lib/core/providers/player_providers.dart:218"
+   ],
+   "n": "delete player .eq(id).eq(tenantId), danach bei appId Zugang zur Instanz entfernen (removeUserFromTenant wie removeEmailFromAuth) und Tracking player_removed wie db.removePlayer (Liste und Personendetail). Fehlendes Tracking beim Zusammenführen: x-afee7b801d.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-9a7299b3": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1990"
+   ],
+   "n": "update player_absences {person_id: Ziel} .eq(person_id, Bewerber) beim Zusammenführen nach den Anwesenheiten wie Ionic; Flutter zusätzlich tenant_id-Filter, Prüfung beider Personen und Abbruch, wenn noch Zeilen übrig sind.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-bd0f56d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:189",
+    "lib/data/repositories/player_repository.dart:586"
+   ],
+   "n": "Massenbearbeitung Standardfeld: update player {[feld]: wert} .eq(id).eq(tenantId), parallel; bei Gruppenwechsel danach syncPlayerWithUpcomingAttendances wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-c1a7cd43": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:328",
+    "lib/data/repositories/player_repository.dart:586"
+   ],
+   "n": "update player {history} .eq(id).eq(tenantId) nach „Eintrag entfernen?“ (Abbrechen/Ja), Toasts „entfernt“/Fehler wie Ionic. Randfall unverändert: Flutter entfernt nur Einträge mit gleichem Datum+Typ+Text, Ionic alle mit gleichem Datum (nur bei zeitgleich angelegten Einträgen relevant).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-c8b7f696": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:178",
+    "lib/features/settings/presentation/pages/left_players_page.dart:23"
+   ],
+   "n": "player: tenantId, pending false, left not null, order left ascending:false wie Ionic; danach wie getModifiedPlayersForList nach Gruppe sortiert.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-ca2edd62": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1902",
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:17"
+   ],
+   "n": "tenantId, pending false, appId null, neq id, or(firstName/lastName ilike Präfix, Sonderzeichen entfernt, max. 50), limit 500, Ranking Schwelle 0,65 wie Ionic; Gruppenname aus groupsMapProvider statt Join. Stiller Ladefehler ist in toast-f8ff8801 erfasst.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-d3a9e9fb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:166"
+   ],
+   "n": "Fix bestätigt: getPendingPlayers .eq(tenantId).eq(pending,true).order('created_at', ascending: true) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#db-e018cb94": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:201",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:73",
+    "lib/core/router/route_access.dart:96",
+    "lib/features/settings/presentation/pages/settings_page.dart:198"
+   ],
+   "n": "player: tenantId, instrument, left null, pending false, order isLeader absteigend, lastName jetzt ascending:true wie Ionic. Rolle unverändert: Einstieg nur isVoiceLeader && !isGeneral && !sp, Routen-Gate VOICE_LEADER/VOICE_LEADER_HELPER (canSeeVoiceLeaderSettings).",
+   "v": "bestätigt"
+  },
+  "services/player/player.service#logic-039a9e56": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_repository.dart:139",
+    "lib/data/repositories/extra_fields_repository.dart:76",
+    "lib/data/repositories/extra_fields_repository.dart:111"
+   ],
+   "n": "Lebende Methoden (getPlayerByAppId/-Profile, getPlayersByGroup, ausstehende/ausgetretene Personen, Personen ohne Konto, Duplikate, Abwesenheiten umhängen, Historie, globale Person-ID, Zusatzfelder, Feld-Update, Entfernen, Zusatzfeldwerte zurücksetzen/umbenennen) haben Gegenstücke; updatePlayer/addPlayer/archive usw. sind toter Code (DbService eigene Implementierungen). x-130f30b192 ist inzwischen behoben; offen bleiben x-6caeb92ca1 und x-afee7b801d (beide niedrig).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-130f30b192": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/extra_fields_repository.dart:111",
+    "lib/data/repositories/extra_fields_repository.dart:185",
+    "lib/data/repositories/extra_fields_repository.dart:208"
+   ],
+   "n": "Zurückgezogen, behoben: updateFieldValue/resetFieldValues nutzen _tryUpdateRow, das fehlgeschlagene Einzel-Updates überspringt und nur Erfolge zählt wie Ionic; Abbruch nur, wenn das Laden scheitert (Toast \"Fehler beim Laden der Personen\" wie Ionic). Toast \"{n} Personen aktualisiert\" wie Ionic.",
+   "v": "korrigiert"
+  },
+  "x-6caeb92ca1": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/extra_fields_repository.dart:76"
+   ],
+   "n": "Weiter zutreffend. Flutter besser: _loadRows lädt player (id, additional_fields) der Instanz seitenweise (fetchAllPages, order id), Ionic in einer Abfrage (max-rows).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-afee7b801d": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2061",
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:88"
+   ],
+   "n": "Weiter zutreffend; f aktualisiert. Ionic: mergePendingPlayerIntoExisting endet mit playerSvc.removePlayer → usage_events player_removed. / Flutter: mergePendingPlayerIntoExisting löscht die Bewerberzeile direkt, Aufrufer trackt nichts. Nur Nutzungsstatistik (Super-Entwickler-Dashboard), kein Fachdatum.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/push/push.service#db-b54d7781": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/device_token_repository.dart:103",
+    "lib/core/services/push/push_service.dart:421",
+    "lib/core/providers/push_providers.dart:101"
+   ],
+   "n": "Flutter besser: gleiche Operation (delete device_tokens .eq(token), zusätzlich .eq(user_id) des abmeldenden Kontos), aber vor dem Abmelden (removePushTokenBeforeSignOut) bzw. beim signedOut-Listener; FCM-Token auch auf Android gelöscht. Ionic löscht erst im SIGNED_OUT-Handler (app.component.ts:166) ohne Sitzung – RLS \"Users can manage their own tokens\" lässt den Delete ins Leere laufen, auf Android kommen weiter Pushes. Kein anderer geschriebener Wert, Ionic-Absicht wird erfüllt.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/push/push.service#nav-1a9e006e": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_navigation.dart:94",
+    "lib/core/providers/push_providers.dart:315"
+   ],
+   "n": "type message + messageId → /messages/:id (Ionic /tabs/messages/:id), vor dem Markieren als gelesen (Seite macht das) wie Ionic; Route ohne Rollen-Gate wie Ionic. Flutter pusht die Detailseite statt zu ersetzen (Zurück zum vorherigen Ort).",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#nav-20f8d0b6": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_navigation.dart:117",
+    "lib/core/router/legacy_routes.dart:54"
+   ],
+   "n": "protocol: /tabs/attendance/:id/protocol → /settings/protocol/:id (kein Rollen-Gate, für alle Empfänger erreichbar wie Ionic); ohne attendanceId team-organization?tab=protocols.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#nav-6fe135b6": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_navigation.dart:108",
+    "lib/core/router/legacy_routes.dart:22"
+   ],
+   "n": "data.route nach dem Markieren als gelesen über legacyRouteRedirect (/tabs/settings/tasks/:id, /tabs/attendance/:id/protocol, team-organization?tab=topics); Zielrouten ohne Rollen-Gate wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#nav-b578f3e6": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_navigation.dart:81",
+    "lib/core/providers/push_providers.dart:334",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:388"
+   ],
+   "n": "Eltern (nicht canAddAttendance) → /parents mit pendingAttendanceId; das Elternportal öffnet den Termin im Aktionsblatt und leert die ID – wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/register.guard#effect-e90908cd": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:468",
+    "lib/core/router/app_router.dart:334",
+    "lib/core/router/app_router.dart:349",
+    "lib/core/utils/dashboard_logic.dart:56"
+   ],
+   "n": "Angemeldet mit Instanz auf /register: Ionic RegisterGuard → Utils.getUrl(role) ohne Dashboard (Admin/Verantwortlich/Beobachter → Personenliste, Eltern → Elternportal, sonst Meine Termine). Flutter: /register → /login → homeRouteFor inkl. Dashboard (Admin/Verantwortlich mit Dashboard-Tab → /home-dashboard), bei noch ladender Rolle oder 'Instanzauswahl aktivieren' direkt nach Anmeldung → /tenants. Ohne Instanz: beide 'Neue Instanz anlegen'. Seltener Pfad (manuelle URL).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/register.guard#nav-28791f97": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:468",
+    "lib/core/router/app_router.dart:329"
+   ],
+   "n": "Erstprüfung überholt: /register ist keine Konto-Registrierung mehr, die Route leitet immer auf /login um (und die globale Weiterleitung schickt Abgemeldete ohnehin auf /login) – wie Ionic RegisterGuard ohne tenantUser.",
+   "v": "korrigiert"
+  },
+  "services/register.guard#nav-7b570795": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:468",
+    "lib/core/router/app_router.dart:334",
+    "lib/core/router/app_router.dart:349",
+    "lib/core/utils/dashboard_logic.dart:56"
+   ],
+   "n": "Wie effect-e90908cd: Ionic Utils.getUrl(role) ohne Dashboard, Flutter über /login → homeRouteFor mit Dashboard bzw. /tenants. Gleiche Funktion, nur andere Startseite bei manueller URL.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/shift/shift.service#db-33af5718": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/shift_repository.dart:93"
+   ],
+   "n": "update shifts mit den Inhaltsfeldern (name, description, definition, shifts) ohne id/created_at/tenant_id, Filter id + tenant_id; Ionic schreibt das ganze ShiftPlan-Objekt (gleiche Werte). Segmente beim Laden nach index sortiert wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-75386190": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/shift_repository.dart:109",
+    "lib/core/providers/shift_providers.dart:149"
+   ],
+   "n": "delete shifts .eq(id).eq(tenant_id). Vorher wie DbService.deleteShift: Demo-Sperre, alle Personen des Plans (getPlayersByShift) per updateShiftAssignmentsForPerson mit shift_id null zurückgesetzt.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-7b43b654": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/shift_repository.dart:19",
+    "lib/data/models/shift/shift_plan.dart:22"
+   ],
+   "n": "Gleiche Abfrage (shifts, tenant_id, order name ascending). Sortierung der definition nach index jetzt im Konverter von ShiftPlan (stabil) wie Ionic loadShifts.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-8236c105": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/shift_repository.dart:53",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:281"
+   ],
+   "n": "Insert shifts mit name, description, tenant_id, definition, shifts (Neu: ShiftPlan.toJson ohne id/created_at, tenant_id aktuell; Kopie: '<Name> (Kopie)', tenant_id der Ziel-Instanz, Segmente ohne IDs). Kleinigkeit: Flutter trimmt Name/Beschreibung beim Anlegen.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#db-de95fd8a": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:70",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:86"
+   ],
+   "n": "Erstprüfung überholt: Kopieren liest jetzt wie Ionic getPlayersWithShift player (id, appId, shift_name, shift_start) .eq(tenantId).eq(shift_id).not(appId is null); nur dann kommt „Zuweisungen kopieren?“, die genannte Anzahl ist die Zahl dieser Personen; Ladefehler → Toast \"svc.loadShiftPeopleFailed\".",
+   "v": "korrigiert"
+  },
+  "services/shift/shift.service#db-eb72dd6f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/shift_repository.dart:141",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:96",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:222"
+   ],
+   "n": "getShiftUsageCount (player.shift_id, zusätzlich tenantId), 'benutzt' = Anzahl > 0; sperrt wie Ionic isUsed Löschen/Name/Datum der festen Schichten. Fehler-Toast ist eigenes toast-Item.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#logic-8cc479ce": {
+   "s": "ok",
+   "f": [
+    "lib/data/models/shift/shift_plan.dart:22",
+    "lib/data/repositories/shift_repository.dart:17",
+    "lib/core/providers/shift_providers.dart:77",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:68",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:237"
+   ],
+   "n": "Weiter gleich: Segmente stabil nach index sortiert, loadShifts/addShift/updateShift/deleteShift/isShiftUsed, Kopieren nur mit Personen mit appId, Zuweisen aktiver Zielpersonen per appId (shift_id/shift_name/shift_start), Neuberechnung künftiger nicht ganztägiger Termine (nur Entschuldigt bei Default-Status) wie Ionic, zusätzlich tenantId-Filter. Ohne Gewicht: scheitert ein einzelnes Personen-Update mit Fehler, meldet Flutter 'Kopieren fehlgeschlagen' (Ionic zählt die Person nur nicht).",
+   "v": "bestätigt"
+  },
+  "x-a0e73b9118": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:70",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:86"
+   ],
+   "n": "Zurückgezogen, behoben: die Kopierfunktion nutzt nicht mehr shiftUsageCountProvider, sondern liest Personen mit dieser Schicht und appId (wie Ionic getPlayersWithShift); Abfrage, Anzahl im Hinweis und Ergebnis-Toasts entsprechen Ionic.",
+   "v": "korrigiert"
+  },
+  "services/sign-in-out/sign-in-out.service#db-574d5c66": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:104",
+    "lib/data/repositories/sign_in_out_repository.dart:111",
+    "lib/data/repositories/sign_in_out_repository.dart:201"
+   ],
+   "n": "Schwere korrigiert (anderer DB-Wert ist nie niedrig). Flutter besser: gleiche Tabelle/Spalten (status, notes, changed_at, Duty-Sync bei Anmelden), aber changed_by bei der Abmeldung: Ionic schreibt null (DbService.signout gibt keine userId weiter), Flutter die User-ID. Folge: „Zuletzt geändert von“ zeigt nach Abmeldung in Flutter den Namen statt \"Status wurde noch nicht geändert\". Duty-Sync bei Abmeldung fehlt, ist für Entschuldigt/Verspätung gemeldet aber wirkungslos (dutyStateAfterStatus unverändert). Leon entscheidet, ob es bleibt.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "services/sign-in-out/sign-in-out.service#logic-6ffa52b8": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:164",
+    "lib/data/repositories/sign_in_out_repository.dart:201",
+    "lib/data/repositories/sign_in_out_repository.dart:245",
+    "lib/data/repositories/sign_in_out_repository.dart:104",
+    "lib/data/repositories/sign_in_out_repository.dart:141"
+   ],
+   "n": "signout/signin/updateAttendanceNote gleich: Entschuldigt bzw. Verspätung gemeldet (lateExcused) mit Grund als notes, Anmelden → Anwesend mit notes, Notiz-Update; danach quick-processor mit signout/lateSignout/noteUpdate bzw. Vorstatus; Pflicht-Status-Sync wie syncDutyWithStatus. Flutter prüft zusätzlich Mandant/Eigentümer der IDs. Einziger Unterschied changed_by bei der Abmeldung (db-574d5c66); Schwere wie dort auf mittel angehoben.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  }
+ },
+ "extra": []
+}

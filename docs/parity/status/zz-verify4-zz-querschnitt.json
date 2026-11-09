@@ -1,0 +1,21 @@
+{
+ "batch": "zz-verify4-zz-querschnitt",
+ "ionic": "1923d203",
+ "flutter": "8004a44",
+ "items": {},
+ "extra": [
+  {
+   "unit": "utilities/Utils",
+   "title": "Teilen auf dem iPad schlägt fehl (share_plus ohne sharePositionOrigin)",
+   "n": "Ionic: navigator.share (WKWebView) öffnet auf dem iPad das Teilen-Popover / Flutter (normales Design): Share.share/shareXFiles ohne sharePositionOrigin; share_plus 10.1.4 bricht auf dem iPad (Popover) mit FlutterError ab (FPPSharePlusPlugin.m:381-392), der Nutzer sieht nur „Fehler: …“. Betroffen: Werk-Datei/ZIP herunterladen (zip_service_io.dart → song_detail_page.dart:1139, zip_service.dart:58), Import-Vorlage (eigener Punkt people/import#effect-31a0aedd), Plan-Link teilen (plan_export_actions.dart:146), Datei-Link teilen (files_page.dart:433). Beide Apps unterstützen das iPad (TARGETED_DEVICE_FAMILY 1,2). Beta (rd_actions.dart) übergibt den Ursprung bereits. Außerdem Begleittext immer „Song-Dateien“.",
+   "sev": "hoch",
+   "ionic": "src/app/planning/planning.page.ts:1003",
+   "f": [
+    "lib/core/services/zip_service_io.dart:14",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:146",
+    "lib/features/settings/presentation/pages/files_page.dart:433",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1139"
+   ]
+  }
+ ]
+}

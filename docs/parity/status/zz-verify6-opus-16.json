@@ -1,0 +1,391 @@
+{
+ "batch": "zz-verify6-opus-16",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "selfService/signout/signout.page#field-c03cb92a": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:366",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:314"
+   ],
+   "n": "Textfeld im Anmeldefelder-Sheet (2+ Felder) mit Feldname als Label, Platzhalter „...“, Vorbelegung aus registration_answers; Aufruf über handleSigninWithFields wie Ionic. Referenz :368→:366.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#loading-3ab7973e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:265",
+    "lib/core/providers/signout_providers.dart:294"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay (max. 10 s) während Absage/Verspätung gespeichert und understaffed-Push gesendet wird / Flutter submitSignout: kein Overlay, Speichern im Hintergrund, danach Erfolgs- oder Fehler-Toast. Referenz signout_providers.dart:284→:294 (signOut).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#loading-45966010": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:78"
+   ],
+   "n": "Ionic: Lade-Overlay während Abwesenheit gespeichert und Termine entschuldigt werden / Flutter saveSelfServiceAbsence: Sheet schließt, Speichern ohne blockierendes Overlay, danach Toast (Erfolg mit Anzahl oder Fehler). Referenz :59→:78.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#loading-6042fa43": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:139"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay während setTenant + Navigation / Flutter _switchTenant (über TenantSwitcherTitle): kein Overlay; bei Fehler Toast signoutFlutterSwitchTenantFailed. Referenz :95→:139.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#modal-76fb71e5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:253",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:395",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:314"
+   ],
+   "n": "Ionic: Sheet 85 % (Breakpoints 0/0.85/1), backdropDismiss=false, „Abbrechen“ nur im Bearbeiten-Modus (Wischen schließt in beiden) / Flutter showRegistrationFieldsSheet: Sheet in Inhaltshöhe mit Griff, Tippen außerhalb schließt nur im Bearbeiten-Modus, „Abbrechen“ in beiden Modi. Gleiche Wahl und Wirkung (nichts gespeichert), nur Darstellung.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#modal-bb6f0815": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:317",
+    "lib/features/self_service/presentation/pages/signout_page.dart:493",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:173",
+    "lib/features/self_service/presentation/pages/signout_page.dart:108",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:157"
+   ],
+   "n": "Auslöser jetzt alle gleich: Kachel (ohne Dienstplan-Ansicht, im Dienstkreis), „Alle {count}“ bei >3 offenen, Push auf nicht zugeteilten offenen Dienst öffnet das Sheet; nicht zugeteilte Dienste stehen nicht mehr in den Listen (kein Aktionsblatt mit „Zusagen“) – Push-Abweichung aus dem Zusatzbefund Runde 1 ist behoben. Sheet 0.75 wie Ionic. Rest: Ionic schließt das Modal nach „Ich übernehme“, wenn keine offenen Dienste mehr übrig sind / Flutter takeDutyAction lässt das Sheet offen mit „Gerade sind alle Dienste besetzt. Danke!“.",
+   "v": "korrigiert"
+  },
+  "selfService/signout/signout.page#modal-caf54574": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:183",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:117",
+    "lib/core/providers/role_permission_providers.dart:252"
+   ],
+   "n": "Öffnung nur über Kopf-Button bei canSelfPause (player_self_pause der Spieler-Rolle) && Person && nicht pausiert – für Spieler, Helfer, Stimmführer, SF-Helfer, ohne Rolle gleich; Bewerber (AppBar ohne player)/Leitung/Eltern nie. Ionic Sheet 0.75 / Flutter Bottom-Sheet in Inhaltshöhe, außen tippen schließt in beiden.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#modal-dd81cc61": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:778",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:447",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:367"
+   ],
+   "n": "Sheet 0.75 mit Titel, Datum (dateFmt), Werken, Instrument der Person der aktuellen Instanz; „Ablaufplan öffnen“ nur bei hasPlan (share_plan && Felder) und öffnet dann den Ablaufplan wie Ionic ATTENDANCE_SONGS_OPEN_PLAN. Referenzen :724-738/:447-470 auf aktuelle Zeilen gesetzt.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#nav-fa2ccf4c": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:133",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:35",
+    "lib/features/self_service/presentation/pages/signout_page.dart:652"
+   ],
+   "n": "Ionic /tabs/settings/files?path=…&t=… (push), nur bei hasFilesFolder / Flutter push /settings/files?path=… aus Chip, Aktionsblatt und Ordner-Button bei Vergangenen, ebenfalls nur bei hasFilesFolder; t (Neuladen) unnötig, push baut die Seite neu.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-00a164fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:480"
+   ],
+   "n": "Datum dd.MM.yyyy (dateFmt()) unter „Pausiert bis“. Referenz :440→:480.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-037e423c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:917",
+    "lib/features/self_service/presentation/pages/signout_page.dart:623"
+   ],
+   "n": "„Anwesenheit“ neben „n%“ in EventSummary; Vergangene auch in der Dienstplan-Ansicht und bei show_all_attendances nur eigene, wie Ionic. Rollen gleich: Seite nur für Spieler/Helfer/Stimmführer/SF-Helfer/ohne Rolle (Ionic lädt player nur für diese, Flutter-Gate !isConductor && !isParent), Bewerber nur Wartekarte.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-0a41e2ca": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:143",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:272"
+   ],
+   "n": "Ionic: Datumskachel mit Tag („05“) / Flutter: keine Kachel, Tag steht in der Zeile „Di, 05.11. · 19:00 Uhr“.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-146f176e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:390",
+    "lib/features/self_service/presentation/pages/signout_page.dart:490",
+    "lib/features/self_service/presentation/pages/signout_page.dart:344"
+   ],
+   "n": "Hinweis nur bei canSelfPause (player_self_pause der Spieler-Rolle); beide Einstiege (Kachel, Dienstplan-Liste) übergeben canSelfPauseProvider. Farbe warning. Referenzen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-14785b63": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:457"
+   ],
+   "n": "„{count}× zu spät“ im Gruß bei lateCount > 0.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-1871da89": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:99",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:272"
+   ],
+   "n": "Ionic: Datumskachel (Wochentag „Di“ + Tag) links / Flutter: keine Kachel, Datum „Di, 05.11.“ in der Textzeile der „Bitte bestätigen“-Karte.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-1914b2e8": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:205",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:474",
+    "lib/core/providers/duty_providers.dart:131"
+   ],
+   "n": "Text und Bedingung (bestätigte Dienste nach dem nächsten) gleich. Ionic: .ev-section h2 1.35rem fett / Flutter: _SectionTitle titleMedium fett – kleiner als „Anstehend“/„Vergangen“.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-223aca41": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:449"
+   ],
+   "n": "Nur ohne Dienstplan-Ansicht und perc > 0, Farbe percentageColor (≥75/≥50).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-22841d1b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:432"
+   ],
+   "n": "„Pausiert“ mit Pause-Icon bei player.paused, unabhängig von player_self_pause, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-341d2a0e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:130",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:474",
+    "lib/core/providers/duty_providers.dart:131",
+    "lib/core/router/route_access.dart:73"
+   ],
+   "n": "Rollen/Bedingung (useDutyView, bestätigter Dienst vorhanden) gleich. Ionic: „NÄCHSTER DIENST“ als .ev-month-Label (klein, Großbuchstaben, grau) / Flutter: _SectionTitle „Nächster Dienst“ fett in Textfarbe.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-35e2d1b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:149",
+    "lib/core/providers/duty_providers.dart:131"
+   ],
+   "n": "Chip „Du“ vor den Teamnamen. Dienstplan-Ansicht: tenant.duty_view && im Dienstkreis, wie Ionic. Rollen gleich: Seite nur für Spieler/Helfer/Stimmführer/SF-Helfer/ohne Rolle (Ionic lädt player nur für diese, Flutter-Gate !isConductor && !isParent), Bewerber nur Wartekarte.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-3e9b3859": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:346",
+    "lib/data/repositories/duty_repository.dart:42"
+   ],
+   "n": "typeInfo || Typname || „Dienst“ wie dutyTitle. Referenz duty_repository.dart:41→:42.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-3e9b3859-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:189",
+    "lib/core/providers/duty_providers.dart:176",
+    "lib/core/providers/duty_providers.dart:131"
+   ],
+   "n": "dutyTitle = typeInfo || Typname || „Dienst“. Offene Dienste: duty_self_signup != false, nicht zugeteilt, nicht abgesagt, nicht voll; Vorschau dringend zuerst, max. 3 – gleich. Rollen gleich: Seite nur für Spieler/Helfer/Stimmführer/SF-Helfer/ohne Rolle (Ionic lädt player nur für diese, Flutter-Gate !isConductor && !isParent), Bewerber nur Wartekarte.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-40830254": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190",
+    "lib/core/providers/duty_providers.dart:193"
+   ],
+   "n": "Trenner „ · “ nach „Dringend“ vor Zeit/Belegung vorhanden („Di, 05.11. · Dringend · 18:00 · 1 von 2 besetzt“). Dringend nach duty_urgent_hours wie Ionic.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-472eaa05": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:623",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:909",
+    "lib/core/providers/signout_providers.dart:90",
+    "lib/core/router/route_access.dart:73"
+   ],
+   "n": "„{perc}%“ aus countsForAverage(fallback true) inkl. shift_excused_as_present, vor dem Dienst-Filter berechnet wie Ionic. Rollen gleich: Seite nur für Spieler/Helfer/Stimmführer/SF-Helfer/ohne Rolle (Ionic lädt player nur für diese, Flutter-Gate !isConductor && !isParent), Bewerber nur Wartekarte.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-4beefbd6": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:143",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:278"
+   ],
+   "n": "Ionic getEventMeta(nextDuty, true, false): „Di., 05.11.2026 · 19:00–21:00“ / Flutter _dateLine: „Di, 05.11. · 19:00 Uhr“ – ohne Jahr und ohne Endzeit. Erstprüfer: niedrig, aber die Endzeit des Dienstes fehlt als Information; in der Dienstplan-Ansicht steht der eigene Dienst sonst nirgends auf der Seite (Weitere Termine ohne eigene Dienste), daher mittel.",
+   "v": "korrigiert"
+  },
+  "selfService/signout/signout.page#text-4d732655": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:204",
+    "lib/features/self_service/presentation/pages/signout_page.dart:549",
+    "lib/features/self_service/presentation/pages/signout_page.dart:357"
+   ],
+   "n": "„Notiz: {note}“ bei att.notes auf aktueller Karte, Anstehend-Zeilen und Nächster Dienst (chipsFor). Rollen gleich: Seite nur für Spieler/Helfer/Stimmführer/SF-Helfer/ohne Rolle (Ionic lädt player nur für diese, Flutter-Gate !isConductor && !isParent), Bewerber nur Wartekarte.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-4dca8fd9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190"
+   ],
+   "n": "Ionic: „Dringend“ rot und fett (.duty-urgent) am Anfang der Zeile / Flutter: „Dringend“ als normaler Text nach dem Datum („Di, 05.11. · Dringend · 19:00 · …“).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-4ddd96dd": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:334"
+   ],
+   "n": "Titel „Offene Dienste“ im Sheet.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-5a0ac94b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:272"
+   ],
+   "n": "Ionic: Datumskachel (Wochentag) links / Flutter: keine Kachel, „Di, 05.11.“ am Anfang der Untertitelzeile.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-5aa30f5e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:143",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:272"
+   ],
+   "n": "Ionic: Datumskachel (Wochentag „Di“) / Flutter: keine Kachel, Wochentag in der Textzeile „Di, 05.11. · 19:00 Uhr“.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-5f79bd8f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:205",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:477",
+    "lib/core/providers/duty_providers.dart:131"
+   ],
+   "n": "Zahl gleich (bestätigte Dienste ohne den nächsten). Ionic: .ev-section__count als graue Zahl neben der Überschrift / Flutter: farbige Primary-Pill (DutyPill). Referenz :471→:477.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-62f375d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:261"
+   ],
+   "n": "Bewerber-Karte mit Gruß (wenn Person) und „Deine Registrierung wurde erfolgreich übermittelt…“. Referenz :217→:261.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-6732b90d": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:354"
+   ],
+   "n": "Titel „Abwesenheit melden“. Referenz :314→:354.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-70ddef87": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:626",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:932"
+   ],
+   "n": "Ionic: jeder Punkt hat title-Tooltip „Datum: Status“, Reihe aria-label „Status der letzten Termine“ / Flutter: Punkte ohne Tooltip/Semantik. Datum und Status stehen in der Liste darunter.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-74a3b56c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:170",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:474",
+    "lib/core/providers/duty_providers.dart:131"
+   ],
+   "n": "Text/Bedingung gleich (immer in der Dienstplan-Ansicht). Ionic: .ev-section h2 1.35rem fett wie „Anstehend“/„Vergangen“ / Flutter: _SectionTitle titleMedium fett – kleiner als die übrigen Abschnittsköpfe (EventSectionHeader).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-751098ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:529",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:756",
+    "lib/core/router/route_access.dart:73"
+   ],
+   "n": "Infotext bei show_all_attendances && !isMember: Mandanten-Text oder Standard „Du bist bei diesem Termin nicht dabei.“, nach Ort und vor den Chips wie Ionic; nur ohne Dienstplan-Ansicht oder aufgeklappt. Rollen gleich: Seite nur für Spieler/Helfer/Stimmführer/SF-Helfer/ohne Rolle (Ionic lädt player nur für diese, Flutter-Gate !isConductor && !isParent), Bewerber nur Wartekarte.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-76bcf174": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:99",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:278"
+   ],
+   "n": "Ionic getEventMeta(att, true, false) auf „Bitte bestätigen“: „Di., 05.11.2026 · 19:00–21:00“ / Flutter _dateLine: „Di, 05.11. · 19:00 Uhr“ – ohne Jahr und ohne Endzeit. Erstprüfer/Runde: niedrig, aber die Endzeit fehlt als Information zur Entscheidung Bestätigen/Kann nicht; in der Dienstplan-Ansicht steht der angefragte Dienst sonst nirgends mit Zeitspanne, daher mittel.",
+   "v": "korrigiert"
+  },
+  "selfService/signout/signout.page#text-77db81e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:176"
+   ],
+   "n": "shortName als Titel bei ≤1 Instanz, auch für Bewerber; bei >1 Instanz Instanz-Umschalter. Referenz :132→:176.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-77db81e5-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:311",
+    "lib/shared/widgets/layout/ionic_ios.dart:488"
+   ],
+   "n": "Großer Titel nur bei Person und ≤1 Instanz; nur iOS-Look (Ionic collapse=\"condense\" ebenfalls nur iOS). Referenz :267→:311.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-7a9b80b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:481"
+   ],
+   "n": "„Kein Enddatum gewählt“ ohne Enddatum. Referenz :441→:481.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

@@ -1,0 +1,19 @@
+{
+  "batch": "zz-fixed-nativ",
+  "afterRound": 4,
+  "ionic": "1923d203",
+  "flutter": "b15b3b0",
+  "note": "Fixes aus #285 (Ionic-Anmeldung übernehmen, Android singleTask), vom Paritäts-Thread im Code nachgesehen. Gerätetest: device-checklist.md Zeilen 1, 2, 36, 66.",
+  "items": {
+    "x-3340d46ef9": {
+      "s": "ok",
+      "f": ["android/app/src/main/AndroidManifest.xml:14"],
+      "n": "behoben in #285: launchMode singleTask wie Ionic; Gerätetest (Link aus Gmail/WhatsApp, dann Icon) steht in device-checklist.md Zeile 36."
+    },
+    "x-6d9a24bfe2": {
+      "sev": "mittel",
+      "f": ["lib/core/services/native/ionic_session_takeover.dart:114", "ios/Runner/AppDelegate.swift:188", "android/app/src/main/kotlin/de/attendix/attendix/ionic/IonicSessionPlugin.kt:126"],
+      "n": "Teilweise behoben in #285: Beim ersten Start liest eine unsichtbare WebView die Ionic-Sitzung (sb-<ref>-auth-token) und currentTenantId aus dem localStorage und meldet per Refresh-Token an, Gruppe wird übernommen, Push registriert sofort. Weiter nicht übernommen: Ionic-Offline-Warteschlange (offline_writes_v1, noch nicht synchronisierte Änderungen gehen beim Update verloren), Sortier-/Ansichtsoptionen aus Ionic Storage, push_prompt_shown (wer in Ionic „Später“ gewählt hat, wird erneut gefragt). Auf Gerät prüfen: device-checklist.md Zeilen 1, 2, 21, 66."
+    }
+  }
+}

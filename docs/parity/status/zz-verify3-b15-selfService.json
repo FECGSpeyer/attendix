@@ -1,0 +1,193 @@
+{
+  "batch": "zz-verify3-b15-selfService",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "selfService/signout/signout.page#nav-abe2527f": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:92-115",
+        "lib/core/constants/enums.dart:137-141"
+      ],
+      "n": "Ionic Utils.getUrl(role) → /tabs/player | /tabs/parents | /tabs/signout; Flutter liest die Rolle der Ziel-Instanz (getTenantUserRole) und geht zu /people | /parents | /signout – gleiche Ziele je Rolle. Unbekannte Rolle: Ionic /register, Flutter /signout (Randfall).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#effect-8c8a4f8d": {
+      "s": "ok",
+      "f": [
+        "lib/core/constants/enums.dart:137-141",
+        "lib/features/self_service/presentation/pages/signout_page.dart:104"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#toast-2a800d7e": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:266-284",
+        "lib/core/providers/signout_providers.dart:284-300"
+      ],
+      "n": "Gleicher Text je isLate, grün; isSelf=true und understaffed-Hinweis für abgesagte eigene Dienste wie Ionic. Seite nur für Nicht-Dirigenten/Nicht-Eltern in beiden.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#alert-bf9b84ae": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:345-353",
+        "lib/shared/widgets/event_list/excuse_reason_sheet.dart:451-480"
+      ],
+      "n": "„Notiz für Anmeldung“, Platzhalter „Gib hier deine Notiz ein“, Abbrechen / Anmelden → handleSigninWithFields mit Notiz; nur bei offener Anmeldung, nicht X, nicht entschuldigt (beide).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#modal-dd81cc61": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:724-738",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:447-470"
+      ],
+      "n": "Sheet 0.75 mit Titel, Datum, Werken, Instrument der Person der aktuellen Instanz (appId + tenantId); „Ablaufplan öffnen“ nur bei hasPlan.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#toast-8c4e1e04": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_actions.dart:162"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#toast-f3239a75": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_actions.dart:164"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#toast-3dea23e3": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_actions.dart:168"
+      ],
+      "n": "Offene Dienste nur für Personen im Dienstkreis, duty_self_signup ?? true in beiden; RPC duty_take entscheidet serverseitig.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#effect-1e56ad93": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:437-452"
+      ],
+      "n": "Nur im Mandanten-Modus „Alle Termine“ (show_all_attendances) für fremde Termine ohne id; Reihenfolge Beschreibung → Ablaufplan → Anhang → Ort → Dateien gleich (Plan ohne Felder: Ionic öffnet leeren Plan, Flutter springt weiter – Randfall).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#alert-4cca859e": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:355-370",
+        "lib/shared/widgets/event_list/excuse_reason_sheet.dart:451-480"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#effect-1e56ad93-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:421-423",
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:508-509"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#toast-dd39dbcc": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:455-458"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#alert-1e78c190": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:564-691",
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:288-330"
+      ],
+      "n": "Kopf = Feldname; Text („...“)/Ja-Nein/Optionen/Checkboxen; Anmelde-Modus nur „Anmelden“ und nicht wegtippbar, Bearbeiten-Modus „Abbrechen“/„Speichern“; leeres Textfeld → Hinweis „signout.fillField“.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#toast-e5ca1d58": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_absences.dart:246-252"
+      ],
+      "n": "In beiden praktisch unerreichbar, weil der Button bei fehlenden Angaben deaktiviert ist.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#toast-94e9b1fc": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_absences.dart:59-79",
+        "lib/features/people/presentation/widgets/planned_absences.dart:25-28"
+      ],
+      "n": "Nur mit player_planned_absence der eigenen Rolle (beide). Text/Plural gleich; welche Termine entschuldigt (und damit gezählt) werden, weicht bei Dienst-Terminen/„Alle Termine“ ab → x-1962646a5f.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#toast-97b7c060": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/widgets/planned_absences.dart:270"
+      ],
+      "n": "Zurückgesetzte Termine siehe x-1962646a5f.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#alert-f9609962": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_absences.dart:120-135",
+        "lib/data/repositories/player_repository.dart:867-903"
+      ],
+      "n": "Sichtbar bei player_self_pause der Spieler-Rolle (gilt für alle Rollen der Seite, beide) und Person geladen; Pausierung beenden / Text / Abbrechen + Reaktivieren; Historie „Selbst reaktiviert“, paused=false, paused_until=null, wieder in kommende Termine.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#toast-479275a1": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_absences.dart:132-134",
+        "lib/core/utils/error_message.dart:24"
+      ],
+      "n": "Erstprüfer übersah den Text: Ionic „Fehler beim updaten des Spielers“ (danger, aus updatePlayer) / Flutter „Fehler: <Fehlertext>“ (friendlyErrorMessage, z. B. „Keine Internetverbindung vorhanden“). Flutter meldet zudem Fehler beim Wiedereintragen in kommende Termine (Ionic ohne await).",
+      "v": "korrigiert"
+    },
+    "selfService/signout/signout.page#action-2c096895": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:139-144",
+        "lib/features/self_service/presentation/widgets/self_service_absences.dart:82-117",
+        "lib/core/providers/role_permission_providers.dart:252-254"
+      ],
+      "n": "Bedingung canSelfPause (Recht der Spieler-Rolle) && Person && nicht pausiert; Bewerber ohne Knopf (beide).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-031946f4": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:145-150",
+        "lib/features/self_service/presentation/widgets/self_service_absences.dart:120-135"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-40830254": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190"
+      ],
+      "n": "Trenner „ · “ nach „Dringend“ vor Zeit/Belegung vorhanden (Flutter-Zeile „Datum · Dringend · 18:00 · 1/2 besetzt“; Datum/Hervorhebung gehören zu anderen Items). Nur in der Dienstplan-Ansicht (duty_view && im Dienstkreis), nicht für Bewerber – gleich."
+    },
+    "x-a5a4d95ac2": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/data/providers/upcoming_songs_provider.dart:86-96",
+        "lib/data/repositories/player_repository.dart:138-155",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:56"
+      ],
+      "n": "Zurückgenommen: in b218510 behoben – currentPlayerInstrumentProvider liest jetzt currentSelfServicePlayerProvider (getPlayerByAppId mit appId + tenantId); Rotmarkierung, Notenoptionen und Drucken nutzen die Stimme der aktuellen Instanz wie Ionic.",
+      "v": "korrigiert"
+    }
+  },
+  "extra": []
+}

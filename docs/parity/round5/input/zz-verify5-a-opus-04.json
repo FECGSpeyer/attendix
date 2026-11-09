@@ -1,0 +1,2011 @@
+{
+ "batch": "zz-verify5-a-opus-04",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/login.guard",
+   "ionic": {
+    "ts": "services/login.guard.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/login.guard.ts",
+    "line": 22,
+    "method": "LoginGuard.canActivate",
+    "cond": [
+     "(this.db.tenantUser())"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "url",
+    "src": "bf7180ad",
+    "mbody": "30fcfc6e",
+    "roleGuarded": true,
+    "id": "services/login.guard#nav-2cb09388"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/user_preferences_provider.dart",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+    ],
+    "n": "behoben in #284 (InstanceSelectionGate)",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/notification/notification.service",
+   "ionic": {
+    "ts": "services/notification/notification.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/notification/notification.service.ts",
+    "line": 42,
+    "method": "NotificationService.getNotificationConfig",
+    "cond": [
+     "(!data)"
+    ],
+    "table": "notifications",
+    "op": "insert",
+    "payload": "newData as any",
+    "options": [],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "dfc9dc1e",
+    "mbody": "461ac0e3",
+    "id": "services/notification/notification.service#db-8470a157"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/main.dart",
+     "lib/core/services/telegram_service.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/print/print.service",
+   "ionic": {
+    "ts": "services/print/print.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/print/print.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "printEntries:34-64",
+     "printSongFile:67-70",
+     "printBlob:73-104",
+     "printNative:106-119",
+     "mergeEntries:121-169",
+     "downloadEntry:171-182",
+     "toCacheFileName:191-200",
+     "isMobileWeb:202-206"
+    ],
+    "bodies": {
+     "printEntries": "61d66708",
+     "printSongFile": "14e8531b",
+     "printBlob": "f5d0608a",
+     "printNative": "fce83405",
+     "mergeEntries": "c38818c8",
+     "downloadEntry": "01c37282",
+     "toCacheFileName": "0c82aedd",
+     "isMobileWeb": "c8d1b148"
+    },
+    "id": "services/print/print.service#logic-e07957d3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/data/song_print_service.dart:57",
+     "lib/features/songs/data/song_print_service.dart:80",
+     "lib/core/services/native/native_file_service.dart:181"
+    ],
+    "n": "Sammeln, Kopien, Bilder auf A4 eingepasst, übersprungene zählen, Sperre gegen Doppeldruck und nativer Druckdialog mit Viewer-Fallback vorhanden. Unterschiede: PDF-Seiten werden mit 150 dpi gerastert statt als Vektorseiten übernommen; kein blockierender Ladehinweis (\"PDFs werden zusammengeführt...\"/\"Datei wird geladen...\"); mobiler Browser öffnet die PDF in neuem Tab statt Teilen/Download; Download nur über die öffentliche URL (Ionic Storage-Download mit fetch-Fallback). Siehe Extras.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/data/song_print_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/print/print.service",
+   "ionic": {
+    "ts": "services/print/print.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-6a833a4976",
+    "title": "PDF-Seiten werden gerastert",
+    "n": "Befund real. Ionic pdf-lib copyPages übernimmt die PDF-Seiten als Vektorseiten. Flutter Printing.raster(dpi: 150) → PNG je Seite in neues PDF (pdf-Paket kann keine PDFs importieren): unschärferer Notendruck, deutlich größere Datei und mehr Speicher bei großen Mappen.",
+    "sev": "mittel",
+    "ionic": "src/app/services/print/print.service.ts:150",
+    "f": [
+     "lib/features/songs/data/song_print_service.dart:80"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/songs/data/song_print_service.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "alert",
+    "file": "services/push/push.service.ts",
+    "line": 67,
+    "method": "PushService.promptAndEnable",
+    "cond": [],
+    "header": {
+     "keys": [
+      "svc.pushTitle"
+     ],
+     "de": [
+      "Push-Benachrichtigungen"
+     ],
+     "literals": [],
+     "expr": "translate('svc.pushTitle')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "svc.pushPrompt"
+     ],
+     "de": [
+      "Möchtest du Push-Benachrichtigungen aktivieren? Du wirst über Termine, Checklisten und wichtige Ereignisse informiert."
+     ],
+     "literals": [],
+     "expr": "translate('svc.pushPrompt')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "svc.later"
+       ],
+       "de": [
+        "Später"
+       ],
+       "literals": [],
+       "expr": "translate('svc.later')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { localStorage.setItem(PUSH_PROMPT_SHOWN_KEY, 'true'); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "svc.activate"
+       ],
+       "de": [
+        "Aktivieren"
+       ],
+       "literals": [],
+       "expr": "translate('svc.activate')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { localStorage.setItem(PUSH_PROMPT_SHOWN_KEY, 'true'); await this.initPush(); await this.enablePushInDb(); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "0ec65553",
+    "mbody": "a883a63d",
+    "roleGuarded": true,
+    "id": "services/push/push.service#alert-a499f987"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_service.dart",
+     "lib/core/providers/push_providers.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt-runde3.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 55,
+    "method": "PushService.promptAndEnable",
+    "cond": [],
+    "plugin": "PushNotifications",
+    "call": "checkPermissions",
+    "args": "",
+    "src": "5513a47c",
+    "mbody": "a883a63d",
+    "roleGuarded": true,
+    "id": "services/push/push.service#native-7521b3d9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_service.dart",
+     "lib/core/providers/push_providers.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt-runde3.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 95,
+    "method": "PushService.initPush",
+    "cond": [],
+    "plugin": "PushNotifications",
+    "call": "checkPermissions",
+    "args": "",
+    "src": "5513a47c",
+    "mbody": "92b48f51",
+    "roleGuarded": true,
+    "id": "services/push/push.service#native-9bb3502f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_service.dart",
+     "lib/core/providers/push_providers.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt-runde3.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/push/push.service.ts",
+    "line": 98,
+    "method": "PushService.initPush",
+    "cond": [
+     "(permStatus.receive === 'prompt')"
+    ],
+    "plugin": "PushNotifications",
+    "call": "requestPermissions",
+    "args": "",
+    "src": "954ff611",
+    "mbody": "92b48f51",
+    "roleGuarded": true,
+    "id": "services/push/push.service#native-c30ca494"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_service.dart",
+     "lib/core/providers/push_providers.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt-runde3.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/shift/shift.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "loadShifts:14-30",
+     "isShiftUsed:32-45",
+     "addShift:47-66",
+     "updateShift:68-78",
+     "deleteShift:80-90",
+     "getPlayersWithShift:92-106",
+     "assignShiftToPlayersInTenant:108-159",
+     "updateShiftAttendancesInTenant:161-245"
+    ],
+    "bodies": {
+     "loadShifts": "06c18568",
+     "isShiftUsed": "16c805dd",
+     "addShift": "e1e95e3c",
+     "updateShift": "31471b3f",
+     "deleteShift": "0002eeab",
+     "getPlayersWithShift": "47d5a500",
+     "assignShiftToPlayersInTenant": "ce90c87e",
+     "updateShiftAttendancesInTenant": "84e2f044"
+    },
+    "id": "services/shift/shift.service#logic-8cc479ce"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/shift_repository.dart:17",
+     "lib/core/providers/shift_providers.dart:108",
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:278",
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:451"
+    ],
+    "n": "Alle Methoden portiert (Repository/Notifier, Kopier-Sheet für Ziel-Instanz), Flutter filtert zusätzlich tenantId. Abweichungen: Segmente werden beim Laden nicht nach 'index' sortiert; Personenzahl fürs Kopieren zählt auch Personen ohne Account (siehe extra). Fehler-Toasts des Service sind eigene Items.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/shift_providers.dart",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/teacher/teacher.service",
+   "ionic": {
+    "ts": "services/teacher/teacher.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/teacher/teacher.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getTeachers:11-21",
+     "addTeacher:23-31",
+     "updateTeacher:33-41",
+     "deleteTeacher:43-48"
+    ],
+    "bodies": {
+     "getTeachers": "3f8ef0d0",
+     "addTeacher": "8ef153f2",
+     "updateTeacher": "4f3c39b7",
+     "deleteTeacher": "12298836"
+    },
+    "id": "services/teacher/teacher.service#logic-32d6a1c3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/teacher_repository.dart:14",
+     "lib/data/repositories/teacher_repository.dart:49",
+     "lib/data/repositories/teacher_repository.dart:75",
+     "lib/data/repositories/teacher_repository.dart:98"
+    ],
+    "n": "getTeachers/addTeacher/updateTeacher gleich (Flutter zusätzlich tenantId-Filter). deleteTeacher ist in Ionic toter Code, Flutter bietet Löschen aber an – siehe extra.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/teacher_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/teacher/teacher.service",
+   "ionic": {
+    "ts": "services/teacher/teacher.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-0df39acfdc",
+    "title": "Lehrer löschen nur in Flutter",
+    "n": "Befund real. Ionic: Lehrerliste ohne Lösch-Aktion (TeacherService.deleteTeacher ohne Aufrufer). Flutter: Admin und Verantwortlich können Lehrer per Wischen mit Bestätigung löschen (delete teachers nach id + tenantId) – zusätzliche Schreibmöglichkeit.",
+    "sev": "mittel",
+    "ionic": "src/app/services/teacher/teacher.service.ts:43",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:95",
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:172",
+     "lib/data/repositories/teacher_repository.dart:98"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-querschnitt.json",
+    "n": "behoben in #295"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/auto-messages/list/auto-message-list.page",
+   "ionic": {
+    "ts": "settings/auto-messages/list/auto-message-list.page.ts",
+    "html": "settings/auto-messages/list/auto-message-list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/auto-messages/list/auto-message-list.page.ts",
+    "line": 54,
+    "method": "AutoMessageListPage.load",
+    "cond": [],
+    "message": {
+     "keys": [
+      "autoMessages.loadFailed"
+     ],
+     "de": [
+      "Automatische Nachrichten konnten nicht geladen werden"
+     ],
+     "literals": [],
+     "expr": "translate('autoMessages.loadFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "eb05dd90",
+    "mbody": "1244eab2",
+    "roleGuarded": true,
+    "id": "settings/auto-messages/list/auto-message-list.page#toast-3c8301fd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/auto_message_list_page.dart"
+    ],
+    "n": "behoben in #304",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "settings/files/files.page.ts",
+    "line": 93,
+    "method": "FilesPage.shareEntry",
+    "cond": [
+     "(navigator.share)"
+    ],
+    "call": "navigator.share",
+    "args": "{ url, title }",
+    "src": "3793e297",
+    "mbody": "a1dd95be",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#effect-c39ff4df"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart",
+     "lib/core/utils/system_share.dart",
+     "lib/core/utils/system_share/system_share_web.dart",
+     "lib/core/utils/system_share/system_share_stub.dart"
+    ],
+    "n": "behoben in #299",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/general/extra-fields/extra-fields.page.ts",
+    "line": 235,
+    "method": "ExtraFieldsPage.resetExtraFieldValues",
+    "cond": [],
+    "header": {
+     "keys": [
+      "extraFields.resetValues"
+     ],
+     "de": [
+      "Werte zurücksetzen?"
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.resetValues')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "extraFields.resetValuesMessage"
+     ],
+     "de": [
+      "Möchtest du alle Werte des Feldes „{name}“ auf den Standardwert zurücksetzen? Dies kann nicht rückgängig gemacht werden!"
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.resetValuesMessage', { name: editingField.name })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "dashSettings.reset"
+       ],
+       "de": [
+        "Zurücksetzen"
+       ],
+       "literals": [],
+       "expr": "translate('dashSettings.reset')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { if (target !== 'person') { return; } const resolved = Utils.getFieldTypeDefaultValue( editingField.type, editingField.type === FieldType.SELECT ? undefined : editingField.defaultValue, editingField.options, this.db.churches()…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "6adb3a6f",
+    "mbody": "0252cd71",
+    "roleGuarded": true,
+    "id": "settings/general/extra-fields/extra-fields.page#alert-89775995"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart",
+     "lib/data/repositories/extra_fields_repository.dart"
+    ],
+    "n": "behoben in #303",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/general/extra-fields/extra-fields.page.ts",
+    "line": 204,
+    "method": "ExtraFieldsPage.removeEditExtraOption",
+    "cond": [
+     "(isExistingOption && optionToRemove)"
+    ],
+    "header": {
+     "keys": [
+      "extraFields.deleteOption"
+     ],
+     "de": [
+      "Option löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.deleteOption')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "extraFields.deleteOptionMessage"
+     ],
+     "de": [
+      "Wenn du die Option „{option}“ löschst, werden alle betroffenen Datensätze auf den Standardwert zurückgesetzt."
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.deleteOptionMessage', { option: optionToRemove })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { const newDefault = editingField.options[0] === optionToRemove ? (editingField.options[1] || '') : editingField.options[0]; if (target === 'person') { try { const count = await this.playerSvc.updateExtraFieldValue(this.db.tena…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "2a774bb0",
+    "mbody": "941b3c2c",
+    "roleGuarded": true,
+    "id": "settings/general/extra-fields/extra-fields.page#alert-bc12427a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart",
+     "lib/data/repositories/extra_fields_repository.dart"
+    ],
+    "n": "behoben in #303",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/general/extra-fields/extra-fields.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:37-41",
+     "ngOnInit:43-48",
+     "emptyField:50-52",
+     "getFieldTypeName:54-64",
+     "setDefaultValue:66-73",
+     "onExtraOptionChanged:75-78",
+     "onEditExtraOptionChanged:80-83",
+     "addExtraField:85-129",
+     "removeExtraField:131-142",
+     "handleReorder:144-150",
+     "openEditExtraField:152-163",
+     "closeEditExtraFieldModal:165-191",
+     "removeEditExtraOption:193-229",
+     "resetExtraFieldValues:231-256",
+     "save:258-297",
+     "haveFieldsChanged:299-315",
+     "sanitizePlayerAdditionalFields:317-349",
+     "backfillSongAdditionalFields:351-381",
+     "navigateBack:383-385",
+     "goBack:387-389"
+    ],
+    "bodies": {
+     "constructor": "54c32bf1",
+     "ngOnInit": "f21734a6",
+     "emptyField": "a94cf7a8",
+     "getFieldTypeName": "b2da41b7",
+     "setDefaultValue": "60399561",
+     "onExtraOptionChanged": "5f48f47a",
+     "onEditExtraOptionChanged": "91f4bfcb",
+     "addExtraField": "f48f78ac",
+     "removeExtraField": "28ddf6b1",
+     "handleReorder": "96ce99ca",
+     "openEditExtraField": "8c6f2eea",
+     "closeEditExtraFieldModal": "7f166437",
+     "removeEditExtraOption": "941b3c2c",
+     "resetExtraFieldValues": "0252cd71",
+     "save": "4fb72fd9",
+     "haveFieldsChanged": "24ec4f3b",
+     "sanitizePlayerAdditionalFields": "59f4355b",
+     "backfillSongAdditionalFields": "f3a8cbcc",
+     "navigateBack": "86962038",
+     "goBack": "b4169157"
+    },
+    "id": "settings/general/extra-fields/extra-fields.page#logic-27aa04c0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:88-208",
+     "lib/data/repositories/extra_fields_repository.dart:56-175"
+    ],
+    "n": "Laden aus additional_fields/song_additional_fields, ID aus Name, Validierung beim Speichern (gleiche Texte), Reorder, Löschen mit Dialog, tenants-Update beider Spalten und Bereinigung (fehlende Werte mit Default, ungültige Auswahl ersetzen, gelöschte Felder entfernen) wie Ionic; haveFieldsChanged/navigateBack toter Code. Abweichungen: Personen-Bereinigung erfasst auch archivierte/ausstehende Personen, Werk-Bereinigung nur eigene Instanz statt song_source_tenant (beide extra, mittel); Prüfung beim Hinzufügen erst nach Schließen und X verwirft (eigene Items); Zurück mit Rückfrage (nav/action-Items).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart",
+    "lib/data/repositories/extra_fields_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/general/general.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "unloadNotification:89-94",
+     "constructor:96-102",
+     "ngOnInit:104-155",
+     "getCurrentStateJson:160-182",
+     "hasUnsavedChanges:187-189",
+     "markAsSaved:194-196",
+     "navigateBack:201-207",
+     "confirmUnsavedChanges:212-239",
+     "loadAttendanceTypes:241-243",
+     "getEmptyCriticalRule:245-257",
+     "getPeriodTypeName:259-270",
+     "hasSelectableGroups:272-274",
+     "get noSelectableGroups:276-278",
+     "saveGeneralSettings:280-369",
+     "formatDate:371-373",
+     "onAttDateChange:375-381",
+     "getSongSharingLink:383-385",
+     "copySongSharingLink:387-390",
+     "getRegisterLink:392-394",
+     "copyRegisterLink:396-399",
+     "getStatusName:402-419",
+     "getAvailableStatuses:421-429",
+     "addCriticalRule:431-457",
+     "removeCriticalRule:459-474",
+     "getCriticalRuleDescription:476-501",
+     "addAbsenceReason:503-505",
+     "removeAbsenceReason:507-509",
+     "resetAbsenceReasons:511-513",
+     "addLateReason:515-517",
+     "removeLateReason:519-521",
+     "resetLateReasons:523-525",
+     "get hasDutyTypes:527-529"
+    ],
+    "bodies": {
+     "unloadNotification": "530f676b",
+     "constructor": "bbebfbab",
+     "ngOnInit": "9d23fe34",
+     "getCurrentStateJson": "b1aa7425",
+     "hasUnsavedChanges": "b6ad6d31",
+     "markAsSaved": "a593b420",
+     "navigateBack": "f290399d",
+     "confirmUnsavedChanges": "359e830e",
+     "loadAttendanceTypes": "80d42bc1",
+     "getEmptyCriticalRule": "68772a20",
+     "getPeriodTypeName": "0d463a1b",
+     "hasSelectableGroups": "9bcff0f0",
+     "get noSelectableGroups": "f25817ff",
+     "saveGeneralSettings": "a08e0334",
+     "formatDate": "d70a73a9",
+     "onAttDateChange": "b3f325e3",
+     "getSongSharingLink": "3dbb7068",
+     "copySongSharingLink": "866b1132",
+     "getRegisterLink": "6632d27c",
+     "copyRegisterLink": "2af24df1",
+     "getStatusName": "14c62205",
+     "getAvailableStatuses": "5be88ae5",
+     "addCriticalRule": "b0d35a3a",
+     "removeCriticalRule": "696e7465",
+     "getCriticalRuleDescription": "1d294d71",
+     "addAbsenceReason": "b129a1d1",
+     "removeAbsenceReason": "72b011ae",
+     "resetAbsenceReasons": "bd25b491",
+     "addLateReason": "6050d95b",
+     "removeLateReason": "e76a8f20",
+     "resetLateReasons": "7122519e",
+     "get hasDutyTypes": "e3258e01"
+    },
+    "id": "settings/general/general.page#logic-8f812cbf"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:119-178",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:184-311",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:313-317",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:901-931"
+    ],
+    "n": "Laden (Defaults Saisonbeginn 2023-01-01, Probenzeiten 18:00/20:00, Gründe-Defaults, Registrierungsfelder), Validierung (Name, Kürzel, Gruppen bei Registrierung), tenants-Update, evaluate-critical-rules, Speichern-Dialog mit 'Neu laden', Ungespeichert-Dialog (Abbrechen/Verwerfen/Speichern), Regel-Validierung und hasDutyTypes wie Ionic. Abweichungen in eigenen Items (Formate beim Schreiben, Info-Text, Statusliste, Beschreibung) und als extra: Probenzeiten nur in Flutter editierbar (mittel), Änderungserkennung, Regeln bearbeiten, Gründe sortieren, Legacy-period_type.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "extra": {
+    "id": "x-759bccbc9e",
+    "title": "Probenbeginn/-ende nur in Flutter editierbar",
+    "n": "Befund real. Ionic: practiceStart/practiceEnd nicht in der UI, nur mitgespeichert (Default 18:00/20:00); genutzt als Standardzeit in der Planung. Flutter: zusätzliche Felder 'Probenbeginn'/'Probenende' mit Zeitauswahl im Abschnitt 'Anwesenheiten' – Admin/Verantwortlich können einen Wert ändern, der in Ionic nicht editierbar ist.",
+    "sev": "mittel",
+    "ionic": "src/app/settings/general/general.page.ts:110",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:510",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:520",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:224"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-einstellungen.json",
+    "n": "behoben in #304"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 11,
+    "cond": [
+     "@if (linkedTenants.length > 0)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=copyToInstance()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "copy-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/shifts/shift/shift.page#action-34770ae6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/shift_providers.dart",
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart",
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+    ],
+    "n": "behoben in #299",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/general/shifts/shift/shift.page.ts",
+    "line": 132,
+    "method": "ShiftPage.copyToInstance",
+    "cond": [],
+    "header": {
+     "keys": [
+      "shifts.copyToTenant"
+     ],
+     "de": [
+      "In Instanz kopieren"
+     ],
+     "literals": [],
+     "expr": "translate('shifts.copyToTenant')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "shifts.chooseTarget"
+     ],
+     "de": [
+      "Wähle die Ziel-Instanz, in die der Schichtplan kopiert werden soll."
+     ],
+     "literals": [],
+     "expr": "translate('shifts.chooseTarget')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.next"
+       ],
+       "de": [
+        "Weiter"
+       ],
+       "literals": [],
+       "expr": "translate('common.next')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (tenantId: string) => { if (!tenantId) { Utils.showToast(translate('shifts.selectTenant'), 'warning'); return false; } // Get players assigned to this shift const playersWithShift = await this.db.getPlayersWithShift(this.db.tenant().…"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "inputs",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "17010921",
+    "mbody": "1f8f313b",
+    "roleGuarded": true,
+    "id": "settings/general/shifts/shift/shift.page#alert-8f8ff7ae"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart",
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+    ],
+    "n": "behoben in #299",
+    "v": null,
+    "src": "zz-fixed-einstellungen.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 550,
+    "cond": [
+     "@if (type)",
+     "@if (type.default_plan?.fields)",
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "time",
+     "id": "datetimestartplan",
+     "[disabled]": "\"!type.all_day\""
+    },
+    "events": [
+     "(ionChange)=calculateEnd()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"type.start_time\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[formatOptions]=\"{ time: { hour: '2-digit', minute: '2-digit', hour12: false } }\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/type/type.page#field-e2cc3102"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:563-574",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213"
+    ],
+    "n": "Schreibt wie Ionic type.start_time und ist bei ganztägigen Typen editierbar, aber nur bei „Werke verwalten“; kein 5-Minuten-Raster; keine Neuberechnung einer Endzeit (Flutter zeigt keine).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/general/type/type.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "unloadNotification:50-55",
+     "constructor:57-65",
+     "ngOnInit:67-126",
+     "hasUnsavedChanges:131-134",
+     "markAsSaved:141-143",
+     "navigateBack:148-154",
+     "confirmUnsavedChanges:160-187",
+     "save:189-203",
+     "createType:205-218",
+     "validate:220-237",
+     "deleteType:239-261",
+     "dismiss:263-287",
+     "getAttendanceStatusDescription:289-291",
+     "calculateTime:293-304",
+     "addExtraField:306-338",
+     "addSongPlaceholder:340-352",
+     "get hasAgendaMarker:354-356",
+     "onProtocolToggle:359-363",
+     "onDutyToggle:366-376",
+     "offerDutyView:383-408",
+     "openDutyHelp:410-412",
+     "openTeamHelp:414-416",
+     "addAgendaItemsPlaceholder:418-434",
+     "addNoteField:436-464",
+     "handleReorder:466-470",
+     "removeField:472-476",
+     "changeField:478-532",
+     "calculateEnd:534-545",
+     "onAvailableStatusesChanged:547-551",
+     "areSelectFieldsAvailable:553-555",
+     "selectedFieldType:557-559",
+     "onAdditionalFieldFilterChanged:561-571",
+     "closeRemindersModal:581-586",
+     "canAddReminder:591-593",
+     "addReminder:598-622",
+     "removeReminder:627-631",
+     "getFormattedReminder:636-644",
+     "addRegistrationField:651-679",
+     "removeRegistrationField:681-686",
+     "getRegFieldTypeLabel:688-696",
+     "isPresetDeadline:703-706",
+     "addChecklistItem:711-739",
+     "removeChecklistItem:744-749",
+     "editChecklistItem:754-784",
+     "getChecklistDeadlineText:789-794",
+     "handleChecklistReorder:799-803"
+    ],
+    "bodies": {
+     "unloadNotification": "530f676b",
+     "constructor": "2905aea1",
+     "ngOnInit": "d688dddc",
+     "hasUnsavedChanges": "83852b45",
+     "markAsSaved": "e8d834f2",
+     "navigateBack": "beec6ec6",
+     "confirmUnsavedChanges": "1bc51c13",
+     "save": "545e2258",
+     "createType": "6571dfbe",
+     "validate": "62326bd9",
+     "deleteType": "05167abe",
+     "dismiss": "05bdaf0a",
+     "getAttendanceStatusDescription": "8c3b00c0",
+     "calculateTime": "a9c14de9",
+     "addExtraField": "65428b54",
+     "addSongPlaceholder": "cb70f71d",
+     "get hasAgendaMarker": "2539f9d6",
+     "onProtocolToggle": "84872811",
+     "onDutyToggle": "5a082778",
+     "offerDutyView": "88ca4c16",
+     "openDutyHelp": "d1a9607d",
+     "openTeamHelp": "9a684bed",
+     "addAgendaItemsPlaceholder": "9835e36d",
+     "addNoteField": "3f54bd3f",
+     "handleReorder": "ba952aa8",
+     "removeField": "dc1250c5",
+     "changeField": "e7ec2f87",
+     "calculateEnd": "5635cd47",
+     "onAvailableStatusesChanged": "2c73fd7a",
+     "areSelectFieldsAvailable": "9744bd35",
+     "selectedFieldType": "45e7852d",
+     "onAdditionalFieldFilterChanged": "c1f61b56",
+     "closeRemindersModal": "f666f4e1",
+     "canAddReminder": "4b338e4e",
+     "addReminder": "6d2eb4ae",
+     "removeReminder": "799963a9",
+     "getFormattedReminder": "9feb9a8e",
+     "addRegistrationField": "51e65e55",
+     "removeRegistrationField": "cecf529a",
+     "getRegFieldTypeLabel": "30dc2c6c",
+     "isPresetDeadline": "0f2a7029",
+     "addChecklistItem": "6d413ca3",
+     "removeChecklistItem": "3e81b2cb",
+     "editChecklistItem": "4ffc1ee3",
+     "getChecklistDeadlineText": "67455864",
+     "handleChecklistReorder": "ea372a67"
+    },
+    "id": "settings/general/type/type.page#logic-20147d19"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:105-185",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1458-1538",
+     "lib/features/settings/presentation/pages/attendance_types_page.dart:180-271"
+    ],
+    "n": "Laden/Speichern/Validierung (Name, ≥2 Status), Ungespeichert-Dialog (Abbrechen/Verwerfen/Speichern, auch beforeunload), onDutyToggle, onProtocolToggle, Dienstplan-Angebot, Erinnerungs-/Anmeldefeld-Logik im Kern gleich. Abweichungen bei den Items (Ablaufplan nur bei „Werke verwalten“, kein Notizfeld/Ausführender/Info, Ja/Nein-Filter, Checklisten-Schalter, Neu-Anlage) und als extra: doppelte Feld-IDs → doppelte Keys im ReorderableListView, Agenda-Marker-Zeit nicht auf 0, null statt []/'' bzw. end_time/duration_days=null beim Speichern, Änderungs-Flag statt JSON-Vergleich (Speichern-FAB ohne Änderung gesperrt), Nutzungshinweis, >168 h abgelehnt, System-Zurück abgefangen.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/features/settings/presentation/pages/attendance_types_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "extra": {
+    "id": "x-0ad1beb81e",
+    "title": "Doppelte Feld-IDs im Ablaufplan",
+    "n": "Befund real, am SDK geprüft: ReorderableListView.builder umhüllt jedes Element mit _ReorderableListViewChildGlobalKey(subKey, state) ohne Index (material/reorderable_list.dart:562) → zwei Felder mit gleicher id = doppelter GlobalKey (Debug-Fehler, Release: eine Zeile verschwindet). Doppelte ids entstehen aus Ionic (Freitext-id = Text, z. B. zweimal 'Pause'; Werk-Platzhalter 1-basiert) und in Flutter selbst (Platzhalter 'song-placeholder-<Anzahl>' 0-basiert, nach Löschen erneut vergeben). Ionic trackt per Objekt, kein Problem. Daten bleiben erhalten, Bearbeiten des Ablaufplans unzuverlässig.",
+    "sev": "mittel",
+    "ionic": "src/app/settings/general/type/type.page.ts:326",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:578",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:596",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1255"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-einstellungen.json",
+    "n": "behoben in #302"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/handover-detail/handover-detail.page",
+   "ionic": {
+    "ts": "settings/handover-detail/handover-detail.page.ts",
+    "html": "settings/handover-detail/handover-detail.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/handover-detail/handover-detail.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:22-28",
+     "ngOnInit:30-60",
+     "changeGroup:62-86",
+     "getInsName:88-90",
+     "confirmProceed:92-111",
+     "proceed:113-149",
+     "trackByPersonId:151-151",
+     "goBack:153-155"
+    ],
+    "bodies": {
+     "constructor": "d05d1f66",
+     "ngOnInit": "5ee28f27",
+     "changeGroup": "3c05a96c",
+     "getInsName": "1b62ad7d",
+     "confirmProceed": "f48cc138",
+     "proceed": "0d0f4375",
+     "trackByPersonId": "3a373d8d",
+     "goBack": "18214997"
+    },
+    "id": "settings/handover-detail/handover-detail.page#logic-1c212d0f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_detail_page.dart:27-36",
+     "lib/features/settings/presentation/pages/handover_detail_page.dart:61-86",
+     "lib/features/settings/presentation/pages/handover_detail_page.dart:129-179",
+     "lib/data/repositories/player_repository.dart:1598-1607"
+    ],
+    "n": "Auto-Zuordnung (gleich oder enthält bei >2 Zeichen, sonst erste Gruppe), Bestätigung, Übergabe je Person mit Fehlerliste (Fehler/Duplikat → Liste), Tracking HandoverCreated, Rücknavigation gleich. Abweichend (extras der Erstprüfung): Zielgruppen nur nach Name statt category/sort_order/name sortiert (andere Reihenfolge/Default), Ladefehler mit Toast.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/handover-detail/handover-detail.page",
+   "ionic": {
+    "ts": "settings/handover-detail/handover-detail.page.ts",
+    "html": "settings/handover-detail/handover-detail.page.html"
+   },
+   "extra": {
+    "id": "x-6fbc5fbd93",
+    "title": "Reihenfolge der Zielgruppen",
+    "n": "Echt: Ionic GroupService.getGroups sortiert nach category, sort_order (nulls last), name / Flutter getTargetTenantGroups nur nach name. Die Zuordnung nimmt die erste Gruppe mit gleichem Namen oder Teiltreffer in dieser Reihenfolge, sonst die erste Gruppe → andere Reihenfolge im Auswahldialog und ggf. andere vorbelegte Zielgruppe (z. B. „Bb Trompete“ vor „Trompete“). Die Vorbelegung ist vor dem Übertragen sichtbar und änderbar → mittel.",
+    "sev": "mittel",
+    "ionic": "src/app/settings/handover-detail/handover-detail.page.ts:39-56",
+    "f": [
+     "lib/data/repositories/player_repository.dart:1568-1582",
+     "lib/features/settings/presentation/pages/handover_detail_page.dart:26-36",
+     "lib/features/settings/presentation/pages/handover_detail_page.dart:72-78"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-einstellungen.json",
+    "n": "behoben in #299"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/handover/handover.page",
+   "ionic": {
+    "ts": "settings/handover/handover.page.ts",
+    "html": "settings/handover/handover.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/handover/handover.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:32-36",
+     "ngOnInit:38-57",
+     "onMainGroupChanged:59-65",
+     "togglePersonSelection:67-75",
+     "selectAll:77-79",
+     "toDetail:81-91",
+     "filterBy:93-97",
+     "filter:99-111",
+     "onDateChange:113-121",
+     "formatDate:123-125",
+     "removeFilter:127-133",
+     "trackByPersonId:136-136",
+     "goBack:138-140"
+    ],
+    "bodies": {
+     "constructor": "f3312191",
+     "ngOnInit": "c0920ee2",
+     "onMainGroupChanged": "0e7fe2e9",
+     "togglePersonSelection": "602f185d",
+     "selectAll": "a15cbc8f",
+     "toDetail": "9e71c000",
+     "filterBy": "fc2f88cd",
+     "filter": "d28550d8",
+     "onDateChange": "355dc9d6",
+     "formatDate": "670140b7",
+     "removeFilter": "1514f1b6",
+     "trackByPersonId": "3a373d8d",
+     "goBack": "cd1360e7"
+    },
+    "id": "settings/handover/handover.page#logic-8f08a3c7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_page.dart:57-81",
+     "lib/features/settings/presentation/pages/handover_page.dart:97-152",
+     "lib/data/repositories/player_repository.dart:62-80"
+    ],
+    "n": "Hauptgruppen-Filter, Älter/Jünger-Filter (Personen ohne Geburtstag fallen raus), Gruppenfilter, Ziel-Instanzen, Default erste Instanz/erste Gruppe, Alle auswählen, Übergabe nur der gefilterten Auswahl entsprechen Ionic. Abweichung (extra der Erstprüfung): Personenliste in DB-Reihenfolge (instrument-ID, isLeader, Nachname) statt Utils.getModifiedPlayersForList (Hauptgruppe zuerst, Gruppen-sort_order, Gruppenname, Personen-sort_order, Nachname).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/handover_page.dart",
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/handover/handover.page",
+   "ionic": {
+    "ts": "settings/handover/handover.page.ts",
+    "html": "settings/handover/handover.page.html"
+   },
+   "extra": {
+    "id": "x-bb2ef2fc5d",
+    "title": "Sortierung der Personenliste",
+    "n": "Echt: Ionic sortiert über getModifiedPlayersForList (Hauptgruppe zuerst, Gruppen-sort_order, Gruppenname, Personen-sort_order, Nachname, isLeader egal) / Flutter zeigt playersProvider unverändert (instrument-ID, isLeader absteigend, Nachname). Sichtbar andere Reihenfolge der Auswahlliste.",
+    "sev": "mittel",
+    "ionic": "src/app/settings/handover/handover.page.ts:40",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_page.dart:296",
+     "lib/data/repositories/player_repository.dart:77"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-einstellungen.json",
+    "n": "behoben in #299"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/content/index",
+   "ionic": {
+    "ts": "settings/help/content/index.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/help/content/index.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function localizeHelp:49-62"
+    ],
+    "bodies": {
+     "function localizeHelp": "f755f40d"
+    },
+    "id": "settings/help/content/index#logic-45b4ee2c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/help/data/help_content_service.dart:199-215",
+     "lib/features/help/data/help_content.dart:244",
+     "lib/features/help/data/help_content.dart:268",
+     "lib/features/help/data/help_content_en.dart:145"
+    ],
+    "n": "localizeHelp-Logik gleich (nur en übersetzt, sonst Deutsch; Kategorielabel/Artikel/Glossar überlagert, deutscher Begriff als Alias). Eigener Textvergleich der 88 deutschen Artikel (Titel+Body) gegen Ionic 9f9b82af: 86 identisch; plan-beamer ohne Satz „Dort siehst du die ORG-Pläne der nächsten 8 Wochen und zusätzlich die letzten 20 vergangenen.“, songs-add bewusst umformuliert (extras der Erstprüfung).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/help/data/help_content_service.dart",
+    "lib/features/help/data/help_content.dart",
+    "lib/features/help/data/help_content_en.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/help/content/index",
+   "ionic": {
+    "ts": "settings/help/content/index.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-8d00ffba99",
+    "title": "Hilfeartikel plan-beamer veraltet",
+    "n": "Echt: Ionic planning.articles.ts:79 (und en/planning.en.ts:70) enthält „Dort siehst du die ORG-Pläne der nächsten 8 Wochen und zusätzlich die letzten 20 vergangenen.“ / Flutter-Artikel endet nach „… in der Gemeinde App erscheinen.“ (de und en). Fehlender Hinweis.",
+    "sev": "mittel",
+    "ionic": "src/app/settings/help/content/articles/planning.articles.ts:79",
+    "f": [
+     "lib/features/help/data/help_content.dart:244",
+     "lib/features/help/data/help_content_en.dart:142"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-einstellungen.json",
+    "n": "behoben in #299"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 269,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=updateUserData()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.save"
+    ],
+    "de": [
+     "Speichern"
+    ],
+    "literals": [],
+    "text": "{{ 'common.save' | transloco }}",
+    "id": "settings/settings/settings.page#action-100a2fb9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:346",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:349",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:227",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:256",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:258"
+    ],
+    "n": "Speichern-Eintrag und Felder (Name, Telefon, Geburtstag mit correctBirthday nur bei Änderung, Zusatzfelder inkl. Org-Feldern, Kirche) gleich. Ionic: Sheet bleibt nach dem Speichern offen, Eingaben wirken sofort live auf die Hero-Karte (auch ungespeichert) / Flutter: Sheet schließt nach Erfolg, ungespeicherte Eingaben verfallen beim Schließen; Flutter trimmt Namen/Telefon. Korrektur zur Erstnotiz: Ionic meldet Fehler sehr wohl (db.updateProfile zeigt 'Fehler beim Aktualisieren des Profils', wie Flutter). Instanzübergreifender Schreibweg ist im Service-Batch (b17 db-d030c88f) bewertet.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 165,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "in <ion-item>"
+    ],
+    "tag": "input",
+    "attrs": {
+     "type": "file",
+     "#": "imgChooser"
+    },
+    "events": [
+     "(change)=onImageSelect($event)"
+    ],
+    "link": null,
+    "model": "name=file",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/settings/settings.page#field-f65b81d3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:165",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:166",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:169"
+    ],
+    "n": "Ionic: <input type=file accept=image/*> – in der App (iOS-WebView) Auswahl Mediathek/Foto aufnehmen/Datei, Originaldatei wird hochgeladen / Flutter: native Apps nur ImageSource.gallery (keine Kamera-Option; PWA: Browser-Dateiauswahl ohne capture wie Ionic); Bild wird auf max. 1200 px, Qualität 85 verkleinert.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 912,
+    "cond": [
+     "in <ion-modal trigger=whatsnew-button>",
+     "@for (v of versionHistory; track v.version)",
+     "@if (v.date)"
+    ],
+    "tag": "#text",
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "Version {{ v.version }} ({{ v.date }})"
+    ],
+    "text": "Version {{ v.version }} ({{ v.date }})",
+    "id": "settings/settings/settings.page#text-7dea9c51"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/sheets/version_history_sheet.dart:166",
+     "assets/version_history.json:1"
+    ],
+    "n": "Kopf „Version x (Datum)“ gleich. Inhalt verschieden: Ionic version-history.json (4.19.9 … 1.4.0, 326 Einträge) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.41.0 … 0.1.0, 106 Einträge, darunter „Beta:“-Einträge). Gleiche Ursache wie text-8938a6a0.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "assets/version_history.json"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 780,
+    "cond": [],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "color": "primary"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ version }}"
+    ],
+    "text": "{{ version }}",
+    "id": "settings/settings/settings.page#text-87e51c97"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/settings_page.dart:549",
+     "lib/core/constants/app_constants.dart:10"
+    ],
+    "n": "Ionic: Badge mit package.json-Version (4.19.7) / Flutter: AppConstants.appVersion (0.38.1) – Nutzer sehen eine niedrigere, andere Versionsnummer.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/constants/app_constants.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 921,
+    "cond": [
+     "in <ion-modal trigger=whatsnew-button>",
+     "@for (v of versionHistory; track v.version)",
+     "@for (change of v.changes; track change)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ change }}"
+    ],
+    "text": "{{ change }}",
+    "id": "settings/settings/settings.page#text-8938a6a0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/sheets/version_history_sheet.dart:37",
+     "lib/shared/widgets/sheets/version_history_sheet.dart:176",
+     "lib/shared/widgets/sheets/version_history_sheet.dart:178",
+     "assets/version_history.json:1"
+    ],
+    "n": "Gleiche Darstellung ('Version x (Datum)' + je Änderung eine Zeile). Inhalt: Ionic version-history.json (4.19.x-Einträge) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.38.x, andere Einträge).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "assets/version_history.json"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 914,
+    "cond": [
+     "in <ion-modal trigger=whatsnew-button>",
+     "@for (v of versionHistory; track v.version)",
+     "@else (not v.date)"
+    ],
+    "tag": "#text",
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "Version {{ v.version }}"
+    ],
+    "text": "Version {{ v.version }}",
+    "id": "settings/settings/settings.page#text-b8c80f4b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/sheets/version_history_sheet.dart:167",
+     "assets/version_history.json:1"
+    ],
+    "n": "Fallback „Version x“ ohne Datum im Code vorhanden, erscheint aber nie: alle Flutter-Einträge haben ein Datum / Ionic zeigt ihn für 58 alte Einträge (3.5.0 … 1.4.0). Ursache und Behebung wie text-7dea9c51 (eigene Flutter-Historie).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "assets/version_history.json"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/voice-leader/voice-leader.page",
+   "ionic": {
+    "ts": "settings/voice-leader/voice-leader.page.ts",
+    "html": "settings/voice-leader/voice-leader.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/voice-leader/voice-leader.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:29-32",
+     "ngOnInit:34-40",
+     "loadGroupMembers:42-95",
+     "getEinteilung:97-102",
+     "getAbsenceText:104-107",
+     "getAbsenceColor:109-119",
+     "handleRefresh:121-124",
+     "goBack:126-128"
+    ],
+    "bodies": {
+     "constructor": "8417748a",
+     "ngOnInit": "714f2aca",
+     "loadGroupMembers": "5fea6ec3",
+     "getEinteilung": "81537b14",
+     "getAbsenceText": "cb678ef7",
+     "getAbsenceColor": "dae5ce87",
+     "handleRefresh": "5162c3dd",
+     "goBack": "cd1360e7"
+    },
+    "id": "settings/voice-leader/voice-leader.page#logic-767b1744"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/voice_leader/data/providers/voice_leader_providers.dart:36-45",
+     "lib/features/voice_leader/data/providers/voice_leader_providers.dart:61-120",
+     "lib/features/voice_leader/data/providers/voice_leader_providers.dart:138-144",
+     "lib/data/repositories/attendance_repository.dart:348-370",
+     "lib/data/repositories/player_repository.dart:200-219",
+     "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:25-110"
+    ],
+    "n": "Eigenes Profil per appId (aktive Zeile bevorzugt), Mitglieder der eigenen Gruppe (left null, nicht pending), Abwesenheiten Status 2/4/5 mit Datum nach heute 0 Uhr, nach Datum sortiert, Badge-Farben, Einteilung-Badge, Pull-to-Refresh entsprechen Ionic. Abweichungen: Sortierung mit Umlauten, Fall ohne Spielerprofil, archivierte Termine (extras der Erstprüfung) sowie neu: Abwesenheiten aller Mitglieder in EINER ungepagten Abfrage ohne Datumsfilter (siehe extra).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart",
+    "lib/data/repositories/attendance_repository.dart",
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/voice-leader/voice-leader.page",
+   "ionic": {
+    "ts": "settings/voice-leader/voice-leader.page.ts",
+    "html": "settings/voice-leader/voice-leader.page.html"
+   },
+   "extra": {
+    "id": "x-6eff6305bb",
+    "title": "Sortierung der Mitglieder bei Umlauten",
+    "n": "Echt: Ionic localeCompare (ICU, Umlaute wie Grundbuchstabe) / Flutter toLowerCase().compareTo (Code-Einheiten): „Müller“ steht nach „Mustermann“, „Özdemir“ nach „Zimmer“. Andere Reihenfolge bei Namen mit Umlauten.",
+    "sev": "mittel",
+    "ionic": "src/app/settings/voice-leader/voice-leader.page.ts:83",
+    "f": [
+     "lib/features/voice_leader/data/providers/voice_leader_providers.dart:138",
+     "lib/features/voice_leader/data/providers/voice_leader_providers.dart:141"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-einstellungen.json",
+    "n": "behoben in #299"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "settings/voice-leader/voice-leader.page",
+   "ionic": {
+    "ts": "settings/voice-leader/voice-leader.page.ts",
+    "html": "settings/voice-leader/voice-leader.page.html"
+   },
+   "extra": {
+    "id": "x-7da9b986f8",
+    "title": "Abwesenheiten ungepagt über alle Mitglieder",
+    "n": "Echt, Grenzfall: Ionic lädt je Mitglied alle person_attendances (der .gt auf attendance.date ohne !inner leert nur das Embed, Filter dann in JS) – Limit 1000 gilt pro Person / Flutter: eine Abfrage für ALLE Mitglieder, nur Status 2/4/5, ohne Datumsfilter, ohne order, ohne fetchAllPages; ab > 1000 Abwesenheitszeilen der ganzen Stimme kappt PostgREST willkürlich, kommende Abwesenheiten können fehlen. Nebenbei: Ionic blendet für Stimmführer archivierte Termine aus, Flutter nicht.",
+    "sev": "mittel",
+    "ionic": "src/app/settings/voice-leader/voice-leader.page.ts:63-72",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:348",
+     "lib/data/repositories/attendance_repository.dart:357",
+     "lib/features/voice_leader/data/providers/voice_leader_providers.dart:80"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-einstellungen.json",
+    "n": "behoben in #299"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "shared-plan/shared-plan.page.ts",
+    "line": 514,
+    "method": "SharedPlanPage.exportPdf",
+    "cond": [],
+    "call": "Utils.createPlanExport",
+    "args": "{ time: this.time, end: this.end, fields: this.fields, sideBySide, branding, dateLabel: this.planLabels.length ? `${dayjs(this.date).locale(currentLanguage()).…",
+    "src": "0d990f5d",
+    "mbody": "8daad4c2",
+    "id": "shared-plan/shared-plan.page#effect-228109d7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/public_brandings.dart:1",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+    ],
+    "n": "behoben in #300",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/notification-bell/notification-bell.component",
+   "ionic": {
+    "ts": "shared/notification-bell/notification-bell.component.ts",
+    "html": "shared/notification-bell/notification-bell.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "shared/notification-bell/notification-bell.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "unread:27-27",
+     "isOpen:29-29",
+     "constructor:35-45",
+     "ngOnInit:47-49",
+     "subscribe:51-83",
+     "refreshCount:85-91",
+     "load:93-102",
+     "onSegmentChange:108-119",
+     "tenantNameFor:126-129",
+     "open:131-161",
+     "onDismiss:163-166",
+     "handleRefresh:168-172",
+     "markAll:174-198",
+     "deleteAll:200-224",
+     "toggleRead:230-240",
+     "deleteOne:246-251",
+     "onTap:253-293",
+     "ngOnDestroy:295-297",
+     "removeChannel:301-306"
+    ],
+    "bodies": {
+     "unread": "2efa8bbe",
+     "isOpen": "8e73a7ad",
+     "constructor": "5e11c3eb",
+     "ngOnInit": "0c76f35c",
+     "subscribe": "ca9a77f4",
+     "refreshCount": "b1f560de",
+     "load": "c16379e9",
+     "onSegmentChange": "f7fbdcd0",
+     "tenantNameFor": "851b97c9",
+     "open": "75a19e61",
+     "onDismiss": "810b06e9",
+     "handleRefresh": "40c400de",
+     "markAll": "4afd4629",
+     "deleteAll": "dae10c52",
+     "toggleRead": "7e091674",
+     "deleteOne": "3be7395e",
+     "onTap": "6c277ca5",
+     "ngOnDestroy": "867133bc",
+     "removeChannel": "71a9411e"
+    },
+    "id": "shared/notification-bell/notification-bell.component#logic-a18396dd"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/messages/presentation/widgets/notification_bell.dart:39",
+     "lib/features/messages/presentation/widgets/notification_bell.dart:98",
+     "lib/core/providers/message_providers.dart:193",
+     "lib/core/providers/message_providers.dart:223"
+    ],
+    "n": "Badge (ungelesen, aktuelle Instanz, 99+), Öffnen mit Fallback „Alle“ und Toast bei leer, Realtime je Nutzer, Alle-markieren (Rückfrage nur in „Alle“), Alle-löschen mit segmentabhängigem Text, Umschalten gelesen/ungelesen, Tippen → gelesen + Navigation je Rolle wie navigateToAttendance – gleich. mittel wegen Instanzwechsel: Flutter _navigate (Zeile 100) wechselt vorab für JEDE Benachrichtigung auf targetTenantId (data.tenantId, sonst Zeilen-tenantId), auch für Geburtstag/Problemfall ohne Ziel; Ionic nur bei Route/Termin mit data.tenantId (siehe b29 extra).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart"
+   ]
+  }
+ ]
+}

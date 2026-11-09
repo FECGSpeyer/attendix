@@ -1,0 +1,276 @@
+{
+  "batch": "zz-verify2-b08-people",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "people/list/list.page#alert-eeaa4fb8": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:986",
+        "lib/features/people/presentation/pages/people_list_page.dart:1002",
+        "lib/features/people/presentation/pages/people_list_page.dart:1013",
+        "lib/features/people/presentation/pages/people_list_page.dart:1016",
+        "lib/features/people/presentation/pages/people_list_page.dart:1019",
+        "lib/core/providers/profile_providers.dart:67"
+      ],
+      "n": "Flutter besser: Für Zahlenfelder der Instanz gleich (Titel = Feldname, Zahlenfeld 'Wert eingeben', 'Abbrechen' → Alle, 'Filtern', leer → Alle; sichtbar für alle Rollen der Personenliste = Admin/Verantwortlicher/Beobachter, in beiden). Erstprüfer übersah den Mandanten-Fall Organisationsfelder: Ionic listet Org-Zahlenfelder im Filter (getPersonExtraFields), öffnet den Alert aber nur für tenant().additional_fields (list.page.ts:474) → kein Dialog, Filter wirkungslos (alle Personen, Icon trotzdem farbig) / Flutter: Dialog und Filter auch für Org-Zahlenfelder (personListExtraFieldsProvider). Vorbelegung: Ionic letzter gespeicherter Zusatzwert, Flutter nur bei gleichem aktivem Filter (kosmetisch). Treffer für Personen ohne Wert (Ionic-Default 0) siehe x-122934c2b4.",
+      "v": "korrigiert"
+    },
+    "people/list/list.page#toast-1106dfab": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1366",
+        "lib/features/people/presentation/pages/people_list_page.dart:1368",
+        "lib/features/people/presentation/pages/people_list_page.dart:1369"
+      ],
+      "n": "Erreichbar nur über die Wisch-Option 'Papierkorb' (Admin/Verantwortlicher, beide Apps); Vergleich appId mit eigener User-ID wie tenantUser().userId; roter Toast 'Du kannst dich nicht selbst entfernen!'; Slidable schließt (autoClose).",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-49667e4f": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:485",
+        "lib/features/people/presentation/pages/people_list_page.dart:722",
+        "lib/features/people/presentation/pages/people_list_page.dart:749",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:51",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:61"
+      ],
+      "n": "Bedingung >1 Instanz gleich (userTenantsProvider = alle tenantUsers des Nutzers wie db.tenants()); für alle Rollen der Personenliste (Admin/Verantwortlicher/Beobachter) '<longName> ⌄' links, kein Titel (iOS AppBar :722, Material centerTitle false :750).",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#popover-91edad79": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:99",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:118",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:122"
+      ],
+      "n": "Popover 220 breit mit allen Instanzen (iOS eigenes Glas-Popover, Material PopupMenuButton), schließt bei Auswahl; gleiche Rollen-/Instanzbedingung wie der Auslöser.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-f4181b04": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:124",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:135",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:354",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:389",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:405"
+      ],
+      "n": "Instanzname + Badge 'Aktuell' (primary) bei aktueller Instanz; Tipp auf aktuelle → nichts, sonst Instanz setzen + router.go(role.defaultRoute) = Utils.getUrl(Rolle der neuen Instanz). Fehlendes Overlay siehe loading-a2fa55fe.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#text-93340ccf": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:487",
+        "lib/features/people/presentation/pages/people_list_page.dart:749",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:51",
+        "lib/features/people/presentation/widgets/ion/ion_widgets.dart:540"
+      ],
+      "n": "≤1 Instanz: Titel = longName (Material: AppBar-Titel; iOS: kleiner Titel des Condense-Headers beim Scrollen), alle Rollen der Personenliste.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#text-93340ccf-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:491",
+        "lib/features/people/presentation/pages/people_list_page.dart:495"
+      ],
+      "n": "iOS + ≤1 Instanz: großer Condense-Titel mit longName.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-67e74d37": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:484",
+        "lib/features/people/presentation/pages/people_list_page.dart:944",
+        "lib/features/people/presentation/pages/people_list_page.dart:948",
+        "lib/features/people/presentation/pages/people_list_page.dart:1280"
+      ],
+      "n": "Nur Admin/Verantwortlicher (isAdmin wie Ionic), Beobachter nicht; Stift-Icon, 'Bulk-Bearbeitung'; übergibt die gefilterte/gesuchte Liste, lädt bei Änderung neu.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-09d8ea9a": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:950",
+        "lib/features/people/presentation/pages/people_list_page.dart:954",
+        "lib/features/people/presentation/pages/people_list_page.dart:1298"
+      ],
+      "n": "Nur Admin/Verantwortlicher; Upload-Icon, 'Personen importieren' → Import, Neuladen bei Erfolg.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-d74a8ace": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:956",
+        "lib/features/people/presentation/pages/people_list_page.dart:961"
+      ],
+      "n": "Nur Admin/Verantwortlicher und Sortierung 'Gruppe'; Label 'Reihenfolge anpassen' (Ionic-Variante 'Reihenfolge speichern' unerreichbar, Popover im Reorder-Modus ausgeblendet). Speichern-Unterschiede siehe db-a9ead6a0.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-8a40dbb1": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:605",
+        "lib/features/people/presentation/pages/people_list_page.dart:1682",
+        "lib/features/people/presentation/pages/people_list_page.dart:1687",
+        "lib/features/people/presentation/pages/people_list_page.dart:1692"
+      ],
+      "n": "Nur Admin/Verantwortlicher (Callbacks nur bei isAdmin, sonst keine Slidable); Beobachter ohne Wisch-Optionen wie Ionic; voller Wisch → pausieren bzw. aktivieren.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-7d1d1666": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1704",
+        "lib/features/people/presentation/pages/people_list_page.dart:1708"
+      ],
+      "n": "Nur Admin/Verantwortlicher; rot, Papierkorb → _remove (Selbst-Check, Archivieren/Entfernen).",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-4e3685b7": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1711",
+        "lib/features/people/presentation/pages/people_list_page.dart:1716",
+        "lib/features/people/presentation/pages/people_list_page.dart:1331"
+      ],
+      "n": "Nur Admin/Verantwortlicher, nicht pausierte Person; gelb, Pause-Icon → Haptik leicht + Pausieren-Sheet.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-c9c70280": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1711",
+        "lib/features/people/presentation/pages/people_list_page.dart:1716",
+        "lib/features/people/presentation/pages/people_list_page.dart:1337"
+      ],
+      "n": "Nur Admin/Verantwortlicher, pausierte Person; grün, Play-Icon → 'Person wieder aktivieren?'.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-8a40dbb1-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:629",
+        "lib/features/people/presentation/pages/people_list_page.dart:1687",
+        "lib/features/people/presentation/pages/people_list_page.dart:1692"
+      ],
+      "n": "Wie action-8a40dbb1 (gleiche Zeile bei Sortierung ≠ Gruppe).",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-7d1d1666-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1704",
+        "lib/features/people/presentation/pages/people_list_page.dart:1708"
+      ],
+      "n": "Wie action-7d1d1666.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-4e3685b7-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1711",
+        "lib/features/people/presentation/pages/people_list_page.dart:1716"
+      ],
+      "n": "Wie action-4e3685b7.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-c9c70280-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1711",
+        "lib/features/people/presentation/pages/people_list_page.dart:1716"
+      ],
+      "n": "Wie action-c9c70280.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-3afbca69": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:565",
+        "lib/features/people/presentation/pages/people_list_page.dart:566"
+      ],
+      "n": "Leerzustand: 'Personen importieren' nur Admin/Verantwortlicher (Beobachter nicht), wie Ionic.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-e4ea4870": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:661",
+        "lib/features/people/presentation/pages/people_list_page.dart:664"
+      ],
+      "n": "FAB '+' nur Admin/Verantwortlicher (Beobachter nicht); öffnet Neuanlage (Darstellung siehe modal-38ba21ec).",
+      "v": "bestätigt"
+    },
+    "people/members/members.page#text-0c9b16ea": {
+      "s": "ok",
+      "f": [
+        "lib/features/members/presentation/pages/members_page.dart:163",
+        "lib/features/members/presentation/pages/members_page.dart:164",
+        "lib/shared/widgets/layout/main_shell.dart:104",
+        "lib/core/router/route_access.dart:84"
+      ],
+      "n": "Badge 'Stimmführer' (primary) bei isLeader, unabhängig vom Instanztyp; Seite in beiden nur für Helfer/Stimmführer/Stimmführer-Helfer/Mitglied/NONE bei showMembersList.",
+      "v": "bestätigt"
+    },
+    "x-542476aae8": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:1573",
+        "lib/data/models/person/person.dart:141",
+        "lib/core/providers/realtime_providers.dart:46"
+      ],
+      "n": "Echt: teacherName ist includeFromJson false und wird nirgends gesetzt (enrichPlayers setzt nur groupName) → Ansicht 'Lehrer' zeigt bei allen Nicht-Hauptgruppen-Personen 'Kein Lehrer', Ionic 'Lehrer: <Name>'. Falsche Daten → hoch. Zusätzlich: Flutter prüft beim Anzeigen maintainTeachers nicht (Ionic showTeachers && maintainTeachers).",
+      "v": "bestätigt"
+    },
+    "x-122934c2b4": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:296",
+        "lib/features/people/presentation/pages/people_list_page.dart:1530",
+        "lib/features/people/presentation/pages/people_list_page.dart:1589",
+        "lib/features/people/presentation/pages/people_list_page.dart:1620",
+        "lib/shared/widgets/sheets/church_overview_sheet.dart:61"
+      ],
+      "n": "Echt. Beide Apps füllen beim Speichern der Zusatzfelder fehlende Werte auf (Flutter extra_fields_page.dart:186), daher v. a.: Zahlenfelder (mit 0 aufgefüllt) zeigen in Flutter Badge/Zeile '<Feld> 0' bei allen, Ionic blendet 0 aus; Personen ohne gespeicherten Wert (z. B. Org-Felder) bekommen in Ionic Defaults für Badge/Filter/Gemeinde-Übersicht, in Flutter nicht.",
+      "v": "bestätigt"
+    },
+    "x-efc684b2eb": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/people_list_utils.dart:75",
+        "lib/features/people/people_list_utils.dart:85"
+      ],
+      "n": "Echt: sortPeopleByGroup nutzt toLowerCase().compareTo (ü=U+00FC nach z) → z. B. 'Mustermann' vor 'Müller', 'Schmidt' vor 'Schäfer'; Ionic localeCompare. Sichtbare Reihenfolge in der Standard-Sortierung 'Gruppe'.",
+      "v": "bestätigt"
+    },
+    "x-e7ca7e309b": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/members/data/providers/members_providers.dart:116"
+      ],
+      "n": "Echt: Ionic füllt fehlende 'einteilung' mit defaultValue bzw. erster Option (Mitgliederseite ohne Org-Werte-Hydrierung, ein Org-Feld 'einteilung' landet damit immer beim Default) / Flutter vergleicht nur den gespeicherten Wert. Betrifft Personen ohne gespeicherten Wert.",
+      "v": "bestätigt"
+    },
+    "x-24bba1cc4b": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/members/data/providers/members_providers.dart:28",
+        "lib/features/people/people_list_utils.dart:75",
+        "lib/features/people/people_list_utils.dart:85"
+      ],
+      "n": "Echt: gleiche Ursache wie x-efc684b2eb (sortPeopleByGroup mit toLowerCase().compareTo), hier auf der Mitgliederseite; Ionic localeCompare.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

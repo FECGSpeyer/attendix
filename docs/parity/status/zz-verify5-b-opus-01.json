@@ -1,0 +1,393 @@
+{
+ "batch": "zz-verify5-b-opus-01",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-333c131c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:146-150",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:309-314",
+    "lib/core/utils/toast_helper.dart:54-61"
+   ],
+   "n": "Unverändert: _save() prüft leeren/whitespace-Titel vor dem Speichern, oranger Warn-Toast „Bitte einen Titel eingeben“ (agendaEnterTitle), kein DB-Aufruf. Speichern-FAB nur isTeamLeader (ADMIN/RESPONSIBLE wie Ionic isTeamLeaderRole) und bei Item oder neu.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-07b55f9c": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:107-111",
+    "lib/core/router/app_router.dart:187",
+    "lib/core/router/app_router.dart:1023-1026"
+   ],
+   "n": "/tabs/settings/teachers → /settings/teachers (TeachersListPage); Guard _isConductor = ADMIN/RESPONSIBLE/VIEWER wie Ionic isUrlAccessAllowed, sonst role.defaultRoute (= Utils.getUrl).",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-1ed5378b": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:93-94",
+    "lib/core/router/app_router.dart:166",
+    "lib/core/router/app_router.dart:1097-1100"
+   ],
+   "n": "/tabs/settings/general → /settings/general (GeneralSettingsPage), nur ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-259813cd": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:107-111",
+    "lib/core/router/app_router.dart:180",
+    "lib/core/router/app_router.dart:1283-1296"
+   ],
+   "n": "/tabs/settings/handover → /settings/handover (HandoverPage), nur ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-26467c34": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:84-88",
+    "lib/core/router/app_router.dart:1064-1069"
+   ],
+   "n": "/tabs/settings/agenda-items (ohne id) → /settings/team-organization wie Ionic redirectTo (pathMatch full); mit id → /settings/agenda-items/:id.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-30d5de34": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:255-261",
+    "lib/core/router/app_router.dart:304",
+    "lib/core/router/app_router.dart:1371-1376"
+   ],
+   "n": "Öffentliche Route /:songSharingId → SongsListPage(songSharingId), ohne Login (_isPublicSongsRoute), als letzte registriert wie Ionic-Reihenfolge.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-362ac3d6": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:95-96",
+    "lib/core/router/app_router.dart:167",
+    "lib/core/router/app_router.dart:1107-1110"
+   ],
+   "n": "/tabs/settings/general/types → /settings/types (AttendanceTypesPage), nur ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-3957412a": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:48-49",
+    "lib/core/router/app_router.dart:188",
+    "lib/core/router/app_router.dart:826-832"
+   ],
+   "n": "/tabs/player → /people (PeopleListPage); canSeePeopleTab = ADMIN/RESPONSIBLE/VIEWER wie Ionic isUrlAccessAllowed; /tabs → Rollen-Startseite über /open-link.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-3a204f54": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:311-316",
+    "lib/core/router/app_router.dart:538-545"
+   ],
+   "n": "/open-attendance öffentlich erreichbar; abgemeldet wird der Link gemerkt und nach Login fortgesetzt (Ionic pendingAttendanceId + /login), Seite übernimmt Mandantwechsel und Weiterleitung.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-4195df74": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:255-261",
+    "lib/core/router/app_router.dart:1360-1363"
+   ],
+   "n": "/app → AppRedirectPage, öffentlich, vor dem :songSharingId-Wildcard.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-49fc5ebe": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:293-294",
+    "lib/core/router/app_router.dart:492-499"
+   ],
+   "n": "/register/:id → TenantRegistrationPage, ohne Login und ohne Terms-/Rollen-Gate (isTenantRegistration) wie Ionic (kein Guard).",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-54b016ce": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:65-71",
+    "lib/core/router/app_router.dart:197",
+    "lib/core/router/app_router.dart:1302-1309"
+   ],
+   "n": "/tabs/home-dashboard → /home-dashboard (HomeDashboardPage), nur ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-57e60fc9": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:255-261",
+    "lib/core/router/app_router.dart:1377-1383"
+   ],
+   "n": "Öffentliche Route /:songSharingId/:songId → SongDetailPage(songId, songSharingId), ohne Login.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-5d496c10": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:84-88",
+    "lib/core/router/app_router.dart:1064-1074"
+   ],
+   "n": "/tabs/settings/tasks (ohne id) → /settings/team-organization wie Ionic redirectTo; mit id → /settings/tasks/:id.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-600bc78e": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:103-106",
+    "lib/core/router/app_router.dart:184",
+    "lib/core/router/app_router.dart:1193-1197"
+   ],
+   "n": "/tabs/settings/org-settings/planning-templates → /settings/org-settings/planning-templates (OrgPlanningTemplatesPage), Guard über Präfix /settings/org-settings = ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-61b8a146": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:296-298",
+    "lib/core/router/app_router.dart:502-506"
+   ],
+   "n": "/legal → LegalPage, öffentlich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-64f686ec": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:107-111",
+    "lib/core/router/app_router.dart:198",
+    "lib/core/router/app_router.dart:1268-1272"
+   ],
+   "n": "/tabs/settings/dashboard → /settings/dashboard (DashboardSettingsPage), nur ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-66af9bdd": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:107-111",
+    "lib/core/router/app_router.dart:183",
+    "lib/core/router/app_router.dart:1177-1187"
+   ],
+   "n": "/tabs/settings/org-plans/planung → /settings/org-plans/planung (PublicPlanningPage inApp, fromOrgPlans), Guard über /settings/org-plans = ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-74c4b07e": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:107-111",
+    "lib/core/router/app_router.dart:182",
+    "lib/core/router/app_router.dart:1171-1175"
+   ],
+   "n": "/tabs/settings/planung → /settings/planung (PublicPlanningPage inApp), nur ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-7f7cfdbd": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:24-29"
+   ],
+   "n": "'' bzw. '/' → /login (Query bleibt erhalten); Login-Redirect für Angemeldete entspricht LoginGuard.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-80d287ce": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:299-301",
+    "lib/core/router/app_router.dart:513-517"
+   ],
+   "n": "/teams-config → TeamsConfigPage, öffentlich (außerhalb Login-Gate) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-892610fa": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:255-261",
+    "lib/core/router/app_router.dart:1363-1370"
+   ],
+   "n": "/open-file → OpenFilePage(tenantId, path, folder) öffentlich; Seite selbst merkt Link und schickt zum Login wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-8b879178": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:102",
+    "lib/core/router/app_router.dart:166",
+    "lib/core/router/app_router.dart:1257-1261"
+   ],
+   "n": "/tabs/settings/general/branding → /settings/general/branding (BrandingPage), Guard über Präfix /settings/general = ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-8fe0e4ca": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:107-111",
+    "lib/core/router/app_router.dart:174",
+    "lib/core/router/app_router.dart:1247-1251"
+   ],
+   "n": "/tabs/settings/role-permissions → /settings/role-permissions, nur ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-956f337d": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:209",
+    "lib/core/router/app_router.dart:533-537"
+   ],
+   "n": "/org-plan → OrgPlanPublicPage(key), öffentlich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-9a25908b": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:107-111",
+    "lib/core/router/app_router.dart:183",
+    "lib/core/router/app_router.dart:1176-1180"
+   ],
+   "n": "/tabs/settings/org-plans → /settings/org-plans (OrgPlansPage), nur ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-9ddb8b7c": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:80",
+    "lib/core/router/app_router.dart:971-977"
+   ],
+   "n": "/tabs/settings → /settings (SettingsPage) für alle Rollen wie Ionic (kein Eintrag in _protectedRoutes trifft genau /settings).",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-a99e6e47": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:107-111",
+    "lib/core/router/app_router.dart:180",
+    "lib/core/router/app_router.dart:1287-1295"
+   ],
+   "n": "/tabs/settings/handover/detail → /settings/handover/detail (Daten per extra, ohne Daten Fehler-Toast und zurück wie Ionic handover.noData), ADMIN/RESPONSIBLE.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-bd3213ab": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:209",
+    "lib/core/router/app_router.dart:519-527"
+   ],
+   "n": "/plan → SharedPlanPage(id, key, edit), öffentlich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-c4744fe8": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:107-111",
+    "lib/core/router/app_router.dart:1239-1246",
+    "lib/features/settings/presentation/pages/files_page.dart:1044",
+    "lib/features/settings/presentation/pages/files_page.dart:1186-1193",
+    "lib/core/providers/role_permission_providers.dart:116-120"
+   ],
+   "n": "Zugriff wie Ionic canAccessFiles (files_shared: alle außer Bewerber/NONE, sonst ADMIN/RESPONSIBLE/HELPER/VLH), Prüfung in der Seite: ohne Zugriff Text „Du hast keinen Zugriff auf Dateien.“ statt Rücksprung auf die Startseite – gleiche Wirkung (kein Zugriff).",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-c75ffb00": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:65-71",
+    "lib/core/router/route_access.dart:72-76",
+    "lib/core/router/app_router.dart:895-902"
+   ],
+   "n": "/tabs/signout → /signout; Gate !isConductor && !isParent (HELPER/PLAYER/APPLICANT/VL/VLH/NONE) = Ionic isUrlAccessAllowed + getUrl(NONE).",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-c862e0d0": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:107-111",
+    "lib/core/router/app_router.dart:168",
+    "lib/core/router/app_router.dart:1017-1021"
+   ],
+   "n": "/tabs/settings/instruments → /settings/instruments, nur ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-d10242f3": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:95-96",
+    "lib/core/router/app_router.dart:167",
+    "lib/core/router/app_router.dart:1111-1119"
+   ],
+   "n": "/tabs/settings/general/types/:id → /settings/types/:id (AttendanceTypeEditPage), ADMIN/RESPONSIBLE wie Ionic includes('/tabs/settings/general/types/').",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-d6ee1e0c": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:456-460",
+    "lib/core/router/app_router.dart:334-356"
+   ],
+   "n": "/login: Angemeldete mit Instanz → homeRouteFor (Dashboard oder Rollen-Startseite) wie LoginGuard; zusätzlich Terms-Gate und gemerkte Links.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-e346b9e2": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:305-309",
+    "lib/core/router/app_router.dart:528-532"
+   ],
+   "n": "/planung öffentlich; Angemeldete werden wie Ionic (public-planning ngOnInit) auf /settings/planung umgeleitet (dort ADMIN/RESPONSIBLE). Randfall: angemeldeter Spieler landet in Flutter auf /signout, in Ionic blockiert der AuthGuard die Navigation und die Seite bleibt uninitialisiert.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-ed286061": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:89-90",
+    "lib/core/router/app_router.dart:1028-1039"
+   ],
+   "n": "/tabs/settings/meetings(/…) → /settings/team-organization wie Ionic redirectTo (prefix).",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-ede3e6e8": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:65-71",
+    "lib/core/router/route_access.dart:69-70",
+    "lib/core/router/app_router.dart:916-924"
+   ],
+   "n": "/tabs/parents → /parents (normales Design: ParentsPortalPage), nur PARENT wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-f9c1060e": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:103-106",
+    "lib/core/router/app_router.dart:184",
+    "lib/core/router/app_router.dart:1188-1192"
+   ],
+   "n": "/tabs/settings/org-settings → /settings/org-settings (OrgSettingsPage), nur ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-fc0d5b73": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:63-64",
+    "lib/core/router/app_router.dart:200",
+    "lib/core/router/app_router.dart:1337-1343"
+   ],
+   "n": "/tabs/org-plans → /org-plans-tab (OrgPlansPage), nur ADMIN/RESPONSIBLE wie Ionic.",
+   "v": "bestätigt"
+  },
+  "app.component#db-c155d49d": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:137-150",
+    "lib/core/providers/push_providers.dart:59-96",
+    "lib/features/auth/data/auth_link_listener.dart:26-32"
+   ],
+   "n": "onAuthStateChange: PASSWORD_RECOVERY → Alert „Neues Passwort“; SIGNED_IN → Tracking Login, Push promptAndEnable (nur nativ), Native-App-Hinweis (nur Web); SIGNED_OUT → Push-Token entfernen, Router leitet auf /login. Kein Tabellen-Schreibzugriff außer Device-Token wie Ionic.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

@@ -1,0 +1,1099 @@
+{
+ "batch": "b08-people",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "people/list/list.page#logic-9183f2d4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:250",
+    "lib/features/people/presentation/pages/people_list_page.dart:316",
+    "lib/features/people/presentation/pages/people_list_page.dart:404",
+    "lib/features/people/presentation/pages/people_list_page.dart:121",
+    "lib/features/people/presentation/pages/people_list_page.dart:1563",
+    "lib/features/people/presentation/pages/people_list_page.dart:1599",
+    "lib/data/repositories/player_repository.dart:1844",
+    "lib/core/providers/realtime_providers.dart:32",
+    "lib/core/providers/attendance_providers.dart:275",
+    "lib/features/people/people_list_utils.dart:59"
+   ],
+   "n": "Laden (Realtime, Tenant-Filter), Filter-/Sortier-/Ansichtsoptionen inkl. Reihenfolge und Bedingungen, Speicherung je Instanz, Pausieren/Aktivieren/Archivieren/Entfernen, Auto-Entpausieren, Geburtstags-Banner, Reorder im Kern gleich. Abweichungen: Lehrer-Zeile zeigt immer 'Kein Lehrer' (teacherName wird nie befüllt), Zusatzfeld-Defaults werden nicht angewendet, Umlaute in der Gruppen-Sortierung, Anwesenheits-Badge bei 0 Terminen, Reorder speichert alle Personen, Auto-Entpausieren nur beim ersten Öffnen; mehrere Punkte 'Flutter besser' – siehe extra.",
+   "sev": "hoch"
+  },
+  "people/list/list.page#loading-a2fa55fe": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:389"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay (ohne Text, 3 s) beim Instanzwechsel über das Header-Popover / Flutter: switchTenant ohne Overlay.",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#nav-90d2a585": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:405",
+    "lib/core/constants/enums.dart:137"
+   ],
+   "n": "router.go(role.defaultRoute) = Utils.getUrl: Admin/Verantwortlicher/Betrachter → Personen, Eltern → Eltern-Seite, sonst Abmelde-Seite."
+  },
+  "people/list/list.page#effect-42a1d825": {
+   "s": "ok",
+   "f": [
+    "lib/core/constants/enums.dart:137"
+   ],
+   "n": "Zielroute je Rolle wie Utils.getUrl (Role.defaultRoute)."
+  },
+  "people/list/list.page#alert-1947a6d2": {
+   "s": "na",
+   "n": "toter Code: showReleaseNotesAlert kehrt wegen `if (hasSeen || true) return;` (list.page.ts:152) immer vor dem Alert zurück."
+  },
+  "people/list/list.page#nav-a0bd37ce": {
+   "s": "na",
+   "n": "toter Code: Button-Handler des nie angezeigten Release-Notes-Alerts (list.page.ts:152 `|| true`)."
+  },
+  "people/list/list.page#db-ce70f764": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/realtime_providers.dart:79",
+    "lib/core/providers/realtime_providers.dart:103"
+   ],
+   "n": "Realtime-Abo auf Tabelle player (tenantId-Filter + DELETE über bekannte ids) lädt die Liste neu; im Reorder-Modus nutzt Flutter eine eigene Id-Liste, Reload stört nicht (Ionic: Reload ausgesetzt)."
+  },
+  "people/list/list.page#db-883313ef": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/realtime_providers.dart:80"
+   ],
+   "n": "Kanal 'player_changes_<tenantId>' statt 'player-changes'; gleiche Tabelle/Ereignisse."
+  },
+  "people/list/list.page#modal-38ba21ec": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:604",
+    "lib/features/people/presentation/pages/people_list_page.dart:529",
+    "lib/features/people/presentation/pages/people_list_page.dart:664",
+    "lib/core/router/app_router.dart:799",
+    "lib/core/router/app_router.dart:804",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1700"
+   ],
+   "n": "Ionic: PersonPage als Modal (iOS-Card mit presentingElement, backdropDismiss false), readOnly = !isAdmin / Flutter: context.push('/people/<id>') bzw. '/people/new' – normale Seite im Shell (Tab-Leiste bleibt sichtbar, Zurück statt Modal-Schließen). readOnly-Logik gleich (Admin/Verantwortlicher).",
+   "sev": "mittel"
+  },
+  "people/list/list.page#loading-275de79e": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:463",
+    "lib/features/people/presentation/pages/people_list_page.dart:1169"
+   ],
+   "n": "Ionic: blockierendes Overlay 'Reihenfolge wird gespeichert...' / Flutter: nur Spinner im Häkchen-Button, kein Overlay (X-Abbrechen und Ziehen bleiben bedienbar).",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#db-a9ead6a0": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1163",
+    "lib/features/people/presentation/pages/people_list_page.dart:1171",
+    "lib/data/repositories/player_repository.dart:1844"
+   ],
+   "n": "Ionic: update player.sort_order nur für Personen mit sort_order != null (verschobene Gruppe + bereits gesetzte Werte), Filter nur id / Flutter: schreibt sort_order 1..n für alle (gefilterten) Personen aller Gruppen, mit id + tenantId. Folge: auch nie sortierte Gruppen erhalten feste Werte, später neu angelegte Personen landen dort am Gruppenende statt alphabetisch.",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#toast-c81105f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1173"
+   ]
+  },
+  "people/list/list.page#toast-9a849d38": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1176"
+   ]
+  },
+  "people/list/list.page#alert-0eb34b23": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1084",
+    "lib/features/people/presentation/pages/people_list_page.dart:1095"
+   ],
+   "n": "Ionic: Alert 'Instanz wählen' mit Radio-Liste (gespeicherte Instanz vorausgewählt) und Buttons 'Abbrechen' (setzt Filter auf Alle) / 'Filtern' / Flutter: Auswahl-Dialog 'Instanz wählen' ohne Buttons, Tipp auf eine Instanz filtert sofort, Schließen lässt den bisherigen Filter stehen. Gefilterte Daten gleich (Nicht-Betrachter-Konten der Instanz).",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#alert-eeaa4fb8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1002",
+    "lib/features/people/presentation/pages/people_list_page.dart:1013",
+    "lib/features/people/presentation/pages/people_list_page.dart:1018",
+    "lib/features/people/presentation/pages/people_list_page.dart:1021"
+   ],
+   "n": "Titel = Feldname, Zahlenfeld mit 'Wert eingeben', 'Abbrechen' → Alle, 'Filtern' (Stringvergleich wie Ionic). Vorbelegung nur bei gleichem aktivem Filter (Ionic: zuletzt gespeicherter Zusatzwert)."
+  },
+  "people/list/list.page#alert-1081984d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1027",
+    "lib/features/people/presentation/pages/people_list_page.dart:1029",
+    "lib/features/people/presentation/pages/people_list_page.dart:1036"
+   ],
+   "n": "Ionic: Alert mit Radio 'Ja'/'Nein' (Ja bzw. gespeicherter Wert vorausgewählt) und 'Abbrechen' (→ Alle) / 'Filtern' / Flutter: einfacher Auswahl-Dialog 'Ja'/'Nein' ohne Buttons, Tipp filtert sofort, Schließen → Alle. Default true für leere Werte gleich.",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#alert-76ef2f5f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1030",
+    "lib/features/people/presentation/pages/people_list_page.dart:1036",
+    "lib/features/people/presentation/pages/people_list_page.dart:296"
+   ],
+   "n": "Ionic: Alert mit Radio-Liste (Optionen bzw. Gemeindenamen, erste/gespeicherte vorausgewählt) und 'Abbrechen' (→ Alle) / 'Filtern' / Flutter: Auswahl-Dialog ohne Buttons, Tipp filtert sofort. Zudem trifft Ionic Personen ohne Wert über den aufgefüllten Default (erste Option bzw. erste Gemeinde/defaultValue), Flutter nicht – siehe extra.",
+   "sev": "mittel"
+  },
+  "people/list/list.page#toast-1106dfab": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1367",
+    "lib/features/people/presentation/pages/people_list_page.dart:1369"
+   ]
+  },
+  "people/list/list.page#actionsheet-95b42378": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1372",
+    "lib/shared/widgets/adaptive/app_action_sheet.dart:59"
+   ],
+   "n": "'Archivieren' / 'Entfernen' / 'Abbrechen' (von showAppActionSheet ergänzt); Archivieren öffnet den Archiv-Dialog, Entfernen die Bestätigung."
+  },
+  "people/list/list.page#native-79bc7764": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1471",
+    "lib/core/utils/haptic_helper.dart:15"
+   ]
+  },
+  "people/list/list.page#alert-3e99f381": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1472",
+    "lib/core/utils/dialog_helper.dart:12"
+   ],
+   "n": "Gleicher Titel/Text, 'Abbrechen' / 'Entfernen' (in Flutter rot gestaltet); löscht Person + entzieht Zugang wie db.removePlayer."
+  },
+  "people/list/list.page#loading-5e1535fb": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1480"
+   ],
+   "n": "Ionic: blockierendes Overlay 'Person wird entfernt...' / Flutter: kein Overlay.",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#toast-aac6b1fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1483"
+   ]
+  },
+  "people/list/list.page#toast-8b738017": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1485"
+   ],
+   "n": "Roter Toast; Flutter: 'Fehler: <Fehlertext>'."
+  },
+  "people/list/list.page#native-fae6edc2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1332",
+    "lib/core/utils/haptic_helper.dart:8"
+   ]
+  },
+  "people/list/list.page#toast-6fa849cc": {
+   "s": "na",
+   "n": "toter Code: confirmPause wird nur vom Button 'Pausieren' aufgerufen, der bei leerem Grund disabled ist (list.page.html:610). Flutter deaktiviert den Button ebenso (pause_person_sheet.dart:164)."
+  },
+  "people/list/list.page#loading-93ed0021": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:211",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:219"
+   ],
+   "n": "Ionic: blockierendes Overlay 'Wird pausiert...' / Flutter: kein Overlay; Flutter zeigt danach zusätzlich eine grüne Snackbar '<Vorname> wurde pausiert' (Ionic: keine Meldung).",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#toast-4abeba9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:213"
+   ],
+   "n": "Roter Hinweis; Flutter: 'Fehler: <Fehlertext>'."
+  },
+  "people/list/list.page#alert-86b4fbec": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:229",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:236",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:284"
+   ],
+   "n": "Flutter besser: Titel, Text, Checkboxen (Instanzname), 'Überspringen'/'Pausieren' gleich; Ionic bietet aber alle verknüpften Instanzen an, in denen die Person (nicht als Betrachter) Mitglied ist, Flutter nur jene, in denen der angemeldete Nutzer Admin/Verantwortlicher ist (Ionic scheitert dort sonst mit 'Fehler bei …').",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#toast-f68d8cd2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:269"
+   ]
+  },
+  "people/list/list.page#alert-c512ac6d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1337",
+    "lib/features/people/presentation/pages/people_list_page.dart:1358"
+   ],
+   "n": "'Person wieder aktivieren?' mit 'Abbrechen' / 'Aktivieren'; schreibt paused=false, paused_until=null, Historie 'Person wieder aktiv' und fügt die Person kommenden Terminen hinzu."
+  },
+  "people/list/list.page#loading-8b3a6dad": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1357"
+   ],
+   "n": "Ionic: blockierendes Overlay 'Wird aktiviert...' / Flutter: kein Overlay.",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#toast-4d69c1c0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1361"
+   ],
+   "n": "Roter Toast; Flutter: 'Fehler: <Fehlertext>'."
+  },
+  "people/list/list.page#modal-a495856e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1280",
+    "lib/features/people/presentation/pages/people_list_page.dart:1289"
+   ],
+   "n": "Vollbild-Dialog-Route (fullscreenDialog) mit den gefilterten Personen; bei Rückgabe true wird neu geladen."
+  },
+  "people/list/list.page#modal-99a2d84a": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1128",
+    "lib/features/people/presentation/pages/people_list_page.dart:1139",
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:61",
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:70"
+   ],
+   "n": "Trigger, Sheet (initial 0.5) und Untertitel 'Personen' gleich. Daten: Ionic zählt Personen ohne Gemeinde-Wert über den aufgefüllten Default (defaultValue bzw. erste Gemeinde), Flutter als ohne Gemeinde (churchIdOf → null) – siehe extra.",
+   "sev": "mittel"
+  },
+  "people/list/list.page#modal-b8ba8673": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1298",
+    "lib/features/people/presentation/pages/people_list_page.dart:1302"
+   ],
+   "n": "Vollbild-Dialog-Route PersonImportPage; bei Rückgabe true wird neu geladen."
+  },
+  "people/list/list.page#text-6edb0bb4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:449",
+    "lib/features/people/presentation/pages/people_list_page.dart:455"
+   ],
+   "n": "Gelbe (warning) AppBar mit 'Reihenfolge anpassen'."
+  },
+  "people/list/list.page#action-ba141813": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:463",
+    "lib/features/people/presentation/pages/people_list_page.dart:474"
+   ],
+   "n": "Häkchen speichert und beendet den Modus; Flutter hat zusätzlich links ein X zum Verwerfen (siehe extra)."
+  },
+  "people/list/list.page#action-b6d96f14": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:499",
+    "lib/features/people/presentation/pages/people_list_page.dart:728",
+    "lib/features/people/presentation/pages/people_list_page.dart:748"
+   ]
+  },
+  "people/list/list.page#action-49667e4f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:738",
+    "lib/features/people/presentation/pages/people_list_page.dart:749",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:51",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:61"
+   ],
+   "n": "Bei >1 Instanz: '<longName> ⌄' als Auslöser links, kein Titel."
+  },
+  "people/list/list.page#popover-91edad79": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:99",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:118"
+   ],
+   "n": "Popover/Popup-Menü 220 px breit mit allen Instanzen."
+  },
+  "people/list/list.page#action-f4181b04": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:124",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:135",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:95"
+   ],
+   "n": "Instanzname + Badge 'Aktuell' (settingsCurrent) bei aktueller Instanz; Tipp wechselt die Instanz."
+  },
+  "people/list/list.page#text-93340ccf": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:749",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:51"
+   ]
+  },
+  "people/list/list.page#embed-343ae756": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:501",
+    "lib/features/people/presentation/pages/people_list_page.dart:741",
+    "lib/features/people/presentation/pages/people_list_page.dart:751"
+   ]
+  },
+  "people/list/list.page#action-15041222": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:503",
+    "lib/features/people/presentation/pages/people_list_page.dart:648",
+    "lib/features/people/presentation/pages/people_list_page.dart:670"
+   ],
+   "n": "Ionic: Pull-to-Refresh lädt Personen und Termine (Anwesenheitsprozente) neu und wartet darauf / Flutter: invalidiert nur realtimePlayersProvider – Prozentwerte werden nicht neu geladen, Spinner endet sofort.",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#text-93340ccf-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:491",
+    "lib/features/people/presentation/pages/people_list_page.dart:495"
+   ],
+   "n": "iOS + nur eine Instanz: großer Condense-Titel mit Instanzname."
+  },
+  "people/list/list.page#field-27abe29e": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:510",
+    "lib/features/people/presentation/pages/people_list_page.dart:514",
+    "lib/features/people/presentation/pages/people_list_page.dart:309",
+    "lib/features/people/people_list_utils.dart:8"
+   ],
+   "n": "Flutter besser: Platzhalter 'Person suchen...' und Suchfelder (Vor-/Nachname, Gruppe, Text-/Zahl-Zusatzfelder) gleich; Ionic verwirft bei der Suche aber den aktiven Filter und die gewählte Sortierung (Ergebnis in Gruppenreihenfolge), Flutter kombiniert Suche, Filter und Sortierung.",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#action-c3aff9e6": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:973",
+    "lib/features/people/presentation/pages/people_list_page.dart:976"
+   ],
+   "n": "Optionen-Icon, primärfarben wenn Filter ≠ 'Alle Anzeigen'."
+  },
+  "people/list/list.page#popover-8130df68": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:888"
+   ],
+   "n": "MenuAnchor mit Filter-, Sortier- und Ansichtsauswahl (Untermenüs) und den Admin-Einträgen."
+  },
+  "people/list/list.page#field-2000a145": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:760",
+    "lib/features/people/presentation/pages/people_list_page.dart:796",
+    "lib/features/people/presentation/pages/people_list_page.dart:851"
+   ],
+   "n": "Optionen, Reihenfolge und Bedingungen gleich (Stimmführer nicht bei 'general', VoS-Optionen, 'Mitglied anderer Instanz' nur mit verknüpften Instanzen, Zusatzfelder boolean/select/number/bfecg_church); erneute Wahl öffnet den Wert-Dialog wieder; Speicherung je Instanz."
+  },
+  "people/list/list.page#field-a2446bcd": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:782",
+    "lib/features/people/presentation/pages/people_list_page.dart:814",
+    "lib/features/people/presentation/pages/people_list_page.dart:316"
+   ],
+   "n": "Gleiche 11 Optionen in gleicher Reihenfolge ('Testergebnis' nur VoS), gleiche Sortierlogik, Speicherung je Instanz. Umlaute in der Gruppen-Sortierung siehe extra."
+  },
+  "people/list/list.page#field-ed9d9a10": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:93",
+    "lib/features/people/presentation/pages/people_list_page.dart:900",
+    "lib/features/people/presentation/pages/people_list_page.dart:909"
+   ],
+   "n": "Mehrfachauswahl mit gleichen Optionen/Reihenfolge/Bedingungen (Instrumente nur Chor, VoS-Optionen, Stimmführer nicht 'general', Lehrer nur maintainTeachers, Zusatzfelder); Default Gruppe/Stimmführer/Anwesenheit/Problemfälle/Pausiert; je Instanz gespeichert."
+  },
+  "people/list/list.page#action-71140d62": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:936",
+    "lib/features/people/presentation/pages/people_list_page.dart:941"
+   ]
+  },
+  "people/list/list.page#action-67e74d37": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:944",
+    "lib/features/people/presentation/pages/people_list_page.dart:948"
+   ]
+  },
+  "people/list/list.page#action-09d8ea9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:950",
+    "lib/features/people/presentation/pages/people_list_page.dart:954"
+   ]
+  },
+  "people/list/list.page#action-d74a8ace": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:956",
+    "lib/features/people/presentation/pages/people_list_page.dart:961"
+   ],
+   "n": "Nur Admin/Verantwortlicher und Sortierung 'Gruppe'; Label 'Reihenfolge anpassen' (Ionic-Variante 'Reihenfolge speichern' ist im Reorder-Modus nicht erreichbar, da das Popover ausgeblendet ist)."
+  },
+  "people/list/list.page#action-f9b0c465": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:527",
+    "lib/features/people/presentation/pages/people_list_page.dart:529",
+    "lib/features/people/presentation/pages/people_list_page.dart:1768",
+    "lib/features/people/presentation/pages/people_list_page.dart:1814"
+   ],
+   "n": "Banner mit Name und 'n Jahre', Tipp öffnet die Person (Darstellung als Seite statt Modal siehe modal-38ba21ec)."
+  },
+  "people/list/list.page#action-99ad824e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1794",
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:408"
+   ],
+   "n": "Fehlerhaftes Bild → Avatar-Platzhalter."
+  },
+  "people/list/list.page#text-75888fce": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:616"
+   ]
+  },
+  "people/list/list.page#text-ccf5d7d7": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:404",
+    "lib/features/people/presentation/pages/people_list_page.dart:622"
+   ],
+   "n": "Normalfall gleich ('<Gruppe> (n)', primärer Trenner). Sonderfälle: Personen ohne bekannte Gruppe – Ionic Trenner ' (n)' ohne Namen / Flutter 'Keine Gruppe (n)'; Flutter gruppiert nach Gruppenname statt Gruppen-ID (gleichnamige Gruppen würden zusammengelegt).",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#action-e7b7f732": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:448",
+    "lib/features/people/presentation/pages/people_list_page.dart:1189",
+    "lib/features/people/presentation/pages/people_list_page.dart:1209"
+   ],
+   "n": "Ionic: Reihenfolge direkt in der normalen Liste (ion-reorder-Griffe in den vollen Zeilen mit Avatar/Badges, Suche ausgeblendet, Trenner bleiben) / Flutter: eigene vereinfachte Liste (Karten nur mit Name + Ziehgriff, Gruppentitel als Text) plus X zum Verwerfen. Zeileninhalt außerhalb des Reorder-Modus siehe action-982a1154.",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#action-982a1154": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:604",
+    "lib/features/people/presentation/pages/people_list_page.dart:1563",
+    "lib/features/people/presentation/pages/people_list_page.dart:1573",
+    "lib/features/people/presentation/pages/people_list_page.dart:1599",
+    "lib/data/models/person/person.dart:141"
+   ],
+   "n": "Tipp öffnet die Person (Darstellung siehe modal-38ba21ec); Name, Untertext (Gruppe | Geburtsdatum | Testergebnis | Instrumente | Sonstige Dienste), Instanzname, Notizen und Badges (Stimmführer/Neu/Problemfall/Pausiert/Prüfling, Prozent mit 75/50-Farben) wie Ionic. Abweichungen: Ansicht 'Lehrer' zeigt in Flutter immer 'Kein Lehrer', weil Person.teacherName nie befüllt wird (Ionic: 'Lehrer: <Name>'); Zusatzfeld-Badges/-Zeilen ohne aufgefüllte Defaults und Zahl 0 sichtbar; kein '0%'-Badge bei Personen ohne gezählte Termine – siehe extra.",
+   "sev": "hoch"
+  },
+  "people/list/list.page#action-99ad824e-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1653",
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:396",
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:408"
+   ],
+   "n": "Avatar nur mit Ansicht 'Passbild'; Fehler → Platzhalter."
+  },
+  "people/list/list.page#action-8a40dbb1": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1687",
+    "lib/features/people/presentation/pages/people_list_page.dart:1694"
+   ],
+   "n": "Nur Admin/Verantwortlicher; voller Wisch pausiert bzw. aktiviert."
+  },
+  "people/list/list.page#action-7d1d1666": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1704",
+    "lib/features/people/presentation/pages/people_list_page.dart:1708"
+   ],
+   "n": "Rot, Papierkorb → remove()."
+  },
+  "people/list/list.page#action-4e3685b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1711",
+    "lib/features/people/presentation/pages/people_list_page.dart:1716"
+   ],
+   "n": "Gelb, Pause-Icon → Pausieren-Sheet."
+  },
+  "people/list/list.page#action-c9c70280": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1711",
+    "lib/features/people/presentation/pages/people_list_page.dart:1716"
+   ],
+   "n": "Grün, Play-Icon → 'Person wieder aktivieren?'."
+  },
+  "people/list/list.page#action-846fa8d2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:627",
+    "lib/features/people/presentation/pages/people_list_page.dart:629"
+   ],
+   "n": "Flache Liste ohne Trenner und ohne Reorder bei Sortierung ≠ Gruppe; Zeileninhalt siehe action-0df20264."
+  },
+  "people/list/list.page#action-0df20264": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:604",
+    "lib/features/people/presentation/pages/people_list_page.dart:1563",
+    "lib/features/people/presentation/pages/people_list_page.dart:1573",
+    "lib/features/people/presentation/pages/people_list_page.dart:1599",
+    "lib/data/models/person/person.dart:141"
+   ],
+   "n": "Tipp öffnet die Person (Darstellung siehe modal-38ba21ec); Name, Untertext (Gruppe | Geburtsdatum | Testergebnis | Instrumente | Sonstige Dienste), Instanzname, Notizen und Badges (Stimmführer/Neu/Problemfall/Pausiert/Prüfling, Prozent mit 75/50-Farben) wie Ionic. Abweichungen: Ansicht 'Lehrer' zeigt in Flutter immer 'Kein Lehrer', weil Person.teacherName nie befüllt wird (Ionic: 'Lehrer: <Name>'); Zusatzfeld-Badges/-Zeilen ohne aufgefüllte Defaults und Zahl 0 sichtbar; kein '0%'-Badge bei Personen ohne gezählte Termine – siehe extra.",
+   "sev": "hoch"
+  },
+  "people/list/list.page#action-99ad824e-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1653",
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:408"
+   ]
+  },
+  "people/list/list.page#action-8a40dbb1-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1687",
+    "lib/features/people/presentation/pages/people_list_page.dart:1694"
+   ],
+   "n": "Wie action-8a40dbb1."
+  },
+  "people/list/list.page#action-7d1d1666-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1704",
+    "lib/features/people/presentation/pages/people_list_page.dart:1708"
+   ]
+  },
+  "people/list/list.page#action-4e3685b7-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1711",
+    "lib/features/people/presentation/pages/people_list_page.dart:1716"
+   ]
+  },
+  "people/list/list.page#action-c9c70280-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1711",
+    "lib/features/people/presentation/pages/people_list_page.dart:1716"
+   ]
+  },
+  "people/list/list.page#text-b78dc42f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:576",
+    "lib/features/people/presentation/pages/people_list_page.dart:580"
+   ]
+  },
+  "people/list/list.page#text-6468ac89": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:581"
+   ]
+  },
+  "people/list/list.page#action-de48c2e0": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:582",
+    "lib/features/people/presentation/pages/people_list_page.dart:1243"
+   ],
+   "n": "Flutter besser: Ionic clearFilters leert nur filterOptAdd und zeigt alle Personen, Filterauswahl (Icon bleibt farbig) und Suchtext bleiben stehen / Flutter setzt Filter auf 'Alle Anzeigen', leert die Suche und speichert das.",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#text-6f2a6577": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:553",
+    "lib/features/people/presentation/pages/people_list_page.dart:559"
+   ]
+  },
+  "people/list/list.page#action-4792cae3": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:561",
+    "lib/features/people/presentation/pages/people_list_page.dart:563",
+    "lib/core/router/app_router.dart:799"
+   ],
+   "n": "Ionic: Button für alle Rollen sichtbar, öffnet PersonPage mit readOnly = !isAdmin (Betrachter sieht nur gesperrtes Formular) / Flutter: push '/people/new' ohne Rollenprüfung (Route nur canSeePeopleTab) → Betrachter erhält bei leerer Instanz das editierbare Anlageformular (Speichern scheitert vermutlich an RLS).",
+   "sev": "mittel"
+  },
+  "people/list/list.page#action-3afbca69": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:565",
+    "lib/features/people/presentation/pages/people_list_page.dart:566"
+   ]
+  },
+  "people/list/list.page#action-e4ea4870": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:661",
+    "lib/features/people/presentation/pages/people_list_page.dart:664"
+   ],
+   "n": "FAB nur Admin/Verantwortlicher; öffnet Neuanlage (Darstellung siehe modal-38ba21ec)."
+  },
+  "people/list/list.page#modal-11a551b4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1385",
+    "lib/features/people/presentation/pages/people_list_page.dart:1391"
+   ],
+   "n": "Ionic: eigenes Vollbild-Modal (Toolbar mit Titel + X, Datumsfeld, Notiz, FAB unten rechts, backdropDismiss false) / Flutter: AlertDialog (nicht wegtippbar) mit Datum-Zeile, Notizfeld und Buttons 'Abbrechen'/'Archivieren'. Geschriebene Daten gleich (left, Historie, Zugang entziehen).",
+   "sev": "mittel"
+  },
+  "people/list/list.page#text-2e536d7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1395"
+   ]
+  },
+  "people/list/list.page#action-6ccc25e4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1426"
+   ],
+   "n": "Ionic: X-Icon in der Modal-Toolbar / Flutter: Textbutton 'Abbrechen' im Dialog.",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#text-1edff7fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1401"
+   ]
+  },
+  "people/list/list.page#field-1802f7a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1399",
+    "lib/features/people/presentation/pages/people_list_page.dart:1404"
+   ],
+   "n": "Datum per Picker-Zeile (dd.MM.yyyy) statt nativer Datumseingabe; Vorgabe heute."
+  },
+  "people/list/list.page#text-3c936418": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1419"
+   ]
+  },
+  "people/list/list.page#field-ab968b75": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1416"
+   ],
+   "n": "Mehrzeiliges Textfeld, Satzanfang groß."
+  },
+  "people/list/list.page#action-64a96898": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1430",
+    "lib/features/people/presentation/pages/people_list_page.dart:1438"
+   ],
+   "n": "Ionic: FAB mit Archiv-Icon unten rechts im Modal / Flutter: Button 'Archivieren' mit Archiv-Icon in der Dialog-Aktionsleiste.",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#modal-7e8cba02": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:43",
+    "lib/features/people/presentation/pages/people_list_page.dart:1333"
+   ],
+   "n": "Bottom-Sheet über der Tab-Leiste (Höhe nach Inhalt statt Breakpoint 0.75), Wegtippen/Wischen schließt; Felder werden bei jedem Öffnen zurückgesetzt."
+  },
+  "people/list/list.page#text-c3ef87c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:98"
+   ]
+  },
+  "people/list/list.page#action-032eda11": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:103"
+   ]
+  },
+  "people/list/list.page#text-b82e149a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:115"
+   ]
+  },
+  "people/list/list.page#field-c1d3a82f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:112",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:116"
+   ],
+   "n": "Platzhalter Ionic 'Bitte gib einen Grund an...' / Flutter 'Gib einen Grund für die Pause an...' (personPauseReasonPlaceholder); sonst gleich (mehrzeilig, Satzanfang groß).",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#text-6fee986f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:128"
+   ]
+  },
+  "people/list/list.page#text-7ee61a82": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:129"
+   ],
+   "n": "dd.MM.yyyy (dateFmt)."
+  },
+  "people/list/list.page#text-610f68be": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:129"
+   ]
+  },
+  "people/list/list.page#action-ff7f52d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:130",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:359"
+   ]
+  },
+  "people/list/list.page#field-187f6bb7": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:131",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:135"
+   ],
+   "n": "Ionic: Inline-Kalender im Akkordeon (max heute, keine Untergrenze) / Flutter: Datumspicker-Dialog beim Tippen auf die Zeile (max heute, frühestens vor 5 Jahren).",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#text-d297b676": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:142"
+   ]
+  },
+  "people/list/list.page#text-7ee61a82-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:143"
+   ]
+  },
+  "people/list/list.page#text-16971d80": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:143"
+   ]
+  },
+  "people/list/list.page#action-62bad746": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:144",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:359"
+   ]
+  },
+  "people/list/list.page#field-315040b9": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:145",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:148"
+   ],
+   "n": "Ionic: Inline-Kalender im Akkordeon (ab heute, keine Obergrenze) / Flutter: Datumspicker-Dialog (ab heute, bis +3 Jahre, Vorauswahl heute+30 Tage).",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#text-63b77c8c": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:157"
+   ],
+   "n": "Ionic: '… Wenn ein Enddatum angegeben wird, wird die Person automatisch reaktiviert.' / Flutter: '… Wenn ein Enddatum angegeben ist, wird die Person danach automatisch wieder aktiviert.' (gleiche Bedeutung).",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#action-32a9bf9f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:163",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:177"
+   ],
+   "n": "Ionic: Block-Button in Primärfarbe / Flutter: gelber (warning) Button; sonst gleich (Pause-Icon, 'Pausieren', ohne Grund deaktiviert).",
+   "sev": "niedrig"
+  },
+  "people/members/members.page#logic-a08c75f7": {
+   "s": "diff",
+   "f": [
+    "lib/features/members/data/providers/members_providers.dart:27",
+    "lib/features/members/data/providers/members_providers.dart:53",
+    "lib/features/members/data/providers/members_providers.dart:87",
+    "lib/features/members/data/providers/members_providers.dart:98",
+    "lib/features/members/presentation/pages/members_page.dart:35",
+    "lib/features/members/presentation/pages/members_page.dart:98"
+   ],
+   "n": "Laden aktiver Personen (pending=false, left=null, tenantId), Gruppierung ohne Hauptgruppen-Vorrang, 'Ohne Gruppe' für Personen ohne Gruppe, Suche (Vor-/Nachname, Gruppe), Einteilungs-Segment (nur select-Feld 'einteilung', '-' ausgelassen), Neuladen bei Instanzwechsel und Pull-to-Refresh gleich. Abweichungen: Einteilungs-Filter ohne aufgefüllten Default, Umlaute in der Sortierung, Ladefehler inline statt Toast – siehe extra.",
+   "sev": "mittel"
+  },
+  "people/members/members.page#toast-d347f87a": {
+   "s": "diff",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:98",
+    "lib/features/members/presentation/pages/members_page.dart:99"
+   ],
+   "n": "Ionic: roter Toast 'Fehler beim Laden der Mitglieder.' + darunter 'Keine Mitglieder gefunden.' / Flutter: kein Toast, Text 'Fehler beim Laden der Mitglieder.' inline mit Personen-Icon.",
+   "sev": "niedrig"
+  },
+  "people/members/members.page#action-d5ff144e": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:50"
+   ]
+  },
+  "people/members/members.page#text-15e8ec78": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:48"
+   ]
+  },
+  "people/members/members.page#embed-788cb176": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:52"
+   ]
+  },
+  "people/members/members.page#action-3e04d426": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:35",
+    "lib/features/members/presentation/pages/members_page.dart:53",
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:1093",
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:1104"
+   ]
+  },
+  "people/members/members.page#text-15e8ec78-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:48",
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:1078"
+   ],
+   "n": "iOS: großer Condense-Titel 'Mitglieder' (IonPage)."
+  },
+  "people/members/members.page#field-f68af1a6": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:57",
+    "lib/features/members/presentation/pages/members_page.dart:59",
+    "lib/features/members/data/providers/members_providers.dart:128"
+   ],
+   "n": "Platzhalter 'Person suchen...'; sucht in Vor-/Nachname und Gruppenname (Flutter trifft zusätzlich den Text 'Ohne Gruppe')."
+  },
+  "people/members/members.page#field-f9de5b80": {
+   "s": "diff",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:66",
+    "lib/features/members/presentation/pages/members_page.dart:72",
+    "lib/features/members/data/providers/members_providers.dart:87",
+    "lib/features/members/data/providers/members_providers.dart:109"
+   ],
+   "n": "Segment (md, scrollbar) mit 'Alle' + Optionen ohne '-' gleich. Filterwirkung: Ionic vergleicht mit dem durch getModifiedPlayersForList aufgefüllten Default (defaultValue bzw. erste Option), Personen ohne Wert erscheinen also unter der Default-Option / Flutter: nur Personen mit gespeichertem Wert.",
+   "sev": "mittel"
+  },
+  "people/members/members.page#text-614d7590": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:103",
+    "lib/features/members/presentation/pages/members_page.dart:105"
+   ]
+  },
+  "people/members/members.page#text-320a4d73": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:111"
+   ]
+  },
+  "people/members/members.page#text-fcd72565": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:113",
+    "lib/features/members/presentation/pages/members_page.dart:115",
+    "lib/features/members/data/providers/members_providers.dart:27"
+   ],
+   "n": "Primärer Trenner '<Gruppe> (n)' mit Anzahl nach Filterung; unbekannte Gruppe → 'Ohne Gruppe'."
+  },
+  "people/members/members.page#text-bf9d77ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:166"
+   ]
+  },
+  "people/members/members.page#text-0c9b16ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:163",
+    "lib/features/members/presentation/pages/members_page.dart:164"
+   ]
+  }
+ },
+ "extra": [
+  {
+   "unit": "people/list/list.page",
+   "title": "Lehrer-Zeile immer 'Kein Lehrer'",
+   "n": "Ionic: Ansicht 'Lehrer' zeigt 'Lehrer: <Name>' (getTeacherName aus getTeachers) bzw. 'Kein Lehrer' / Flutter: _lines nutzt person.teacherName, das nie befüllt wird (includeFromJson false, kein copyWith) → bei allen Nicht-Hauptgruppen-Personen 'Kein Lehrer'. Zusätzlich prüft Flutter maintainTeachers beim Anzeigen nicht mehr.",
+   "sev": "hoch",
+   "ionic": "src/app/people/list/list.page.html:254",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1573",
+    "lib/data/models/person/person.dart:141"
+   ]
+  },
+  {
+   "unit": "people/list/list.page",
+   "title": "Zusatzfeld-Defaults nicht angewendet",
+   "n": "Ionic: getModifiedPlayersForList füllt fehlende additional_fields mit Defaults (defaultValue, sonst boolean true, select erste Option, Gemeinde erste Gemeinde) → Badges/Zeilen, Select-/Gemeinde-Filter und Gemeinde-Übersicht berücksichtigen diese Werte; Zahl 0 wird als falsy ausgeblendet / Flutter: keine Defaults (nur der Boolean-Filter nutzt defaultValue ?? true), Personen ohne Wert fehlen bei Badge/Filter/Übersicht; Zahl-Badge '<Feld> 0' wird angezeigt.",
+   "sev": "mittel",
+   "ionic": "src/app/utilities/Utils.ts:121",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:296",
+    "lib/features/people/presentation/pages/people_list_page.dart:1589",
+    "lib/features/people/presentation/pages/people_list_page.dart:1620",
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:61"
+   ]
+  },
+  {
+   "unit": "people/list/list.page",
+   "title": "Umlaute in Gruppen-Sortierung",
+   "n": "Ionic: Gruppenname und Nachname innerhalb der Gruppe per localeCompare (Müller zwischen Mu… und Mv…) / Flutter: sortPeopleByGroup vergleicht toLowerCase().compareTo → Umlaute nach z (z. B. 'Mustermann' vor 'Müller'); Vor-/Nachnamen-Sortierung nutzt dagegen localeCompareDe.",
+   "sev": "mittel",
+   "ionic": "src/app/utilities/Utils.ts:100",
+   "f": [
+    "lib/features/people/people_list_utils.dart:76",
+    "lib/features/people/people_list_utils.dart:85"
+   ]
+  },
+  {
+   "unit": "people/list/list.page",
+   "title": "Anwesenheits-Badge / Prozentbasis",
+   "n": "Ionic: Personen ohne gezählte Termine zeigen roten '0%'-Badge; Basis ab seasonStart bzw. 2023-01-01 bis jetzt+24 h, für Nicht-Admins ohne archivierte Termine / Flutter: kein Badge, wenn keine gezählten Termine; Basis ab seasonStart (ohne Fallback) bis jetzt, archivierte Termine mitgezählt.",
+   "sev": "niedrig",
+   "ionic": "src/app/utilities/Utils.ts:129",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1629",
+    "lib/core/providers/attendance_providers.dart:286"
+   ]
+  },
+  {
+   "unit": "people/list/list.page",
+   "title": "Flutter besser: Suche/Filter/Sortierung kombiniert",
+   "n": "Ionic: search() setzt die Liste auf alle Personen zurück (aktiver Filter verloren) und sortiert nach Gruppe; onFilterChanged sortiert ebenfalls nach Gruppe trotz anderer Sortierung; ein gespeicherter Filter wird beim Laden nur bei Sortierung 'Gruppe' angewendet / Flutter: Filter, Suche und Sortierung werden immer zusammen angewendet.",
+   "sev": "niedrig",
+   "ionic": "src/app/people/list/list.page.ts:714",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:250",
+    "lib/features/people/presentation/pages/people_list_page.dart:316"
+   ]
+  },
+  {
+   "unit": "people/list/list.page",
+   "title": "Reorder-Modus",
+   "n": "Ionic: Griffe in der normalen Liste, kein Abbrechen, Overlay beim Speichern, schreibt nur Personen mit sort_order / Flutter: separate Kartenliste, zusätzliches X zum Verwerfen, kein Overlay, schreibt sort_order für alle gefilterten Personen aller Gruppen (mit tenantId).",
+   "sev": "niedrig",
+   "ionic": "src/app/people/list/list.page.ts:324",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:448",
+    "lib/features/people/presentation/pages/people_list_page.dart:1148",
+    "lib/features/people/presentation/pages/people_list_page.dart:1189",
+    "lib/data/repositories/player_repository.dart:1844"
+   ]
+  },
+  {
+   "unit": "people/list/list.page",
+   "title": "Auto-Entpausieren nur beim ersten Öffnen",
+   "n": "Ionic: checkAndUnpausePlayers (Admin/Verantwortlicher) in jedem initializeData, also auch nach Instanzwechsel, vor dem Laden der Liste / Flutter: nur im initState per Post-Frame-Callback; ein Instanzwechsel bei offener Seite löst es nicht erneut aus.",
+   "sev": "niedrig",
+   "ionic": "src/app/people/list/list.page.ts:140",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:125",
+    "lib/features/people/presentation/pages/people_list_page.dart:128"
+   ]
+  },
+  {
+   "unit": "people/list/list.page",
+   "title": "Flutter besser: schmalere Pausen-Schreibvorgänge",
+   "n": "Ionic: Pausieren/Aktivieren über updatePlayer schreibt den ganzen Listen-Datensatz zurück (inkl. mit Defaults aufgefüllter additional_fields); Pausieren in anderen Instanzen überschreibt dort die Historie mit der Quell-Historie / Flutter: schreibt nur paused, paused_until, history (+ tenantId-Filter); in anderen Instanzen wird der Eintrag an deren Historie angehängt.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:2219",
+   "f": [
+    "lib/data/repositories/player_repository.dart:816",
+    "lib/data/repositories/player_repository.dart:861",
+    "lib/data/repositories/cross_tenant_person_repository.dart:288"
+   ]
+  },
+  {
+   "unit": "people/list/list.page",
+   "title": "Flutter-Zusatz: Personen übertragen",
+   "n": "Ionic: kein Mehrfachauswahl-Modus in der Personenliste / Flutter: Optionsmenü-Eintrag 'Personen übertragen' (Admin/Verantwortlicher) mit Auswahlmodus, AppBar 'n ausgewählt' und Übergabe-Sheet.",
+   "sev": "niedrig",
+   "ionic": "src/app/people/list/list.page.html:166",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:963",
+    "lib/features/people/presentation/pages/people_list_page.dart:651",
+    "lib/features/people/presentation/pages/people_list_page.dart:1255"
+   ]
+  },
+  {
+   "unit": "people/members/members.page",
+   "title": "Einteilungs-Filter ohne Default",
+   "n": "Ionic: getModifiedPlayersForList(…, getPersonExtraFields()) füllt fehlende 'einteilung'-Werte mit defaultValue bzw. erster Option → diese Personen erscheinen beim Segment der Default-Option / Flutter: Vergleich nur mit gespeichertem Wert, Personen ohne Wert nur unter 'Alle'.",
+   "sev": "mittel",
+   "ionic": "src/app/people/members/members.page.ts:101",
+   "f": [
+    "lib/features/members/data/providers/members_providers.dart:116"
+   ]
+  },
+  {
+   "unit": "people/members/members.page",
+   "title": "Umlaute in der Sortierung",
+   "n": "Ionic: Gruppen- und Nachnamen per localeCompare / Flutter: sortPeopleByGroup mit toLowerCase().compareTo → Umlaute nach z (z. B. 'Mustermann' vor 'Müller').",
+   "sev": "mittel",
+   "ionic": "src/app/utilities/Utils.ts:109",
+   "f": [
+    "lib/features/members/data/providers/members_providers.dart:28",
+    "lib/features/people/people_list_utils.dart:85"
+   ]
+  },
+  {
+   "unit": "people/members/members.page",
+   "title": "Ladefehler inline statt Toast",
+   "n": "Ionic: roter Toast und leere Liste / Flutter: Fehlertext inline, kein Toast.",
+   "sev": "niedrig",
+   "ionic": "src/app/people/members/members.page.ts:72",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:98"
+   ]
+  }
+ ]
+}

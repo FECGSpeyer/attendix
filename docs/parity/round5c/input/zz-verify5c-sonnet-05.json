@@ -1,0 +1,2253 @@
+{
+ "batch": "zz-verify5c-sonnet-05",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 15,
+    "cond": [
+     "@if (step === 'preview')"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=run()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'duty.redistribute' | transloco\""
+    ],
+    "icons": [
+     "shuffle-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#action-39f7c63f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:316"
+    ],
+    "n": "Icons.shuffle mit Tooltip „Neu verteilen“, ruft _run.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 103,
+    "cond": [
+     "@else (not step === 'rules')",
+     "@else (not !rows.length)",
+     "@for (row of rows; track row.termin.attendance.id)",
+     "@for (pa of row.picked; track pa.id)"
+    ],
+    "tag": "ion-chip",
+    "attrs": {
+     "color": "primary"
+    },
+    "events": [
+     "(click)=change(row, pa)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ firstName(pa) }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#action-41a83796"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:497"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 131,
+    "cond": [
+     "@if (step === 'preview' && rows.length)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "class": "ion-margin-horizontal",
+     "[disabled]": "\"saving || !plannedTotal\""
+    },
+    "events": [
+     "(click)=save()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [
+     " Einteilungen speichern",
+     "Nichts zu verteilen"
+    ],
+    "text": "{{ plannedTotal ? plannedTotal + ' Einteilungen speichern' : 'Nichts zu verteilen' }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#action-48d2440d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:340"
+    ],
+    "n": "Unten fixierter Button „{n} Einteilungen speichern“ / „Nichts zu verteilen“, deaktiviert bei saving oder 0, nur in der Vorschau mit Zeilen.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 69,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=changeMax(1)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'attList.more' | transloco\""
+    ],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#action-7bb1a2ef"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:420"
+    ],
+    "n": "Flutter besser: Ionic: Plus-Button bleibt bei 10 aktiv, Tippen wirkungslos (Math.min 10) / Flutter: Button bei 10 ausgegraut. Maximum 10 gleich.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 7,
+    "cond": [
+     "@else (not step === 'preview')"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=cancel()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'common.cancel' | transloco\""
+    ],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#action-92abd7bd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:309"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 65,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small",
+     "[disabled]": "\"maxPerPerson <= 1\""
+    },
+    "events": [
+     "(click)=changeMax(-1)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'attList.less' | transloco\""
+    ],
+    "icons": [
+     "remove-circle-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#action-c226c1cd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:408"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 5,
+    "cond": [
+     "@if (step === 'preview')"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=back()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.back"
+    ],
+    "de": [
+     "Zurück"
+    ],
+    "literals": [],
+    "text": "{{ 'common.back' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#action-ef738241"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:304"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 32,
+    "cond": [
+     "@if (step === 'rules')",
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "id": "dutyDistFrom",
+     "presentation": "date"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"from\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\"",
+     "[showDefaultButtons]=\"true\"",
+     "[doneText]=\"'person.done' | transloco\"",
+     "[cancelText]=\"'common.cancel' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "person.done",
+     "common.cancel"
+    ],
+    "de": [
+     "Fertig",
+     "Abbrechen"
+    ],
+    "literals": [],
+    "text": "[doneText]=\"'person.done' | transloco\" [cancelText]=\"'common.cancel' | transloco\"",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#field-71fefb63"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:96"
+    ],
+    "n": "Ionic: Kalender (Montag zuerst) mit Buttons „Fertig“/„Abbrechen“, Wert erst mit „Fertig“, unbegrenzter Bereich / Flutter: md showDatePicker mit „OK“/„Abbrechen“ bzw. iOS-Look Kalenderkarte ohne Buttons (Tipp übernimmt sofort), Bereich 2020–2100.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 75,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"notTwiceSameDay\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "duty.notTwiceSameDay"
+    ],
+    "de": [
+     "Nicht zweimal am selben Tag"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.notTwiceSameDay' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#field-8f524790"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:430"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 29,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "ion-datetime-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#field-b28d8f3e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:375"
+    ],
+    "n": "Anzeigeformat: Ionic ion-datetime-button zeigt das Intl-Kurzformat (z. B. „1. Dez. 2026“, Ionic-Paket nicht im Container) / Flutter IonDatetimeChip „01.12.2026“ (dateFmt()).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 39,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "ion-datetime-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#field-b28d8f3e-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:379"
+    ],
+    "n": "Anzeigeformat: Ionic ion-datetime-button Intl-Kurzformat (z. B. „31. Dez. 2026“, Ionic-Paket nicht im Container) / Flutter IonDatetimeChip „31.12.2026“.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 42,
+    "cond": [
+     "@if (step === 'rules')",
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "id": "dutyDistTo",
+     "presentation": "date"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"to\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\"",
+     "[showDefaultButtons]=\"true\"",
+     "[doneText]=\"'person.done' | transloco\"",
+     "[cancelText]=\"'common.cancel' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "person.done",
+     "common.cancel"
+    ],
+    "de": [
+     "Fertig",
+     "Abbrechen"
+    ],
+    "literals": [],
+    "text": "[doneText]=\"'person.done' | transloco\" [cancelText]=\"'common.cancel' | transloco\"",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#field-bca25190"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:96"
+    ],
+    "n": "Ionic: Kalender mit „Fertig“/„Abbrechen“, unbegrenzter Bereich / Flutter: md showDatePicker mit „OK“/„Abbrechen“ bzw. iOS-Look Kalenderkarte ohne Buttons, Bereich 2020–2100. Keine Prüfung Von ≤ Bis in beiden.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 54,
+    "cond": [
+     "@if (step === 'rules')",
+     "@if (dutyTypes.length > 1)",
+     "@for (t of dutyTypes; track t.id)"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {},
+    "events": [
+     "(ionChange)=toggleType(t.id)"
+    ],
+    "link": null,
+    "model": "[checked]=\"selectedTypeIds.includes(t.id)\"",
+    "bindings": [
+     "[checked]=\"selectedTypeIds.includes(t.id)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ t.name }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#field-dcffc1a2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:389"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 30,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#modal-8334d587"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:96"
+    ],
+    "n": "Plattform-Datumsdialog statt Inline-ion-modal mit ion-datetime.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 40,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#modal-8334d587-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:96",
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:379"
+    ],
+    "n": "„Bis“-Chip öffnet showAppDatePicker (Plattform-Datumsdialog) statt Inline-ion-modal mit ion-datetime; Startwert Monatsende des Folgemonats wie Ionic. Bedienunterschiede des Pickers gehören zu field-bca25190.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 86,
+    "cond": [
+     "@else (not step === 'rules')",
+     "@if (!rows.length)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "empty"
+    },
+    "keys": [
+     "duty.noDutyEvents"
+    ],
+    "de": [
+     "Im Zeitraum gibt es keine Termine mit Dienst-Modus."
+    ],
+    "literals": [],
+    "text": "{{ 'duty.noDutyEvents' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-0c03b658"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:447"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 100,
+    "cond": [
+     "@else (not step === 'rules')",
+     "@else (not !rows.length)",
+     "@for (row of rows; track row.termin.attendance.id)",
+     "@for (pa of row.existing; track pa.id)"
+    ],
+    "tag": "ion-chip",
+    "attrs": {
+     "color": "medium"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ firstName(pa) }}"
+    ],
+    "text": "{{ firstName(pa) }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-1882858c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:495"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 119,
+    "cond": [
+     "@else (not step === 'rules')",
+     "@else (not !rows.length)",
+     "@for (c of personCounts; track c.name)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [
+     " neu)"
+    ],
+    "bound": [
+     "{{ c.count }}{{ c.planned ? ' (+' + c.planned + ' neu)' : '' }}"
+    ],
+    "text": "{{ c.count }}{{ c.planned ? ' (+' + c.planned + ' neu)' : '' }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-2ae55158"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:519"
+    ],
+    "n": "„{n} (+{m} neu)“ wie Ionic.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 118,
+    "cond": [
+     "@else (not step === 'rules')",
+     "@else (not !rows.length)",
+     "@for (c of personCounts; track c.name)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ c.name }}"
+    ],
+    "text": "{{ c.name }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-3a79670e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:518"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 123,
+    "cond": [
+     "@else (not step === 'rules')",
+     "@else (not !rows.length)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "duty.greyHint"
+    ],
+    "de": [
+     "Grau = schon eingeteilt, bleibt unverändert."
+    ],
+    "literals": [],
+    "text": "{{ 'duty.greyHint' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-3e33eb39"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:524"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 61,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "duty.rules"
+    ],
+    "de": [
+     "Regeln"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.rules' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-409d35e4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:400"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 68,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ maxPerPerson }}"
+    ],
+    "text": "{{ maxPerPerson }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-44d703fe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:415"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 97,
+    "cond": [
+     "@else (not step === 'rules')",
+     "@else (not !rows.length)",
+     "@for (row of rows; track row.termin.attendance.id)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ title(row.termin) }} · {{ row.existing.length + row.picked.length }}/{{ row.termin.required }}"
+    ],
+    "text": "{{ title(row.termin) }} · {{ row.existing.length + row.picked.length }}/{{ row.termin.required }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-4f73a196"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:486",
+     "lib/data/repositories/duty_repository.dart:41"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart",
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 78,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "duty.distributeHint"
+    ],
+    "de": [
+     "Nur offene Plätze werden gefüllt, bestehende Einteilungen bleiben. Wer abgesagt hat oder regelmäßig verhindert ist, wird nicht eingeteilt. Wer bisher am wenigsten Dienste hat, kommt zuerst dran."
+    ],
+    "literals": [],
+    "text": "{{ 'duty.distributeHint' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-5a20f49b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:437"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 51,
+    "cond": [
+     "@if (step === 'rules')",
+     "@if (dutyTypes.length > 1)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "duty.eventTypes"
+    ],
+    "de": [
+     "Termintypen"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.eventTypes' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-5bf9a0b7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:383"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 26,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "duty.period"
+    ],
+    "de": [
+     "Zeitraum"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.period' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-67345289"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:371"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 28,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "duty.from"
+    ],
+    "de": [
+     "Von"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.from' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-85e38131"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:374"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 38,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "duty.to"
+    ],
+    "de": [
+     "Bis"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.to' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-c98e746d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:378"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 12,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Dienste verteilen",
+     "Vorschlag"
+    ],
+    "bound": [
+     "{{ step === 'rules' ? 'Dienste verteilen' : 'Vorschlag' }}"
+    ],
+    "text": "{{ step === 'rules' ? 'Dienste verteilen' : 'Vorschlag' }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-d1ef8852"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:314"
+    ],
+    "n": "„Dienste verteilen“ (attListDistributeDuties) / „Vorschlag“ (teamOrgProposal).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 63,
+    "cond": [
+     "@if (step === 'rules')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "duty.maxPerPerson"
+    ],
+    "de": [
+     "Höchstens pro Person"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.maxPerPerson' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-d6fa8825"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:403"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 88,
+    "cond": [
+     "@else (not step === 'rules')",
+     "@else (not !rows.length)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint top"
+    },
+    "keys": [
+     "duty.plannedSummaryMissing",
+     "duty.plannedSummary",
+     "duty.tapToSwap"
+    ],
+    "de": [
+     "{count, plural, one {# Einteilung} other {# Einteilungen}} geplant, {missing, plural, one {# Platz bleibt} other {# Plätze bleiben}} offen.",
+     "{count, plural, one {# Einteilung} other {# Einteilungen}} geplant.",
+     "Tippe auf einen Namen zum Tauschen."
+    ],
+    "literals": [],
+    "text": "{{ missingTotal ? ('duty.plannedSummaryMissing' | transloco: { count: plannedTotal, missing: missingTotal }) : ('duty.plannedSummary' | transloco: { count: plannedTotal }) }} {{ 'duty.tapToSwap' | tr…",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-dd1d8c79"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:457",
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:475"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 96,
+    "cond": [
+     "@else (not step === 'rules')",
+     "@else (not !rows.length)",
+     "@for (row of rows; track row.termin.attendance.id)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ dateLabel(row.termin) }}"
+    ],
+    "text": "{{ dateLabel(row.termin) }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-e73248fa"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:88"
+    ],
+    "n": "Ionic: dayjs „dd, DD.MM.“ + „ · HH:mm“, z. B. „Mo, 03.02. · 19:00“ / Flutter: Tag und Monat ohne führende Null, „Mo, 3.2. · 19:00“ (auch im Untertitel des Tausch-Dialogs).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.html",
+    "line": 115,
+    "cond": [
+     "@else (not step === 'rules')",
+     "@else (not !rows.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "duty.dutiesPerPerson"
+    ],
+    "de": [
+     "Dienste pro Person im Zeitraum"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.dutiesPerPerson' | transloco }}",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#text-f1aefe19"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:514"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 87,
+    "cond": [
+     "@else (not editing)",
+     "@else (not loading)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block"
+    },
+    "events": [
+     "(click)=add()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add"
+    ],
+    "keys": [
+     "duty.addRule"
+    ],
+    "de": [
+     "Regel hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.addRule' | transloco }}",
+    "id": "duty/unavailability-modal/unavailability-modal.component#action-0e2193da"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:273"
+    ],
+    "n": "Volle Breite „Regel hinzufügen“ mit Plus-Icon unter der Liste/dem Leertext, öffnet neue Regel. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 5,
+    "cond": [
+     "@if (editing)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=editing = null"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.back"
+    ],
+    "de": [
+     "Zurück"
+    ],
+    "literals": [],
+    "text": "{{ 'common.back' | transloco }}",
+    "id": "duty/unavailability-modal/unavailability-modal.component#action-0f45da39"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:204"
+    ],
+    "n": "Text-Button „Zurück“ links nur beim Bearbeiten, verwirft die Bearbeitung. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 70,
+    "cond": [
+     "@else (not editing)",
+     "@else (not loading)",
+     "@if (rules.length)",
+     "@for (rule of rules; track rule.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "true"
+    },
+    "events": [
+     "(click)=edit(rule)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ weekdaysText(rule.weekdays) }}{{ rule.reason ? ' · ' + rule.reason : '' }} {{ typesText(rule) }} · {{ untilText(rule) }}",
+    "id": "duty/unavailability-modal/unavailability-modal.component#action-9aa27fbe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:253"
+    ],
+    "n": "Titel „Mo, Mi · Grund“, Untertitel „Typen · bis DD.MM.YYYY / unbefristet“, Chevron, Tipp öffnet Bearbeitung. Typnamen unsichtbarer Typen: siehe Extra „Typnamen in der Regel-Liste“ (niedrig). Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 20,
+    "cond": [
+     "@if (editing)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "[disabled]": "\"saving\""
+    },
+    "events": [
+     "(click)=save()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[strong]=\"true\""
+    ],
+    "icons": [],
+    "keys": [
+     "common.save"
+    ],
+    "de": [
+     "Speichern"
+    ],
+    "literals": [],
+    "text": "{{ 'common.save' | transloco }}",
+    "id": "duty/unavailability-modal/unavailability-modal.component#action-ab8ecfb1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:216"
+    ],
+    "n": "„Speichern“ fett rechts nur beim Bearbeiten, während des Speicherns deaktiviert. Schreibt tenant_id, person_id, weekdays, type_ids, reason, valid_until, created_by = aktueller Nutzer wie Ionic. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 75,
+    "cond": [
+     "@else (not editing)",
+     "@else (not loading)",
+     "@if (rules.length)",
+     "@for (rule of rules; track rule.id)",
+     "in <ion-item>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear",
+     "color": "danger"
+    },
+    "events": [
+     "(click)=$event.stopPropagation(); remove(rule)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'duty.deleteRule' | transloco\""
+    ],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "duty/unavailability-modal/unavailability-modal.component#action-c445913a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:262"
+    ],
+    "n": "Roter Mülleimer rechts (Tooltip „Regel löschen“), öffnet nur die Lösch-Bestätigung, nicht die Bearbeitung. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 32,
+    "cond": [
+     "@if (editing)",
+     "@for (label of weekdayShort; track label; let i = $index)"
+    ],
+    "tag": "ion-chip",
+    "attrs": {
+     "[color]": "\"editing.weekdays.includes(i + 1) ? 'primary' : 'medium'\""
+    },
+    "events": [
+     "(click)=toggleWeekday(i + 1)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[outline]=\"!editing.weekdays.includes(i + 1)\"",
+     "[attr.aria-label]=\"weekdayLong[i]\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ label }}",
+    "id": "duty/unavailability-modal/unavailability-modal.component#action-ee9ebd0b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:301"
+    ],
+    "n": "Chips „Mo“…„So“ (ISO 1–7), gewählt primary gefüllt, sonst medium outline, Langname als Tooltip, Liste sortiert. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 7,
+    "cond": [
+     "@else (not editing)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=close()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'common.close' | transloco\""
+    ],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "duty/unavailability-modal/unavailability-modal.component#action-fa621d1e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:209"
+    ],
+    "n": "X-Button (Tooltip „Schließen“) links außerhalb der Bearbeitung, schließt. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "line": 139,
+    "method": "UnavailabilityModalComponent.remove",
+    "cond": [],
+    "header": {
+     "keys": [
+      "duty.deleteRuleConfirm"
+     ],
+     "de": [
+      "Regel löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('duty.deleteRuleConfirm')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "duty.deleteRuleMessage"
+     ],
+     "de": [
+      "Bereits eingetragene Abmeldungen bleiben bestehen."
+     ],
+     "literals": [],
+     "expr": "translate('duty.deleteRuleMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { await this.db.dutySvc.deleteUnavailability(rule.id); await this.load(); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "ea6c5da3",
+    "mbody": "d13ef547",
+    "id": "duty/unavailability-modal/unavailability-modal.component#alert-7cb35beb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:153",
+     "lib/data/repositories/duty_repository.dart:407"
+    ],
+    "n": "„Regel löschen?“ / „Bereits eingetragene Abmeldungen bleiben bestehen.“, „Abbrechen“ / „Löschen“ (rot); löscht person_unavailability (Flutter zusätzlich mit tenant_id-Filter) und lädt neu. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 42,
+    "cond": [
+     "@if (editing)",
+     "@for (t of types; track t.id)"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {},
+    "events": [
+     "(ionChange)=toggleType(t.id)"
+    ],
+    "link": null,
+    "model": "[checked]=\"editing.type_ids?.includes(t.id)\"",
+    "bindings": [
+     "[checked]=\"editing.type_ids?.includes(t.id)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ t.name }}",
+    "id": "duty/unavailability-modal/unavailability-modal.component#field-845c170b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:325"
+    ],
+    "n": "Checkbox links je sichtbarem Typ (visible), Neu mit Vorauswahl der Dienst-Typen, Umschalten wie Ionic. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 54,
+    "cond": [
+     "@if (editing)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editing.reason\"",
+    "bindings": [
+     "[label]=\"'duty.reasonOptional' | transloco\"",
+     "[placeholder]=\"'duty.childrenHourPlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "duty.reasonOptional",
+     "duty.childrenHourPlaceholder"
+    ],
+    "de": [
+     "Grund (optional)",
+     "z. B. Kinderstunde"
+    ],
+    "literals": [],
+    "text": "[label]=\"'duty.reasonOptional' | transloco\" [placeholder]=\"'duty.childrenHourPlaceholder' | transloco\"",
+    "id": "duty/unavailability-modal/unavailability-modal.component#field-b539df20"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:345",
+     "lib/features/duty/presentation/pages/unavailability_page.dart:111"
+    ],
+    "n": "Gestapeltes Feld „Grund (optional)“, Platzhalter „z. B. Kinderstunde“; Flutter speichert getrimmt (Ionic ungetrimmt), praktisch nicht sichtbar. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 57,
+    "cond": [
+     "@if (editing)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "date"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editing.valid_until\"",
+    "bindings": [
+     "[label]=\"'duty.validUntil' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "duty.validUntil"
+    ],
+    "de": [
+     "Gültig bis (optional)"
+    ],
+    "literals": [],
+    "text": "[label]=\"'duty.validUntil' | transloco\"",
+    "id": "duty/unavailability-modal/unavailability-modal.component#field-bb90d03c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:350",
+     "lib/features/duty/presentation/pages/unavailability_page.dart:166"
+    ],
+    "n": "Ionic: natives Datumsfeld (ion-input type=date) mit gestapeltem Label „Gültig bis (optional)“, zeigt das Datum im Browser-Format bzw. leer / Flutter: Zeile mit Label, Wert „bis 31.12.2026“ bzw. „unbefristet“, Tipp öffnet Datumsauswahl (Vorjahr bis +10 Jahre), X-Button zum Leeren. Gespeichert wird in beiden YYYY-MM-DD oder null.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 48,
+    "cond": [
+     "@if (editing)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "class": "small"
+    },
+    "keys": [
+     "duty.allTypesHint"
+    ],
+    "de": [
+     "Ohne Auswahl gilt die Regel für alle Termintypen."
+    ],
+    "literals": [],
+    "text": "{{ 'duty.allTypesHint' | transloco }}",
+    "id": "duty/unavailability-modal/unavailability-modal.component#text-190b3c0b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:336"
+    ],
+    "n": "Kleiner grauer Hinweis „Ohne Auswahl gilt die Regel für alle Termintypen.“ Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 29,
+    "cond": [
+     "@if (editing)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "duty.weekdays"
+    ],
+    "de": [
+     "Wochentage"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.weekdays' | transloco }}",
+    "id": "duty/unavailability-modal/unavailability-modal.component#text-61239cdf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:293"
+    ],
+    "n": "Listenkopf „Wochentage“. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 82,
+    "cond": [
+     "@else (not editing)",
+     "@else (not loading)",
+     "@else (not rules.length)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "empty"
+    },
+    "keys": [
+     "duty.noRuleOther",
+     "duty.noRuleSelf"
+    ],
+    "de": [
+     "Noch keine Regel. Trag ein, an welchen Wochentagen die Person grundsätzlich nicht kann, z. B. mittwochs wegen der Kinderstunde.",
+     "Noch keine Regel. Trag ein, an welchen Wochentagen du grundsätzlich nicht kannst, z. B. mittwochs wegen der Kinderstunde."
+    ],
+    "literals": [],
+    "text": "{{ (forOther ? 'duty.noRuleOther' : 'duty.noRuleSelf') | transloco }}",
+    "id": "duty/unavailability-modal/unavailability-modal.component#text-7f458e30"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:237"
+    ],
+    "n": "Leertext je nach „für andere“ (noRuleOther / noRuleSelf) wie Ionic; Ladefehler siehe Extra „Ladefehler der Regeln“. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 15,
+    "cond": [
+     "@if (forOther && personName)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "sub"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ personName }}"
+    ],
+    "text": "{{ personName }}",
+    "id": "duty/unavailability-modal/unavailability-modal.component#text-96d283d0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:189"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 39,
+    "cond": [
+     "@if (editing)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "duty.forWhichTypes"
+    ],
+    "de": [
+     "Für welche Termintypen?"
+    ],
+    "literals": [],
+    "text": "{{ 'duty.forWhichTypes' | transloco }}",
+    "id": "duty/unavailability-modal/unavailability-modal.component#text-c25a5821"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:322"
+    ],
+    "n": "Listenkopf „Für welche Termintypen?“. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "duty/unavailability-modal/unavailability-modal.component.html",
+    "line": 60,
+    "cond": [
+     "@if (editing)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "hint"
+    },
+    "keys": [
+     "duty.ruleHint"
+    ],
+    "de": [
+     "Neue Termine an diesen Tagen werden automatisch als entschuldigt eingetragen. Bei Diensten wirst du dann nicht eingeteilt."
+    ],
+    "literals": [],
+    "text": "{{ 'duty.ruleHint' | transloco }}",
+    "id": "duty/unavailability-modal/unavailability-modal.component#text-c5d27b76"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:364"
+    ],
+    "n": "Hinweis „Neue Termine an diesen Tagen …“ in beiden auch bei „für andere“ in Du-Form. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  }
+ ]
+}

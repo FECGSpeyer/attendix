@@ -1,0 +1,2415 @@
+{
+ "batch": "zz-verify5c-sonnet-23",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "public-planning/public-planning.page.html",
+    "line": 183,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "public-planning/public-planning.page#modal-419a4f08-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:804-817"
+    ],
+    "n": "Plattform-Zeitwahl (24 h) statt ion-modal mit ion-datetime; Änderung speichert.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "public-planning/public-planning.page.html",
+    "line": 115,
+    "cond": [
+     "in <ion-popover trigger=add-trigger #addPopover>",
+     "@if (isLoggedIn && orgDefaultFields.length)"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [
+     "planning.fields"
+    ],
+    "de": [
+     "Felder"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.fields' | transloco }}",
+    "id": "public-planning/public-planning.page#text-4ae11dda"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:513"
+    ],
+    "n": "„Felder“ nur eingeloggt mit Org-Standardfeldern (Flutter: Org nur bei Login gelesen).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "public-planning/public-planning.page.html",
+    "line": 259,
+    "cond": [
+     "@if (end)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.end"
+    ],
+    "de": [
+     "Ende"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.end' | transloco }}",
+    "id": "public-planning/public-planning.page#text-aefaf1bb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:981-986"
+    ],
+    "n": "„Ende“ gleich. Ionic: sichtbar sobald end gesetzt (auch bei leerem Ablauf, z. B. Vorlage „Leerer Ablauf“; nach „Neuer Plan“ bis zur nächsten Änderung aus) / Flutter: nur wenn mindestens ein Feld existiert.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 1004,
+    "method": "PublicPlanningPage.resetToTemplate",
+    "cond": [
+     "(!tpl)"
+    ],
+    "message": {
+     "keys": [
+      "plans.noTemplate"
+     ],
+     "de": [
+      "Keine Vorlage ausgewählt."
+     ],
+     "literals": [],
+     "expr": "translate('plans.noTemplate')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "30700277",
+    "mbody": "ac08efd3",
+    "id": "public-planning/public-planning.page#toast-44b64ac5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:453",
+     "lib/features/planning/presentation/pages/public_planning_page.dart:456"
+    ],
+    "n": "„Keine Vorlage ausgewählt.“ (warning), wenn keine Standardvorlage gewählt ist (auch bei Org-Vorlage, da nur die Standardvorlagen durchsucht werden) – gleich, keine Rollenbedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 964,
+    "method": "PublicPlanningPage.addToOrg",
+    "cond": [
+     "(!this.currentPlanId)"
+    ],
+    "message": {
+     "keys": [
+      "plans.savePlanFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern des Plans"
+     ],
+     "literals": [],
+     "expr": "translate('plans.savePlanFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "3dede34d",
+    "mbody": "8a68593e",
+    "id": "public-planning/public-planning.page#toast-4f1670a7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:693-698"
+    ],
+    "n": "Flutter besser: Text „Fehler beim Speichern des Plans“ (danger) gleich. Ionic: nur ohne Plan-ID (Upsert-Fehler ignoriert, danach Org-Update auf evtl. nicht vorhandene Zeile mit Erfolgs-Toast) / Flutter: bei jedem fehlgeschlagenen Speichern",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 713,
+    "method": "PublicPlanningPage.validate",
+    "cond": [
+     "(!this.time || !this.selectedFields.length)"
+    ],
+    "message": {
+     "keys": [
+      "plans.addFieldMin"
+     ],
+     "de": [
+      "Bitte mindestens ein Feld hinzufügen."
+     ],
+     "literals": [],
+     "expr": "translate('plans.addFieldMin')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "65908b13",
+    "mbody": "62a200e9",
+    "id": "public-planning/public-planning.page#toast-51c4a8ae"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:714-718"
+    ],
+    "n": "„Bitte mindestens ein Feld hinzufügen.“ (warning)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 992,
+    "method": "PublicPlanningPage.removeFromOrg",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "plans.removeOrgFailed"
+     ],
+     "de": [
+      "Fehler beim Entfernen aus der Organisation"
+     ],
+     "literals": [],
+     "expr": "translate('plans.removeOrgFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "b7c3da47",
+    "mbody": "5a0337cd",
+    "id": "public-planning/public-planning.page#toast-59c04720"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:688-690"
+    ],
+    "n": "„Fehler beim Entfernen aus der Organisation“ (danger)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 998,
+    "method": "PublicPlanningPage.removeFromOrg",
+    "cond": [],
+    "message": {
+     "keys": [
+      "plans.removedFromOrg"
+     ],
+     "de": [
+      "Plan aus Organisation entfernt"
+     ],
+     "literals": [],
+     "expr": "translate('plans.removedFromOrg')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "9636ad94",
+    "mbody": "5a0337cd",
+    "id": "public-planning/public-planning.page#toast-798244e5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:687"
+    ],
+    "n": "„Plan aus Organisation entfernt“ (success)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 824,
+    "method": "PublicPlanningPage.doShare",
+    "cond": [
+     "(!this.currentPlanId)",
+     "(this.isLoggedIn)"
+    ],
+    "message": {
+     "keys": [
+      "plans.linkFailed"
+     ],
+     "de": [
+      "Fehler beim Erstellen des Links"
+     ],
+     "literals": [],
+     "expr": "translate('plans.linkFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "6b2de157",
+    "mbody": "75a3fcd1",
+    "id": "public-planning/public-planning.page#toast-7e4f62bb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:763-770",
+     "lib/features/planning/presentation/pages/public_planning_page.dart:335-362"
+    ],
+    "n": "Flutter besser: Text „Fehler beim Erstellen des Links“ (danger) gleich. Ionic: nur wenn nach persistToDb keine Plan-ID existiert (Upsert-Fehler werden ignoriert, Link auf evtl. ungespeicherten Plan wird geteilt) / Flutter: speichert vor dem Teilen immer und zeigt den Toast auch bei Speicherfehler",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 853,
+    "method": "PublicPlanningPage.doShare",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "plans.linkFailed"
+     ],
+     "de": [
+      "Fehler beim Erstellen des Links"
+     ],
+     "literals": [],
+     "expr": "translate('plans.linkFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "6b2de157",
+    "mbody": "75a3fcd1",
+    "id": "public-planning/public-planning.page#toast-7e4f62bb-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:775-779"
+    ],
+    "n": "Insert-Fehler → „Fehler beim Erstellen des Links“ (danger)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 717,
+    "method": "PublicPlanningPage.validate",
+    "cond": [
+     "(!this.selectedFields.every(f => f.id.includes('noteFld') || f.time))"
+    ],
+    "message": {
+     "keys": [
+      "plans.fillDurations"
+     ],
+     "de": [
+      "Bitte alle Dauern ausfüllen."
+     ],
+     "literals": [],
+     "expr": "translate('plans.fillDurations')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "ab629373",
+    "mbody": "62a200e9",
+    "id": "public-planning/public-planning.page#toast-88e9eba9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:719-722"
+    ],
+    "n": "„Bitte alle Dauern ausfüllen.“ (warning); Notizen und Block-Köpfe ausgenommen",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 833,
+    "method": "PublicPlanningPage.doShare",
+    "cond": [
+     "!(navigator.share)",
+     "(this.isLoggedIn)"
+    ],
+    "message": {
+     "keys": [
+      "planning.linkCopied"
+     ],
+     "de": [
+      "Link in Zwischenablage kopiert"
+     ],
+     "literals": [],
+     "expr": "translate('planning.linkCopied')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "6f2699da",
+    "mbody": "75a3fcd1",
+    "id": "public-planning/public-planning.page#toast-c76fea2d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:150-153"
+    ],
+    "n": "„Link in Zwischenablage kopiert“ (success) gleich; Flutter im Web zusätzlich nach erfolgreichem Teilen (share_plus liefert dort „unavailable“)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 863,
+    "method": "PublicPlanningPage.doShare",
+    "cond": [
+     "!(navigator.share)"
+    ],
+    "message": {
+     "keys": [
+      "planning.linkCopied"
+     ],
+     "de": [
+      "Link in Zwischenablage kopiert"
+     ],
+     "literals": [],
+     "expr": "translate('planning.linkCopied')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "6f2699da",
+    "mbody": "75a3fcd1",
+    "id": "public-planning/public-planning.page#toast-c76fea2d-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:150-153"
+    ],
+    "n": "„Link in Zwischenablage kopiert“ (success) gleich; Flutter im Web zusätzlich nach erfolgreichem Teilen (share_plus liefert dort „unavailable“)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 980,
+    "method": "PublicPlanningPage.addToOrg",
+    "cond": [],
+    "message": {
+     "keys": [
+      "plans.addedToOrg"
+     ],
+     "de": [
+      "Plan zur Organisation \"{org}\" hinzugefügt"
+     ],
+     "literals": [],
+     "expr": "translate('plans.addedToOrg', { org: org.name })"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "c8af40b3",
+    "mbody": "8a68593e",
+    "id": "public-planning/public-planning.page#toast-d3dbfed3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:704"
+    ],
+    "n": "„Plan zur Organisation \"{org}\" hinzugefügt“ (success)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 974,
+    "method": "PublicPlanningPage.addToOrg",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "plans.addOrgFailed"
+     ],
+     "de": [
+      "Fehler beim Hinzufügen zur Organisation"
+     ],
+     "literals": [],
+     "expr": "translate('plans.addOrgFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "54038e06",
+    "mbody": "8a68593e",
+    "id": "public-planning/public-planning.page#toast-e01820b2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:705-707"
+    ],
+    "n": "„Fehler beim Hinzufügen zur Organisation“ (danger)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/register.page.html",
+    "line": 69,
+    "cond": [],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "action-sheet"
+    },
+    "events": [
+     "(ionChange)=onTypeChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"tenant.type\"",
+    "bindings": [
+     "[label]=\"'register.groupType' | transloco\"",
+     "[interfaceOptions]=\"{header: ('register.groupTypeQuestion' | transloco)}\""
+    ],
+    "icons": [
+     "people-outline"
+    ],
+    "options": [
+     {
+      "value": "general",
+      "keys": [
+       "register.typeGeneral"
+      ],
+      "de": [
+       "Allgemeine Gruppe"
+      ],
+      "literals": [],
+      "text": "{{ 'register.typeGeneral' | transloco }} \"general\""
+     },
+     {
+      "value": "choir",
+      "keys": [
+       "register.typeChoirOption"
+      ],
+      "de": [
+       "Chor / Gesangsgruppe"
+      ],
+      "literals": [],
+      "text": "{{ 'register.typeChoirOption' | transloco }}\"choir\""
+     },
+     {
+      "value": "orchestra",
+      "keys": [
+       "register.typeOrchestraOption"
+      ],
+      "de": [
+       "Orchester / Musikgruppe"
+      ],
+      "literals": [],
+      "text": "{{ 'register.typeOrchestraOption' | transloco }}\"orchestra\""
+     }
+    ],
+    "keys": [
+     "register.groupType",
+     "register.groupTypeQuestion",
+     "register.typeGeneral",
+     "register.typeChoirOption",
+     "register.typeOrchestraOption"
+    ],
+    "de": [
+     "Gruppentyp",
+     "Was beschreibt deine Gruppe am besten?",
+     "Allgemeine Gruppe",
+     "Chor / Gesangsgruppe",
+     "Orchester / Musikgruppe"
+    ],
+    "literals": [
+     "{header: ( )}"
+    ],
+    "text": "[label]=\"'register.groupType' | transloco\" [interfaceOptions]=\"{header: ('register.groupTypeQuestion' | transloco)}\" \"general\" {{ 'register.typeGeneral' | transloco }} \"choir\" {{ 'register.typeChoirO…",
+    "id": "register/register.page#field-5641b587"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:265-279",
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:470-490"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "register/register.page.html",
+    "line": 108,
+    "cond": [],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"tenant.longName\"",
+    "bindings": [
+     "[label]=\"'register.fullName' | transloco\"",
+     "[placeholder]=\"namePlaceholder\"",
+     "[counter]=\"true\"",
+     "[helperText]=\"'register.fullNameHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "register.fullName",
+     "register.fullNameHelper"
+    ],
+    "de": [
+     "Vollständiger Name",
+     "Der Name wird in der App angezeigt"
+    ],
+    "literals": [],
+    "text": "[label]=\"'register.fullName' | transloco\" [placeholder]=\"namePlaceholder\" [helperText]=\"'register.fullNameHelper' | transloco\"",
+    "id": "register/register.page#field-98af382f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:311-324"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "register/register.page.ts",
+    "line": 111,
+    "method": "RegisterPage.confirmDeleteAccount",
+    "cond": [],
+    "message": {
+     "keys": [
+      "register.delete.running"
+     ],
+     "de": [
+      "Konto wird gelöscht..."
+     ],
+     "literals": [],
+     "expr": "translate('register.delete.running')"
+    },
+    "duration": "60000",
+    "src": "35961f67",
+    "mbody": "a23f3ffb",
+    "id": "register/register.page#loading-14fb6abb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:524"
+    ],
+    "n": "Ionic: blockierendes Loading-Overlay beim Löschen / Flutter: nur Info-Toast, nicht blockierend.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/register.page.html",
+    "line": 44,
+    "cond": [],
+    "tag": "p",
+    "attrs": {},
+    "bindings": [
+     "[innerHTML]=\"'register.introHtml' | transloco\""
+    ],
+    "keys": [
+     "register.introHtml"
+    ],
+    "de": [
+     "Eine <strong>Instanz</strong> ist dein eigener Bereich für dein Orchester, deinen Chor oder deine Gruppe. Hier verwaltest du Mitglieder, Termine und Anwesenheiten."
+    ],
+    "literals": [],
+    "text": "[innerHTML]=\"'register.introHtml' | transloco\"",
+    "id": "register/register.page#text-51a59c27"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:206-213"
+    ],
+    "n": "Gleicher Introtext, \"Instanz\" fett (Inline-HTML-Spans), zentriert in der Intro-Karte.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/register.page.ts",
+    "line": 119,
+    "method": "RegisterPage.confirmDeleteAccount",
+    "cond": [],
+    "message": {
+     "keys": [
+      "register.delete.failed",
+      "common.unknown"
+     ],
+     "de": [
+      "Fehler beim Löschen: {error}",
+      "Unbekannt"
+     ],
+     "literals": [],
+     "expr": "translate('register.delete.failed', { error: error?.message || translate('common.unknown') })"
+    },
+    "color": "danger",
+    "duration": "5000",
+    "src": "6c75caff",
+    "mbody": "a23f3ffb",
+    "id": "register/register.page#toast-243480af"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:530-537",
+     "lib/data/repositories/account_repository.dart:27-42"
+    ],
+    "n": "Vorlage \"Fehler beim Löschen: {error}\" gleich, aber {error}: Ionic FunctionsHttpError \"Edge Function returned a non-2xx status code\" / Flutter RepositoryException aus FunctionException.toString() → \"FunctionException(status: 500, details: {error: …}, reasonPhrase: …)\". Erstprüfung hat den Fehlertext nicht verglichen.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/register.page.ts",
+    "line": 116,
+    "method": "RegisterPage.confirmDeleteAccount",
+    "cond": [],
+    "message": {
+     "keys": [
+      "register.delete.done"
+     ],
+     "de": [
+      "Dein Konto wurde gelöscht."
+     ],
+     "literals": [],
+     "expr": "translate('register.delete.done')"
+    },
+    "color": "success",
+    "duration": "4000",
+    "src": "bf295f2a",
+    "mbody": "a23f3ffb",
+    "id": "register/register.page#toast-aed4ea59"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:524-530"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 233,
+    "cond": [],
+    "tag": "ion-item",
+    "attrs": {
+     "color": "primary",
+     "button": "",
+     "detail": "false",
+     "[disabled]": "\"noGroupsAvailable\""
+    },
+    "events": [
+     "(click)=register()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark-circle-outline"
+    ],
+    "keys": [
+     "tenantRegister.finish"
+    ],
+    "de": [
+     "Registrierung abschließen"
+    ],
+    "literals": [],
+    "text": "{{ 'tenantRegister.finish' | transloco }}",
+    "id": "register/tenant-register/tenant-register.page#action-5bd78b6a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:422-433"
+    ],
+    "n": "Ionic: nur bei fehlenden Gruppen deaktiviert, auch bei ungültigem Link sichtbar / Flutter: zusätzlich im OTP-Modus vor Anmeldung und während des Ladens deaktiviert, bei ungültigem Link nicht vorhanden.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 5,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=goHome()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "home-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "register/tenant-register/tenant-register.page#action-7a63a66c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:132"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 255,
+    "method": "TenantRegisterPage.login",
+    "cond": [],
+    "header": {
+     "keys": [
+      "login.signIn"
+     ],
+     "de": [
+      "Anmelden"
+     ],
+     "literals": [],
+     "expr": "translate('login.signIn')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "login.signIn"
+       ],
+       "de": [
+        "Anmelden"
+       ],
+       "literals": [],
+       "expr": "translate('login.signIn')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data) => { try { await this.db.login(data.email, data.password, true); const tenantUsers = await this.db.getTenantsByUserId(); const alreadyRegistered = await this.checkExistent(tenantUsers); if (!alreadyRegistered) { await this.pre…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "email",
+      "label": null,
+      "name": "'email'",
+      "placeholder": {
+       "keys": [
+        "tenantRegister.emailAddress"
+       ],
+       "de": [
+        "E-Mail Adresse"
+       ],
+       "literals": [],
+       "expr": "translate('tenantRegister.emailAddress')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "password",
+      "label": null,
+      "name": "'password'",
+      "placeholder": {
+       "keys": [
+        "login.modePassword"
+       ],
+       "de": [
+        "Passwort"
+       ],
+       "literals": [],
+       "expr": "translate('login.modePassword')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "10943898",
+    "mbody": "44ece2f1",
+    "id": "register/tenant-register/tenant-register.page#alert-d3091b10"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:715"
+    ],
+    "n": "Gleicher Titel 'Anmelden', Buttons 'Abbrechen'/'Anmelden', danach Check+Prefill. Unterschiede: Flutter zusätzlicher Text 'Melde dich mit deinem bestehenden Account an.', Feld-Label 'E-Mail' statt Platzhalter 'E-Mail Adresse', Fehler als roter Text im Dialog statt Toast (bei unbestätigter E-Mail zeigt Flutter 'Bitte bestätige zuerst deine E-Mail-Adresse.', Ionic nichts).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 498,
+    "method": "TenantRegisterPage.onImageSelect",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "3ad6372f",
+    "id": "register/tenant-register/tenant-register.page#loading-19c310bc"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:590"
+    ],
+    "n": "Ionic: Loading-Overlay während Bild eingelesen wird / Flutter: kein Ladeindikator.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 198,
+    "method": "TenantRegisterPage.verifyCode",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "1e1dd1b5",
+    "id": "register/tenant-register/tenant-register.page#loading-54fa6693"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:988",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:434-438"
+    ],
+    "n": "Ionic: blockierendes Loading-Overlay beim Code-Bestätigen / Flutter: Buttons/Codefeld deaktiviert, kein Overlay.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 175,
+    "method": "TenantRegisterPage.requestCode",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "9ba232cc",
+    "id": "register/tenant-register/tenant-register.page#loading-ba12bb0b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:968"
+    ],
+    "n": "Ionic: blockierendes Loading-Overlay beim Code-Anfordern / Flutter: nur Buttons deaktiviert, Spinner unter dem Formular.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 139,
+    "method": "TenantRegisterPage.openPrivacy",
+    "cond": [],
+    "component": "LegalModalComponent",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "806f99f8",
+    "mbody": "be8e7d1f",
+    "id": "register/tenant-register/tenant-register.page#modal-c3de19e4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:929",
+     "lib/features/legal/presentation/widgets/legal_content_view.dart:139"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 505,
+    "method": "TenantRegisterPage.onImageSelect",
+    "cond": [
+     "(imgFile.size > 15 * 1024 * 1024)",
+     "(imgFile)"
+    ],
+    "message": {
+     "keys": [
+      "tenantRegister.pictureTooLarge"
+     ],
+     "de": [
+      "Das ausgewählte Bild ist zu groß. Bitte wähle ein Bild unter 15 MB."
+     ],
+     "literals": [],
+     "expr": "translate('tenantRegister.pictureTooLarge')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "0f770e09",
+    "mbody": "3ad6372f",
+    "id": "register/tenant-register/tenant-register.page#toast-2a68da3c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:604"
+    ],
+    "n": "Gleicher Text. Ionic prüft die Originaldatei (>15 MB) / Flutter prüft erst nach Verkleinerung auf 800 px, Qualität 80 – greift praktisch nie, große Bilder werden angenommen.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 172,
+    "method": "TenantRegisterPage.requestCode",
+    "cond": [
+     "(!this.privacyAccepted)"
+    ],
+    "message": {
+     "keys": [
+      "tenantRegister.acceptTermsToast"
+     ],
+     "de": [
+      "Bitte akzeptiere die Nutzungsbedingungen und Datenschutzerklärung."
+     ],
+     "literals": [],
+     "expr": "translate('tenantRegister.acceptTermsToast')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "e7a86f86",
+    "mbody": "9ba232cc",
+    "id": "register/tenant-register/tenant-register.page#toast-9ab09d16"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:963"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 168,
+    "method": "TenantRegisterPage.requestCode",
+    "cond": [
+     "(!Utils.validateEmail(email))"
+    ],
+    "message": {
+     "keys": [
+      "login.toast.invalidEmail"
+     ],
+     "de": [
+      "Bitte eine gültige E-Mail Adresse eingeben."
+     ],
+     "literals": [],
+     "expr": "translate('login.toast.invalidEmail')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "bd3863a9",
+    "mbody": "9ba232cc",
+    "id": "register/tenant-register/tenant-register.page#toast-fa4a46f9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:959"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/overview/overview.page.html",
+    "line": 127,
+    "cond": [
+     "<ng-template #eventChips>",
+     "@if (showDeadlineInfo(att) || att.notes || att.attendance?.description || att.attendance?.attachment_url || hasFilesFolder(att) || att.attendance?.place)",
+     "@if (att.attendance?.attachment_url)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-chip"
+    },
+    "events": [
+     "(click)=$event.stopPropagation(); openAttachment(att.attendance)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "attach-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Anhang"
+    ],
+    "text": "{{ att.attendance?.attachment_name || 'Anhang' }}",
+    "id": "selfService/overview/overview.page#action-203e5c71"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:223-228"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/overview/overview.page.html",
+    "line": 124,
+    "cond": [
+     "<ng-template #eventChips>",
+     "@if (showDeadlineInfo(att) || att.notes || att.attendance?.description || att.attendance?.attachment_url || hasFilesFolder(att) || att.attendance?.place)",
+     "@if (att.attendance?.description)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-chip"
+    },
+    "events": [
+     "(click)=$event.stopPropagation(); openDescription(att)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "information-circle-outline"
+    ],
+    "keys": [
+     "signout.infos"
+    ],
+    "de": [
+     "Infos"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.infos' | transloco }}",
+    "id": "selfService/overview/overview.page#action-2e23edd6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:217-222"
+    ],
+    "n": "Chip ok; Inhalt des Sheets siehe modal-44ffacb0",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/overview/overview.page.html",
+    "line": 130,
+    "cond": [
+     "<ng-template #eventChips>",
+     "@if (showDeadlineInfo(att) || att.notes || att.attendance?.description || att.attendance?.attachment_url || hasFilesFolder(att) || att.attendance?.place)",
+     "@if (hasFilesFolder(att))"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-chip"
+    },
+    "events": [
+     "(click)=$event.stopPropagation(); openFilesFolder(att)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "folder-outline"
+    ],
+    "keys": [
+     "signout.files"
+    ],
+    "de": [
+     "Dateien"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.files' | transloco }}",
+    "id": "selfService/overview/overview.page#action-96db2113"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:229-234",
+     "lib/features/self_service/presentation/pages/self_service_overview_page.dart:69-74"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/overview/overview.page.html",
+    "line": 93,
+    "cond": [],
+    "tag": "app-excuse-reason-picker",
+    "attrs": {
+     "#": "excusePicker"
+    },
+    "events": [
+     "(confirm)=onExcuseConfirm($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[absenceReasons]=\"absenceReasons\"",
+     "[lateReasons]=\"lateReasons\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "selfService/overview/overview.page#action-f60f8ec5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/self_service_overview_page.dart:50",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:245",
+     "lib/core/utils/event_list_utils.dart:39"
+    ],
+    "n": "Keine Rollenbedingung am Picker; Mandantenabhängigkeit sind die Gründe: absence_reasons/late_reasons der aktuellen Instanz (auch für Termine anderer Instanzen), sonst Standardgründe – gleich. Geöffnet über Aktionsblatt bzw. Schnellaktionen (Absagen/Verspätung) mit isToday = Termin läuft heute (attendanceIsRunning bzw. att.isRunning); Abmelden schreibt für die gewählte Teilnahme mit Grund/isLate, Dank-Toast gleich. Seite nur für Spieler-/Helferrollen mit mehreren Instanzen (beide). Inhalt des Pickers eigene Unit.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "selfService/overview/overview.page.ts",
+    "line": 337,
+    "method": "OverviewPage.showNoteAlert",
+    "cond": [],
+    "header": {
+     "keys": [
+      "signout.editNote"
+     ],
+     "de": [
+      "Notiz anpassen"
+     ],
+     "literals": [],
+     "expr": "translate('signout.editNote')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data) => { await this.db.updateAttendanceNote(attendance.id!, data.note); Utils.showToast(translate('signout.noteUpdated'), 'success', 4000); await this.loadAttendances(true); }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'note'",
+      "placeholder": {
+       "keys": [
+        "signout.enterNote"
+       ],
+       "de": [
+        "Gib hier deine Notiz ein"
+       ],
+       "literals": [],
+       "expr": "translate('signout.enterNote')"
+      },
+      "value": "note",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "0cb0d226",
+    "mbody": "a47fa0b0",
+    "id": "selfService/overview/overview.page#alert-855b4ce2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:355-370",
+     "lib/core/providers/self_service_providers.dart:210-220"
+    ],
+    "n": "Nur bei Status Anwesend (text X) in beiden; Notiz vorbelegt, Speichern schreibt notes + noteUpdate-Benachrichtigung, Toast „Notiz aktualisiert“. Seite nur für Spieler/NONE/Helfer/Stimmführer-Helfer mit >1 Instanz (Stimmführer nicht) – Tab (main_shell.dart:115) und Route (route_access.dart:77) wie tabs.page.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/overview/overview.page.html",
+    "line": 118,
+    "cond": [
+     "<ng-template #eventChips>",
+     "@if (showDeadlineInfo(att) || att.notes || att.attendance?.description || att.attendance?.attachment_url || hasFilesFolder(att) || att.attendance?.place)",
+     "@if (showDeadlineInfo(att))"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-chip ev-chip--danger"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getDeadlineText(att) }}"
+    ],
+    "text": "{{ getDeadlineText(att) }}",
+    "id": "selfService/overview/overview.page#text-62906ae5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:113-123",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:201-202"
+    ],
+    "n": "'Anmeldefrist: TT.MM.JJJJ HH:mm' nur in den 3 Tagen vor der Frist (overviewMode) wie Ionic",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/overview/overview.page.html",
+    "line": 121,
+    "cond": [
+     "<ng-template #eventChips>",
+     "@if (showDeadlineInfo(att) || att.notes || att.attendance?.description || att.attendance?.attachment_url || hasFilesFolder(att) || att.attendance?.place)",
+     "@if (att.notes)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-chip"
+    },
+    "keys": [
+     "signout.noteChip"
+    ],
+    "de": [
+     "Notiz: {note}"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.noteChip' | transloco: { note: att.notes } }}",
+    "id": "selfService/overview/overview.page#text-ce67106b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:203-204"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/overview/overview.page.ts",
+    "line": 324,
+    "method": "OverviewPage.onExcuseConfirm",
+    "cond": [],
+    "message": {
+     "keys": [
+      "signout.thanksLate",
+      "signout.thanksSignout"
+     ],
+     "de": [
+      "Vielen Dank für die Info und Gottes Segen dir!",
+      "Vielen Dank für deine rechtzeitige Abmeldung und Gottes Segen dir."
+     ],
+     "literals": [],
+     "expr": "isLate ? translate('signout.thanksLate') : translate('signout.thanksSignout')"
+    },
+    "color": "success",
+    "duration": "4000",
+    "src": "9c8886b6",
+    "mbody": "8cae2cd0",
+    "id": "selfService/overview/overview.page#toast-7a36c603"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:265-284"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/overview/overview.page.ts",
+    "line": 316,
+    "method": "OverviewPage.signin",
+    "cond": [],
+    "message": {
+     "keys": [
+      "signout.gladYouCome"
+     ],
+     "de": [
+      "Schön, dass du dabei bist 🙂"
+     ],
+     "literals": [],
+     "expr": "translate('signout.gladYouCome')"
+    },
+    "color": "success",
+    "duration": "4000",
+    "src": "fde6119a",
+    "mbody": "7e386c0a",
+    "id": "selfService/overview/overview.page#toast-8236dcaf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:335-343"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/overview/overview.page.ts",
+    "line": 353,
+    "method": "OverviewPage.showNoteAlert",
+    "cond": [],
+    "message": {
+     "keys": [
+      "signout.noteUpdated"
+     ],
+     "de": [
+      "Notiz erfolgreich aktualisiert."
+     ],
+     "literals": [],
+     "expr": "translate('signout.noteUpdated')"
+    },
+    "color": "success",
+    "duration": "4000",
+    "src": "82744bb6",
+    "mbody": "a47fa0b0",
+    "id": "selfService/overview/overview.page#toast-b3e96f73"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:363-367"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 194,
+    "cond": [
+     "<ng-template #eventChips>",
+     "@if (hasPlan(att) || att.description || att.attachment_url || songsOf(att).length)",
+     "@if (att.attachment_url)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-chip"
+    },
+    "events": [
+     "(click)=openAttachment(att); $event.stopPropagation()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "attach-outline"
+    ],
+    "keys": [
+     "selfService.attachment"
+    ],
+    "de": [
+     "Anhang"
+    ],
+    "literals": [],
+    "text": "{{ 'selfService.attachment' | transloco }}",
+    "id": "selfService/parents/parents.page#action-12dc0660"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:127-132"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 259,
+    "cond": [
+     "@if (upcomingAttendances.length > 0)",
+     "@for (group of upcomingGroups; track group.key)",
+     "@for (att of group.items; track att.id)",
+     "@if (kids.length !== 1)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=openActionSheet(att, true)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.all"
+    ],
+    "de": [
+     "Alle"
+    ],
+    "literals": [],
+    "text": "{{ 'common.all' | transloco }}",
+    "id": "selfService/parents/parents.page#action-136ed4ac"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:298-303"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 185,
+    "cond": [
+     "<ng-template #eventChips>",
+     "@if (hasPlan(att) || att.description || att.attachment_url || songsOf(att).length)",
+     "@if (songsOf(att).length; as songCount)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-chip"
+    },
+    "events": [
+     "(click)=openAttendanceSongs(att); $event.stopPropagation()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "musical-notes-outline"
+    ],
+    "keys": [
+     "attendanceSongs.chip"
+    ],
+    "de": [
+     "{count, plural, one {# Werk} other {# Werke}}"
+    ],
+    "literals": [],
+    "text": "{{ 'attendanceSongs.chip' | transloco: { count: songCount } }}",
+    "id": "selfService/parents/parents.page#action-3ea4d6a0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:90-98",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:114"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 291,
+    "cond": [
+     "@if (pastAttendances.length > 0)",
+     "@for (att of pastPreview; track att.id)",
+     "@if (songsOf(att).length; as songCount)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-chip"
+    },
+    "events": [
+     "(click)=openAttendanceSongs(att); $event.stopPropagation()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "musical-notes-outline"
+    ],
+    "keys": [
+     "attendanceSongs.chip"
+    ],
+    "de": [
+     "{count, plural, one {# Werk} other {# Werke}}"
+    ],
+    "literals": [],
+    "text": "{{ 'attendanceSongs.chip' | transloco: { count: songCount } }}",
+    "id": "selfService/parents/parents.page#action-3ea4d6a0-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:343"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 84,
+    "cond": [],
+    "tag": "ion-refresher",
+    "attrs": {
+     "slot": "fixed"
+    },
+    "events": [
+     "(ionRefresh)=handleRefresh($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "selfService/parents/parents.page#action-4094e62c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:238-244"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 30,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "legend-button-parents"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "information-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "selfService/parents/parents.page#action-4d01e523-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:182-187"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 301,
+    "cond": [
+     "@if (pastAttendances.length > 0)",
+     "@if (pastAttendances.length > pastPreviewCount)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-more-link"
+    },
+    "events": [
+     "(click)=showAllPast = !showAllPast"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Weniger anzeigen",
+     "Alle ",
+     " anzeigen"
+    ],
+    "text": "{{ showAllPast ? 'Weniger anzeigen' : 'Alle ' + pastAttendances.length + ' anzeigen' }}",
+    "id": "selfService/parents/parents.page#action-6939adbb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:355-361"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 264,
+    "cond": [
+     "@if (upcomingAttendances.length > 0)",
+     "@for (group of upcomingGroups; track group.key)",
+     "@for (att of group.items; track att.id)",
+     "@for (pa of kidsByAttendance[att.id] ?? []; track pa.id)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-kid"
+    },
+    "events": [
+     "(click)=openActionSheet(att, false, pa)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[ngClass]=\"'ion-color-' + statusColorOf(pa.status)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ initials(pa) }} {{ pa.person.firstName }} · {{ statusLabelOf(pa.status) }}",
+    "id": "selfService/parents/parents.page#action-b0f208df"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:313-320",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:623-679"
+    ],
+    "n": "Chip 'Initialen Vorname · Status' öffnet Aktionsblatt des Kindes. Funktion gleich; Reihenfolge der Kinder je Termin: Ionic nach Kinder-Sortierung (Instrument, isLeader, Nachname) / Flutter Reihenfolge der DB-Zeilen (nicht garantiert gleich)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/parents/parents.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-menu-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "selfService/parents/parents.page#action-c596d047"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:169-177"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  }
+ ]
+}

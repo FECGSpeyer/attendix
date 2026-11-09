@@ -1,0 +1,1361 @@
+{
+ "batch": "b33-teachers-instruments-duty",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "duty/duty-assign-modal/duty-assign-modal.component#logic-16f653f5": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:86",
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:99"
+   ],
+   "n": "Sortierung (Verhinderte zuletzt, dann Anzahl Dienste, dann Name), Mehrfachauswahl, Bestätigen-Label, Überbuchungs-Hinweis, Abbrechen (null) und Bestätigen (Liste der IDs) wie Ionic. Abweichung nur beim Namens-Tiebreak (localeCompare vs. compareTo), siehe extra.",
+   "sev": "niedrig"
+  },
+  "duty/duty-assign-modal/duty-assign-modal.component#action-07f7484d": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:128"
+   ]
+  },
+  "duty/duty-assign-modal/duty-assign-modal.component#text-6cafa3d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:136"
+   ]
+  },
+  "duty/duty-assign-modal/duty-assign-modal.component#text-0255bf07": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:137"
+   ]
+  },
+  "duty/duty-assign-modal/duty-assign-modal.component#text-6d8af43b": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:145"
+   ]
+  },
+  "duty/duty-assign-modal/duty-assign-modal.component#action-b70d5eb8": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:161",
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:109"
+   ],
+   "n": "CheckboxListTile, ganze Zeile schaltet um; Untertitel Verhinderungs-Notiz bzw. „{n} Dienste im {Monat} · am selben Tag schon dran“; Verhinderte mit Opacity 0.55 wie Ionic .dim."
+  },
+  "duty/duty-assign-modal/duty-assign-modal.component#field-6e90fbb3": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:165"
+   ]
+  },
+  "duty/duty-assign-modal/duty-assign-modal.component#text-45459e16": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:180"
+   ]
+  },
+  "duty/duty-assign-modal/duty-assign-modal.component#text-cea8d552": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:187"
+   ]
+  },
+  "duty/duty-assign-modal/duty-assign-modal.component#action-1be8c271": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:203"
+   ],
+   "n": "Runder Block-Button, deaktiviert ohne Auswahl, Label „Einteilen“ / „{Vorname} einteilen“ / „{n} Personen einteilen“."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#logic-488dd772": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:77",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:107",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:161",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:222",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:269"
+   ],
+   "n": "Defaults (nächster Monat, alle Dienst-Typen, max 2, nicht zweimal am Tag), Kandidaten-Filter, Zählung (Basis + geplant), Summen, Tauschen, Speichern pro Termin über assign wie Ionic. Abweichungen: Gleicher-Tag-Sperre zählt mehr Termine, Fehlerbehandlung beim Laden und Speichern, Namens-Tiebreak (siehe extra).",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#toast-2f70fc41": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:108"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#loading-e612daf1": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:326"
+   ],
+   "n": "Ionic: blockierendes Overlay „Verteile Dienste…“ / Flutter: Body durch Spinner mit gleichem Text ersetzt, das X in der AppBar bleibt bedienbar.",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#toast-fb615d29": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:231"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#alert-500b3722": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:236"
+   ],
+   "n": "Titel „{Vorname} tauschen“ / „Person wählen“, Untertitel „{Titel} · {Datum}“, Option „Niemand (Platz offen lassen)“ nur beim Tauschen, Einträge „Name (Anzahl)“ nach Anzahl sortiert wie Ionic. Ionic: Alert mit Radio-Liste und Buttons „Abbrechen“/„Übernehmen“, Auswahl gilt erst mit „Übernehmen“ / Flutter: einfacher Auswahldialog ohne Radios und ohne Buttons, Tipp auf einen Namen übernimmt sofort, Abbrechen nur durch Tippen daneben.",
+   "sev": "mittel"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#loading-ef16b6da": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:326",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:347"
+   ],
+   "n": "Ionic: blockierendes Overlay „Teile ein…“ / Flutter: Body durch Spinner mit gleichem Text ersetzt, Speichern-Button deaktiviert, aber „Zurück“ und „Neu verteilen“ in der AppBar bleiben während des Speicherns bedienbar.",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#toast-79fe0ace": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:291"
+   ],
+   "n": "Grüner Toast mit gleichem Text; Dauer md 3 s (ToastHelper-Default) statt 4 s."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-ef738241": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:304"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-92abd7bd": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:309"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-d1ef8852": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:314"
+   ],
+   "n": "„Dienste verteilen“ (attListDistributeDuties) / „Vorschlag“ (teamOrgProposal)."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-39f7c63f": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:316"
+   ],
+   "n": "Icons.shuffle mit Tooltip „Neu verteilen“, ruft _run."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-67345289": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:371"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-85e38131": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:374"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#field-b28d8f3e": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:375"
+   ],
+   "n": "Anzeigeformat: Ionic ion-datetime-button zeigt das Intl-Kurzformat (z. B. „1. Dez. 2026“, Ionic-Paket nicht im Container) / Flutter IonDatetimeChip „01.12.2026“ (dateFmt()).",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#modal-8334d587": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:96"
+   ],
+   "n": "Plattform-Datumsdialog statt Inline-ion-modal mit ion-datetime."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#field-71fefb63": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:96"
+   ],
+   "n": "Ionic: Kalender (Montag zuerst) mit Buttons „Fertig“/„Abbrechen“, Wert erst mit „Fertig“, unbegrenzter Bereich / Flutter: md showDatePicker mit „OK“/„Abbrechen“ bzw. iOS-Look Kalenderkarte ohne Buttons (Tipp übernimmt sofort), Bereich 2020–2100.",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-c98e746d": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:378"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#field-b28d8f3e-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:379"
+   ],
+   "n": "Anzeigeformat: Ionic ion-datetime-button Intl-Kurzformat (z. B. „31. Dez. 2026“, Ionic-Paket nicht im Container) / Flutter IonDatetimeChip „31.12.2026“.",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#modal-8334d587-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:96"
+   ],
+   "n": "Plattform-Datumsdialog statt Inline-ion-modal mit ion-datetime."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#field-bca25190": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:96"
+   ],
+   "n": "Ionic: Kalender mit „Fertig“/„Abbrechen“, unbegrenzter Bereich / Flutter: md showDatePicker mit „OK“/„Abbrechen“ bzw. iOS-Look Kalenderkarte ohne Buttons, Bereich 2020–2100. Keine Prüfung Von ≤ Bis in beiden.",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-5bf9a0b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:383"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#field-dcffc1a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:389"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-409d35e4": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:400"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-d6fa8825": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:403"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-c226c1cd": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:408"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-44d703fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:415"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-7bb1a2ef": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:420"
+   ],
+   "n": "Flutter besser: Ionic: Plus-Button bleibt bei 10 aktiv, Tippen wirkungslos (Math.min 10) / Flutter: Button bei 10 ausgegraut. Maximum 10 gleich.",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#field-8f524790": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:430"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-5a20f49b": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:437"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-167c9b56": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:440"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-0c03b658": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:447"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-dd1d8c79": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:457",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:475"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-e73248fa": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:88"
+   ],
+   "n": "Ionic: dayjs „dd, DD.MM.“ + „ · HH:mm“, z. B. „Mo, 03.02. · 19:00“ / Flutter: Tag und Monat ohne führende Null, „Mo, 3.2. · 19:00“ (auch im Untertitel des Tausch-Dialogs).",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-4f73a196": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:486",
+    "lib/data/repositories/duty_repository.dart:41"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-1882858c": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:495"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-41a83796": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:497"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-17a84369": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:499"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-f1aefe19": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:514"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-3a79670e": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:518"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-2ae55158": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:519"
+   ],
+   "n": "„{n} (+{m} neu)“ wie Ionic."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-3e33eb39": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:524"
+   ]
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-48d2440d": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:340"
+   ],
+   "n": "Unten fixierter Button „{n} Einteilungen speichern“ / „Nichts zu verteilen“, deaktiviert bei saving oder 0, nur in der Vorschau mit Zeilen."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#logic-8717ad43": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:65",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:82",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:101",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:122",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:153",
+    "lib/core/providers/duty_providers.dart:90"
+   ],
+   "n": "Sichtbare Typen, Laden pro Person, Typen-/Bis-Text, Neu (Vorauswahl Dienst-Typen), Bearbeiten, Wochentage sortiert, Speichern mit Wochentag-Pflicht, Angebot für geplante Termine mit Vorschau (max. 4 Daten, „ …“), Löschen mit Neuladen wie Ionic. Abweichungen bei Fehlern und Typnamen, siehe extra.",
+   "sev": "mittel"
+  },
+  "duty/unavailability-modal/unavailability-modal.component#toast-08cde731": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:104"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#toast-b910e419": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:127"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#alert-b577ca37": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:131",
+    "lib/core/utils/dialog_helper.dart:12"
+   ],
+   "n": "Titel, Text (Self/Other mit Vorname, Vorschau „DD.MM.“), Buttons „Nur neue Termine“ (Abbrechen) / „Auch geplante“ (übernimmt) wie Ionic."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#toast-872ca16f": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:150"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#alert-7cb35beb": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:153"
+   ],
+   "n": "„Regel löschen?“ / „Bereits eingetragene Abmeldungen bleiben bestehen.“, „Abbrechen“ / „Löschen“ (rot), löscht und lädt neu (Provider-Invalidierung)."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-0f45da39": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:204"
+   ],
+   "n": "Text-Button „Zurück“ verwirft die Bearbeitung; System-Zurück (PopScope) ebenso."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-fa621d1e": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:209"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-cd246303": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:188"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-96d283d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:189"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-ab8ecfb1": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:216"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-61239cdf": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:293"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-ee9ebd0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:301"
+   ],
+   "n": "Chips „Mo“…„So“, gewählt primary gefüllt, sonst medium outline, Tooltip mit langem Namen wie Ionic aria-label."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-c25a5821": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:322"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#field-845c170b": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:325"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-190b3c0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:336"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#field-b539df20": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:345"
+   ],
+   "n": "Gestapeltes Feld „Grund (optional)“ mit Platzhalter „z. B. Kinderstunde“; Flutter speichert den Grund getrimmt (Ionic ungetrimmt)."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#field-bb90d03c": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:350",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:166"
+   ],
+   "n": "Ionic: natives Datumsfeld (ion-input type=date) mit gestapeltem Label „Gültig bis (optional)“, zeigt das Datum im Browser-Format bzw. leer / Flutter: Zeile mit Label, Wert „bis 31.12.2026“ bzw. „unbefristet“, Tipp öffnet Datumsauswahl (Vorjahr bis +10 Jahre), X-Button zum Leeren. Gespeichert wird in beiden YYYY-MM-DD oder null.",
+   "sev": "niedrig"
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-c5d27b76": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:364"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-9aa27fbe": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:253"
+   ],
+   "n": "Titel „Mo, Mi · Grund“, Untertitel „Typen · bis DD.MM.YYYY/unbefristet“, Chevron, Tipp öffnet Bearbeitung."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-c445913a": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:262"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-7f458e30": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:237"
+   ]
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-0e2193da": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:273"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#logic-8072fecc": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:71",
+    "lib/core/utils/instrument_sort.dart:54",
+    "lib/core/utils/instrument_sort.dart:86",
+    "lib/core/providers/group_providers.dart:107",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:28"
+   ],
+   "n": "Admin = Admin/Verantwortlicher, Gruppierung nach Kategorie (Sektionen nach sort_order, dann Name; Gruppen nach sort_order, dann Name), globale Neu-Nummerierung beim Sortieren, Kategorien-CRUD, Gruppe hinzufügen (tuning C, clefs g) wie Ionic. Personenanzahl siehe action-d2efa7e3; weitere Abweichungen siehe extra.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument-list/instrument-list.page#modal-1bead9c9": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:437"
+   ],
+   "n": "Nur für Admin/Verantwortliche, übergibt die Gruppe (plus Kategorien). Ionic: iOS Karten-Modal (presentingElement), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) auf allen Plattformen. Neuladen nach Änderung in beiden.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument-list/instrument-list.page#toast-c584c476": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:373"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#alert-eeb83d29": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:260"
+   ],
+   "n": "Titel „Neue Kategorie“, Buttons „Abbrechen“/„Hinzufügen“, legt Kategorie an. Ionic: Platzhalter „Name der Kategorie“, „Abbrechen“ mit role destructive (iOS rot) / Flutter: schwebendes Label „Name der Kategorie“, „Abbrechen“ neutral; Name wird getrimmt.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument-list/instrument-list.page#toast-4c623e8a": {
+   "s": "missing",
+   "n": "Flutter: bei leerem Namen passiert beim Tippen auf „Hinzufügen“ nichts (Dialog bleibt offen), kein Toast „Bitte gib einem Namen an“.",
+   "sev": "mittel"
+  },
+  "instruments/instrument-list/instrument-list.page#alert-415386f9": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:339"
+   ],
+   "n": "Titel „Bestätigen“, Text „Kategorie wirklich löschen? …“, Buttons „Abbrechen“/„Ja“, löscht. Ionic: „Abbrechen“ mit role destructive (iOS rot), „Ja“ normal / Flutter: „Abbrechen“ neutral, „Ja“ rot gefüllt.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument-list/instrument-list.page#alert-bd4338b7": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:298"
+   ],
+   "n": "Titel „Kategorie bearbeiten“, vorbelegter Name, Buttons „Abbrechen“/„Speichern“, speichert Namen. Ionic: Platzhalter „Name der Kategorie“, „Abbrechen“ role destructive (iOS rot) / Flutter: schwebendes Label, „Abbrechen“ neutral; Name getrimmt.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument-list/instrument-list.page#toast-30c6ec59": {
+   "s": "missing",
+   "n": "Flutter: bei leerem Namen passiert beim Tippen auf „Speichern“ nichts (Dialog bleibt offen), kein Toast „Bitte gib einem Namen an“.",
+   "sev": "mittel"
+  },
+  "instruments/instrument-list/instrument-list.page#loading-c2ec3077": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:135"
+   ],
+   "n": "Ionic: blockierendes Overlay „Reihenfolge wird gespeichert...“ / Flutter: nur LinearProgressIndicator im Sheet-Kopf, ohne Text, nicht blockierend.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument-list/instrument-list.page#toast-c1848ce1": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:60"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#toast-0702bdec": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:62"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#loading-7d7ff756": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:54"
+   ],
+   "n": "Ionic: blockierendes Overlay „Reihenfolge wird gespeichert...“ / Flutter: speichert im Hintergrund ohne Ladeanzeige, Liste bleibt bedienbar.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument-list/instrument-list.page#toast-e4f5c17f": {
+   "s": "missing",
+   "n": "Ionic: grüner Toast „Reihenfolge gespeichert“ nach dem Speichern der Gruppen-Reihenfolge / Flutter: _toggleReorder zeigt nur bei Fehler einen Toast, keine Erfolgsmeldung (instruments_list_page.dart:57).",
+   "sev": "mittel"
+  },
+  "instruments/instrument-list/instrument-list.page#toast-a428ffb5": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:58"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#action-4c33cd05": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:93"
+   ],
+   "n": "Zurück ohne Text, context.go('/settings') = Ionic defaultHref tabs/settings."
+  },
+  "instruments/instrument-list/instrument-list.page#text-c02390fa": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:92"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#action-13fe6ace": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:100"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#action-e7701887": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:110"
+   ],
+   "n": "Icons.sell_outlined statt pricetags-outline, nur Admin/Verantwortliche."
+  },
+  "instruments/instrument-list/instrument-list.page#modal-e8e040b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:411"
+   ],
+   "n": "Bottom-Sheet mit Start 60 % wie Ionic (Ionic bis 100 %, Flutter bis 90 %); Flutter zusätzlich X-Button und Leer-Hinweis „Keine Kategorien“."
+  },
+  "instruments/instrument-list/instrument-list.page#text-9789226a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:105"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#action-b5b9e69f": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:112"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#action-3f2a74e6": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:122"
+   ],
+   "n": "Ionic: Plus-Button immer sichtbar, auch im Sortiermodus / Flutter: im Sortiermodus ausgeblendet.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument-list/instrument-list.page#text-49ad7035": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:191"
+   ],
+   "n": "Gleicher Text „Ziehe die Kategorien …“. Ionic: ion-item mit primary-Hintergrund und weißem Info-Icon / Flutter: normale ListTile mit blauem Info-Icon.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument-list/instrument-list.page#action-a01ef8cf": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:197",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:384"
+   ],
+   "n": "Sortieren per Ziehen und Speichern wie Ionic. Ionic: Zeile mit Griff-Icon (im Sortiermodus) und Badge der gespeicherten sort_order (immer, auch außerhalb des Sortiermodus) / Flutter: Karten; außerhalb des Sortiermodus Kategorie-Icon statt sort_order-Badge, im Sortiermodus Positionsnummer im Kreis, Ziehen per Long-Press (Standard-Griff).",
+   "sev": "niedrig"
+  },
+  "instruments/instrument-list/instrument-list.page#action-623e8e94": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:392"
+   ],
+   "n": "Öffnet Bearbeiten-Dialog. Ionic: Stift-Icon in warning-Farbe (orange) / Flutter: Icons.edit in Standardfarbe.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument-list/instrument-list.page#action-e212c1b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:397"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#text-c02390fa-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:1077"
+   ],
+   "n": "IonPage zeigt auf iOS den kondensierten großen Titel „Gruppen (n)“."
+  },
+  "instruments/instrument-list/instrument-list.page#text-5f0475fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:197"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#text-1d015e65": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:243"
+   ],
+   "n": "Text „Kategorie (n)“ in primary gleich. Ionic: ion-item-divider sticky (bleibt beim Scrollen oben stehen) / Flutter: IonItemDivider in einer Column, scrollt mit.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument-list/instrument-list.page#action-7fdb0a4f": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:209"
+   ],
+   "n": "ReorderableListView je Kategorie mit Griff, nur innerhalb der Kategorie."
+  },
+  "instruments/instrument-list/instrument-list.page#action-d2efa7e3": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:278",
+    "lib/data/repositories/group_repository.dart:216"
+   ],
+   "n": "Titel „{Name} (Hauptgruppe)“ / „Name (Stimmung)“ / nur Name bei Chor/Allgemein, Schlüssel-Zeile, sort_order-Badge, „n Personen“-Badge rot bei 0, Tipp öffnet Bearbeiten nur für Admin und nicht im Sortiermodus wie Ionic. Abweichung Anzahl: Ionic zählt aus db.getPlayers() (pending = false, left = null) / Flutter getPlayerCountsForGroups filtert nur left = null, ausstehende Registrierungen werden mitgezählt. Bei leerer Stimmung zeigt Flutter „(C)“ statt „()“.",
+   "sev": "mittel"
+  },
+  "instruments/instrument-list/instrument-list.page#modal-c7ef6c60": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:333"
+   ],
+   "n": "FAB nur für Admin/Verantwortliche öffnet Bottom-Sheet; Sheet in Inhaltshöhe statt fester 80 %, Kategorie bei jedem Öffnen auf „Keine“."
+  },
+  "instruments/instrument-list/instrument-list.page#text-971d4e5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:399"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#text-1de3fac0": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:407"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#field-a89a567a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:402"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#field-c9279f21": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:411"
+   ]
+  },
+  "instruments/instrument-list/instrument-list.page#action-09922adb": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:426",
+    "lib/data/repositories/group_repository.dart:94"
+   ],
+   "n": "Legt Gruppe mit Name (getrimmt), maingroup false, tuning C, clefs [g], Kategorie an."
+  },
+  "instruments/instrument/instrument.page#logic-2c2cd89a": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:437",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:517",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:730",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:755"
+   ],
+   "n": "Felder, Sichtbarkeiten (Chor/Allgemein/Hauptgruppe), Synonym-Generierung, Aktualisieren und Löschen vorhanden; Speichern und Löschen laufen in Flutter erst nach dem Schließen in der Liste. Abweichungen siehe extra und Items.",
+   "sev": "mittel"
+  },
+  "instruments/instrument/instrument.page#toast-5c66f01d": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:519"
+   ]
+  },
+  "instruments/instrument/instrument.page#loading-2112917a": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:683"
+   ],
+   "n": "Ionic: blockierendes Overlay „Synonyme werden generiert...“ / Flutter: kleiner Spinner statt Funken-Button im Synonym-Feld, ohne Text, Seite bleibt bedienbar.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument/instrument.page#toast-547cd222": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:527"
+   ]
+  },
+  "instruments/instrument/instrument.page#toast-30af5db1": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:529"
+   ]
+  },
+  "instruments/instrument/instrument.page#toast-283b4da3": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:604"
+   ],
+   "n": "Gleicher Text „Bitte gib einen Namen an!“. Ionic: roter Toast / Flutter: Validierungsfehler rot unter dem Namensfeld (Form-Validator); Flutter wertet nur Leerzeichen ebenfalls als leer.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument/instrument.page#toast-e997b3c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:474"
+   ],
+   "n": "Grüner Toast „{Name} wurde erfolgreich aktualisiert“, in Flutter nach dem Schließen aus der Liste."
+  },
+  "instruments/instrument/instrument.page#toast-39c411aa": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:458",
+    "lib/data/repositories/group_repository.dart:244"
+   ],
+   "n": "Gleicher Text. Ionic: Prüfung (alle Personen inkl. ausgetretene, ohne ausstehende) sofort beim Tippen auf „Entfernen“, Toast ohne Bestätigungsdialog, Seite bleibt offen / Flutter: erst Bestätigungsdialog, nach „Ja“ schließt die Seite, dann Prüfung in der Liste und Toast; zählt auch ausstehende Registrierungen.",
+   "sev": "mittel"
+  },
+  "instruments/instrument/instrument.page#alert-cb09ce26": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:755"
+   ],
+   "n": "Titel „Bestätigen“, Text „Gruppe wirklich löschen?“, „Abbrechen“/„Ja“ gleich. Ionic: „Abbrechen“ mit role destructive (iOS rot) / Flutter: beide neutrale Text-Buttons. (Zeitpunkt des Dialogs siehe toast-39c411aa.)",
+   "sev": "niedrig"
+  },
+  "instruments/instrument/instrument.page#text-60ebf1b1": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:585"
+   ],
+   "n": "Ionic: Titel an instrument.name gebunden, ändert sich beim Tippen im Namensfeld / Flutter: fester Titel mit dem ursprünglichen Namen.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument/instrument.page#action-34028dbf": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:588"
+   ]
+  },
+  "instruments/instrument/instrument.page#text-ee26db51": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:603"
+   ]
+  },
+  "instruments/instrument/instrument.page#field-efd74495": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:600"
+   ]
+  },
+  "instruments/instrument/instrument.page#text-8d4cfc9c": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:616"
+   ]
+  },
+  "instruments/instrument/instrument.page#field-5a416954": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:613"
+   ],
+   "n": "Optionen „Keine“ + Kategorien; Flutter nimmt die Kategorien aus der Liste statt sie neu zu laden."
+  },
+  "instruments/instrument/instrument.page#field-679fa215": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:628"
+   ],
+   "n": "Label „Stimmung“, Optionen C, Es, B, F, Sichtbarkeit gleich. Ionic: Popover-Auswahl, leerer Wert bleibt leer / Flutter: Dropdown, leerer (oder unbekannter) Wert wird als „C“ angezeigt, leerer Wert wird beim Speichern zu „C“.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument/instrument.page#text-c378b60d": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:643"
+   ]
+  },
+  "instruments/instrument/instrument.page#field-47841cc6": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:641"
+   ]
+  },
+  "instruments/instrument/instrument.page#field-ae69e131": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:646"
+   ],
+   "n": "Optionen Violinschlüssel (G), Bassschlüssel (F), Altschlüssel (C), Mehrfachauswahl. Ionic: Popover-Mehrfachauswahl mit (fehlerhaftem) Label „Stimmung“, alle abwählbar / Flutter: Überschrift „Notenschlüssel“ mit FilterChips, mindestens ein Schlüssel bleibt gewählt.",
+   "sev": "niedrig"
+  },
+  "instruments/instrument/instrument.page#text-ba9457df": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:680"
+   ]
+  },
+  "instruments/instrument/instrument.page#field-34f95dcc": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:676"
+   ]
+  },
+  "instruments/instrument/instrument.page#action-ed85ded8": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:692"
+   ],
+   "n": "Icons.auto_awesome_outlined statt sparkles-outline, gleiche Sichtbarkeit (nicht Allgemein, nicht Hauptgruppe)."
+  },
+  "instruments/instrument/instrument.page#text-7f650816": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:704"
+   ]
+  },
+  "instruments/instrument/instrument.page#field-fcf5031f": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:701"
+   ]
+  },
+  "instruments/instrument/instrument.page#action-2c9f44ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:712"
+   ],
+   "n": "Button „Aktualisieren“; Ablauf beim Speichern siehe extra."
+  },
+  "instruments/instrument/instrument.page#action-82db5bdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:716"
+   ]
+  },
+  "teacher/teacher.page#logic-4aa9911c": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:135",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:435",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:340"
+   ],
+   "n": "Kopie des Lehrers bearbeiten, Schüler = aktive Personen mit diesem Lehrer, Speichern ohne Validierung (name, number, notes, private, instruments), Erfolgs-Toast, Schließen und Neuladen der Liste. Flutter speichert erst nach dem Schließen in der Liste und trimmt die Texte; Fehler werden in beiden nicht gemeldet (Notifier liefert null, Ionic prüft den Fehler nicht)."
+  },
+  "teacher/teacher.page#toast-e7e95130": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:164"
+   ]
+  },
+  "teacher/teacher.page#text-f92398bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:454"
+   ]
+  },
+  "teacher/teacher.page#action-1d0733b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:457"
+   ]
+  },
+  "teacher/teacher.page#text-e9145a26": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:383"
+   ]
+  },
+  "teacher/teacher.page#field-fa0a11d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:380"
+   ]
+  },
+  "teacher/teacher.page#field-fc1d0925": {
+   "s": "diff",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:385",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:296"
+   ],
+   "n": "Label „Instrumente“, Mehrfachauswahl aus allen Gruppen (inkl. Hauptgruppe), Anzeige der gewählten Namen. Ionic: ion-select interface=modal (Vollbild-Auswahlliste) / Flutter: Dialog mit Checkboxen und „Abbrechen“/„OK“.",
+   "sev": "niedrig"
+  },
+  "teacher/teacher.page#field-1cbc213b": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:392"
+   ]
+  },
+  "teacher/teacher.page#text-977b874f": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:401"
+   ]
+  },
+  "teacher/teacher.page#field-fa382e19": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:398"
+   ]
+  },
+  "teacher/teacher.page#text-6a2e04d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:407"
+   ]
+  },
+  "teacher/teacher.page#field-a8b17730": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:404"
+   ]
+  },
+  "teacher/teacher.page#text-b7c51796": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:413"
+   ],
+   "n": "ExpansionTile „Spieler“, anfangs aufgeklappt wie das Ionic-Akkordeon, nur wenn Schüler vorhanden."
+  },
+  "teacher/teacher.page#text-1bdd08c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:446"
+   ]
+  },
+  "teacher/teacher.page#action-6c1f7380": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:424"
+   ]
+  },
+  "teachers/teachers.page#logic-9d258dde": {
+   "s": "diff",
+   "f": [
+    "lib/core/providers/teacher_providers.dart:66",
+    "lib/data/repositories/teacher_repository.dart:115",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:27",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:111"
+   ],
+   "n": "Admin = Admin/Verantwortlicher, Lehrer nach Name, Instrumentnamen, Anlegen mit gleicher Validierung (Name ≥ 3 Zeichen, mind. ein Instrument; Add-Auswahl ohne Hauptgruppe), Bearbeiten nur für Admin. Schüleranzahl siehe action-5b603f4a; weitere Abweichungen siehe extra (Löschen nur in Flutter u. a.).",
+   "sev": "niedrig"
+  },
+  "teachers/teachers.page#toast-449601dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:341"
+   ]
+  },
+  "teachers/teachers.page#modal-81bd0046": {
+   "s": "diff",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:135"
+   ],
+   "n": "Nur für Admin/Verantwortliche, übergibt den Lehrer (Schüler aus playersProvider). Ionic: iOS Karten-Modal (presentingElement), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) auf allen Plattformen; Liste wird danach neu geladen.",
+   "sev": "niedrig"
+  },
+  "teachers/teachers.page#action-9e94dd91": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:546"
+   ],
+   "n": "Automatischer Zurück-Button der verschachtelten Route /settings/teachers."
+  },
+  "teachers/teachers.page#text-d1de992e": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:59"
+   ]
+  },
+  "teachers/teachers.page#text-d1de992e-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:1083"
+   ]
+  },
+  "teachers/teachers.page#action-5b603f4a": {
+   "s": "diff",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:195",
+    "lib/data/repositories/teacher_repository.dart:115"
+   ],
+   "n": "Name, Instrumentnamen, Badge „{n} Spieler“ (rot bei 0), Tipp öffnet Bearbeiten nur für Admin. Ionic: n = aktive Personen (left = null, pending = false) / Flutter: getStudentCounts zählt alle Personen mit diesem Lehrer inkl. ausgetretener und ausstehender, Badge zeigt dadurch zu hohe Zahlen bzw. nicht rot.",
+   "sev": "hoch"
+  },
+  "teachers/teachers.page#modal-285aa196": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:111"
+   ],
+   "n": "FAB (nur Admin/Verantwortliche) öffnet Bottom-Sheet; Inhaltshöhe statt fester 70 %."
+  },
+  "teachers/teachers.page#text-887b3cdf": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:376"
+   ]
+  },
+  "teachers/teachers.page#text-b210d81e": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:383"
+   ]
+  },
+  "teachers/teachers.page#field-ebd5df11": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:380"
+   ]
+  },
+  "teachers/teachers.page#field-cfeef758": {
+   "s": "diff",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:385",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:113"
+   ],
+   "n": "Label „Instrumente“, Gruppen ohne Hauptgruppe, Mehrfachauswahl. Ionic: ion-select interface=modal (Vollbild-Auswahlliste), Auswahl bleibt nach dem Anlegen für das nächste Öffnen erhalten (selInstruments) / Flutter: Dialog mit Checkboxen und „Abbrechen“/„OK“, Formular startet jedes Mal leer.",
+   "sev": "niedrig"
+  },
+  "teachers/teachers.page#text-7cf94b57": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:394"
+   ]
+  },
+  "teachers/teachers.page#field-8a21ddb5": {
+   "s": "diff",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:392",
+    "lib/data/repositories/teacher_repository.dart:57"
+   ],
+   "n": "Flutter besser: Ionic: addTeacher wertet private.value aus – das ist der Formularwert der ion-toggle („on“), nicht der Schaltzustand; pri === 'true' ist nie wahr, neue Lehrer werden immer mit private = false gespeichert (Ionic-Paket nicht im Container, Standardwert laut Ionic-API) / Flutter: speichert den Schalterzustand.",
+   "sev": "niedrig"
+  },
+  "teachers/teachers.page#text-e78eb077": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:401"
+   ]
+  },
+  "teachers/teachers.page#field-ebd5df11-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:398"
+   ]
+  },
+  "teachers/teachers.page#text-01272e39": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:407"
+   ]
+  },
+  "teachers/teachers.page#field-23cb755d": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:404"
+   ]
+  },
+  "teachers/teachers.page#action-26f99aac": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:424",
+    "lib/data/repositories/teacher_repository.dart:49"
+   ],
+   "n": "Validiert, legt Lehrer an (name, instruments, notes, number, private, tenantId), schließt und lädt neu; Flutter trimmt die Texte."
+  }
+ },
+ "extra": [
+  {
+   "unit": "duty/duty-assign-modal/duty-assign-modal.component",
+   "title": "Namens-Tiebreak nicht locale-aware",
+   "n": "Ionic: bei gleicher Dienstanzahl a.name.localeCompare(b.name) (Umlaute bei Grundbuchstaben, Groß/Klein egal) / Flutter: a.name.compareTo(b.name) (Code-Unit-Reihenfolge, z. B. „Özil“ nach „Zoe“, Kleinbuchstaben nach Großbuchstaben).",
+   "sev": "niedrig",
+   "ionic": "src/app/duty/duty-assign-modal/duty-assign-modal.component.ts:41",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:95"
+   ]
+  },
+  {
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "title": "Gleicher-Tag-Sperre zählt mehr Termine",
+   "n": "Flutter besser: Ionic: lädt nur die gewählten Termintypen und filtert voll besetzte Termine vor distributeDuties heraus, deren Eingeteilte blockieren den Tag daher nicht / Flutter: lädt alle Dienst-Typen und gibt voll besetzte und nicht gewählte Termine mit open 0 mit, deren Eingeteilte blockieren bei „Nicht zweimal am selben Tag“ den Tag. Der Vorschlag kann sich dadurch unterscheiden.",
+   "sev": "niedrig",
+   "ionic": "src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:111",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:123",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:164"
+   ]
+  },
+  {
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "title": "Ladefehler beim Berechnen",
+   "n": "Flutter besser: Ionic: kein catch, getUpcomingDutyTermine verschluckt Fehler und liefert [], dann Vorschau „Im Zeitraum gibt es keine Termine mit Dienst-Modus.“ / Flutter: roter Toast „Fehler: …“, bleibt im Regeln-Schritt.",
+   "sev": "niedrig",
+   "ionic": "src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:79",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:145"
+   ]
+  },
+  {
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "title": "Speichern bei Fehler",
+   "n": "Ionic: dutySvc.assign zeigt „Fehler beim Einteilen“ und wirft, die Schleife bricht beim ersten fehlerhaften Termin ab, übrige Termine werden nicht eingeteilt / Flutter: Fehler pro Termin abgefangen, alle übrigen Termine werden trotzdem eingeteilt, danach ein Toast „Fehler beim Einteilen“; Seite bleibt in beiden offen.",
+   "sev": "niedrig",
+   "ionic": "src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:236",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:277"
+   ]
+  },
+  {
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "title": "Namens-Tiebreak nicht locale-aware",
+   "n": "Ionic: „Dienste pro Person“ und Tausch-Optionen bei Gleichstand mit localeCompare sortiert / Flutter: String.compareTo (Umlaute nach Z, Kleinbuchstaben nach Großbuchstaben).",
+   "sev": "niedrig",
+   "ionic": "src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:174",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:229",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:469"
+   ]
+  },
+  {
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "title": "Fehler bei „Auch geplante“ meldet Erfolg",
+   "n": "Ionic: schlägt das Update fehl, roter Toast „Fehler beim Übernehmen in geplante Termine“ und kein Erfolgs-Toast / Flutter: Repository wirft, Notifier fängt ab und liefert 0, danach grüner Toast „0 Termine angepasst“, keine Fehlermeldung.",
+   "sev": "mittel",
+   "ionic": "src/app/services/duty/duty.service.ts:315",
+   "f": [
+    "lib/core/providers/duty_providers.dart:311",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:148"
+   ]
+  },
+  {
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "title": "Ladefehler der Regeln",
+   "n": "Ionic: Toast „Fehler beim Laden der Verfügbarkeit“, dann leere Liste mit „Noch keine Regel…“ und Button „Regel hinzufügen“ / Flutter: nur Text „Fehler: …“ im Body, kein Button „Regel hinzufügen“.",
+   "sev": "niedrig",
+   "ionic": "src/app/duty/unavailability-modal/unavailability-modal.component.ts:54",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:233"
+   ]
+  },
+  {
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "title": "Typnamen in der Regel-Liste",
+   "n": "Ionic: typesText sucht nur in den sichtbaren Typen (visible !== false), unsichtbare Typen fehlen im Text / Flutter: Liste nutzt alle Typen, Namen unsichtbarer Typen erscheinen.",
+   "sev": "niedrig",
+   "ionic": "src/app/duty/unavailability-modal/unavailability-modal.component.ts:62",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:230"
+   ]
+  },
+  {
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "title": "Sortiermodus ohne Verschieben nummeriert neu",
+   "n": "Ionic: Häkchen ohne Verschieben speichert nur vorhandene sort_order-Werte unverändert (null bleibt null) / Flutter: computeGlobalSortOrder vergibt beim Verlassen immer 1..n an alle Gruppen und schreibt sie (Badges ändern sich, Gruppen ohne sort_order bekommen eine).",
+   "sev": "niedrig",
+   "ionic": "src/app/instruments/instrument-list/instrument-list.page.ts:401",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:49"
+   ]
+  },
+  {
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "title": "Pull-to-Refresh nur in Flutter",
+   "n": "Flutter besser: Ionic: kein ion-refresher auf der Gruppenliste / Flutter: Herunterziehen lädt Gruppen, Kategorien und Personenanzahlen neu.",
+   "sev": "niedrig",
+   "ionic": "src/app/instruments/instrument-list/instrument-list.page.html:70",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:82"
+   ]
+  },
+  {
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "title": "Fehler beim Hinzufügen einer Gruppe",
+   "n": "Flutter besser: Ionic: groupSvc.addGroup prüft den Fehler nicht, Sheet schließt ohne Meldung / Flutter: Sheet schließt, roter Toast „Fehler beim Hinzufügen“.",
+   "sev": "niedrig",
+   "ionic": "src/app/instruments/instrument-list/instrument-list.page.ts:178",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:346"
+   ]
+  },
+  {
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "title": "Namens-Tiebreak der Kategorien",
+   "n": "Ionic: Kategorien ohne sort_order per localeCompare sortiert / Flutter: toLowerCase().compareTo (Umlaute nach Z).",
+   "sev": "niedrig",
+   "ionic": "src/app/instruments/instrument-list/instrument-list.page.ts:150",
+   "f": [
+    "lib/core/utils/instrument_sort.dart:79"
+   ]
+  },
+  {
+   "unit": "instruments/instrument/instrument.page",
+   "title": "Seite schließt vor dem Speichern",
+   "n": "Ionic: update() speichert, zeigt Toast und schließt erst danach; bei Fehler Toast „Fehler beim updaten des Instruments“ (bzw. „Es kann nur eine Hauptgruppe existieren“) und die Seite bleibt mit den Eingaben offen / Flutter: _save schließt die Seite sofort mit den Werten, gespeichert wird in der Liste; bei Fehler Toast „Fehler beim Speichern“, die Eingaben sind verloren.",
+   "sev": "mittel",
+   "ionic": "src/app/instruments/instrument/instrument.page.ts:64",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:750",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:471"
+   ]
+  },
+  {
+   "unit": "instruments/instrument/instrument.page",
+   "title": "Geschriebene Werte beim Aktualisieren",
+   "n": "Ionic: schreibt notes, range, tuning, clefs, name, maingroup, category, synonyms so wie sie sind ('' bleibt '', versteckte Felder unverändert) / Flutter: trimmt, schreibt leere range/synonyms/notes als null, maingroup nicht, und schreibt tuning/clefs immer – bei Chor/Allgemein/Hauptgruppe (Felder versteckt) wird ein leerer Wert zu „C“ bzw. [g].",
+   "sev": "niedrig",
+   "ionic": "src/app/instruments/instrument/instrument.page.ts:64",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:730"
+   ]
+  },
+  {
+   "unit": "teachers/teachers.page",
+   "title": "Löschen von Lehrern nur in Flutter",
+   "n": "Ionic: keine Löschfunktion für Lehrer / Flutter: Wischen nach links (Admin/Verantwortliche) → Dialog „Lehrer löschen“ / „Möchtest du \"{Name}\" wirklich löschen?“ mit „Abbrechen“/„Löschen“, löscht den Lehrer und zeigt „Lehrer gelöscht“ (auch wenn das Löschen fehlschlägt, da deleteTeacher den Fehler verschluckt).",
+   "sev": "niedrig",
+   "ionic": "src/app/teachers/teachers.page.html:18",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:172",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:211"
+   ]
+  },
+  {
+   "unit": "teachers/teachers.page",
+   "title": "Pull-to-Refresh nur in Flutter",
+   "n": "Flutter besser: Ionic: kein ion-refresher / Flutter: Herunterziehen lädt Lehrer und Schüleranzahlen neu.",
+   "sev": "niedrig",
+   "ionic": "src/app/teachers/teachers.page.html:10",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:49"
+   ]
+  },
+  {
+   "unit": "teachers/teachers.page",
+   "title": "Gelöschte Gruppe in Lehrer-Instrumenten",
+   "n": "Flutter besser: Ionic: getTeachers liest .name einer nicht mehr existierenden Gruppe → TypeError, die Lehrerliste bleibt leer / Flutter: unbekannte Gruppen-IDs werden übersprungen.",
+   "sev": "niedrig",
+   "ionic": "src/app/teachers/teachers.page.ts:41",
+   "f": [
+    "lib/core/providers/teacher_providers.dart:75"
+   ]
+  }
+ ]
+}

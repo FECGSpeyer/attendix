@@ -1,0 +1,300 @@
+{
+  "batch": "zz-verify3-b24-settings-general-2",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "settings/general/type/type.page#field-b74def74": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:943",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:964-970",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1506",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Schalter „Selbst eintragen erlaubt“ + Hilfetext nur bei Dienst-Modus, Default true (Modell @Default(true) = Ionic !== false), schreibt duty_self_signup. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-5409bc4e": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:971-986",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1507",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "„Erinnern, wenn unbestätigt“ mit Aus/nach 1 Tag/2/3/7 Tagen in gleicher Reihenfolge, null=Aus, schreibt duty_confirm_reminder_days. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-30cdf8c8": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:987-995",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1508",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "„Gruppe bei Ausfall benachrichtigen“ + Hilfetext, Default true, schreibt duty_notify_understaffed. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-e4e83761": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:996-1013",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1509",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "„Dringend, wenn noch offen“ + Hilfetext, Aus/6/12/24/48/72 h vorher, schreibt duty_urgent_hours. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-e35b5a32": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:476-478",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Abschnitt „Terminerinnerungen“. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-8fba8ce6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:481-492",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1485",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Schalter „Terminerinnerung“ + Hilfetext, schreibt notification. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-5f58aecb": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:81-90",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:493-500",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "„So funktionieren Erinnerungen“ als Info-Karte, nur bei notification. Sheet→inline ist bei modal-0895b1d0 erfasst. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-d58b9b25": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:91-92",
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:189-199",
+        "lib/features/settings/presentation/widgets/strong_html_text.dart:5-36"
+      ],
+      "n": "„Erinnerungen werden alle 5 Minuten geprüft und versendet.“ mit fettem Teil (StrongHtmlText) und Uhr-Icon in Primärfarbe, nur bei notification. Sheet→inline ist bei modal-0895b1d0 erfasst. Rolle wie Seite (nur Admin/Verantwortlich in beiden)."
+    },
+    "settings/general/type/type.page#text-c9c25629": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:93-95",
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:189-199",
+        "lib/features/settings/presentation/widgets/strong_html_text.dart:5-36"
+      ],
+      "n": "„Die Erinnerung wird versendet, sobald die verbleibende Zeit …“ mit fettem Teil, Rechner-Icon. Sheet→inline ist bei modal-0895b1d0 erfasst. Rolle wie Seite."
+    },
+    "settings/general/type/type.page#text-79b4c15e": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:96-97",
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:189-199",
+        "lib/features/settings/presentation/widgets/strong_html_text.dart:5-36"
+      ],
+      "n": "„Maximal 3 Erinnerungen pro Termintyp möglich.“ mit fettem Teil, Glocken-Icon. Sheet→inline ist bei modal-0895b1d0 erfasst. Rolle wie Seite."
+    },
+    "settings/general/type/type.page#text-b4f5731a": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:102-104",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "„Aktive Erinnerungen“. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-7128bb80": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:106-109",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Badge „n/3“ in medium, auch bei 0. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-e30ee4ee": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:124",
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:26-31",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "getFormattedReminder gleich: 0 → „Zur gleichen Zeit“, <24 → „# Stunde(n) vorher“, sonst „# Tag(e) vorher“ (abgerundet). Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-4074ac4b": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:125",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "„{count} Stunde(n) vor Terminbeginn“. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#action-5917fc85": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:117-119",
+        "lib/shared/widgets/common/swipe_actions.dart:40-46",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Wisch-Option Papierkorb (rot) entfernt die Erinnerung lokal, gespeichert erst mit Speichern (wie Ionic). Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-5cb01ac6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:129-130",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "„Schnellauswahl“ nur solange < 3 Erinnerungen. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-2bab6162": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:147-158",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Zahlenfeld „Stunden vor Termin“, Platzhalter „z.B. 12 für 12 Stunden vorher“, Hilfetext „Gültige Werte: 0-168 …“, nur bei < 3 Erinnerungen. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-dfaf8c58": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:168-183",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Warnkarte mit Warn-Icon und „Maximum von 3 Erinnerungen erreicht …“ bei 3 Erinnerungen. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-77016ef0": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:509-510",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Abschnitt „Darstellung“. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-d9788b1c": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:513",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "„Farbe“. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-08ed915a": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:514",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "„Die Farbe ist nur für den Kalender relevant …“. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#action-2608135b": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:744-781",
+        "lib/core/utils/color_utils.dart:81-91",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1482",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Gleiche 9 Farben in gleicher Reihenfolge, Auswahl grau hinterlegt, Tippen setzt color und schließt; Popover→Dialog bei popover-31d23755 erfasst. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#action-fb3aac9e": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:669-703",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Sortierbare Checkliste mit Text, Deadline-Text und Griff am Ende; dass Flutter sie auch ohne aktivierte Checkliste zeigt, ist bei field-d34df4b8 erfasst. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#action-9242896d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:686-691",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Wisch-Option Papierkorb entfernt den Eintrag lokal. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-058a3ea5": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:723-724",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Abschnitt „Anmeldefelder“ (fehlender Zähler-Badge bei text-fdfcef92). Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-2dca20de": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/registration_fields_editor.dart:96",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Feldbezeichnung als Titel. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-05a7cbcf": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/registration_fields_editor.dart:97-100",
+        "lib/features/settings/presentation/widgets/registration_fields_editor.dart:151-165",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Typ-Label (Text/Ja / Nein/Einzelauswahl/Mehrfachauswahl) + „ · “ + Optionen mit „, “. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#action-174badcb": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/registration_fields_editor.dart:91-93",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1503",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "Wisch-Option Papierkorb entfernt das Feld per Index, gespeichert mit Speichern. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-39727779": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/registration_fields_editor.dart:80-88",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "„Keine Anmeldefelder konfiguriert“ zentriert in medium, nur ohne Felder. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-fc88ba9f": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/registration_fields_editor.dart:104-111",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "„Feldbezeichnung“, Platzhalter „z.B. Instrument mitbringen?“, nach Hinzufügen geleert. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#field-43531b7a": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/registration_fields_editor.dart:128-138",
+        "lib/core/router/app_router.dart:167"
+      ],
+      "n": "„Optionen (kommagetrennt)“, Platzhalter „Option A, Option B, Option C“, nur bei Einzel-/Mehrfachauswahl. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

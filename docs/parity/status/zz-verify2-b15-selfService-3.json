@@ -1,0 +1,245 @@
+{
+  "batch": "zz-verify2-b15-selfService-3",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "selfService/signout/signout.page#text-037e423c": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/event_list/event_list_widgets.dart:917", "lib/features/self_service/presentation/pages/signout_page.dart:569"],
+      "n": "\"Anwesenheit\" neben \"n%\". Rollen: Seite in beiden nur für Spieler, Helfer, Stimmführer, SF-Helfer, ohne Rolle (Flutter-Gate !isConductor && !isParent, Bewerber nur Bewerber-Karte); Vergangene auch in Dienstplan-Ansicht und bei show_all_attendances (nur eigene) gleich.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-14785b63-2": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/event_list/event_list_widgets.dart:918", "lib/shared/widgets/event_list/event_list_widgets.dart:920"],
+      "n": "\"{count}× zu spät\" nur bei lateCount > 0; keine Rollen-/Mandantenbedingung außer der Seite selbst.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-eaedcf38": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/pages/signout_page.dart:574", "lib/features/self_service/presentation/pages/signout_page.dart:592", "lib/features/self_service/presentation/pages/signout_page.dart:600"],
+      "n": "Zeile mit Kachel, Titel, Datum, Werke-Chip, Ordner-Button, Vergangenheits-Pill; tippbar nur bei Entschuldigt/Verspätung entschuldigt (isExcusedStatus) → Aktionsblatt. Keine Rollenunterschiede.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-0547ed34-2": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/pages/signout_page.dart:583", "lib/features/self_service/presentation/pages/signout_page.dart:724"],
+      "n": "\"♪ n Werke\" nur wenn Werke vorhanden; öffnet Werke-Sheet (Titel, Datum, Instrument, Ablaufplan-Link bei hasPlan). Keine Rollenbedingung.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-fbc3e42a": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/pages/signout_page.dart:594", "lib/core/providers/role_permission_providers.dart:116", "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:25"],
+      "n": "Sichtbar bei files_folder && canAccessFiles: Helfer/SF-Helfer immer, Spieler/Stimmführer nur mit files_shared, ohne Rolle nie – Flutter canAccessFilesFor (tenant.filesShared) identisch. Ziel /settings/files?path=… (Ionic zusätzlich Zeitstempel t), Tooltip \"Dateiablage öffnen\".",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-f143d5dc": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/pages/signout_page.dart:603"],
+      "n": "\"Alle N anzeigen\" / \"Weniger anzeigen\" ab mehr als 3 vergangenen Terminen (PAST_PREVIEW_COUNT = pastPreviewCount = 3).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#modal-caf54574": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:84", "lib/features/self_service/presentation/pages/signout_page.dart:139", "lib/core/providers/role_permission_providers.dart:252"],
+      "n": "Öffnung nur über Kopf-Button bei canSelfPause (player_self_pause der Spieler-Rolle) && Person && nicht pausiert – für Spieler, Helfer, Stimmführer, SF-Helfer, ohne Rolle in beiden gleich; Bewerber/Leitung/Eltern nie. Ionic Sheet 0.75 / Flutter Bottom-Sheet in Inhaltshöhe.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-a2e0ff58": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:412"],
+      "n": "Titel \"Pausieren\".",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-e63e1734": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:414"],
+      "n": "X schließt ohne Speichern (Eingaben verworfen).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#field-b8a7d60e": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:423"],
+      "n": "Mehrzeilig, Label \"Grund\", Platzhalter \"Warum möchtest du pausieren?\", Großschreibung Satzanfang.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-d2c703b8": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:438"],
+      "n": "\"Pausiert bis (optional)\" als aufklappbare Kopfzeile mit Kalender.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-00a164fb": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:440"],
+      "n": "Datum dd.MM.yyyy (dateFmt()).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-7a9b80b2": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:441"],
+      "n": "\"Kein Enddatum gewählt\".",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-a3f4a02c": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:446"],
+      "n": "Nur bei gewähltem Datum; leert das Enddatum ohne die Zeile aufzuklappen.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-95ff56f8": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:464", "lib/features/self_service/presentation/widgets/self_service_absences.dart:82", "lib/data/repositories/player_repository.dart:786"],
+      "n": "Rollen wie Pausieren-Button (canSelfPause). Ohne Grund Warn-Toast \"Bitte gib einen Grund an!\"; Text \"Grund (bis dd.MM.yyyy)\", paused/paused_until/Historie PAUSED, aus kommenden Terminen entfernt, Telegram-Hinweis gleich (Flutter zusätzlich tenantId-Filter). Kleinigkeit: Flutter schließt das Sheet vor dem Speichern, Ionic lässt es bei Fehler offen.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#modal-40e4838d": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:46", "lib/features/self_service/presentation/pages/signout_page.dart:441", "lib/features/self_service/presentation/pages/signout_page.dart:299", "lib/core/providers/player_absence_providers.dart:69"],
+      "n": "Öffnung über Kachel (ohne Dienstplan-Ansicht) bzw. Zeile \"Abwesenheit melden\" (Dienstplan-Ansicht), beide nur mit player_planned_absence der eigenen Rolle – Flutter canSelfReportAbsenceProvider (currentRole) gleich für alle Rollen der Seite. Ionic Sheet 0.92 / Flutter Bottom-Sheet in Inhaltshöhe.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-6732b90d": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:314"],
+      "n": "Titel \"Abwesenheit melden\".",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-5f654a29": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:316"],
+      "n": "X schließt, Eingaben verworfen.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-bf54f1e3": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:334"],
+      "n": "\"Grund *\" als Label über dem Feld.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#field-21e89f82": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:327"],
+      "n": "Mitwachsendes Textfeld, Platzhalter \"z.B. Urlaub, Krankheit...\".",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-dfe3a332": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:270"],
+      "n": "\"Starttag wählen\" solange kein Start.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-d5872503": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:270"],
+      "n": "\"Endtag wählen\" nach dem Start.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-8ef0331d": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:282"],
+      "n": "\"dd.MM. – dd.MM.yyyy\".",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-21c846cb": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:289"],
+      "n": "Setzt Start und Ende zurück (Flutter baut den Kalender neu).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-146f176e": {
+      "s": "ok",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:350", "lib/features/self_service/presentation/pages/signout_page.dart:447", "lib/features/self_service/presentation/pages/signout_page.dart:301"],
+      "n": "Hinweis nur bei canSelfPause (Spieler-Rollenrecht player_self_pause); beide Einstiege übergeben canSelfPauseProvider – gleich.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-89fbd54f": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": ["lib/features/self_service/presentation/widgets/self_service_absences.dart:361", "lib/features/self_service/presentation/widgets/self_service_absences.dart:59", "lib/data/repositories/player_absence_repository.dart:122", "lib/data/repositories/player_absence_repository.dart:191"],
+      "n": "Erstprüfer: ok übersieht abweichende Schreibwirkung. Gleich: Rollen (player_planned_absence der eigenen Rolle), deaktiviert ohne Grund/Start/Ende, Insert player_absences (tenant_id, person_id, from/until, reason), Erfolgs-Toast. Ionic: entschuldigt nur die geladenen kommenden Termine current+actualAttendances (ohne nicht zugeteilte Dienste, in Dienstplan-Ansicht ohne eigene Dienste) / Flutter: alle eigenen kommenden person_attendances im Zeitraum → status 2 + Notiz auch auf diesen Zeilen. Gleiche Ursache wie x-1962646a5f (nur einmal beheben).",
+      "v": "korrigiert"
+    },
+    "selfService/signout/signout.page#text-bb12f68e": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/event_list/excuse_reason_sheet.dart:390"],
+      "n": "\"Anmeldefelder\" (Bearbeiten) / \"Anmeldung\" (Anmelden). Keine Rollenbedingung; Felder aus attType.registration_fields (in Flutter geladen).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#field-c03cb92a": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/event_list/excuse_reason_sheet.dart:368"],
+      "n": "Textfeld mit Feldname als Label, Platzhalter \"...\".",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-cdb21ed4": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/event_list/excuse_reason_sheet.dart:317"],
+      "n": "Feldname links vom Schalter.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#field-778b0d8d": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/event_list/excuse_reason_sheet.dart:317"],
+      "n": "Schalter, Standard aus bzw. vorhandene Antwort.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#field-10c68b6f": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/event_list/excuse_reason_sheet.dart:325"],
+      "n": "Auswahl mit Feldname als Label, Optionen in Reihenfolge, iOS als Alert wie ion-select.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-cdb21ed4-2": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/event_list/excuse_reason_sheet.dart:343"],
+      "n": "Feldname als Überschrift der Mehrfachauswahl.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-5e305659": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/event_list/excuse_reason_sheet.dart:346"],
+      "n": "Ganze Zeile schaltet die Option um.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#field-4af21fc3": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/event_list/excuse_reason_sheet.dart:346"],
+      "n": "Checkbox links, gesetzt bei gewählter Option.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-d2d1b707": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/event_list/excuse_reason_sheet.dart:408", "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:314", "lib/data/repositories/sign_in_out_repository.dart:272"],
+      "n": "\"Speichern\" / \"Anmelden\" mit Häkchen-Icon; speichert registration_answers, danach Anmelden (zugeteilter Dienst → bestätigen) bzw. Toast \"Anmeldefelder gespeichert\". Pflichttext-Hinweis als roter Text statt Toast ist bei toast-36f88117 erfasst. Keine Rollenbedingung.",
+      "v": "bestätigt"
+    },
+    "x-f56fb3f1cc": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": ["lib/features/self_service/presentation/pages/signout_page.dart:66", "lib/core/services/push/push_navigation.dart:134", "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:434"],
+      "n": "Befund real, Sev zu niedrig. Push \"Wer springt ein?\" (duty_understaffed/duty_urgent, laut duty-notify an Springer ohne duty_state): Ionic → Zeile per applyDutyView gefiltert → Sheet \"Offene Dienste\" mit \"Übernehme ich\" (take). Flutter sucht in ungefilterten signoutData → Aktionsblatt der nicht zugeteilten Dienstzeile; \"Anmelden\" schreibt status=Anwesend ohne duty_state → Dienst bleibt unterbesetzt, Nutzer glaubt eingesprungen zu sein (duty_filled-Push: Ionic nichts, Flutter ebenso Aktionsblatt). Eigener Dienst in Dienstplan-Ansicht: Aktionsblatt statt Scrollen, funktional gleichwertig.",
+      "v": "korrigiert"
+    },
+    "x-d890aa8b00": {
+      "s": "na",
+      "f": ["lib/features/self_service/presentation/pages/signout_page.dart:501", "lib/features/self_service/presentation/pages/signout_page.dart:550"],
+      "n": "Zurückgenommen als Doppelung, Befund selbst real: genau dieser Unterschied steht schon bei text-7ab3ea5e (aktuelle Karte) und action-836ea596 (Anstehend), beide diff mittel; kein zusätzlicher verdeckter Unterschied.",
+      "v": "korrigiert"
+    },
+    "x-1962646a5f": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": ["lib/data/repositories/player_absence_repository.dart:122", "lib/data/repositories/player_absence_repository.dart:191", "lib/data/repositories/player_absence_repository.dart:228"],
+      "n": "Befund real: _upcomingInRange nimmt alle eigenen kommenden person_attendances im Zeitraum (inkl. nicht zugeteilter Dienstzeilen, in Dienstplan-Ansicht auch eigene Dienste) zum Entschuldigen bzw. Zurücksetzen; Ionic nur geladene Liste nach applyDutyView/applyDutyLayout. Eigener Dienst wird in Flutter so still abgesagt (kein understaffed). Teilweise Flutter besser: Ionic bricht im \"alle Termine\"-Modus am ersten fremden Termin (id null) ab. Auch bei action-89fbd54f bzw. alert-cf2e9968 (dort mittel) – einmal beheben.",
+      "v": "bestätigt"
+    },
+    "x-73a571e974": {
+      "s": "na",
+      "f": ["lib/features/self_service/presentation/pages/signout_page.dart:87", "lib/core/providers/duty_providers.dart:67", "lib/core/providers/duty_providers.dart:148"],
+      "n": "Zurückgenommen als Doppelung, Befund selbst real (_refresh invalidiert upcomingDutyTermineProvider nicht, myDutyOverview rechnet mit Cache): wortgleich schon als action-47659591 (Pull-to-Refresh, diff mittel) erfasst.",
+      "v": "korrigiert"
+    }
+  },
+  "extra": []
+}

@@ -1,0 +1,2607 @@
+{
+ "batch": "zz-verify5c-sonnet-08",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 181,
+    "method": "InstrumentListPage.addInstrument",
+    "cond": [
+     "!(value)"
+    ],
+    "message": {
+     "keys": [
+      "instruments.enterName"
+     ],
+     "de": [
+      "Bitte gib einem Namen an"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.enterName')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "89780d2a",
+    "mbody": "f6ec1fc1",
+    "id": "instruments/instrument-list/instrument-list.page#toast-c584c476"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:373"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 7,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "instruments/instrument/instrument.page#action-34028dbf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:588"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 81,
+    "cond": [
+     "@if (instrument)",
+     "@if (!isGeneral && !instrument.maingroup)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=generateSynonyms()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "sparkles-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "instruments/instrument/instrument.page#action-ed85ded8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:692"
+    ],
+    "n": "Icons.auto_awesome_outlined statt sparkles-outline rechts im Feld, gleiche Sichtbarkeit; ohne Namen roter Toast „nameFirst“, ruft synonyms-gpt. Rolle/Mandant: Seite nur für Admin/Verantwortlicher (Ionic openModal isAdmin / Flutter onEdit isAdmin, instruments_list_page:152), Mandantentyp aus tenant.type.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "instruments/instrument/instrument.page.ts",
+    "line": 88,
+    "method": "InstrumentPage.delete",
+    "cond": [],
+    "header": {
+     "keys": [
+      "common.confirm"
+     ],
+     "de": [
+      "Bestätigen"
+     ],
+     "literals": [],
+     "expr": "translate('common.confirm')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "instruments.deleteGroup"
+     ],
+     "de": [
+      "Gruppe wirklich löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.deleteGroup')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.yes"
+       ],
+       "de": [
+        "Ja"
+       ],
+       "literals": [],
+       "expr": "translate('common.yes')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { await this.db.removeGroup(this.instrument.id); await this.modalController.dismiss({ updated: true, }); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "831d965a",
+    "mbody": "4e1e52a5",
+    "id": "instruments/instrument/instrument.page#alert-cb09ce26"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:755"
+    ],
+    "n": "Titel „Bestätigen“, Text „Gruppe wirklich löschen?“, „Abbrechen“/„Ja“, „Ja“ löscht und schließt. Ionic: „Abbrechen“ mit role destructive (iOS rot) / Flutter: beide neutral. Zeitpunkt (Dialog auch bei zugeordneten Personen) siehe toast-39c411aa.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 80,
+    "cond": [
+     "@if (instrument)",
+     "@if (!isGeneral && !instrument.maingroup)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"instrument.synonyms\"",
+    "bindings": [
+     "[helperText]=\"'instruments.synonymsHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "instruments.synonymsHelper"
+    ],
+    "de": [
+     "Definiere Synonyme um beim Hinzufügen von Dateien zu Werken die Instrumente automatisch zuordnen zu können. Synonyme durch Komma trennen."
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'instruments.synonymsHelper' | transloco\"",
+    "id": "instruments/instrument/instrument.page#field-34f95dcc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:676"
+    ],
+    "n": "Textfeld Synonyme mit Hilfetext „Definiere Synonyme …“, gleiche Bedingung. Rolle/Mandant: Seite nur für Admin/Verantwortlicher (Ionic openModal isAdmin / Flutter onEdit isAdmin, instruments_list_page:152), Mandantentyp aus tenant.type.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 57,
+    "cond": [
+     "@if (instrument)",
+     "@if (!isChoir && !isGeneral && !instrument.maingroup)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"instrument.range\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "instruments/instrument/instrument.page#field-47841cc6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:641"
+    ],
+    "n": "Textfeld Tonumfang, gleiche Bedingung (Chor/Allgemein/Hauptgruppe ausgeblendet). Flutter ohne Satzanfang-Großschreibung der Tastatur; geschriebene Werte siehe Extra „Geschriebene Werte beim Aktualisieren“. Rolle/Mandant: Seite nur für Admin/Verantwortlicher (Ionic openModal isAdmin / Flutter onEdit isAdmin, instruments_list_page:152), Mandantentyp aus tenant.type.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 29,
+    "cond": [
+     "@if (instrument)"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"instrument.category\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"null\"",
+      "keys": [
+       "generalSettings.none"
+      ],
+      "de": [
+       "Keine"
+      ],
+      "literals": [],
+      "text": "{{ 'generalSettings.none' | transloco }}"
+     },
+     {
+      "value": "\"cat.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ cat.name }}"
+     }
+    ],
+    "keys": [
+     "generalSettings.none"
+    ],
+    "de": [
+     "Keine"
+    ],
+    "literals": [],
+    "text": "{{ 'generalSettings.none' | transloco }} {{ cat.name }}",
+    "id": "instruments/instrument/instrument.page#field-5a416954"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:613"
+    ],
+    "n": "Optionen „Keine“ + Kategorien; Flutter nimmt die Kategorien aus der Liste statt sie neu zu laden.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 42,
+    "cond": [
+     "@if (instrument)",
+     "@if (!isChoir && !isGeneral && !instrument.maingroup)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"instrument.tuning\"",
+    "bindings": [
+     "[label]=\"'instruments.tuning' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "\"C\""
+     },
+     {
+      "value": "",
+      "keys": [
+       "instruments.es"
+      ],
+      "de": [
+       "Es"
+      ],
+      "literals": [],
+      "text": "{{ 'instruments.es' | transloco }}"
+     },
+     {
+      "value": "",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "\"B\""
+     },
+     {
+      "value": "",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "\"F\""
+     }
+    ],
+    "keys": [
+     "instruments.tuning",
+     "instruments.es"
+    ],
+    "de": [
+     "Stimmung",
+     "Es"
+    ],
+    "literals": [],
+    "text": "[label]=\"'instruments.tuning' | transloco\" \"C\" {{ 'instruments.es' | transloco }} \"B\" \"F\"",
+    "id": "instruments/instrument/instrument.page#field-679fa215"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:628"
+    ],
+    "n": "Label „Stimmung“, Optionen C, Es, B, F, Sichtbarkeit gleich. Ionic: Popover-Auswahl, leerer Wert bleibt leer / Flutter: Dropdown, leerer (oder unbekannter) Wert wird als „C“ angezeigt, leerer Wert wird beim Speichern zu „C“.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 66,
+    "cond": [
+     "@if (instrument)",
+     "@if (!isChoir && !isGeneral && !instrument.maingroup)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover",
+     "multiple": "true"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"instrument.clefs\"",
+    "bindings": [
+     "[label]=\"'instruments.tuning' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "g",
+      "keys": [
+       "common.clef.g"
+      ],
+      "de": [
+       "Violinschlüssel"
+      ],
+      "literals": [],
+      "text": "{{ 'common.clef.g' | transloco }} (G)\"g\""
+     },
+     {
+      "value": "f",
+      "keys": [
+       "common.clef.f"
+      ],
+      "de": [
+       "Bassschlüssel"
+      ],
+      "literals": [],
+      "text": "{{ 'common.clef.f' | transloco }} (F)\"f\""
+     },
+     {
+      "value": "c",
+      "keys": [
+       "common.clef.c"
+      ],
+      "de": [
+       "Altschlüssel"
+      ],
+      "literals": [],
+      "text": "{{ 'common.clef.c' | transloco }} (C)\"c\""
+     }
+    ],
+    "keys": [
+     "instruments.tuning",
+     "common.clef.g",
+     "common.clef.f",
+     "common.clef.c"
+    ],
+    "de": [
+     "Stimmung",
+     "Violinschlüssel",
+     "Bassschlüssel",
+     "Altschlüssel"
+    ],
+    "literals": [],
+    "text": "[label]=\"'instruments.tuning' | transloco\" \"g\" {{ 'common.clef.g' | transloco }} (G) \"f\" {{ 'common.clef.f' | transloco }} (F) \"c\" {{ 'common.clef.c' | transloco }} (C)",
+    "id": "instruments/instrument/instrument.page#field-ae69e131"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:646"
+    ],
+    "n": "Optionen Violinschlüssel (G), Bassschlüssel (F), Altschlüssel (C), Mehrfachauswahl. Ionic: Popover-Mehrfachauswahl mit (fehlerhaftem) Label „Stimmung“, alle abwählbar / Flutter: Überschrift „Notenschlüssel“ mit FilterChips, mindestens ein Schlüssel bleibt gewählt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 21,
+    "cond": [
+     "@if (instrument)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"instrument.name\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "instruments/instrument/instrument.page#field-efd74495"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:600"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 92,
+    "cond": [
+     "@if (instrument)"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"instrument.notes\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "instruments/instrument/instrument.page#field-fcf5031f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:701"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "instruments/instrument/instrument.page.ts",
+    "line": 43,
+    "method": "InstrumentPage.generateSynonyms",
+    "cond": [],
+    "message": {
+     "keys": [
+      "instruments.generatingSynonyms"
+     ],
+     "de": [
+      "Synonyme werden generiert..."
+     ],
+     "literals": [],
+     "expr": "translate('instruments.generatingSynonyms')"
+    },
+    "duration": "10000",
+    "src": "300d711d",
+    "mbody": "3dbb0af3",
+    "id": "instruments/instrument/instrument.page#loading-2112917a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:683"
+    ],
+    "n": "Ionic: blockierendes Overlay „Synonyme werden generiert...“ / Flutter: kleiner Spinner statt Funken-Button im Synonym-Feld, ohne Text, Seite bleibt bedienbar.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 4,
+    "cond": [
+     "@if (instrument)"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ instrument.name }}"
+    ],
+    "text": "{{ instrument.name }}",
+    "id": "instruments/instrument/instrument.page#text-60ebf1b1"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:585"
+    ],
+    "n": "Ionic: Titel an instrument.name gebunden, ändert sich beim Tippen im Namensfeld / Flutter: fester Titel mit dem ursprünglichen Namen.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 28,
+    "cond": [
+     "@if (instrument)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "instruments.category"
+    ],
+    "de": [
+     "Kategorie"
+    ],
+    "literals": [],
+    "text": "{{ 'instruments.category' | transloco }}",
+    "id": "instruments/instrument/instrument.page#text-8d4cfc9c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:616"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 79,
+    "cond": [
+     "@if (instrument)",
+     "@if (!isGeneral && !instrument.maingroup)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "instruments.synonyms"
+    ],
+    "de": [
+     "Synonyme"
+    ],
+    "literals": [],
+    "text": "{{ 'instruments.synonyms' | transloco }}",
+    "id": "instruments/instrument/instrument.page#text-ba9457df"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:680"
+    ],
+    "n": "Label „Synonyme“ nur bei Nicht-Allgemein und Nicht-Hauptgruppe (auch bei Chor) wie Ionic. Rolle/Mandant: Seite nur für Admin/Verantwortlicher (Ionic openModal isAdmin / Flutter onEdit isAdmin, instruments_list_page:152), Mandantentyp aus tenant.type.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 56,
+    "cond": [
+     "@if (instrument)",
+     "@if (!isChoir && !isGeneral && !instrument.maingroup)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "instruments.range"
+    ],
+    "de": [
+     "Tonumfang"
+    ],
+    "literals": [],
+    "text": "{{ 'instruments.range' | transloco }}",
+    "id": "instruments/instrument/instrument.page#text-c378b60d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:643"
+    ],
+    "n": "Label „Tonumfang“ nur bei Nicht-Chor, Nicht-Allgemein, Nicht-Hauptgruppe (Flutter showMusicFields :580). Rolle/Mandant: Seite nur für Admin/Verantwortlicher (Ionic openModal isAdmin / Flutter onEdit isAdmin, instruments_list_page:152), Mandantentyp aus tenant.type.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 20,
+    "cond": [
+     "@if (instrument)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.name"
+    ],
+    "de": [
+     "Name"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.name' | transloco }}",
+    "id": "instruments/instrument/instrument.page#text-ee26db51"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:603"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "instruments/instrument/instrument.page.ts",
+    "line": 60,
+    "method": "InstrumentPage.update",
+    "cond": [
+     "(!this.instrument.name)"
+    ],
+    "message": {
+     "keys": [
+      "instruments.nameRequired"
+     ],
+     "de": [
+      "Bitte gib einen Namen an!"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.nameRequired')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "63eecf97",
+    "mbody": "eee6f5b0",
+    "id": "instruments/instrument/instrument.page#toast-283b4da3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:604"
+    ],
+    "n": "Gleicher Text „Bitte gib einen Namen an!“, Seite bleibt offen. Ionic: roter Toast / Flutter: roter Validierungstext unter dem Namensfeld; Flutter wertet reine Leerzeichen ebenfalls als leer.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "instruments/instrument/instrument.page.ts",
+    "line": 54,
+    "method": "InstrumentPage.generateSynonyms",
+    "cond": [],
+    "message": {
+     "keys": [
+      "instruments.synonymsFailed"
+     ],
+     "de": [
+      "Fehler beim Generieren der Synonyme"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.synonymsFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "664d250f",
+    "mbody": "3dbb0af3",
+    "id": "instruments/instrument/instrument.page#toast-30af5db1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:529"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "instruments/instrument/instrument.page.ts",
+    "line": 84,
+    "method": "InstrumentPage.delete",
+    "cond": [
+     "(Boolean(allPlayers.find((p: Player) => p.instrument === this.instrument.id)))"
+    ],
+    "message": {
+     "keys": [
+      "instruments.cannotDelete"
+     ],
+     "de": [
+      "Du kannst das Instrument nicht löschen, da es Spieler gibt (gab), die darauf spielen"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.cannotDelete')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "0d15fa06",
+    "mbody": "4e1e52a5",
+    "id": "instruments/instrument/instrument.page#toast-39c411aa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:779",
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:785",
+     "lib/data/repositories/group_repository.dart:193"
+    ],
+    "n": "Behebung bestätigt: Prüfung sofort beim Löschen (Personen inkl. ausgetretene, ohne ausstehende = getPlayers(true)), bei Treffer roter Toast, kein Bestätigungsdialog, Seite bleibt offen; sonst „Gruppe wirklich löschen?“ → Ja → löschen und schließen. Rest: schlägt die Zählabfrage fehl, geht Flutter weiter zum Dialog (Ionic bricht ab) – Randfall.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/group_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "instruments/instrument/instrument.page.ts",
+    "line": 50,
+    "method": "InstrumentPage.generateSynonyms",
+    "cond": [],
+    "message": {
+     "keys": [
+      "instruments.synonymsGenerated"
+     ],
+     "de": [
+      "Synonyme erfolgreich generiert!"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.synonymsGenerated')"
+    },
+    "color": null,
+    "duration": null,
+    "src": "dda9037e",
+    "mbody": "3dbb0af3",
+    "id": "instruments/instrument/instrument.page#toast-547cd222"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:527"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "instruments/instrument/instrument.page.ts",
+    "line": 39,
+    "method": "InstrumentPage.generateSynonyms",
+    "cond": [
+     "(!this.instrument.name || this.instrument.name.trim().length === 0)"
+    ],
+    "message": {
+     "keys": [
+      "instruments.nameFirst"
+     ],
+     "de": [
+      "Bitte gib zuerst einen Namen an!"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.nameFirst')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "064e053b",
+    "mbody": "3dbb0af3",
+    "id": "instruments/instrument/instrument.page#toast-5c66f01d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:519"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/legal-modal/legal-modal.component",
+   "ionic": {
+    "ts": "login/legal-modal/legal-modal.component.ts",
+    "html": "login/legal-modal/legal-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/legal-modal/legal-modal.component.html",
+    "line": 5,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "login/legal-modal/legal-modal.component#action-bf1f94b8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/widgets/legal_content_view.dart:171-193"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart (Referenz ungültig)"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/legal-modal/legal-modal.component",
+   "ionic": {
+    "ts": "login/legal-modal/legal-modal.component.ts",
+    "html": "login/legal-modal/legal-modal.component.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "login/legal-modal/legal-modal.component.html",
+    "line": 13,
+    "cond": [],
+    "tag": "app-legal-content",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "login/legal-modal/legal-modal.component#embed-8f9b9e91"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/widgets/legal_content_view.dart:171-193"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart (Referenz ungültig)"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/legal-modal/legal-modal.component",
+   "ionic": {
+    "ts": "login/legal-modal/legal-modal.component.ts",
+    "html": "login/legal-modal/legal-modal.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "login/legal-modal/legal-modal.component.html",
+    "line": 3,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "legal.title"
+    ],
+    "de": [
+     "Impressum & Datenschutz"
+    ],
+    "literals": [],
+    "text": "{{ 'legal.title' | transloco }}",
+    "id": "login/legal-modal/legal-modal.component#text-67a39ad6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/widgets/legal_content_view.dart:171-193"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart (Referenz ungültig)"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/login.page.html",
+    "line": 94,
+    "cond": [
+     "@if (liveUpdate.updateAvailable())"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "solid",
+     "color": "success"
+    },
+    "events": [
+     "(click)=liveUpdate.applyUpdate()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "cloud-download-outline"
+    ],
+    "keys": [
+     "login.installUpdate"
+    ],
+    "de": [
+     "Update installieren"
+    ],
+    "literals": [],
+    "text": "{{ 'login.installUpdate' | transloco }}",
+    "id": "login/login.page#action-02346026"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:657-672"
+    ],
+    "n": "Ionic: \"Nach Updates suchen\" prüft/installiert ein OTA-Live-Update (Capgo) / Flutter: prüft die Store-Version und öffnet den Store.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/login.page.html",
+    "line": 84,
+    "cond": [
+     "in <form>",
+     "@else",
+     "@else"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "clear",
+     "[disabled]": "\"resendCooldown > 0\""
+    },
+    "events": [
+     "(click)=resendCode()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.resendIn",
+     "login.resendCode"
+    ],
+    "de": [
+     "Erneut senden ({seconds}s)",
+     "Code erneut senden"
+    ],
+    "literals": [],
+    "text": "{{ resendCooldown > 0 ? ('login.resendIn' | transloco: { seconds: resendCooldown }) : ('login.resendCode' | transloco) }}",
+    "id": "login/login.page#action-1966836a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:840-845"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/login.page.html",
+    "line": 9,
+    "cond": [],
+    "tag": "form",
+    "attrs": {
+     "#": "registerForm"
+    },
+    "events": [
+     "(keyup.enter)=onEnter()",
+     "(ngSubmit)=onEnter()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"showPassword ? 'eye-off-outline' : 'eye-outline'\""
+    ],
+    "keys": [
+     "login.linkNote",
+     "login.modePassword",
+     "login.modeOtp",
+     "login.email",
+     "login.password",
+     "login.otpLabel",
+     "login.register",
+     "login.forgotPassword",
+     "login.linkAndSignIn",
+     "login.signIn",
+     "login.sendCode",
+     "login.resendIn",
+     "login.resendCode"
+    ],
+    "de": [
+     "Verknüpfe dein Attendix-Konto einmalig mit Microsoft. Melde dich mit deinen Attendix-Zugangsdaten an – danach wirst du in Teams automatisch angemeldet.",
+     "Passwort",
+     "Code per E-Mail",
+     "E-Mail",
+     "Passwort",
+     "Code aus der E-Mail",
+     "Registrieren",
+     "Passwort vergessen?",
+     "Verknüpfen & anmelden",
+     "Anmelden",
+     "Code senden",
+     "Erneut senden ({seconds}s)",
+     "Code erneut senden"
+    ],
+    "literals": [],
+    "text": "{{ 'login.linkNote' | transloco }} \"password\" {{ 'login.modePassword' | transloco }} \"otp\" {{ 'login.modeOtp' | transloco }} {{ 'login.email' | transloco }} [placeholder]=\"'login.email' | transloco\" …",
+    "id": "login/login.page#action-4356dbd3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:182-189",
+     "lib/features/auth/presentation/pages/login_page.dart:747-756",
+     "lib/features/auth/presentation/pages/login_page.dart:797-799"
+    ],
+    "n": "Ionic: (keyup.enter) am Formular ruft onEnter() → login() sofort, auch aus dem E-Mail-Feld (kein Fokuswechsel) / Flutter: E-Mail-Feld TextInputAction.next springt ins Passwortfeld, erst Enter im Passwortfeld sendet (mit Validierung). OTP-Enter gleich.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/login.page.html",
+    "line": 100,
+    "cond": [],
+    "tag": "a",
+    "attrs": {},
+    "events": [
+     "(click)=openLegal()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.legal"
+    ],
+    "de": [
+     "Impressum & Datenschutz"
+    ],
+    "literals": [],
+    "text": "{{ 'login.legal' | transloco }}",
+    "id": "login/login.page#action-6a4ae84b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:688-691"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/login.page.html",
+    "line": 73,
+    "cond": [
+     "in <form>",
+     "@else",
+     "@if (!otpSent)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "color": "primary",
+     "expand": "block",
+     "[disabled]": "\"!registerCredentials.email\""
+    },
+    "events": [
+     "(click)=requestCode()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.sendCode"
+    ],
+    "de": [
+     "Code senden"
+    ],
+    "literals": [],
+    "text": "{{ 'login.sendCode' | transloco }}",
+    "id": "login/login.page#action-70cf3742"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:826-827"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/login.page.html",
+    "line": 61,
+    "cond": [
+     "in <form>",
+     "@if (!otpMode)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "color": "primary",
+     "expand": "block",
+     "[disabled]": "\"!registerForm.form.valid\""
+    },
+    "events": [
+     "(click)=login()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.linkAndSignIn",
+     "login.signIn"
+    ],
+    "de": [
+     "Verknüpfen & anmelden",
+     "Anmelden"
+    ],
+    "literals": [],
+    "text": "{{ linkMode ? ('login.linkAndSignIn' | transloco) : ('login.signIn' | transloco) }}",
+    "id": "login/login.page#action-9df2d240"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:820-824",
+     "lib/features/auth/presentation/pages/login_page.dart:490-495"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/login.page.html",
+    "line": 56,
+    "cond": [
+     "in <form>",
+     "@if (!otpMode)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=forgotPassword()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.forgotPassword"
+    ],
+    "de": [
+     "Passwort vergessen?"
+    ],
+    "literals": [],
+    "text": "{{ 'login.forgotPassword' | transloco }}",
+    "id": "login/login.page#action-a353b6d4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:807-808"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/login.page.html",
+    "line": 100,
+    "cond": [],
+    "tag": "a",
+    "attrs": {},
+    "events": [
+     "(click)=startDemo()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.startDemo"
+    ],
+    "de": [
+     "Demo starten"
+    ],
+    "literals": [],
+    "text": "{{ 'login.startDemo' | transloco }}",
+    "id": "login/login.page#action-a6d6b3b4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:683-686"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/login.page.html",
+    "line": 55,
+    "cond": [
+     "in <form>",
+     "@if (!otpMode)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=register()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.register"
+    ],
+    "de": [
+     "Registrieren"
+    ],
+    "literals": [],
+    "text": "{{ 'login.register' | transloco }}",
+    "id": "login/login.page#action-af3f04b0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:804-806"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/login.page.html",
+    "line": 68,
+    "cond": [
+     "in <form>",
+     "@else",
+     "@if (!otpSent)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=register()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.register"
+    ],
+    "de": [
+     "Registrieren"
+    ],
+    "literals": [],
+    "text": "{{ 'login.register' | transloco }}",
+    "id": "login/login.page#action-af3f04b0-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:820-825"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/login.page.html",
+    "line": 79,
+    "cond": [
+     "in <form>",
+     "@else",
+     "@else"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "color": "primary",
+     "expand": "block",
+     "[disabled]": "\"!otpCode\""
+    },
+    "events": [
+     "(click)=verifyCode()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.signIn"
+    ],
+    "de": [
+     "Anmelden"
+    ],
+    "literals": [],
+    "text": "{{ 'login.signIn' | transloco }}",
+    "id": "login/login.page#action-b6cdb175"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:838-839"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "login/login.page.html",
+    "line": 38,
+    "cond": [
+     "in <form>",
+     "@if (!otpMode)",
+     "in <ion-input>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "slot": "end"
+    },
+    "events": [
+     "(click)=showPassword = !showPassword"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'login.showPassword' | transloco\""
+    ],
+    "icons": [
+     "[name]=\"showPassword ? 'eye-off-outline' : 'eye-outline'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "login/login.page#action-f30ee364"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:767-781"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "login/login.page.ts",
+    "line": 280,
+    "method": "LoginPage.promptSwitchToOtp",
+    "cond": [],
+    "header": {
+     "keys": [
+      "login.failed.header"
+     ],
+     "de": [
+      "Anmeldung fehlgeschlagen"
+     ],
+     "literals": [],
+     "expr": "translate('login.failed.header')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "login.failed.message"
+     ],
+     "de": [
+      "E-Mail oder Passwort ist falsch. Falls du kein Passwort gesetzt hast, kannst du dich stattdessen mit einem Code per E-Mail anmelden."
+     ],
+     "literals": [],
+     "expr": "translate('login.failed.message')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "login.modeOtp"
+       ],
+       "de": [
+        "Code per E-Mail"
+       ],
+       "literals": [],
+       "expr": "translate('login.modeOtp')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { this.enterOtpMode(); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "8a147284",
+    "mbody": "7100e7e8",
+    "id": "login/login.page#alert-1434e49d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:412-421"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "login/login.page.ts",
+    "line": 225,
+    "method": "LoginPage.promptResendConfirmation",
+    "cond": [],
+    "header": {
+     "keys": [
+      "login.notConfirmed.header"
+     ],
+     "de": [
+      "E-Mail nicht bestätigt"
+     ],
+     "literals": [],
+     "expr": "translate('login.notConfirmed.header')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "login.notConfirmed.message"
+     ],
+     "de": [
+      "Deine E-Mail-Adresse wurde noch nicht bestätigt. Möchtest du die Bestätigungs-E-Mail erneut senden?"
+     ],
+     "literals": [],
+     "expr": "translate('login.notConfirmed.message')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "login.notConfirmed.resend"
+       ],
+       "de": [
+        "Erneut senden"
+       ],
+       "literals": [],
+       "expr": "translate('login.notConfirmed.resend')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(values: { email?: string }) => { const target = values?.email?.trim(); if (!target) { Utils.showToast(translate('login.toast.enterEmail'), 'warning'); return false; } this.db.resendConfirmationEmail(target); return true; }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "email",
+      "label": null,
+      "name": "'email'",
+      "placeholder": {
+       "keys": [
+        "login.emailPlaceholder"
+       ],
+       "de": [
+        "E-Mail eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('login.emailPlaceholder')"
+      },
+      "value": "email",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "f03a0ed4",
+    "mbody": "01bbbef3",
+    "id": "login/login.page#alert-219aeb1d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:351-395",
+     "lib/features/auth/presentation/pages/login_page.dart:196-210",
+     "lib/core/services/teams/teams_service.dart:181-183"
+    ],
+    "n": "Flutter besser: Normalmodus gleich (\"E-Mail nicht bestätigt\", Text, E-Mail-Feld vorbefüllt, Abbrechen / Erneut senden → resend). Teams-Verknüpfungsmodus: Ionic ssoLink fängt email_not_confirmed ab → nur Toast \"Bitte bestätige zuerst deine E-Mail-Adresse.\", kein Dialog / Flutter ssoLink lässt LoginFailure durch → Dialog mit \"Erneut senden\" auch dort.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "login/login.page.ts",
+    "line": 317,
+    "method": "LoginPage.forgotPassword",
+    "cond": [],
+    "header": {
+     "keys": [
+      "login.reset.header"
+     ],
+     "de": [
+      "Passwort zurücksetzen"
+     ],
+     "literals": [],
+     "expr": "translate('login.reset.header')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "login.reset.confirm"
+       ],
+       "de": [
+        "Zurücksetzen"
+       ],
+       "literals": [],
+       "expr": "translate('login.reset.confirm')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(values: any) => { this.db.resetPassword(values.email); }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "email",
+      "label": null,
+      "name": "'email'",
+      "placeholder": {
+       "keys": [
+        "login.emailPlaceholder"
+       ],
+       "de": [
+        "E-Mail eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('login.emailPlaceholder')"
+      },
+      "value": "this.registerCredentials.email",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "8db38c7d",
+    "mbody": "1ebd9485",
+    "id": "login/login.page#alert-6a20446e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:113-126",
+     "lib/features/auth/presentation/widgets/reset_password_dialog.dart"
+    ],
+    "n": "Ionic: Alert \"Passwort zurücksetzen\" mit E-Mail-Feld, danach Toast / Flutter: eigener Dialog (reset_password_dialog) mit gleichem Feld; Toast-Texte leicht anders formuliert, kein Loading-Overlay.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "login/login.page.html",
+    "line": 46,
+    "cond": [
+     "in <form>",
+     "@if (otpMode && otpSent)"
+    ],
+    "tag": "ion-input-otp",
+    "attrs": {
+     "size": "small",
+     "type": "text"
+    },
+    "events": [
+     "(ionComplete)=verifyCode()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"otpCode\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "login.otpLabel"
+    ],
+    "de": [
+     "Code aus der E-Mail"
+    ],
+    "literals": [],
+    "text": "{{ 'login.otpLabel' | transloco }}",
+    "id": "login/login.page#field-4e867a58"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:828-835"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "login/login.page.html",
+    "line": 37,
+    "cond": [
+     "in <form>",
+     "@if (!otpMode)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "class": "inputFontBlack",
+     "autocomplete": "current-password",
+     "required": "",
+     "#": "passwordInput"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"registerCredentials.password\"",
+    "bindings": [
+     "[type]=\"showPassword ? 'text' : 'password'\"",
+     "[label]=\"'login.password' | transloco\"",
+     "[placeholder]=\"'login.password' | transloco\""
+    ],
+    "icons": [
+     "[name]=\"showPassword ? 'eye-off-outline' : 'eye-outline'\""
+    ],
+    "keys": [
+     "login.password"
+    ],
+    "de": [
+     "Passwort"
+    ],
+    "literals": [],
+    "text": "[label]=\"'login.password' | transloco\" [placeholder]=\"'login.password' | transloco\"",
+    "id": "login/login.page#field-970a3c41"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:762-797"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "login/login.page.html",
+    "line": 33,
+    "cond": [
+     "in <form>"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "class": "inputFontBlack",
+     "type": "email",
+     "inputmode": "email",
+     "autocomplete": "email",
+     "required": "",
+     "[readonly]": "\"otpMode && otpSent\"",
+     "#": "emailInput"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"registerCredentials.email\"",
+    "bindings": [
+     "[placeholder]=\"'login.email' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "login.email"
+    ],
+    "de": [
+     "E-Mail"
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'login.email' | transloco\"",
+    "id": "login/login.page#field-d0883640"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:731-760"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "login/login.page.html",
+    "line": 19,
+    "cond": [
+     "in <form>"
+    ],
+    "tag": "ion-segment",
+    "attrs": {
+     "class": "mode-segment",
+     "[value]": "\"otpMode ? 'otp' : 'password'\""
+    },
+    "events": [
+     "(ionChange)=onModeChange($event)"
+    ],
+    "link": null,
+    "model": "[value]=\"otpMode ? 'otp' : 'password'\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "password",
+      "keys": [
+       "login.modePassword"
+      ],
+      "de": [
+       "Passwort"
+      ],
+      "literals": [],
+      "text": "{{ 'login.modePassword' | transloco }}\"password\""
+     },
+     {
+      "value": "otp",
+      "keys": [
+       "login.modeOtp"
+      ],
+      "de": [
+       "Code per E-Mail"
+      ],
+      "literals": [],
+      "text": "{{ 'login.modeOtp' | transloco }}\"otp\""
+     }
+    ],
+    "keys": [
+     "login.modePassword",
+     "login.modeOtp"
+    ],
+    "de": [
+     "Passwort",
+     "Code per E-Mail"
+    ],
+    "literals": [],
+    "text": "\"password\" {{ 'login.modePassword' | transloco }} \"otp\" {{ 'login.modeOtp' | transloco }}",
+    "id": "login/login.page#field-d44519e1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:714-726"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "login/login.page.ts",
+    "line": 87,
+    "method": "LoginPage.login",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "7c1f97ed",
+    "id": "login/login.page#loading-256b5e4d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:192-228",
+     "lib/features/auth/presentation/pages/login_page.dart:490-495"
+    ],
+    "n": "Ionic: blockierendes Loading-Overlay ohne Text (max. 3 s) / Flutter: Spinner im Button, Felder und Links bleiben bedienbar. (Erstnotiz „mit Text“ unzutreffend.)",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "login/login.page.ts",
+    "line": 300,
+    "method": "LoginPage.startDemo",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "c21185e3",
+    "id": "login/login.page#loading-5b2e7ab2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:151-168"
+    ],
+    "n": "Ionic: blockierendes Loading-Overlay mit Text / Flutter: Spinner im Button, Felder und Links bleiben bedienbar.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "login/login.page.ts",
+    "line": 194,
+    "method": "LoginPage.verifyCode",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "adfd5f40",
+    "id": "login/login.page#loading-65905d50"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:284-298"
+    ],
+    "n": "Ionic: blockierendes Loading-Overlay mit Text / Flutter: Spinner im Button, Felder und Links bleiben bedienbar.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "login/login.page.ts",
+    "line": 169,
+    "method": "LoginPage.requestCode",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "2f646fc6",
+    "id": "login/login.page#loading-850f8e3f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:262-282"
+    ],
+    "n": "Ionic: blockierendes Loading-Overlay mit Text / Flutter: Spinner im Button, Felder und Links bleiben bedienbar.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "login/login.page.ts",
+    "line": 312,
+    "method": "LoginPage.openLegal",
+    "cond": [],
+    "component": "LegalModalComponent",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "806f99f8",
+    "mbody": "a363d927",
+    "id": "login/login.page#modal-103ea590"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:135-136"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "login/login.page.ts",
+    "line": 344,
+    "method": "LoginPage.register",
+    "cond": [],
+    "component": "RegisterModalComponent",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "1f43f01f",
+    "mbody": "0005dfe6",
+    "id": "login/login.page#modal-54e99890"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:333-347"
+    ],
+    "n": "Ionic: Registrieren-Modal leer / Flutter: Registrieren-Seite mit der im Login eingegebenen E-Mail vorbefüllt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1592 @@
+{
+ "batch": "zz-verify5c-opus-20",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1568,
+    "method": "DbService.getPlayers",
+    "cond": [
+     "(error)",
+     "(all)"
+    ],
+    "message": {
+     "keys": [
+      "db.loadPeopleFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Personen"
+     ],
+     "literals": [],
+     "expr": "translate('db.loadPeopleFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "76ebe788",
+    "mbody": "435d8d9d",
+    "roleGuarded": true,
+    "id": "services/db.service#toast-f23fb4a8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/dashboard_repository.dart:36",
+     "lib/features/people/presentation/pages/people_list_page.dart:534"
+    ],
+    "n": "Betrifft getPlayers(true) (Statistik, Termin, Werk, Gruppe, Dashboard-Karten, Aufgaben …). Ionic: Toast \"Fehler beim Laden der Personen\" / Flutter: Text dbLoadPeopleFailed nirgends genutzt; Fehler je Seite inline oder gar nicht angezeigt.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/dashboard_repository.dart",
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1616,
+    "method": "DbService.getPlayers",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.loadPeopleFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Personen"
+     ],
+     "literals": [],
+     "expr": "translate('db.loadPeopleFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "76ebe788",
+    "mbody": "435d8d9d",
+    "roleGuarded": true,
+    "id": "services/db.service#toast-f23fb4a8-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:534"
+    ],
+    "n": "Ionic: Toast \"Fehler beim Laden der Personen\" / Flutter: Fehleranzeige in der Liste.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-95b3cf867d",
+    "title": "Sortierung ohne ascending absteigend (postgrest-dart)",
+    "n": "Ionic (postgrest-js): .order('spalte') sortiert aufsteigend. Flutter (postgrest-dart 2.6.0, postgrest_transform_builder.dart:72-81): order() hat ascending = false als Standard → jede .order('spalte') ohne ascending sortiert ABSTEIGEND. 51 Stellen im normalen Code (Liste in f). Bestätigt sichtbar: Kinder der Eltern in umgekehrter Reihenfolge (x-afb9c7a207, player_repository.dart:266/268), Gruppenkategorien ohne sort_order Z→A (group_repository.dart:280). Bei den übrigen Stellen ist offen, ob der Client danach selbst sortiert und ob Ionic dort ascending:false nutzt. Fix: jede Stelle mit dem Ionic-Aufruf vergleichen und ascending explizit setzen.",
+    "sev": "mittel",
+    "ionic": "src/app/services/db.service.ts:1",
+    "f": [
+     "lib/data/repositories/dashboard_repository.dart:83",
+     "lib/data/repositories/dashboard_repository.dart:110",
+     "lib/data/repositories/dashboard_repository.dart:132",
+     "lib/data/repositories/plan_repository.dart:181",
+     "lib/data/repositories/group_repository.dart:24",
+     "lib/data/repositories/group_repository.dart:26",
+     "lib/data/repositories/group_repository.dart:280",
+     "lib/data/repositories/attendance_repository.dart:135",
+     "lib/data/repositories/attendance_repository.dart:368",
+     "lib/data/repositories/attendance_repository.dart:821",
+     "lib/data/repositories/attendance_repository.dart:852",
+     "lib/data/repositories/org_song_repository.dart:100",
+     "lib/data/repositories/org_song_repository.dart:101",
+     "lib/data/repositories/org_song_repository.dart:117",
+     "lib/data/repositories/org_song_repository.dart:131",
+     "lib/data/repositories/parent_repository.dart:25",
+     "lib/data/repositories/parent_repository.dart:26",
+     "lib/data/repositories/player_repository.dart:79",
+     "lib/data/repositories/player_repository.dart:81",
+     "lib/data/repositories/player_repository.dart:166",
+     "lib/data/repositories/player_repository.dart:211",
+     "lib/data/repositories/player_repository.dart:236",
+     "lib/data/repositories/player_repository.dart:266",
+     "lib/data/repositories/player_repository.dart:268",
+     "lib/data/repositories/player_repository.dart:288",
+     "lib/data/repositories/player_repository.dart:290",
+     "lib/data/repositories/player_repository.dart:1352",
+     "lib/data/repositories/player_repository.dart:1400",
+     "lib/data/repositories/player_repository.dart:1641",
+     "lib/data/repositories/player_repository.dart:1643",
+     "lib/data/repositories/shift_repository.dart:23",
+     "lib/data/repositories/viewer_repository.dart:25",
+     "lib/data/repositories/viewer_repository.dart:26",
+     "lib/data/repositories/organisation_repository.dart:258",
+     "lib/data/repositories/organisation_repository.dart:259",
+     "lib/data/repositories/player_absence_repository.dart:35",
+     "lib/data/repositories/player_absence_repository.dart:57",
+     "lib/data/repositories/public_song_repository.dart:110",
+     "lib/data/repositories/public_song_repository.dart:127",
+     "lib/data/repositories/public_song_repository.dart:128",
+     "lib/data/repositories/public_song_repository.dart:145",
+     "lib/data/repositories/song_repository.dart:358",
+     "lib/data/repositories/song_repository.dart:448",
+     "lib/data/repositories/shared_person_fields.dart:105",
+     "lib/data/repositories/import_repository.dart:37",
+     "lib/data/repositories/import_repository.dart:90",
+     "lib/data/repositories/duty_repository.dart:350",
+     "lib/data/repositories/church_repository.dart:23",
+     "lib/data/repositories/church_repository.dart:155",
+     "lib/core/providers/tenant_providers.dart:339",
+     "lib/core/utils/paged_query.dart:10"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-querschnitt-r5.json",
+    "n": "alle 50 .order() ohne Richtung mit Ionic verglichen und ascending: true gesetzt; Wächter-Test gegen neue nackte .order()"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-a90a7e3384",
+    "title": "removeEmailFromAuth: Nachprüfung bricht ab",
+    "n": "Flutter besser: Ionic ruft nach removeUserFromTenant noch getAppIdByEmail auf; bleibt der Zugang wegen einer zweiten aktiven Person mit gleicher appId bestehen, wirft das \"… bereits in der Instanz als …\" → Archivieren bricht ab (Entfernen meldet Fehler nach dem Löschen) / Flutter: kein Nachlauf, Archivieren/Löschen gelingt.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/db.service.ts:2536",
+    "f": [
+     "lib/data/repositories/player_repository.dart:584"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-e667bd214f",
+    "title": "Logout löscht gespeicherte Instanz",
+    "n": "Ionic: logout() nur signOut, user_metadata.currentTenantId bleibt / Flutter: Abmelden auf Instanzauswahl/Instanz-Erstellen ruft clearTenant() → currentTenantId in Metadaten gelöscht, nächster Login landet auf der Instanzauswahl.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/db.service.ts:757",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:345",
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:495",
+     "lib/core/providers/tenant_providers.dart:160"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart",
+    "lib/core/providers/tenant_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 262,
+    "method": "DutyService.saveUnavailability",
+    "cond": [
+     "?(rule.id)"
+    ],
+    "table": "person_unavailability",
+    "op": "insert",
+    "payload": "payload",
+    "options": [],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "eb5b54ad",
+    "mbody": "ab1c4094",
+    "id": "services/duty/duty.service#db-02bd826b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:399"
+    ],
+    "n": "Insert person_unavailability mit gleichem Payload (tenant_id = aktuelle Instanz, type_ids/reason-Defaults über Modell, valid_until leer → null, created_by aktueller Nutzer wie Ionic-Aufrufer).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 86,
+    "method": "DutyService.unassign",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "update",
+    "payload": "{ duty_state: null, ...(keepStatus ? {} : { status: AttendanceStatus.Neutral, notes: '' }), duty_assigned_by: null, duty_assigned_at: null, changed_by: userId,…",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', personAttendanceId)"
+    ],
+    "tenantFilter": false,
+    "src": "3f2d7ea5",
+    "mbody": "1f5fa39e",
+    "id": "services/duty/duty.service#db-08f908d3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:136"
+    ],
+    "n": "duty_state/assigned_by/at null, bei !keepStatus Status Neutral + notes '', changed_by/at; ID vorab über attendance.tenantId geprüft.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 261,
+    "method": "DutyService.saveUnavailability",
+    "cond": [
+     "?(rule.id)"
+    ],
+    "table": "person_unavailability",
+    "op": "update",
+    "payload": "payload",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', rule.id)"
+    ],
+    "tenantFilter": false,
+    "src": "80b9bb1f",
+    "mbody": "ab1c4094",
+    "id": "services/duty/duty.service#db-0f54bc54"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:391"
+    ],
+    "n": "Update mit gleichem Payload inkl. created_by (aktueller Nutzer, wie Ionic save()); zusätzlich Filter tenant_id.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 198,
+    "method": "DutyService.getDutyCounts",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'person_id, status, duty_state, attendance:attendance_id!inner(date, type_id)'",
+    "filters": [
+     "in('person_id', personIds)",
+     "not('duty_state', 'is', null)",
+     "gte('attendance.date', from)",
+     "lte('attendance.date', to)",
+     "range(0, 9999)"
+    ],
+    "tenantFilter": false,
+    "src": "e1488da1",
+    "mbody": "56518854",
+    "id": "services/duty/duty.service#db-37def78d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:312"
+    ],
+    "n": "Flutter besser: Ionic lädt die Dienst-Zählung mit .range(0,9999), PostgREST kappt bei max-rows (1000) → bei vielen Einteilungen zu niedrige Zähler / Flutter paginiert per fetchAllPages und filtert zusätzlich attendance.tenantId.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 125,
+    "method": "DutyService.take",
+    "cond": [],
+    "table": "rpc:duty_take",
+    "op": "rpc",
+    "payload": "{ p_attendance_id: attendanceId }",
+    "filters": [],
+    "src": "58a712e2",
+    "mbody": "0970306b",
+    "id": "services/duty/duty.service#db-55cf5d45"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:186"
+    ],
+    "n": "RPC duty_take mit p_attendance_id; Termin vorab gegen Tenant geprüft; bei 'ok' duty-notify 'filled' (Flutter wartet darauf, notify wirft nie).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 152,
+    "method": "DutyService.getUpcomingDutyTermine",
+    "cond": [],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, persons:person_attendances(id, person_id, status, notes, duty_state, duty_assigned_at, person:person_id(firstName, lastName, img, appId))'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "in('type_id', dutyTypes.map(t => t.id))",
+     "gte('date', from ?? dayjs().startOf('day').toISOString())",
+     "order('date', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "3c032da6",
+    "mbody": "19042825",
+    "id": "services/duty/duty.service#db-67423715"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:265"
+    ],
+    "n": "Gleiche Spalten/Filter (tenantId, type_id in Dienst-Typen, date ≥ heute 0 Uhr bzw. from, optional ≤ until), order date aufsteigend; Fehlerverhalten (Flutter wirft statt []) siehe Extra.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 106,
+    "method": "DutyService.confirm",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "update",
+    "payload": "{ duty_state: 'confirmed', status: AttendanceStatus.Present, notes: '', changed_by: userId, changed_at: new Date().toISOString(), }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', personAttendanceId)"
+    ],
+    "tenantFilter": false,
+    "src": "c0693c72",
+    "mbody": "98deec17",
+    "id": "services/duty/duty.service#db-7067bf2c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:161"
+    ],
+    "n": "duty_state 'confirmed', Status Anwesend, notes '', changed_by/at; ID vorab gegen Tenant geprüft.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 238,
+    "method": "DutyService.getUnavailabilityForTenant",
+    "cond": [],
+    "table": "person_unavailability",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenant_id', tenantId)"
+    ],
+    "tenantFilter": true,
+    "src": "59156713",
+    "mbody": "6be0c1dd",
+    "id": "services/duty/duty.service#db-7d46abd1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:363"
+    ],
+    "n": "select * mit tenant_id; Fehler → leere Liste wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 224,
+    "method": "DutyService.getUnavailabilityForPerson",
+    "cond": [],
+    "table": "person_unavailability",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('person_id', personId)",
+     "eq('tenant_id', tenantId)",
+     "order('created_at')"
+    ],
+    "tenantFilter": true,
+    "src": "cf2ef713",
+    "mbody": "feec96d6",
+    "id": "services/duty/duty.service#db-7ef6118a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:350"
+    ],
+    "n": "Regeln „Regelmäßig verhindert“ jetzt .order('created_at', ascending: true), älteste zuerst wie Ionic.",
+    "v": "korrigiert",
+    "src": "zz-fixed-zz-querschnitt-r5-nachtrag.json",
+    "flutterAt": "0f74333"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 41,
+    "method": "DutyService.assign",
+    "cond": [
+     "(present.length)"
+    ],
+    "table": "person_attendances",
+    "op": "update",
+    "payload": "{ duty_state: 'confirmed', duty_assigned_by: userId, duty_assigned_at: new Date().toISOString(), duty_reminder_sent: true, changed_by: userId, changed_at: new …",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "in('id', present)"
+    ],
+    "tenantFilter": false,
+    "src": "226ac4ed",
+    "mbody": "78850880",
+    "id": "services/duty/duty.service#db-807d7b5e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:97"
+    ],
+    "n": "Gleiche Spalten (duty_state 'confirmed', duty_assigned_by/at, duty_reminder_sent true, changed_by/at; Status bleibt); IDs vorab über attendance.tenantId geprüft.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 59,
+    "method": "DutyService.assign",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "update",
+    "payload": "{ duty_state: 'requested', status: AttendanceStatus.Neutral, notes: '', duty_assigned_by: userId, duty_assigned_at: new Date().toISOString(), duty_reminder_sen…",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "in('id', requested)"
+    ],
+    "tenantFilter": false,
+    "src": "b6a5e01e",
+    "mbody": "78850880",
+    "id": "services/duty/duty.service#db-807d7b5e-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:109"
+    ],
+    "n": "'requested', Status Neutral, notes '', reminder_sent false, assigned_by/at, changed_by/at; danach duty-notify 'assigned' mit den angefragten IDs.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 324,
+    "method": "DutyService.countFutureMatches",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, status, duty_state, attendance:attendance_id!inner(date, type_id, tenantId)'",
+    "filters": [
+     "eq('person_id', rule.person_id)",
+     "eq('attendance.tenantId', tenantId)",
+     "gte('attendance.date', dayjs().startOf('day').toISOString())"
+    ],
+    "tenantFilter": true,
+    "src": "85cc2501",
+    "mbody": "7d16ed76",
+    "id": "services/duty/duty.service#db-851bf368"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:428",
+     "lib/data/repositories/duty_repository.dart:449"
+    ],
+    "n": "Gleiche Abfrage (person_id, attendance.tenantId, date ≥ heute) und Filterlogik; Fehler → {0, []} wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 306,
+    "method": "DutyService.applyUnavailabilityToFuture",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "update",
+    "payload": "{ status: AttendanceStatus.Excused, notes: unavailabilityNote(rule), changed_by: userId, changed_at: new Date().toISOString(), }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "in('id', ids)"
+    ],
+    "tenantFilter": false,
+    "src": "8e9070b1",
+    "mbody": "30b6b838",
+    "id": "services/duty/duty.service#db-8727fa30"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:477"
+    ],
+    "n": "Status Entschuldigt, notes unavailabilityNote (identisch, lib/core/utils/duty_utils.dart:218), changed_by/at für dieselbe ID-Auswahl.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 272,
+    "method": "DutyService.deleteUnavailability",
+    "cond": [],
+    "table": "person_unavailability",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', id)"
+    ],
+    "tenantFilter": false,
+    "src": "111ebf7d",
+    "mbody": "eb7d0da5",
+    "id": "services/duty/duty.service#db-8bd7fb45"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:410"
+    ],
+    "n": "Delete per id, zusätzlich Filter tenant_id.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 286,
+    "method": "DutyService.applyUnavailabilityToFuture",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, status, duty_state, attendance:attendance_id!inner(date, type_id, tenantId)'",
+    "filters": [
+     "eq('person_id', rule.person_id)",
+     "eq('attendance.tenantId', tenantId)",
+     "gte('attendance.date', dayjs().startOf('day').toISOString())"
+    ],
+    "tenantFilter": true,
+    "src": "85cc2501",
+    "mbody": "30b6b838",
+    "id": "services/duty/duty.service#db-976ff62c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:428",
+     "lib/data/repositories/duty_repository.dart:467"
+    ],
+    "n": "Gleiche Abfrage; Lookup-Fehler → 0 ohne Änderung wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/duty/duty.service.ts",
+    "line": 140,
+    "method": "DutyService.notify",
+    "cond": [],
+    "table": "edge:duty-notify",
+    "op": "invoke",
+    "payload": "{ body }",
+    "filters": [],
+    "src": "522e21e7",
+    "mbody": "0a1685bc",
+    "id": "services/duty/duty.service#db-9a8744f6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:214"
+    ],
+    "n": "duty-notify mit gleichem Body (type, tenantId, attendanceId, personAttendanceIds); Fehler nur geloggt; im Demo-Konto unterdrückt.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/duty/duty.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "assign:36-79",
+     "unassign:85-102",
+     "confirm:105-121",
+     "take:124-135",
+     "notify:138-145",
+     "getUpcomingDutyTermine:148-179",
+     "getOpenDutiesForPerson:182-188",
+     "getDutyCounts:194-219",
+     "getUnavailabilityForPerson:223-235",
+     "getUnavailabilityForTenant:237-248",
+     "saveUnavailability:250-269",
+     "deleteUnavailability:271-277",
+     "applyUnavailabilityToFuture:285-320",
+     "countFutureMatches:323-338"
+    ],
+    "bodies": {
+     "assign": "78850880",
+     "unassign": "1f5fa39e",
+     "confirm": "98deec17",
+     "take": "0970306b",
+     "notify": "0a1685bc",
+     "getUpcomingDutyTermine": "19042825",
+     "getOpenDutiesForPerson": "03675c39",
+     "getDutyCounts": "56518854",
+     "getUnavailabilityForPerson": "feec96d6",
+     "getUnavailabilityForTenant": "6be0c1dd",
+     "saveUnavailability": "ab1c4094",
+     "deleteUnavailability": "eb7d0da5",
+     "applyUnavailabilityToFuture": "30b6b838",
+     "countFutureMatches": "7d16ed76"
+    },
+    "id": "services/duty/duty.service#logic-75953b4f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:96",
+     "lib/data/repositories/duty_repository.dart:264",
+     "lib/data/repositories/duty_repository.dart:313",
+     "lib/data/repositories/duty_repository.dart:427",
+     "lib/core/providers/duty_providers.dart:176",
+     "lib/core/providers/duty_providers.dart:306"
+    ],
+    "n": "Methoden entsprechen DutyRepository/DutyNotifier (assign/unassign/confirm/take/notify, Verfügbarkeiten, Übernehmen in künftige Termine). Abweichungen siehe Items (Paging getDutyCounts, Lade-Fehler Verfügbarkeit, Übernehmen-Fehler) und Extra (Fehler beim Laden der Dienst-Termine). getOpenDutiesForPerson ist in Ionic ungenutzt; Flutter hat Gleichwertiges in myDutyOverviewProvider.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart",
+    "lib/core/providers/duty_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-430cdb3d1a",
+    "title": "Fehler beim Laden der Dienst-Termine wird gemeldet",
+    "n": "Flutter besser: Ionic getUpcomingDutyTermine fängt DB-Fehler ab und liefert still [] (Dienstverteilung wirkt leer) / Flutter wirft den Fehler weiter, die Dienstverteilung zeigt den Fehler-Toast 'Fehler: …'.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/duty/duty.service.ts:165",
+    "f": [
+     "lib/data/repositories/duty_repository.dart:264",
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:146"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/feedback/feedback.service",
+   "ionic": {
+    "ts": "services/feedback/feedback.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/feedback/feedback.service.ts",
+    "line": 12,
+    "method": "FeedbackService.sendQuestion",
+    "cond": [],
+    "table": "questions",
+    "op": "insert",
+    "payload": "{ message, phone, tenant_id: tenantId, user_id: userId, }",
+    "options": [],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "7d5e9b2a",
+    "mbody": "6a80dec1",
+    "id": "services/feedback/feedback.service#db-d7adec93"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/feedback_repository.dart:30",
+     "lib/shared/widgets/sheets/feedback_sheet.dart:90",
+     "lib/features/settings/presentation/pages/files_page.dart:708"
+    ],
+    "n": "Flutter besser: Tabelle questions, gleiche Spalten inkl. tenant_id / Ionic schreibt leere Telefonnummer als '', Flutter als null (send-telegram-on-question zeigt dann '(keine Nummer)' statt leer).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/files/files.service",
+   "ionic": {
+    "ts": "services/files/files.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/files/files.service.ts",
+    "line": 183,
+    "method": "FilesService.listRaw",
+    "cond": [],
+    "table": "storage:this.bucket",
+    "op": "list",
+    "payload": "prefix, { sortBy: { column: 'name', order: 'asc' }, limit: 1000 }",
+    "filters": [],
+    "src": "582f86a7",
+    "mbody": "632f3214",
+    "id": "services/files/files.service#db-95cedfe5"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/files_repository.dart:180"
+    ],
+    "n": "Flutter besser: Ionic listet mit limit 1000 und hört dort auf (Löschen/Verschieben großer Ordner unvollständig) / Flutter listAllPages blättert alle Einträge durch.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/files_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/files/files.service",
+   "ionic": {
+    "ts": "services/files/files.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-6b399b9e28",
+    "title": "Ordner-Listing über 1000 Einträge",
+    "n": "Flutter besser: Ionic listRaw lädt je Ordnerebene nur die ersten 1000 Einträge (limit 1000) – Löschen/Verschieben/Umbenennen großer Ordner erfasst nur einen Teil und meldet trotzdem Erfolg, die Liste zeigt max. 1000 / Flutter listAllPages lädt seitenweise alle Einträge.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/files/files.service.ts:182",
+    "f": [
+     "lib/data/repositories/files_repository.dart:180"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/files_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/files/files.service",
+   "ionic": {
+    "ts": "services/files/files.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-920cf157c8",
+    "title": "Sortierung nach Name",
+    "n": "Ionic: a.name.localeCompare(b.name) (sprachrichtige Reihenfolge) / Flutter: toLowerCase().compareTo (Codepoint-Reihenfolge). Unterschied nur bei Alt-Namen mit Nicht-ASCII-Zeichen oder Satzzeichen.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/files/files.service.ts:285",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:147"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group-category/group-category.service",
+   "ionic": {
+    "ts": "services/group-category/group-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/group-category/group-category.service.ts",
+    "line": 42,
+    "method": "GroupCategoryService.addGroupCategory",
+    "cond": [],
+    "table": "group_categories",
+    "op": "insert",
+    "payload": "{ name, tenant_id: tenantId, }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "100178ca",
+    "mbody": "1f4ebdfd",
+    "id": "services/group-category/group-category.service#db-0dccc13f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/group_repository.dart:298"
+    ],
+    "n": "Insert {name, tenant_id} + select single.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/group_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group-category/group-category.service",
+   "ionic": {
+    "ts": "services/group-category/group-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/group-category/group-category.service.ts",
+    "line": 92,
+    "method": "GroupCategoryService.deleteGroupCategory",
+    "cond": [],
+    "table": "group_categories",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "35b33cee",
+    "mbody": "92a372e5",
+    "id": "services/group-category/group-category.service#db-4913a14b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/group_repository.dart:390"
+    ],
+    "n": "Delete per id, zusätzlich tenant_id.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/group_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/group-category/group-category.service",
+   "ionic": {
+    "ts": "services/group-category/group-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/group-category/group-category.service.ts",
+    "line": 25,
+    "method": "GroupCategoryService.getGroupCategories",
+    "cond": [],
+    "table": "group_categories",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenant_id', tenantId)",
+     "order('sort_order', { ascending: true, nullsFirst: false })",
+     "order('name', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "7bb5bc6b",
+    "mbody": "8350c3f2",
+    "id": "services/group-category/group-category.service#db-bab11025"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/group_repository.dart:280"
+    ],
+    "n": "Kategorien jetzt sort_order aufsteigend (nulls last), dann name aufsteigend wie Ionic.",
+    "v": "korrigiert",
+    "src": "zz-fixed-zz-querschnitt-r5-nachtrag.json",
+    "flutterAt": "0f74333"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group-category/group-category.service",
+   "ionic": {
+    "ts": "services/group-category/group-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/group-category/group-category.service.ts",
+    "line": 76,
+    "method": "GroupCategoryService.updateGroupCategorySortOrder",
+    "cond": [],
+    "table": "group_categories",
+    "op": "update",
+    "payload": "{ sort_order: sortOrder }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', id)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "cd2c442d",
+    "mbody": "84bd7068",
+    "id": "services/group-category/group-category.service#db-bbeac978"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/group_repository.dart:374",
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:43"
+    ],
+    "n": "sort_order 1..n wie Ionic handleCategoryReorder (dazu globale Instrument-Reihenfolge wie updateGlobalSortOrder), zusätzlich Filter tenant_id.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/group_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group-category/group-category.service",
+   "ionic": {
+    "ts": "services/group-category/group-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/group-category/group-category.service.ts",
+    "line": 60,
+    "method": "GroupCategoryService.updateGroupCategory",
+    "cond": [],
+    "table": "group_categories",
+    "op": "update",
+    "payload": "{ name }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "9e0200d7",
+    "mbody": "d8132cd7",
+    "id": "services/group-category/group-category.service#db-e5a432a0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/group_repository.dart:329",
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:345"
+    ],
+    "n": "Update {name} per id + tenant_id; leerer Name → Toast „instruments.enterName“, Dialog bleibt offen.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/group_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group-category/group-category.service",
+   "ionic": {
+    "ts": "services/group-category/group-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/group-category/group-category.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getGroupCategories:16-39",
+     "addGroupCategory:41-57",
+     "updateGroupCategory:59-73",
+     "updateGroupCategorySortOrder:75-89",
+     "deleteGroupCategory:91-101"
+    ],
+    "bodies": {
+     "getGroupCategories": "8350c3f2",
+     "addGroupCategory": "1f4ebdfd",
+     "updateGroupCategory": "d8132cd7",
+     "updateGroupCategorySortOrder": "84bd7068",
+     "deleteGroupCategory": "92a372e5"
+    },
+    "id": "services/group-category/group-category.service#logic-519c274b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/group_repository.dart:273",
+     "lib/data/repositories/group_repository.dart:292",
+     "lib/data/repositories/group_repository.dart:321",
+     "lib/data/repositories/group_repository.dart:370",
+     "lib/data/repositories/group_repository.dart:387",
+     "lib/core/providers/group_providers.dart:98"
+    ],
+    "n": "CRUD, Sortier-Updates und Offline-Cache (OfflineListCache) entsprechen; die Sortierabweichung beim Laden (name absteigend) steht beim Item db-bab11025, Toast-Abweichungen bei den Toast-Items.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/group_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/group-category/group-category.service",
+   "ionic": {
+    "ts": "services/group-category/group-category.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-9da1d11c08",
+    "title": "Kategorien bei gleichem sort_order absteigend nach Name",
+    "n": "Ionic: order('sort_order', asc, nullsLast).order('name', asc) – neue Kategorien (sort_order NULL, Spalte ohne Default) stehen A→Z / Flutter: .order('name') ohne ascending ist in postgrest-dart 2.6.0 absteigend → Kategorien ohne/mit gleichem sort_order Z→A im Kategorien-Sheet, in den Register-Plan-Vorgaben und überall, wo die Provider-Reihenfolge genutzt wird (Instrumentenliste sortiert selbst und ist nicht betroffen).",
+    "sev": "mittel",
+    "ionic": "src/app/services/group-category/group-category.service.ts:29",
+    "f": [
+     "lib/data/repositories/group_repository.dart:280",
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:68"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-querschnitt-r5.json",
+    "n": "Gruppenkategorien: sort_order, dann name aufsteigend wie Ionic"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group/group.service",
+   "ionic": {
+    "ts": "services/group/group.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/group/group.service.ts",
+    "line": 53,
+    "method": "GroupService.updateGroup",
+    "cond": [],
+    "table": "instruments",
+    "op": "update",
+    "payload": "dbFields as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "883f9b67",
+    "mbody": "2512796c",
+    "id": "services/group/group.service#db-1b7059eb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/group_repository.dart:143"
+    ],
+    "n": "pickGroupFields wie Ionic, zusätzlich Filter tenantId; 23505 → „svc.onlyOneMainGroup“-Meldung.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/group_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group/group.service",
+   "ionic": {
+    "ts": "services/group/group.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/group/group.service.ts",
+    "line": 35,
+    "method": "GroupService.addGroup",
+    "cond": [],
+    "table": "instruments",
+    "op": "insert",
+    "payload": "{ name, tuning: 'C', clefs: ['g'], tenantId, maingroup, ...(category != null ? { category } : {}), }",
+    "options": [],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "6c3a4ad4",
+    "mbody": "4fc50f52",
+    "id": "services/group/group.service#db-5235a536"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/group_repository.dart:109",
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:381",
+     "lib/data/repositories/tenant_create_repository.dart:59",
+     "lib/features/tenant_selection/tenant_defaults.dart:65"
+    ],
+    "n": "Instrument {name, maingroup false, category?} plus tenantId und Defaults tuning 'C'/clefs ['g']; Hauptgruppe bei Tenant-Erstellung über buildMainGroupPayload.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/group_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/group/group.service",
+   "ionic": {
+    "ts": "services/group/group.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/group/group.service.ts",
+    "line": 19,
+    "method": "GroupService.getGroups",
+    "cond": [],
+    "table": "instruments",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, categoryData:category(*)'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "order('category')",
+     "order('sort_order', { ascending: true, nullsFirst: false })",
+     "order('name', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "f7e2931d",
+    "mbody": "6d2bc3ad",
+    "id": "services/group/group.service#db-799fb770"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/group_repository.dart:24",
+     "lib/data/repositories/group_repository.dart:26"
+    ],
+    "n": "Gruppen jetzt category, sort_order (nulls last), name aufsteigend wie Ionic; Standardgruppe (groups()[0]) wieder dieselbe.",
+    "v": "korrigiert",
+    "src": "zz-fixed-zz-querschnitt-r5-nachtrag.json",
+    "flutterAt": "0f74333"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group/group.service",
+   "ionic": {
+    "ts": "services/group/group.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/group/group.service.ts",
+    "line": 73,
+    "method": "GroupService.removeGroup",
+    "cond": [],
+    "table": "instruments",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "d48a7bbb",
+    "mbody": "2eeae8ff",
+    "id": "services/group/group.service#db-9bbeb42c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/group_repository.dart:259"
+    ],
+    "n": "Delete per id, zusätzlich tenantId-Filter und Vorab-Prüfung auf zugeordnete (auch archivierte) Personen wie die Ionic-Seite.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/group_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group/group.service",
+   "ionic": {
+    "ts": "services/group/group.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/group/group.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:16-16",
+     "getGroups:18-28",
+     "getMainGroup:30-32",
+     "addGroup:34-49",
+     "updateGroup:51-70",
+     "removeGroup:72-81",
+     "getGroupCategories:84-92",
+     "addGroupCategory:94-103",
+     "updateGroupCategory:105-112",
+     "removeGroupCategory:114-119",
+     "getTeachers:122-130",
+     "addTeacher:132-141",
+     "updateTeacher:143-152"
+    ],
+    "bodies": {
+     "constructor": "e58f9596",
+     "getGroups": "6d2bc3ad",
+     "getMainGroup": "f20e7727",
+     "addGroup": "4fc50f52",
+     "updateGroup": "2512796c",
+     "removeGroup": "2eeae8ff",
+     "getGroupCategories": "4607868e",
+     "addGroupCategory": "a6f52862",
+     "updateGroupCategory": "b488e666",
+     "removeGroupCategory": "3ea6037e",
+     "getTeachers": "4b94911c",
+     "addTeacher": "c61b1555",
+     "updateTeacher": "48cbe019"
+    },
+    "id": "services/group/group.service#logic-66f1135a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/group_repository.dart:18",
+     "lib/data/repositories/group_repository.dart:94",
+     "lib/data/repositories/group_repository.dart:129",
+     "lib/data/repositories/group_repository.dart:244"
+    ],
+    "n": "getGroups/addGroup/updateGroup/removeGroup entsprechen GroupRepository (pickGroupFields gleich); Sortierabweichung beim Laden steht beim Item db-799fb770. Kategorie-/Lehrer-Methoden und getMainGroup der Klasse sind toter Code.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/group_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/history/history.service",
+   "ionic": {
+    "ts": "services/history/history.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/history/history.service.ts",
+    "line": 28,
+    "method": "HistoryService.getHistoryByAttendanceId",
+    "cond": [],
+    "table": "history",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "eq('attendance_id', attendanceId)",
+     "order('songId', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "34b4e1fe",
+    "mbody": "51da1b55",
+    "id": "services/history/history.service#db-1c319cab"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:889"
+    ],
+    "n": "Fix greift: history nach attendance_id + tenantId, jetzt .order('songId', ascending: true) wie Ionic (explizit aufsteigend, postgrest-dart-Default wäre absteigend).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  }
+ ]
+}

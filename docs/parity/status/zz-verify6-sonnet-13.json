@@ -1,0 +1,462 @@
+{
+ "batch": "zz-verify6-sonnet-13",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "org-settings/org-settings.page#modal-fd2da8e9": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:245"
+   ],
+   "n": "Ionic: LinkPersonsPage als Sheet-Modal / Flutter: Push-Seite /settings/general/link-persons, Button nur für Admin (isSuperAdmin) wie Ionic. Gleiche Funktion, nur Darstellung. Hinweis: Route fällt unter /settings/general (Admin+Verantwortlich), Verantwortliche könnten sie nur per getippter URL öffnen (siehe extra).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-settings.page#text-020d4514": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:172"
+   ],
+   "n": "Abschnittskopf „Organisation“ nur mit Organisation; Seite nur Admin/Verantwortlich (Router :184) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-03add0f2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:209-210"
+   ],
+   "n": "„Gemeinde App“ nur isSuperAdmin && gemeindeAppLinked(org), wie showGemeindeApp.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-1a2c91b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:237-238"
+   ],
+   "n": "„Personen“ nur Admin (role == admin) wie isSuperAdmin.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-248ea768": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:187"
+   ],
+   "n": "„Darstellung & Pläne“ mit Organisation, ohne weitere Rollenprüfung wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-2df945fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:151-153"
+   ],
+   "n": "Ohne Organisation: Nicht-Admin sieht orgNoneAdminOnly, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-841b3f4c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:231-234"
+   ],
+   "n": "Hinweis orgGaHint unter dem Bereich, gleiche Bedingung (Admin + Gemeinde-App-Org).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-cb7ad407": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:151-153",
+    "lib/core/router/app_router.dart:184",
+    "lib/features/settings/presentation/pages/settings_page.dart:411"
+   ],
+   "n": "Text orgNoneIntro nur für Admin (isSuperAdmin), sonst orgNoneAdminOnly. Seite: Einstellungen-Eintrag isAdmin + Guard /settings/org-settings wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-ce868386": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:150",
+    "lib/core/router/app_router.dart:184",
+    "lib/features/settings/presentation/pages/settings_page.dart:411"
+   ],
+   "n": "„Keine Organisation verknüpft“ ohne Organisation, Seite für Admin/Verantwortlich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#toast-6d088b19": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:140-141"
+   ],
+   "n": "Ionic: Service-Toast „Fehler beim Erstellen der Organisation“ und danach zweiter Toast mit error.message (danger) / Flutter: nur „Fehler beim Erstellen der Organisation“. Der zweite Toast ist nur der rohe Supabase-Text; Nutzer erfährt dasselbe.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-settings.page#toast-7cb48d62": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:132-146"
+   ],
+   "n": "Jetzt gleich: Erfolgs-Toast „Die Organisation wurde erfolgreich erstellt.“ nur wenn Erstellen UND Verknüpfen klappen (linked-Prüfung :135/:142), sonst Fehler-Toast „Fehler beim Verknüpfen der Organisation“ (Ionic wirft dort ebenfalls). Frühere Abweichung behoben.",
+   "v": "korrigiert"
+  },
+  "org-settings/org-songs/org-songs.page#action-6bc33df9": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:419",
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:327",
+    "lib/data/repositories/org_song_repository.dart:163"
+   ],
+   "n": "Flutter besser: Ionic copy() und songSvc.copyOrgSong haben keine Demo-Sperre / Flutter: DemoGuard.blocked() bzw. ensureNotDemo blockiert das Kopieren im Demo-Konto. Rest (Überschreib-Rückfrage, Felder, Dateien, Fortschritt) wie Ionic. Leon entscheidet.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/bulk-edit/bulk-edit.page#action-5c670508": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:271-274"
+   ],
+   "n": "Flutter besser: Ionic: X schließt das Modal immer, auch während Speichern / Flutter: X während _isSaving deaktiviert.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/bulk-edit/bulk-edit.page#action-a2a2fcd3": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:428-443"
+   ],
+   "n": "Texte „Speichern...“ / „# Änderung(en) speichern“ / „Keine Änderungen“ und Deaktivierung (changedCount==0 oder isSaving) gleich. Ionic: Spinner vor „Speichern...“ / Flutter: nur Text. Schreiben: player-Update mit id+tenantId-Filter, Extrafelder wie Ionic (Org-Felder in Shared-Tabelle), Demo-Sperre, Attendance-Sync: gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/bulk-edit/bulk-edit.page#action-ac3f725b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:356-364",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:157-164"
+   ],
+   "n": "Outline-Button „Für alle setzen“ mit done_all-Icon; schreibt Sammelwert in alle Zeilen.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-0c27356e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:522-523",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:401-409"
+   ],
+   "n": "Notiz je Person: Eingabe mit Platzhalter „Notiz...“.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-0e4833d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:554-557",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:401-409"
+   ],
+   "n": "Auswahlfeld je Person: Dropdown mit Optionen in Reihenfolge, Platzhalter = Feldname. Referenz korrigiert (vorher :610 ungültig).",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-0e4833d3-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:558-563",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:401-409"
+   ],
+   "n": "Gemeinde-Dropdown je Person (nur Gemeinden mit id, id ist String), Platzhalter = Feldname. Referenz korrigiert (vorher :617 ungültig).",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-2be5734e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:522-523"
+   ],
+   "n": "Sammelwert Notiz: Eingabe mit Platzhalter „Notiz...“, Startwert .",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-399cfe3f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:524-528"
+   ],
+   "n": "Sammelwert Telefon: Telefon-Tastatur, Platzhalter „Telefon...“.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-3f70cbe7": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:285-325"
+   ],
+   "n": "Flutter besser: Label, Platzhalter, „Standard-Felder“/„Zusatzfelder“ und Optionen gleich. Ionic zeigt Zusatzfelder nur wenn db.tenant().additional_fields nicht leer (Organisationsfelder fehlen sonst) / Flutter sobald irgendein Zusatzfeld (Org oder Instanz) existiert.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/bulk-edit/bulk-edit.page#field-40247d7a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:517-521"
+   ],
+   "n": "Schalter Stimmführer je Person ohne Beschriftung wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-40247d7a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:540-553"
+   ],
+   "n": "Schalter für Ja/Nein: im Sammelwert mit Feldname, je Person ohne Label. Referenz korrigiert (vorher ungültig). Standardwert true wie Ionic (extraFieldDefaultValue :31).",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-4964deb8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:585-586",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:401-409"
+   ],
+   "n": "Texteingabe je Person mit Platzhalter = Feldname.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-4964deb8-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:534-539",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:478-482"
+   ],
+   "n": "Flutter besser: Ionic: (ionChange) liefert bei ion-input einen String (laut Ionic-Core; @ionic/angular nicht im Container geprüft), Zusatzfeld wird evtl. als \"5\" gespeichert / Flutter: speichert num (Komma erlaubt), leer → null. Zahl-Tastatur gleich. Ionic übernimmt bei Blur, Flutter bei jedem Tastendruck.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/bulk-edit/bulk-edit.page#field-4964deb8-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:585-586",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:401-409"
+   ],
+   "n": "Textarea-Zusatzfeld je Person in beiden einzeilig (Ionic ion-input).",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-4964deb8-4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:564-584"
+   ],
+   "n": "Ionic: natives input type=date (Wert leerbar) / Flutter: Button mit Datumsdialog, zeigt „Kein Datum gewählt“ bzw. Datum; Wert nicht leerbar. Format yyyy-MM-dd gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/bulk-edit/bulk-edit.page#field-523de84f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:585-586",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:129-136"
+   ],
+   "n": "Startwert jetzt gleich: Flutter nutzt extraFieldDefaultValue ohne Feld-defaultValue (Text ), Platzhalter = Feldname. Frühere Startwert-Abweichung behoben.",
+   "v": "korrigiert"
+  },
+  "people/bulk-edit/bulk-edit.page#field-523de84f-3": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:564-584",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:129-136"
+   ],
+   "n": "Startwert jetzt gleich (heutiges Datum als ISO, „Für alle setzen“ schreibt es wie Ionic). Ionic: natives Datumsfeld, zeigt den ISO-Startwert nicht an, leerbar / Flutter: Button zeigt das Datum, nicht leerbar.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/bulk-edit/bulk-edit.page#field-82a98603": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:524-528",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:401-409"
+   ],
+   "n": "Telefon je Person: Telefon-Tastatur, Platzhalter „Telefon...“.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-9dd7902a": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:517-521"
+   ],
+   "n": "Ionic: Sammel-Toggle mit Beschriftung „Stimmführer“ / Flutter: nur Switch ohne Text (Feld steht bereits im Dropdown). Startwert false in beiden.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/bulk-edit/bulk-edit.page#field-d2bdf3b7": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:585-586",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:129-136"
+   ],
+   "n": "Ionic: ion-textarea mit autoGrow (mehrzeilig) / Flutter: einzeiliges Textfeld, Zeilenumbrüche im Sammelwert nicht eingebbar. Startwert jetzt gleich (). ",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/bulk-edit/bulk-edit.page#field-e33a38c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:507-516"
+   ],
+   "n": "Gruppen-Dropdown je Person mit Platzhalter „Gruppe...“, Optionen = Gruppen.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-fc367be8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:554-557",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:129-136"
+   ],
+   "n": "Dropdown mit Optionen in Reihenfolge, Platzhalter = Feldname; Startwert jetzt gleich (erste Option, Feld-defaultValue ignoriert wie Ionic). Frühere Abweichung behoben.",
+   "v": "korrigiert"
+  },
+  "people/bulk-edit/bulk-edit.page#text-24646e77": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:416"
+   ],
+   "n": "Name „Vorname Nachname“.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#text-44853193": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:380"
+   ],
+   "n": "Listenkopf „Personen (n)“.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#text-48f2cb53": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:329-347"
+   ],
+   "n": "Hinweis „Wähle ein Feld aus, um die Werte für alle Personen zu bearbeiten.“ ohne Feldauswahl; Icon edit_note statt create-outline (nur Optik).",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#text-91a4384e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:352"
+   ],
+   "n": "Listenkopf „Für alle setzen“.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#text-f4a32189": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:417"
+   ],
+   "n": "Gruppenname unter dem Namen (groupName, Fallback aus Gruppenliste).",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#action-0df4f9a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:351-354",
+    "lib/features/people/presentation/widgets/import_widgets.dart:217"
+   ],
+   "n": "„{count} importieren“, aktiv nur wenn nicht busy und importierbare Zeilen > 0, Zahl = nicht fehlerhafte, nicht doppelte Zeilen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#action-0ebf9e46": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:346-348",
+    "lib/features/people/presentation/widgets/import_widgets.dart:215"
+   ],
+   "n": "„Zurück“ im Mapping-Schritt → Datei-Schritt. Flutter-Leiste bleibt während Laden bedienbar (Ionic: Overlay blockiert), nur Randfall.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#action-3ba65881": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:351-352",
+    "lib/features/people/presentation/widgets/import_widgets.dart:215"
+   ],
+   "n": "„Zurück“ im Vorschau-Schritt → Mapping.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#action-9212f462": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:292-295"
+   ],
+   "n": "X schließt die Seite; während busy deaktiviert (Ionic: Overlay blockiert).",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#action-a2aac1cb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:346-349",
+    "lib/features/people/presentation/pages/person_import_page.dart:166",
+    "lib/core/utils/import_mapper.dart:235"
+   ],
+   "n": "„Weiter“ aktiv nur wenn Name oder Vorname+Nachname zugeordnet (mappingHasName) und nicht busy. Keine Rollenbedingung im Button; Import-Öffner nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#alert-3b9d1c7b": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:273",
+    "lib/features/people/presentation/pages/person_import_page.dart:250-251",
+    "lib/features/people/presentation/widgets/import_widgets.dart:226-243"
+   ],
+   "n": "Titel „Nicht importierte Personen“, max. 10 Zeilen „• Vorname Nachname: Grund“, „… und N weitere“, Button „OK“ gleich. Grund: Ionic error.message / Flutter „$e“ (kann technischen Präfix wie „RepositoryException:“ enthalten); Information bleibt erhalten.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/import/import.page#field-018f6a18": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:423-445"
+   ],
+   "n": "Gruppen-Dropdown je Zeile (nicht bei Fehlerzeilen), Auswahl setzt groupResolved, gleich. Ionic: Label „Gruppe“ immer über dem Wert, ungeklärte Gruppe mit orangem Rahmen / Flutter: „Gruppe“ nur als Hinweis bei leerem Wert, ungeklärte Gruppe als orange Schrift.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/import/import.page#field-147e444a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:392-396"
+   ],
+   "n": "Schalter „Konten erstellen“ im Vorschau-Schritt, Standard aus; Hinweis bei Aktivierung (:397-404). Wirkt nur bei Zeilen mit E-Mail wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#loading-3194637c": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:95-121",
+    "lib/features/people/presentation/pages/person_import_page.dart:319-341"
+   ],
+   "n": "Flutter blockiert mit Overlay (Spinner), aber ohne Text „Datei wird gelesen...“ (peopleReadingFile ungenutzt).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/import/import.page#loading-b32cfbfa": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:170-182",
+    "lib/features/people/presentation/pages/person_import_page.dart:319-341"
+   ],
+   "n": "Ionic: blockierendes Overlay „Daten werden geprüft...“ / Flutter: Overlay nur Spinner (peopleCheckingData ungenutzt); „Zurück“ in der Leiste bleibt bedienbar.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/import/import.page#text-14720394": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:446-447"
+   ],
+   "n": "Bei Fehlerzeilen wird der Gruppenname als Text statt Dropdown gezeigt.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "org-settings/org-settings.page",
+   "title": "Link-Persons-Seite für Verantwortliche per URL erreichbar",
+   "n": "Ionic: LinkPersonsPage nur über Button für Admin (isSuperAdmin) als Modal, keine URL / Flutter: /settings/general/link-persons liegt unter dem Guard /settings/general (Admin oder Verantwortlich), die Seite prüft selbst keine Rolle. Ein Verantwortlicher könnte Personen über eine getippte URL verknüpfen. Über die UI nicht erreichbar.",
+   "sev": "mittel",
+   "ionic": "src/app/org-settings/org-settings.page.html:119",
+   "f": [
+    "lib/core/router/app_router.dart:165",
+    "lib/core/router/app_router.dart:1263"
+   ]
+  }
+ ]
+}

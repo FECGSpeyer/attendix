@@ -1,0 +1,240 @@
+{
+ "batch": "zz-verify3-b11-planning-org",
+ "ionic": "9f9b82af",
+ "flutter": "b218510",
+ "items": {
+  "org-settings/org-planning-templates/org-planning-templates.page#action-7562664a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:200",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:241"
+   ],
+   "n": "Im „Feld hinzufügen“-Menü des aufgeklappten Templates nur bei Instanztyp ≠ general (beide über tenant.type); legt song-placeholder-{n} „Werk-Platzhalter {n}“ mit 20 min an und speichert. Seite in beiden nur Admin/Verantwortlich mit Organisation.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-d66bdd77": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:30",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:158"
+   ],
+   "n": "Nur Admin ohne Organisation („Organisation erstellen oder verknüpfen“ nur bei isSuperAdmin in beiden). „Organisation auswählen“, Radioliste der Orgs aus Instanzen mit Rolle 1/5 (erste vorausgewählt), „Abbrechen“/„Auswählen“/„Neue Organisation erstellen“; ohne Orgs direkt „Organisation erstellen“. Nuance: Ladefehler → Ionic nur Fehler-Toast, Flutter Erstellen-Dialog.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#toast-5c26b059": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:73"
+   ],
+   "n": "„Die Organisation wurde erfolgreich ausgewählt.“ success nach Insert tenant_group_tenants; nur Admin.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-eca98d48": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:94"
+   ],
+   "n": "Nur Admin + fecg_link_enabled (Ionic showGemeindeApp, Flutter isSuperAdmin && PlanBeamer.gemeindeAppLinked). Nach Speichern von Hash/Hint: „Verbindungsschlüssel“, Schlüssel (atx_+48 hex, Flutter monospace), „Nur jetzt sichtbar…“, „Kopieren“ (bleibt offen) / „Schließen“.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#toast-89e49671": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:112"
+   ],
+   "n": "„Schlüssel kopiert“ success, Dialog bleibt offen; nur Admin + fecg_link_enabled.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-f8951c24": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:75"
+   ],
+   "n": "Nur bei gesetztem gemeinde_app_key_hash: „Schlüssel erneuern“, „Der alte Schlüssel funktioniert danach nicht mehr…“, „Abbrechen“ / „Erneuern“ (destruktiv); Rollen/Flag wie Gemeinde-App-Bereich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#toast-d99388c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:44"
+   ],
+   "n": "„Organisation umbenannt“ success; Umbenennen nur für Admin (Tap nur bei isSuperAdmin in beiden).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-49a6136a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:47",
+    "lib/data/repositories/organisation_repository.dart:91"
+   ],
+   "n": "Nur Admin (Eintrag nur bei isSuperAdmin in beiden). „Organisation von Instanz trennen?“, „Möchtest du die Organisation „{name}“ wirklich…“, „Abbrechen“/„Trennen“ (destruktiv); löscht tenant_group_tenants (tenant_id + tenant_group) und die leere Organisation in beiden.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#toast-9381748b": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:59"
+   ],
+   "n": "„Die Organisation wurde erfolgreich von der Instanz getrennt.“ success nach erfolgreichem Trennen; nur Admin.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#toast-2193dd25": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:68",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:280"
+   ],
+   "n": "Nur Admin + weitere Instanzen in der Org (beide); schreibt tenants.song_source_tenant_id der aktuellen Instanz, dann „Werk-Synchronisierung gespeichert.“ success.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-17b9e40c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:31"
+   ],
+   "n": "Nur beim Wechsel von einer Quelle auf „Keine“: „Synchronisierung deaktivieren?“, Text gleich, „Abbrechen“/„Deaktivieren“ (rot); Abbrechen lässt den alten Wert. Nur Admin + verknüpfte Instanzen.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-03add0f2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:212"
+   ],
+   "n": "„Gemeinde App“ nur Admin + fecg_link_enabled in beiden; Verantwortlich sieht den Bereich in beiden nicht.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#field-16ab0b34": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:214"
+   ],
+   "n": "Schalter „Beamer-Dateien im Ablaufplan“ + Hinweis, Wert beamer_files_enabled, schreibt tenant_groups.beamer_files_enabled; nur Admin + fecg_link_enabled.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-16566c33": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:222"
+   ],
+   "n": "Mit Hash „Schlüssel erneuern“ / „Schlüssel aktiv, endet auf …{hint}“, sonst „Verbindungsschlüssel erstellen“ / „Noch nicht mit der Gemeinde App verbunden“; Rollen/Flag gleich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-841b3f4c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:234"
+   ],
+   "n": "Hinweis unter dem Bereich, gleiche Bedingung (Admin + fecg_link_enabled).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-9f03cb0c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:283"
+   ],
+   "n": "„Instanzen“ für alle, die die Seite öffnen (Admin/Verantwortlich), sobald weitere Instanzen verknüpft sind (Flutter linkedTenantsProvider ohne aktuelle Instanz).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-b41bd762": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:286"
+   ],
+   "n": "shortName der aktuellen Instanz; gleiche Bedingung.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-03183d75": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:287"
+   ],
+   "n": "„Diese Instanz“; gleiche Bedingung.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#toast-8a81b299": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:385",
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:97",
+    "lib/core/providers/org_song_providers.dart:41"
+   ],
+   "n": "Seite nur Admin/Verantwortlich mit Organisation; Kopierziele nur Instanzen mit eigener Rolle Admin/Verantwortlich (buildOrgSongCopyTargets wie buildTargets). „„{name}“ wurde nach {tenant} kopiert.“ bzw. „…in das vorhandene Werk in {tenant} übernommen.“ success.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#toast-1281d722": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:393"
+   ],
+   "n": "„Fehler beim Kopieren des Werks: {error}“ danger; {error} über friendlyErrorMessage statt error.message, sonst gleich. Rollen wie Kopieren.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#alert-eaa61c59": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:334"
+   ],
+   "n": "Nur im Modus „vorhandenes Werk“ mit Feldern, die im Ziel schon Werte haben: „Werte überschreiben?“, „Diese Felder haben im Ziel schon einen Wert…: {fields}“, „Abbrechen“/„Überschreiben“.",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-0fbfb680": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:209",
+    "lib/features/planning/presentation/pages/planning_page.dart:2056"
+   ],
+   "n": "„Beamer“ (Flutter versal). showBeamer wie Ionic: fecg_link_enabled && beamer_files_enabled && Org-Plan (PlanBeamer.active, planning_page.dart:2056 → beamerFileOf; Notizen ohne Beamer-Bereich, Ionic: eigener Notiz-Dialog).",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#field-86c9cb80": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:212",
+    "lib/features/planning/presentation/pages/planning_page.dart:2056"
+   ],
+   "n": "„Beamer-Datei nötig“, Auto-Grund „Automatisch an: Werk“ / „…Titel enthält „{word}““ nur ohne Handwert; Umschalten setzt Handwert, gespeichert als needsBeamer. showBeamer wie Ionic: fecg_link_enabled && beamer_files_enabled && Org-Plan (PlanBeamer.active, planning_page.dart:2056 → beamerFileOf; Notizen ohne Beamer-Bereich, Ionic: eigener Notiz-Dialog).",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-0d1ecdbc": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:226"
+   ],
+   "n": "Dateiname (Zeile, sonst Werk-Datei) nur bei Beamer an. showBeamer wie Ionic: fecg_link_enabled && beamer_files_enabled && Org-Plan (PlanBeamer.active, planning_page.dart:2056 → beamerFileOf; Notizen ohne Beamer-Bereich, Ionic: eigener Notiz-Dialog).",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-a42fe7b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:227"
+   ],
+   "n": "„Ändern kannst du die Datei in der Gemeinde App.“ bei vorhandener Datei. showBeamer wie Ionic: fecg_link_enabled && beamer_files_enabled && Org-Plan (PlanBeamer.active, planning_page.dart:2056 → beamerFileOf; Notizen ohne Beamer-Bereich, Ionic: eigener Notiz-Dialog).",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-d5e8230e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:226"
+   ],
+   "n": "„Noch keine Datei verknüpft“ ohne Datei. showBeamer wie Ionic: fecg_link_enabled && beamer_files_enabled && Org-Plan (PlanBeamer.active, planning_page.dart:2056 → beamerFileOf; Notizen ohne Beamer-Bereich, Ionic: eigener Notiz-Dialog).",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-6aad1281": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:227"
+   ],
+   "n": "„Verknüpfen kannst du die Datei in der Gemeinde App.“ ohne Datei. showBeamer wie Ionic: fecg_link_enabled && beamer_files_enabled && Org-Plan (PlanBeamer.active, planning_page.dart:2056 → beamerFileOf; Notizen ohne Beamer-Bereich, Ionic: eigener Notiz-Dialog).",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-552fe355": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:231"
+   ],
+   "n": "Hinweis „Automatisch an bei Werken…“ unter dem Bereich. showBeamer wie Ionic: fecg_link_enabled && beamer_files_enabled && Org-Plan (PlanBeamer.active, planning_page.dart:2056 → beamerFileOf; Notizen ohne Beamer-Bereich, Ionic: eigener Notiz-Dialog).",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

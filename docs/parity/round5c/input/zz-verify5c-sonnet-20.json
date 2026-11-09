@@ -1,0 +1,2226 @@
+{
+ "batch": "zz-verify5c-sonnet-20",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 267,
+    "cond": [
+     "<ng-template #wideLayout>"
+    ],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "agenda-item add"
+    },
+    "events": [
+     "(click)=addSpontaneousTopic()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [
+     "protocol.point"
+    ],
+    "de": [
+     "Punkt"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.point' | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-7b79c06e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1755"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 654,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">",
+     "@if (summary; as sum)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=publishOpen = false"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Abbrechen",
+     "Als Entwurf lassen"
+    ],
+    "text": "{{ isPublished ? 'Abbrechen' : 'Als Entwurf lassen' }}",
+    "id": "protocols/protocol/protocol.page#action-85b310a5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:949"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 246,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@for (s of sections; track s.id)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "agenda-item"
+    },
+    "events": [
+     "(click)=activate(s.id, true)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.sel]=\"activeId === s.id\"",
+     "[class.live]=\"live?.fieldId === s.id\""
+    ],
+    "icons": [],
+    "keys": [
+     "planning.minShort"
+    ],
+    "de": [
+     "{min} min"
+    ],
+    "literals": [],
+    "text": "{{ s.start }} {{ s.title }} {{ s.conductor }} \" · \" {{ 'planning.minShort' | transloco: { min: s.duration } }}",
+    "id": "protocols/protocol/protocol.page#action-a536206e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1715",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1743"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 538,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=publishOpen = false"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.cancel"
+    ],
+    "de": [
+     "Abbrechen"
+    ],
+    "literals": [],
+    "text": "{{ 'common.cancel' | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-b5f2fcb0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:861"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 355,
+    "cond": [
+     "<ng-template #wideLayout>"
+    ],
+    "tag": "app-tiptap-editor",
+    "attrs": {},
+    "events": [
+     "(contentChange)=onSectionChange(GENERAL, $event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[content]=\"editorContent[GENERAL] ?? null\"",
+     "[sectionId]=\"GENERAL\"",
+     "[taskStatuses]=\"taskStatuses\"",
+     "[editable]=\"true\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "protocols/protocol/protocol.page#action-c6f17db5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1900"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 341,
+    "cond": [
+     "<ng-template #wideLayout>"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "resizer"
+    },
+    "events": [
+     "(pointerdown)=startResize('right', $event)",
+     "(dblclick)=resetWidth('right')",
+     "(keydown)=resizeByKey('right', $event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.active]=\"resizing === 'right'\"",
+     "[attr.aria-label]=\"'protocol.resizeGeneral' | transloco\"",
+     "[attr.aria-valuenow]=\"columnWidths.right\"",
+     "[attr.title]=\"'protocol.dragResize' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "protocol.dragResize"
+    ],
+    "de": [
+     "Ziehen, um die Breite anzupassen (Doppelklick setzt zurück)"
+    ],
+    "literals": [],
+    "text": "[attr.title]=\"'protocol.dragResize' | transloco\"",
+    "id": "protocols/protocol/protocol.page#action-c84d1157"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1963",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1594"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 97,
+    "cond": [
+     "<ng-template #liveBar>",
+     "@if (live)",
+     "@if (hasNext)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=nextSection()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "protocol.nextPoint"
+    ],
+    "de": [
+     "Nächster Punkt"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.nextPoint' | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-e9b880bb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1394",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1398"
+    ],
+    "n": "Breites Layout gleich (nextSectionId + Fokus). Ionic Handy: „Nächster Punkt“ auch sichtbar, wenn kein Abschnitt offen ist (springt zum ersten), öffnet, fokussiert und scrollt den Abschnitt ins Bild / Flutter Handy: Button nur bei geöffnetem Abschnitt mit Nachfolger, setzt nur die Auswahl ohne Scroll/Fokus.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 195,
+    "cond": [
+     "<ng-template #phoneLayout>",
+     "@for (s of sections; track s.id)",
+     "@if (activeId === s.id)"
+    ],
+    "tag": "app-tiptap-editor",
+    "attrs": {},
+    "events": [
+     "(contentChange)=onSectionChange(s.id, $event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[content]=\"editorContent[s.id] ?? null\"",
+     "[sectionId]=\"s.id\"",
+     "[taskStatuses]=\"taskStatuses\"",
+     "[editable]=\"true\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "protocols/protocol/protocol.page#action-eb5b2d02"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1491"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 301,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@for (s of (activeSection ? [activeSection] : []); track s.id)"
+    ],
+    "tag": "app-tiptap-editor",
+    "attrs": {},
+    "events": [
+     "(contentChange)=onSectionChange(s.id, $event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[content]=\"editorContent[s.id] ?? null\"",
+     "[sectionId]=\"s.id\"",
+     "[taskStatuses]=\"taskStatuses\"",
+     "[editable]=\"true\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "protocols/protocol/protocol.page#action-eb5b2d02-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1804"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "protocols/protocol/protocol.page.ts",
+    "line": 796,
+    "method": "ProtocolPage.addSpontaneousTopic",
+    "cond": [],
+    "header": {
+     "keys": [
+      "protocol.spontaneous"
+     ],
+     "de": [
+      "Spontaner Punkt"
+     ],
+     "literals": [],
+     "expr": "translate('protocol.spontaneous')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "protocol.spontaneousHint"
+     ],
+     "de": [
+      "Wird als neues Thema angelegt und im Ablaufplan ergänzt."
+     ],
+     "literals": [],
+     "expr": "translate('protocol.spontaneousHint')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "protocol.add"
+       ],
+       "de": [
+        "Hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('protocol.add')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(data: { title?: string; duration?: string }) => { const title = data.title?.trim(); if (!title) { Utils.showToast(translate('agenda.enterTitle'), 'warning'); return false; } const duration = Math.max(1, parseInt(data.duration ?? '', 10) |…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'title'",
+      "placeholder": {
+       "keys": [
+        "tasks.title"
+       ],
+       "de": [
+        "Titel"
+       ],
+       "literals": [],
+       "expr": "translate('tasks.title')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "number",
+      "label": null,
+      "name": "'duration'",
+      "placeholder": {
+       "keys": [
+        "protocol.durationMinutes"
+       ],
+       "de": [
+        "Dauer in Minuten"
+       ],
+       "literals": [],
+       "expr": "translate('protocol.durationMinutes')"
+      },
+      "value": "defaultDuration",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "dc45a1a5",
+    "mbody": "e752cb2b",
+    "id": "protocols/protocol/protocol.page#alert-0750ecfb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:561",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:592"
+    ],
+    "n": "Titel „Spontaner Punkt“, Hinweis „Wird als neues Thema angelegt …“, Felder Titel/Dauer (vorbelegt mit Standarddauer), Abbrechen/Hinzufügen gleich (Platzhalter als Feld-Label). Ionic: leerer Titel → Warn-Toast „Bitte einen Titel eingeben“, Alert bleibt offen (return false) / Flutter: Dialog schließt, dann derselbe Warn-Toast – geänderte Dauer geht verloren. Randfall: „12.5“ Ionic parseInt → 12, Flutter → Standarddauer.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 141,
+    "cond": [
+     "<ng-template #leftoverList>",
+     "@if (leftovers.length)",
+     "@for (l of leftovers; track l.key)"
+    ],
+    "tag": "app-tiptap-editor",
+    "bindings": [
+     "[content]",
+     "[editable]",
+     "[taskStatuses]"
+    ],
+    "bindingExprs": [
+     "[content]=\"l.doc\"",
+     "[editable]=\"false\"",
+     "[taskStatuses]=\"taskStatuses\""
+    ],
+    "events": [],
+    "id": "protocols/protocol/protocol.page#embed-5484c3d8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1542"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 329,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@empty of (activeSection ? [activeSection] : [])",
+     "@if (activeLeftover; as l)"
+    ],
+    "tag": "app-tiptap-editor",
+    "bindings": [
+     "[content]",
+     "[editable]",
+     "[taskStatuses]"
+    ],
+    "bindingExprs": [
+     "[content]=\"l.doc\"",
+     "[editable]=\"false\"",
+     "[taskStatuses]=\"taskStatuses\""
+    ],
+    "events": [],
+    "id": "protocols/protocol/protocol.page#embed-5484c3d8-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1865",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1866"
+    ],
+    "n": "Schreibgeschützte Notizen gleich. Flutter listet darunter zusätzlich die in diesen Notizen referenzierten Aufgaben; Ionic zeigt im breiten Layout bei „Weitere Notizen“ keine Aufgabenliste.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 426,
+    "cond": [
+     "<ng-template #readLayout>",
+     "@for (s of sections; track s.id)",
+     "@if (s.isTop || hasNotes(s.id) || outcomes[s.id] || tasksFor(s.id).length)",
+     "@if (hasNotes(s.id))"
+    ],
+    "tag": "app-tiptap-editor",
+    "bindings": [
+     "[content]",
+     "[editable]",
+     "[taskStatuses]"
+    ],
+    "bindingExprs": [
+     "[content]=\"docs[s.id]\"",
+     "[editable]=\"false\"",
+     "[taskStatuses]=\"taskStatuses\""
+    ],
+    "events": [],
+    "id": "protocols/protocol/protocol.page#embed-5484c3d8-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:2041"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 443,
+    "cond": [
+     "<ng-template #readLayout>",
+     "@if (hasNotes(GENERAL) || unassignedTasks.length)",
+     "@if (hasNotes(GENERAL))"
+    ],
+    "tag": "app-tiptap-editor",
+    "bindings": [
+     "[content]",
+     "[editable]",
+     "[taskStatuses]"
+    ],
+    "bindingExprs": [
+     "[content]=\"docs[GENERAL]\"",
+     "[editable]=\"false\"",
+     "[taskStatuses]=\"taskStatuses\""
+    ],
+    "events": [],
+    "id": "protocols/protocol/protocol.page#embed-5484c3d8-4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:2059"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 605,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">",
+     "@if (summary; as sum)",
+     "@if (topicClosures.length)",
+     "@for (t of topicClosures; track t.agendaItemId)"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"t.close\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ t.title }} {{ OUTCOME_LABELS[t.outcome] }}",
+    "id": "protocols/protocol/protocol.page#field-a14b79a7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:905"
+    ],
+    "n": "Checkbox je Thema mit Ergebnis-Label, „Beschlossen“ vorausgewählt.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 636,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">",
+     "@if (summary; as sum)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"sendPdf\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "protocol.sendPdf",
+     "protocol.viaTelegram"
+    ],
+    "de": [
+     "Protokoll als PDF mitschicken",
+     "Per Telegram als Dokument"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.sendPdf' | transloco }} {{ 'protocol.viaTelegram' | transloco }}",
+    "id": "protocols/protocol/protocol.page#field-c72137bf"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:847",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:932"
+    ],
+    "n": "Schalter mit Text/Untertitel, Standard an. Ionic: sendPdf ist Seitenzustand – ausgeschaltet bleibt es beim erneuten Öffnen aus / Flutter: wird bei jedem Öffnen wieder auf „an“ gesetzt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "protocols/protocol/protocol.page.ts",
+    "line": 1012,
+    "method": "ProtocolPage.sharePdf",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "44a998d8",
+    "id": "protocols/protocol/protocol.page#loading-20731d79"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:768"
+    ],
+    "n": "Ionic: blockierendes Lade-Overlay beim Erstellen des PDFs / Flutter: kein Overlay, keine Rückmeldung bis zum Teilen-Dialog.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "protocols/protocol/protocol.page.ts",
+    "line": 914,
+    "method": "ProtocolPage.publish",
+    "cond": [],
+    "message": null,
+    "duration": "99999",
+    "src": "ed5913fc",
+    "mbody": "b39b3660",
+    "id": "protocols/protocol/protocol.page#loading-4ee35e81"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:971"
+    ],
+    "n": "Blockierender Spinner-Dialog (nicht schließbar) während der Freigabe.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 506,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"notesOpen\""
+    },
+    "events": [
+     "(willDismiss)=closeNotes()"
+    ],
+    "bindings": [
+     "[isOpen]=\"notesOpen\"",
+     "[initialBreakpoint]=\"0.75\"",
+     "[breakpoints]=\"[0, 0.75, 1]\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "protocols/protocol/protocol.page#modal-310a0a39"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1258",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1303"
+    ],
+    "n": "Auslöser (Footer „Notizen“), Inhalt allgemeine Notizen und Speichern beim Schließen gleich (Flutter speichert sofort statt nach Debounce). Ionic: Sheet mit Breakpoints [0, 0.75, 1] (auf Vollbild ziehbar) / Flutter: feste Höhe 80 %, nicht ziehbar.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 534,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"publishOpen\""
+    },
+    "events": [
+     "(didDismiss)=publishOpen = false"
+    ],
+    "bindings": [
+     "[isOpen]=\"publishOpen\"",
+     "[initialBreakpoint]=\"1\"",
+     "[breakpoints]=\"[0, 1]\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "protocols/protocol/protocol.page#modal-a445544e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:848"
+    ],
+    "n": "Bottom-Sheet 90 % Höhe mit Abbrechen links und Titel; Ionic Sheet mit Breakpoint 1.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 459,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"attendeesOpen\""
+    },
+    "events": [
+     "(didDismiss)=attendeesOpen = false"
+    ],
+    "bindings": [
+     "[isOpen]=\"attendeesOpen\"",
+     "[initialBreakpoint]=\"0.6\"",
+     "[breakpoints]=\"[0, 0.6, 1]\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "protocols/protocol/protocol.page#modal-ee22855e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1196",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1204"
+    ],
+    "n": "Auslöser (Tippen auf Teilnehmer-Zeile) und Daten (Anwesend/Entschuldigt/Sonstige) gleich. Ionic: Sheet mit Breakpoints [0, 0.6, 1] (Start 60 %, auf Vollbild ziehbar) / Flutter: Bottom-Sheet fester Höhe 70 %, nur nach unten wegwischbar.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 138,
+    "cond": [
+     "<ng-template #leftoverList>",
+     "@if (leftovers.length)",
+     "@for (l of leftovers; track l.key)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "t"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ l.title }}"
+    ],
+    "text": "{{ l.title }}",
+    "id": "protocols/protocol/protocol.page#text-02d5034d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1537"
+    ],
+    "n": "Titel gleich. Flutter zeigt (Handy- und Leseansicht) unter jedem Titel zusätzlich „Dieser Punkt steht nicht mehr im Ablaufplan. Die Notizen bleiben erhalten.“ – Ionic dort nur Titel + Notizen.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 584,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">",
+     "@if (summary; as sum)",
+     "@if (sum.withoutOutcome.length)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "protocol.withoutOutcome"
+    ],
+    "de": [
+     "Ohne Ergebnis: {count}"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.withoutOutcome' | transloco: { count: sum.withoutOutcome.length } }}",
+    "id": "protocols/protocol/protocol.page#text-036b6b54"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:893"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 236,
+    "cond": [
+     "<ng-template #wideLayout>"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "side-title"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ title }}"
+    ],
+    "text": "{{ title }}",
+    "id": "protocols/protocol/protocol.page#text-066d150f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1704"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 290,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@for (s of (activeSection ? [activeSection] : []); track s.id)",
+     "@if (s.duration)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "planning.minShort"
+    ],
+    "de": [
+     "{min} min"
+    ],
+    "literals": [],
+    "text": "· {{ 'planning.minShort' | transloco: { min: s.duration } }}",
+    "id": "protocols/protocol/protocol.page#text-06b9b81b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1781"
+    ],
+    "n": "Breites Layout (nur Leitung): „· {n} min“ im Kicker nur bei Dauer > 0.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 632,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">",
+     "@if (summary; as sum)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "protocol.recipients"
+    ],
+    "de": [
+     "{count} Anwesende"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.recipients' | transloco: { count: sum.recipientCount } }}",
+    "id": "protocols/protocol/protocol.page#text-096e9cd3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:930"
+    ],
+    "n": "Inkl. Zusatz „ · n Personen mit Aufgaben“.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 569,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">",
+     "@if (summary; as sum)",
+     "@if (sum.postponed.length)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ sum.postponed.join(', ') }}"
+    ],
+    "text": "{{ sum.postponed.join(', ') }}",
+    "id": "protocols/protocol/protocol.page#text-0a05ce42"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:885"
+    ],
+    "n": "Inkl. Zusatz „ · wird beim nächsten Termin vorgeschlagen“ bei suggest_postponed.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 316,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@for (s of (activeSection ? [activeSection] : []); track s.id)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "save-state"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ saveLabel }}"
+    ],
+    "text": "{{ saveLabel }}",
+    "id": "protocols/protocol/protocol.page#text-0cd727f0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1848"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 403,
+    "cond": [
+     "<ng-template #readLayout>",
+     "@if (present.length || excused.length)",
+     "@for (a of present; track a.id)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "chip"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ a.name }}"
+    ],
+    "text": "{{ a.name }}",
+    "id": "protocols/protocol/protocol.page#text-11d66fff"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:2011"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 408,
+    "cond": [
+     "<ng-template #readLayout>",
+     "@if (present.length || excused.length)",
+     "@if (excused.length)",
+     "@for (a of excused; track a.id)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "chip muted"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ a.name }}"
+    ],
+    "text": "{{ a.name }}",
+    "id": "protocols/protocol/protocol.page#text-11d66fff-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:2018"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 429,
+    "cond": [
+     "<ng-template #readLayout>",
+     "@for (s of sections; track s.id)",
+     "@if (s.isTop || hasNotes(s.id) || outcomes[s.id] || tasksFor(s.id).length)",
+     "@else if (!tasksFor(s.id).length)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "s"
+    },
+    "keys": [
+     "protocol.noNotes"
+    ],
+    "de": [
+     "Keine Notizen"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.noNotes' | transloco }}",
+    "id": "protocols/protocol/protocol.page#text-158e2b35"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:2043"
+    ],
+    "n": "Leseansicht: „Keine Notizen“ (grau) bei Abschnitt ohne Notizen und ohne Aufgaben; Kartenbedingung (TOP, Notizen, Ergebnis oder Aufgaben) gleich.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 273,
+    "cond": [
+     "<ng-template #wideLayout>"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "group-label"
+    },
+    "keys": [
+     "protocol.present"
+    ],
+    "de": [
+     "Anwesend"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.present' | transloco }}",
+    "id": "protocols/protocol/protocol.page#text-15ef5196"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1765"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 621,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">",
+     "@if (summary; as sum)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "protocol.mayRead"
+    ],
+    "de": [
+     "Lesen dürfen"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.mayRead' | transloco }}",
+    "id": "protocols/protocol/protocol.page#text-160968fc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:921"
+    ],
+    "n": "Inkl. „die Gruppen aus dem Termintyp …“ / „alle Mitglieder …“.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 624,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">",
+     "@if (summary; as sum)",
+     "@else (not type?.relevant_groups?.length)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "protocol.readAll"
+    ],
+    "de": [
+     "alle Mitglieder (Termintyp „{type}“ hat keine Gruppen)"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.readAll' | transloco: { type: type?.name } }}",
+    "id": "protocols/protocol/protocol.page#text-171a2841"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:924"
+    ],
+    "n": "„alle Mitglieder (Termintyp „{Typ}“ hat keine Gruppen)“ sonst; nur Leitung.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 237,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@if (timeRange)"
+    ],
+    "tag": "#text",
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "· {{ timeRange }}"
+    ],
+    "text": "· {{ timeRange }}",
+    "id": "protocols/protocol/protocol.page#text-18dbad86"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1705"
+    ],
+    "n": "Breites Layout (nur Leitung): Kopf links „Di, 21.10.2026 · 19:00–20:30“ – Zeitspanne nur wenn Planstart vorhanden, Ende = Start + Summe der Dauern, sonst nur Startzeit; wie Ionic.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 473,
+    "cond": [
+     "in <ion-modal isOpen=\"attendeesOpen\">",
+     "@for (a of present; track a.id)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ a.name }}"
+    ],
+    "text": "{{ a.name }}",
+    "id": "protocols/protocol/protocol.page#text-19804570"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1223"
+    ],
+    "n": "Name „Vorname Nachname“ je anwesender Person im Teilnehmer-Sheet. Randfall leerer Name (Ionic „Unbekannt“, Flutter leer) und Sortierung siehe Erst-Extra „Teilnehmende: Sortierung/Fallback“.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 485,
+    "cond": [
+     "in <ion-modal isOpen=\"attendeesOpen\">",
+     "@if (excused.length)",
+     "@for (a of excused; track a.id)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ a.name }}"
+    ],
+    "text": "{{ a.name }}",
+    "id": "protocols/protocol/protocol.page#text-19804570-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1234"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 497,
+    "cond": [
+     "in <ion-modal isOpen=\"attendeesOpen\">",
+     "@if (others.length)",
+     "@for (a of others; track a.id)"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ a.name }}"
+    ],
+    "text": "{{ a.name }}",
+    "id": "protocols/protocol/protocol.page#text-19804570-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1243"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 334,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@empty of (activeSection ? [activeSection] : [])",
+     "@else (not activeLeftover)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Wähle links einen Punkt aus.",
+     "Der Ablaufplan ist noch leer."
+    ],
+    "bound": [
+     "{{ sections.length ? 'Wähle links einen Punkt aus.' : 'Der Ablaufplan ist noch leer.' }}"
+    ],
+    "text": "{{ sections.length ? 'Wähle links einen Punkt aus.' : 'Der Ablaufplan ist noch leer.' }}",
+    "id": "protocols/protocol/protocol.page#text-1aaa95b7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1876"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 481,
+    "cond": [
+     "in <ion-modal isOpen=\"attendeesOpen\">",
+     "@if (excused.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "protocol.excusedList"
+    ],
+    "de": [
+     "Entschuldigt ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.excusedList' | transloco: { count: excused.length } }}",
+    "id": "protocols/protocol/protocol.page#text-24981059"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1230"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 406,
+    "cond": [
+     "<ng-template #readLayout>",
+     "@if (present.length || excused.length)",
+     "@if (excused.length)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "card-label spaced"
+    },
+    "keys": [
+     "protocol.excusedList"
+    ],
+    "de": [
+     "Entschuldigt ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.excusedList' | transloco: { count: excused.length } }}",
+    "id": "protocols/protocol/protocol.page#text-24bf7368"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:2015"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 325,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@empty of (activeSection ? [activeSection] : [])",
+     "@if (activeLeftover; as l)"
+    ],
+    "tag": "h1",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ l.title }}"
+    ],
+    "text": "{{ l.title }}",
+    "id": "protocols/protocol/protocol.page#text-27c5b66c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1861"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 289,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@for (s of (activeSection ? [activeSection] : []); track s.id)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "kicker"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ s.start }}"
+    ],
+    "text": "{{ s.start }}",
+    "id": "protocols/protocol/protocol.page#text-28a78447"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1781",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1788"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 393,
+    "cond": [
+     "<ng-template #readLayout>",
+     "@if (timeRange)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "attendance.timeOClock"
+    ],
+    "de": [
+     "{time} Uhr"
+    ],
+    "literals": [],
+    "text": "· {{ 'attendance.timeOClock' | transloco: { time: timeRange } }}",
+    "id": "protocols/protocol/protocol.page#text-2bcbb774"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1992"
+    ],
+    "n": "Lese-Layout (Nicht-Leitung, freigegebenes Protokoll): „Di, 21.10.2026 · 19:00–20:30 Uhr“, nur bei Planstart; wie Ionic.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 550,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">",
+     "@if (summary; as sum)",
+     "@if (sum.decided.length)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "protocol.decidedCount"
+    ],
+    "de": [
+     "{count, plural, one {# Thema} other {# Themen}} beschlossen"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.decidedCount' | transloco: { count: sum.decided.length } }}",
+    "id": "protocols/protocol/protocol.page#text-2bf7f00d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:874"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 392,
+    "cond": [
+     "<ng-template #readLayout>"
+    ],
+    "tag": "h1",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ title }}"
+    ],
+    "text": "{{ title }}",
+    "id": "protocols/protocol/protocol.page#text-2c1a73a9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1991"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 476,
+    "cond": [
+     "in <ion-modal isOpen=\"attendeesOpen\">",
+     "@empty of present"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium"
+    },
+    "keys": [
+     "protocol.nobodyPresent"
+    ],
+    "de": [
+     "Niemand als anwesend eingetragen"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.nobodyPresent' | transloco }}",
+    "id": "protocols/protocol/protocol.page#text-2d97aa39"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1227"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 469,
+    "cond": [
+     "in <ion-modal isOpen=\"attendeesOpen\">"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "protocol.presentList"
+    ],
+    "de": [
+     "Anwesend ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.presentList' | transloco: { count: present.length } }}",
+    "id": "protocols/protocol/protocol.page#text-32276dc5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1216"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 417,
+    "cond": [
+     "<ng-template #readLayout>",
+     "@for (s of sections; track s.id)",
+     "@if (s.isTop || hasNotes(s.id) || outcomes[s.id] || tasksFor(s.id).length)",
+     "@if (s.topNumber)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "kicker"
+    },
+    "keys": [
+     "protocol.top"
+    ],
+    "de": [
+     "TOP {n}"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.top' | transloco: { n: s.topNumber } }}",
+    "id": "protocols/protocol/protocol.page#text-360916dc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:2033"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 237,
+    "cond": [
+     "<ng-template #wideLayout>"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "s"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ dateLabel }}"
+    ],
+    "text": "{{ dateLabel }}",
+    "id": "protocols/protocol/protocol.page#text-400180d3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1705"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  }
+ ]
+}

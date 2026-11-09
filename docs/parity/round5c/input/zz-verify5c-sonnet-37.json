@@ -1,0 +1,2234 @@
+{
+ "batch": "zz-verify5c-sonnet-37",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 97,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "ion-list-header",
+    "attrs": {},
+    "keys": [
+     "stats.trend"
+    ],
+    "de": [
+     "📈 Anwesenheits-Trend"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.trend' | transloco }}",
+    "id": "stats/stats.page#text-729fe4d0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:87",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:236",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:245"
+    ],
+    "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 304,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-list-header",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "🏢 {{ db.organisation().name }}"
+    ],
+    "text": "🏢 {{ db.organisation().name }}",
+    "id": "stats/stats.page#text-80978ea5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1321",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1241",
+     "lib/core/router/app_router.dart:193"
+    ],
+    "n": "Statistik in beiden nur Admin/Verantwortlich (Ionic isAdmin-Einstieg Einstellungen/Side-Nav, Flutter Route-Guard /statistics); Abschnitt nur wenn die Instanz einer Organisation angehört (Ionic db.organisation(), Flutter currentOrganisationProvider). '🏢 {Name}' gleich.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 343,
+    "cond": [
+     "@if (db.organisation())",
+     "in <ion-modal trigger=persons-button>",
+     "@for (u of uniquePersons; track trackByPersonId($index, u))"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ u.firstName }} {{ u.lastName }}"
+    ],
+    "text": "{{ u.firstName }} {{ u.lastName }}",
+    "id": "stats/stats.page#text-8808d9e3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1449"
+    ],
+    "n": "'{Vorname} {Nachname}' (Person.fullName); Reihenfolge meiste Instanzen zuerst, dann Nachname.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 60,
+    "cond": [
+     "@for(type of this.db.attendanceTypes(); track type.id)",
+     "@if (getAttTypeLength(type.id) > 0)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getAttTypeLength(type.id) }}"
+    ],
+    "text": "{{ getAttTypeLength(type.id) }}",
+    "id": "stats/stats.page#text-89697536"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:444"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 328,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ uniquePersons.length }}"
+    ],
+    "text": "{{ uniquePersons.length }}",
+    "id": "stats/stats.page#text-8ee10fbd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1362",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1378"
+    ],
+    "n": "Anzahl eindeutiger Personen (Schlüssel global_person_id → appId → Name+Geburtstag; nicht pending, nicht ausgetreten), Instanzfilter wie filterInstances; Flutter zeigt beim ersten Laden einen Spinner statt 0.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 59,
+    "cond": [
+     "@for(type of this.db.attendanceTypes(); track type.id)",
+     "@if (getAttTypeLength(type.id) > 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "class": "ion-text-wrap"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ type.name }}"
+    ],
+    "text": "{{ type.name }}",
+    "id": "stats/stats.page#text-98ec1180"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:440"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 180,
+    "cond": [],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "color": "success"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ activePlayers?.length }}"
+    ],
+    "text": "{{ activePlayers?.length }}",
+    "id": "stats/stats.page#text-9d79b85d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:494",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:506"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 195,
+    "cond": [],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ players?.length }}"
+    ],
+    "text": "{{ players?.length }}",
+    "id": "stats/stats.page#text-9f46e7f6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:509"
+    ],
+    "n": "Aktuelle (nicht ausgetretene) + ausgetretene Personen, ohne pending – wie getPlayers(true).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 112,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "ion-list-header",
+    "attrs": {},
+    "keys": [
+     "stats.statusDistribution"
+    ],
+    "de": [
+     "📉 Statusverteilung"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.statusDistribution' | transloco }}",
+    "id": "stats/stats.page#text-a54abdb5"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:87",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:238",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:245"
+    ],
+    "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 218,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "ion-list-header",
+    "attrs": {},
+    "keys": [
+     "stats.avgAgeInstrument"
+    ],
+    "de": [
+     "📊 Durchschnittsalter pro Instrument"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.avgAgeInstrument' | transloco }}",
+    "id": "stats/stats.page#text-c9d5517b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:272"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 75,
+    "cond": [
+     "@if (bestAttendance)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "stats.best"
+    ],
+    "de": [
+     "Beste Anwesenheit"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.best' | transloco }}",
+    "id": "stats/stats.page#text-dd5dc127"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:452"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 127,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "ion-list-header",
+    "attrs": {},
+    "keys": [
+     "stats.top20"
+    ],
+    "de": [
+     "🏆 Top 20 Anwesenheit"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.top20' | transloco }}",
+    "id": "stats/stats.page#text-f6dad6f9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:87",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:240",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:245"
+    ],
+    "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 76,
+    "cond": [
+     "@if (bestAttendance)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ bestAttendance.date | date: ('common.ngDate' | transloco) }}",
+    "id": "stats/stats.page#text-f8479cf2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:454",
+     "lib/data/models/attendance/attendance.dart:332"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 86,
+    "cond": [
+     "@if (worstAttendance)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ worstAttendance.date | date: ('common.ngDate' | transloco) }}",
+    "id": "stats/stats.page#text-f8479cf2-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:463",
+     "lib/data/models/attendance/attendance.dart:332"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 6,
+    "cond": [
+     "@if (layout.sidePanelFixed())"
+    ],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "sn-icon-btn"
+    },
+    "events": [
+     "(click)=toggleCollapsed()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"(layout.collapsed() ? 'nav.expand' : 'nav.collapse') | transloco\"",
+     "[attr.aria-expanded]=\"!layout.collapsed()\"",
+     "[title]=\"((layout.collapsed() ? 'nav.expand' : 'nav.collapse') | transloco) + ' (' + ('nav.shortcut' | transloco) + ')'\""
+    ],
+    "icons": [],
+    "keys": [
+     "nav.shortcut"
+    ],
+    "de": [
+     "Strg/⌘ + B"
+    ],
+    "literals": [
+     "((layout.collapsed() ? 'nav.expand' : 'nav.collapse') | transloco) + ' (' + ( ) + ')'"
+    ],
+    "text": "[title]=\"((layout.collapsed() ? 'nav.expand' : 'nav.collapse') | transloco) + ' (' + ('nav.shortcut' | transloco) + ')'\"",
+    "id": "tabs/side-nav/side-nav.component#action-0465a216"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:257"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 91,
+    "cond": [],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "sn-user"
+    },
+    "events": [
+     "(click)=openProfile()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[title]=\"userName()\"",
+     "[attr.aria-label]=\"userName()\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "userName()"
+    ],
+    "text": "[title]=\"userName()\" {{ initialsOf(userName()) }} {{ userName() }} {{ roleKey() | transloco }}",
+    "id": "tabs/side-nav/side-nav.component#action-136d171b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:316"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 106,
+    "cond": [],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "sn-item sn-logout"
+    },
+    "events": [
+     "(click)=logout()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[title]=\"layout.collapsed() ? ('settings.logout' | transloco) : ''\"",
+     "[attr.aria-label]=\"'settings.logout' | transloco\""
+    ],
+    "icons": [
+     "log-out-outline"
+    ],
+    "keys": [
+     "settings.logout"
+    ],
+    "de": [
+     "Ausloggen"
+    ],
+    "literals": [
+     "layout.collapsed() ? ( ) : ''"
+    ],
+    "text": "[title]=\"layout.collapsed() ? ('settings.logout' | transloco) : ''\" {{ 'settings.logout' | transloco }}",
+    "id": "tabs/side-nav/side-nav.component#action-a8d16ecc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:354",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:133"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 73,
+    "cond": [
+     "@for (group of groups(); track group.id; let first = $first)",
+     "@for (item of group.items; track item.id)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "sn-item"
+    },
+    "events": [
+     "(click)=onItem(item)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.active]=\"activeId() === item.id\"",
+     "[attr.aria-current]=\"activeId() === item.id ? 'page' : null\"",
+     "[attr.aria-label]=\"count ? label + ' (' + count + ')' : label\"",
+     "[title]=\"layout.collapsed() ? label : ''\""
+    ],
+    "icons": [
+     "[name]=\"item.icon\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "layout.collapsed() ? label : ''"
+    ],
+    "text": "[title]=\"layout.collapsed() ? label : ''\" {{ label }} {{ count > 99 ? '99+' : count }}",
+    "id": "tabs/side-nav/side-nav.component#action-b52e84d3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/nav_items.dart:70-226",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:150-205",
+     "lib/core/providers/role_permission_providers.dart:116-120"
+    ],
+    "n": "Einträge je Rolle identisch zu buildNavGroups (Dashboard/Ablaufpläne/Mitteilungen/Statistik nur Admin+Verantw., Personen für Admin/Verantw./Beobachter, Termine für diese + Helfer/Helfer-Stimmführer, Meine Termine außer Leitung/Beobachter/Eltern, Mitglieder bei showMembersList für Helfer/Stimmführer/Spieler/NONE, Werke nicht bei general/Bewerber/Eltern, Meine Stimme Stimmführer, Übersicht Spieler/Helfer mit >1 Instanz). Mandant: Dateiablage (files_shared), Organisation, Teamorganisation (Leitung/Kreis/eigene Aufgaben) gleich. Badges: offene Anträge nur Admin/Verantw., offene Aufgaben, „99+“.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 16,
+    "cond": [
+     "@else (not layout.sidePanelFixed())"
+    ],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "sn-icon-btn"
+    },
+    "events": [
+     "(click)=closeOverlay()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'nav.close' | transloco\"",
+     "[title]=\"'nav.close' | transloco\""
+    ],
+    "icons": [
+     "close-outline"
+    ],
+    "keys": [
+     "nav.close"
+    ],
+    "de": [
+     "Menü schließen"
+    ],
+    "literals": [],
+    "text": "[title]=\"'nav.close' | transloco\"",
+    "id": "tabs/side-nav/side-nav.component#action-e344604a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:266"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 93,
+    "cond": [
+     "in <button>",
+     "@if (userImg())"
+    ],
+    "tag": "img",
+    "attrs": {
+     "class": "sn-avatar"
+    },
+    "events": [
+     "(error)=userImg.set(null)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[src]=\"userImg()\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "tabs/side-nav/side-nav.component#action-f967a167"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:729"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 20,
+    "cond": [],
+    "tag": "app-notification-bell",
+    "bindings": [
+     "class"
+    ],
+    "bindingExprs": [],
+    "events": [],
+    "id": "tabs/side-nav/side-nav.component#embed-972ec73c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:272"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 24,
+    "cond": [],
+    "tag": "button",
+    "attrs": {
+     "class": "sn-tenant"
+    },
+    "bindings": [
+     "[disabled]=\"!hasMultipleTenants()\"",
+     "[title]=\"db.tenant()?.longName\"",
+     "[attr.aria-label]=\"hasMultipleTenants() ? ('settings.switchTenant' | transloco) + ': ' + db.tenant()?.longName : db.tenant()?.longName\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "db.tenant()?.longName"
+    ],
+    "text": "[title]=\"db.tenant()?.longName\"",
+    "id": "tabs/side-nav/side-nav.component#text-179b9e05"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:661",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:668"
+    ],
+    "n": "Tooltip = Instanz-Langname in beiden Fällen: eine Instanz → nicht antippbarer Kopf mit Tooltip (Ionic [disabled]), mehrere → PopupMenuButton mit tooltip longName und Semantik „Instanz wechseln: …“. Bedingung (Anzahl Instanzen aus userTenantsProvider > 1) gilt für alle Rollen wie Ionic db.tenants().",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 66,
+    "cond": [
+     "@for (group of groups(); track group.id; let first = $first)",
+     "@else if (group.labelKey)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "sn-section"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ group.labelKey | transloco }}"
+    ],
+    "text": "{{ group.labelKey | transloco }}",
+    "id": "tabs/side-nav/side-nav.component#text-5522586b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/nav_items.dart:215-225",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:189-194"
+    ],
+    "n": "Admin/Verantwortlich: drei Überschriften (Übersicht/Team/Verwaltung), alle anderen Rollen nur „Konto“; im eingeklappten Panel Trenner statt Überschrift. Wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 33,
+    "cond": [
+     "@if (!layout.collapsed())"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ db.tenant()?.longName }}"
+    ],
+    "text": "{{ db.tenant()?.longName }}",
+    "id": "tabs/side-nav/side-nav.component#text-b58c667f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:646"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 134,
+    "cond": [
+     "@if (task && task.status !== 'completed')"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "shape": "round",
+     "[disabled]": "\"savingStatus\""
+    },
+    "events": [
+     "(click)=setStatus('completed')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark"
+    ],
+    "keys": [
+     "tasks.markDone"
+    ],
+    "de": [
+     "Als erledigt markieren"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.markDone' | transloco }}",
+    "id": "tasks/task-detail/task-detail.page#action-222258cc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:91",
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:107"
+    ],
+    "n": "Grüner runder Button mit Häkchen, nur bei nicht erledigter Aufgabe, während Speichern deaktiviert.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-back-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[defaultHref]=\"backHref\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"\"",
+    "id": "tasks/task-detail/task-detail.page#action-367e5078"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:74",
+     "lib/core/providers/push_providers.dart:313"
+    ],
+    "n": "In-App identisch (pop). Push/Deep-Link: Ionic: ion-back-button defaultHref=backHref (Leitung → Teamorganisation, Mitglieder → /tabs/signout, wenn im Einstellungen-Tab kein Verlauf) / Flutter: Push öffnet per go('/settings/tasks/:id'), Zurück führt immer auf die Einstellungen-Seite.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart",
+    "lib/core/providers/push_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 9,
+    "cond": [
+     "@if (isLeader && task)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=edit()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'common.edit' | transloco\""
+    ],
+    "icons": [
+     "create-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "tasks/task-detail/task-detail.page#action-5099bb1b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:77",
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:81",
+     "lib/core/providers/team_org_providers.dart:129"
+    ],
+    "n": "Nur Leitung + geladene Aufgabe; Stift öffnet Aufgabenformular (Sheet wie Ionic breakpoints [0,1]), danach Neuladen per Invalidierung (Ionic: task = updated). Rollen: Ionic isLeader = db.isTeamLeader() (ADMIN|RESPONSIBLE), Flutter isTeamLeaderProvider (gleiche Rollen aus tenantUsers.role) – Admin/Verantwortlich ja; Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nein; kein Tenant-Flag.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 33,
+    "cond": [
+     "@else if (!task)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "[routerLink]": "\"backHref\""
+    },
+    "events": [],
+    "link": "\"backHref\"",
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.back"
+    ],
+    "de": [
+     "Zurück"
+    ],
+    "literals": [],
+    "text": "{{ 'common.back' | transloco }}",
+    "id": "tasks/task-detail/task-detail.page#action-96d71bae"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:127"
+    ],
+    "n": "Ionic: routerLink navigiert immer zu backHref (Leitung: Teamorganisation, sonst /tabs/signout) / Flutter: pop() zur vorherigen Seite (z. B. Protokoll oder Thema), nur ohne Verlauf go(backHref).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 12,
+    "cond": [
+     "@if (isLeader && task)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=deleteTask()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'common.delete' | transloco\""
+    ],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "tasks/task-detail/task-detail.page#action-b4ae1052"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:83-87"
+    ],
+    "n": "Rotes Papierkorb-Icon rechts neben Bearbeiten, nur Leitung (Admin/Verantwortlich) und geladene Aufgabe; Bestätigung „Aufgabe löschen?“ mit Abbrechen/Löschen.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 91,
+    "cond": [
+     "@else (not loading && !task / !task)",
+     "@if (hasSource)",
+     "@if (task.attendance_id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "true",
+     "[routerLink]": "\"['/tabs/attendance', task.attendance_id, 'protocol']\""
+    },
+    "events": [],
+    "link": "\"['/tabs/attendance', task.attendance_id, 'protocol']\"",
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "document-text-outline"
+    ],
+    "keys": [
+     "tasks.protocol"
+    ],
+    "de": [
+     "Protokoll"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.protocol' | transloco }} {{ attendanceLabel }}",
+    "id": "tasks/task-detail/task-detail.page#action-b9c30d9d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:243",
+     "lib/core/router/legacy_routes.dart:54"
+    ],
+    "n": "Ziel /settings/protocol/:id = Ionic /tabs/attendance/:id/protocol (Legacy-Mapping); Untertitel „{Typ} vom {Datum}“.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart",
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 103,
+    "cond": [
+     "@else (not loading && !task / !task)",
+     "@if (hasSource)",
+     "@if (task.agenda_item_id)",
+     "@if (isLeader)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "true",
+     "[routerLink]": "\"['/tabs/settings/agenda-items', task.agenda_item_id]\""
+    },
+    "events": [],
+    "link": "\"['/tabs/settings/agenda-items', task.agenda_item_id]\"",
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "list-outline"
+    ],
+    "keys": [
+     "tasks.topic"
+    ],
+    "de": [
+     "Thema"
+    ],
+    "literals": [
+     "Thema öffnen"
+    ],
+    "text": "{{ 'tasks.topic' | transloco }} {{ task.agenda_item?.title || 'Thema öffnen' }}",
+    "id": "tasks/task-detail/task-detail.page#action-c566ab32"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:254",
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:261"
+    ],
+    "n": "Nur Leitung: Icon Liste, „Thema“, Untertitel Thementitel oder „Thema öffnen“, öffnet /settings/agenda-items/:id. Andere Rollen: nicht klickbare Zeile nur mit Titel (TD:263), wie Ionic @else if.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "tasks/task-detail/task-detail.page.ts",
+    "line": 134,
+    "method": "TaskDetailPage.deleteTask",
+    "cond": [],
+    "header": {
+     "keys": [
+      "tasks.deleteConfirm"
+     ],
+     "de": [
+      "Aufgabe löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('tasks.deleteConfirm')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "tasks.deleteMessage"
+     ],
+     "de": [
+      "Die Aufgabe wird endgültig entfernt."
+     ],
+     "literals": [],
+     "expr": "translate('tasks.deleteMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { try { await this.db.deleteTask(this.taskId); Utils.showToast(translate('tasks.deleted')); this.navController.navigateBack('/tabs/settings/team-organization'); } catch (error) { console.error('Delete error:', error); Utils.sho…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "451a635b",
+    "mbody": "bd998b2f",
+    "id": "tasks/task-detail/task-detail.page#alert-3b0ee21a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:77",
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:45",
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:53"
+    ],
+    "n": "Löschen-Icon nur Leitung bei geladener Aufgabe (Ionic html:7 / Flutter :77); Verantwortliche und andere Rollen sehen es in beiden Apps nicht. Dialog „Aufgabe löschen?“ / „Die Aufgabe wird endgültig entfernt.“, Abbrechen + „Löschen“ destruktiv → deleteTask (Flutter mit tenant_id-Filter, Fehler bei 0 Zeilen wie Ionic), Toast, Teamorganisation.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 42,
+    "cond": [
+     "@else (not loading && !task / !task)"
+    ],
+    "tag": "ion-segment",
+    "attrs": {
+     "[value]": "\"task.status\"",
+     "[disabled]": "\"savingStatus\""
+    },
+    "events": [
+     "(ionChange)=setStatus($any($event.detail.value))"
+    ],
+    "link": null,
+    "model": "[value]=\"task.status\"",
+    "bindings": [
+     "[attr.aria-label]=\"'agenda.status' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"opt.value\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ opt.label }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ opt.label }}",
+    "id": "tasks/task-detail/task-detail.page#field-98dcebe4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:194",
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:31"
+    ],
+    "n": "Optionen Offen/In Arbeit/Erledigt gleich. Ionic: Status wird optimistisch gesetzt, Segment springt sofort um (bei Fehler zurück) / Flutter: kein optimistischer Wechsel, Segment bleibt deaktiviert auf dem alten Wert bis die Aufgabe nach dem Speichern neu geladen ist.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 66,
+    "cond": [
+     "@else (not loading && !task / !task)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "slot": "end",
+     "[color]": "\"isOverdue ? 'danger' : undefined\""
+    },
+    "bindings": [
+     "[color]=\"isOverdue ? 'danger' : undefined\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Ohne Fälligkeit"
+    ],
+    "bound": [
+     "{{ task.due_date ? formatLongDate(task.due_date) : 'Ohne Fälligkeit' }}"
+    ],
+    "text": "{{ task.due_date ? formatLongDate(task.due_date) : 'Ohne Fälligkeit' }}",
+    "id": "tasks/task-detail/task-detail.page#text-0a1f7670"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:213"
+    ],
+    "n": "Langes Datum + „· überfällig“ rot bzw. „Ohne Fälligkeit“ (tasksNoDue).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 73,
+    "cond": [
+     "@else (not loading && !task / !task)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "[color]": "\"priorityColors[task.priority]\""
+    },
+    "bindings": [
+     "[color]=\"priorityColors[task.priority]\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ priorityLabels[task.priority] }}"
+    ],
+    "text": "{{ priorityLabels[task.priority] }}",
+    "id": "tasks/task-detail/task-detail.page#text-0b47706e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:222",
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:277"
+    ],
+    "n": "Farben low=medium, medium=warning, high=danger wie Ionic.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 88,
+    "cond": [
+     "@else (not loading && !task / !task)",
+     "@if (hasSource)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "tasks.origin"
+    ],
+    "de": [
+     "Herkunft"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.origin' | transloco }}",
+    "id": "tasks/task-detail/task-detail.page#text-0f3ee4e8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:240"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 68,
+    "cond": [
+     "@else (not loading && !task / !task)",
+     "@if (isOverdue)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "tasks.overdueSuffix"
+    ],
+    "de": [
+     "· überfällig"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.overdueSuffix' | transloco }}",
+    "id": "tasks/task-detail/task-detail.page#text-1119b153"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:215"
+    ],
+    "n": "„· überfällig“ hinter dem Fälligkeitsdatum, Notiz rot; isTaskOverdue gleich (nicht erledigt und Fälligkeit < heute). Alle Rollen.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 58,
+    "cond": [
+     "@else (not loading && !task / !task)",
+     "@if (isLeader)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "tasks.responsible"
+    ],
+    "de": [
+     "Verantwortlich"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.responsible' | transloco }}",
+    "id": "tasks/task-detail/task-detail.page#text-1426d778"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:206",
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:208"
+    ],
+    "n": "„Verantwortlich“ nur für Leitung (if (isLeader)). Rollen: Ionic isLeader = db.isTeamLeader() (ADMIN|RESPONSIBLE), Flutter isTeamLeaderProvider (gleiche Rollen aus tenantUsers.role) – Admin/Verantwortlich ja; Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nein; kein Tenant-Flag.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 79,
+    "cond": [
+     "@else (not loading && !task / !task)",
+     "@if (task.description)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "task-description"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ task.description }}"
+    ],
+    "text": "{{ task.description }}",
+    "id": "tasks/task-detail/task-detail.page#text-2a6306ad"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:232"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 65,
+    "cond": [
+     "@else (not loading && !task / !task)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "tasks.dueOn"
+    ],
+    "de": [
+     "Fällig am"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.dueOn' | transloco }}",
+    "id": "tasks/task-detail/task-detail.page#text-42f959f0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:212"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 59,
+    "cond": [
+     "@else (not loading && !task / !task)",
+     "@if (isLeader)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Niemand"
+    ],
+    "bound": [
+     "{{ task.responsible_person ? task.responsible_person.firstName + ' ' + task.responsible_person.lastName : 'Niemand' }}"
+    ],
+    "text": "{{ task.responsible_person ? task.responsible_person.firstName + ' ' + task.responsible_person.lastName : 'Niemand' }}",
+    "id": "tasks/task-detail/task-detail.page#text-4f08b74c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:209"
+    ],
+    "n": "Nur Leitung; „Vorname Nachname“ oder „Niemand“ (tasksNobody).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 115,
+    "cond": [
+     "@else (not loading && !task / !task)",
+     "@if (hasSource)",
+     "@if (task.agenda_item_id)",
+     "@else if (task.agenda_item?.title)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ task.agenda_item?.title }}"
+    ],
+    "text": "{{ task.agenda_item?.title }}",
+    "id": "tasks/task-detail/task-detail.page#text-52aa1928"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:267"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 114,
+    "cond": [
+     "@else (not loading && !task / !task)",
+     "@if (hasSource)",
+     "@if (task.agenda_item_id)",
+     "@else if (task.agenda_item?.title)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "tasks.topic"
+    ],
+    "de": [
+     "Thema"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.topic' | transloco }}",
+    "id": "tasks/task-detail/task-detail.page#text-7cddd11e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:263"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 54,
+    "cond": [
+     "@else (not loading && !task / !task)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "tasks.details"
+    ],
+    "de": [
+     "Details"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.details' | transloco }}",
+    "id": "tasks/task-detail/task-detail.page#text-8b7082f8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:204"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 37,
+    "cond": [
+     "@else (not loading && !task / !task)"
+    ],
+    "tag": "h1",
+    "attrs": {},
+    "bindings": [
+     "[class.is-done]=\"task.status === 'completed'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ task.title }}"
+    ],
+    "text": "{{ task.title }}",
+    "id": "tasks/task-detail/task-detail.page#text-bee01c7b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:176"
+    ],
+    "n": "Erledigt: durchgestrichen + grau wie Ionic .is-done.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 38,
+    "cond": [
+     "@else (not loading && !task / !task)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ assigneeText }}"
+    ],
+    "text": "{{ assigneeText }}",
+    "id": "tasks/task-detail/task-detail.page#text-c11b97ec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:148",
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:187"
+    ],
+    "n": "„Dir zugewiesen“ / „Zugewiesen an {name}“ / „Noch niemandem zugewiesen“.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 124,
+    "cond": [
+     "@else (not loading && !task / !task)",
+     "@if (task.status !== 'completed' && task.due_date)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "class": "task-hint"
+    },
+    "keys": [
+     "tasks.reminderSelf",
+     "tasks.reminderOther"
+    ],
+    "de": [
+     "Du bekommst 2 Tage vor Fälligkeit eine Erinnerung und noch eine, falls die Aufgabe überfällig wird.",
+     "Die verantwortliche Person bekommt 2 Tage vor Fälligkeit eine Erinnerung und noch eine, falls die Aufgabe überfällig wird."
+    ],
+    "literals": [],
+    "text": "{{ (isMine ? 'tasks.reminderSelf' : 'tasks.reminderOther') | transloco }}",
+    "id": "tasks/task-detail/task-detail.page#text-c959bd9a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:271"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 72,
+    "cond": [
+     "@else (not loading && !task / !task)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "tasks.priority"
+    ],
+    "de": [
+     "Priorität"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.priority' | transloco }}",
+    "id": "tasks/task-detail/task-detail.page#text-ca279706"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:221"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 78,
+    "cond": [
+     "@else (not loading && !task / !task)",
+     "@if (task.description)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "tasks.description"
+    ],
+    "de": [
+     "Beschreibung"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.description' | transloco }}",
+    "id": "tasks/task-detail/task-detail.page#text-f23a3681"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:229"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "tasks/task-detail/task-detail.page.ts",
+    "line": 145,
+    "method": "TaskDetailPage.deleteTask",
+    "cond": [],
+    "message": {
+     "keys": [
+      "tasks.deleted"
+     ],
+     "de": [
+      "Aufgabe gelöscht"
+     ],
+     "literals": [],
+     "expr": "translate('tasks.deleted')"
+    },
+    "color": null,
+    "duration": null,
+    "src": "16028282",
+    "mbody": "bd998b2f",
+    "id": "tasks/task-detail/task-detail.page#toast-530c6140"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:56"
+    ],
+    "n": "Grüner Toast „Aufgabe gelöscht“; nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  }
+ ]
+}

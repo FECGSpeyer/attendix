@@ -1,0 +1,1254 @@
+{
+ "batch": "b23-settings-general",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "settings/general/general.page#logic-8f812cbf": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:119",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:184",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:313"
+   ],
+   "n": "Laden (Defaults Saisonbeginn 2023-01-01, Probenzeiten 18:00/20:00, Gründe-Defaults, Registrierungsfelder), Validierung, Schreiben, evaluate-critical-rules, Regel-Validierung und hasDutyTypes entsprechen Ionic. Abweichungen in den Items und als extra: Probenzeiten nur in Flutter editierbar, andere Änderungserkennung, Regeln bearbeiten, Gründe sortieren, Legacy-period_type.",
+   "sev": "mittel"
+  },
+  "settings/general/general.page#nav-0643e80a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:433"
+   ],
+   "n": "context.pop() zurück zu den Einstellungen (Ionic navigateBack('/tabs/settings'))."
+  },
+  "settings/general/general.page#alert-5b397ef5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:901"
+   ],
+   "n": "Gleicher Titel/Text; Buttons Abbrechen/Verwerfen/Speichern in gleicher Reihenfolge; Speichern speichert und verlässt die Seite."
+  },
+  "settings/general/general.page#toast-b6c301a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:188"
+   ]
+  },
+  "settings/general/general.page#toast-41f907d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:192"
+   ]
+  },
+  "settings/general/general.page#toast-dcf43f84": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:201"
+   ]
+  },
+  "settings/general/general.page#loading-c8bf88e0": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:444"
+   ],
+   "n": "Ionic: blockierendes Overlay „Einstellungen werden gespeichert...“ / Flutter: nur Spinner im FAB, kein Overlay, kein Text (generalSettingsSaving ungenutzt).",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#db-dd1f5988": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:270"
+   ],
+   "n": "Gleicher Aufruf functions.invoke('evaluate-critical-rules'), Fehler wird ignoriert."
+  },
+  "settings/general/general.page#toast-a82c1284": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:282"
+   ]
+  },
+  "settings/general/general.page#alert-c2833d76": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:283",
+    "lib/core/utils/page_reload.dart:4"
+   ],
+   "n": "Dialog, Text und Buttons „Abbrechen“/„Neu laden“ gleich. Ionic: „Neu laden“ lädt Seite/App neu (auch nativ via window.location.reload) / Flutter: Reload nur im Web, nativ ohne Wirkung (Tenant-Provider wird nach dem Speichern ohnehin invalidiert).",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#toast-f79901f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:304"
+   ]
+  },
+  "settings/general/general.page#toast-06df0b2b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:407"
+   ]
+  },
+  "settings/general/general.page#toast-0e87f2e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:407"
+   ]
+  },
+  "settings/general/general.page#toast-3e9db773": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:87"
+   ]
+  },
+  "settings/general/general.page#toast-ae9cf87e": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:92"
+   ],
+   "n": "Gleicher Text. Ionic akzeptiert Dezimalwerte (z. B. 33.5 %) / Flutter nur ganze Zahlen (int.tryParse) – Dezimalwert löst diesen Toast aus.",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#toast-3a55a82e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:98"
+   ]
+  },
+  "settings/general/general.page#alert-98bdf09a": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:867",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:896"
+   ],
+   "n": "Titel „Regel löschen?“ und Buttons gleich. Ionic: „Möchtest du diese Regel wirklich löschen?“ / Flutter: „Möchtest du die Regel \"{Name oder Beschreibung}\" wirklich löschen?“; danach zusätzlicher Toast „Regel gelöscht“.",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#action-c55b1420": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:427"
+   ]
+  },
+  "settings/general/general.page#text-db951bbc": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:426"
+   ]
+  },
+  "settings/general/general.page#text-db951bbc-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:465"
+   ]
+  },
+  "settings/general/general.page#text-349c82ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:470"
+   ]
+  },
+  "settings/general/general.page#text-ab0ac46f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:474"
+   ]
+  },
+  "settings/general/general.page#field-1ecea16a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:475"
+   ]
+  },
+  "settings/general/general.page#text-5c466de5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:483"
+   ]
+  },
+  "settings/general/general.page#field-7d192fa2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:485"
+   ],
+   "n": "Hilfetext „Wird vor allem als Dateiname bei Exports verwendet“ vorhanden."
+  },
+  "settings/general/general.page#text-b491e396": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:497"
+   ]
+  },
+  "settings/general/general.page#text-df744576": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:501"
+   ]
+  },
+  "settings/general/general.page#field-dd151934": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:500"
+   ],
+   "n": "Tippbare Zeile mit Datum (dd.MM.yyyy) und Hilfetext; Tippen öffnet die Datumsauswahl."
+  },
+  "settings/general/general.page#modal-bedc4546": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:319"
+   ],
+   "n": "Flutter-Datumsdialog statt Inline-ion-modal (native Entsprechung)."
+  },
+  "settings/general/general.page#field-51c6d116": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:320"
+   ],
+   "n": "Ionic: max = heute (keine Zukunftsdaten), kein Minimum, Wochenstart Montag / Flutter: firstDate 2020, lastDate 2030 – Zukunftsdaten wählbar, Daten vor 2020 nicht. Gespeichert wird 'YYYY-MM-DD' (Ionic: ISO-Wert des Pickers; genaues Ionic-Format ohne @ionic/core im Container nicht prüfbar).",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#action-d6f67aed": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:530"
+   ],
+   "n": "Ziel /settings/types (Anwesenheits-Typen)."
+  },
+  "settings/general/general.page#action-710fe69c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:534"
+   ],
+   "n": "Ziel /settings/shifts."
+  },
+  "settings/general/general.page#action-38254204": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:538"
+   ]
+  },
+  "settings/general/general.page#field-216622e2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:542"
+   ]
+  },
+  "settings/general/general.page#field-5c76e90e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:548"
+   ]
+  },
+  "settings/general/general.page#field-7b209ad2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:555",
+    "lib/core/providers/duty_providers.dart:56"
+   ],
+   "n": "Nur wenn ein Typ duty_mode hat; duty_view wird nur dann gespeichert."
+  },
+  "settings/general/general.page#field-98648dc9": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:563"
+   ],
+   "n": "Ionic: Feld bei leerem Wert mit Standardtext „Du bist bei diesem Termin nicht dabei.“ vorbefüllt, mit Lösch-Button (clearInput) / Flutter: Feld leer, Text nur als Platzhalter, kein Lösch-Button. Gespeicherter Wert gleich (leer → Standardtext, aus → null).",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#text-96e4b4b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:577"
+   ]
+  },
+  "settings/general/general.page#text-ac492500": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:581",
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:116"
+   ]
+  },
+  "settings/general/general.page#text-6bf3b772": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:118"
+   ]
+  },
+  "settings/general/general.page#field-34705c68": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:141"
+   ],
+   "n": "Ionic: jeder Grund ist ein direkt editierbares Eingabefeld (Platzhalter „Grund eingeben...“) / Flutter: Gründe nur als Text, bestehende Gründe nicht bearbeitbar (nur löschen und neu anlegen); Platzhalter fehlt.",
+   "sev": "mittel"
+  },
+  "settings/general/general.page#action-fcbed0bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:142"
+   ]
+  },
+  "settings/general/general.page#action-578da7ee": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:150",
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:74"
+   ],
+   "n": "Ionic: hängt eine leere Eingabezeile an / Flutter: öffnet Dialog „Grund hinzufügen“ (Feld „Grund“, Buttons „Abbrechen“/„Hinzufügen“); leere und doppelte Gründe werden verworfen.",
+   "sev": "mittel"
+  },
+  "settings/general/general.page#action-08962457": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:164"
+   ]
+  },
+  "settings/general/general.page#text-32120c43": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:590",
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:116"
+   ]
+  },
+  "settings/general/general.page#text-6bf3b772-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:118"
+   ]
+  },
+  "settings/general/general.page#field-0d3aad25": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:141"
+   ],
+   "n": "Ionic: jeder Grund ist ein direkt editierbares Eingabefeld (Platzhalter „Grund eingeben...“) / Flutter: Gründe nur als Text, bestehende Gründe nicht bearbeitbar (nur löschen und neu anlegen); Platzhalter fehlt.",
+   "sev": "mittel"
+  },
+  "settings/general/general.page#action-d8e4368f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:142"
+   ]
+  },
+  "settings/general/general.page#action-50952c99": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:150",
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:74"
+   ],
+   "n": "Ionic: hängt eine leere Eingabezeile an / Flutter: öffnet Dialog „Grund hinzufügen“ (Feld „Grund“, Buttons „Abbrechen“/„Hinzufügen“); leere und doppelte Gründe werden verworfen.",
+   "sev": "mittel"
+  },
+  "settings/general/general.page#action-62d6aa37": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:164"
+   ]
+  },
+  "settings/general/general.page#text-86057424": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:603"
+   ]
+  },
+  "settings/general/general.page#field-a6c6701b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:606"
+   ]
+  },
+  "settings/general/general.page#text-b494ec56": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:616"
+   ],
+   "n": "Warnfarbe mit Warn-Icon wie Ionic."
+  },
+  "settings/general/general.page#action-c0d0384b": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:630",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:397"
+   ],
+   "n": "Flutter besser: meldet einen Kopierfehler (Toast „Link konnte nicht kopiert werden“), Ionic zeigt immer den Erfolgs-Toast. Sonst gleich (Bedingung, Text „Link kopieren“, Link https://attendix.de/register/<id>).",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#field-e08702e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:637"
+   ]
+  },
+  "settings/general/general.page#text-ce0e448a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:646"
+   ]
+  },
+  "settings/general/general.page#field-031d9492": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:653",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:358",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:159"
+   ],
+   "n": "Ionic: Mehrfach-Select, Reihenfolge Passbild, Vorname, Nachname, Gruppe, Geburtsdatum, Handynummer, Zusatzfelder; Vorname/Nachname/Gruppe deaktiviert; gespeicherte Liste wird unverändert übernommen / Flutter: FilterChips inline, Reihenfolge Vorname, Nachname, Gruppe, Passbild, Geburtsdatum, Handynummer, Zusatzfelder; Pflichtfelder nicht abwählbar und beim Laden immer ergänzt.",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#text-c804cb9e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:659"
+   ]
+  },
+  "settings/general/general.page#text-ef496263": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:671"
+   ]
+  },
+  "settings/general/general.page#field-2beff123": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:674"
+   ]
+  },
+  "settings/general/general.page#action-b6b291b1": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:683",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:397"
+   ],
+   "n": "Flutter besser: meldet einen Kopierfehler (Toast „Link konnte nicht kopiert werden“), Ionic zeigt immer den Erfolgs-Toast. Sonst gleich (Bedingung, Text „Link kopieren“, Link https://attendix.de/<id>).",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#text-84536912": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:693"
+   ]
+  },
+  "settings/general/general.page#action-2951fe6e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:696"
+   ],
+   "n": "„Zusatzfelder“ mit Notiz „n Feld/Felder“ bzw. „Keine“ (additional + song_additional fields), Ziel /settings/general/extra-fields."
+  },
+  "settings/general/general.page#field-cda497d1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:708"
+   ],
+   "n": "Nur bei Typ orchestra."
+  },
+  "settings/general/general.page#field-cc956d6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:715"
+   ]
+  },
+  "settings/general/general.page#field-ee66a39d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:721"
+   ]
+  },
+  "settings/general/general.page#field-c312324f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:727"
+   ]
+  },
+  "settings/general/general.page#text-5de5c707": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:734"
+   ]
+  },
+  "settings/general/general.page#field-8155f670": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:736",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:32"
+   ],
+   "n": "Ionic: nur die 16 Bundesländer / Flutter: zusätzliche erste Option „Keine Feiertage“ (speichert region = null).",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#text-149668b1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:755"
+   ]
+  },
+  "settings/general/general.page#action-76f36472": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:757"
+   ]
+  },
+  "settings/general/general.page#modal-9a5764bc": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:809",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:822"
+   ],
+   "n": "Bottom-Sheet in voller Höhe wie Ionic. Flutter öffnet es nicht, wenn keine Anwesenheits-Typen existieren (Toast „Keine Terminarten vorhanden“); Ionic öffnet immer.",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#text-6ddfbec5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:143"
+   ]
+  },
+  "settings/general/general.page#field-3a7058f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:155"
+   ]
+  },
+  "settings/general/general.page#field-6d77eb19": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:64",
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:175"
+   ],
+   "n": "Ionic: Mehrfach-Select „Anwesenheits-Typen“, Standard leer = „Alle Typen“ / Flutter: FilterChips, bei neuer Regel ist der erste Typ vorausgewählt – ohne Abwählen gilt die Regel nur für diesen Typ statt für alle; „Alle Typen“ nur als Hinweis bei leerer Auswahl.",
+   "sev": "hoch"
+  },
+  "settings/general/general.page#field-7d3ff9d8": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:198",
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:206",
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:67"
+   ],
+   "n": "Ionic: Optionen Anwesend, Abwesend, Entschuldigt, Verspätet, Verspätet (entsch.), Standard leer, Label „Status“ / Flutter: nur Abwesend, Verspätet, Verspätet (entsch.) – Anwesend und Entschuldigt nicht wählbar; „Abwesend“ vorausgewählt; Label „Status (zählt als kritisch)“; Chips statt Select.",
+   "sev": "hoch"
+  },
+  "settings/general/general.page#field-ae5a958b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:234"
+   ]
+  },
+  "settings/general/general.page#field-cf813d87": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:257"
+   ],
+   "n": "Ionic: Label je nach Typ „Anzahl“/„Prozent“ / Flutter: Label „Wert“ mit Suffix „x“/„%“; nur ganze Zahlen.",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#field-62b8bcb5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:273"
+   ]
+  },
+  "settings/general/general.page#field-34b50a2c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:302"
+   ],
+   "n": "Zusätzlich Suffix „Tage“."
+  },
+  "settings/general/general.page#field-e64f6a72": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:315"
+   ],
+   "n": "Ionic: Select „Verknüpfung“ mit Hilfetext „Wie diese Regel mit anderen Regeln kombiniert wird“, Optionen „ODER (eine Regel muss zutreffen)“/„UND (alle Regeln müssen zutreffen)“ / Flutter: Segmented-Button „ODER“/„UND“ mit Hinweis „Person ist kritisch, wenn EINE der Regeln zutrifft“ bzw. „…ALLE Regeln…“; Hilfetext fehlt.",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#action-2a371131": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:352",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:833"
+   ],
+   "n": "Gleicher Button „Regel hinzufügen“ und Validierung, Sheet schließt; Flutter zeigt danach zusätzlich Toast „Regel hinzugefügt“.",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#text-2e97d7f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:763"
+   ]
+  },
+  "settings/general/general.page#text-e7ca4bc1": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_card.dart:27",
+    "lib/data/models/tenant/tenant.dart:139"
+   ],
+   "n": "Ionic: „{Name}: 3x Abwesend, Verspätet in 30 Tagen (Probe, Konzert)“ bzw. „(Alle Typen)“, „seit Saisonbeginn“, „insgesamt“ / Flutter: Typen fehlen ganz, Status mit „ / “ getrennt, „seit Saisonstart“, Status Anwesend/Entschuldigt erscheinen als „Status 1“/„Status 2“, Legacy-Regeln ohne period_type als „insgesamt“ statt „in X Tagen“.",
+   "sev": "mittel"
+  },
+  "settings/general/general.page#text-3cadc6db": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_card.dart:37"
+   ],
+   "n": "Badge „AND“ primary / „OR“ secondary."
+  },
+  "settings/general/general.page#action-afce87e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_card.dart:43"
+   ]
+  },
+  "settings/general/general.page#action-81c091ba": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:441",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:221",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:612"
+   ],
+   "n": "FAB gleich, gleiche Spalten. Unterschiede beim Schreiben: Instanz-Name/-Kürzel getrimmt; seasonStart als 'YYYY-MM-DD'; leerer Regelname weggelassen statt ''; register_id/song_sharing_id: nach Aus-Speichern und erneutem Einschalten ohne Neuladen wird die alte ID wieder geschrieben (Ionic erzeugt dann eine neue).",
+   "sev": "niedrig"
+  },
+  "settings/general/link-persons/link-persons.page#logic-7611562b": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:54",
+    "lib/features/settings/presentation/pages/link_persons_page.dart:106",
+    "lib/features/settings/presentation/pages/link_persons_page.dart:136"
+   ],
+   "n": "Gruppenbildung (Kandidaten ohne global_person_id/appId, rankCandidates 0.85, Schlüssel als String sortiert), Verknüpfen (vorhandene oder neue UUID), Ignorieren, Datums-/Instanz-Anzeige wie Ionic. Abweichungen siehe extra.",
+   "sev": "niedrig"
+  },
+  "settings/general/link-persons/link-persons.page#toast-66b53e5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:139"
+   ]
+  },
+  "settings/general/link-persons/link-persons.page#toast-922e429f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:153"
+   ]
+  },
+  "settings/general/link-persons/link-persons.page#toast-35882351": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:155"
+   ]
+  },
+  "settings/general/link-persons/link-persons.page#text-a4d0ff3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:171"
+   ]
+  },
+  "settings/general/link-persons/link-persons.page#action-ab89d664": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:171"
+   ],
+   "n": "Ionic: Schließen-Button (X) rechts im Modal / Flutter: eigene Seite mit Zurück-Pfeil links (AppBar-Standard).",
+   "sev": "niedrig"
+  },
+  "settings/general/link-persons/link-persons.page#text-0fbea676": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:183"
+   ],
+   "n": "Mit grünem Häkchen-Icon wie Ionic."
+  },
+  "settings/general/link-persons/link-persons.page#text-5a085749": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:185"
+   ]
+  },
+  "settings/general/link-persons/link-persons.page#text-bbcb7133": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:197"
+   ]
+  },
+  "settings/general/link-persons/link-persons.page#text-bc161f8b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:216"
+   ]
+  },
+  "settings/general/link-persons/link-persons.page#text-9c3b7898": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:217"
+   ]
+  },
+  "settings/general/link-persons/link-persons.page#field-b2179ad9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:224"
+   ]
+  },
+  "settings/general/link-persons/link-persons.page#text-844472d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:229"
+   ]
+  },
+  "settings/general/link-persons/link-persons.page#text-30075f8b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:233"
+   ]
+  },
+  "settings/general/link-persons/link-persons.page#text-bc6d5333": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:235"
+   ],
+   "n": "Chip statt ion-badge, gleicher Grund-Text."
+  },
+  "settings/general/link-persons/link-persons.page#action-ea4e3e08": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:246"
+   ]
+  },
+  "settings/general/link-persons/link-persons.page#action-4092043a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:248"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#logic-c5f7ff6e": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:65",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:434",
+    "lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:44"
+   ],
+   "n": "Laden (Plan, isUsed, andere Instanzen), Speichern, Löschen, Kopieren und Beispielrechnung (Start Montag nächster Woche bzw. Anfangsdatum, 30 Tage, (+1) bei Tageswechsel) entsprechen Ionic. Unterschiede in den Items und als extra (Cache).",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#toast-1274dfe5": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:436"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#toast-11bf6169": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:458"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#toast-0db7cc2f": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:462"
+   ],
+   "n": "Ionic: „Fehler beim Speichern des Schichtplans“ / Flutter: „Fehler: {Fehlermeldung}“.",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#alert-9674aef6": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:468"
+   ],
+   "n": "Titel „Schichtplan löschen“ und Buttons Abbrechen/Löschen gleich. Ionic-Text warnt, dass zugehörige Schichten gelöscht werden, zugewiesene Personen die Zuordnung verlieren und die Aktion nicht rückgängig zu machen ist / Flutter: nur „Möchtest du diesen Schichtplan wirklich löschen?“ bzw. „{n} Mitglieder nutzen diesen Schichtplan. Möchtest du ihn trotzdem löschen?“.",
+   "sev": "mittel"
+  },
+  "settings/general/shifts/shift/shift.page#loading-b3201582": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:496"
+   ],
+   "n": "Ionic: blockierendes Overlay „Schichtplan wird gelöscht...“ / Flutter: kein Overlay, keine Anzeige während des Löschens.",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#nav-64b3c9d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:501"
+   ],
+   "n": "context.pop() zurück zur Schichtplan-Liste."
+  },
+  "settings/general/shifts/shift/shift.page#toast-eaabb540": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:500"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#toast-9ec80392": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:503"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#toast-cbc04939": {
+   "s": "na",
+   "n": "toter Code: copyToInstance wird nur vom Kopieren-Button aufgerufen, der nur bei linkedTenants.length > 0 erscheint (shift.page.html:10)."
+  },
+  "settings/general/shifts/shift/shift.page#alert-8f8ff7ae": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:532",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:56"
+   ],
+   "n": "Ionic: Alert „In Instanz kopieren“ mit Text „Wähle die Ziel-Instanz…“, Radio-Liste (longName), Buttons Abbrechen/Weiter / Flutter: Bottom-Sheet „In Instanz kopieren“ mit Dropdown „Ziel-Instanz“ (erste vorausgewählt), Schalter Zuweisungen, Info- und Vorschaukarte, Button „Kopieren“.",
+   "sev": "mittel"
+  },
+  "settings/general/shifts/shift/shift.page#toast-4ae23615": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:91"
+   ],
+   "n": "Flutter wählt die erste Instanz vor; der Hinweis „Bitte wähle eine Instanz aus.“ entfällt.",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#alert-0ef2eadc": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:140"
+   ],
+   "n": "Ionic: zweiter Alert „Zuweisungen kopieren?“ („Der Schichtplan ist n Personen zugewiesen. Sollen diese Zuweisungen auch in „X“ übernommen werden?“) mit Buttons Abbrechen/Nur Schichtplan/Mit Zuweisungen, nur wenn zugewiesene Personen mit appId existieren / Flutter: Schalter „Zuweisungen kopieren“ (Standard aus) im Sheet mit Hinweis „n Personen nutzen diesen Schichtplan…“, sichtbar bei jeder Zuweisung (auch Personen ohne appId).",
+   "sev": "mittel"
+  },
+  "settings/general/shifts/shift/shift.page#loading-dbd1d573": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:238"
+   ],
+   "n": "Ionic: blockierendes Overlay „Schichtplan wird kopiert...“ / Flutter: Fortschrittsbalken im Sheet mit wechselndem Text („Schichtplan wird kopiert...“, „Erstelle Schichtplan...“, …), kein Overlay.",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#toast-38146a50": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:418"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#toast-ee0000ac": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:421",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:428"
+   ],
+   "n": "Gleicher Text, aber Erfolgsfarbe statt Warnung; erscheint auch, wenn die zugewiesenen Personen keine appId haben (Ionic: dann einfache Meldung „…kopiert.“).",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#toast-e8d0589a": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:423"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#toast-f5a8f9ba": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:434"
+   ],
+   "n": "Ionic: „Fehler beim Kopieren des Schichtplans.“ / Flutter: „Fehler beim Kopieren: {Fehler}“.",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#nav-6104294b": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:86"
+   ],
+   "n": "pop bzw. go('/settings/shifts')."
+  },
+  "settings/general/shifts/shift/shift.page#action-fc68a5f1": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:103"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-7ef3058c": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:102"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#action-34770ae6": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:110"
+   ],
+   "n": "Nur wenn andere Instanzen des Nutzers existieren."
+  },
+  "settings/general/shifts/shift/shift.page#action-3db27495": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:124"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-7ef3058c-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:101"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-d9277d71": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:188"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-2e7998e4": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:194"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-8efb67c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:229"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-910fd42c": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:232"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#field-41098c1d": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:230"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-9f1098eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:238"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#field-d445039d": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:236"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-f01d51ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:244"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#action-54992f8a": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:244",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:371"
+   ],
+   "n": "Ionic: neuer Abschnitt übernimmt die Dauer des letzten Abschnitts (sonst 8) / Flutter: immer 8 Stunden.",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#text-b7af2be7": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:295"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#action-4d7456a6": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:298"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-7f82663a": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:306"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#field-82623a70": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:307"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-f61fcafb": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:314"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#field-71ac18b1": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:315"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#modal-13ae628e": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:354"
+   ],
+   "n": "Native Zeitauswahl statt ion-modal."
+  },
+  "settings/general/shifts/shift/shift.page#field-5fdbaf8e": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:354"
+   ],
+   "n": "Ionic: Zeitrad mit 5-Minuten-Schritten (0, 5, …, 55), 24h / Flutter: Standard-Zeitauswahl mit jeder Minute.",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#text-d0887e24": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:322"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#field-24d478af": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:320"
+   ],
+   "n": "Label und Hilfetext gleich. Flutter akzeptiert Komma, begrenzt auf 0–24 Stunden und ignoriert ungültige/leere Eingaben (Feld zeigt dann anderen Wert als gespeichert) / Ionic speichert die Zahl unverändert.",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#text-2a567938": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:335"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#field-f5fdf890": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:333"
+   ],
+   "n": "Label und Hilfetext gleich. Flutter begrenzt auf 1–365 und ignoriert ungültige/leere Eingaben / Ionic speichert unverändert.",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#action-7a146ceb": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:251"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-328e10a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:247"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-4238e588": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:259"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#action-8d7f0fbe": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:260",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:403"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-1ea608fa": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:263"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-393107a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:604"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#action-cbed5f84": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:609"
+   ],
+   "n": "Deaktiviert, wenn der Plan Personen zugewiesen ist."
+  },
+  "settings/general/shifts/shift/shift.page#field-82f253e2": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:602"
+   ],
+   "n": "Deaktiviert, wenn der Plan Personen zugewiesen ist."
+  },
+  "settings/general/shifts/shift/shift.page#text-d0304ee7": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:618"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#field-71ac18b1-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:621"
+   ],
+   "n": "Deaktiviert (halbtransparent), wenn der Plan Personen zugewiesen ist."
+  },
+  "settings/general/shifts/shift/shift.page#modal-13ae628e-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:637"
+   ],
+   "n": "Native Datumsauswahl statt ion-modal."
+  },
+  "settings/general/shifts/shift/shift.page#field-3c4c975e": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:637"
+   ],
+   "n": "Ionic: Datumsauswahl ohne feste Grenzen, Wochenstart Montag / Flutter: nur 2020–2030 wählbar.",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#action-02eec1c5": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:627",
+    "lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:44"
+   ],
+   "n": "Flutter besser: Ionic-Berechnung läuft in eine Endlosschleife, wenn der Plan feste Schichten aber keine Definition hat (currentDate.add(0)); Flutter zeigt eine leere Liste. Sonst gleich (Start am Anfangsdatum).",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shift/shift.page#text-328e10a4-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:267"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#modal-5342a8bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:12"
+   ],
+   "n": "Bottom-Sheet in voller Höhe wie Ionic (breakpoints [0,1])."
+  },
+  "settings/general/shifts/shift/shift.page#action-55d4b9a1": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:115"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-05bb8eca": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:130"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-a9b6a089": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:136"
+   ],
+   "n": "Format „EEE, dd.MM.yyyy“ wie Ionic „ddd, DD.MM.YYYY“."
+  },
+  "settings/general/shifts/shift/shift.page#text-dd13e901": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:140"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#text-06e0af49": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:139"
+   ]
+  },
+  "settings/general/shifts/shift/shift.page#action-e0fdaa55": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:130",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:443"
+   ],
+   "n": "FAB gleich; Flutter speichert Name und Beschreibung getrimmt (Ionic unverändert).",
+   "sev": "niedrig"
+  }
+ },
+ "extra": [
+  {
+   "unit": "settings/general/general.page",
+   "title": "Probenbeginn/-ende nur in Flutter editierbar",
+   "n": "Ionic: practiceStart/practiceEnd nicht in der UI (nur unverändert mitgespeichert, Default 18:00/20:00) / Flutter: zusätzliche Felder „Probenbeginn“/„Probenende“ mit Zeitauswahl im Abschnitt „Anwesenheiten“; der Wert dient u. a. als Standard-Uhrzeit in der Planung.",
+   "sev": "mittel",
+   "ionic": "src/app/settings/general/general.page.ts:110",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:510",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:520"
+   ]
+  },
+  {
+   "unit": "settings/general/general.page",
+   "title": "Änderungserkennung für Ungespeichert-Dialog",
+   "n": "Ionic: Vergleich mit Ausgangszustand (JSON); Abwesenheits-/Verspätungsgründe nicht erfasst, Zurückschalten gilt als keine Änderung; Prüfung nur beim Header-Zurück und beforeunload / Flutter: Dirty-Flag bei jeder Eingabe inkl. Gründe, bleibt nach Zurückschalten gesetzt; Dialog auch bei System-Zurück (PopScope).",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/general.page.ts:160",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:313",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:415"
+   ]
+  },
+  {
+   "unit": "settings/general/general.page",
+   "title": "Problemfall-Regel bearbeiten nur in Flutter",
+   "n": "Ionic: Regeln nur hinzufügen/löschen / Flutter: Tippen auf eine Regel öffnet Sheet „Regel bearbeiten“ (Button „Speichern“, Toast „Regel aktualisiert“).",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/general.page.html:343",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_card.dart:31",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:839"
+   ]
+  },
+  {
+   "unit": "settings/general/general.page",
+   "title": "Gründe per Drag sortierbar nur in Flutter",
+   "n": "Ionic: feste Reihenfolge / Flutter: Drag-Handle zum Umsortieren der Abwesenheits- und Verspätungsgründe.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/general.page.html:98",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:122"
+   ]
+  },
+  {
+   "unit": "settings/general/general.page",
+   "title": "Legacy-Regeln ohne period_type",
+   "n": "Ionic: ergänzt beim Laden period_type = 'days' und speichert es beim nächsten Speichern mit / Flutter: lässt period_type leer und schreibt die Regel ohne period_type (Auswertung durch evaluate-critical-rules ggf. anders).",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/general.page.ts:146",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:164",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:262"
+   ]
+  },
+  {
+   "unit": "settings/general/link-persons/link-persons.page",
+   "title": "Ignorier-Liste nicht übernommen",
+   "n": "Ionic: localStorage-Schlüssel 'link-persons-ignored' / Flutter: SharedPreferences (Web: 'flutter.link-persons-ignored', nativ eigener Speicher) – in Ionic ignorierte Vorschläge erscheinen nach dem Umstieg wieder.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/link-persons/link-persons.page.ts:43",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:92",
+    "lib/features/settings/presentation/pages/link_persons_page.dart:110"
+   ]
+  },
+  {
+   "unit": "settings/general/link-persons/link-persons.page",
+   "title": "Ladefehler wird gemeldet",
+   "n": "Flutter besser: Ionic zeigt bei Ladefehler still „Keine weiteren Vorschläge.“ / Flutter zeigt zusätzlich Toast „Fehler beim Laden: …“.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/link-persons/link-persons.page.ts:48",
+   "f": [
+    "lib/features/settings/presentation/pages/link_persons_page.dart:121"
+   ]
+  },
+  {
+   "unit": "settings/general/shifts/shift/shift.page",
+   "title": "Ungespeicherte Änderungen im Cache",
+   "n": "Flutter besser: Ionic bearbeitet das Objekt aus db.shifts() direkt – ungespeicherte Änderungen erscheinen nach Zurück in der Liste bis zum Neuladen / Flutter arbeitet auf einer lokalen Kopie, die Liste bleibt unverändert.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/shifts/shift/shift.page.ts:34",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:65"
+   ]
+  }
+ ]
+}

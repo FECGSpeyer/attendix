@@ -1,0 +1,262 @@
+{
+ "batch": "zz-verify4-b31-songs",
+ "ionic": "1923d203",
+ "flutter": "8004a44",
+ "items": {
+  "songs/song/song.page#action-00eba127": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:221-226",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:261-264",
+    "lib/core/router/app_router.dart:988-995",
+    "lib/core/router/app_router.dart:1321-1327",
+    "lib/core/router/app_router.dart:1365-1376"
+   ],
+   "n": "Kein Rollenbezug, nur Kontext: Freigabe-Link → /:songSharingId, Werke-Tab → /songs-tab, sonst /settings/songs. Flutter: Detail-Routen jeweils darunter verschachtelt und per push geöffnet → Zurück wie Ionic-History bzw. defaultHref; im Lade-/Fehlerzustand des Freigabe-Links eigener BackButton auf /$sharingId.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#modal-76810b09": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1016-1021",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:911-929",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:933-965",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1066-1068",
+    "lib/core/providers/song_providers.dart:469",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:485-491"
+   ],
+   "n": "Öffner wie Ionic nur bei !readOnly: Upload-Button im Dateien-Header, Seiten-Drop mit ≥2 Dateien, „Hinzufügen“ im Einzel-Sheet; nur Admin/Verantwortlich (readOnly = !(isAdmin||isResponsible) wie Ionic; Freigabe-Link immer read-only); keine weitere Aufrufstelle. Sheet bis 95 %, X/Zurück während des Uploads gesperrt (PopScope, isDismissible:false); ob Herunterziehen während des Uploads blockiert ist, hängt vom Flutter-SDK ab (nicht im Container).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-075f075b": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:500-505"
+   ],
+   "n": "„Dateien hochladen“; erreichbar nur für Admin/Verantwortlich (s. Modal).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-6a2ddb75": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:506-509"
+   ],
+   "n": "X rechts, während des Uploads deaktiviert; schließt ohne Upload.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#media-250650fa": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:513-516"
+   ],
+   "n": "Dünner Fortschrittsbalken unter der Kopfzeile während des Uploads (Anteil Bytes); Sheet nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-0a31d389": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:295-299",
+    "lib/core/services/song_file_service.dart:521-530",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:302-331"
+   ],
+   "n": "Tippen auf die Drop-Zone → Dateiauswahl (FileType.any, mehrere) wie <input type=file multiple>; danach 20-MB-Prüfung, Kategorie, Konflikte wie addFiles.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-299a9ca1": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:551-556"
+   ],
+   "n": "„{done} von {total} Dateien hochgeladen“ mit Zähler erfolgreicher Uploads.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-2099bc9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:483",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:558-562"
+   ],
+   "n": "Prozent gerundet + „ %“.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#media-250650fa-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:545-578"
+   ],
+   "n": "Während des Uploads statt Drop-Zone: Text + Prozent, Fortschrittsbalken (Bytes), Hinweis „Bitte das Fenster nicht schließen …“.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-e316ab5e": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:574-577"
+   ],
+   "n": "„Bitte das Fenster nicht schließen, bis der Upload abgeschlossen ist.“ nur während des Uploads.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-c5ba34f1": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:580",
+    "lib/features/songs/presentation/widgets/file_drop/file_drop_target.dart:93-140"
+   ],
+   "n": "Drop-Zone mit Upload-Icon und „Dateien hierher ziehen oder tippen zum Auswählen“; Tippen → Dateiauswahl, Drop (Web/Desktop) → Dateien hinzufügen, Hervorhebung beim Ziehen; nur ohne laufenden Upload.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#popover-c2888574": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:739-748"
+   ],
+   "n": "Tooltip per Tippen am Warn-Icon statt Popover, nur bei genau 1 Konflikt, gleicher Inhalt.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-3c780fcb": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:744"
+   ],
+   "n": "„Ersetzt: {name}“.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-26b1e517": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:796-801"
+   ],
+   "n": "Dateiname der gewählten Datei.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-88d1659d": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:840-857",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:756-764",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:257-279",
+    "lib/core/utils/choir_file_utils.dart:23-44"
+   ],
+   "n": "Gleiche Optionen und Reihenfolge; „Chor (alle)“ nur bei Chor-Instanz (Mandantentyp wie Ionic isChoir), Gruppen nur bei Orchester ohne Hauptgruppe; während des Uploads gesperrt; Änderung berechnet Konflikte/Ersetzen-Vorauswahl neu. Hinweis „Instrument“ wie Ionic praktisch nie sichtbar (null = Sonstige).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-e65ac505": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:770-777"
+   ],
+   "n": "Volles Wischen nach links entfernt die Datei (DismissiblePane), während des Uploads gesperrt.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-cb1550f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:778-783"
+   ],
+   "n": "Rote Wisch-Aktion mit Papierkorb entfernt die Datei aus der Auswahl.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-040f326a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:891-903"
+   ],
+   "n": "Checkbox je Konfliktdatei bei >1 Konflikt, vorausgewählt wie Ionic (gleichnamige, sonst alle), während des Uploads gesperrt.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-3756d780": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:897"
+   ],
+   "n": "Dateiname der Konfliktdatei.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-03c5a221": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:898-901",
+    "lib/features/songs/presentation/utils/song_utils.dart:49-83"
+   ],
+   "n": "Badge mit gleicher Farb- und Bezeichnungslogik (getBadgeColor/getInstrumentName).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-857a3a23": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:625-628",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:375-466"
+   ],
+   "n": "„Ersetzen & Hinzufügen“: Liedtext-Warnung, Löschen der markierten Konflikte, Upload, Fortschritt, Toasts wie Ionic; nur Admin/Verantwortlich. Fehlende Seiten-Aktualisierung nach Teil-Fehler und Synonym-Lernen sind bereits Zusatzbefunde in b31-songs.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-8a88e627": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:630-633",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:375-466"
+   ],
+   "n": "„Ohne Ersetzen hinzufügen“: gleicher Ablauf ohne Löschen der Konflikte; nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-435a6b69": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1066-1089",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:931-965",
+    "lib/features/songs/presentation/widgets/file_drop/file_drop_target.dart:48-71",
+    "lib/features/songs/presentation/widgets/file_drop/file_drop_web.dart:53-75"
+   ],
+   "n": "Erstreview übersah das Verhalten für Nur-Lese-Rollen im Web. Rollen-Einschränkung selbst gleich: Drop und Hervorhebung nur für Admin/Verantwortlich, 1 Datei → Einzel-Sheet, mehrere → Upload-Sheet, „Keine Dateien vorhanden.“. Ionic: die Dateiliste ruft bei dragover/drop immer preventDefault auf → für Helfer, Spieler usw. und im Freigabe-Link ist ein Datei-Drop wirkungslos / Flutter Web: bei readOnly (und während _busy) ist kein Drop-Ziel registriert, der Dokument-Listener ruft kein preventDefault auf → der Browser öffnet bzw. lädt die gezogene Datei und verlässt die App.",
+   "v": "korrigiert"
+  },
+  "songs/song/song.page#field-72a5d64b": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:289-301",
+    "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:137-153",
+    "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:322-342"
+   ],
+   "n": "Radioliste mit gleichen Optionen/Reihenfolge („Chor (alle)“ + Hinweis nur Chor-Instanz), Freitextfeld bei Sonstige, Konflikte neu berechnet; Einzel-Sheet nur über Seiten-Drop, also nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-03c5a221-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:354-364",
+    "lib/features/songs/presentation/utils/song_utils.dart:49-83"
+   ],
+   "n": "Badge der Konfliktdatei (bei >1 Konflikt) mit gleicher Farb-/Bezeichnungslogik.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#modal-5707ce35": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:374",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:841-875",
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:64-69",
+    "lib/core/providers/organisation_providers.dart:39-46",
+    "lib/data/repositories/organisation_repository.dart:312-326"
+   ],
+   "n": "Öffner „In andere Instanz kopieren“ wie Ionic ohne readOnly-Prüfung für alle Rollen, sobald die Instanz zu einer Organisation gehört und der Nutzer in einer anderen Org-Instanz Admin (1) oder Verantwortlich (5) ist (aktuelle Instanz ausgeschlossen); im Freigabe-Link nicht (Ionic: ohne db.tenant() kein Organisations-Laden). Bottom-Sheet mit Start 60 % (Ionic Breakpoints 0/0,6/1; Flutter 0,4–0,9).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-c6ba34e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:75"
+   ],
+   "n": "„Werk kopieren“; Öffner s. Modal (Rolle im Ziel Admin/Verantwortlich).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-4636e7d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:96-122"
+   ],
+   "n": "Überschrift „Ziel-Instanz“ über Dropdown (longName) mit den erlaubten Instanzen, erste vorausgewählt; Zielgruppen werden erst beim Kopieren geladen (gleiches Ergebnis wie onTargetTenantChange).",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

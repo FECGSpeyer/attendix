@@ -1,0 +1,399 @@
+{
+ "batch": "b30-songs",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "song-viewer/song-viewer.page#logic-e405a309": {
+   "s": "na",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:61",
+    "lib/core/router/app_router.dart:1337"
+   ],
+   "n": "SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) – toter Code ohne Nutzerwirkung; keine Referenz auf SongViewerPageModule. Template ruft zudem nicht existierende Member auf (search, sortOpt, onFilterChanged, instruments, viewOpts, onViewChanged). Die echte öffentliche Werkliste ist SongsPage ↔ Flutter songs_list_page.dart (_isPublic) und wird in deren Unit geprüft."
+  },
+  "song-viewer/song-viewer.page#toast-d692cbd4": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309); Gegenstück der echten Seite: SongsPage ↔ songs_list_page.dart:183"
+  },
+  "song-viewer/song-viewer.page#nav-e41704b5": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309)"
+  },
+  "song-viewer/song-viewer.page#text-8f0039be": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309)"
+  },
+  "song-viewer/song-viewer.page#text-8f0039be-2": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309)"
+  },
+  "song-viewer/song-viewer.page#field-d842f282": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309); Template-Handler search() existiert in der Klasse nicht"
+  },
+  "song-viewer/song-viewer.page#action-c53d7b4c": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309)"
+  },
+  "song-viewer/song-viewer.page#popover-b0832eda": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309)"
+  },
+  "song-viewer/song-viewer.page#field-6a45b149": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309); sortOpt/onFilterChanged existieren in der Klasse nicht"
+  },
+  "song-viewer/song-viewer.page#field-33b91f13": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309); inclChoir/onFilterChanged existieren in der Klasse nicht"
+  },
+  "song-viewer/song-viewer.page#field-0597c0d2": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309); inclSolo/onFilterChanged existieren in der Klasse nicht"
+  },
+  "song-viewer/song-viewer.page#field-43e77f2c": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309); instruments existiert in der Klasse nicht"
+  },
+  "song-viewer/song-viewer.page#field-41775524": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309); viewOpts/onViewChanged existieren in der Klasse nicht"
+  },
+  "song-viewer/song-viewer.page#text-aa2acf28": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309)"
+  },
+  "song-viewer/song-viewer.page#modal-efd7151c": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309)"
+  },
+  "song-viewer/song-viewer.page#text-153f96cf": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309)"
+  },
+  "song-viewer/song-viewer.page#text-2d67cd14": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309)"
+  },
+  "song-viewer/song-viewer.page#action-7902f274": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309)"
+  },
+  "song-viewer/song-viewer.page#text-a4874a9a": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309); Key songs.allSongs wird nur hier verwendet"
+  },
+  "song-viewer/song-viewer.page#action-3816f518": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) (siehe logic-e405a309)"
+  },
+  "songs/import/import.page#logic-587858e7": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:62",
+    "lib/features/songs/presentation/pages/song_import_page.dart:105",
+    "lib/features/songs/presentation/pages/song_import_page.dart:132",
+    "lib/core/utils/import_mapper.dart:467",
+    "lib/core/utils/import_mapper.dart:608",
+    "lib/core/utils/import_mapper.dart:632",
+    "lib/data/repositories/import_repository.dart:80",
+    "lib/data/repositories/import_repository.dart:109",
+    "lib/core/utils/spreadsheet_reader.dart:43"
+   ],
+   "n": "Gleich: 3 Schritte Datei → Zuordnung → Vorschau, Zielfeld-Optionen, Auto-Mapping, Pflicht Nummer+Name, Zeilen-Validierung (Texte identisch), Duplikate in Datei und in effektiver Werkbibliothek (paginiert, tenantId = Werk-Quelle), Zähler/Status, Insert in `songs` mit denselben Spalten und tenantId = effectiveSongTenantId, Vorlage, Schließen. Unterschiede: .xls wird abgelehnt; Flutter erkennt DB-Insert-Fehler (Ionic zählt sie als importiert); Fehlergrund technisch formatiert; Formelzellen evtl. als Formeltext (unverifiziert). Siehe extra.",
+   "sev": "hoch"
+  },
+  "songs/import/import.page#loading-4a98212a": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:66",
+    "lib/features/songs/presentation/pages/song_import_page.dart:226"
+   ],
+   "n": "Ionic: blockierendes Overlay „Datei wird gelesen...“ (people.readingFile; Slice zeigt fälschlich die Dauer 10000 als Text) / Flutter: Spinner-Overlay über dem Inhalt ohne Text",
+   "sev": "niedrig"
+  },
+  "songs/import/import.page#toast-e41395c7": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:70"
+   ]
+  },
+  "songs/import/import.page#toast-3014b190": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:83",
+    "lib/features/songs/presentation/pages/song_import_page.dart:86",
+    "lib/core/utils/spreadsheet_reader.dart:160"
+   ],
+   "n": "„Die Datei konnte nicht gelesen werden.“, rot; Ausnahme .xls → eigener Text (siehe field-601fe7d3)"
+  },
+  "songs/import/import.page#toast-65544cdc": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:108"
+   ],
+   "n": "in beiden praktisch unerreichbar, da „Weiter“ ohne Nummer+Name deaktiviert ist"
+  },
+  "songs/import/import.page#loading-e74d2a64": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:111",
+    "lib/features/songs/presentation/pages/song_import_page.dart:226",
+    "lib/features/people/presentation/widgets/import_widgets.dart:215"
+   ],
+   "n": "Ionic: blockierendes Overlay „Daten werden geprüft...“ über ganzer Seite / Flutter: Spinner ohne Text nur über dem Inhalt; „Zurück“ in der Fußleiste bleibt bedienbar; nach einem Import mit Fehlschlägen zeigt das Overlay noch den alten Text „{n} / {n} importiert...“",
+   "sev": "niedrig"
+  },
+  "songs/import/import.page#toast-59cbd4e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:123"
+   ]
+  },
+  "songs/import/import.page#toast-95c41003": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:135"
+   ],
+   "n": "in beiden praktisch unerreichbar (Button bei 0 importierbaren deaktiviert)"
+  },
+  "songs/import/import.page#toast-b62ba249": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:139",
+    "lib/core/utils/toast_helper.dart:65"
+   ],
+   "n": "Flutter-Text über dbDemoRestricted, identisch „Diese Funktion ist im Demo-Modus nicht verfügbar.“, Warnung"
+  },
+  "songs/import/import.page#loading-656de8cd": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:149",
+    "lib/features/songs/presentation/pages/song_import_page.dart:165",
+    "lib/features/songs/presentation/pages/song_import_page.dart:226",
+    "lib/features/songs/presentation/pages/song_import_page.dart:260"
+   ],
+   "n": "Text „{done} / {total} importiert...“ mit Fortschritt gleich. Ionic: Overlay blockiert ganze Seite / Flutter: nur Inhalt blockiert, „Zurück“ in der Fußleiste bleibt während des Imports aktiv (wechselt zur Zuordnung, Import läuft weiter)",
+   "sev": "niedrig"
+  },
+  "songs/import/import.page#toast-fdeb0c8d": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:172",
+    "lib/features/songs/presentation/pages/song_import_page.dart:176"
+   ],
+   "n": "„{n} Werke importiert.“ + ggf. „{n} fehlgeschlagen.“, grün/Warnung wie Ionic; zur Fehlererkennung siehe extra"
+  },
+  "songs/import/import.page#toast-3c445d79": {
+   "s": "missing",
+   "n": "Ionic: äußerer catch zeigt Fehler als roten Toast (praktisch unerreichbar, importSongs fängt pro Zeile) / Flutter: kein äußerer catch, nur Fehler pro Zeile (song_import_page.dart:158-163)",
+   "sev": "niedrig"
+  },
+  "songs/import/import.page#alert-8c2d4a0a": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:180",
+    "lib/features/people/presentation/widgets/import_widgets.dart:226"
+   ],
+   "n": "Gleich: Titel „Nicht importierte Werke“, max. 10 Zeilen „• {Präfix}{Nr} {Name}: {Grund}“, „… und {n} weitere“, Button „OK“. Unterschiede: Grund in Flutter „RepositoryException: <msg> (operation: insertSong, code: …)“ statt error.message; Ionic schließt das Import-Modal sofort hinter dem Alert, Flutter erst nach „OK“. In Ionic praktisch nie sichtbar (siehe extra).",
+   "sev": "niedrig"
+  },
+  "songs/import/import.page#text-704ce14a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:193"
+   ]
+  },
+  "songs/import/import.page#action-08249090": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:198"
+   ],
+   "n": "✕ rechts, schließt ohne Ergebnis; in Flutter während Arbeit deaktiviert (Ionic: Overlay blockiert)"
+  },
+  "songs/import/import.page#text-08ea26b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:209",
+    "lib/features/people/presentation/widgets/import_widgets.dart:30"
+   ],
+   "n": "Text identisch; nennt .xls, das Flutter ablehnt (siehe field-601fe7d3)"
+  },
+  "songs/import/import.page#action-15457cd2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:35",
+    "lib/features/songs/presentation/pages/song_import_page.dart:62"
+   ]
+  },
+  "songs/import/import.page#field-601fe7d3": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/import_file_io.dart:13",
+    "lib/core/utils/spreadsheet_reader.dart:43"
+   ],
+   "n": "Ionic: accept .xlsx,.xls,.csv, SheetJS liest alle drei / Flutter: Picker erlaubt xlsx/xls/csv, .xls wird aber mit rotem Toast „Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.“ abgelehnt",
+   "sev": "hoch"
+  },
+  "songs/import/import.page#action-4e64e010": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:42",
+    "lib/features/songs/presentation/pages/song_import_page.dart:92"
+   ],
+   "n": "gleiche Kopfzeilen inkl. Zusatzfelder, Beispielzeile, Blatt „Import“, Dateiname „Werke_Import_Vorlage.xlsx“"
+  },
+  "songs/import/import.page#text-e873b9b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:87"
+   ]
+  },
+  "songs/import/import.page#text-9f02e438": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:86"
+   ]
+  },
+  "songs/import/import.page#text-85e1d136": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:90",
+    "lib/features/songs/presentation/pages/song_import_page.dart:216"
+   ]
+  },
+  "songs/import/import.page#field-60669f95": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:95",
+    "lib/features/songs/presentation/pages/song_import_page.dart:48",
+    "lib/core/utils/import_mapper.dart:467"
+   ],
+   "n": "Label = Spaltenname, Platzhalter „Feld wählen...“, Optionen Ignorieren, Nummer, Präfix, Name, Chor & Orchester, Mit Solo, Link, Schwierigkeit (1/2/3), Kategorien, Zusatzfelder; Vorbelegung per Auto-Mapping (sonst Ignorieren) identisch"
+  },
+  "songs/import/import.page#text-17b1ba5e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:108"
+   ]
+  },
+  "songs/import/import.page#text-9e707764": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:144"
+   ]
+  },
+  "songs/import/import.page#text-2535ba2e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:145"
+   ]
+  },
+  "songs/import/import.page#text-bded6f0f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:146"
+   ]
+  },
+  "songs/import/import.page#text-cc5ca6f2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:148"
+   ]
+  },
+  "songs/import/import.page#text-bfd6f72b": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:296",
+    "lib/core/utils/import_mapper.dart:454"
+   ]
+  },
+  "songs/import/import.page#text-fee81b5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:183",
+    "lib/core/utils/import_mapper.dart:533"
+   ],
+   "n": "Fehlertexte identisch (z. B. „Nummer ist erforderlich und muss eine Zahl sein“)"
+  },
+  "songs/import/import.page#text-f8645500": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:185",
+    "lib/core/utils/import_mapper.dart:636"
+   ],
+   "n": "Hinweistexte identisch (Link/Schwierigkeit/Kategorie/Doppelte Nummer/Liednummer existiert bereits)"
+  },
+  "songs/import/import.page#action-aa4671b9": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:254",
+    "lib/features/people/presentation/widgets/import_widgets.dart:215"
+   ]
+  },
+  "songs/import/import.page#action-1ebac815": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:255"
+   ]
+  },
+  "songs/import/import.page#action-7bf7e9a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:260"
+   ],
+   "n": "während des Imports in Flutter bedienbar (siehe loading-656de8cd)"
+  },
+  "songs/import/import.page#action-442f4824": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:261"
+   ]
+  }
+ },
+ "extra": [
+  {
+   "unit": "songs/import/import.page",
+   "title": ".xls-Dateien werden nicht importiert",
+   "n": "Ionic: SheetJS liest .xlsx, .xls und .csv / Flutter: .xls wird mit „Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.“ abgelehnt, obwohl Intro-Text und Dateiauswahl .xls anbieten",
+   "sev": "hoch",
+   "ionic": "src/app/utilities/spreadsheet-reader.ts:16",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:43",
+    "lib/core/utils/import_file_io.dart:13"
+   ]
+  },
+  {
+   "unit": "songs/import/import.page",
+   "title": "DB-Insert-Fehler: Ionic verschluckt sie, Flutter meldet sie",
+   "n": "Ionic: SongService.addSong prüft `error` nicht → fehlgeschlagene Inserts landen als null in `imported`, Toast meldet sie als „importiert“, Alert „Nicht importierte Werke“ erscheint nie / Flutter: insertSong wirft → Zeile zählt als fehlgeschlagen, Warn-Toast „… fehlgeschlagen.“ + Alert. Flutter-Verhalten ist korrekter",
+   "sev": "niedrig",
+   "ionic": "src/app/services/song/song.service.ts:84",
+   "f": [
+    "lib/data/repositories/import_repository.dart:109",
+    "lib/features/songs/presentation/pages/song_import_page.dart:158"
+   ]
+  },
+  {
+   "unit": "songs/import/import.page",
+   "title": "Fehlergrund im Alert technisch formatiert",
+   "n": "Ionic: Grund = error.message / Flutter: Grund = `$e` = „RepositoryException: <msg> (operation: insertSong, code: …)“",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:3739",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:162",
+    "lib/data/repositories/base_repository.dart:170"
+   ]
+  },
+  {
+   "unit": "songs/import/import.page",
+   "title": "Formelzellen evtl. als Formeltext gelesen (unverifiziert)",
+   "n": "Ionic: SheetJS liefert bei Formelzellen den berechneten Wert / Flutter: cellToDart gibt für FormulaCellValue `value.formula` zurück – z. B. Nummer „=A2+1“ → Fehler „Nummer ist erforderlich und muss eine Zahl sein“. Ob excel_community Formelzellen mit Ergebnis als FormulaCellValue liefert, war ohne Paketquelle nicht prüfbar",
+   "sev": "mittel",
+   "ionic": "src/app/utilities/spreadsheet-reader.ts:16",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:186"
+   ]
+  }
+ ]
+}
