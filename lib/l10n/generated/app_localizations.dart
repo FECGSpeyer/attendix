@@ -11423,6 +11423,150 @@ abstract class AppLocalizations {
   /// **'Bitte gib einen gültigen Namen ein.'**
   String get orgValidName;
 
+  /// parentRegister.addChild
+  ///
+  /// In de, this message translates to:
+  /// **'Weiteres Kind hinzufügen'**
+  String get parentRegisterAddChild;
+
+  /// parentRegister.change
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get parentRegisterChange;
+
+  /// parentRegister.child
+  ///
+  /// In de, this message translates to:
+  /// **'Mein Kind'**
+  String get parentRegisterChild;
+
+  /// parentRegister.childBirthDateRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib für jedes Kind das Geburtsdatum an.'**
+  String get parentRegisterChildBirthDateRequired;
+
+  /// parentRegister.childHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ich bin Elternteil, auch für mehrere Kinder'**
+  String get parentRegisterChildHint;
+
+  /// parentRegister.childNameRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib für jedes Kind Vor- und Nachnamen an.'**
+  String get parentRegisterChildNameRequired;
+
+  /// parentRegister.childOf
+  ///
+  /// In de, this message translates to:
+  /// **'Kind von {name}'**
+  String parentRegisterChildOf(Object name);
+
+  /// parentRegister.childTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Kind {number}'**
+  String parentRegisterChildTitle(Object number);
+
+  /// parentRegister.finish
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Kind anmelden} other {{count} Kinder anmelden}}'**
+  String parentRegisterFinish(num count);
+
+  /// parentRegister.forChild
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung für: Mein Kind'**
+  String get parentRegisterForChild;
+
+  /// parentRegister.forSelf
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung für: Mich selbst'**
+  String get parentRegisterForSelf;
+
+  /// parentRegister.inviteByEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Per E-Mail einladen'**
+  String get parentRegisterInviteByEmail;
+
+  /// parentRegister.parentData
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Angaben (Elternteil)'**
+  String get parentRegisterParentData;
+
+  /// parentRegister.removeChild
+  ///
+  /// In de, this message translates to:
+  /// **'Kind entfernen'**
+  String get parentRegisterRemoveChild;
+
+  /// parentRegister.reviewParent
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil'**
+  String get parentRegisterReviewParent;
+
+  /// parentRegister.reviewParentHint
+  ///
+  /// In de, this message translates to:
+  /// **'Beim Aufnehmen bekommt {name} Zugang als Elternteil und sieht die Termine des Kindes.'**
+  String parentRegisterReviewParentHint(Object name);
+
+  /// parentRegister.self
+  ///
+  /// In de, this message translates to:
+  /// **'Mich selbst'**
+  String get parentRegisterSelf;
+
+  /// parentRegister.selfHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ich spiele oder singe selbst mit'**
+  String get parentRegisterSelfHint;
+
+  /// parentRegister.shareButton
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldelink teilen'**
+  String get parentRegisterShareButton;
+
+  /// parentRegister.shareHint
+  ///
+  /// In de, this message translates to:
+  /// **'Schick den Eltern den Anmeldelink. Sie wählen dort „Mein Kind“ und du schaltest frei.'**
+  String get parentRegisterShareHint;
+
+  /// parentRegister.shareTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Kind neu dabei?'**
+  String get parentRegisterShareTitle;
+
+  /// parentRegister.successNewPending
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Konto wurde erstellt und die Anmeldung wartet auf die Freigabe durch die Leitung. Bitte bestätige deine E-Mail. Sobald du freigeschaltet bist, siehst du in der App die Termine deiner Kinder und kannst sie an- und abmelden.'**
+  String get parentRegisterSuccessNewPending;
+
+  /// parentRegister.successPending
+  ///
+  /// In de, this message translates to:
+  /// **'Die Anmeldung wartet auf die Freigabe durch die Leitung. Sobald du freigeschaltet bist, siehst du in der App die Termine deiner Kinder und kannst sie an- und abmelden.'**
+  String get parentRegisterSuccessPending;
+
+  /// parentRegister.whoTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Wen möchtest du anmelden?'**
+  String get parentRegisterWhoTitle;
+
   /// people.activate
   ///
   /// In de, this message translates to:

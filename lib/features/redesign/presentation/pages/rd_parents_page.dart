@@ -12,6 +12,9 @@ import '../../../settings/presentation/pages/viewers_page.dart' show ViewersPage
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
+import '../widgets/members/rd_invite_sheet.dart' show showRdInviteSheet;
+import '../widgets/rd_widgets.dart' show RdPrimaryButton;
+import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 
 /// REDESIGN: Verwaltung › Eltern in the template "Verwaltungsliste"
@@ -30,8 +33,25 @@ class RdParentsPage extends ConsumerWidget {
     return RdManageListPage(
       title: rdManageTitle(l10n, RdManageEntry.parents),
       intro: l10n.redesignParentsListIntro,
-      // The switch of the old "Allgemein".
-      header: const RdTenantSettingsBlock(sections: [RdTenantSettings.parents]),
+      // The switch of the old "Allgemein", then the one main action: the
+      // sign-up link, where parents register their child ("Mein Kind").
+      header: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const RdTenantSettingsBlock(sections: [RdTenantSettings.parents]),
+          const SizedBox(height: 12),
+          RdInfoCard(
+            key: const Key('rd-parents-share'),
+            icon: Icons.link,
+            text: '${l10n.parentRegisterShareTitle} ${l10n.parentRegisterShareHint}',
+            action: RdPrimaryButton(
+              label: l10n.parentRegisterShareButton,
+              icon: Icons.ios_share,
+              onPressed: () => showRdInviteSheet(context),
+            ),
+          ),
+        ],
+      ),
       sections: parents == null
           ? null
           : [
@@ -51,8 +71,14 @@ class RdParentsPage extends ConsumerWidget {
       onRetry: () => ref.invalidate(parentsProvider),
       emptyText: l10n.redesignParentsListEmpty,
       emptyIcon: Icons.favorite_border,
-      addLabel: l10n.redesignParentsListAdd,
-      onAdd: parents == null ? null : () => ParentsPage.showAddParentDialog(context, ref),
+      // Inviting by e-mail stays, in the "•••" menu (one main action).
+      actions: [
+        RdManageListAction(
+          label: l10n.parentRegisterInviteByEmail,
+          icon: Icons.mail_outline,
+          onSelected: () => ParentsPage.showAddParentDialog(context, ref),
+        ),
+      ],
       onRefresh: () async {
         ref.invalidate(parentsProvider);
         await ref.read(parentsProvider.future).catchError((_) => const <ParentModel>[]);

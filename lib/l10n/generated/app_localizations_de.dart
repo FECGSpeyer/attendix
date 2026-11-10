@@ -7027,6 +7027,98 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgValidName => 'Bitte gib einen gültigen Namen ein.';
 
   @override
+  String get parentRegisterAddChild => 'Weiteres Kind hinzufügen';
+
+  @override
+  String get parentRegisterChange => 'Ändern';
+
+  @override
+  String get parentRegisterChild => 'Mein Kind';
+
+  @override
+  String get parentRegisterChildBirthDateRequired =>
+      'Bitte gib für jedes Kind das Geburtsdatum an.';
+
+  @override
+  String get parentRegisterChildHint =>
+      'Ich bin Elternteil, auch für mehrere Kinder';
+
+  @override
+  String get parentRegisterChildNameRequired =>
+      'Bitte gib für jedes Kind Vor- und Nachnamen an.';
+
+  @override
+  String parentRegisterChildOf(Object name) {
+    return 'Kind von $name';
+  }
+
+  @override
+  String parentRegisterChildTitle(Object number) {
+    return 'Kind $number';
+  }
+
+  @override
+  String parentRegisterFinish(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Kinder anmelden',
+      one: 'Kind anmelden',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get parentRegisterForChild => 'Anmeldung für: Mein Kind';
+
+  @override
+  String get parentRegisterForSelf => 'Anmeldung für: Mich selbst';
+
+  @override
+  String get parentRegisterInviteByEmail => 'Per E-Mail einladen';
+
+  @override
+  String get parentRegisterParentData => 'Deine Angaben (Elternteil)';
+
+  @override
+  String get parentRegisterRemoveChild => 'Kind entfernen';
+
+  @override
+  String get parentRegisterReviewParent => 'Elternteil';
+
+  @override
+  String parentRegisterReviewParentHint(Object name) {
+    return 'Beim Aufnehmen bekommt $name Zugang als Elternteil und sieht die Termine des Kindes.';
+  }
+
+  @override
+  String get parentRegisterSelf => 'Mich selbst';
+
+  @override
+  String get parentRegisterSelfHint => 'Ich spiele oder singe selbst mit';
+
+  @override
+  String get parentRegisterShareButton => 'Anmeldelink teilen';
+
+  @override
+  String get parentRegisterShareHint =>
+      'Schick den Eltern den Anmeldelink. Sie wählen dort „Mein Kind“ und du schaltest frei.';
+
+  @override
+  String get parentRegisterShareTitle => 'Kind neu dabei?';
+
+  @override
+  String get parentRegisterSuccessNewPending =>
+      'Dein Konto wurde erstellt und die Anmeldung wartet auf die Freigabe durch die Leitung. Bitte bestätige deine E-Mail. Sobald du freigeschaltet bist, siehst du in der App die Termine deiner Kinder und kannst sie an- und abmelden.';
+
+  @override
+  String get parentRegisterSuccessPending =>
+      'Die Anmeldung wartet auf die Freigabe durch die Leitung. Sobald du freigeschaltet bist, siehst du in der App die Termine deiner Kinder und kannst sie an- und abmelden.';
+
+  @override
+  String get parentRegisterWhoTitle => 'Wen möchtest du anmelden?';
+
+  @override
   String get peopleActivate => 'Aktivieren';
 
   @override

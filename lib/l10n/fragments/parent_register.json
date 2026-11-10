@@ -1,0 +1,58 @@
+{
+  "de": {
+    "parentRegister": {
+      "whoTitle": "Wen möchtest du anmelden?",
+      "self": "Mich selbst",
+      "selfHint": "Ich spiele oder singe selbst mit",
+      "child": "Mein Kind",
+      "childHint": "Ich bin Elternteil, auch für mehrere Kinder",
+      "forSelf": "Anmeldung für: Mich selbst",
+      "forChild": "Anmeldung für: Mein Kind",
+      "change": "Ändern",
+      "parentData": "Deine Angaben (Elternteil)",
+      "childTitle": "Kind {number}",
+      "addChild": "Weiteres Kind hinzufügen",
+      "removeChild": "Kind entfernen",
+      "childNameRequired": "Bitte gib für jedes Kind Vor- und Nachnamen an.",
+      "childBirthDateRequired": "Bitte gib für jedes Kind das Geburtsdatum an.",
+      "finish": "{count, plural, one {Kind anmelden} other {{count} Kinder anmelden}}",
+      "successNewPending": "Dein Konto wurde erstellt und die Anmeldung wartet auf die Freigabe durch die Leitung. Bitte bestätige deine E-Mail. Sobald du freigeschaltet bist, siehst du in der App die Termine deiner Kinder und kannst sie an- und abmelden.",
+      "successPending": "Die Anmeldung wartet auf die Freigabe durch die Leitung. Sobald du freigeschaltet bist, siehst du in der App die Termine deiner Kinder und kannst sie an- und abmelden.",
+      "childOf": "Kind von {name}",
+      "reviewParent": "Elternteil",
+      "reviewParentHint": "Beim Aufnehmen bekommt {name} Zugang als Elternteil und sieht die Termine des Kindes.",
+      "shareTitle": "Kind neu dabei?",
+      "shareHint": "Schick den Eltern den Anmeldelink. Sie wählen dort „Mein Kind“ und du schaltest frei.",
+      "shareButton": "Anmeldelink teilen",
+      "inviteByEmail": "Per E-Mail einladen"
+    }
+  },
+  "en": {
+    "parentRegister": {
+      "whoTitle": "Who would you like to register?",
+      "self": "Myself",
+      "selfHint": "I play or sing myself",
+      "child": "My child",
+      "childHint": "I am a parent, also for several children",
+      "forSelf": "Registering: myself",
+      "forChild": "Registering: my child",
+      "change": "Change",
+      "parentData": "Your details (parent)",
+      "childTitle": "Child {number}",
+      "addChild": "Add another child",
+      "removeChild": "Remove child",
+      "childNameRequired": "Please enter first and last name for each child.",
+      "childBirthDateRequired": "Please enter the date of birth for each child.",
+      "finish": "{count, plural, one {Register child} other {Register {count} children}}",
+      "successNewPending": "Your account has been created and the registration is waiting for approval by the leaders. Please confirm your email. Once you are approved, you will see your children's events in the app and can sign them in and out.",
+      "successPending": "The registration is waiting for approval by the leaders. Once you are approved, you will see your children's events in the app and can sign them in and out.",
+      "childOf": "Child of {name}",
+      "reviewParent": "Parent",
+      "reviewParentHint": "When you accept, {name} gets access as a parent and sees the child's events.",
+      "shareTitle": "New child joining?",
+      "shareHint": "Send the parents the sign-up link. They choose \"My child\" there and you approve.",
+      "shareButton": "Share sign-up link",
+      "inviteByEmail": "Invite by email"
+    }
+  }
+}

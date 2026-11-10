@@ -206,7 +206,7 @@ void main() {
     expect(rdLoadedValue(const AsyncLoading<List<int>>()), isNull);
   });
 
-  testWidgets('Eltern: after a group switch no list and no "+" until the new group is loaded', (tester) async {
+  testWidgets('Eltern: after a group switch no list and no invite menu (•••) until the new group is loaded', (tester) async {
     _phone(tester);
     final tenant = StateProvider<int>((_) => 1);
     final second = Completer<List<ParentModel>>();
@@ -222,18 +222,18 @@ void main() {
     );
     await _settle(tester);
     expect(find.text('Eva Alt'), findsOneWidget);
-    expect(find.byKey(const Key('rd-manage-list-add')), findsOneWidget);
+    expect(find.byKey(const Key('rd-manage-list-more')), findsOneWidget);
 
     final container = ProviderScope.containerOf(tester.element(find.byType(RdParentsPage)));
     container.read(tenant.notifier).state = 2;
     await _settle(tester);
     expect(find.text('Eva Alt'), findsNothing);
-    expect(find.byKey(const Key('rd-manage-list-add')), findsNothing);
+    expect(find.byKey(const Key('rd-manage-list-more')), findsNothing);
 
     second.complete(const [ParentModel(id: 2, appId: 'b', email: 'neu@test.de', firstName: 'Nina', lastName: 'Neu')]);
     await _settle(tester);
     expect(find.text('Nina Neu'), findsOneWidget);
-    expect(find.byKey(const Key('rd-manage-list-add')), findsOneWidget);
+    expect(find.byKey(const Key('rd-manage-list-more')), findsOneWidget);
   });
 
   testWidgets('Freigaben: leaving does not close a sheet of the root navigator', (tester) async {
