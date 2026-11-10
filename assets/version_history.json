@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.121.0",
+      "date": "10.11.2026",
+      "changes": [
+        "✨ Eltern können ihr Kind über den Anmeldelink selbst anmelden („Mein Kind“), auch mehrere Kinder auf einmal; beim Aufnehmen werden sie automatisch Elternteil",
+        "✨ Freigaben zeigen „Kind von …“, Verwaltung › Eltern teilt den Anmeldelink (Beta)"
+      ]
+    },
+    {
       "version": "0.120.0",
       "date": "10.11.2026",
       "changes": [
