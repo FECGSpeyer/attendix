@@ -16,6 +16,7 @@ import '../../../core/providers/tenant_providers.dart';
 import '../../../core/utils/attendance_logic_utils.dart';
 import '../../../core/utils/duty_utils.dart';
 import '../../../core/utils/event_list_utils.dart';
+import '../../../core/utils/helper_member.dart';
 import '../../../core/utils/shift_utils.dart';
 import '../../../data/models/attendance/attendance.dart';
 import '../../../data/models/duty/person_unavailability.dart';
@@ -327,7 +328,11 @@ class AttendanceCreateWriter {
     final relevantGroups = type.relevantGroups;
     final additionalFieldsFilter = type.additionalFieldsFilter;
 
+    final day = helperDay(date);
     final filteredPlayers = playerList.where((player) {
+      // Aushilfen only until their last day ("dabei bis").
+      if (!helperCoversDate(player['additional_fields'] as Map<String, dynamic>?, day)) return false;
+
       // Filter by relevant_groups if set
       if (relevantGroups != null && relevantGroups.isNotEmpty) {
         final playerInstrument = player['instrument'] as int?;

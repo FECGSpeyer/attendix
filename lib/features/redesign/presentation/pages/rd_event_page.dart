@@ -58,6 +58,7 @@ import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/event/rd_event_head.dart';
 import '../widgets/event/rd_event_now.dart';
+import '../widgets/event/rd_new_person_sheet.dart' show createPersonForAttendance;
 import '../../../planning/presentation/attendance_plan_viewer.dart' show attendanceHasPlan, openAttendancePlanViewer;
 import '../widgets/today/rd_today_common.dart';
 
@@ -401,6 +402,21 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     });
     _showToast(context.l10n.redesignEventUndone);
     _writeMany(undo.previous, current);
+  }
+
+  /// "Person hinzufügen"; Leitung that may create persons (Admin,
+  /// Verantwortliche like "Neue Person") can also create a new one there,
+  /// who is added to this Termin right away.
+  Future<void> _addPersons() {
+    final role = ref.read(effectiveRoleProvider);
+    final canCreate = role.isAdmin || role.isResponsible;
+    return addPersonsToAttendance(
+      context,
+      ref,
+      attendanceId: _id,
+      currentPersonIds: _rowPersonIds ?? const {},
+      onCreateNew: canCreate ? () => createPersonForAttendance(context, ref, attendanceId: _id) : null,
+    );
   }
 
   /// The person sheet: status, note, registration answers, "Zur Person",
@@ -965,7 +981,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
           action: canMutate
               ? RdOutlineButton(
                   label: l10n.attendanceAddPerson,
-                  onPressed: () => addPersonsToAttendance(context, ref, attendanceId: _id, currentPersonIds: _rowPersonIds ?? const {}),
+                  onPressed: _addPersons,
                 )
               : null,
         ));
@@ -1318,12 +1334,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
               icon: Icons.person_add_alt_1_outlined,
               label: l10n.redesignEventAddPersonShort,
               semanticLabel: l10n.attendanceAddPerson,
-              onPressed: () => addPersonsToAttendance(
-                context,
-                ref,
-                attendanceId: _id,
-                currentPersonIds: _rowPersonIds ?? const {},
-              ),
+              onPressed: _addPersons,
             ),
         ],
       ),

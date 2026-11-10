@@ -30,6 +30,14 @@
       "copyHint": "Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv.",
       "teacherAdd": "Neuer Lehrer",
       "teacherNone": "Für dieses Register gibt es noch keinen Lehrer."
+    },
+    "rdHelper": {
+      "title": "Aushilfe",
+      "until": "Aushilfe bis {date}",
+      "personHint": "Kommt nur in Termine bis zu diesem Tag und wird danach automatisch archiviert.",
+      "switchHint": "Nur für eine bestimmte Zeit dabei, z. B. für ein Konzert",
+      "lastDay": "Dabei bis",
+      "formHint": "Aushilfen kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert."
     }
   },
   "en": {
@@ -63,6 +71,14 @@
       "copyHint": "The person is created in the target group and stays active here.",
       "teacherAdd": "New teacher",
       "teacherNone": "There is no teacher for this section yet."
+    },
+    "rdHelper": {
+      "title": "Helper",
+      "until": "Helper until {date}",
+      "personHint": "Only added to events up to this day and archived automatically afterwards.",
+      "switchHint": "Only joins for a while, e.g. for one concert",
+      "lastDay": "Last day",
+      "formHint": "Helpers are only added to events up to this day, never count as a problem case and are archived automatically afterwards."
     }
   }
 }

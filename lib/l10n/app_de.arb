@@ -1007,6 +1007,14 @@
   "@attendanceConnectionRestored": {
     "description": "attendance.connectionRestored"
   },
+  "attendanceCreateNewPerson": "Neue Person anlegen",
+  "@attendanceCreateNewPerson": {
+    "description": "attendance.createNewPerson"
+  },
+  "attendanceCreateNewPersonHint": "Wird angelegt und gleich zu diesem Termin hinzugefügt.",
+  "@attendanceCreateNewPersonHint": {
+    "description": "attendance.createNewPersonHint"
+  },
   "attendanceCreateRunSheet": "Ablaufplan erstellen",
   "@attendanceCreateRunSheet": {
     "description": "attendance.createRunSheet"
@@ -1563,6 +1571,59 @@
         "type": "num"
       }
     }
+  },
+  "attendanceNewPersonAddFailed": "{name} wurde angelegt, konnte aber nicht zum Termin hinzugefügt werden.",
+  "@attendanceNewPersonAddFailed": {
+    "description": "attendance.newPerson.addFailed",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "attendanceNewPersonAdded": "{name} angelegt und hinzugefügt",
+  "@attendanceNewPersonAdded": {
+    "description": "attendance.newPerson.added",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "attendanceNewPersonCreate": "Anlegen",
+  "@attendanceNewPersonCreate": {
+    "description": "attendance.newPerson.create"
+  },
+  "attendanceNewPersonFailed": "Die Person konnte nicht angelegt werden.",
+  "@attendanceNewPersonFailed": {
+    "description": "attendance.newPerson.failed"
+  },
+  "attendanceNewPersonFirstName": "Vorname",
+  "@attendanceNewPersonFirstName": {
+    "description": "attendance.newPerson.firstName"
+  },
+  "attendanceNewPersonGroup": "Register",
+  "@attendanceNewPersonGroup": {
+    "description": "attendance.newPerson.group"
+  },
+  "attendanceNewPersonHint": "Die Person wird Mitglied der Gruppe und gleich zu diesem Termin hinzugefügt. Weitere Angaben ergänzt du später bei der Person.",
+  "@attendanceNewPersonHint": {
+    "description": "attendance.newPerson.hint"
+  },
+  "attendanceNewPersonLastName": "Nachname",
+  "@attendanceNewPersonLastName": {
+    "description": "attendance.newPerson.lastName"
+  },
+  "attendanceNewPersonNameMissing": "Bitte gib Vor- und Nachnamen ein.",
+  "@attendanceNewPersonNameMissing": {
+    "description": "attendance.newPerson.nameMissing"
+  },
+  "attendanceNewPersonOthersMissing": "{name} wurde angelegt und hinzugefügt, fehlt aber noch in anderen kommenden Terminen.",
+  "@attendanceNewPersonOthersMissing": {
+    "description": "attendance.newPerson.othersMissing",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "attendanceNewPersonTitle": "Neue Person",
+  "@attendanceNewPersonTitle": {
+    "description": "attendance.newPerson.title"
   },
   "attendanceNoConnection": "Keine Internetverbindung vorhanden",
   "@attendanceNoConnection": {
@@ -12791,6 +12852,33 @@
   "rdDataWhat": "Was",
   "@rdDataWhat": {
     "description": "rdData.what"
+  },
+  "rdHelperFormHint": "Aushilfen kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert.",
+  "@rdHelperFormHint": {
+    "description": "rdHelper.formHint"
+  },
+  "rdHelperLastDay": "Dabei bis",
+  "@rdHelperLastDay": {
+    "description": "rdHelper.lastDay"
+  },
+  "rdHelperPersonHint": "Kommt nur in Termine bis zu diesem Tag und wird danach automatisch archiviert.",
+  "@rdHelperPersonHint": {
+    "description": "rdHelper.personHint"
+  },
+  "rdHelperSwitchHint": "Nur für eine bestimmte Zeit dabei, z. B. für ein Konzert",
+  "@rdHelperSwitchHint": {
+    "description": "rdHelper.switchHint"
+  },
+  "rdHelperTitle": "Aushilfe",
+  "@rdHelperTitle": {
+    "description": "rdHelper.title"
+  },
+  "rdHelperUntil": "Aushilfe bis {date}",
+  "@rdHelperUntil": {
+    "description": "rdHelper.until",
+    "placeholders": {
+      "date": {}
+    }
   },
   "rdOrgArchiveNote": "Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.",
   "@rdOrgArchiveNote": {

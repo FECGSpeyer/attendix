@@ -1,0 +1,1 @@
+{"bump": "minor", "changes": ["✨ Beta: Im Termin unter „Person hinzufügen“ kann die Leitung jetzt direkt eine neue Person anlegen, die gleich zum Termin hinzugefügt wird", "✨ Beta: Aushilfen mit „dabei bis“: kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert"]}

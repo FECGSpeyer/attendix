@@ -559,6 +559,24 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Whether [personId] already has a row in the Termin [attendanceId] of
+  /// the current tenant (inner join on attendance.tenantId).
+  Future<bool> hasPersonAttendance(int attendanceId, int personId) async {
+    try {
+      final rows = await supabase
+          .from('person_attendances')
+          .select('id, attendance:attendance_id!inner(tenantId)')
+          .eq('attendance_id', attendanceId)
+          .eq('person_id', personId)
+          .eq('attendance.tenantId', currentTenantId)
+          .limit(1);
+      return (rows as List).isNotEmpty;
+    } catch (e, stack) {
+      handleError(e, stack, 'hasPersonAttendance');
+      rethrow;
+    }
+  }
+
   /// Delete a single person_attendances row after validating it belongs to
   /// the current tenant. Throws [RepositoryException] on cross-tenant access.
   Future<void> deletePersonAttendance(String personAttendanceId) async {
