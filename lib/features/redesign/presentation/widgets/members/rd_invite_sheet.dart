@@ -112,6 +112,7 @@ class _InviteSheet extends ConsumerWidget {
               button,
               link,
               subject: l10n.redesignInviteShareSubject(group),
+              message: l10n.redesignInviteShareText(group, link),
               copiedMessage: l10n.redesignInviteCopied,
             ),
           ),
