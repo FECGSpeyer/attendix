@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.117.2",
+      "date": "10.11.2026",
+      "changes": [
+        "✨ Einladungslink: freundlichere Nachricht (Beta) und Link-Vorschau mit App-Logo und Gruppennamen in WhatsApp, Telegram & Co."
+      ]
+    },
+    {
       "version": "0.117.1",
       "date": "10.11.2026",
       "changes": [
