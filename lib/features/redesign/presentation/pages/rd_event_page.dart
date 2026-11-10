@@ -1432,7 +1432,8 @@ class _Overview extends ConsumerWidget {
     // Before the start: answers; from the start on: who is there.
     final here = members.where((m) => m.status == AttendanceStatus.present).length;
     final late = members.where((m) => m.status == AttendanceStatus.late || m.status == AttendanceStatus.lateExcused).length;
-    // Each count opens the Anwesenheit filtered to it.
+    // Each count opens the Anwesenheit filtered to it (no arrows: the
+    // card stays calm, the "›" at "eingeladen" shows it can be tapped).
     final List<(String, Color, RdRecordFilter)> legend = started
         ? [
             (l10n.redesignEventCountHere(here), p.present, RdRecordFilter.present),
@@ -1517,7 +1518,7 @@ class _Overview extends ConsumerWidget {
               const SizedBox(height: 12),
               Wrap(
                 spacing: 14,
-                runSpacing: 6,
+                runSpacing: 0,
                 children: [
                   for (final (text, color, filter) in legend)
                     Semantics(
@@ -1527,7 +1528,7 @@ class _Overview extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(8),
                         onTap: () => onRecord(filter),
                         child: ConstrainedBox(
-                          constraints: const BoxConstraints(minHeight: 32),
+                          constraints: const BoxConstraints(minHeight: 28),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -1538,7 +1539,6 @@ class _Overview extends ConsumerWidget {
                               ),
                               const SizedBox(width: 6),
                               Text(text, style: RdType.meta(p, size: 14).copyWith(color: p.text)),
-                              Icon(Icons.chevron_right, size: 16, color: p.text2),
                             ],
                           ),
                         ),
