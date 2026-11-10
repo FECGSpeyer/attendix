@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.118.0",
+      "date": "10.11.2026",
+      "changes": [
+        "✨ Beta: Im Termin unter „Person hinzufügen“ kann die Leitung jetzt direkt eine neue Person anlegen, die gleich zum Termin hinzugefügt wird",
+        "✨ Beta: Aushilfen mit „dabei bis“: kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert"
+      ]
+    },
+    {
       "version": "0.117.2",
       "date": "10.11.2026",
       "changes": [
