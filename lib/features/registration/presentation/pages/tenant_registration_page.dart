@@ -212,7 +212,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       });
     }
 
-    if (_forChildren == null) return _buildChoice();
+    if (_forChildren == null) return _buildChoice(tenant);
 
     final groupsAsync = ref.watch(registrationGroupsProvider(tenant.id!));
     final registrationFields = tenant.registrationFields ?? [];
@@ -516,7 +516,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   /// "Wen möchtest du anmelden?": "Mich selbst" (the old form) or "Mein
   /// Kind" (an Elternteil registers children). Nothing is preselected, so
   /// parents never register themselves as members by mistake.
-  Widget _buildChoice() {
+  Widget _buildChoice(Tenant tenant) {
     final beta = ref.watch(redesignEnabledProvider);
     final l10n = context.l10n;
     Widget tile(Key key, IconData icon, String title, String hint, bool forChildren) => IonItem(
@@ -529,7 +529,17 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           onTap: () => _choose(forChildren),
         );
     final children = <Widget>[
-      if (!beta) const IonContentTopInset(),
+      if (!beta) ...[
+        const IonContentTopInset(),
+        // The Beta card shows the group above; the old page names it here.
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Text(
+            tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+          ),
+        ),
+      ],
       beta ? RdGroupLabel(l10n.parentRegisterWhoTitle) : IonListHeader(l10n.parentRegisterWhoTitle),
       IonInsetGroup(
         margin: _betaGroupMargin,
