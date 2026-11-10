@@ -179,7 +179,7 @@ void main() {
     expect(find.text('Zugesagt'), findsWidgets);
   });
 
-  testWidgets('Dirigent with the sidebar: answers, attention, this week', (tester) async {
+  testWidgets('Dirigent with the sidebar: answers and attention, no week list', (tester) async {
     _size(tester, const Size(1280, 900));
     await tester.pumpWidget(_app(Role.admin));
     await _settle(tester);
@@ -195,7 +195,8 @@ void main() {
     expect(find.textContaining('24 zugesagt'), findsOneWidget);
     expect(find.text('2 neue Anmeldungen'), findsOneWidget);
     expect(find.text('3 Abmeldungen für den nächsten Termin'), findsOneWidget);
-    expect(find.text('Registerprobe'), findsOneWidget);
+    // The week list is gone from Heute: the later Termin is only in Termine.
+    expect(find.text('Registerprobe'), findsNothing);
     expect(find.text('Vorbei'), findsNothing);
   });
 
@@ -301,11 +302,10 @@ void main() {
     expect(find.text('Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.'), findsOneWidget);
     expect(find.text('Anwesenheit erfassen'), findsNothing);
     expect(find.textContaining('noch nicht erfasst'), findsNothing);
-    await tester.scrollUntilVisible(find.text('Registerprobe'), 200);
-    await tester.tap(find.text('Registerprobe'));
+    await tester.tap(find.text('Gesamtprobe'));
     await _settle(tester);
     expect(find.textContaining('page'), findsNothing);
-    expect(find.text('Registerprobe'), findsOneWidget);
+    expect(find.text('Gesamtprobe'), findsOneWidget);
   });
 
   testWidgets('every Farbwelt renders the phone shell without overflow', (tester) async {

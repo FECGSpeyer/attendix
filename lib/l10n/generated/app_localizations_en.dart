@@ -16250,8 +16250,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String redesignTodayBirthdayMore(Object name, Object day, Object count) {
-    return 'Birthday: $name ($day) +$count';
+  String redesignTodayBirthdays(Object list) {
+    return 'Birthdays: $list';
   }
 
   @override
@@ -16492,9 +16492,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get redesignTodayViewerHint =>
       'As an observer you see the overview. Leaders open single events.';
-
-  @override
-  String get redesignTodayWeekEmpty => 'Nothing else this week.';
 
   @override
   String get redesignTodayWhyNot => 'Why can\'t you make it?';

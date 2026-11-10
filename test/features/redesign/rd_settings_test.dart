@@ -10,7 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../factories/test_factories.dart';
 
 /// REDESIGN: Beta switch and Darstellung are stored on the device only;
 /// helpers of "Heute".
@@ -108,19 +107,6 @@ void main() {
       expect(rdStartOf('2026-10-30', '19:30'), DateTime(2026, 10, 30, 19, 30));
       expect(rdStartOf('2026-10-30', null), DateTime(2026, 10, 30));
       expect(rdStartOf(null, '19:30'), isNull);
-    });
-
-    test('rdThisWeek: the coming 7 days, at most three', () {
-      final now = DateTime(2026, 10, 29, 10);
-      final list = [
-        TestFactories.createAttendance(id: 1, date: '2026-10-30'),
-        TestFactories.createAttendance(id: 2, date: '2026-11-01'),
-        TestFactories.createAttendance(id: 3, date: '2026-11-04'),
-        TestFactories.createAttendance(id: 4, date: '2026-11-05'),
-        TestFactories.createAttendance(id: 5, date: '2026-11-20'),
-      ];
-      expect(rdThisWeek(list, now: now).map((a) => a.id), [1, 2, 3]);
-      expect(rdThisWeek(list, now: now, limit: 10).map((a) => a.id), [1, 2, 3, 4]);
     });
 
     test('rdRelativeDay and rdCountdown', () {

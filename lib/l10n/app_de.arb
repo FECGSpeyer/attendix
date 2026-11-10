@@ -20202,13 +20202,11 @@
       "day": {}
     }
   },
-  "redesignTodayBirthdayMore": "Geburtstag: {name} ({day}) +{count}",
-  "@redesignTodayBirthdayMore": {
-    "description": "redesign.today.birthdayMore",
+  "redesignTodayBirthdays": "Geburtstage: {list}",
+  "@redesignTodayBirthdays": {
+    "description": "redesign.today.birthdays",
     "placeholders": {
-      "name": {},
-      "day": {},
-      "count": {}
+      "list": {}
     }
   },
   "redesignTodayChangeAnswer": "Ändern",
@@ -20481,10 +20479,6 @@
   "redesignTodayViewerHint": "Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.",
   "@redesignTodayViewerHint": {
     "description": "redesign.today.viewerHint"
-  },
-  "redesignTodayWeekEmpty": "Diese Woche kommt sonst nichts.",
-  "@redesignTodayWeekEmpty": {
-    "description": "redesign.today.weekEmpty"
   },
   "redesignTodayWhyNot": "Warum kannst du nicht?",
   "@redesignTodayWhyNot": {

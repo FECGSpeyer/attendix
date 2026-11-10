@@ -26170,11 +26170,11 @@ abstract class AppLocalizations {
   /// **'Geburtstag: {name} ({day})'**
   String redesignTodayBirthday(Object name, Object day);
 
-  /// redesign.today.birthdayMore
+  /// redesign.today.birthdays
   ///
   /// In de, this message translates to:
-  /// **'Geburtstag: {name} ({day}) +{count}'**
-  String redesignTodayBirthdayMore(Object name, Object day, Object count);
+  /// **'Geburtstage: {list}'**
+  String redesignTodayBirthdays(Object list);
 
   /// redesign.today.changeAnswer
   ///
@@ -26481,12 +26481,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.'**
   String get redesignTodayViewerHint;
-
-  /// redesign.today.weekEmpty
-  ///
-  /// In de, this message translates to:
-  /// **'Diese Woche kommt sonst nichts.'**
-  String get redesignTodayWeekEmpty;
 
   /// redesign.today.whyNot
   ///
