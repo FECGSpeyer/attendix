@@ -634,6 +634,18 @@ void main() {
     expect(find.text('0 von 1 da'), findsOneWidget);
   });
 
+  testWidgets('excused rows are settled: no status buttons, all behind more', (tester) async {
+    _size(tester, const Size(393, 852));
+    final h = _Harness();
+    await tester.pumpWidget(h.app(tab: RdEventTab.record));
+    await _settle(tester);
+
+    final max = find.byKey(const ValueKey('rd-record-3'));
+    expect(find.descendant(of: max, matching: find.bySemanticsLabel('Anwesend')), findsNothing);
+    expect(find.descendant(of: max, matching: find.bySemanticsLabel('Abwesend')), findsNothing);
+    expect(find.descendant(of: max, matching: find.bySemanticsLabel('Weitere Status und Notiz für Max Huber')), findsOneWidget);
+  });
+
   testWidgets('Helfer only see their own group, without notes', (tester) async {
     _size(tester, const Size(393, 852));
     final h = _Harness(role: Role.helper, scope: const AttendanceGroupScope.group(20), canViewNotes: false);
