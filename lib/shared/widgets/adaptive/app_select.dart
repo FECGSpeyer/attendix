@@ -340,7 +340,7 @@ Widget _selectToggleIcon(BuildContext context, {required bool enabled}) {
   return Opacity(
     opacity: enabled ? 1 : 0.4,
     child: rd != null
-        ? Icon(AppIcons.keyboardArrowDown, size: 20, color: rd.text2)
+        ? Icon(Icons.keyboard_arrow_down, size: 20, color: rd.text2)
         : const IonSelectIcon(),
   );
 }

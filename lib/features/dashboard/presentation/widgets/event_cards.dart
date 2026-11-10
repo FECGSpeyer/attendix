@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,6 +10,7 @@ import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/router/route_access.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/utils/dashboard_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/dashboard/dashboard_event.dart';
@@ -62,19 +62,19 @@ class NextEventCard extends ConsumerWidget {
     }
 
     return DashboardCard(
-      icon: Ionicons.calendarOutline,
+      icon: AppIcons.calendarTodayOutlined,
       title: context.l10n.homeDashboardEvents,
       subtitle: context.l10n.homeDashboardNextAndLast,
       strip: DashStrips.event,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Ionicons.alertCircleOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
+        error: (e, _) => DashEmptyRow(icon: AppIcons.errorOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (s) {
           final next = s.nextEvent;
           final last = s.lastEvent;
           if (next == null && last == null) {
             return DashEmptyRow(
-              icon: Ionicons.calendarOutline,
+              icon: AppIcons.calendarTodayOutlined,
               text: context.l10n.homeDashboardNoEvents,
             );
           }
@@ -90,7 +90,7 @@ class NextEventCard extends ConsumerWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Ionicons.documentTextOutline, size: 16, color: AppColors.medium),
+                        Icon(AppIcons.descriptionOutlined, size: 16, color: AppColors.medium),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -296,17 +296,17 @@ class CurrentSongsCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(dashboardCurrentSongsProvider);
     return DashboardCard(
-      icon: Ionicons.musicalNotesOutline,
+      icon: AppIcons.musicNoteOutlined,
       title: context.l10n.homeDashboardCurrentSongs,
       subtitle: context.l10n.homeDashboardPlannedSongs,
       strip: DashStrips.songs,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Ionicons.alertCircleOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
+        error: (e, _) => DashEmptyRow(icon: AppIcons.errorOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (entries) {
           if (entries.isEmpty) {
             return DashEmptyRow(
-              icon: Ionicons.musicalNotesOutline,
+              icon: AppIcons.musicNoteOutlined,
               text: context.l10n.homeDashboardNoPlannedSongs,
             );
           }
@@ -381,7 +381,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
     final async = ref.watch(dashboardCurrentPlanProvider);
     return async.when(
       loading: () => DashboardCard(
-        icon: Ionicons.listOutline,
+        icon: AppIcons.listAlt,
         title: context.l10n.homeDashboardCurrentPlan,
         subtitle: '',
         strip: DashStrips.plan,
@@ -489,7 +489,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
     );
 
     return DashboardCard(
-      icon: Ionicons.listOutline,
+      icon: AppIcons.listAlt,
       title: context.l10n.homeDashboardCurrentPlan,
       subtitle: typeName,
       strip: DashStrips.plan,
@@ -513,7 +513,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
             leading: DashTile.date(data.planDay, tone: DashTone.teal, solid: isToday),
             title: dateLabel,
             subtitle: planTimes,
-            trailing: const Icon(Ionicons.chevronForwardOutline, color: AppColors.medium),
+            trailing: Icon(AppIcons.chevronRight, color: AppColors.medium),
           ),
           for (var i = 0; i < fields.length; i++)
             _fieldRow(

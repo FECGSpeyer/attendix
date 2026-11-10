@@ -183,7 +183,7 @@ class IonDetailChevron extends StatelessWidget {
   Widget build(BuildContext context) {
     // Beta-Skin: the chevron of the new design's list rows.
     final rd = context.rdSkin;
-    if (rd != null) return Icon(AppIcons.chevronRight, size: 20, color: rd.text2);
+    if (rd != null) return Icon(Icons.chevron_right, size: 20, color: rd.text2);
     return _ionChevron(context);
   }
 
@@ -431,7 +431,7 @@ class IonSearchIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rd = context.rdSkin;
-    if (rd != null) return Icon(AppIcons.search, size: 20, color: rd.text2);
+    if (rd != null) return Icon(Icons.search, size: 20, color: rd.text2);
     return Icon(
       AppIcons.cupertinoSearch,
       size: size,

@@ -1359,7 +1359,7 @@ class _RadioAlertState<T> extends State<_RadioAlert<T>> {
                               ),
                               const SizedBox(width: 12),
                               value == _value
-                                  ? Icon(AppIcons.check, size: 22, color: rd.primary)
+                                  ? Icon(Icons.check, size: 22, color: rd.primary)
                                   : const SizedBox(width: 22),
                             ],
                           ),

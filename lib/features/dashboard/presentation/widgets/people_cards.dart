@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/utils/dashboard_utils.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../people/presentation/widgets/person_modal.dart';
@@ -31,17 +31,17 @@ class BirthdaysCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(dashboardBirthdaysProvider);
     return DashboardCard(
-      icon: Ionicons.giftOutline,
+      icon: AppIcons.cardGiftcardOutlined,
       title: context.l10n.homeDashboardBirthdays,
       subtitle: context.l10n.homeDashboardBirthdayRange,
       strip: DashStrips.birthday,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Ionicons.alertCircleOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
+        error: (e, _) => DashEmptyRow(icon: AppIcons.errorOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (entries) {
           if (entries.isEmpty) {
             return DashEmptyRow(
-              icon: Ionicons.happyOutline,
+              icon: AppIcons.sentimentSatisfiedAltOutlined,
               text: context.l10n.homeDashboardNoBirthdays,
             );
           }
@@ -79,7 +79,7 @@ class BirthdaysCard extends ConsumerWidget {
           ? DashChip(
               label: context.l10n.teamOrgTodayCap,
               tone: DashTone.pink,
-              icon: Ionicons.sparkles,
+              icon: AppIcons.autoAwesome,
               solid: true,
             )
           : DashMeta(DashboardUtils.relativeDays(e.date)),
@@ -95,17 +95,17 @@ class MemberChangesCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(dashboardMemberChangesProvider);
     return DashboardCard(
-      icon: Ionicons.peopleOutline,
+      icon: AppIcons.peopleOutline,
       title: context.l10n.homeDashboardMemberChanges,
       subtitle: context.l10n.homeDashboardLast60Days,
       strip: DashStrips.members,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Ionicons.alertCircleOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
+        error: (e, _) => DashEmptyRow(icon: AppIcons.errorOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (changes) {
           if (changes.isEmpty) {
             return DashEmptyRow(
-              icon: Ionicons.peopleOutline,
+              icon: AppIcons.peopleOutline,
               text: context.l10n.homeDashboardNoChanges,
             );
           }
@@ -125,7 +125,7 @@ class MemberChangesCard extends ConsumerWidget {
                         ? context.l10n.homeDashboardFlutterJoin
                         : context.l10n.homeDashboardFlutterExit,
                     tone: c.joined ? DashTone.green : DashTone.red,
-                    icon: c.joined ? Ionicons.arrowForward : Ionicons.arrowBack,
+                    icon: c.joined ? AppIcons.arrowForward : AppIcons.arrowBack,
                   ),
                 ),
             ],
@@ -144,17 +144,17 @@ class AbsencesCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(dashboardAbsencesProvider);
     return DashboardCard(
-      icon: Ionicons.moonOutline,
+      icon: AppIcons.nightlightOutlined,
       title: context.l10n.homeDashboardAbsences,
       subtitle: context.l10n.homeDashboardLast4Weeks,
       strip: DashStrips.absences,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Ionicons.alertCircleOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
+        error: (e, _) => DashEmptyRow(icon: AppIcons.errorOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (entries) {
           if (entries.isEmpty) {
             return DashEmptyRow(
-              icon: Ionicons.checkmarkCircleOutline,
+              icon: AppIcons.checkCircleOutline,
               text: context.l10n.homeDashboardNoAbsences,
             );
           }
@@ -183,7 +183,7 @@ class AbsencesCard extends ConsumerWidget {
   Widget _leading(AbsenceEntry e) {
     final from = DashboardUtils.parse(e.fromDate);
     if (from == null) {
-      return const DashTile(tone: DashTone.muted, icon: Ionicons.pause);
+      return DashTile(tone: DashTone.muted, icon: AppIcons.pause);
     }
     return DashTile.date(from, tone: e.isPause ? DashTone.muted : DashTone.orange);
   }
@@ -197,17 +197,17 @@ class CriticalPersonsCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(dashboardCriticalPersonsProvider);
     return DashboardCard(
-      icon: Ionicons.warningOutline,
+      icon: AppIcons.warningAmberOutlined,
       title: context.l10n.homeDashboardProblemCases,
       subtitle: context.l10n.homeDashboardCurrentProblemCases,
       strip: DashStrips.critical,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Ionicons.alertCircleOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
+        error: (e, _) => DashEmptyRow(icon: AppIcons.errorOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (persons) {
           if (persons.isEmpty) {
             return DashEmptyRow(
-              icon: Ionicons.checkmarkCircleOutline,
+              icon: AppIcons.checkCircleOutline,
               iconColor: AppColors.success,
               text: context.l10n.homeDashboardNoProblemCases,
             );

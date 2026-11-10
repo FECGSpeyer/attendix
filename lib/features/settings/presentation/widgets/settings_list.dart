@@ -451,7 +451,7 @@ class IonDetailChevron extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rd = context.rdSkin;
-    if (rd != null) return Icon(AppIcons.chevronRight, size: 20, color: rd.text2);
+    if (rd != null) return Icon(Icons.chevron_right, size: 20, color: rd.text2);
     if (!ionIsIos(context)) {
       // MD_SWEEP: md `.item-detail-icon` – chevron-forward 1.25em (20px)
       // in the text colour at `--detail-icon-opacity: .25`.

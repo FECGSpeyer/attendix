@@ -122,8 +122,8 @@ abstract final class AppIcons {
   static IconData get event => _pick(Ionicons.calendar, Icons.event);
   static IconData get eventAvailable => _pick(Ionicons.calendar, Icons.event_available);
   static IconData get eventAvailableOutlined => _pick(Ionicons.calendarOutline, Icons.event_available_outlined);
-  static IconData get eventBusy => _pick(Ionicons.calendarClear, Icons.event_busy);
-  static IconData get eventBusyOutlined => _pick(Ionicons.calendarClearOutline, Icons.event_busy_outlined);
+  static IconData get eventBusy => _pick(Ionicons.removeCircle, Icons.event_busy);
+  static IconData get eventBusyOutlined => _pick(Ionicons.removeCircleOutline, Icons.event_busy_outlined);
   static IconData get eventNote => _pick(Ionicons.calendar, Icons.event_note);
   static IconData get eventNoteOutlined => _pick(Ionicons.calendarOutline, Icons.event_note_outlined);
   static IconData get eventOutlined => _pick(Ionicons.calendarOutline, Icons.event_outlined);
