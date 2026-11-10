@@ -50,18 +50,25 @@ Future<void> rdSetRedesignEnabled(
 
 /// Opens the system share sheet for [link] (WhatsApp, Telegram, Mail,
 /// "Kopieren" …), anchored at [button] (iPad popover). The message starts
-/// with [subject] so the chat shows what the link is. Where no share sheet
+/// with [subject] so the chat shows what the link is; a full [message]
+/// (which must contain the link itself) replaces that, and [subject] is
+/// then only the mail subject. Where no share sheet
 /// exists (desktop browsers) only the link is copied.
 Future<void> rdShareLink(
   BuildContext button,
   String link, {
   String? subject,
+  String? message,
   required String copiedMessage,
 }) async {
   final box = button.findRenderObject() as RenderBox?;
   final origin = box == null || !box.hasSize ? null : box.localToGlobal(Offset.zero) & box.size;
   try {
-    final text = (subject ?? '').trim().isEmpty ? link : '${subject!.trim()}\n$link';
+    final text = (message ?? '').trim().isNotEmpty
+        ? message!.trim()
+        : (subject ?? '').trim().isEmpty
+            ? link
+            : '${subject!.trim()}\n$link';
     final result = await Share.share(text, subject: subject, sharePositionOrigin: origin);
     if (result.status != ShareResultStatus.unavailable) return;
   } catch (_) {

@@ -23221,8 +23221,14 @@ abstract class AppLocalizations {
   /// redesign.invite.shareSubject
   ///
   /// In de, this message translates to:
-  /// **'Melde dich bei {group} in Attendix an:'**
+  /// **'Einladung zu {group} in Attendix'**
   String redesignInviteShareSubject(Object group);
+
+  /// redesign.invite.shareText
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo! 👋 Du bist zu {group} in Attendix eingeladen. Dort siehst du alle Termine und gibst Bescheid, ob du dabei bist.\n\nHier meldest du dich an, im Browser oder in der Attendix-App:\n{link}'**
+  String redesignInviteShareText(Object group, Object link);
 
   /// redesign.invite.title
   ///

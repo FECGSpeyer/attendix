@@ -17938,11 +17938,19 @@
   "@redesignInviteShare": {
     "description": "redesign.invite.share"
   },
-  "redesignInviteShareSubject": "Melde dich bei {group} in Attendix an:",
+  "redesignInviteShareSubject": "Einladung zu {group} in Attendix",
   "@redesignInviteShareSubject": {
     "description": "redesign.invite.shareSubject",
     "placeholders": {
       "group": {}
+    }
+  },
+  "redesignInviteShareText": "Hallo! 👋 Du bist zu {group} in Attendix eingeladen. Dort siehst du alle Termine und gibst Bescheid, ob du dabei bist.\n\nHier meldest du dich an, im Browser oder in der Attendix-App:\n{link}",
+  "@redesignInviteShareText": {
+    "description": "redesign.invite.shareText",
+    "placeholders": {
+      "group": {},
+      "link": {}
     }
   },
   "redesignInviteTitle": "Mitglieder einladen",

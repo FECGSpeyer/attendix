@@ -39,6 +39,24 @@
   <link rel="icon" type="image/png" href="favicon.png"/>
 
   <title>Attendix</title>
+  <!-- LINK_PREVIEW: what WhatsApp, Telegram, iMessage, Signal, Mail … show
+       for a shared attendix.de link (e.g. the invitation link from
+       "Mitglieder einladen"): app icon, name and a short description.
+       Crawlers do not run the app, so this is the same for every path.
+       The image URL must be absolute. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Attendix">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:title" content="Attendix">
+  <meta property="og:description" content="Termine, Anwesenheit und Noten für Orchester, Chöre und Gruppen – im Browser oder in der App.">
+  <meta property="og:image" content="https://attendix.de/icons/Icon-512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:alt" content="Attendix-Logo">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Attendix">
+  <meta name="twitter:description" content="Termine, Anwesenheit und Noten für Orchester, Chöre und Gruppen – im Browser oder in der App.">
+  <meta name="twitter:image" content="https://attendix.de/icons/Icon-512.png">
   <!-- SWIPE_BACK_WEB: Safari's edge swipe (and Chrome's back gesture) slides
        the previous page in itself before it fires popstate. Mark those steps
        so the app shows the page without playing its own transition again

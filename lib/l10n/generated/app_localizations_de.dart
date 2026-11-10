@@ -14603,7 +14603,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String redesignInviteShareSubject(Object group) {
-    return 'Melde dich bei $group in Attendix an:';
+    return 'Einladung zu $group in Attendix';
+  }
+
+  @override
+  String redesignInviteShareText(Object group, Object link) {
+    return 'Hallo! 👋 Du bist zu $group in Attendix eingeladen. Dort siehst du alle Termine und gibst Bescheid, ob du dabei bist.\n\nHier meldest du dich an, im Browser oder in der Attendix-App:\n$link';
   }
 
   @override
