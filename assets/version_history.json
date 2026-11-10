@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.120.0",
+      "date": "10.11.2026",
+      "changes": [
+        "💄 Normales Design: alle Icons wieder als Ionicons wie in der alten App (Beta bleibt bei Material)"
+      ]
+    },
+    {
       "version": "0.119.1",
       "date": "10.11.2026",
       "changes": [
