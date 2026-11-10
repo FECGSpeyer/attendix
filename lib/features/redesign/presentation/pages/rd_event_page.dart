@@ -740,6 +740,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         attendance: attendance,
         preview: plan == null ? null : RdPlanTimeline(day: EventListUtils.parse(attendance.date), plan: plan),
         range: plan == null ? '' : rdPlanRange(plan),
+        freeMinutes: plan == null ? null : rdPlanFreeMinutes(plan, _span(attendance, type)),
       ),
     ];
   }

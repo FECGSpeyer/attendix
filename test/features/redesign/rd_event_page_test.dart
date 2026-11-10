@@ -882,7 +882,7 @@ void main() {
       _size(tester, const Size(393, 1400));
       await tester.pumpWidget(_Harness(plan: plan, empty: true).app(tab: RdEventTab.program));
       await _settle(tester);
-      expect(find.text('Ablauf ansehen'), findsOneWidget);
+      expect(find.byKey(const Key('rd-plan-preview')), findsOneWidget);
     });
 
     for (final role in [Role.helper, Role.viewer]) {
@@ -907,8 +907,8 @@ void main() {
         _size(tester, const Size(393, 1400));
         await tester.pumpWidget(h().app(tab: RdEventTab.program));
         await _settle(tester);
-        expect(find.text('Ablauf ansehen'), shown ? findsOneWidget : findsNothing);
-        // Reiter Programm: the Ablauf itself, not only a link to it.
+        // Reiter Programm: the Ablauf itself (a tap opens it whole).
+        expect(find.byKey(const Key('rd-plan-preview')), shown ? findsOneWidget : findsNothing);
         expect(find.text('Einspielen'), shown ? findsOneWidget : findsNothing);
       });
     }

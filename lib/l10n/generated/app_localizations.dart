@@ -20344,6 +20344,12 @@ abstract class AppLocalizations {
   /// **'Bearbeiten'**
   String get redesignEventPlanEditShort;
 
+  /// redesign.event.planFree
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Min frei bis Terminende'**
+  String redesignEventPlanFree(Object count);
+
   /// redesign.event.planHint
   ///
   /// In de, this message translates to:

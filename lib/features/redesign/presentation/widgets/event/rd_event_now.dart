@@ -59,6 +59,21 @@ String rdPlanRange(Plan plan) {
   return end.isEmpty || end == start ? start : '$start–$end';
 }
 
+/// Minutes the Ablauf leaves free before the end of a one-day Termin with
+/// times ("20 Min frei"); null when it fills the Termin, runs over or the
+/// times are missing.
+int? rdPlanFreeMinutes(Plan plan, ({DateTime start, DateTime end, bool hasTime})? span) {
+  if (span == null || !span.hasTime) return null;
+  final start = PlanUtils.parseTimeToMinutes(plan.time);
+  if (start == null || plan.fields.isEmpty) return null;
+  final end = start + PlanUtils.totalMinutes(plan.fields);
+  final day = span.start;
+  final eventEnd = span.end;
+  if (eventEnd.year != day.year || eventEnd.month != day.month || eventEnd.day != day.day) return null;
+  final free = eventEnd.hour * 60 + eventEnd.minute - end;
+  return free >= 5 ? free : null;
+}
+
 String _hm(DateTime d) => '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
 
 /// Rebuilds once a minute (the current Ablauf row moves on).
@@ -208,11 +223,12 @@ class _RdPlanTimelineState extends State<RdPlanTimeline> with _MinuteTicker {
       if (PlanUtils.isGroupHead(f)) {
         rows.add(Container(
           width: double.infinity,
-          color: p.bg,
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 7),
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+          // A block of the Ablauf, not a section of the page: normal case
+          // on the card, no band.
           child: Text(
-            f.name.toUpperCase(),
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: p.softText),
+            f.name,
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: p.text2),
           ),
         ));
         continue;

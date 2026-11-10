@@ -361,7 +361,8 @@
         "planEditShort": "Bearbeiten",
         "prepTitle": "Vorbereitung",
         "prepEmpty": "Was vor dem Termin erledigt sein muss, z. B. Raum aufschließen oder Noten kopieren. Abhaken kannst du direkt hier, sehen kann es nur die Leitung.",
-        "prepTakeOver": "{count, plural, one {1 Aufgabe der Terminart übernehmen} other {{count} Aufgaben der Terminart übernehmen}}"
+        "prepTakeOver": "{count, plural, one {1 Aufgabe der Terminart übernehmen} other {{count} Aufgaben der Terminart übernehmen}}",
+        "planFree": "{count} Min frei bis Terminende"
       },
       "own": {
         "notFound": "Dieser Termin ist nicht mehr in deiner Liste.",
@@ -1968,7 +1969,8 @@
         "planEditShort": "Edit",
         "prepTitle": "Preparation",
         "prepEmpty": "What has to be done before the event, e.g. unlock the room or copy the sheet music. Tick it off right here; only leaders can see it.",
-        "prepTakeOver": "{count, plural, one {Add 1 task of the event type} other {Add {count} tasks of the event type}}"
+        "prepTakeOver": "{count, plural, one {Add 1 task of the event type} other {Add {count} tasks of the event type}}",
+        "planFree": "{count} min free until the event ends"
       },
       "own": {
         "notFound": "This event is no longer in your list.",

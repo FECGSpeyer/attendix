@@ -12510,6 +12510,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventPlanEditShort => 'Edit';
 
   @override
+  String redesignEventPlanFree(Object count) {
+    return '$count min free until the event ends';
+  }
+
+  @override
   String get redesignEventPlanHint => 'Run sheet, live on the day';
 
   @override

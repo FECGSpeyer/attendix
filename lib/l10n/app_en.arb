@@ -3368,6 +3368,7 @@
   "redesignEventPlanEdit": "Edit schedule",
   "redesignEventPlanEditHint": "Items, times, PDF and Telegram",
   "redesignEventPlanEditShort": "Edit",
+  "redesignEventPlanFree": "{count} min free until the event ends",
   "redesignEventPlanHint": "Run sheet, live on the day",
   "redesignEventPlanLive": "Live schedule",
   "redesignEventPlanMinutes": "{count} min",

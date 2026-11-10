@@ -12629,6 +12629,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventPlanEditShort => 'Bearbeiten';
 
   @override
+  String redesignEventPlanFree(Object count) {
+    return '$count Min frei bis Terminende';
+  }
+
+  @override
   String get redesignEventPlanHint => 'Ablaufplan, am Termin-Tag live';
 
   @override

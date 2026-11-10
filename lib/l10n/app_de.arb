@@ -15606,6 +15606,13 @@
   "@redesignEventPlanEditShort": {
     "description": "redesign.event.planEditShort"
   },
+  "redesignEventPlanFree": "{count} Min frei bis Terminende",
+  "@redesignEventPlanFree": {
+    "description": "redesign.event.planFree",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "redesignEventPlanHint": "Ablaufplan, am Termin-Tag live",
   "@redesignEventPlanHint": {
     "description": "redesign.event.planHint"
