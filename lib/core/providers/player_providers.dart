@@ -241,13 +241,9 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final parent = parentRegistrationOf(player);
-      if (parent != null && (player.appId ?? '').isNotEmpty) {
-        // Elternteil first: when that fails, the child stays in Freigaben.
-        final newParent =
-            await _approveChild(repo, registration, parents, player, parent);
-        await repo.approvePlayer(player.copyWith(appId: null, email: null));
+      if (parent != null) {
+        await _approveChild(repo, registration, parents, player, parent);
         ref.invalidate(parentsProvider);
-        if (newParent) await _notifyParentApproval(registration, parent);
       } else {
         await repo.approvePlayer(player);
         await _notifyApproval(registration, player);
@@ -268,16 +264,17 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     final parent = parentRegistrationOf(player);
     state = const AsyncValue.loading();
     try {
-      // Parent registration: the account stays when it is already more
-      // than an applicant here (e.g. the Elternteil of an approved sibling).
-      var declined = player;
-      if (parent != null && (player.appId ?? '').isNotEmpty) {
-        final role = await registration.getTenantUserRole(player.appId!);
-        if (role != null && role != Role.applicant) {
-          declined = player.copyWith(appId: null);
+      await repo.declinePlayer(player, reason);
+      // Parent registration (the child has no appId): the parent's account
+      // loses its access only while it is still an applicant without
+      // another child waiting here.
+      if (parent != null) {
+        final role = await registration.getTenantUserRole(parent.appId);
+        if (role == Role.applicant &&
+            !await repo.hasPendingChildOf(parent.appId, exceptId: player.id)) {
+          await repo.removeUserFromTenant(parent.appId, personId: player.id);
         }
       }
-      await repo.declinePlayer(declined, reason);
       await _notifyReject(registration, player);
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
@@ -311,19 +308,21 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
-  /// Parent registration ("Mein Kind"), after the child is approved: the
-  /// registering account becomes the child's Elternteil (one per account,
-  /// siblings share it), an applicant account gets the role Elternteil and
-  /// the approval mail, and the child no longer carries the account.
-  /// True when the account just became an Elternteil (send the mail).
-  Future<bool> _approveChild(
+  /// Parent registration ("Mein Kind"): the registering account becomes
+  /// the child's Elternteil (one per account, siblings share it), an
+  /// applicant account gets the role Elternteil, and only then the child is
+  /// approved, linked and freed of the marker in ONE update. Every step
+  /// before is idempotent, so after a failure the child stays in Freigaben
+  /// and "Aufnehmen" can simply be repeated. The approval mail goes out
+  /// with the Elternteil's first approved child.
+  Future<void> _approveChild(
     PlayerRepository players,
     UserRegistrationRepository registration,
     ParentRepository parents,
     Person child,
     ParentRegistration parent,
   ) async {
-    final appId = child.appId!;
+    final appId = parent.appId;
     final existing = await parents.getParentByAppId(appId);
     final parentRow = existing ??
         await parents.createParent(ParentModel(
@@ -332,8 +331,6 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
           firstName: parent.firstName,
           lastName: parent.lastName,
         ));
-    await players.linkChildToParent(
-        child.id!, parentRow.id!, withoutParentRegistration(child.additionalFields));
     final role = await registration.getTenantUserRole(appId);
     if (role == Role.applicant) {
       await registration.updateTenantUserRole(appId, Role.parent);
@@ -341,7 +338,10 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     if (role == Role.applicant || role == Role.parent) {
       await registration.linkParentToTenantUser(appId, parentRow.id!);
     }
-    return role == Role.applicant;
+    final firstChild = (await players.getChildrenForParent(parentRow.id!)).isEmpty;
+    await players.approvePlayer(child,
+        extra: childApprovalFields(parentRow.id!, child.additionalFields));
+    if (firstChild) await _notifyParentApproval(registration, parent);
   }
 
   /// Approval mail of a new Elternteil (non-blocking like [_notifyApproval]).

@@ -190,20 +190,23 @@ class RegistrationService {
           DateTime.utc(today.year, today.month, today.day).toIso8601String();
       final hasBirthDate =
           (tenant.registrationFields ?? const []).contains('birthDate');
-      for (final child in formData.children) {
-        await supabase.from('player').insert({
-          ...buildChildRegistrationPlayerData(
-            tenantId: tenantId,
-            parentAppId: userId,
-            formData: formData,
-            child: child,
-            parentEmail: email,
-            hasBirthDate: hasBirthDate,
-            todayIso: todayIso,
-          ),
-          'id': generateIonicId(),
-        });
-      }
+      // One insert for all children: either all are saved or none (a retry
+      // then never duplicates a child).
+      await supabase.from('player').insert([
+        for (final child in formData.children)
+          {
+            ...buildChildRegistrationPlayerData(
+              tenantId: tenantId,
+              parentAppId: userId,
+              formData: formData,
+              child: child,
+              parentEmail: email,
+              hasBirthDate: hasBirthDate,
+              todayIso: todayIso,
+            ),
+            'id': generateIonicId(),
+          },
+      ]);
       return RegistrationResult.success(
         isNewAccount: created && !otpMode,
         role: Role.applicant,
@@ -478,8 +481,9 @@ extension _ParentAccount on RegistrationService {
 
 /// Player row of one child in a parent registration: the shared form data
 /// with the child's name / group / birth date, always pending (the lead
-/// approves the parent with the child), the parent's account as `appId`
-/// and the parent marker (see [kParentRegistrationKey]).
+/// approves the parent with the child), no `appId` (the child is not the
+/// parent's own person) and the parent marker with the parent's account
+/// (see [kParentRegistrationKey]).
 Map<String, dynamic> buildChildRegistrationPlayerData({
   required int tenantId,
   required String parentAppId,
@@ -507,10 +511,12 @@ Map<String, dynamic> buildChildRegistrationPlayerData({
     'birthday': hasBirthDate
         ? child.birthDate?.toIso8601String().split('T').first
         : null,
+    'appId': null,
     'img': kDefaultAvatarUrl,
     'additional_fields': {
       ...formData.additionalFields,
       kParentRegistrationKey: ParentRegistration(
+        appId: parentAppId,
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
         email: parentEmail,

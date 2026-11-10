@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:attendix/core/utils/parent_registration.dart';
 import 'package:attendix/features/registration/data/providers/registration_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,7 +20,8 @@ void main() {
       );
 
       expect(row['tenantId'], 42);
-      expect(row['appId'], 'parent-uid');
+      // Never the parent's own person (profile sync, login).
+      expect(row.containsKey('appId') && row['appId'] == null, isTrue);
       expect(row['pending'], true);
       expect(row['firstName'], 'Max');
       expect(row['instrument'], 7);
@@ -32,18 +31,22 @@ void main() {
       final parent = ParentRegistration.fromAdditionalFields(fields)!;
       expect(parent.fullName, 'Anna Muster');
       expect(parent.email, 'anna@mail.de');
+      expect(parent.appId, 'parent-uid');
       // The shared form fields stay untouched for the next child.
       expect(form.additionalFields.containsKey(kParentRegistrationKey), isFalse);
       expect(withoutParentRegistration(fields).containsKey(kParentRegistrationKey), isFalse);
     });
 
-    test('approval links the child with id AND tenantId filter', () {
-      // Source check like the other repository security tests.
-      final src = File('lib/data/repositories/player_repository.dart').readAsStringSync();
-      final link = src.substring(src.indexOf('Future<void> linkChildToParent('));
-      final body = link.substring(0, link.indexOf('\n  }\n'));
-      expect(body, contains(".eq('id', playerId)"));
-      expect(body, contains(".eq('tenantId', currentTenantId)"));
+    test('approval fields: parent_id set, account, e-mail and marker removed', () {
+      final fields = {
+        'church': 'x',
+        kParentRegistrationKey: {'appId': 'p', 'email': 'a@b.de', 'firstName': 'A', 'lastName': 'B'},
+      };
+      final update = childApprovalFields(9, fields);
+      expect(update['parent_id'], 9);
+      expect(update.containsKey('appId') && update['appId'] == null, isTrue);
+      expect(update['email'], isNull);
+      expect(update['additional_fields'], {'church': 'x'});
     });
   });
 }

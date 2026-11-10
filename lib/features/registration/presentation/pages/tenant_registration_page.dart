@@ -593,6 +593,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     final dateFormat = DateFormat(dateFmt());
     final hasBirthDate = (tenant.registrationFields ?? const []).contains('birthDate');
     final groups = groupsAsync.valueOrNull ?? const <Map<String, dynamic>>[];
+    // Like the self registration: no groups → warning and no sending.
+    if (groupsAsync.hasValue) _noGroupsAvailable = groups.isEmpty;
     final label = _groupLabel(tenant);
     final kids = _formData.children;
     return [
@@ -622,7 +624,22 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                 onSaved: (v) => kids[i].lastName = v?.trim() ?? '',
               ),
             ),
-            if (groups.isNotEmpty)
+            if (groupsAsync.isLoading && !groupsAsync.hasValue)
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(child: AppSpinner()),
+              )
+            else if (groupsAsync.hasError && !groupsAsync.hasValue)
+              IonItem(
+                label: l10n.tenantRegisterFlutterLoadGroupsFailed,
+                labelColor: AppColors.danger,
+              )
+            else if (groups.isEmpty)
+              IonItem(
+                start: const Icon(Icons.warning_amber_outlined, color: AppColors.warning),
+                label: l10n.tenantRegisterNoGroups,
+              )
+            else
               Builder(builder: (_) {
                 kids[i].groupId ??= groups.first['id'] as int;
                 final selected = groups.where((g) => g['id'] == kids[i].groupId).firstOrNull;
@@ -1516,6 +1533,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         if (child.firstName.trim().isEmpty || child.lastName.trim().isEmpty) {
           return context.l10n.parentRegisterChildNameRequired;
         }
+        if (child.groupId == null) return context.l10n.tenantRegisterNoGroupsToast;
         if (registrationFields.contains('birthDate') && child.birthDate == null) {
           return context.l10n.parentRegisterChildBirthDateRequired;
         }

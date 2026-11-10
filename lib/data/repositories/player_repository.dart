@@ -25,6 +25,7 @@ import 'shared_person_fields.dart'
 import 'user_registration_repository.dart';
 import '../../l10n/l10n.dart';
 import '../../core/services/error_reporter.dart';
+import '../../core/utils/parent_registration.dart';
 
 /// Provider for PlayerRepository
 final playerRepositoryProvider = Provider<PlayerRepository>((ref) {
@@ -1259,8 +1260,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Approve a pending player
-  Future<void> approvePlayer(Person player) async {
+  /// Approve a pending player. [extra]: further columns written in the
+  /// same update (parent registration: `parent_id`, marker removed).
+  Future<void> approvePlayer(Person player, {Map<String, dynamic> extra = const {}}) async {
     ensureNotDemo('approvePlayer'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
@@ -1283,6 +1285,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       await supabase
           .from('player')
           .update({
+            ...extra,
             'pending': false,
             'history': history,
           })
@@ -1298,28 +1301,22 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Parent registration, on approval: the child belongs to the Elternteil
-  /// [parentId] and no longer to the parent's account (`appId`, e-mail and
-  /// the parent marker are removed).
-  Future<void> linkChildToParent(
-    int playerId,
-    int parentId,
-    Map<String, dynamic> additionalFields,
-  ) async {
-    ensureNotDemo('linkChildToParent'); // DEMO_GUARD
+  /// Parent registration: whether another child of the account [parentAppId]
+  /// still waits in Freigaben of the current tenant.
+  Future<bool> hasPendingChildOf(String parentAppId, {int? exceptId}) async {
     try {
-      await supabase
+      var query = supabase
           .from('player')
-          .update({
-            'parent_id': parentId,
-            'appId': null,
-            'email': null,
-            'additional_fields': additionalFields,
-          })
-          .eq('id', playerId)
-          .eq('tenantId', currentTenantId);
+          .select('id')
+          .eq('tenantId', currentTenantId)
+          .eq('pending', true)
+          .isFilter('left', null)
+          .eq('additional_fields->$kParentRegistrationKey->>appId', parentAppId);
+      if (exceptId != null) query = query.neq('id', exceptId);
+      final rows = await query.limit(1);
+      return (rows as List).isNotEmpty;
     } catch (e, stack) {
-      handleError(e, stack, 'linkChildToParent');
+      handleError(e, stack, 'hasPendingChildOf');
       rethrow;
     }
   }
