@@ -357,9 +357,7 @@
         "countAbsentStarted": "{count} abwesend",
         "editBasics": "Grunddaten",
         "noPlanYet": "Noch kein Ablauf",
-        "planEditShort": "Bearbeiten",
-        "hereAfterAll": "Doch da",
-        "hereAfterAllHint": "{name} doch anwesend"
+        "planEditShort": "Bearbeiten"
       },
       "own": {
         "notFound": "Dieser Termin ist nicht mehr in deiner Liste.",
@@ -1962,9 +1960,7 @@
         "countAbsentStarted": "{count} absent",
         "editBasics": "Basics",
         "noPlanYet": "No schedule yet",
-        "planEditShort": "Edit",
-        "hereAfterAll": "Here after all",
-        "hereAfterAllHint": "{name} present after all"
+        "planEditShort": "Edit"
       },
       "own": {
         "notFound": "This event is no longer in your list.",

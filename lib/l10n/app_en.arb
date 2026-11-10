@@ -3338,8 +3338,6 @@
   "redesignEventEditTypeStatusTitle": "Adjust status?",
   "redesignEventExportExcel": "Export as Excel",
   "redesignEventForMembers": "For members",
-  "redesignEventHereAfterAll": "Here after all",
-  "redesignEventHereAfterAllHint": "{name} present after all",
   "redesignEventHide": "Less",
   "redesignEventInvited": "{count} invited",
   "redesignEventKeyboardHint": "Keyboard: A present · V late · F absent · ↑↓ next person · ⌘Z or Ctrl+Z undo",

@@ -20164,18 +20164,6 @@ abstract class AppLocalizations {
   /// **'Für Mitglieder'**
   String get redesignEventForMembers;
 
-  /// redesign.event.hereAfterAll
-  ///
-  /// In de, this message translates to:
-  /// **'Doch da'**
-  String get redesignEventHereAfterAll;
-
-  /// redesign.event.hereAfterAllHint
-  ///
-  /// In de, this message translates to:
-  /// **'{name} doch anwesend'**
-  String redesignEventHereAfterAllHint(Object name);
-
   /// redesign.event.hide
   ///
   /// In de, this message translates to:

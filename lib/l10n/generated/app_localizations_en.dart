@@ -12396,14 +12396,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventForMembers => 'For members';
 
   @override
-  String get redesignEventHereAfterAll => 'Here after all';
-
-  @override
-  String redesignEventHereAfterAllHint(Object name) {
-    return '$name present after all';
-  }
-
-  @override
   String get redesignEventHide => 'Less';
 
   @override

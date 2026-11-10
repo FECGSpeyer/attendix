@@ -634,7 +634,7 @@ void main() {
     expect(find.text('0 von 1 da'), findsOneWidget);
   });
 
-  testWidgets('excused rows are settled: only "Doch da", the rest behind more', (tester) async {
+  testWidgets('excused rows are settled: no status buttons, all behind more', (tester) async {
     _size(tester, const Size(393, 852));
     final h = _Harness();
     await tester.pumpWidget(h.app(tab: RdEventTab.record));
@@ -643,14 +643,7 @@ void main() {
     final max = find.byKey(const ValueKey('rd-record-3'));
     expect(find.descendant(of: max, matching: find.bySemanticsLabel('Anwesend')), findsNothing);
     expect(find.descendant(of: max, matching: find.bySemanticsLabel('Abwesend')), findsNothing);
-    final hereAfterAll = find.descendant(of: max, matching: find.bySemanticsLabel('Max Huber doch anwesend'));
-    await tester.ensureVisible(hereAfterAll);
-    await tester.pump();
-    await tester.tap(hereAfterAll);
-    await _settle(tester);
-    expect(h.writes, ['pa-3 {status: 1}']);
-    // Present again: the usual three buttons are back.
-    expect(find.descendant(of: max, matching: find.bySemanticsLabel('Anwesend')), findsOneWidget);
+    expect(find.descendant(of: max, matching: find.bySemanticsLabel('Weitere Status und Notiz für Max Huber')), findsOneWidget);
   });
 
   testWidgets('Helfer only see their own group, without notes', (tester) async {
