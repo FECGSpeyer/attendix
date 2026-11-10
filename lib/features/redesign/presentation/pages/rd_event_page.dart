@@ -936,7 +936,17 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
               : null,
         ));
         // Programm and Ablauf can be prepared before anyone is invited
-        // (Reiter Programm).
+        // (Reiter Programm), the Vorbereitung too (Überblick).
+        if (tab == RdEventTab.overview &&
+            canMutate &&
+            ref.watch(canViewAttendanceChecklistProvider) &&
+            !attendance.archived &&
+            rdEventPhase(_span(attendance, type), archived: false) != RdEventPhase.after) {
+          content.addAll([
+            const SizedBox(height: 24),
+            RdEventChecklistSection(attendance: attendance, type: type, canEdit: true),
+          ]);
+        }
       } else if (tab == RdEventTab.overview) {
         content.add(overview(members));
       } else {
@@ -1444,9 +1454,10 @@ class _Overview extends ConsumerWidget {
             if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2, RdRecordFilter.open),
           ]
         : [
-            (l10n.redesignTodayCountYes(counts.present), p.present, RdRecordFilter.present),
+            (l10n.redesignTodayCountYes(counts.present), p.present, RdRecordFilter.yes),
             if (counts.excused > 0) (l10n.redesignTodayCountExcused(counts.excused), p.excused, RdRecordFilter.excused),
-            if (counts.lateAnnounced > 0) (l10n.redesignTodayCountLater(counts.lateAnnounced), p.late, RdRecordFilter.late),
+            if (counts.lateAnnounced > 0)
+              (l10n.redesignTodayCountLater(counts.lateAnnounced), p.late, RdRecordFilter.later),
             if (counts.absent > 0) (l10n.redesignTodayCountAbsent(counts.absent), p.absent, RdRecordFilter.absent),
             if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2, RdRecordFilter.open),
           ];
@@ -1653,7 +1664,7 @@ class _Overview extends ConsumerWidget {
                 ? !(over && attendance.checklist!.every((c) => c.completed))
                 : canMutate && !over && !attendance.archived)) ...[
           const SizedBox(height: 24),
-          RdEventChecklistSection(attendance: attendance, type: type),
+          RdEventChecklistSection(attendance: attendance, type: type, canEdit: canMutate),
         ],
         RdEventInfoSection(attendance: attendance, title: l10n.redesignEventForMembers, ended: over),
         if (notes.isNotEmpty) ...[

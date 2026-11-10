@@ -19,6 +19,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurationDays, rdSortStartOf, rdUnrecordedProvider;
 import '../../../data/providers/rd_today_providers.dart';
 import '../../../data/rd_event_details_logic.dart';
+import '../../../data/rd_event_phase.dart' show rdEventSpan;
 import '../manage/rd_manage_list.dart' show rdLoadedValue;
 import '../rd_desktop.dart';
 import '../rd_widgets.dart';
@@ -314,7 +315,7 @@ class _AttentionSection extends ConsumerWidget {
     final prep = ref.watch(canViewAttendanceChecklistProvider)
         ? rdDuePrepTasks(
             (ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const <Attendance>[]).where(
-              (a) => a.id != null && !a.archived && !EventListUtils.hasEnded(a.date, rdAttendanceDurationDays(a, types)),
+              (a) => a.id != null && !a.archived && !_eventOver(a, types),
             ),
           )
         : const <({Attendance attendance, ChecklistItem item})>[];
@@ -382,6 +383,19 @@ class _AttentionSection extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Whether the Termin [a] is over, with its end time (or its type's).
+bool _eventOver(Attendance a, List<AttendanceType> types, {DateTime? now}) {
+  final type = types.where((t) => t.id == a.typeId).firstOrNull;
+  final span = rdEventSpan(
+    day: EventListUtils.parse(a.date),
+    startTime: a.startTime ?? type?.startTime,
+    endTime: a.endTime ?? type?.endTime,
+    durationDays: rdAttendanceDurationDays(a, types),
+  );
+  if (span == null) return EventListUtils.hasEnded(a.date, rdAttendanceDurationDays(a, types), now: now);
+  return !(now ?? DateTime.now()).isBefore(span.end);
 }
 
 /// "Raum aufschließen · Probe 17.11." for the most urgent Vorbereitung task.

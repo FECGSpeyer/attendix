@@ -1392,11 +1392,15 @@ extension _PlanningBeta on _PlanningPageState {
     final loadGen = _loadGen;
     // Leitung: this Ablauf as the template of the Terminart (a rare one-off
     // action, so here and not on the Termin).
-    final type = !ref.read(effectiveRoleProvider).isAdmin
-        ? null
-        : (ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
-            .where((t) => t.id != null && t.id == att.typeId)
-            .firstOrNull;
+    // Waits for the Terminarten on a direct entry (not loaded yet).
+    var types = const <AttendanceType>[];
+    if (ref.read(effectiveRoleProvider).isAdmin) {
+      try {
+        types = await ref.read(attendanceTypesProvider.future);
+      } catch (_) {}
+      if (!mounted || loadGen != _loadGen) return;
+    }
+    final type = types.where((t) => t.id != null && t.id == att.typeId).firstOrNull;
     final action = await _rdSheet<String>(
       title: l10n.redesignPlanTitle,
       builder:

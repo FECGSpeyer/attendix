@@ -571,9 +571,12 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
 /// without any the section explains itself and, when the Terminart has
 /// tasks, offers to take them over.
 class RdEventChecklistSection extends ConsumerStatefulWidget {
-  const RdEventChecklistSection({super.key, required this.attendance, this.type});
+  const RdEventChecklistSection({super.key, required this.attendance, this.type, this.canEdit = true});
 
   final Attendance attendance;
+
+  /// Leitung: tick off, add, delete; others with view permission only read.
+  final bool canEdit;
 
   /// The Termin's Terminart: its tasks can be taken over into an empty list.
   final AttendanceType? type;
@@ -684,22 +687,24 @@ class _RdEventChecklistSectionState extends ConsumerState<RdEventChecklistSectio
       children: [
         RdSectionLabel(
           l10n.redesignEventPrep('$done', '${items.length}'),
-          actionLabel: l10n.redesignEventAddTask,
+          actionLabel: widget.canEdit ? l10n.redesignEventAddTask : null,
           actionSemantics: l10n.redesignEventAddTaskLabel,
-          onAction: _add,
+          onAction: widget.canEdit ? _add : null,
         ),
         RdGroupedList(children: [
           for (var i = 0; i < items.length; i++)
             _ChecklistRow(
               key: ValueKey('rd-check-${items[i].id}'),
               item: items[i],
-              onToggle: () {
-                HapticHelper.light();
-                final next = [...items];
-                next[i] = items[i].copyWith(completed: !items[i].completed);
-                _save(next);
-              },
-              onDelete: () => _delete(i),
+              onToggle: !widget.canEdit
+                  ? null
+                  : () {
+                      HapticHelper.light();
+                      final next = [...items];
+                      next[i] = items[i].copyWith(completed: !items[i].completed);
+                      _save(next);
+                    },
+              onDelete: widget.canEdit ? () => _delete(i) : null,
             ),
         ]),
         if (_local != null && _local != widget.attendance.checklist)
@@ -713,8 +718,8 @@ class _ChecklistRow extends StatelessWidget {
   const _ChecklistRow({super.key, required this.item, required this.onToggle, required this.onDelete});
 
   final ChecklistItem item;
-  final VoidCallback onToggle;
-  final VoidCallback onDelete;
+  final VoidCallback? onToggle;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -764,11 +769,14 @@ class _ChecklistRow extends StatelessWidget {
                     },
                   ),
                 ],
-                IconButton(
-                  icon: Icon(Icons.close, size: 18, color: p.text2),
-                  tooltip: l10n.redesignEventDeleteTask,
-                  onPressed: onDelete,
-                ),
+                if (onDelete != null)
+                  IconButton(
+                    icon: Icon(Icons.close, size: 18, color: p.text2),
+                    tooltip: l10n.redesignEventDeleteTask,
+                    onPressed: onDelete,
+                  )
+                else
+                  const SizedBox(width: 10),
               ],
             ),
           ),
