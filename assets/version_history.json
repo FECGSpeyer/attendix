@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.121.1",
+      "date": "10.11.2026",
+      "changes": [
+        "🐛 iOS: Standort-Hinweis in Info.plist ergänzt (Apple-Warnung ITMS-90683, ausgelöst durch die Dateiauswahl)"
+      ]
+    },
+    {
       "version": "0.121.0",
       "date": "10.11.2026",
       "changes": [
