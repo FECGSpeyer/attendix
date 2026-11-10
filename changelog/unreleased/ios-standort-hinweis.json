@@ -1,0 +1,1 @@
+{"bump": "patch", "changes": ["🐛 iOS: Standort-Hinweis in Info.plist ergänzt (Apple-Warnung ITMS-90683, ausgelöst durch die Dateiauswahl)"]}
