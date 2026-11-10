@@ -281,8 +281,15 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
     });
   }
 
-  /// Aushilfe on (last day = today) or off.
-  void _toggleHelper(bool on) => widget.onExtra(helperUntilKey, on ? helperDay(DateTime.now()) : null);
+  /// Aushilfe on (asks for the last day first; nothing is stored when the
+  /// picker is cancelled, so no Termin is touched) or off.
+  void _toggleHelper(bool on) {
+    if (on) {
+      _pickHelperDay();
+    } else {
+      widget.onExtra(helperUntilKey, null);
+    }
+  }
 
   Future<void> _pickHelperDay() async {
     final current = DateTime.tryParse(helperUntilOf(widget.additionalValues) ?? '') ?? DateTime.now();

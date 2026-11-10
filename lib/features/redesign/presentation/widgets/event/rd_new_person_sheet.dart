@@ -159,14 +159,16 @@ class _RdNewPersonSheetState extends State<RdNewPersonSheet> {
   final _last = TextEditingController();
   late int? _group = widget.initialGroup;
 
-  /// Aushilfe ("dabei bis") and its last day.
+  /// Aushilfe ("dabei bis") and its last day: never before the Termin's
+  /// day (the person is added to this Termin) nor before today.
   bool _helper = false;
-  late DateTime _helperUntil = () {
+  late final DateTime _firstHelperDay = () {
     final today = DateTime.now();
     final day = widget.eventDay;
     final start = DateTime(today.year, today.month, today.day);
     return day == null || day.isBefore(start) ? start : DateTime(day.year, day.month, day.day);
   }();
+  late DateTime _helperUntil = _firstHelperDay;
 
   /// Errors show only after the first "Anlegen".
   bool _tried = false;
@@ -199,7 +201,10 @@ class _RdNewPersonSheetState extends State<RdNewPersonSheet> {
       playsSince: today,
       joined: today,
       correctBirthday: false,
-      additionalFields: _helper ? {helperUntilKey: helperDay(_helperUntil)} : null,
+      additionalFields:
+          _helper
+              ? {helperUntilKey: helperDay(_helperUntil.isBefore(_firstHelperDay) ? _firstHelperDay : _helperUntil)}
+              : null,
     );
     setState(() {
       _busy = true;
@@ -227,14 +232,15 @@ class _RdNewPersonSheetState extends State<RdNewPersonSheet> {
   }
 
   Future<void> _pickHelperDay() async {
-    final today = DateTime.now();
     final picked = await showAppDatePicker(
       context: context,
       initialDate: _helperUntil,
-      firstDate: DateTime(today.year, today.month, today.day),
-      lastDate: DateTime(today.year + 5),
+      firstDate: _firstHelperDay,
+      lastDate: DateTime(_firstHelperDay.year + 5),
     );
-    if (picked != null && mounted) setState(() => _helperUntil = picked);
+    if (picked != null && mounted) {
+      setState(() => _helperUntil = picked.isBefore(_firstHelperDay) ? _firstHelperDay : picked);
+    }
   }
 
   @override

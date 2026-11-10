@@ -2407,9 +2407,16 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
             type.filterKey != null && changedFields.contains(type.filterKey);
         if (!affectsGroup && !affectsField && !helperChanged) continue;
 
-        final should = _matchesType(player, type, defaults) &&
+        final covered =
             helperCoversDate(player.additionalFields, att['date']?.toString());
         final isIn = existing.contains(att['id']?.toString());
+        // Only the Aushilfe's last day changed for this type: rows within
+        // the time stay as they are (also persons added by hand to a Termin
+        // of another Register), only later ones go and missing matching
+        // ones come.
+        final should = affectsGroup || affectsField
+            ? _matchesType(player, type, defaults) && covered
+            : covered && (isIn || _matchesType(player, type, defaults));
         if (should && !isIn) {
           toAdd.add({
             'attendance_id': att['id'],
