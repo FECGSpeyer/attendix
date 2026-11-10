@@ -27592,6 +27592,12 @@ abstract class AppLocalizations {
   /// **'Zurück blättern'**
   String get redesignWorksCurrentBack;
 
+  /// redesign.works.currentFor
+  ///
+  /// In de, this message translates to:
+  /// **'Für {when}'**
+  String redesignWorksCurrentFor(Object when);
+
   /// redesign.works.currentForward
   ///
   /// In de, this message translates to:
@@ -27609,12 +27615,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Keine Stimme'**
   String get redesignWorksCurrentNoPart;
-
-  /// redesign.works.currentPart
-  ///
-  /// In de, this message translates to:
-  /// **'Deine Stimme: {name}'**
-  String redesignWorksCurrentPart(Object name);
 
   /// redesign.works.empty
   ///

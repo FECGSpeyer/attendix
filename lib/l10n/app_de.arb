@@ -21327,6 +21327,13 @@
   "@redesignWorksCurrentBack": {
     "description": "redesign.works.currentBack"
   },
+  "redesignWorksCurrentFor": "Für {when}",
+  "@redesignWorksCurrentFor": {
+    "description": "redesign.works.currentFor",
+    "placeholders": {
+      "when": {}
+    }
+  },
   "redesignWorksCurrentForward": "Weiter blättern",
   "@redesignWorksCurrentForward": {
     "description": "redesign.works.currentForward"
@@ -21341,13 +21348,6 @@
   "redesignWorksCurrentNoPart": "Keine Stimme",
   "@redesignWorksCurrentNoPart": {
     "description": "redesign.works.currentNoPart"
-  },
-  "redesignWorksCurrentPart": "Deine Stimme: {name}",
-  "@redesignWorksCurrentPart": {
-    "description": "redesign.works.currentPart",
-    "placeholders": {
-      "name": {}
-    }
   },
   "redesignWorksEmpty": "Noch keine Werke.",
   "@redesignWorksEmpty": {

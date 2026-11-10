@@ -76,6 +76,8 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
     }
   }
 
+  static (int?, DateTime?, String) _eventKey(RdCurrentWork w) => (w.event.attendanceId, w.event.date, w.event.type);
+
   void _page(int direction) {
     if (!_scroll.hasClients) return;
     final pos = _scroll.position;
@@ -89,6 +91,9 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
     final l10n = context.l10n;
     final desktop = RdSplitScope.of(context) != null;
     final printable = _printable();
+    // All cards for one Termin: it is named once above the row; otherwise
+    // the first card of each Termin names it.
+    final single = widget.works.map(_eventKey).toSet().length == 1;
     // The cards grow with the text size (fixed height for the row).
     final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
     final height = 128 * scale.clamp(1.0, 1.8);
@@ -105,11 +110,11 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Semantics(header: true, child: Text(l10n.redesignWorksCurrent, style: RdType.section(p))),
-                  if (widget.ownGroup != null)
+                  if (single)
                     Padding(
                       padding: const EdgeInsets.only(top: 2),
                       child: Text(
-                        l10n.redesignWorksCurrentPart(widget.ownGroup!.name),
+                        l10n.redesignWorksCurrentFor(rdCurrentWorkWhen(widget.works.first)),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: RdType.meta(p, size: 13),
@@ -168,7 +173,12 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
               itemBuilder:
                   (context, i) => SizedBox(
                     width: width,
-                    child: _CurrentCard(work: widget.works[i], ownGroup: widget.ownGroup, choir: widget.choir),
+                    child: _CurrentCard(
+                      work: widget.works[i],
+                      ownGroup: widget.ownGroup,
+                      choir: widget.choir,
+                      showWhen: !single && (i == 0 || _eventKey(widget.works[i]) != _eventKey(widget.works[i - 1])),
+                    ),
                   ),
             ),
           ),
@@ -178,13 +188,17 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
   }
 }
 
-/// Number, Termin, title and whether the own part is there.
+/// Number, title (up to three lines), the Termin when it is not named above
+/// the row, and a hint when the own part is missing.
 class _CurrentCard extends StatelessWidget {
-  const _CurrentCard({required this.work, required this.ownGroup, required this.choir});
+  const _CurrentCard({required this.work, required this.ownGroup, required this.choir, required this.showWhen});
 
   final RdCurrentWork work;
   final Group? ownGroup;
   final bool choir;
+
+  /// First card of its Termin while the row holds several Termine.
+  final bool showWhen;
 
   @override
   Widget build(BuildContext context) {
@@ -193,18 +207,15 @@ class _CurrentCard extends StatelessWidget {
     final song = work.song;
     final number = song.fullNumber;
     final when = rdCurrentWorkWhen(work);
-    final part = rdCurrentWorkFiles(song, ownGroup?.id, choir: choir).isNotEmpty;
-    final foot = !part
-        ? l10n.redesignWorksCurrentNoPart
-        : ownGroup == null
-        ? l10n.redesignWorkScore
-        : l10n.redesignWorksStatusPart;
+    // Only a missing part is news; "Deine Stimme" / "Partitur" on every
+    // card said nothing (the card opens the whole Werk).
+    final missing = rdCurrentWorkFiles(song, ownGroup?.id, choir: choir).isEmpty;
     void open() => rdOpenCurrentWork(context, song);
     // One label for the whole card; the tap stays reachable for screen
     // readers (the excluded InkWell no longer offers it).
     return Semantics(
       button: true,
-      label: [if (number.isNotEmpty) number, song.name, when, foot].join(', '),
+      label: [if (number.isNotEmpty) number, song.name, when, if (missing) l10n.redesignWorksCurrentNoPart].join(', '),
       onTap: open,
       excludeSemantics: true,
       child: RdCard(
@@ -213,50 +224,49 @@ class _CurrentCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                if (number.isNotEmpty) ...[
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                    decoration: BoxDecoration(color: p.soft, borderRadius: BorderRadius.circular(8)),
-                    child: Text(
-                      number,
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: p.softText,
-                        fontFeatures: const [FontFeature.tabularFigures()],
+            if (number.isNotEmpty || showWhen) ...[
+              Row(
+                children: [
+                  if (number.isNotEmpty) ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      decoration: BoxDecoration(color: p.soft, borderRadius: BorderRadius.circular(8)),
+                      child: Text(
+                        number,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: p.softText,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 6),
+                    const SizedBox(width: 6),
+                  ],
+                  if (showWhen)
+                    Expanded(
+                      child: Text(rdCurrentWorkWhen(work, short: true), maxLines: 1, overflow: TextOverflow.ellipsis, style: RdType.meta(p, size: 12)),
+                    ),
                 ],
-                Expanded(
-                  child: Text(when, maxLines: 1, overflow: TextOverflow.ellipsis, style: RdType.meta(p, size: 12)),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
+              ),
+              const SizedBox(height: 6),
+            ],
             Text(
               song.name,
-              maxLines: 2,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(fontSize: 15, height: 1.25, fontWeight: FontWeight.w600, color: p.text),
             ),
-            const Spacer(),
-            // What the Werk page holds on top (no file link: the card opens
-            // the whole Werk).
-            Text(
-              foot,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: part ? FontWeight.w600 : FontWeight.w500,
-                color: part ? p.softText : p.text2,
+            if (missing) ...[
+              const Spacer(),
+              Text(
+                l10n.redesignWorksCurrentNoPart,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: p.text2),
               ),
-            ),
+            ],
           ],
         ),
       ),
@@ -264,13 +274,13 @@ class _CurrentCard extends StatelessWidget {
   }
 }
 
-/// "Do. 12.11. · Probe": the Termin a current Werk is planned for.
-String rdCurrentWorkWhen(RdCurrentWork work) {
+/// "Do. 12.11. · Probe": the Termin a current Werk is planned for; [short]
+/// only the day (a card is too narrow for the type).
+String rdCurrentWorkWhen(RdCurrentWork work, {bool short = false}) {
   final event = work.event;
-  return [
-    if (event.date != null) DateFormat('E d.M.', currentIntlLocale()).format(event.date!),
-    if (event.type.isNotEmpty) event.type,
-  ].join(' · ');
+  final day = event.date == null ? null : DateFormat('E d.M.', currentIntlLocale()).format(event.date!);
+  if (short && day != null) return day;
+  return [if (day != null) day, if (event.type.isNotEmpty) event.type].join(' · ');
 }
 
 /// What a card of [song] stands for: the Noten of the own part, without a

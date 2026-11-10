@@ -586,7 +586,9 @@ void main() {
       expect(find.text('Titel oder Nummer'), findsOneWidget);
       // The Werke of the coming Termine as cards, each once.
       expect(find.text('Aktuell'), findsOneWidget);
-      expect(find.text('Deine Stimme: Klarinette'), findsOneWidget);
+      // All cards for one Termin: it is named once above the row.
+      expect(find.textContaining('Für '), findsOneWidget);
+      expect(find.text('Deine Stimme: Klarinette'), findsNothing);
       final cards = find.byKey(const Key('rd-works-current'));
       expect(find.descendant(of: cards, matching: find.byType(RdCard)), findsNWidgets(2));
       expect(find.descendant(of: cards, matching: find.text('Keine Stimme')), findsOneWidget);
@@ -706,7 +708,8 @@ void main() {
       // "Aktuell" for leads too: without a group of their own the score.
       expect(find.text('Aktuell'), findsOneWidget);
       final cards = find.byKey(const Key('rd-works-current'));
-      expect(find.descendant(of: cards, matching: find.text('Partitur')), findsOneWidget);
+      // Only a missing part is named on a card.
+      expect(find.descendant(of: cards, matching: find.text('Partitur')), findsNothing);
       expect(find.descendant(of: cards, matching: find.text('Keine Stimme')), findsOneWidget);
       expect(find.text('ohne Noten'), findsOneWidget);
       // A single missing part is normal: no pill in the list.
