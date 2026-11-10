@@ -1004,7 +1004,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         // Like before: a page closed at the duplicate check still creates.
         createWhenGone: true,
       );
-      if (!created) return;
+      if (created == null) return;
 
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.personAdded);

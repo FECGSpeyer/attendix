@@ -14,6 +14,7 @@ import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/duty_utils.dart';
+import '../../../../core/utils/helper_member.dart';
 import '../../../../core/utils/shift_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
@@ -265,7 +266,11 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
         ? const <ProfileExtraField>[]
         : await ref.read(personExtraFieldsProvider.future);
     final persons = personsForAttendanceType(
-      results[0] as List<Map<String, dynamic>>,
+      [
+        // Aushilfen only until their last day ("dabei bis").
+        for (final p in results[0] as List<Map<String, dynamic>>)
+          if (helperCoversDate(p['additional_fields'] as Map<String, dynamic>?, helperDay(day))) p,
+      ],
       type,
       [
         ...tenantFields,

@@ -45,6 +45,7 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
+import '../../../../core/utils/helper_member.dart';
 
 /// People list page
 class PeopleListPage extends ConsumerStatefulWidget {
@@ -141,6 +142,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     if (!repo.hasTenantId) return;
     try {
       await repo.checkAndUnpausePlayers();
+      await repo.archiveExpiredHelpers();
     } on DemoModeException {
       // Demo account: the guard already showed the demo hint; load anyway.
     }
@@ -266,7 +268,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     // Apply filter
     switch (_filterOption) {
       case 'critical':
-        filtered = filtered.where((p) => p.isCritical).toList();
+        filtered = filtered.where((p) => p.isCritical && !isHelperMember(p)).toList();
         break;
       case 'paused':
         filtered = filtered.where((p) => p.paused).toList();

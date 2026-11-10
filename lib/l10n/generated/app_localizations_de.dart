@@ -794,6 +794,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceConnectionRestored => 'Verbindung wiederhergestellt';
 
   @override
+  String get attendanceCreateNewPerson => 'Neue Person anlegen';
+
+  @override
+  String get attendanceCreateNewPersonHint =>
+      'Wird angelegt und gleich zu diesem Termin hinzugefügt.';
+
+  @override
   String get attendanceCreateRunSheet => 'Ablaufplan erstellen';
 
   @override
@@ -1238,6 +1245,48 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return 'Benötigt: $_temp0';
   }
+
+  @override
+  String attendanceNewPersonAddFailed(Object name) {
+    return '$name wurde angelegt, konnte aber nicht zum Termin hinzugefügt werden.';
+  }
+
+  @override
+  String attendanceNewPersonAdded(Object name) {
+    return '$name angelegt und hinzugefügt';
+  }
+
+  @override
+  String get attendanceNewPersonCreate => 'Anlegen';
+
+  @override
+  String get attendanceNewPersonFailed =>
+      'Die Person konnte nicht angelegt werden.';
+
+  @override
+  String get attendanceNewPersonFirstName => 'Vorname';
+
+  @override
+  String get attendanceNewPersonGroup => 'Register';
+
+  @override
+  String get attendanceNewPersonHint =>
+      'Die Person wird Mitglied der Gruppe und gleich zu diesem Termin hinzugefügt. Weitere Angaben ergänzt du später bei der Person.';
+
+  @override
+  String get attendanceNewPersonLastName => 'Nachname';
+
+  @override
+  String get attendanceNewPersonNameMissing =>
+      'Bitte gib Vor- und Nachnamen ein.';
+
+  @override
+  String attendanceNewPersonOthersMissing(Object name) {
+    return '$name wurde angelegt und hinzugefügt, fehlt aber noch in anderen kommenden Terminen.';
+  }
+
+  @override
+  String get attendanceNewPersonTitle => 'Neue Person';
 
   @override
   String get attendanceNoConnection => 'Keine Internetverbindung vorhanden';
@@ -10295,6 +10344,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdDataWhat => 'Was';
 
   @override
+  String get rdHelperFormHint =>
+      'Aushilfen kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert.';
+
+  @override
+  String get rdHelperLastDay => 'Dabei bis';
+
+  @override
+  String get rdHelperPersonHint =>
+      'Kommt nur in Termine bis zu diesem Tag und wird danach automatisch archiviert.';
+
+  @override
+  String get rdHelperSwitchHint =>
+      'Nur für eine bestimmte Zeit dabei, z. B. für ein Konzert';
+
+  @override
+  String get rdHelperTitle => 'Aushilfe';
+
+  @override
+  String rdHelperUntil(Object date) {
+    return 'Aushilfe bis $date';
+  }
+
+  @override
   String get rdOrgArchiveNote =>
       'Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.';
 
@@ -14603,7 +14675,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String redesignInviteShareSubject(Object group) {
-    return 'Melde dich bei $group in Attendix an:';
+    return 'Einladung zu $group in Attendix';
+  }
+
+  @override
+  String redesignInviteShareText(Object group, Object link) {
+    return 'Hallo! 👋 Du bist zu $group in Attendix eingeladen. Dort siehst du alle Termine und gibst Bescheid, ob du dabei bist.\n\nHier meldest du dich an, im Browser oder in der Attendix-App:\n$link';
   }
 
   @override

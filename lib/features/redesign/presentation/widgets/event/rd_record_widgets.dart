@@ -125,6 +125,9 @@ class _FilterChip extends StatelessWidget {
 
 /// One person of the recording list: name, note, three status buttons
 /// (only the ones the Termin type allows) and "more".
+///
+/// Excused persons are settled: nothing is left to do, so the row is
+/// muted and shows no status buttons; every status sits behind "more".
 class RdRecordRow extends StatelessWidget {
   const RdRecordRow({
     super.key,
@@ -157,6 +160,7 @@ class RdRecordRow extends StatelessWidget {
       _ => null,
     };
     final look = rdStatusLook(p, status);
+    final settled = status == AttendanceStatus.excused;
     final info = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -164,14 +168,25 @@ class RdRecordRow extends StatelessWidget {
           member.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: settled ? p.text2 : p.text),
         ),
         if (badge != null)
-          Text(
-            badge,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: look.color),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (settled) ...[
+                Icon(look.icon, size: 15, color: look.color),
+                const SizedBox(width: 4),
+              ],
+              Flexible(
+                child: Text(
+                  badge,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: look.color),
+                ),
+              ),
+            ],
           ),
         if (note.isNotEmpty)
           Text(
@@ -185,11 +200,12 @@ class RdRecordRow extends StatelessWidget {
     final buttons = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        for (final s in _buttons)
-          if (available.contains(s)) ...[
-            _StatusButton(status: s, active: status == s, onTap: () => onTap(s)),
-            const SizedBox(width: 6),
-          ],
+        if (!settled)
+          for (final s in _buttons)
+            if (available.contains(s)) ...[
+              _StatusButton(status: s, active: status == s, onTap: () => onTap(s)),
+              const SizedBox(width: 6),
+            ],
         Semantics(
           button: true,
           label: l10n.redesignEventMoreStatus(member.name),

@@ -219,14 +219,15 @@ Future<Map<String, dynamic>> saveSharedPersonFields(
 /// then db.addPlayer(player, Boolean(email), role) – the account is
 /// registered right away when an e-mail is set (Verantwortlicher for the
 /// main group, else Spieler), the person joins every Termin since the join
-/// date, the Passbild is uploaded after the insert. Returns false when the
-/// user cancelled at the duplicate question; throws when saving fails.
+/// date, the Passbild is uploaded after the insert. Returns the created
+/// person, null when the user cancelled at the duplicate question; throws
+/// when saving fails.
 ///
 /// [repo]: the tenant repository bound by the caller before its first await
 /// (tenant switch); read from [ref] when null. [createWhenGone]: when the
 /// page is gone at the duplicate question, the person is still created
 /// (normal app) instead of cancelled.
-Future<bool> createPersonWithChecks(
+Future<Person?> createPersonWithChecks(
   BuildContext context,
   WidgetRef ref,
   Person person, {
@@ -241,7 +242,7 @@ Future<bool> createPersonWithChecks(
   final container = ProviderScope.containerOf(context, listen: false);
   final existing = await players.findPlayersByName(person.firstName, person.lastName);
   if (existing.isNotEmpty && (context.mounted || !createWhenGone)) {
-    if (!context.mounted) return false;
+    if (!context.mounted) return null;
     final confirmed = await DialogHelper.showConfirmation(
       context,
       title: context.l10n.peopleFlutterPossibleDuplicate,
@@ -249,10 +250,10 @@ Future<bool> createPersonWithChecks(
       confirmText: context.l10n.peopleFlutterCreateAnyway,
       cancelText: context.l10n.commonCancel,
     );
-    if (!confirmed) return false;
+    if (!confirmed) return null;
   }
 
-  await players.addPlayer(
+  final created = await players.addPlayer(
     person,
     register: person.email != null && person.email!.isNotEmpty,
     role: isMainGroup ? Role.responsible : Role.player,
@@ -262,7 +263,7 @@ Future<bool> createPersonWithChecks(
   container
     ..invalidate(realtimePlayersProvider)
     ..invalidate(playersProvider);
-  return true;
+  return created;
 }
 
 /// Ionic searchPerson(): finds the person in a linked instance, takes over

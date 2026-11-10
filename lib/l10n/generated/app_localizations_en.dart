@@ -792,6 +792,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendanceConnectionRestored => 'Connection restored';
 
   @override
+  String get attendanceCreateNewPerson => 'Create new person';
+
+  @override
+  String get attendanceCreateNewPersonHint =>
+      'Is created and added to this event right away.';
+
+  @override
   String get attendanceCreateRunSheet => 'Create run sheet';
 
   @override
@@ -1232,6 +1239,47 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return 'Needed: $_temp0';
   }
+
+  @override
+  String attendanceNewPersonAddFailed(Object name) {
+    return '$name was created but could not be added to the event.';
+  }
+
+  @override
+  String attendanceNewPersonAdded(Object name) {
+    return '$name created and added';
+  }
+
+  @override
+  String get attendanceNewPersonCreate => 'Create';
+
+  @override
+  String get attendanceNewPersonFailed => 'The person could not be created.';
+
+  @override
+  String get attendanceNewPersonFirstName => 'First name';
+
+  @override
+  String get attendanceNewPersonGroup => 'Section';
+
+  @override
+  String get attendanceNewPersonHint =>
+      'The person becomes a member of the group and is added to this event right away. Add more details later on the person.';
+
+  @override
+  String get attendanceNewPersonLastName => 'Last name';
+
+  @override
+  String get attendanceNewPersonNameMissing =>
+      'Please enter first and last name.';
+
+  @override
+  String attendanceNewPersonOthersMissing(Object name) {
+    return '$name was created and added, but is still missing in other upcoming events.';
+  }
+
+  @override
+  String get attendanceNewPersonTitle => 'New person';
 
   @override
   String get attendanceNoConnection => 'No internet connection';
@@ -10186,6 +10234,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdDataWhat => 'What';
 
   @override
+  String get rdHelperFormHint =>
+      'Helpers are only added to events up to this day, never count as a problem case and are archived automatically afterwards.';
+
+  @override
+  String get rdHelperLastDay => 'Last day';
+
+  @override
+  String get rdHelperPersonHint =>
+      'Only added to events up to this day and archived automatically afterwards.';
+
+  @override
+  String get rdHelperSwitchHint =>
+      'Only joins for a while, e.g. for one concert';
+
+  @override
+  String get rdHelperTitle => 'Helper';
+
+  @override
+  String rdHelperUntil(Object date) {
+    return 'Helper until $date';
+  }
+
+  @override
   String get rdOrgArchiveNote =>
       'The people are archived here. People with an account get a message.';
 
@@ -14468,7 +14539,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String redesignInviteShareSubject(Object group) {
-    return 'Sign up for $group in Attendix:';
+    return 'Invitation to $group on Attendix';
+  }
+
+  @override
+  String redesignInviteShareText(Object group, Object link) {
+    return 'Hi! 👋 You\'re invited to $group on Attendix. There you see all events and let everyone know whether you\'re coming.\n\nSign up here, in your browser or in the Attendix app:\n$link';
   }
 
   @override
