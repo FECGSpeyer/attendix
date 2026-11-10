@@ -12581,6 +12581,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventPlanEditShort => 'Edit';
 
   @override
+  String redesignEventPlanFree(Object count) {
+    return '$count min free until the event ends';
+  }
+
+  @override
   String get redesignEventPlanHint => 'Run sheet, live on the day';
 
   @override
@@ -12611,6 +12616,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String redesignEventPrep(Object done, Object total) {
     return 'Preparation · $done of $total done';
   }
+
+  @override
+  String get redesignEventPrepEmpty =>
+      'What has to be done before the event, e.g. unlock the room or copy the sheet music. Tick it off right here; only leaders can see it.';
+
+  @override
+  String redesignEventPrepTakeOver(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count tasks of the event type',
+      one: 'Add 1 task of the event type',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventPrepTitle => 'Preparation';
 
   @override
   String redesignEventPresentOf(Object present, Object total, Object percent) {
@@ -16414,6 +16437,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignTodayPendingHint => 'Review and approve';
+
+  @override
+  String redesignTodayPrepDue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count preparation tasks due',
+      one: '1 preparation task due',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignTodayQuestion => 'Are you coming?';

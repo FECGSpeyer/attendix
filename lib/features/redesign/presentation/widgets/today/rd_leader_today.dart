@@ -8,6 +8,7 @@ import '../../../../../core/providers/attendance_type_providers.dart';
 import '../../../../../core/providers/dashboard_providers.dart';
 import '../../../../../core/providers/player_providers.dart';
 import '../../../../../core/providers/realtime_providers.dart';
+import '../../../../../core/providers/role_permission_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
@@ -17,6 +18,8 @@ import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurationDays, rdSortStartOf, rdUnrecordedProvider;
 import '../../../data/providers/rd_today_providers.dart';
+import '../../../data/rd_event_details_logic.dart';
+import '../../../data/rd_event_phase.dart' show rdEventSpan;
 import '../manage/rd_manage_list.dart' show rdLoadedValue;
 import '../rd_desktop.dart';
 import '../rd_widgets.dart';
@@ -307,6 +310,16 @@ class _AttentionSection extends ConsumerWidget {
     final excused = nextId == null
         ? 0
         : ref.watch(rdAttendanceCountsProvider(nextId)).valueOrNull?.excused ?? 0;
+    // Vorbereitung tasks due within a day or overdue (Termine still ahead).
+    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    final prep = ref.watch(canViewAttendanceChecklistProvider)
+        ? rdDuePrepTasks(
+            (ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const <Attendance>[]).where(
+              (a) => a.id != null && !a.archived && !_eventOver(a, types),
+            ),
+          )
+        : const <({Attendance attendance, ChecklistItem item})>[];
+    final prepOverdue = prep.any((t) => rdChecklistDue(t.item) == RdDue.overdue);
 
     final rows = <Widget>[
       if (pending > 0)
@@ -335,6 +348,20 @@ class _AttentionSection extends ConsumerWidget {
           // Newest first: the one most likely still to be recorded.
           onTap: () => context.push(RedesignRoutes.event(unrecorded.last, record: true)),
         ),
+      if (prep.isNotEmpty)
+        RdListRow(
+          key: const Key('rd-today-prep'),
+          leading: RdRowIcon(
+            Icons.task_alt_rounded,
+            color: prepOverdue ? p.absent : p.late,
+            background: prepOverdue ? p.absentSoft : p.lateSoft,
+          ),
+          title: l10n.redesignTodayPrepDue(prep.length),
+          subtitle: _prepLine(ref, prep.first),
+          trailing: RdCountBadge(prep.length, tone: prepOverdue ? RdTone.absent : RdTone.late),
+          // The most urgent one: its Termin shows the Vorbereitung in the Überblick.
+          onTap: () => context.push(RedesignRoutes.event(prep.first.attendance.id!)),
+        ),
       if (excused > 0 && nextId != null)
         RdListRow(
           leading: RdRowIcon(Icons.event_busy_outlined, color: p.excused, background: p.excusedSoft),
@@ -356,6 +383,31 @@ class _AttentionSection extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Whether the Termin [a] is over, with its end time (or its type's).
+bool _eventOver(Attendance a, List<AttendanceType> types, {DateTime? now}) {
+  final type = types.where((t) => t.id == a.typeId).firstOrNull;
+  final span = rdEventSpan(
+    day: EventListUtils.parse(a.date),
+    startTime: a.startTime ?? type?.startTime,
+    endTime: a.endTime ?? type?.endTime,
+    durationDays: rdAttendanceDurationDays(a, types),
+  );
+  if (span == null) return EventListUtils.hasEnded(a.date, rdAttendanceDurationDays(a, types), now: now);
+  return !(now ?? DateTime.now()).isBefore(span.end);
+}
+
+/// "Raum aufschließen · Probe 17.11." for the most urgent Vorbereitung task.
+String _prepLine(WidgetRef ref, ({Attendance attendance, ChecklistItem item}) task) {
+  final a = task.attendance;
+  return [
+    task.item.text,
+    [
+      rdEventInfo(a, ref.watch(rdAttendanceTypeProvider(a.typeId))).title,
+      if (EventListUtils.parse(a.date) case final d?) '${d.day}.${d.month}.',
+    ].join(' '),
+  ].join(' · ');
 }
 
 /// "Probe 29.10., Probe 22.10." for the not yet recorded Termine (newest

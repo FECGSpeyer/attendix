@@ -1,15 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/plan_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/plan/plan.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../attendance/presentation/attendance_song_history.dart';
-import '../../../../attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntry;
 import '../../../../planning/presentation/attendance_plan_viewer.dart';
 import '../rd_widgets.dart';
 
@@ -60,6 +57,21 @@ String rdPlanRange(Plan plan) {
   if (start.isEmpty) return '';
   final end = PlanUtils.computeEnd(plan.time, plan.fields);
   return end.isEmpty || end == start ? start : '$start–$end';
+}
+
+/// Minutes the Ablauf leaves free before the end of a one-day Termin with
+/// times ("20 Min frei"); null when it fills the Termin, runs over or the
+/// times are missing.
+int? rdPlanFreeMinutes(Plan plan, ({DateTime start, DateTime end, bool hasTime})? span) {
+  if (span == null || !span.hasTime) return null;
+  final start = PlanUtils.parseTimeToMinutes(plan.time);
+  if (start == null || plan.fields.isEmpty) return null;
+  final end = start + PlanUtils.totalMinutes(plan.fields);
+  final day = span.start;
+  final eventEnd = span.end;
+  if (eventEnd.year != day.year || eventEnd.month != day.month || eventEnd.day != day.day) return null;
+  final free = eventEnd.hour * 60 + eventEnd.minute - end;
+  return free >= 5 ? free : null;
 }
 
 String _hm(DateTime d) => '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
@@ -211,11 +223,12 @@ class _RdPlanTimelineState extends State<RdPlanTimeline> with _MinuteTicker {
       if (PlanUtils.isGroupHead(f)) {
         rows.add(Container(
           width: double.infinity,
-          color: p.bg,
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 7),
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+          // A block of the Ablauf, not a section of the page: normal case
+          // on the card, no band.
           child: Text(
-            f.name.toUpperCase(),
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: p.softText),
+            f.name,
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: p.text2),
           ),
         ));
         continue;
@@ -297,56 +310,6 @@ class _RdPlanTimelineState extends State<RdPlanTimeline> with _MinuteTicker {
           ],
         ),
       ),
-    );
-  }
-}
-
-/// Überblick: "Programm" with "4 Werke · Ablauf 16:00–17:35" and the first
-/// Werke; tap opens the Reiter Programm.
-class RdProgramSummary extends ConsumerWidget {
-  const RdProgramSummary({super.key, required this.attendance, required this.showWorks, required this.onTap});
-
-  final Attendance attendance;
-  final bool showWorks;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final id = attendance.id;
-    final works = showWorks && id != null
-        ? ref.watch(attendanceSongEntriesProvider(id)).valueOrNull ?? const <SongHistoryEntry>[]
-        : const <SongHistoryEntry>[];
-    final plan = rdPlanOf(attendance);
-    final range = plan == null ? '' : rdPlanRange(plan);
-    final title = [
-      if (works.isNotEmpty) l10n.redesignEventProgramWorks(works.length),
-      if (plan != null) range.isEmpty ? l10n.redesignEventPlanSection : l10n.redesignEventProgramPlan(range),
-    ].join(' · ');
-    if (title.isEmpty) return const SizedBox.shrink();
-    final names = works.map((w) => w.songName).toList();
-    final shownNames = names.length > 2
-        ? l10n.redesignEventProgramMore(names.take(2).join(', '), names.length - 2)
-        : names.join(', ');
-    final subtitle = [
-      if (shownNames.isNotEmpty) shownNames,
-      if (plan != null && attendance.sharePlan) l10n.redesignEventPlanShared,
-    ].join(' · ');
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const SizedBox(height: 24),
-        RdGroupLabel(l10n.redesignEventProgram),
-        RdGroupedList(children: [
-          RdListRow(
-            key: const Key('rd-program-summary'),
-            leading: const RdRowIcon(Icons.queue_music_outlined),
-            title: title,
-            subtitle: subtitle.isEmpty ? null : subtitle,
-            onTap: onTap,
-          ),
-        ]),
-      ],
     );
   }
 }

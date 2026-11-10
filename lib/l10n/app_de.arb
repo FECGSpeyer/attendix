@@ -15694,6 +15694,13 @@
   "@redesignEventPlanEditShort": {
     "description": "redesign.event.planEditShort"
   },
+  "redesignEventPlanFree": "{count} Min frei bis Terminende",
+  "@redesignEventPlanFree": {
+    "description": "redesign.event.planFree",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "redesignEventPlanHint": "Ablaufplan, am Termin-Tag live",
   "@redesignEventPlanHint": {
     "description": "redesign.event.planHint"
@@ -15736,6 +15743,23 @@
       "done": {},
       "total": {}
     }
+  },
+  "redesignEventPrepEmpty": "Was vor dem Termin erledigt sein muss, z. B. Raum aufschließen oder Noten kopieren. Abhaken kannst du direkt hier, sehen kann es nur die Leitung.",
+  "@redesignEventPrepEmpty": {
+    "description": "redesign.event.prepEmpty"
+  },
+  "redesignEventPrepTakeOver": "{count, plural, one {1 Aufgabe der Terminart übernehmen} other {{count} Aufgaben der Terminart übernehmen}}",
+  "@redesignEventPrepTakeOver": {
+    "description": "redesign.event.prepTakeOver",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventPrepTitle": "Vorbereitung",
+  "@redesignEventPrepTitle": {
+    "description": "redesign.event.prepTitle"
   },
   "redesignEventPresentOf": "{present} von {total} · {percent} %",
   "@redesignEventPresentOf": {
@@ -20402,6 +20426,15 @@
   "redesignTodayPendingHint": "Prüfen und freischalten",
   "@redesignTodayPendingHint": {
     "description": "redesign.today.pendingHint"
+  },
+  "redesignTodayPrepDue": "{count, plural, one {1 Aufgabe zur Vorbereitung fällig} other {{count} Aufgaben zur Vorbereitung fällig}}",
+  "@redesignTodayPrepDue": {
+    "description": "redesign.today.prepDue",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignTodayQuestion": "Bist du dabei?",
   "@redesignTodayQuestion": {

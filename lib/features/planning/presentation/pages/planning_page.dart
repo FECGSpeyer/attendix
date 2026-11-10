@@ -8,6 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/providers/attendance_detail_providers.dart';
+import '../../../../core/providers/attendance_type_providers.dart' show attendanceTypesProvider;
+import '../../../../data/models/attendance/attendance.dart' show AttendanceType;
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
@@ -51,6 +53,7 @@ import '../../data/planning_write_sync.dart';
 import '../../../../core/providers/redesign_providers.dart' show redesignEnabledProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/event/rd_plan_take_over.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
 
 part 'planning_page_beta.dart';

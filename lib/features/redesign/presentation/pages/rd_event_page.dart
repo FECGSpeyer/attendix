@@ -47,7 +47,6 @@ import '../../../../core/providers/profile_providers.dart';
 import '../../../attendance/presentation/pages/attendance_detail_page.dart' show canMutateAttendanceDetail;
 import '../../../duty/presentation/widgets/duty_staffing_section.dart';
 import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
-import '../../data/rd_event_details_logic.dart';
 import '../widgets/event/rd_event_answers.dart';
 import '../widgets/event/rd_event_sections.dart';
 import '../widgets/event/rd_pult_view.dart';
@@ -86,7 +85,7 @@ class RdEventPage extends ConsumerStatefulWidget {
 }
 
 /// Entries of the ••• menu.
-enum _MenuAction { statusOverview, church, excel, checklist, archive }
+enum _MenuAction { church, excel, archive }
 
 /// Days of [attendance], with the type's default for all-day types (a
 /// Freizeit without own `duration_days` still runs on day 2).
@@ -544,13 +543,13 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   // ---------------------------------------------------------------------------
 
   /// "•••" next to "Bearbeiten" (concept L6): Status-Übersicht,
-  /// Gemeinde-Übersicht, Excel, Checkliste starten, Archivieren.
+  /// Gemeinde-Übersicht, Excel, Archivieren. The Vorbereitung lives in the
+  /// Überblick, the answers per status in the Anwesenheit.
   /// "Termin löschen" is at the bottom of "Bearbeiten".
   Future<void> _openMenu(Attendance attendance, List<RdMember> members) async {
     final l10n = context.l10n;
     final role = ref.read(effectiveRoleProvider);
     final type = ref.read(attendanceTypeForAttendanceProvider(_id)).valueOrNull;
-    final canMutate = canMutateAttendanceDetail(role);
     final canArchive = canArchiveAttendance(
       date: attendance.date,
       durationDays: _effectiveDays(attendance, type),
@@ -562,13 +561,6 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       title: rdEventInfo(attendance, type).title,
       message: role.isAdmin || role.isResponsible ? l10n.redesignEventDeleteHint : null,
       actions: [
-        if (members.isNotEmpty)
-          AppActionSheetAction(
-            value: _MenuAction.statusOverview,
-            icon: Icons.bar_chart_rounded,
-            label: l10n.attendanceStatusOverview,
-            subtitle: l10n.redesignEventStatusOverviewHint,
-          ),
         // Like Ionic: offered whenever the group has the Gemeinde field.
         if (members.isNotEmpty && attendanceChurchFieldId(ref) != null)
           AppActionSheetAction(
@@ -582,12 +574,6 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
             icon: Icons.table_chart_outlined,
             label: l10n.redesignEventExportExcel,
           ),
-        if (canMutate && ref.read(canViewAttendanceChecklistProvider) && (attendance.checklist?.isEmpty ?? true))
-          AppActionSheetAction(
-            value: _MenuAction.checklist,
-            icon: Icons.check_box_outlined,
-            label: l10n.attendanceStartChecklist,
-          ),
         if (canArchive)
           AppActionSheetAction(
             value: _MenuAction.archive,
@@ -598,8 +584,6 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     );
     if (action == null || !mounted) return;
     switch (action) {
-      case _MenuAction.statusOverview:
-        await showRdStatusOverviewSheet(context, members: members);
       case _MenuAction.church:
         await showAttendanceChurchOverview(
           context,
@@ -609,8 +593,6 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         );
       case _MenuAction.excel:
         await _exportExcel(attendance, members);
-      case _MenuAction.checklist:
-        await _startChecklist(attendance, type);
       case _MenuAction.archive:
         await _toggleArchived(attendance);
     }
@@ -620,30 +602,12 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     if (members.isNotEmpty) return true;
     final role = ref.watch(effectiveRoleProvider);
     final type = ref.watch(attendanceTypeForAttendanceProvider(_id)).valueOrNull;
-    return (canMutateAttendanceDetail(role) &&
-            ref.watch(canViewAttendanceChecklistProvider) &&
-            (attendance.checklist?.isEmpty ?? true)) ||
-        canArchiveAttendance(
-          date: attendance.date,
-          durationDays: _effectiveDays(attendance, type),
-          archived: attendance.archived,
-          role: role,
-        );
-  }
-
-  /// "Checkliste starten": the type's default checklist when it has one,
-  /// else a first task.
-  Future<void> _startChecklist(Attendance attendance, AttendanceType? type) async {
-    final id = attendance.id;
-    if (id == null) return;
-    if (type != null && (type.checklist?.isNotEmpty ?? false)) {
-      await rdSaveChecklist(context, ref, id, rdDefaultChecklist(type, attendance));
-      if (mounted) ToastHelper.showSuccess(context, context.l10n.attendanceChecklistRestored);
-      return;
-    }
-    final item = await rdAskChecklistItem(context, attendance);
-    if (item == null || !mounted) return;
-    await rdSaveChecklist(context, ref, id, [item]);
+    return canArchiveAttendance(
+      date: attendance.date,
+      durationDays: _effectiveDays(attendance, type),
+      archived: attendance.archived,
+      role: role,
+    );
   }
 
   /// "Als Excel exportieren" with the statuses shown on this page.
@@ -792,6 +756,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         attendance: attendance,
         preview: plan == null ? null : RdPlanTimeline(day: EventListUtils.parse(attendance.date), plan: plan),
         range: plan == null ? '' : rdPlanRange(plan),
+        freeMinutes: plan == null ? null : rdPlanFreeMinutes(plan, _span(attendance, type)),
       ),
     ];
   }
@@ -937,16 +902,17 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         personAttendanceIds: _paIds,
         span: span,
         phase: rdEventPhase(span, archived: attendance.archived),
-        hasProgramTab: hasProgram && !sideBySide,
         sideBySide: sideBySide,
-        onRecord: () => setState(() => _tab = RdEventTab.record),
+        onRecord: (filter) => setState(() {
+          _tab = RdEventTab.record;
+          _filter = filter;
+        }),
         onPult: () => setState(() {
           _tab = RdEventTab.record;
           _pult = true;
           _search.clear();
           _query = '';
         }),
-        onProgram: () => setState(() => _tab = RdEventTab.program),
         onOpenMember: _openMember,
       );
     }
@@ -986,7 +952,18 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
               : null,
         ));
         // Programm and Ablauf can be prepared before anyone is invited
-        // (Reiter Programm).
+        // (Reiter Programm), the Vorbereitung too (Überblick).
+        final phase = rdEventPhase(_span(attendance, type), archived: attendance.archived);
+        final over = phase == RdEventPhase.after ||
+            (phase == RdEventPhase.archived &&
+                EventListUtils.hasEnded(attendance.date, _effectiveDays(attendance, type)));
+        if (tab == RdEventTab.overview &&
+            _showPrep(attendance, over: over, canMutate: canMutate, canView: ref.watch(canViewAttendanceChecklistProvider))) {
+          content.addAll([
+            const SizedBox(height: 24),
+            RdEventChecklistSection(attendance: attendance, type: type, canEdit: canMutate),
+          ]);
+        }
       } else if (tab == RdEventTab.overview) {
         content.add(overview(members));
       } else {
@@ -1427,6 +1404,15 @@ class _MoreRow extends StatelessWidget {
 /// * danach: "35 von 38 · 92 %" and the Abschluss.
 /// Below: Programm (opens the Reiter), Vorbereitung, "Für Mitglieder",
 /// "Nur Leitung", Dienst and Protokoll.
+/// "Vorbereitung" in the Überblick: always for the Leitung before the
+/// Termin (empty with "+ Aufgabe"); afterwards only while tasks are open.
+bool _showPrep(Attendance attendance, {required bool over, required bool canMutate, required bool canView}) {
+  if (!canView) return false;
+  final items = attendance.checklist ?? const <ChecklistItem>[];
+  if (items.isNotEmpty) return !(over && items.every((c) => c.completed));
+  return canMutate && !over && !attendance.archived;
+}
+
 class _Overview extends ConsumerWidget {
   const _Overview({
     required this.attendance,
@@ -1435,11 +1421,9 @@ class _Overview extends ConsumerWidget {
     required this.personAttendanceIds,
     required this.span,
     required this.phase,
-    required this.hasProgramTab,
     this.sideBySide = false,
     required this.onRecord,
     required this.onPult,
-    required this.onProgram,
     required this.onOpenMember,
   });
 
@@ -1449,13 +1433,12 @@ class _Overview extends ConsumerWidget {
   final Map<int, String?> personAttendanceIds;
   final ({DateTime start, DateTime end, bool hasTime})? span;
   final RdEventPhase phase;
-  final bool hasProgramTab;
 
   /// The Anwesenheit is next to it (desktop): no "Anwesenheit eintragen".
   final bool sideBySide;
-  final VoidCallback onRecord;
+  /// To the Anwesenheit, with the filter of a tapped count.
+  final ValueChanged<RdRecordFilter> onRecord;
   final VoidCallback onPult;
-  final VoidCallback onProgram;
   final ValueChanged<RdMember> onOpenMember;
 
   @override
@@ -1480,20 +1463,24 @@ class _Overview extends ConsumerWidget {
     // Before the start: answers; from the start on: who is there.
     final here = members.where((m) => m.status == AttendanceStatus.present).length;
     final late = members.where((m) => m.status == AttendanceStatus.late || m.status == AttendanceStatus.lateExcused).length;
-    final List<(String, Color)> legend = started
+    // Each count opens the Anwesenheit filtered to it (no arrows: the
+    // card stays calm, the "›" at "eingeladen" shows it can be tapped).
+    final List<(String, Color, RdRecordFilter)> legend = started
         ? [
-            (l10n.redesignEventCountHere(here), p.present),
-            if (late > 0) (l10n.redesignEventCountLateStarted(late), p.late),
-            if (counts.excused > 0) (l10n.redesignEventCountExcusedStarted(counts.excused), p.excused),
-            if (counts.absent > 0) (l10n.redesignEventCountAbsentStarted(counts.absent), p.absent),
-            if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2),
+            (l10n.redesignEventCountHere(here), p.present, RdRecordFilter.present),
+            if (late > 0) (l10n.redesignEventCountLateStarted(late), p.late, RdRecordFilter.late),
+            if (counts.excused > 0)
+              (l10n.redesignEventCountExcusedStarted(counts.excused), p.excused, RdRecordFilter.excused),
+            if (counts.absent > 0) (l10n.redesignEventCountAbsentStarted(counts.absent), p.absent, RdRecordFilter.absent),
+            if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2, RdRecordFilter.open),
           ]
         : [
-            (l10n.redesignTodayCountYes(counts.present), p.present),
-            if (counts.excused > 0) (l10n.redesignTodayCountExcused(counts.excused), p.excused),
-            if (counts.lateAnnounced > 0) (l10n.redesignTodayCountLater(counts.lateAnnounced), p.late),
-            if (counts.absent > 0) (l10n.redesignTodayCountAbsent(counts.absent), p.absent),
-            if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2),
+            (l10n.redesignTodayCountYes(counts.present), p.present, RdRecordFilter.yes),
+            if (counts.excused > 0) (l10n.redesignTodayCountExcused(counts.excused), p.excused, RdRecordFilter.excused),
+            if (counts.lateAnnounced > 0)
+              (l10n.redesignTodayCountLater(counts.lateAnnounced), p.late, RdRecordFilter.later),
+            if (counts.absent > 0) (l10n.redesignTodayCountAbsent(counts.absent), p.absent, RdRecordFilter.absent),
+            if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2, RdRecordFilter.open),
           ];
     final total = counts.total;
     final percent = total == 0 ? 0 : ((here + late) * 100 / total).round();
@@ -1529,11 +1516,18 @@ class _Overview extends ConsumerWidget {
                 ),
                 const SizedBox(height: 6),
               ],
-              Row(
-                children: [
-                  Expanded(child: Text(title, style: RdType.section(p))),
-                  Text(side, style: RdType.meta(p, size: 13)),
-                ],
+              // The whole list sits in the Anwesenheit.
+              InkWell(
+                key: const Key('rd-event-answers-open'),
+                borderRadius: BorderRadius.circular(8),
+                onTap: () => onRecord(RdRecordFilter.all),
+                child: Row(
+                  children: [
+                    Expanded(child: Text(title, style: RdType.section(p))),
+                    Text(side, style: RdType.meta(p, size: 13)),
+                    Icon(Icons.chevron_right, size: 18, color: p.text2),
+                  ],
+                ),
               ),
               const SizedBox(height: 12),
               RdStatusBar(
@@ -1556,20 +1550,31 @@ class _Overview extends ConsumerWidget {
               const SizedBox(height: 12),
               Wrap(
                 spacing: 14,
-                runSpacing: 6,
+                runSpacing: 0,
                 children: [
-                  for (final (text, color) in legend)
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                  for (final (text, color, filter) in legend)
+                    Semantics(
+                      button: true,
+                      child: InkWell(
+                        key: Key('rd-event-count-${filter.name}'),
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () => onRecord(filter),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 28),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(text, style: RdType.meta(p, size: 14).copyWith(color: p.text)),
+                            ],
+                          ),
                         ),
-                        const SizedBox(width: 6),
-                        Text(text, style: RdType.meta(p, size: 14).copyWith(color: p.text)),
-                      ],
+                      ),
                     ),
                 ],
               ),
@@ -1584,7 +1589,7 @@ class _Overview extends ConsumerWidget {
                   RdPrimaryButton(
                     label: l10n.redesignEventRecord,
                     icon: Icons.checklist_rounded,
-                    onPressed: onRecord,
+                    onPressed: () => onRecord(RdRecordFilter.all),
                   ),
                   const SizedBox(height: 10),
                 ],
@@ -1673,12 +1678,11 @@ class _Overview extends ConsumerWidget {
             members: members,
             personAttendanceIds: personAttendanceIds,
           ),
-        if (hasProgramTab) RdProgramSummary(attendance: attendance, showWorks: rdShowsProgram(ref, type), onTap: onProgram),
-        if (ref.watch(canViewAttendanceChecklistProvider) &&
-            (attendance.checklist?.isNotEmpty ?? false) &&
-            !(over && attendance.checklist!.every((c) => c.completed))) ...[
+        // "Vorbereitung": always there for the Leitung before the Termin
+        // (empty with "+ Aufgabe"); afterwards only while tasks are open.
+        if (_showPrep(attendance, over: over, canMutate: canMutate, canView: ref.watch(canViewAttendanceChecklistProvider))) ...[
           const SizedBox(height: 24),
-          RdEventChecklistSection(attendance: attendance),
+          RdEventChecklistSection(attendance: attendance, type: type, canEdit: canMutate),
         ],
         RdEventInfoSection(attendance: attendance, title: l10n.redesignEventForMembers, ended: over),
         if (notes.isNotEmpty) ...[
