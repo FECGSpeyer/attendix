@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/config/supabase_config.dart';
@@ -123,7 +124,7 @@ class _DuplicateCandidatesCardState
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ListTile(
-            leading: const Icon(Icons.people_alt_outlined, color: AppColors.warning),
+            leading: Icon(AppIcons.peopleAltOutlined, color: AppColors.warning),
             title: Text(
               context.l10n.personSimilarExists,
               style: const TextStyle(fontWeight: FontWeight.w600),

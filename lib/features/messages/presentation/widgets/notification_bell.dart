@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
@@ -181,7 +183,10 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
         isLabelVisible: unread > 0,
         backgroundColor: AppColors.danger,
         label: Text(unread > 99 ? '99+' : '$unread'),
-        child: const Icon(Icons.notifications_outlined),
+        // ICONS: classic design uses the Ionic app's ionicon, Beta keeps Material.
+        child: Icon(ref.watch(redesignEnabledProvider)
+            ? AppIcons.notificationsOutlined
+            : Ionicons.notificationsOutline),
       ),
     );
   }
@@ -309,7 +314,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
             // iOS: plain ion-button in the glass capsule → black icon.
             color: ios ? null : AppColors.primary,
             icon: Icon(
-              Icons.done_all,
+              AppIcons.doneAll,
               semanticLabel: ios ? context.l10n.bellMarkAllRead : null,
             ),
             onPressed: _markAll,
@@ -318,7 +323,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
           IconButton(
             tooltip: ios ? null : context.l10n.bellDeleteAll,
             icon: Icon(
-              Icons.delete_outline,
+              AppIcons.deleteOutline,
               color: AppColors.danger,
               semanticLabel: ios ? context.l10n.bellDeleteAll : null,
             ),
@@ -396,9 +401,9 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
     final action = await showAppActionSheet<String>(
       context,
       actions: [
-        if (unread > 0) AppActionSheetAction(value: 'read', icon: Icons.done_all, label: l10n.bellMarkAllRead),
+        if (unread > 0) AppActionSheetAction(value: 'read', icon: AppIcons.doneAll, label: l10n.bellMarkAllRead),
         if (list.isNotEmpty)
-          AppActionSheetAction(value: 'delete', icon: Icons.delete_outline, label: l10n.bellDeleteAll, destructive: true),
+          AppActionSheetAction(value: 'delete', icon: AppIcons.deleteOutline, label: l10n.bellDeleteAll, destructive: true),
       ],
     );
     if (!mounted) return;
@@ -614,7 +619,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: [
                         const SizedBox(height: 80),
-                        const Icon(Icons.notifications_off_outlined, size: 48, color: AppColors.medium),
+                        Icon(AppIcons.notificationsOffOutlined, size: 48, color: AppColors.medium),
                         const SizedBox(height: AppDimensions.paddingS),
                         Center(child: Text(context.l10n.bellNone)),
                       ],
@@ -674,7 +679,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
             onPressed: (_) => _toggleRead(n),
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
-            icon: read ? Icons.mark_email_unread_outlined : Icons.drafts_outlined,
+            icon: read ? AppIcons.markEmailUnreadOutlined : AppIcons.draftsOutlined,
           ),
         ],
       ),
@@ -686,7 +691,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
             onPressed: (_) => _guard(() => _notifier.deleteOne(n)),
             backgroundColor: AppColors.danger,
             foregroundColor: Colors.white,
-            icon: Icons.delete_outline,
+            icon: AppIcons.deleteOutline,
           ),
         ],
       ),
@@ -750,7 +755,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
               if (n.isNavigable) ...[
                 if (ios) const SizedBox(width: 8),
                 Icon(
-                  Icons.chevron_right,
+                  AppIcons.chevronRight,
                   size: ios ? 20 : 22,
                   // iOS detail icon: opacity .25
                   color:

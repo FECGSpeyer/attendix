@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
@@ -261,17 +262,17 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
     final c = widget.controller;
     final l10n = context.l10n;
     return [
-      SlashCommand(l10n.editorH1, l10n.editorH1Desc, Icons.title, () async => c.formatSelection(Attribute.h1)),
-      SlashCommand(l10n.editorH2, l10n.editorH2Desc, Icons.text_fields, () async => c.formatSelection(Attribute.h2)),
-      SlashCommand(l10n.editorBulletList, l10n.editorBulletDesc, Icons.format_list_bulleted,
+      SlashCommand(l10n.editorH1, l10n.editorH1Desc, AppIcons.title, () async => c.formatSelection(Attribute.h1)),
+      SlashCommand(l10n.editorH2, l10n.editorH2Desc, AppIcons.textFields, () async => c.formatSelection(Attribute.h2)),
+      SlashCommand(l10n.editorBulletList, l10n.editorBulletDesc, AppIcons.formatListBulleted,
           () async => c.formatSelection(Attribute.ul)),
-      SlashCommand(l10n.editorOrderedList, l10n.editorOrderedDesc, Icons.format_list_numbered,
+      SlashCommand(l10n.editorOrderedList, l10n.editorOrderedDesc, AppIcons.formatListNumbered,
           () async => c.formatSelection(Attribute.ol)),
       if (widget.onCreateTask != null)
-        SlashCommand(l10n.editorNewTask, l10n.editorNewTaskDesc, Icons.add_task, widget.onCreateTask!),
+        SlashCommand(l10n.editorNewTask, l10n.editorNewTaskDesc, AppIcons.addTask, widget.onCreateTask!),
       for (final item in widget.agendaItems)
         if (item.id != null)
-          SlashCommand('/tagesordnung – ${item.title}', l10n.editorAgendaDesc, Icons.list_alt, () async {
+          SlashCommand('/tagesordnung – ${item.title}', l10n.editorAgendaDesc, AppIcons.listAlt, () async {
             insertRefEmbed(c, agendaItemRefEmbedType, {
               'id': item.id,
               'title': item.title,

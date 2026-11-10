@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:printing/printing.dart' show Printing;
@@ -222,7 +223,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
           : const Color(0xFFE5E5EA),
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: Icon(AppIcons.close),
           tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -235,8 +236,8 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
           if (_document != null && _totalPages > 1)
             IconButton(
               icon: Icon(_mode == PdfViewMode.scroll
-                  ? Icons.auto_stories_outlined
-                  : Icons.view_agenda_outlined),
+                  ? AppIcons.autoStoriesOutlined
+                  : AppIcons.viewAgendaOutlined),
               tooltip: _mode == PdfViewMode.scroll
                   ? context.l10n.songsFlutterPdfPagedMode
                   : context.l10n.songsFlutterPdfScrollMode,
@@ -245,20 +246,20 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
           if (_canShareFile && _error == null)
             Builder(
               builder: (button) => IconButton(
-                icon: Icon(Icons.adaptive.share),
+                icon: Icon(AppIcons.adaptiveShare),
                 tooltip: context.l10n.redesignWorkFileShare,
                 onPressed: _bytes == null ? null : () => _share(button),
               ),
             ),
           if (_canPrintDirectly && _error == null)
             IconButton(
-              icon: const Icon(Icons.print_outlined),
+              icon: Icon(AppIcons.printOutlined),
               tooltip: context.l10n.redesignWorkFilePrint,
               onPressed: _bytes == null ? null : _print,
             ),
           if (!(_canShareFile || _canPrintDirectly) || _error != null)
             IconButton(
-              icon: const Icon(Icons.open_in_new),
+              icon: Icon(AppIcons.openInNew),
               tooltip: context.l10n.coreFlutterOpenExternally,
               onPressed: _openExternally,
             ),
@@ -306,7 +307,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
+              Icon(AppIcons.errorOutline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
               Text(
                 context.l10n.songsFlutterPdfLoadFailed,
@@ -328,7 +329,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                   });
                   _loadPdf();
                 },
-                icon: const Icon(Icons.refresh),
+                icon: Icon(AppIcons.refresh),
                 label: IonButtonLabel(context.l10n.messagesRetry),
               ),
               // Fallback when the in-app viewer is unavailable (e.g. pdf.js
@@ -336,7 +337,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
               const SizedBox(height: AppDimensions.paddingS),
               TextButton.icon(
                 onPressed: _openExternally,
-                icon: const Icon(Icons.open_in_new),
+                icon: Icon(AppIcons.openInNew),
                 label: IonButtonLabel(context.l10n.coreFlutterOpenExternally),
               ),
             ],
@@ -438,7 +439,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            icon: const Icon(Icons.keyboard_arrow_up),
+            icon: Icon(AppIcons.keyboardArrowUp),
             onPressed: _currentPage > 1 ? () => _goToPage(_currentPage - 1) : null,
             tooltip: context.l10n.songsFlutterPreviousPage,
           ),
@@ -450,7 +451,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.keyboard_arrow_down),
+            icon: Icon(AppIcons.keyboardArrowDown),
             onPressed: _currentPage < _totalPages
                 ? () => _goToPage(_currentPage + 1)
                 : null,

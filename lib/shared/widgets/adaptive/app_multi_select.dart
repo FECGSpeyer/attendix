@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../l10n/l10n.dart';
 import 'adaptive_platform.dart';
@@ -139,7 +140,7 @@ class _AppMultiSelectFormFieldState<T> extends State<AppMultiSelectFormField<T>>
                 ),
               ),
               const SizedBox(width: 6),
-              if (ios) const IonSelectIcon() else Icon(Icons.arrow_drop_down, color: theme.hintColor),
+              if (ios) const IonSelectIcon() else Icon(AppIcons.arrowDropDown, color: theme.hintColor),
             ],
           ),
         ),

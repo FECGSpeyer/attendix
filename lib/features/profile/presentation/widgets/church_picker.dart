@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/church/church.dart';
@@ -75,7 +76,7 @@ class _ChurchPickerState extends State<ChurchPicker> {
         : widget.churches
             .where((c) => c.name.toLowerCase().contains(term))
             .toList();
-    const check = Icon(Icons.check, color: AppColors.primary);
+    final check = Icon(AppIcons.check, color: AppColors.primary);
 
     return Scaffold(
       appBar: AppBar(
@@ -100,7 +101,7 @@ class _ChurchPickerState extends State<ChurchPicker> {
                 textAlignVertical: TextAlignVertical.center,
                 decoration: InputDecoration(
                   hintText: widget.searchHint,
-                  prefixIcon: const Icon(Icons.search, size: 20),
+                  prefixIcon: Icon(AppIcons.search, size: 20),
                   isDense: true,
                   filled: true,
                   fillColor: AppColors.medium.withValues(alpha: 0.12),

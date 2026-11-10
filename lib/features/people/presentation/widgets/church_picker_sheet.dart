@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -182,7 +183,7 @@ class _ChurchPickerState extends State<_ChurchPicker> {
             child: TextField(
               decoration: InputDecoration(
                 hintText: context.l10n.personSearchChurch,
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: Icon(AppIcons.search),
               ),
               onChanged: (v) => setState(() => _search = v),
             ),
@@ -193,7 +194,7 @@ class _ChurchPickerState extends State<_ChurchPicker> {
                 ListTile(
                   title: Text(context.l10n.personNotListed),
                   trailing: widget.selectedId == ''
-                      ? const Icon(Icons.check, color: AppColors.primary)
+                      ? Icon(AppIcons.check, color: AppColors.primary)
                       : null,
                   onTap: () => Navigator.of(context).pop(''),
                 ),
@@ -201,7 +202,7 @@ class _ChurchPickerState extends State<_ChurchPicker> {
                   ListTile(
                     title: Text(church.name),
                     trailing: widget.selectedId == church.id
-                        ? const Icon(Icons.check, color: AppColors.primary)
+                        ? Icon(AppIcons.check, color: AppColors.primary)
                         : null,
                     onTap: () => Navigator.of(context).pop(church.id),
                   ),

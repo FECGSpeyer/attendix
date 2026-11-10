@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -510,7 +511,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                      icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                       onPressed: _isUploading ? null : () => Navigator.pop(context, false),
                     ),
                   ],
@@ -529,7 +530,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                     Material(
                       color: AppColors.warning.withAlpha(45),
                       child: ExpansionTile(
-                        leading: const Icon(Icons.info_outline),
+                        leading: Icon(AppIcons.infoOutline),
                         title: Text(context.l10n.songsImportantInfo),
                         shape: const Border(),
                         collapsedShape: const Border(),
@@ -736,15 +737,15 @@ class _FileItemState extends State<_FileItem> {
         return const SizedBox(
             width: 20, height: 20, child: AppSpinner(strokeWidth: 2));
       case _UploadStatus.done:
-        return const Icon(Icons.check_circle, color: AppColors.success, size: 20);
+        return Icon(AppIcons.checkCircle, color: AppColors.success, size: 20);
       case _UploadStatus.error:
-        return const Icon(Icons.error, color: AppColors.danger, size: 20);
+        return Icon(AppIcons.error, color: AppColors.danger, size: 20);
       case _UploadStatus.pending:
-        return const Icon(Icons.schedule, color: AppColors.medium, size: 20);
+        return Icon(AppIcons.schedule, color: AppColors.medium, size: 20);
       case null:
         final conflicts = widget.file.conflicts;
         if (conflicts.isEmpty) return null;
-        const icon = Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: 20);
+        final icon = Icon(AppIcons.warningAmberRounded, color: AppColors.warning, size: 20);
         return conflicts.length == 1
             ? Tooltip(
                 message: context.l10n.songsReplaces(conflicts.first.fileName),
@@ -785,7 +786,7 @@ class _FileItemState extends State<_FileItem> {
                 onPressed: (_) => widget.onRemove(),
                 backgroundColor: AppColors.danger,
                 foregroundColor: Colors.white,
-                icon: Icons.delete_outline,
+                icon: AppIcons.deleteOutline,
               ),
             ],
           ),

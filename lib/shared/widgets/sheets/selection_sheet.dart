@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
@@ -152,7 +153,7 @@ class _SelectionSheetState<T> extends State<SelectionSheet<T>> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                  icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -165,11 +166,11 @@ class _SelectionSheetState<T> extends State<SelectionSheet<T>> {
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: widget.searchHint ?? context.l10n.coreFlutterSearchHint,
-                  prefixIcon: const Icon(Icons.search),
+                  prefixIcon: Icon(AppIcons.search),
                   border: const OutlineInputBorder(),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
-                          icon: Icon(Icons.clear, semanticLabel: context.l10n.a11yClearInput),
+                          icon: Icon(AppIcons.clear, semanticLabel: context.l10n.a11yClearInput),
                           onPressed: () {
                             _searchController.clear();
                             setState(() => _searchQuery = '');
@@ -262,7 +263,7 @@ class _SelectionTile<T> extends StatelessWidget {
       ),
       subtitle: subtitle != null ? Text(subtitle!) : null,
       trailing: isSelected
-          ? const Icon(Icons.check, color: AppColors.primary)
+          ? Icon(AppIcons.check, color: AppColors.primary)
           : null,
       onTap: onTap,
       selected: isSelected,

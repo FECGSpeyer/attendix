@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:pdfx/pdfx.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -131,7 +132,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 child: Row(
                   children: [
-                    const Icon(Icons.picture_as_pdf, color: AppColors.danger),
+                    Icon(AppIcons.pictureAsPdf, color: AppColors.danger),
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: Text(
@@ -146,12 +147,12 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                     ),
                     if (!_isLoading && _pdfController != null)
                       IconButton(
-                        icon: const Icon(Icons.fullscreen),
+                        icon: Icon(AppIcons.fullscreen),
                         onPressed: _openFullscreen,
                         tooltip: context.l10n.songsFlutterFullscreen,
                       ),
                     IconButton(
-                      icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                      icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -193,7 +194,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
+              Icon(AppIcons.errorOutline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
               Text(
                 context.l10n.songsFlutterPdfLoadFailed,
@@ -215,7 +216,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                   });
                   _loadPdf();
                 },
-                icon: const Icon(Icons.refresh),
+                icon: Icon(AppIcons.refresh),
                 label: IonButtonLabel(context.l10n.messagesRetry),
               ),
               // Fallback when the in-app viewer is unavailable (e.g. pdf.js
@@ -227,7 +228,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                     ? NativeFileService.downloadInBrowser(
                         widget.url, NativeFileService.fileNameFromUrl(widget.url))
                     : NativeFileService.openExternal(Uri.parse(widget.url)),
-                icon: const Icon(Icons.open_in_new),
+                icon: Icon(AppIcons.openInNew),
                 label: IonButtonLabel(context.l10n.coreFlutterOpenExternally),
               ),
             ],
@@ -276,12 +277,12 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
-            icon: const Icon(Icons.first_page),
+            icon: Icon(AppIcons.firstPage),
             onPressed: _currentPage > 1 ? () => _goToPage(1) : null,
             tooltip: context.l10n.songsFlutterFirstPage,
           ),
           IconButton(
-            icon: const Icon(Icons.chevron_left),
+            icon: Icon(AppIcons.chevronLeft),
             onPressed:
                 _currentPage > 1 ? () => _goToPage(_currentPage - 1) : null,
             tooltip: context.l10n.songsFlutterPreviousPage,
@@ -296,14 +297,14 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.chevron_right),
+            icon: Icon(AppIcons.chevronRight),
             onPressed: _currentPage < _totalPages
                 ? () => _goToPage(_currentPage + 1)
                 : null,
             tooltip: context.l10n.songsFlutterNextPage,
           ),
           IconButton(
-            icon: const Icon(Icons.last_page),
+            icon: Icon(AppIcons.lastPage),
             onPressed:
                 _currentPage < _totalPages ? () => _goToPage(_totalPages) : null,
             tooltip: context.l10n.songsFlutterLastPage,
@@ -396,7 +397,7 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                       child: Row(
                         children: [
                           IconButton(
-                            icon: Icon(Icons.close, color: Colors.white, semanticLabel: context.l10n.commonClose),
+                            icon: Icon(AppIcons.close, color: Colors.white, semanticLabel: context.l10n.commonClose),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                           Expanded(
@@ -440,7 +441,7 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.chevron_left,
+                            icon: Icon(AppIcons.chevronLeft,
                                 color: Colors.white, size: 32, semanticLabel: context.l10n.a11yPreviousPage),
                             onPressed: _currentPage > 1
                                 ? () => widget.pdfController.animateToPage(
@@ -467,7 +468,7 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.chevron_right,
+                            icon: Icon(AppIcons.chevronRight,
                                 color: Colors.white, size: 32, semanticLabel: context.l10n.a11yNextPage),
                             onPressed: _currentPage < widget.totalPages
                                 ? () => widget.pdfController.animateToPage(

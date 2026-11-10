@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/org_song_providers.dart';
@@ -463,7 +464,7 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
                       ),
                       if (target?.libraryName != null)
                         IonItem(
-                          leading: const Icon(Icons.sync, color: AppColors.medium),
+                          leading: Icon(AppIcons.sync, color: AppColors.medium),
                           title: Text(
                             l10n.orgSongsSyncedTarget(target!.tenant.shortName, target.libraryName!),
                             style: const TextStyle(fontSize: 14, color: AppColors.medium),
@@ -499,7 +500,7 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
             Container(
               color: AppColors.warning,
               child: ListTile(
-                leading: const Icon(Icons.warning_amber_rounded, color: Colors.black),
+                leading: Icon(AppIcons.warningAmberRounded, color: Colors.black),
                 title: Text(
                   l10n.orgSongsDuplicateWarning(_duplicates.length),
                   style: const TextStyle(color: Colors.black),
@@ -566,7 +567,7 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
             ),
             if (_numberTaken)
               IonItem(
-                leading: const Icon(Icons.error_outline, color: AppColors.danger),
+                leading: Icon(AppIcons.errorOutline, color: AppColors.danger),
                 title: Text(l10n.orgSongsNumberTaken, style: const TextStyle(color: AppColors.danger)),
                 subtitle: Text(l10n.orgSongsUseNextFree('${_prefix.text}$_nextFreeNumber')),
                 onTap: () => setState(() => _number.text = '$_nextFreeNumber'),

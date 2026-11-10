@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -93,7 +94,7 @@ class CurrentSongsSheet extends ConsumerWidget {
                 if (canPrint)
                   IconButton(
                     tooltip: context.l10n.songsPrintScores,
-                    icon: const Icon(Icons.print_outlined),
+                    icon: Icon(AppIcons.printOutlined),
                     onPressed: () => _printNotesForGroup(context, ref),
                   ),
               ],

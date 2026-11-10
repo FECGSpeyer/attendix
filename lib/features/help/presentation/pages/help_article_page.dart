@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -34,7 +35,7 @@ class HelpArticlePage extends ConsumerWidget {
       extendBodyBehindAppBar: useIosLook(context),
       appBar: IonTranslucentAppBar(child: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Text(article?.title ?? context.l10n.helpTitle),

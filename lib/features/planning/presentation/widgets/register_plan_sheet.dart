@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -177,7 +178,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
         // IOS_PAGES3: iOS → ✕ in a Liquid Glass circle
         actions: [
           ToolbarButtonGroup(children: [
-            IconButton(icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose), onPressed: () => Navigator.pop(context)),
+            IconButton(icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose), onPressed: () => Navigator.pop(context)),
           ]),
         ],
       ),
@@ -191,7 +192,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                   for (var i = 0; i < _groups.length; i++)
                     _inputRow(
                       key: ValueKey('group-${_groups[i].id}'),
-                      icon: Icons.people_outline,
+                      icon: AppIcons.peopleOutline,
                       controller: _groups[i].controller,
                       hint: l10n.planningGroupName,
                       capitalization: TextCapitalization.sentences,
@@ -204,7 +205,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                   for (var i = 0; i < _conductors.length; i++)
                     _inputRow(
                       key: ValueKey('conductor-${_conductors[i].id}'),
-                      icon: Icons.person_outline,
+                      icon: AppIcons.personOutline,
                       controller: _conductors[i].controller,
                       hint: l10n.planningName,
                       capitalization: TextCapitalization.words,
@@ -215,7 +216,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                 _insetList([
                   // Ionic: ion-input with an inline start label.
                   ListTile(
-                    leading: const Icon(Icons.schedule, color: AppColors.medium),
+                    leading: Icon(AppIcons.schedule, color: AppColors.medium),
                     title: Row(
                       children: [
                         Text(l10n.planningTimeMinutes),
@@ -242,20 +243,20 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                 const SizedBox(height: 24),
                 FilledButton.icon(
                   onPressed: _disabled ? null : () => _createPlan(),
-                  icon: const Icon(Icons.description_outlined),
+                  icon: Icon(AppIcons.descriptionOutlined),
                   label: IonButtonLabel(l10n.planningExport),
                 ),
                 if (chatId != null) ...[
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
                     onPressed: _disabled ? null : () => _createPlan(perTelegram: true),
-                    icon: const Icon(Icons.send_outlined),
+                    icon: Icon(AppIcons.sendOutlined),
                     label: IonButtonLabel(l10n.planningTelegramPdfShort),
                   ),
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
                     onPressed: _disabled ? null : () => _createPlan(perTelegram: true, asImage: true),
-                    icon: const Icon(Icons.image_outlined),
+                    icon: Icon(AppIcons.imageOutlined),
                     label: IonButtonLabel(l10n.planningTelegramImageShort),
                   ),
                 ],
@@ -452,7 +453,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     return IonListHeader(
       title: label,
       trailing: IconButton(
-        icon: Icon(Icons.add_circle_outline, semanticLabel: context.l10n.a11yIncrease),
+        icon: Icon(AppIcons.addCircleOutline, semanticLabel: context.l10n.a11yIncrease),
         color: AppColors.primary,
         onPressed: onAdd,
       ),
@@ -500,7 +501,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
       trailing: onRemove == null
           ? null
           : IconButton(
-              icon: Icon(Icons.highlight_off, semanticLabel: context.l10n.commonRemove),
+              icon: Icon(AppIcons.highlightOff, semanticLabel: context.l10n.commonRemove),
               color: AppColors.danger,
               onPressed: onRemove,
             ),

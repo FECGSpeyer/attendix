@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:attendix/features/people/presentation/widgets/ion/ion_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,7 @@ void main() {
         Scaffold(floatingActionButton: IonFabButton(onPressed: () {})),
       ));
       expect(find.byType(FloatingActionButton), findsNothing);
-      expect(find.byIcon(Icons.add), findsOneWidget);
+      expect(find.byIcon(AppIcons.add), findsOneWidget);
 
       await tester.pumpWidget(_app(
         TargetPlatform.android,

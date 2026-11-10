@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -252,7 +253,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
     return ListTile(
       onTap: () => setState(() => row.selected = !row.selected),
       leading: Icon(
-        row.selected ? Icons.check_circle : Icons.radio_button_unchecked,
+        row.selected ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
         color: row.selected ? AppColors.primary : AppColors.medium,
       ),
       title: Text(row.item.title),
@@ -280,7 +281,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
                   tooltip: l10n.agendaShorter,
                   color: AppColors.primary,
                   visualDensity: VisualDensity.compact,
-                  icon: const Icon(Icons.remove),
+                  icon: Icon(AppIcons.remove),
                   onPressed: () => setState(() => row.duration = (row.duration - 5).clamp(5, 999)),
                 ),
                 Text(l10n.planningMinShort(row.duration)),
@@ -288,7 +289,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
                   tooltip: l10n.agendaLonger,
                   color: AppColors.primary,
                   visualDensity: VisualDensity.compact,
-                  icon: const Icon(Icons.add),
+                  icon: Icon(AppIcons.add),
                   onPressed: () => setState(() => row.duration += 5),
                 ),
               ],
@@ -311,7 +312,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
             automaticallyImplyLeading: false,
             primary: false,
             leading: IconButton(
-              icon: const Icon(Icons.close),
+              icon: Icon(AppIcons.close),
               tooltip: l10n.commonClose,
               onPressed: () => Navigator.of(context).pop(),
             ),
@@ -335,7 +336,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
                       if (_canCreateFromSearch)
                         IonInsetList(children: [
                           ListTile(
-                            leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+                            leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
                             title: Text(l10n.agendaCreateAsNew(_search.trim()),
                                 style: const TextStyle(color: AppColors.primary)),
                             onTap: _createFromSearch,

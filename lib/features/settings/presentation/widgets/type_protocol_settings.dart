@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -121,7 +122,7 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
         if (widget.showLearnMore)
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.help_outline, color: AppColors.primary),
+            leading: Icon(AppIcons.helpOutline, color: AppColors.primary),
             title: Text(context.l10n.typeSettingsLearnMore, style: const TextStyle(color: AppColors.primary)),
             onTap: () => context.push('/settings/help/article/team-activate'),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -168,13 +169,13 @@ class AttendancePersonTile extends StatelessWidget {
             onPressed: (_) => _showMoreSheet(context),
             backgroundColor: AppColors.medium,
             foregroundColor: Colors.white,
-            icon: Icons.more_horiz,
+            icon: AppIcons.moreHoriz,
           ),
           SlidableAction(
             onPressed: (_) => _showNoteDialog(context),
             backgroundColor: AppColors.warning,
             foregroundColor: Colors.black,
-            icon: Icons.edit,
+            icon: AppIcons.edit,
           ),
         ],
       ),
@@ -222,30 +223,30 @@ class AttendancePersonTile extends StatelessWidget {
         if (status != AttendanceStatus.neutral)
           option(
             context.l10n.attendanceSetNeutral,
-            Icons.remove_circle_outline,
+            AppIcons.removeCircleOutline,
             () => _onStatusChangedWithHaptic(AttendanceStatus.neutral),
           ),
         if (canLateExcused)
           option(
             context.l10n.commonStatusLateExcused,
-            Icons.schedule,
+            AppIcons.schedule,
             () => _onStatusChangedWithHaptic(AttendanceStatus.lateExcused),
           ),
         if (onEditRegistrationFields != null)
           option(
             context.l10n.attendanceEditRegFields,
-            Icons.edit_outlined,
+            AppIcons.editOutlined,
             onEditRegistrationFields!,
           ),
         if (showModifierInfo) ...[
           option(
             context.l10n.attendanceWhoChanged,
-            Icons.info_outline,
+            AppIcons.infoOutline,
             onShowModifierInfo,
           ),
           option(
             context.l10n.attendanceRemovePerson,
-            Icons.delete_outline,
+            AppIcons.deleteOutline,
             onRemoveFromAttendance,
             destructive: true,
           ),
@@ -253,7 +254,7 @@ class AttendancePersonTile extends StatelessWidget {
         if (onSendReminder != null)
           option(
             context.l10n.attendanceSendReminderShort,
-            Icons.notifications_outlined,
+            AppIcons.notificationsOutlined,
             onSendReminder!,
           ),
       ],

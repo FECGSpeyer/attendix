@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
@@ -61,7 +62,7 @@ class MessageListPage extends ConsumerWidget {
       floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         tooltip: l10n.messagesNewMessage,
         onPressed: () => _compose(context, ref),
-        child: const Icon(Icons.add),
+        child: Icon(AppIcons.add),
       )),
       body: RefreshIndicator.adaptive(
         onRefresh: () {
@@ -129,7 +130,7 @@ class _AutoMessagesEntry extends ConsumerWidget {
     return SettingsListSection(
       children: [
         SettingsListTile(
-          icon: Icons.timer_outlined,
+          icon: AppIcons.timerOutlined,
           iconColor: AppColors.primary,
           title: context.l10n.messagesAutoEntry,
           subtitle: active == null ? null : context.l10n.messagesAutoActive(active),
@@ -168,7 +169,7 @@ class _MessageRow extends StatelessWidget {
             onPressed: (_) => onDelete(),
             backgroundColor: AppColors.danger,
             foregroundColor: Colors.white,
-            icon: Icons.delete_outline,
+            icon: AppIcons.deleteOutline,
           ),
         ],
       ),
@@ -259,7 +260,7 @@ class _MessageRow extends StatelessWidget {
               SizedBox(width: ios ? 8 : AppDimensions.paddingS),
               ios
                   ? const IonDetailChevron()
-                  : const Icon(Icons.chevron_right, color: AppColors.medium),
+                  : Icon(AppIcons.chevronRight, color: AppColors.medium),
             ],
           ),
         ),
@@ -290,7 +291,7 @@ class _MessagesEmptyState extends StatelessWidget {
               shape: BoxShape.circle,
               color: AppColors.primary.withValues(alpha: 0.12),
             ),
-            child: const Icon(Icons.campaign_outlined, size: 42, color: AppColors.primary),
+            child: Icon(AppIcons.campaignOutlined, size: 42, color: AppColors.primary),
           ),
           Text(
             l10n.messagesNone,
@@ -310,7 +311,7 @@ class _MessagesEmptyState extends StatelessWidget {
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
             onPressed: onCompose,
-            icon: const Icon(Icons.edit_note),
+            icon: Icon(AppIcons.editNote),
             label: IonButtonLabel(l10n.messagesWriteFirst),
           ),
         ],

@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -172,7 +173,7 @@ void main() {
   }
 
   Future<void> tapClose(WidgetTester tester) async {
-    await tester.tap(find.byIcon(Icons.close));
+    await tester.tap(find.byIcon(AppIcons.close));
     await tester.pump();
   }
 

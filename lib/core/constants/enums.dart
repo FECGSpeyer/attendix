@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../theme/app_colors.dart';
 import '../../l10n/l10n.dart';
@@ -194,12 +195,12 @@ enum AttendanceStatus {
 
   /// UI icon for this status
   IconData get icon => switch (this) {
-    AttendanceStatus.present => Icons.check_circle,
-    AttendanceStatus.absent => Icons.cancel,
-    AttendanceStatus.excused => Icons.event_busy,
-    AttendanceStatus.late => Icons.schedule,
-    AttendanceStatus.lateExcused => Icons.schedule,
-    AttendanceStatus.neutral => Icons.help_outline,
+    AttendanceStatus.present => AppIcons.checkCircle,
+    AttendanceStatus.absent => AppIcons.cancel,
+    AttendanceStatus.excused => AppIcons.eventBusy,
+    AttendanceStatus.late => AppIcons.schedule,
+    AttendanceStatus.lateExcused => AppIcons.schedule,
+    AttendanceStatus.neutral => AppIcons.helpOutline,
   };
 
   /// Localized label for this status (follows the active UI language).

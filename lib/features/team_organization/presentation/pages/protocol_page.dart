@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -916,29 +917,29 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     Card(
                       child: Column(children: [
                         if (summary.decided.isNotEmpty)
-                          _summaryTile(Icons.check_circle, AppColors.success,
+                          _summaryTile(AppIcons.checkCircle, AppColors.success,
                               ctx.l10n.protocolDecidedCount(summary.decided.length),
                               summary.decided.join(', ')),
                         if (summary.discussed.isNotEmpty)
-                          _summaryTile(Icons.forum_outlined, AppColors.primary,
+                          _summaryTile(AppIcons.forumOutlined, AppColors.primary,
                               ctx.l10n.protocolDiscussedCount(summary.discussed.length),
                               summary.discussed.join(', ')),
                         if (summary.postponed.isNotEmpty)
                           _summaryTile(
-                              Icons.schedule,
+                              AppIcons.schedule,
                               AppColors.warning,
                               ctx.l10n.protocolPostponedCount(summary.postponed.length),
                               '${summary.postponed.join(', ')}${_type?.suggestPostponed == true ? ctx.l10n.protocolSuggestNext : ''}'),
                         _summaryTile(
-                            Icons.check_box_outlined,
+                            AppIcons.checkBoxOutlined,
                             AppColors.medium,
                             ctx.l10n.protocolTaskCount(summary.taskCount),
                             summary.taskOwners.isNotEmpty ? ctx.l10n.protocolForNames(joinNames(summary.taskOwners)) : null),
                         if (summary.withoutOutcome.isNotEmpty)
-                          _summaryTile(Icons.help_outline, AppColors.medium,
+                          _summaryTile(AppIcons.helpOutline, AppColors.medium,
                               ctx.l10n.protocolWithoutOutcome(summary.withoutOutcome.length), summary.withoutOutcome.join(', ')),
                         if (summary.withoutNotes.isNotEmpty)
-                          _summaryTile(Icons.error_outline, AppColors.warning,
+                          _summaryTile(AppIcons.errorOutline, AppColors.warning,
                               ctx.l10n.protocolWithoutNotes(summary.withoutNotes.length), summary.withoutNotes.join(', ')),
                       ]),
                     ),
@@ -962,7 +963,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     Card(
                       child: Column(children: [
                         _summaryTile(
-                          Icons.visibility_outlined,
+                          AppIcons.visibilityOutlined,
                           AppColors.medium,
                           ctx.l10n.protocolMayRead,
                           (_type?.relevantGroups?.isNotEmpty ?? false)
@@ -970,7 +971,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                               : ctx.l10n.protocolReadAll(_type?.name ?? ''),
                         ),
                         _summaryTile(
-                          Icons.notifications_outlined,
+                          AppIcons.notificationsOutlined,
                           AppColors.medium,
                           ctx.l10n.protocolNotified,
                           '${ctx.l10n.protocolRecipients(summary.recipientCount)}${summary.taskOwners.isNotEmpty ? ctx.l10n.protocolTaskOwners(summary.taskOwners.length) : ''}',
@@ -989,7 +990,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     ),
                     FilledButton.icon(
                       onPressed: () => Navigator.of(ctx).pop(true),
-                      icon: const Icon(Icons.send),
+                      icon: Icon(AppIcons.send),
                       label: IonButtonLabel(_isPublished ? ctx.l10n.protocolFlutterRepublishNotify : ctx.l10n.protocolFlutterPublishNotify),
                     ),
                     TextButton(
@@ -1115,7 +1116,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           ),
           actions: [
             if (_attendance != null && !_notAvailable && !_loadFailed)
-              IconButton(tooltip: context.l10n.protocolSharePdf, icon: const Icon(Icons.ios_share), onPressed: _sharePdf),
+              IconButton(tooltip: context.l10n.protocolSharePdf, icon: Icon(AppIcons.iosShare), onPressed: _sharePdf),
           ],
         ),
         // Ionic `.protocol-footer`: centered save state above two equal buttons.
@@ -1149,7 +1150,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                                   isLabelVisible: _hasNotes(protocolGeneralSectionId),
                                   smallSize: 7,
                                   backgroundColor: AppColors.primary,
-                                  child: const Icon(Icons.description_outlined),
+                                  child: Icon(AppIcons.descriptionOutlined),
                                 ),
                                 label: IonButtonLabel(context.l10n.protocolNotes),
                               ),
@@ -1173,10 +1174,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         body: _loading
             ? const Center(child: AppSpinner())
             : _notAvailable
-                ? _centerState(Icons.lock_outline, context.l10n.protocolNotPublished, context.l10n.protocolNotPublishedHint)
+                ? _centerState(AppIcons.lockOutline, context.l10n.protocolNotPublished, context.l10n.protocolNotPublishedHint)
                 : _loadFailed || _attendance == null
                     ? IonEmptyState(
-                        icon: Icons.cloud_off,
+                        icon: AppIcons.cloudOff,
                         padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
                         title: context.l10n.protocolLoadFailed,
                         text: '',
@@ -1486,7 +1487,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                               await _createTask(protocolGeneralSectionId);
                               if (sheetCtx.mounted) setSheet(() {});
                             },
-                            icon: const Icon(Icons.add_circle_outline),
+                            icon: Icon(AppIcons.addCircleOutline),
                             label: IonButtonLabel(ctx.l10n.tasksTask),
                           ),
                         ),
@@ -1542,7 +1543,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           ListTile(
             dense: true,
             leading: Icon(
-              t.status == 'completed' ? Icons.check_circle : Icons.radio_button_unchecked,
+              t.status == 'completed' ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
               color: t.status == 'completed' ? AppColors.success : AppColors.medium,
             ),
             title: Text(
@@ -1590,7 +1591,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           Card(
             color: AppColors.danger.withValues(alpha: 0.08),
             child: ListTile(
-              leading: const Icon(Icons.circle, color: AppColors.danger, size: 12),
+              leading: Icon(AppIcons.circle, color: AppColors.danger, size: 12),
               title: Text(context.l10n.protocolRunning(
                   liveSec.topNumber != null ? context.l10n.protocolTop(liveSec.topNumber!) : liveSec.name,
                   _live!.remainingMinutes)),
@@ -1606,7 +1607,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
             child: Row(children: [
-              const Icon(Icons.check_circle, color: AppColors.success, size: 18),
+              Icon(AppIcons.checkCircle, color: AppColors.success, size: 18),
               const SizedBox(width: 6),
               Expanded(child: Text(_statusLine)),
             ]),
@@ -1621,7 +1622,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         for (final s in _sections) _sectionCard(s, map),
         TextButton.icon(
           onPressed: _addSpontaneousTopic,
-          icon: const Icon(Icons.add),
+          icon: Icon(AppIcons.add),
           label: IonButtonLabel(context.l10n.protocolPoint),
         ),
         if (unassigned.isNotEmpty) ...[
@@ -1653,7 +1654,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           ListTile(
             onTap: () => setState(() => _activeId = active ? null : s.id),
             leading: !active && _hasNotes(s.id) && outcome == null
-                ? const Icon(Icons.check_circle_outline, color: AppColors.success)
+                ? Icon(AppIcons.checkCircleOutline, color: AppColors.success)
                 : null,
             title: s.isTop
                 ? Column(
@@ -1675,7 +1676,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   TeamOrgBadge(label: outcomeLabels[outcome] ?? outcome, color: outcomeColor(outcome)),
                 if (s.duration > 0)
                   Padding(padding: const EdgeInsets.only(left: 6), child: Text(context.l10n.planningMinShort(s.duration))),
-                Icon(active ? Icons.expand_less : Icons.expand_more),
+                Icon(active ? AppIcons.expandLess : AppIcons.expandMore),
               ],
             ),
           ),
@@ -1694,7 +1695,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     alignment: Alignment.centerLeft,
                     child: TextButton.icon(
                       onPressed: () => _createTask(s.id),
-                      icon: const Icon(Icons.add_circle_outline),
+                      icon: Icon(AppIcons.addCircleOutline),
                       label: IonButtonLabel(context.l10n.tasksTask),
                     ),
                   ),
@@ -1879,7 +1880,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       color: AppColors.danger.withValues(alpha: 0.08),
       child: ListTile(
         dense: true,
-        leading: const Icon(Icons.circle, color: AppColors.danger, size: 12),
+        leading: Icon(AppIcons.circle, color: AppColors.danger, size: 12),
         title: Text(l10n.protocolRunning(label, _live!.remainingMinutes)),
         trailing: hasNext ? TextButton(onPressed: _nextSection, child: IonButtonLabel(l10n.protocolNextPoint)) : null,
       ),
@@ -1946,7 +1947,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 ListTile(
                   dense: true,
                   selected: _activeId == l.key,
-                  leading: const SizedBox(width: 40, child: Icon(Icons.archive_outlined, size: 18)),
+                  leading: SizedBox(width: 40, child: Icon(AppIcons.archiveOutlined, size: 18)),
                   minLeadingWidth: 40,
                   title: Text(l.title),
                   subtitle: Text(context.l10n.protocolMoreNotes),
@@ -1954,7 +1955,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 ),
               ListTile(
                 dense: true,
-                leading: const SizedBox(width: 40, child: Icon(Icons.add, size: 18, color: AppColors.primary)),
+                leading: SizedBox(width: 40, child: Icon(AppIcons.add, size: 18, color: AppColors.primary)),
                 minLeadingWidth: 40,
                 title: Text(context.l10n.protocolPoint, style: const TextStyle(color: AppColors.primary)),
                 onTap: _addSpontaneousTopic,
@@ -2025,7 +2026,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 children: [
                   OutlinedButton.icon(
                     onPressed: () => _createTask(s.id),
-                    icon: const Icon(Icons.add_circle_outline),
+                    icon: Icon(AppIcons.addCircleOutline),
                     label: IonButtonLabel(context.l10n.tasksTask),
                   ),
                   const SizedBox(width: AppDimensions.paddingM),
@@ -2071,7 +2072,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.list, size: 56, color: AppColors.medium),
+            Icon(AppIcons.list, size: 56, color: AppColors.medium),
             const SizedBox(height: AppDimensions.paddingS),
             Text(_sections.isNotEmpty ? context.l10n.protocolFlutterChooseLeft : context.l10n.protocolFlutterPlanEmptyShort,
                 style: theme.textTheme.titleMedium),
@@ -2090,7 +2091,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             Expanded(child: Text(context.l10n.protocolGeneralNotes, style: theme.textTheme.titleMedium)),
             IconButton(
               tooltip: context.l10n.protocolGeneralTask,
-              icon: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+              icon: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
               onPressed: () => _createTask(protocolGeneralSectionId),
             ),
           ],
@@ -2121,7 +2122,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   ListTile(
                     dense: true,
                     leading: Icon(
-                      t.status == 'completed' ? Icons.check_circle : Icons.radio_button_unchecked,
+                      t.status == 'completed' ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
                       color: t.status == 'completed' ? AppColors.success : AppColors.medium,
                     ),
                     title: Text(
@@ -2196,7 +2197,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
             child: Row(children: [
-              const Icon(Icons.check_circle, color: AppColors.success, size: 18),
+              Icon(AppIcons.checkCircle, color: AppColors.success, size: 18),
               const SizedBox(width: 6),
               Expanded(child: Text(_statusLine)),
             ]),
@@ -2267,7 +2268,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         const SizedBox(height: AppDimensions.paddingM),
         OutlinedButton.icon(
           onPressed: _sharePdf,
-          icon: const Icon(Icons.ios_share),
+          icon: Icon(AppIcons.iosShare),
           label: IonButtonLabel(context.l10n.protocolSharePdf),
         ),
       ],

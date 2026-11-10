@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -211,7 +212,7 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> with LinkPers
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.check_circle_outline, color: AppColors.success, size: 48),
+                        Icon(AppIcons.checkCircleOutline, color: AppColors.success, size: 48),
                         const SizedBox(height: AppDimensions.paddingS),
                         Text(context.l10n.linkPersonsNoMore),
                         if (linkedCount > 0)
@@ -249,9 +250,9 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> with LinkPers
             Text('${rep.firstName} ${rep.lastName}', style: const TextStyle(fontWeight: FontWeight.bold)),
             Text('${tenantName(rep.tenantId)} · ${formatBirthday(rep.birthday)}',
                 style: const TextStyle(color: AppColors.medium)),
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(vertical: AppDimensions.paddingXS),
-              child: Center(child: Icon(Icons.merge_type, color: AppColors.medium)),
+              child: Center(child: Icon(AppIcons.mergeType, color: AppColors.medium)),
             ),
             for (final m in group.matches)
               CheckboxListTile(

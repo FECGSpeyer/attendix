@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -194,7 +195,7 @@ class _TargetTenantAlertState extends State<_TargetTenantAlert> {
                   title: Text(widget.tenants[i].longName),
                   contentPadding: EdgeInsets.zero,
                   trailing: widget.tenants[i].id == _selected
-                      ? const Icon(Icons.check, color: AppColors.primary)
+                      ? Icon(AppIcons.check, color: AppColors.primary)
                       : null,
                   onTap: () =>
                       setState(() => _selected = widget.tenants[i].id),

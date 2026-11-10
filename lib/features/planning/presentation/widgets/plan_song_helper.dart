@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/song_providers.dart';
@@ -158,7 +159,7 @@ class _SongPickerState extends State<_SongPicker> {
         actions: [
           IconButton(
             tooltip: context.l10n.commonClose,
-            icon: const Icon(Icons.close),
+            icon: Icon(AppIcons.close),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],

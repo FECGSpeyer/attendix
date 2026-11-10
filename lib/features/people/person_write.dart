@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -308,7 +309,7 @@ Future<bool> searchPersonInOtherInstance(
       for (final m in matches)
         AppActionSheetAction(
           value: m.candidate,
-          icon: Icons.person_search,
+          icon: AppIcons.personSearch,
           label: m.candidate.label,
           subtitle: m.reason,
         ),

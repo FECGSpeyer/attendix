@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import '../widgets/horizontal_bar_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -180,7 +181,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
         actions: [
           ToolbarButtonGroup(children: [
             IconButton(
-              icon: const Icon(Icons.close),
+              icon: Icon(AppIcons.close),
               tooltip: context.l10n.commonClose,
               onPressed: () => widget.asModal
                   ? Navigator.of(context).pop()
@@ -284,7 +285,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
                     friendlyErrorMessage(error))),
                 data: (_) => Column(
                   children: [
-                    const Icon(Icons.bar_chart,
+                    Icon(AppIcons.barChart,
                         size: 64, color: AppColors.medium),
                     const SizedBox(height: 16),
                     Text(l10n.statsFlutterNoDataInPeriod),
@@ -1012,7 +1013,7 @@ class _EmptyChartPlaceholder extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.show_chart, size: 32, color: AppColors.medium),
+            Icon(AppIcons.showChart, size: 32, color: AppColors.medium),
             const SizedBox(height: 8),
             Text(
               message ?? context.l10n.statsFlutterNoData,

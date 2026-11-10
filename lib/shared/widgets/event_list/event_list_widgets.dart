@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -239,7 +240,7 @@ class EventNotInvitedPill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.visibility_outlined, size: 13, color: fg),
+          Icon(AppIcons.visibilityOutlined, size: 13, color: fg),
           const SizedBox(width: 4),
           Text(
             context.l10n.signoutNotInvited,
@@ -735,9 +736,9 @@ class EventTodayCard extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 2),
-                      child: Icon(Icons.location_on_outlined, size: 16, color: AppColors.medium),
+                      child: Icon(AppIcons.locationOnOutlined, size: 16, color: AppColors.medium),
                     ),
                     const SizedBox(width: 6),
                     Expanded(
@@ -1293,7 +1294,7 @@ class EventTodayFilledCard extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(top: 2),
-                            child: Icon(Icons.location_on_outlined, size: 16, color: dimmed),
+                            child: Icon(AppIcons.locationOnOutlined, size: 16, color: dimmed),
                           ),
                           const SizedBox(width: 6),
                           Expanded(

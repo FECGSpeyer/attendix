@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -405,7 +406,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                 actions: [
                   ToolbarButtonGroup(children: [
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: Icon(AppIcons.close),
                       tooltip: context.l10n.commonClose,
                       onPressed: _isCreating ? null : _closeNew,
                     ),
@@ -414,12 +415,12 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               )
             : IonTranslucentAppBar(child: AppBar(
           leading: IconButton(
-          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
           onPressed: _onBackPressed,
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+            icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
             tooltip: context.l10n.commonDelete,
             onPressed: _deleteType,
           ),
@@ -430,12 +431,12 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           ? FloatingActionButton(
               onPressed: _isCreating ? null : _create,
               tooltip: context.l10n.typeSettingsFlutterCreateType,
-              child: const Icon(Icons.add),
+              child: Icon(AppIcons.add),
             )
           : TabBarFab.wrap(FloatingActionButton(
         onPressed: _hasChanges ? _save : null,
         tooltip: context.l10n.commonSave,
-        child: const Icon(Icons.save_outlined),
+        child: Icon(AppIcons.saveOutlined),
       )),
       body: Form(
         key: _formKey,
@@ -452,7 +453,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   padding: const EdgeInsets.all(AppDimensions.paddingS),
                   child: Row(
                     children: [
-                      const Icon(Icons.info_outline, size: 18, color: AppColors.warning),
+                      Icon(AppIcons.infoOutline, size: 18, color: AppColors.warning),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -707,7 +708,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                               text: '${_reminders.length}/${TypeRemindersEditor.maxReminders}',
                               color: AppColors.primary,
                             ),
-                          const Icon(Icons.chevron_right, color: AppColors.medium),
+                          Icon(AppIcons.chevronRight, color: AppColors.medium),
                         ],
                       ),
                       onTap: _openReminders,
@@ -726,7 +727,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                 contentPadding: EdgeInsets.zero,
                 title: Text(context.l10n.typeSettingsColor),
                 subtitle: Text(context.l10n.typeSettingsColorHint),
-                trailing: Icon(Icons.circle, color: ColorUtils.getColorForPicker(_color)),
+                trailing: Icon(AppIcons.circle, color: ColorUtils.getColorForPicker(_color)),
                 onTap: _pickColor,
               ),
             ),
@@ -805,7 +806,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
-                    Icons.circle,
+                    AppIcons.circle,
                     size: 24,
                     color: ColorUtils.getColorForPicker(colorName),
                   ),
@@ -1000,7 +1001,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           if (!_isNew)
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.help_outline, color: AppColors.primary),
+            leading: Icon(AppIcons.helpOutline, color: AppColors.primary),
             title: Text(context.l10n.typeSettingsLearnMore, style: const TextStyle(color: AppColors.primary)),
             onTap: () => context.push('/settings/help/article/duty-setup'),
           ),
@@ -1012,13 +1013,13 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.remove),
+                    icon: Icon(AppIcons.remove),
                     tooltip: context.l10n.attListLess,
                     onPressed: _dutyRequired <= 1 ? null : () => mark(() => _dutyRequired--),
                   ),
                   Text('$_dutyRequired'),
                   IconButton(
-                    icon: const Icon(Icons.add),
+                    icon: Icon(AppIcons.add),
                     tooltip: context.l10n.attListMore,
                     onPressed: () => mark(() => _dutyRequired++),
                   ),
@@ -1291,7 +1292,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               actions: [
                 IconButton(
                   tooltip: context.l10n.commonOk,
-                  icon: const Icon(Icons.check),
+                  icon: Icon(AppIcons.check),
                   onPressed: () => Navigator.of(sheetContext).pop(),
                 ),
               ],
@@ -1465,7 +1466,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       action: Builder(
         builder: (anchorContext) => IconButton(
           tooltip: l10n.typeSettingsAddField,
-          icon: const Icon(Icons.add, color: AppColors.primary),
+          icon: Icon(AppIcons.add, color: AppColors.primary),
           onPressed: () => _showPlanAddMenu(anchorContext),
         ),
       ),
@@ -1567,7 +1568,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           PopupMenuItem(
             value: 'agenda',
             child: Row(children: [
-              const Icon(Icons.commit, color: AppColors.medium),
+              Icon(AppIcons.commit, color: AppColors.medium),
               const SizedBox(width: 12),
               Expanded(child: Text(l10n.typeSettingsAgendaPlaceholder)),
             ]),
@@ -1701,7 +1702,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     subtitle: Text(_checklistDeadlineText(item.deadlineHours)),
                     trailing: ReorderableDragStartListener(
                       index: index,
-                      child: const Icon(Icons.reorder, color: AppColors.medium),
+                      child: Icon(AppIcons.reorder, color: AppColors.medium),
                     ),
                     onTap: () => _editChecklistItem(index),
                   ),
@@ -1713,7 +1714,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Column(
                 children: [
-                  const Icon(Icons.check_box_outlined, size: 32, color: AppColors.medium),
+                  Icon(AppIcons.checkBoxOutlined, size: 32, color: AppColors.medium),
                   const SizedBox(height: 4),
                   Text(l10n.typeSettingsNoTodos, style: const TextStyle(color: AppColors.medium)),
                 ],
@@ -1766,7 +1767,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: FilledButton.icon(
               onPressed: _newTodoController.text.trim().isEmpty ? null : _addChecklistItem,
-              icon: const Icon(Icons.add_circle_outline),
+              icon: Icon(AppIcons.addCircleOutline),
               label: IonButtonLabel(l10n.typeSettingsAddTodo),
             ),
           ),

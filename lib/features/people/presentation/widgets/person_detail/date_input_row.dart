@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/app_colors.dart';
@@ -177,7 +178,7 @@ class _DateInputRowState extends State<DateInputRow> {
               ),
               IconButton(
                 tooltip: widget.label,
-                icon: Icon(Icons.calendar_today_outlined, color: widget.highlight ? fg : null),
+                icon: Icon(AppIcons.calendarTodayOutlined, color: widget.highlight ? fg : null),
                 onPressed: widget.enabled ? _pick : null,
               ),
             ],

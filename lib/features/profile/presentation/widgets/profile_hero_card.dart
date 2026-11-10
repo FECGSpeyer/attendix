@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -41,14 +41,14 @@ class ProfileHeroCard extends ConsumerWidget {
     final chips = <Widget>[
       if ((person.birthday ?? '').isNotEmpty)
         _StatChip(
-          icon: Icons.calendar_today_outlined,
+          icon: AppIcons.calendarTodayOutlined,
           label: formatProfileDate(person.birthday),
         ),
       if ((person.phone ?? '').isNotEmpty)
-        _StatChip(icon: Icons.phone_outlined, label: person.phone!),
+        _StatChip(icon: AppIcons.phoneOutlined, label: person.phone!),
       for (final field in visibleFields)
         _StatChip(
-          icon: Icons.info_outline,
+          icon: AppIcons.infoOutline,
           label:
               '${field.name}: ${extraFieldDisplayValue(field, profile.additionalFields, churches)}',
         ),
@@ -116,7 +116,7 @@ class ProfileHeroCard extends ConsumerWidget {
                       ),
                     ),
                     Icon(
-                      ios ? CupertinoIcons.chevron_forward : Icons.chevron_right,
+                      ios ? AppIcons.cupertinoChevronForward : AppIcons.chevronRight,
                       size: ios ? 17.6 : null,
                       color: AppColors.medium,
                     ),

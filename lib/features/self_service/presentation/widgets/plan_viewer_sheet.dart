@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -71,7 +72,7 @@ class PlanViewerSheet extends ConsumerWidget {
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 child: Row(
                   children: [
-                    const Icon(Icons.list_alt, color: AppColors.primary),
+                    Icon(AppIcons.listAlt, color: AppColors.primary),
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: Column(
@@ -94,7 +95,7 @@ class PlanViewerSheet extends ConsumerWidget {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                      icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -264,7 +265,7 @@ class _PlanTimeRow extends StatelessWidget {
       child: Row(
         children: [
           Icon(
-            isStart ? Icons.play_arrow : Icons.stop,
+            isStart ? AppIcons.playArrow : AppIcons.stop,
             color: isStart ? AppColors.success : AppColors.danger,
             size: 20,
           ),
@@ -312,8 +313,8 @@ class _PlanFieldRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (isInstrumentMissing) ...[
-            const Icon(
-              Icons.warning_amber,
+            Icon(
+              AppIcons.warningAmber,
               color: AppColors.warning,
               size: 18,
             ),

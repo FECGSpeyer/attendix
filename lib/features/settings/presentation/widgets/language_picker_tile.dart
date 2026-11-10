@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/locale_provider.dart';
@@ -28,7 +29,7 @@ class LanguagePickerTile extends ConsumerWidget {
     // label + green ion-badge "NEU", the selected value at the end.
     SettingsListTile tile({VoidCallback? onTap}) => SettingsListTile(
           // Ionic language-outline (文A).
-          icon: Icons.translate,
+          icon: AppIcons.translate,
           title: l10n.settingsLanguageTitle,
           detail: false,
           onTap: onTap,
@@ -55,7 +56,7 @@ class LanguagePickerTile extends ConsumerWidget {
                 // ion-select ios: `chevron-expand` toggle icon.
                 ios
                     ? const IonSelectIcon(key: Key('languagePickerChevron'))
-                    : const Icon(Icons.arrow_drop_down,
+                    : Icon(AppIcons.arrowDropDown,
                         color: AppColors.medium),
               ],
             );

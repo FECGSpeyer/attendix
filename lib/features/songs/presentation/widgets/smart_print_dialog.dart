@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -117,7 +118,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
     return AppAlertDialog(
       title: Row(
         children: [
-          const Icon(Icons.print, color: AppColors.primary),
+          Icon(AppIcons.print, color: AppColors.primary),
           const SizedBox(width: AppDimensions.paddingS),
           Expanded(
             child: Text(
@@ -144,7 +145,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
                   height: 16,
                   child: AppSpinner(strokeWidth: 2),
                 )
-              : const Icon(Icons.print),
+              : Icon(AppIcons.print),
           label: Text(_isPrinting ? context.l10n.songsFlutterPrinting : '${context.l10n.songsPrint} ($_totalCopies)'),
         ),
       ],
@@ -165,7 +166,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
+            Icon(AppIcons.errorOutline, size: 48, color: AppColors.danger),
             const SizedBox(height: AppDimensions.paddingM),
             Text(context.l10n.songsFlutterErrorWith('$_error')),
           ],
@@ -179,7 +180,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.people_outline, size: 48, color: AppColors.medium),
+            Icon(AppIcons.peopleOutline, size: 48, color: AppColors.medium),
             const SizedBox(height: AppDimensions.paddingM),
             Text(context.l10n.songsFlutterNoPlayers),
           ],
@@ -309,7 +310,7 @@ class _CopyCountRow extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: Icon(Icons.remove_circle_outline, semanticLabel: context.l10n.a11yDecrease),
+                icon: Icon(AppIcons.removeCircleOutline, semanticLabel: context.l10n.a11yDecrease),
                 onPressed: copies > 0 ? () => onChanged(copies - 1) : null,
                 visualDensity: VisualDensity.compact,
                 iconSize: 20,
@@ -326,7 +327,7 @@ class _CopyCountRow extends StatelessWidget {
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.add_circle_outline, semanticLabel: context.l10n.a11yIncrease),
+                icon: Icon(AppIcons.addCircleOutline, semanticLabel: context.l10n.a11yIncrease),
                 onPressed: copies < 99 ? () => onChanged(copies + 1) : null,
                 visualDensity: VisualDensity.compact,
                 iconSize: 20,

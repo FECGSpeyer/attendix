@@ -2,6 +2,7 @@
 /// type page as modal; nothing is written before the "+" FAB creates it.
 library;
 
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:async';
 
 import 'package:attendix/core/constants/enums.dart';
@@ -89,7 +90,7 @@ void main() {
 
     // ✕ is disabled, system back is swallowed: the page stays open.
     final closeButton =
-        tester.widget<IconButton>(find.widgetWithIcon(IconButton, Icons.close));
+        tester.widget<IconButton>(find.widgetWithIcon(IconButton, AppIcons.close));
     expect(closeButton.onPressed, isNull);
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
@@ -137,9 +138,9 @@ void main() {
     await tester.pumpAndSettle();
 
     // Neu-Modus: ✕ instead of back arrow / trash.
-    expect(find.byIcon(Icons.close), findsOneWidget);
-    expect(find.byIcon(Icons.delete_outline), findsNothing);
-    expect(find.byIcon(Icons.arrow_back), findsNothing);
+    expect(find.byIcon(AppIcons.close), findsOneWidget);
+    expect(find.byIcon(AppIcons.deleteOutline), findsNothing);
+    expect(find.byIcon(AppIcons.arrowBack), findsNothing);
 
     // Empty name → toast, no insert.
     await tester.tap(find.byType(FloatingActionButton));

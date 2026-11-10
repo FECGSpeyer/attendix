@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/group_providers.dart';
@@ -241,7 +242,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                      icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                       onPressed: _uploading ? null : () => Navigator.pop(context),
                     ),
                   ],
@@ -256,7 +257,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                   shrinkWrap: true,
                   children: [
                     ListTile(
-                      leading: const Icon(Icons.description_outlined),
+                      leading: Icon(AppIcons.descriptionOutlined),
                       title: Text(widget.file.name),
                       subtitle: _reading && !_reviewed
                           ? Text(
@@ -345,7 +346,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                         margin: const EdgeInsets.only(top: 12),
                         color: AppColors.warning.withAlpha(60),
                         child: ListTile(
-                          leading: const Icon(Icons.warning_amber_rounded),
+                          leading: Icon(AppIcons.warningAmberRounded),
                           title: Text(_conflicts.length == 1
                               ? context.l10n.songsReplaces(_conflicts.first.fileName)
                               : context.l10n.songsWhichReplace),

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart'
         CupertinoPageTransition,
         CupertinoRouteTransitionMixin;
 import 'package:flutter/foundation.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -327,10 +328,10 @@ class AppTheme {
       actionIconTheme: ActionIconThemeData(
         // IOS_THEME2: md back button = arrow-back-sharp (←).
         backButtonIconBuilder: (context) => ios
-            ? const IosCircleIcon(icon: Icons.arrow_back_ios_new, iconSize: 20)
-            : const Icon(Icons.arrow_back),
+            ? const IosCircleIcon(icon: Ionicons.chevronBack, iconSize: 20)
+            : const Icon(Ionicons.arrowBackSharp),
         closeButtonIconBuilder: ios
-            ? (context) => const IosCircleIcon(icon: Icons.close, filled: true)
+            ? (context) => const IosCircleIcon(icon: Ionicons.close, filled: true)
             : null,
       ),
       // ion-list inset / ion-card: rounded sections without border.

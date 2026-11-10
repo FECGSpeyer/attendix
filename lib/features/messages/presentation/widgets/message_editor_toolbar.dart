@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
 import '../../../../l10n/l10n.dart';
@@ -49,12 +50,12 @@ class MessageEditorToolbar extends StatelessWidget {
         showRedo: false,
         customButtons: [
           QuillToolbarCustomButtonOptions(
-            icon: const Icon(Icons.link),
+            icon: Icon(AppIcons.link),
             tooltip: l10n.editorLink,
             onPressed: () => editMessageLink(context, controller),
           ),
           QuillToolbarCustomButtonOptions(
-            icon: const Icon(Icons.undo),
+            icon: Icon(AppIcons.undo),
             tooltip: l10n.editorUndo,
             onPressed: () {
               if (controller.hasUndo) controller.undo();

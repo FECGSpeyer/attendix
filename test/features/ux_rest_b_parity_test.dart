@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:io';
 
 import 'package:attendix/core/providers/profile_providers.dart';
@@ -76,7 +77,7 @@ void main() {
       expect(find.byType(Slidable), findsOneWidget);
       await tester.drag(find.text('Feld'), const Offset(-300, 0));
       await tester.pumpAndSettle();
-      await tester.tap(find.byIcon(Icons.delete_outline));
+      await tester.tap(find.byIcon(AppIcons.deleteOutline));
       await tester.pumpAndSettle();
       expect(deleted, isTrue);
     });
@@ -84,12 +85,12 @@ void main() {
     test('lane lists use swipe options instead of trailing trash icons', () {
       final type = _read('lib/features/settings/presentation/pages/attendance_type_edit_page.dart');
       expect(type, contains('SwipeActions.delete('));
-      expect(type, isNot(contains('Icons.close, size: 20')));
+      expect(type, isNot(contains('AppIcons.close, size: 20')));
 
       final templates = _read('lib/features/organisation/presentation/pages/org_planning_templates_page.dart');
       expect(templates, contains('Slidable('));
       expect(templates, contains('_renameTemplate'));
-      expect(templates, isNot(contains('Icons.more_horiz')));
+      expect(templates, isNot(contains('AppIcons.moreHoriz')));
 
       for (final path in [
         'lib/features/settings/presentation/widgets/type_reminders_editor.dart',

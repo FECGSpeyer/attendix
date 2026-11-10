@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
@@ -122,7 +123,7 @@ class _PlanViewListState extends State<PlanViewList> {
       final openSong = isNote || isHead ? null : widget.songAction?.call(f);
       if (openSong != null) {
         lines.add(Row(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.music_note_outlined, size: 16, color: AppColors.primary),
+          Icon(AppIcons.musicNoteOutlined, size: 16, color: AppColors.primary),
           const SizedBox(width: 4),
           Text(context.l10n.planViewerOpenScores,
               style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500, fontSize: 14)),

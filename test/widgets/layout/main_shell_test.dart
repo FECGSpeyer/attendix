@@ -6,6 +6,7 @@ import 'package:attendix/shared/widgets/layout/main_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../helpers/widget_test_helpers.dart';
@@ -267,9 +268,9 @@ void main() {
         // Check for icons
         // Ionic tabs.page.html: people-outline, checkbox-outline,
         // ellipsis-horizontal ("Mehr")
-        expect(find.byIcon(Icons.people_outline), findsOneWidget);
-        expect(find.byIcon(Icons.check_box_outlined), findsOneWidget);
-        expect(find.byIcon(Icons.more_horiz), findsOneWidget);
+        expect(find.byIcon(Ionicons.peopleOutline), findsOneWidget);
+        expect(find.byIcon(Ionicons.checkboxOutline), findsOneWidget);
+        expect(find.byIcon(Ionicons.ellipsisHorizontal), findsOneWidget);
       });
 
       widgetTest('admin tab order matches Ionic (Personen, Termine, Mehr)',

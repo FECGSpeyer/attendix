@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -285,20 +286,20 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
             else if (_attachmentUrl == null)
               IconButton(
                 tooltip: context.l10n.attendanceFlutterAddAttachment,
-                icon: const Icon(Icons.attach_file),
+                icon: Icon(AppIcons.attachFile),
                 onPressed: _upload,
               )
             else ...[
               Flexible(
                 child: ActionChip(
-                  avatar: const Icon(Icons.description_outlined, size: 18),
+                  avatar: Icon(AppIcons.descriptionOutlined, size: 18),
                   label: Text(_attachmentName ?? context.l10n.selfServiceAttachment, overflow: TextOverflow.ellipsis),
                   onPressed: _open,
                 ),
               ),
               IconButton(
                 tooltip: context.l10n.attendanceFlutterRemoveAttachment,
-                icon: const Icon(Icons.cancel_outlined, color: AppColors.danger),
+                icon: Icon(AppIcons.cancelOutlined, color: AppColors.danger),
                 onPressed: _remove,
               ),
             ],

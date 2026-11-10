@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -102,7 +103,7 @@ class _DocxViewerPageState extends State<DocxViewerPage> {
       backgroundColor: theme.brightness == Brightness.dark ? Colors.black : const Color(0xFFE5E5EA),
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: Icon(AppIcons.close),
           tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -112,14 +113,14 @@ class _DocxViewerPageState extends State<DocxViewerPage> {
             Builder(
               builder:
                   (button) => IconButton(
-                    icon: Icon(Icons.adaptive.share),
+                    icon: Icon(AppIcons.adaptiveShare),
                     tooltip: context.l10n.redesignWorkFileShare,
                     onPressed: _bytes == null ? null : () => _share(button),
                   ),
             )
           else
             IconButton(
-              icon: const Icon(Icons.open_in_new),
+              icon: Icon(AppIcons.openInNew),
               tooltip: context.l10n.coreFlutterOpenExternally,
               onPressed: _openExternally,
             ),
@@ -151,7 +152,7 @@ class _DocxViewerPageState extends State<DocxViewerPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
+              Icon(AppIcons.errorOutline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
               Text(
                 l10n.songsFlutterDocxLoadFailed,
@@ -169,13 +170,13 @@ class _DocxViewerPageState extends State<DocxViewerPage> {
                   });
                   _load();
                 },
-                icon: const Icon(Icons.refresh),
+                icon: Icon(AppIcons.refresh),
                 label: IonButtonLabel(l10n.messagesRetry),
               ),
               const SizedBox(height: AppDimensions.paddingS),
               TextButton.icon(
                 onPressed: _openExternally,
-                icon: const Icon(Icons.open_in_new),
+                icon: Icon(AppIcons.openInNew),
                 label: IonButtonLabel(l10n.coreFlutterOpenExternally),
               ),
             ],

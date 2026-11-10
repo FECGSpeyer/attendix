@@ -136,13 +136,13 @@ void main() {
 
     test('Dateiablage header buttons in glass circles', () {
       final files = _read('lib/features/settings/presentation/pages/files_page.dart');
-      expect(files, contains('IosCircleIcon(icon: Icons.arrow_back'));
+      expect(files, contains('IosCircleIcon(icon: AppIcons.arrowBack'));
       expect(files, contains('ToolbarButtonGroup(children: ['));
     });
 
     test('Werke filter in a glass circle, detail actions grouped', () {
       final list = _read('lib/features/songs/presentation/pages/songs_list_page.dart');
-      expect(list, contains('IosCircleIcon(icon: Icons.tune'));
+      expect(list, contains('IosCircleIcon(icon: AppIcons.tune'));
       final detail = _read('lib/features/songs/presentation/pages/song_detail_page.dart');
       expect(detail, contains('ToolbarButtonGroup(children: ['));
       expect(detail, contains('class _FilesGroup'));

@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -117,14 +118,14 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Text(context.l10n.generalSettingsBranding),
         actions: [
           if (hasOrg)
             IconButton(
-              icon: Icon(Icons.check, semanticLabel: context.l10n.commonSave),
+              icon: Icon(AppIcons.check, semanticLabel: context.l10n.commonSave),
               onPressed: _busy ? null : _save,
             ),
         ],
@@ -140,7 +141,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
                 SettingsListSection(
                   children: [
                     SettingsListTile(
-                      icon: Icons.info_outline,
+                      icon: AppIcons.infoOutline,
                       iconColor: AppColors.medium,
                       title: '',
                       titleWidget: Text(context.l10n.brandingOrgOnly, style: pStyle),
@@ -183,13 +184,13 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
                               child: Image.network(
                                 _logoUrl,
                                 fit: BoxFit.contain,
-                                errorBuilder: (_, __, ___) => const Icon(Icons.broken_image_outlined, size: 48),
+                                errorBuilder: (_, __, ___) => Icon(AppIcons.brokenImageOutlined, size: 48),
                               ),
                             ),
                           ),
                         ),
                       SettingsListTile(
-                        icon: Icons.image_outlined,
+                        icon: AppIcons.imageOutlined,
                         color: AppColors.primary,
                         detail: false,
                         title: _logoUrl.isNotEmpty ? context.l10n.brandingFlutterReplaceLogo : context.l10n.brandingFlutterUploadLogo,
@@ -197,7 +198,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
                       ),
                       if (_logoUrl.isNotEmpty)
                         SettingsListTile(
-                          icon: Icons.delete_outline,
+                          icon: AppIcons.deleteOutline,
                           color: AppColors.danger,
                           detail: false,
                           title: context.l10n.brandingRemoveLogo,

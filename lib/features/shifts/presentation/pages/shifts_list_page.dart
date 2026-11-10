@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,13 +33,13 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
     return IonCondenseScaffold(
       title: context.l10n.shiftsPlans,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
+        icon: Icon(AppIcons.arrowBack),
         tooltip: context.l10n.commonBack,
         onPressed: () => context.pop(),
       ),
       floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         onPressed: () => showCreateShiftPlanSheet(context, ref),
-        child: const Icon(Icons.add),
+        child: Icon(AppIcons.add),
       )),
       bodyBuilder: (context, largeTitle) => ListView(
         padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
@@ -83,7 +84,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
         child: Column(
           children: [
-            const Icon(Icons.schedule, size: 64, color: AppColors.medium),
+            Icon(AppIcons.schedule, size: 64, color: AppColors.medium),
             const SizedBox(height: 16),
             Text(
               context.l10n.shiftsIntro,

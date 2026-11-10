@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/theme/app_colors.dart';
 import 'package:attendix/shared/widgets/display/status_badge.dart';
@@ -205,7 +206,7 @@ void main() {
           ),
         );
 
-        expect(find.byIcon(Icons.check), findsOneWidget);
+        expect(find.byIcon(AppIcons.check), findsOneWidget);
       });
 
       widgetTest('absent shows close icon', (tester) async {
@@ -216,7 +217,7 @@ void main() {
           ),
         );
 
-        expect(find.byIcon(Icons.close), findsOneWidget);
+        expect(find.byIcon(AppIcons.close), findsOneWidget);
       });
 
       widgetTest('excused shows event_busy icon', (tester) async {
@@ -227,7 +228,7 @@ void main() {
           ),
         );
 
-        expect(find.byIcon(Icons.event_busy), findsOneWidget);
+        expect(find.byIcon(AppIcons.eventBusy), findsOneWidget);
       });
 
       widgetTest('late shows schedule icon', (tester) async {
@@ -238,7 +239,7 @@ void main() {
           ),
         );
 
-        expect(find.byIcon(Icons.schedule), findsOneWidget);
+        expect(find.byIcon(AppIcons.schedule), findsOneWidget);
       });
     });
   });

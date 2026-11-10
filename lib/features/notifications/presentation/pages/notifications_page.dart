@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -447,7 +448,7 @@ class _UserIdTile extends StatelessWidget {
         style: const TextStyle(fontFamily: 'monospace'),
       ),
       trailing: IconButton(
-        icon: const Icon(Icons.copy, size: 18),
+        icon: Icon(AppIcons.copy, size: 18),
         tooltip: context.l10n.songsCopy,
         onPressed: () {
           Clipboard.setData(ClipboardData(text: userId));
@@ -532,7 +533,7 @@ class _TelegramItem extends StatelessWidget {
       child: Row(
         children: [
           Icon(
-            Icons.telegram,
+            AppIcons.telegram,
             color: connected ? AppColors.success : const Color(0xFF0088CC),
           ),
           const SizedBox(width: 16),

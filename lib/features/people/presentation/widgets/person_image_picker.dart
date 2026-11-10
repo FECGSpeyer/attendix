@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -35,12 +36,12 @@ Future<XFile?> pickPersonImage(BuildContext context, WidgetRef ref) async {
     actions: [
       AppActionSheetAction(
         value: ImageSource.camera,
-        icon: Icons.photo_camera_outlined,
+        icon: AppIcons.photoCameraOutlined,
         label: context.l10n.attendanceFlutterCamera,
       ),
       AppActionSheetAction(
         value: ImageSource.gallery,
-        icon: Icons.photo_library_outlined,
+        icon: AppIcons.photoLibraryOutlined,
         label: context.l10n.attendanceFlutterGallery,
       ),
     ],

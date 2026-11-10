@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -125,7 +126,7 @@ class _InstrumentCategoriesSheetState
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 child: Row(
                   children: [
-                    const Icon(Icons.category, color: AppColors.primary),
+                    Icon(AppIcons.category, color: AppColors.primary),
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: Text(
@@ -138,7 +139,7 @@ class _InstrumentCategoriesSheetState
                     ),
                     IconButton(
                       icon: Icon(
-                          _isReordering ? Icons.check : Icons.swap_vert),
+                          _isReordering ? AppIcons.check : AppIcons.swapVert),
                       tooltip: _isReordering
                           ? context.l10n.peopleFlutterSaveOrder
                           : context.l10n.peopleReorder,
@@ -148,12 +149,12 @@ class _InstrumentCategoriesSheetState
                     ),
                     if (!_isReordering)
                       IconButton(
-                        icon: const Icon(Icons.add),
+                        icon: Icon(AppIcons.add),
                         onPressed: () => _showAddCategoryDialog(context),
                         tooltip: context.l10n.instrumentsNewCategory,
                       ),
                     IconButton(
-                      icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                      icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -172,7 +173,7 @@ class _InstrumentCategoriesSheetState
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.error_outline,
+                        Icon(AppIcons.errorOutline,
                             size: 48, color: AppColors.danger),
                         const SizedBox(height: AppDimensions.paddingM),
                         Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(error))),
@@ -191,8 +192,8 @@ class _InstrumentCategoriesSheetState
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
-                              Icons.category_outlined,
+                            Icon(
+                              AppIcons.categoryOutlined,
                               size: 64,
                               color: AppColors.medium,
                             ),
@@ -216,7 +217,7 @@ class _InstrumentCategoriesSheetState
                       return Column(
                         children: [
                           ListTile(
-                            leading: const Icon(Icons.info_outline,
+                            leading: Icon(AppIcons.infoOutline,
                                 color: AppColors.primary),
                             title: Text(context.l10n.instrumentsDragCategories),
                           ),
@@ -428,19 +429,19 @@ class _CategoryTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
       child: ListTile(
-        leading: const Icon(Icons.category, size: 20),
+        leading: Icon(AppIcons.category, size: 20),
         title: Text(category.name),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.edit, size: 20),
+              icon: Icon(AppIcons.edit, size: 20),
               onPressed: onEdit,
               tooltip: context.l10n.commonEdit,
             ),
             IconButton(
               icon:
-                  const Icon(Icons.delete, size: 20, color: AppColors.danger),
+                  Icon(AppIcons.delete, size: 20, color: AppColors.danger),
               onPressed: onDelete,
               tooltip: context.l10n.commonDelete,
             ),

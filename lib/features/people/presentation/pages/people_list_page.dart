@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -509,7 +510,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           foregroundColor: Colors.black,
           title: Text(context.l10n.peopleReorder),
           leading: IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(AppIcons.close),
             tooltip: context.l10n.commonCancel,
             onPressed: () => setState(() {
               _isReordering = false;
@@ -524,7 +525,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                       height: 20,
                       child: AppSpinner(strokeWidth: 2),
                     )
-                  : const Icon(Icons.check),
+                  : Icon(AppIcons.check),
               tooltip: context.l10n.peopleFlutterSaveOrder,
               onPressed: _isSavingOrder ? null : _toggleReorderMode,
             ),
@@ -592,7 +593,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           SliverFillRemaining(
             hasScrollBody: false,
             child: EmptyStateWidget(
-              icon: Icons.error_outline,
+              icon: AppIcons.errorOutline,
               title: context.l10n.peopleFlutterLoadFailed,
               subtitle: context.l10n.peopleFlutterListLoadFailed,
               actionLabel: context.l10n.messagesRetry,
@@ -612,7 +613,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: IonNoData(
-                  icon: Icons.people_outline,
+                  icon: AppIcons.peopleOutline,
                   label: context.l10n.peopleNoPeopleYet,
                   actions: [
                     (
@@ -633,7 +634,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: IonNoData(
-                  icon: Icons.filter_alt_outlined,
+                  icon: AppIcons.filterAltOutlined,
                   label: context.l10n.peopleNoPeopleFound,
                   message: context.l10n.peopleFiltersNoMatch,
                   actions: [(context.l10n.peopleResetFilter, _clearFilters)],
@@ -714,7 +715,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               ? TabBarFab(
                   child: FloatingActionButton.extended(
                     onPressed: _showHandoverSheet,
-                    icon: const Icon(Icons.swap_horiz),
+                    icon: Icon(AppIcons.swapHoriz),
                     label: Text(context.l10n.peopleFlutterTransferCount(_selectedPlayerIds.length)),
                     backgroundColor: AppColors.warning,
                   ),
@@ -756,12 +757,12 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       return AppBar(
         title: Text(context.l10n.peopleFlutterSelectedCount(_selectedPlayerIds.length)),
         leading: IconButton(
-          icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+          icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
           onPressed: _exitSelectionMode,
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.select_all),
+            icon: Icon(AppIcons.selectAll),
             tooltip: context.l10n.handoverSelectAll,
             onPressed: () {
               final filtered = _filterPeople(_listPeople());
@@ -774,7 +775,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.deselect),
+            icon: Icon(AppIcons.deselect),
             tooltip: context.l10n.peopleFlutterDeselectAll,
             onPressed: () => setState(() => _selectedPlayerIds.clear()),
           ),
@@ -906,7 +907,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     Widget check(bool on) => SizedBox(
           width: 24,
           child: on
-              ? const Icon(Icons.check, size: 20, color: AppColors.primary)
+              ? Icon(AppIcons.check, size: 20, color: AppColors.primary)
               : null,
         );
 
@@ -951,13 +952,13 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       style: menuStyle,
       menuChildren: [
         selectRow(
-          icon: Icons.filter_alt,
+          icon: AppIcons.filterAlt,
           value: filterLabels.containsKey(_filterOption) ? _filterOption : 'all',
           options: filterLabels,
           onSelected: _onFilterSelected,
         ),
         selectRow(
-          icon: Icons.filter_list,
+          icon: AppIcons.filterList,
           value: sortLabels.containsKey(_sortOption) ? _sortOption : 'group',
           options: sortLabels,
           onSelected: _onSortSelected,
@@ -965,7 +966,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         SubmenuButton(
           style: itemStyle,
           menuStyle: menuStyle,
-          leadingIcon: const Icon(Icons.visibility, size: 18),
+          leadingIcon: Icon(AppIcons.visibility, size: 18),
           menuChildren: [
             for (final e in viewLabels.entries)
               CheckboxMenuButton(
@@ -998,27 +999,27 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         if (_churchField(tenant) != null)
           MenuItemButton(
             style: itemStyle,
-            leadingIcon: const Icon(Icons.business_outlined, size: 18),
+            leadingIcon: Icon(AppIcons.businessOutlined, size: 18),
             onPressed: _showChurchOverview,
             child: Text(context.l10n.attendanceChurchOverview),
           ),
         if (isAdmin) ...[
           MenuItemButton(
             style: itemStyle,
-            leadingIcon: const Icon(Icons.edit, size: 18),
+            leadingIcon: Icon(AppIcons.edit, size: 18),
             onPressed: _openBulkEdit,
             child: Text(context.l10n.peopleBulkEdit),
           ),
           MenuItemButton(
             style: itemStyle,
-            leadingIcon: const Icon(Icons.cloud_upload_outlined, size: 18),
+            leadingIcon: Icon(AppIcons.cloudUploadOutlined, size: 18),
             onPressed: _openImport,
             child: Text(context.l10n.peopleImportPeople),
           ),
           if (_sortOption == 'group')
             MenuItemButton(
               style: itemStyle,
-              leadingIcon: const Icon(Icons.swap_vert, size: 18),
+              leadingIcon: Icon(AppIcons.swapVert, size: 18),
               onPressed: _toggleReorderMode,
               child: Text(context.l10n.peopleReorder),
             ),
@@ -1026,7 +1027,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           // handover page in the settings)
           MenuItemButton(
             style: itemStyle,
-            leadingIcon: const Icon(Icons.checklist, size: 18),
+            leadingIcon: Icon(AppIcons.checklist, size: 18),
             onPressed: _enterSelectionMode,
             child: Text(context.l10n.peopleFlutterTransferPeople),
           ),
@@ -1035,7 +1036,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       builder: (context, controller, _) => IconButton(
         key: const Key('people_options_button'),
         icon: Icon(
-          Icons.tune,
+          AppIcons.tune,
           color: _filterOption != 'all' ? AppColors.primary : null,
         ),
         tooltip: context.l10n.typeSettingsOptions,
@@ -1296,7 +1297,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                   child: ListTile(
                     leading: ReorderableDragStartListener(
                       index: i,
-                      child: const Icon(Icons.drag_handle),
+                      child: Icon(AppIcons.dragHandle),
                     ),
                     title: Text(
                         byId[_reorderIds[groupName]![i]]?.fullName ?? '?'),
@@ -1727,7 +1728,7 @@ class _PersonListItem extends StatelessWidget {
               onPressed: (_) => onRemove!(),
               backgroundColor: AppColors.danger,
               foregroundColor: Colors.white,
-              icon: Icons.delete,
+              icon: AppIcons.delete,
             ),
           if (pauseAction != null)
             SlidableAction(
@@ -1735,7 +1736,7 @@ class _PersonListItem extends StatelessWidget {
               backgroundColor:
                   person.paused ? AppColors.success : AppColors.warning,
               foregroundColor: person.paused ? Colors.white : Colors.black,
-              icon: person.paused ? Icons.play_arrow : Icons.pause,
+              icon: person.paused ? AppIcons.playArrow : AppIcons.pause,
             ),
         ],
       ),
@@ -1780,7 +1781,7 @@ class _BirthdayBanner extends StatelessWidget {
                   color: AppColors.primary.withValues(alpha: 0.13),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.card_giftcard_outlined,
+                child: Icon(AppIcons.cardGiftcardOutlined,
                     size: 18, color: AppColors.primaryDark),
               ),
               const SizedBox(width: 10),

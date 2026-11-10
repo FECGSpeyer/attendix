@@ -1,6 +1,7 @@
 import 'dart:math' show max;
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -300,7 +301,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
                 child: IonButtonLabel(context.l10n.commonBack),
               )
             : IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(AppIcons.close),
                 tooltip: context.l10n.commonCancel,
                 onPressed: () => Navigator.of(context).pop(false),
               ),
@@ -308,7 +309,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
         actions: [
           if (_preview)
             IconButton(
-              icon: const Icon(Icons.shuffle),
+              icon: Icon(AppIcons.shuffle),
               tooltip: context.l10n.dutyRedistribute,
               onPressed: _run,
             ),
@@ -399,7 +400,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.remove_circle_outline),
+                    icon: Icon(AppIcons.removeCircleOutline),
                     color: AppColors.primary,
                     visualDensity: VisualDensity.compact,
                     tooltip: context.l10n.attListLess,
@@ -411,7 +412,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
                         textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w600)),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.add_circle_outline),
+                    icon: Icon(AppIcons.addCircleOutline),
                     color: AppColors.primary,
                     visualDensity: VisualDensity.compact,
                     tooltip: context.l10n.attListMore,

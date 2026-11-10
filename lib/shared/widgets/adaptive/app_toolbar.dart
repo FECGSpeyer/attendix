@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/theme/redesign/rd_theme.dart';
 
@@ -101,7 +102,7 @@ class IonCloseButton extends StatelessWidget {
     // Beta-Skin: a plain close icon in the link colour.
     if (!useIosLook(context) || context.rdSkin != null) {
       return IconButton(
-        icon: const Icon(Icons.close),
+        icon: Icon(AppIcons.close),
         tooltip: tooltip ?? context.l10n.commonClose,
         onPressed: onTap,
       );
@@ -113,7 +114,7 @@ class IonCloseButton extends StatelessWidget {
         label: tooltip ?? context.l10n.commonClose,
         child: GestureDetector(
           onTap: onTap,
-          child: const IosCircleIcon(icon: Icons.close, size: 44),
+          child: IosCircleIcon(icon: AppIcons.close, size: 44),
         ),
       ),
     );
@@ -149,8 +150,8 @@ class IosCircleIcon extends StatelessWidget {
         width: size,
         height: size,
         child: Icon(
-          icon == Icons.arrow_back_ios_new ? Icons.chevron_left : icon,
-          size: icon == Icons.arrow_back_ios_new ? 30 : iconSize + 2,
+          icon == AppIcons.arrowBackIosNew ? AppIcons.chevronLeft : icon,
+          size: icon == AppIcons.arrowBackIosNew ? 30 : iconSize + 2,
           color: rd.link,
         ),
       );

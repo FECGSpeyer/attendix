@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:io';
 
 import 'package:attendix/features/settings/presentation/widgets/calendar_subscription_dialog.dart';
@@ -78,11 +79,11 @@ void main() {
 
     test('ionicons: library-outline, apps-outline, musical-notes, chatbubble-ellipses', () {
       expect(source, contains('iconWidget: const IonLibraryOutlineIcon()'));
-      expect(source, contains('icon: CupertinoIcons.circle_grid_3x3'));
-      expect(source, contains('icon: CupertinoIcons.music_note_2'));
-      expect(source, contains('icon: Icons.sms_outlined'));
+      expect(source, contains('icon: AppIcons.cupertinoCircleGrid3x3'));
+      expect(source, contains('icon: AppIcons.cupertinoMusicNote2'));
+      expect(source, contains('icon: AppIcons.smsOutlined'));
       final lang = read('lib/features/settings/presentation/widgets/language_picker_tile.dart');
-      expect(lang, contains('icon: Icons.translate'));
+      expect(lang, contains('icon: AppIcons.translate'));
       expect(lang, contains('IonSelectIcon(')); // IOS_THEME2: chevron-expand
     });
 
@@ -119,7 +120,7 @@ void main() {
     testWidgets('detail=false rows show no chevron; iconWidget is used', (tester) async {
       await tester.pumpWidget(app(IonInsetGroup(children: [
         SettingsListTile(
-          icon: Icons.logout,
+          icon: AppIcons.logout,
           title: 'Ausloggen',
           detail: false,
           background: Colors.red,
@@ -135,7 +136,7 @@ void main() {
       expect(
         find.descendant(
           of: find.widgetWithText(ListTile, 'Ausloggen'),
-          matching: find.byIcon(CupertinoIcons.chevron_forward),
+          matching: find.byIcon(AppIcons.cupertinoChevronForward),
         ),
         findsNothing,
       );

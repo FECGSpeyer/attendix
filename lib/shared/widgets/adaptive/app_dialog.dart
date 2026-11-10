@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -1223,7 +1224,7 @@ class _DateAlertState extends State<_DateAlert> {
             controller: _text,
             readOnly: true,
             onTap: _pick,
-            decoration: const InputDecoration(suffixIcon: Icon(Icons.calendar_today_outlined)),
+            decoration: InputDecoration(suffixIcon: Icon(AppIcons.calendarTodayOutlined)),
           ),
         ],
       ),
@@ -1416,7 +1417,7 @@ class _RadioAlertState<T> extends State<_RadioAlert<T>> {
                               ),
                             ),
                           ),
-                          if (value == _value) Icon(Icons.check, color: primary, size: 22),
+                          if (value == _value) Icon(AppIcons.check, color: primary, size: 22),
                         ],
                       ),
                     ),

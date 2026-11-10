@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -344,14 +345,14 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       title: head.name,
       subtitle: context.l10n.planningBlockSubHeader(children.length, minutes),
       actions: [
-        PlanSheetAction('edit', context.l10n.planningEditBlock, icon: Icons.edit_outlined),
-        PlanSheetAction('add', context.l10n.planningAddSubItem, icon: Icons.add),
+        PlanSheetAction('edit', context.l10n.planningEditBlock, icon: AppIcons.editOutlined),
+        PlanSheetAction('add', context.l10n.planningAddSubItem, icon: AppIcons.add),
         if (widget.onSaveBlockTemplate != null && children.isNotEmpty)
           PlanSheetAction('template', exists ? context.l10n.planningUpdateTemplate : context.l10n.planningSaveAsTemplate,
-              icon: Icons.bookmark_add_outlined),
-        PlanSheetAction('dissolve', context.l10n.planningDissolveBlock, icon: Icons.call_split),
+              icon: AppIcons.bookmarkAddOutlined),
+        PlanSheetAction('dissolve', context.l10n.planningDissolveBlock, icon: AppIcons.callSplit),
         PlanSheetAction('delete', context.l10n.planningDeleteBlockWithItems,
-            icon: Icons.delete_outline, destructive: true),
+            icon: AppIcons.deleteOutline, destructive: true),
       ],
     );
     if (!mounted || action == null) return;
@@ -474,10 +475,10 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     final isChild = field.groupId != null;
     final dragHandle = ReorderableDragStartListener(
       index: rowIndex,
-      child: const Padding(
+      child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 4),
         // Ionic ion-reorder (reorder-three icon)
-        child: Icon(Icons.reorder, color: AppColors.medium),
+        child: Icon(AppIcons.reorder, color: AppColors.medium),
       ),
     );
 
@@ -492,7 +493,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
             border: Border(bottom: BorderSide(color: theme.dividerColor, width: 0.5)),
           ),
           child: ListTile(
-            leading: const Icon(Icons.commit, color: AppColors.medium),
+            leading: Icon(AppIcons.commit, color: AppColors.medium),
             title: Text(context.l10n.typeSettingsAgenda),
             subtitle: Text(context.l10n.typeSettingsTopicsHere),
             trailing: dragHandle,
@@ -509,7 +510,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
         child: ListTile(
           dense: true,
           minTileHeight: 36,
-          leading: const Icon(Icons.commit, color: AppColors.medium),
+          leading: Icon(AppIcons.commit, color: AppColors.medium),
           title: Text(context.l10n.planningAgendaInsertPos,
               style: const TextStyle(color: AppColors.medium, fontSize: 14)),
           trailing: Row(mainAxisSize: MainAxisSize.min, children: [
@@ -543,7 +544,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       subtitleParts.add(Row(
         key: ValueKey('beamer-status-${field.id}'),
         children: [
-          Icon(Icons.tv_outlined, size: 14, color: style.color),
+          Icon(AppIcons.tvOutlined, size: 14, color: style.color),
           const SizedBox(width: 4),
           Flexible(child: Text(file?.name ?? context.l10n.planningBeamerMissing, style: style)),
         ],
@@ -606,7 +607,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
             ? IconButton(
                 tooltip: _collapsed.contains(field.id) ? context.l10n.planningExpandBlock : context.l10n.planningCollapseBlock,
                 color: AppColors.primary,
-                icon: Icon(_collapsed.contains(field.id) ? Icons.chevron_right : Icons.expand_more),
+                icon: Icon(_collapsed.contains(field.id) ? AppIcons.chevronRight : AppIcons.expandMore),
                 onPressed: () => setState(() {
                   if (!_collapsed.remove(field.id)) _collapsed.add(field.id);
                 }),
@@ -670,7 +671,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
             onPressed: (_) => _removeField(index),
             backgroundColor: AppColors.danger,
             foregroundColor: Colors.white,
-            icon: Icons.delete,
+            icon: AppIcons.delete,
           ),
         ],
       ),
@@ -771,7 +772,7 @@ class _AddSubItemRow extends StatelessWidget {
           dense: true,
           minTileHeight: 40,
           contentPadding: const EdgeInsets.only(left: 34, right: 16),
-          leading: const Icon(Icons.add, color: AppColors.primary),
+          leading: Icon(AppIcons.add, color: AppColors.primary),
           title: Text(context.l10n.planningAddSubItem, style: const TextStyle(color: AppColors.primary, fontSize: 15)),
           onTap: onTap,
         ),
