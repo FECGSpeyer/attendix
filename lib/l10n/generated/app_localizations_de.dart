@@ -11985,6 +11985,63 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignArchiveListRestore => 'Wiederherstellen';
 
   @override
+  String get redesignBellByParents => 'von den Eltern gemeldet';
+
+  @override
+  String get redesignBellEvent => 'Termin';
+
+  @override
+  String redesignBellLate(Object name) {
+    return '$name kommt zu spät';
+  }
+
+  @override
+  String redesignBellNote(Object name) {
+    return '$name hat die Notiz geändert';
+  }
+
+  @override
+  String redesignBellOnTime(Object name) {
+    return '$name kommt doch pünktlich';
+  }
+
+  @override
+  String get redesignBellOpenAttendance => 'Zur Anwesenheit';
+
+  @override
+  String get redesignBellOpenEvent => 'Zum Termin';
+
+  @override
+  String redesignBellReports(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Meldungen',
+      one: '1 Meldung',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignBellSignin(Object name) {
+    return '$name hat zugesagt';
+  }
+
+  @override
+  String redesignBellSignout(Object name) {
+    return '$name ist abgemeldet';
+  }
+
+  @override
+  String get redesignBellToday => 'Heute';
+
+  @override
+  String get redesignBellTomorrow => 'Morgen';
+
+  @override
+  String get redesignBellYesterday => 'Gestern';
+
+  @override
   String get redesignBulkActionArchive => 'Archivieren';
 
   @override
@@ -15223,6 +15280,36 @@ class AppLocalizationsDe extends AppLocalizations {
       'Alles, was an die Gruppe ging, mit Lesestatus.';
 
   @override
+  String get redesignNotifBirthdaysHint => 'Morgens um 8 Uhr';
+
+  @override
+  String get redesignNotifBlockedAndroid =>
+      'Du bekommst gerade keine Push-Nachrichten. Erlaube sie in den Android-Einstellungen unter Apps › Attendix › Benachrichtigungen.';
+
+  @override
+  String get redesignNotifBlockedIos =>
+      'Du bekommst gerade keine Push-Nachrichten. Erlaube sie in den Einstellungen.';
+
+  @override
+  String get redesignNotifBlockedTitle =>
+      'Dein Gerät blockiert Benachrichtigungen von Attendix';
+
+  @override
+  String get redesignNotifChecklistHint =>
+      'Fällige Punkte der Termin-Checkliste';
+
+  @override
+  String get redesignNotifCriticals => 'Neue Problemfälle';
+
+  @override
+  String get redesignNotifCriticalsHint =>
+      'Wenn jemand eine Regel für Problemfälle erfüllt';
+
+  @override
+  String get redesignNotifDutiesHint =>
+      'Wenn du für einen Dienst eingeteilt wirst';
+
+  @override
   String get redesignNotifForMe => 'Für mich';
 
   @override
@@ -15239,6 +15326,55 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignNotifLead => 'Als Leitung';
 
   @override
+  String get redesignNotifMaster => 'Benachrichtigungen';
+
+  @override
+  String get redesignNotifMasterHint =>
+      'Aus heißt: gar keine Benachrichtigungen, weder Push noch Telegram.';
+
+  @override
+  String get redesignNotifMessagesHint => 'Nachrichten der Leitung';
+
+  @override
+  String get redesignNotifMore => 'Weitere';
+
+  @override
+  String get redesignNotifOpenSettings => 'Einstellungen öffnen';
+
+  @override
+  String get redesignNotifPush => 'Push';
+
+  @override
+  String get redesignNotifPushHint => 'Mitteilungen auf deinem Handy';
+
+  @override
+  String get redesignNotifRegistrations => 'Neue Registrierungen';
+
+  @override
+  String get redesignNotifRegistrationsHint =>
+      'Wenn sich jemand über den Anmeldelink anmeldet';
+
+  @override
+  String get redesignNotifRemindersHint => 'Vor deinen Terminen';
+
+  @override
+  String get redesignNotifSignins => 'Zusagen';
+
+  @override
+  String get redesignNotifSigninsHint =>
+      'Wenn sich jemand an- oder zurückmeldet';
+
+  @override
+  String get redesignNotifSignouts => 'Abmeldungen und Verspätungen';
+
+  @override
+  String get redesignNotifSignoutsHint => 'Z. B. „Anna Beispiel kommt zu spät“';
+
+  @override
+  String get redesignNotifTasksHint =>
+      '2 Tage bevor deine Aufgaben fällig sind';
+
+  @override
   String get redesignNotifTelegram => 'Telegram';
 
   @override
@@ -15249,6 +15385,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignNotifTelegramDisconnect => 'Trennen';
+
+  @override
+  String get redesignNotifTelegramHint => 'Optional, über den Telegram-Bot';
+
+  @override
+  String get redesignNotifUpdatesHint => 'Wenn es eine neue App-Version gibt';
 
   @override
   String redesignOwnAnswerDays(num count) {

@@ -14845,6 +14845,78 @@
   "@redesignArchiveListRestore": {
     "description": "redesign.archiveList.restore"
   },
+  "redesignBellByParents": "von den Eltern gemeldet",
+  "@redesignBellByParents": {
+    "description": "redesign.bell.byParents"
+  },
+  "redesignBellEvent": "Termin",
+  "@redesignBellEvent": {
+    "description": "redesign.bell.event"
+  },
+  "redesignBellLate": "{name} kommt zu spät",
+  "@redesignBellLate": {
+    "description": "redesign.bell.late",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignBellNote": "{name} hat die Notiz geändert",
+  "@redesignBellNote": {
+    "description": "redesign.bell.note",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignBellOnTime": "{name} kommt doch pünktlich",
+  "@redesignBellOnTime": {
+    "description": "redesign.bell.onTime",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignBellOpenAttendance": "Zur Anwesenheit",
+  "@redesignBellOpenAttendance": {
+    "description": "redesign.bell.openAttendance"
+  },
+  "redesignBellOpenEvent": "Zum Termin",
+  "@redesignBellOpenEvent": {
+    "description": "redesign.bell.openEvent"
+  },
+  "redesignBellReports": "{count, plural, one {1 Meldung} other {{count} Meldungen}}",
+  "@redesignBellReports": {
+    "description": "redesign.bell.reports",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignBellSignin": "{name} hat zugesagt",
+  "@redesignBellSignin": {
+    "description": "redesign.bell.signin",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignBellSignout": "{name} ist abgemeldet",
+  "@redesignBellSignout": {
+    "description": "redesign.bell.signout",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignBellToday": "Heute",
+  "@redesignBellToday": {
+    "description": "redesign.bell.today"
+  },
+  "redesignBellTomorrow": "Morgen",
+  "@redesignBellTomorrow": {
+    "description": "redesign.bell.tomorrow"
+  },
+  "redesignBellYesterday": "Gestern",
+  "@redesignBellYesterday": {
+    "description": "redesign.bell.yesterday"
+  },
   "redesignBulkActionArchive": "Archivieren",
   "@redesignBulkActionArchive": {
     "description": "redesign.bulk.actionArchive"
@@ -18700,6 +18772,38 @@
   "@redesignMessagesIntro": {
     "description": "redesign.messages.intro"
   },
+  "redesignNotifBirthdaysHint": "Morgens um 8 Uhr",
+  "@redesignNotifBirthdaysHint": {
+    "description": "redesign.notif.birthdaysHint"
+  },
+  "redesignNotifBlockedAndroid": "Du bekommst gerade keine Push-Nachrichten. Erlaube sie in den Android-Einstellungen unter Apps › Attendix › Benachrichtigungen.",
+  "@redesignNotifBlockedAndroid": {
+    "description": "redesign.notif.blockedAndroid"
+  },
+  "redesignNotifBlockedIos": "Du bekommst gerade keine Push-Nachrichten. Erlaube sie in den Einstellungen.",
+  "@redesignNotifBlockedIos": {
+    "description": "redesign.notif.blockedIos"
+  },
+  "redesignNotifBlockedTitle": "Dein Gerät blockiert Benachrichtigungen von Attendix",
+  "@redesignNotifBlockedTitle": {
+    "description": "redesign.notif.blockedTitle"
+  },
+  "redesignNotifChecklistHint": "Fällige Punkte der Termin-Checkliste",
+  "@redesignNotifChecklistHint": {
+    "description": "redesign.notif.checklistHint"
+  },
+  "redesignNotifCriticals": "Neue Problemfälle",
+  "@redesignNotifCriticals": {
+    "description": "redesign.notif.criticals"
+  },
+  "redesignNotifCriticalsHint": "Wenn jemand eine Regel für Problemfälle erfüllt",
+  "@redesignNotifCriticalsHint": {
+    "description": "redesign.notif.criticalsHint"
+  },
+  "redesignNotifDutiesHint": "Wenn du für einen Dienst eingeteilt wirst",
+  "@redesignNotifDutiesHint": {
+    "description": "redesign.notif.dutiesHint"
+  },
   "redesignNotifForMe": "Für mich",
   "@redesignNotifForMe": {
     "description": "redesign.notif.forMe"
@@ -18720,6 +18824,66 @@
   "@redesignNotifLead": {
     "description": "redesign.notif.lead"
   },
+  "redesignNotifMaster": "Benachrichtigungen",
+  "@redesignNotifMaster": {
+    "description": "redesign.notif.master"
+  },
+  "redesignNotifMasterHint": "Aus heißt: gar keine Benachrichtigungen, weder Push noch Telegram.",
+  "@redesignNotifMasterHint": {
+    "description": "redesign.notif.masterHint"
+  },
+  "redesignNotifMessagesHint": "Nachrichten der Leitung",
+  "@redesignNotifMessagesHint": {
+    "description": "redesign.notif.messagesHint"
+  },
+  "redesignNotifMore": "Weitere",
+  "@redesignNotifMore": {
+    "description": "redesign.notif.more"
+  },
+  "redesignNotifOpenSettings": "Einstellungen öffnen",
+  "@redesignNotifOpenSettings": {
+    "description": "redesign.notif.openSettings"
+  },
+  "redesignNotifPush": "Push",
+  "@redesignNotifPush": {
+    "description": "redesign.notif.push"
+  },
+  "redesignNotifPushHint": "Mitteilungen auf deinem Handy",
+  "@redesignNotifPushHint": {
+    "description": "redesign.notif.pushHint"
+  },
+  "redesignNotifRegistrations": "Neue Registrierungen",
+  "@redesignNotifRegistrations": {
+    "description": "redesign.notif.registrations"
+  },
+  "redesignNotifRegistrationsHint": "Wenn sich jemand über den Anmeldelink anmeldet",
+  "@redesignNotifRegistrationsHint": {
+    "description": "redesign.notif.registrationsHint"
+  },
+  "redesignNotifRemindersHint": "Vor deinen Terminen",
+  "@redesignNotifRemindersHint": {
+    "description": "redesign.notif.remindersHint"
+  },
+  "redesignNotifSignins": "Zusagen",
+  "@redesignNotifSignins": {
+    "description": "redesign.notif.signins"
+  },
+  "redesignNotifSigninsHint": "Wenn sich jemand an- oder zurückmeldet",
+  "@redesignNotifSigninsHint": {
+    "description": "redesign.notif.signinsHint"
+  },
+  "redesignNotifSignouts": "Abmeldungen und Verspätungen",
+  "@redesignNotifSignouts": {
+    "description": "redesign.notif.signouts"
+  },
+  "redesignNotifSignoutsHint": "Z. B. „Anna Beispiel kommt zu spät“",
+  "@redesignNotifSignoutsHint": {
+    "description": "redesign.notif.signoutsHint"
+  },
+  "redesignNotifTasksHint": "2 Tage bevor deine Aufgaben fällig sind",
+  "@redesignNotifTasksHint": {
+    "description": "redesign.notif.tasksHint"
+  },
   "redesignNotifTelegram": "Telegram",
   "@redesignNotifTelegram": {
     "description": "redesign.notif.telegram"
@@ -18735,6 +18899,14 @@
   "redesignNotifTelegramDisconnect": "Trennen",
   "@redesignNotifTelegramDisconnect": {
     "description": "redesign.notif.telegramDisconnect"
+  },
+  "redesignNotifTelegramHint": "Optional, über den Telegram-Bot",
+  "@redesignNotifTelegramHint": {
+    "description": "redesign.notif.telegramHint"
+  },
+  "redesignNotifUpdatesHint": "Wenn es eine neue App-Version gibt",
+  "@redesignNotifUpdatesHint": {
+    "description": "redesign.notif.updatesHint"
   },
   "redesignOwnAnswerDays": "{count, plural, =0 {Du kannst heute noch antworten.} one {Du kannst noch 1 Tag antworten.} other {Du kannst noch {count} Tage antworten.}}",
   "@redesignOwnAnswerDays": {

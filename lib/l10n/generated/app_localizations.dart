@@ -19462,6 +19462,84 @@ abstract class AppLocalizations {
   /// **'Wiederherstellen'**
   String get redesignArchiveListRestore;
 
+  /// redesign.bell.byParents
+  ///
+  /// In de, this message translates to:
+  /// **'von den Eltern gemeldet'**
+  String get redesignBellByParents;
+
+  /// redesign.bell.event
+  ///
+  /// In de, this message translates to:
+  /// **'Termin'**
+  String get redesignBellEvent;
+
+  /// redesign.bell.late
+  ///
+  /// In de, this message translates to:
+  /// **'{name} kommt zu spät'**
+  String redesignBellLate(Object name);
+
+  /// redesign.bell.note
+  ///
+  /// In de, this message translates to:
+  /// **'{name} hat die Notiz geändert'**
+  String redesignBellNote(Object name);
+
+  /// redesign.bell.onTime
+  ///
+  /// In de, this message translates to:
+  /// **'{name} kommt doch pünktlich'**
+  String redesignBellOnTime(Object name);
+
+  /// redesign.bell.openAttendance
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Anwesenheit'**
+  String get redesignBellOpenAttendance;
+
+  /// redesign.bell.openEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Termin'**
+  String get redesignBellOpenEvent;
+
+  /// redesign.bell.reports
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Meldung} other {{count} Meldungen}}'**
+  String redesignBellReports(num count);
+
+  /// redesign.bell.signin
+  ///
+  /// In de, this message translates to:
+  /// **'{name} hat zugesagt'**
+  String redesignBellSignin(Object name);
+
+  /// redesign.bell.signout
+  ///
+  /// In de, this message translates to:
+  /// **'{name} ist abgemeldet'**
+  String redesignBellSignout(Object name);
+
+  /// redesign.bell.today
+  ///
+  /// In de, this message translates to:
+  /// **'Heute'**
+  String get redesignBellToday;
+
+  /// redesign.bell.tomorrow
+  ///
+  /// In de, this message translates to:
+  /// **'Morgen'**
+  String get redesignBellTomorrow;
+
+  /// redesign.bell.yesterday
+  ///
+  /// In de, this message translates to:
+  /// **'Gestern'**
+  String get redesignBellYesterday;
+
   /// redesign.bulk.actionArchive
   ///
   /// In de, this message translates to:
@@ -24190,6 +24268,54 @@ abstract class AppLocalizations {
   /// **'Alles, was an die Gruppe ging, mit Lesestatus.'**
   String get redesignMessagesIntro;
 
+  /// redesign.notif.birthdaysHint
+  ///
+  /// In de, this message translates to:
+  /// **'Morgens um 8 Uhr'**
+  String get redesignNotifBirthdaysHint;
+
+  /// redesign.notif.blockedAndroid
+  ///
+  /// In de, this message translates to:
+  /// **'Du bekommst gerade keine Push-Nachrichten. Erlaube sie in den Android-Einstellungen unter Apps › Attendix › Benachrichtigungen.'**
+  String get redesignNotifBlockedAndroid;
+
+  /// redesign.notif.blockedIos
+  ///
+  /// In de, this message translates to:
+  /// **'Du bekommst gerade keine Push-Nachrichten. Erlaube sie in den Einstellungen.'**
+  String get redesignNotifBlockedIos;
+
+  /// redesign.notif.blockedTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Gerät blockiert Benachrichtigungen von Attendix'**
+  String get redesignNotifBlockedTitle;
+
+  /// redesign.notif.checklistHint
+  ///
+  /// In de, this message translates to:
+  /// **'Fällige Punkte der Termin-Checkliste'**
+  String get redesignNotifChecklistHint;
+
+  /// redesign.notif.criticals
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Problemfälle'**
+  String get redesignNotifCriticals;
+
+  /// redesign.notif.criticalsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn jemand eine Regel für Problemfälle erfüllt'**
+  String get redesignNotifCriticalsHint;
+
+  /// redesign.notif.dutiesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn du für einen Dienst eingeteilt wirst'**
+  String get redesignNotifDutiesHint;
+
   /// redesign.notif.forMe
   ///
   /// In de, this message translates to:
@@ -24220,6 +24346,96 @@ abstract class AppLocalizations {
   /// **'Als Leitung'**
   String get redesignNotifLead;
 
+  /// redesign.notif.master
+  ///
+  /// In de, this message translates to:
+  /// **'Benachrichtigungen'**
+  String get redesignNotifMaster;
+
+  /// redesign.notif.masterHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aus heißt: gar keine Benachrichtigungen, weder Push noch Telegram.'**
+  String get redesignNotifMasterHint;
+
+  /// redesign.notif.messagesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nachrichten der Leitung'**
+  String get redesignNotifMessagesHint;
+
+  /// redesign.notif.more
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere'**
+  String get redesignNotifMore;
+
+  /// redesign.notif.openSettings
+  ///
+  /// In de, this message translates to:
+  /// **'Einstellungen öffnen'**
+  String get redesignNotifOpenSettings;
+
+  /// redesign.notif.push
+  ///
+  /// In de, this message translates to:
+  /// **'Push'**
+  String get redesignNotifPush;
+
+  /// redesign.notif.pushHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mitteilungen auf deinem Handy'**
+  String get redesignNotifPushHint;
+
+  /// redesign.notif.registrations
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Registrierungen'**
+  String get redesignNotifRegistrations;
+
+  /// redesign.notif.registrationsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn sich jemand über den Anmeldelink anmeldet'**
+  String get redesignNotifRegistrationsHint;
+
+  /// redesign.notif.remindersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vor deinen Terminen'**
+  String get redesignNotifRemindersHint;
+
+  /// redesign.notif.signins
+  ///
+  /// In de, this message translates to:
+  /// **'Zusagen'**
+  String get redesignNotifSignins;
+
+  /// redesign.notif.signinsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn sich jemand an- oder zurückmeldet'**
+  String get redesignNotifSigninsHint;
+
+  /// redesign.notif.signouts
+  ///
+  /// In de, this message translates to:
+  /// **'Abmeldungen und Verspätungen'**
+  String get redesignNotifSignouts;
+
+  /// redesign.notif.signoutsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Z. B. „Anna Beispiel kommt zu spät“'**
+  String get redesignNotifSignoutsHint;
+
+  /// redesign.notif.tasksHint
+  ///
+  /// In de, this message translates to:
+  /// **'2 Tage bevor deine Aufgaben fällig sind'**
+  String get redesignNotifTasksHint;
+
   /// redesign.notif.telegram
   ///
   /// In de, this message translates to:
@@ -24243,6 +24459,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Trennen'**
   String get redesignNotifTelegramDisconnect;
+
+  /// redesign.notif.telegramHint
+  ///
+  /// In de, this message translates to:
+  /// **'Optional, über den Telegram-Bot'**
+  String get redesignNotifTelegramHint;
+
+  /// redesign.notif.updatesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn es eine neue App-Version gibt'**
+  String get redesignNotifUpdatesHint;
 
   /// redesign.own.answerDays
   ///

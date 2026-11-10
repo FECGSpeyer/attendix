@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../data/models/message/message.dart';
 import '../../data/models/user_notification/user_notification.dart';
+import '../../data/repositories/attendance_repository.dart';
 import '../../data/repositories/message_repository.dart';
 import '../../data/repositories/user_notification_repository.dart';
 import '../config/supabase_config.dart';
@@ -301,3 +302,43 @@ class UserNotificationNotifier extends Notifier<AsyncValue<void>> {
 
 final userNotificationNotifierProvider =
     NotifierProvider<UserNotificationNotifier, AsyncValue<void>>(UserNotificationNotifier.new);
+
+/// REDESIGN (Beta bell): date and name of the Termine the bell groups by,
+/// per tenant. Key: `"<tenantId>:<id>,<id>;<tenantId>:<id>"` (sorted, so
+/// the same Termine share one load). Missing Termine are left out; the bell
+/// then falls back to the date in the entry's text.
+final bellEventLabelsProvider = FutureProvider.autoDispose
+    .family<Map<(int, int), ({DateTime? date, String? name})>, String>((ref, key) async {
+  ref.watch(currentAuthUserIdProvider);
+  final result = <(int, int), ({DateTime? date, String? name})>{};
+  for (final part in key.split(';')) {
+    final split = part.split(':');
+    if (split.length != 2) continue;
+    final tenantId = int.tryParse(split[0]);
+    if (tenantId == null) continue;
+    final ids = split[1].split(',').map(int.tryParse).whereType<int>().toList();
+    final repo = ref.watch(attendanceRepositoryForTenantProvider(tenantId));
+    if (!repo.hasTenantId || ids.isEmpty) continue;
+    try {
+      final labels = await repo.getEventLabels(ids);
+      for (final e in labels.entries) {
+        result[(tenantId, e.key)] = e.value;
+      }
+    } catch (_) {
+      // Non-critical: the bell shows the date from the text instead.
+    }
+  }
+  return result;
+});
+
+/// Key of [bellEventLabelsProvider] for (tenantId, attendanceId) pairs.
+String bellEventLabelsKey(Iterable<(int, int)> events) {
+  final byTenant = <int, Set<int>>{};
+  for (final (tenantId, id) in events) {
+    (byTenant[tenantId] ??= <int>{}).add(id);
+  }
+  final tenants = byTenant.keys.toList()..sort();
+  return [
+    for (final t in tenants) '$t:${(byTenant[t]!.toList()..sort()).join(',')}',
+  ].join(';');
+}

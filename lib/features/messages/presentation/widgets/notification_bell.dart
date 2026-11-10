@@ -21,6 +21,7 @@ import '../../../../data/models/user_notification/user_notification.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../bell_logic.dart';
 import '../../../../shared/widgets/layout/ion_modal_handle.dart';
 import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 
@@ -57,7 +58,10 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
     }
     ref.invalidate(unreadNotificationCountProvider);
     if (!context.mounted) return;
-    if (list.isEmpty) {
+    // REDESIGN: the Beta sheet also opens when empty ("Keine
+    // Benachrichtigungen") instead of a short toast.
+    final beta = ref.read(redesignEnabledProvider);
+    if (list.isEmpty && !beta) {
       ToastHelper.showInfo(context, context.l10n.bellNoneAvailable);
       return;
     }
@@ -67,7 +71,6 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
     // over the header (no extra 48pt drag-handle row), so the sheet top sits
     // where Ionic's does.
     // REDESIGN (canvas K1 "Glocke"): Beta sheet like "Gruppe wechseln".
-    final beta = ref.read(redesignEnabledProvider);
     final ios = !beta && useIosLook(context);
     // PARITY_R3: Ionic sheet modal on desktop/tablet (min 768 × 600) = a
     // 600 px wide sheet at the bottom (ion-modal `--width: 600px`, sheet
@@ -421,14 +424,47 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
     final l10n = context.l10n;
     final fresh = [for (final n in list) if (!_isRead(n)) n];
     final older = [for (final n in list) if (_isRead(n)) n];
-    Widget group(String label, List<UserNotification> rows) => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        RdGroupLabel(label),
-        RdGroupedList(children: [for (final n in rows) _buildBetaRow(n, tenants)]),
-        const SizedBox(height: 18),
-      ],
-    );
+    // REDESIGN (Beta bell): sign-in/out entries of one Termin form one block.
+    final events = <(int, int)>{
+      for (final item in groupBellEntries(list))
+        if (item is BellEventGroup) (item.tenantId, item.attendanceId),
+    };
+    final labels = events.isEmpty
+        ? const <(int, int), ({DateTime? date, String? name})>{}
+        : ref.watch(bellEventLabelsProvider(bellEventLabelsKey(events))).valueOrNull ??
+            const <(int, int), ({DateTime? date, String? name})>{};
+    Widget group(String label, List<UserNotification> rows) {
+      final blocks = <Widget>[];
+      final singles = <Widget>[];
+      void flush() {
+        if (singles.isEmpty) return;
+        blocks.add(RdGroupedList(children: [...singles]));
+        singles.clear();
+      }
+
+      for (final item in groupBellEntries(rows)) {
+        switch (item) {
+          case BellSingle(:final notification):
+            singles.add(_buildBetaRow(notification, tenants));
+          case BellEventGroup():
+            flush();
+            blocks.add(_buildBetaEventGroup(item, tenants, labels[(item.tenantId, item.attendanceId)]));
+        }
+      }
+      flush();
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          RdGroupLabel(label),
+          for (var i = 0; i < blocks.length; i++) ...[
+            if (i > 0) const SizedBox(height: 10),
+            blocks[i],
+          ],
+          const SizedBox(height: 18),
+        ],
+      );
+    }
+
     final List<Widget> body;
     if (listAsync.isLoading && list.isEmpty) {
       body = [
@@ -448,6 +484,8 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
         if (older.isNotEmpty) group(l10n.redesignMessagesBellEarlier, older),
       ];
     }
+    // The group switch only matters with more than one group.
+    final showGroupSwitch = tenants.length > 1 || _allTenants;
     return Column(
       children: [
         Padding(
@@ -467,18 +505,19 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-          child: RdSegmented<bool>(
-            values: const [false, true],
-            selected: _allTenants,
-            labelOf: (all) => all ? l10n.redesignMessagesBellAllGroups : l10n.redesignMessagesBellThisGroup,
-            onChanged: (v) => setState(() {
-              _allTenants = v;
-              _readOverrides.clear();
-            }),
+        if (showGroupSwitch)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: RdSegmented<bool>(
+              values: const [false, true],
+              selected: _allTenants,
+              labelOf: (all) => all ? l10n.redesignMessagesBellAllGroups : l10n.redesignMessagesBellThisGroup,
+              onChanged: (v) => setState(() {
+                _allTenants = v;
+                _readOverrides.clear();
+              }),
+            ),
           ),
-        ),
         Expanded(
           child: RefreshIndicator(
             color: p.primary,
@@ -501,14 +540,41 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
     );
   }
 
-  /// Beta row: unread dot, the group (in "Alle Gruppen"), text and date;
-  /// swipe right = read/unread, swipe left = delete (as before).
-  Widget _buildBetaRow(UserNotification n, List<Tenant> tenants) {
+  /// Beta: icon per kind of entry.
+  static IconData _betaIcon(String type) => switch (type) {
+        'message' => Icons.mail_outline,
+        'reminder' => Icons.event_outlined,
+        'attendance' => Icons.how_to_reg_outlined,
+        'pause' => Icons.pause_circle_outline,
+        'birthday' => Icons.cake_outlined,
+        'criticals' || 'CRITICAL_PERSON' => Icons.warning_amber_rounded,
+        'registration' => Icons.person_add_alt_1_outlined,
+        'task' || 'task_assigned' => Icons.task_alt,
+        'checklist' => Icons.checklist,
+        'protocol' || 'protocol_published' => Icons.description_outlined,
+        'proposal' || 'proposal_decided' => Icons.lightbulb_outline,
+        'assigned' || 'understaffed' || 'filled' || 'conjunction' || 'duty' => Icons.badge_outlined,
+        _ => Icons.notifications_none,
+      };
+
+  Widget _unreadDot(bool read) {
+    final p = context.rd;
+    return SizedBox(
+      width: 8,
+      child: read
+          ? null
+          : Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(color: p.primary, shape: BoxShape.circle),
+            ),
+    );
+  }
+
+  /// Swipe right = read/unread, swipe left = delete (as before).
+  Widget _betaSlidable(UserNotification n, Widget child) {
     final p = context.rd;
     final read = _isRead(n);
-    final tenantName = _allTenants ? _tenantName(n, tenants) : '';
-    final body = n.body.replaceAll(RegExp(r'\s+'), ' ').trim();
-    final when = n.createdAt == null ? '' : DateFormat('${dateFmt()} HH:mm').format(n.createdAt!.toLocal());
     return Slidable(
       key: ValueKey(n.id),
       startActionPane: ActionPane(
@@ -535,23 +601,130 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
           ),
         ],
       ),
-      child: RdListRow(
-        leading: SizedBox(
-          width: 10,
-          child: read
-              ? null
-              : Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(color: p.primary, shape: BoxShape.circle),
-                ),
+      child: child,
+    );
+  }
+
+  String _betaTime(UserNotification n) =>
+      n.createdAt == null ? '' : bellRelativeTime(context.l10n, n.createdAt!, locale: currentIntlLocale());
+
+  /// Beta row: unread dot, icon of the kind, text, the group (in "Alle
+  /// Gruppen") and the time.
+  Widget _buildBetaRow(UserNotification n, List<Tenant> tenants) {
+    final read = _isRead(n);
+    final tenantName = _allTenants ? _tenantName(n, tenants) : '';
+    final body = n.body.replaceAll(RegExp(r'\s+'), ' ').trim();
+    return _betaSlidable(
+      n,
+      RdListRow(
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [_unreadDot(read), const SizedBox(width: 8), RdRowIcon(_betaIcon(n.type))],
         ),
         title: body,
-        subtitle: [if (tenantName.isNotEmpty) tenantName, if (when.isNotEmpty) when].join(' · '),
+        subtitle: tenantName.isEmpty ? null : tenantName,
+        value: _betaTime(n),
         showChevron: n.isNavigable,
         onTap: () => _onTap(n),
       ),
     );
+  }
+
+  /// Beta block of one Termin: "Probe · Heute  3 Meldungen", one short row
+  /// per person, "Zur Anwesenheit" at the end.
+  Widget _buildBetaEventGroup(
+    BellEventGroup group,
+    List<Tenant> tenants,
+    ({DateTime? date, String? name})? label,
+  ) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final locale = currentIntlLocale();
+    final lines = [for (final n in group.entries) parseBellAttendanceBody(n.body)];
+    BellAttendanceLine? firstLine;
+    for (final line in lines) {
+      firstLine ??= line;
+    }
+    final name = label?.name ?? firstLine?.eventInfo ?? l10n.redesignBellEvent;
+    final date = label?.date ?? firstLine?.date;
+    final title = [name, if (date != null) bellEventDay(l10n, date, locale: locale)].join(' · ');
+    final tenantName = _allTenants ? _tenantName(group.entries.first, tenants) : '';
+    final role = ref.watch(currentRoleProvider);
+    final lead = role.isAdmin || role.isResponsible || role.isHelper || role.isVoiceLeaderHelper;
+
+    final rows = <Widget>[
+      Padding(
+        padding: const EdgeInsets.fromLTRB(14, 12, 14, 4),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.text),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              [if (tenantName.isNotEmpty) tenantName, l10n.redesignBellReports(group.entries.length)].join(' · '),
+              style: RdType.meta(p, size: 13),
+            ),
+          ],
+        ),
+      ),
+      for (var i = 0; i < group.entries.length; i++)
+        _betaSlidable(
+          group.entries[i],
+          RdListRow(
+            leading: _unreadDot(_isRead(group.entries[i])),
+            title: lines[i] == null
+                ? group.entries[i].body.replaceAll(RegExp(r'\s+'), ' ').trim()
+                : bellLineTitle(l10n, lines[i]!),
+            subtitle: lines[i] == null ? null : bellLineDetail(l10n, lines[i]!),
+            value: _betaTime(group.entries[i]),
+            showChevron: false,
+            onTap: () => _onTap(group.entries[i]),
+          ),
+        ),
+      Divider(height: 1, thickness: 1, color: p.line),
+      RdListRow(
+        key: ValueKey('rd-bell-open-${group.tenantId}-${group.attendanceId}'),
+        title: lead ? l10n.redesignBellOpenAttendance : l10n.redesignBellOpenEvent,
+        titleColor: p.link,
+        onTap: () => _openGroup(group),
+      ),
+    ];
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: p.surface,
+        borderRadius: BorderRadius.circular(p.listRadius),
+        boxShadow: p.cardShadow,
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        borderRadius: BorderRadius.circular(p.listRadius),
+        clipBehavior: Clip.antiAlias,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: rows),
+      ),
+    );
+  }
+
+  /// "Zur Anwesenheit": marks the block read and opens its Termin.
+  Future<void> _openGroup(BellEventGroup group) async {
+    final unread = [for (final n in group.entries) if (!_isRead(n)) n];
+    if (unread.isNotEmpty) {
+      setState(() {
+        for (final n in unread) {
+          _readOverrides[n.id] = true;
+        }
+      });
+      for (final n in unread) {
+        await _guard(() => _notifier.setRead(n, true));
+      }
+    }
+    if (!mounted) return;
+    Navigator.of(context).pop(_BellTarget(group.entries.first));
   }
 
   @override
