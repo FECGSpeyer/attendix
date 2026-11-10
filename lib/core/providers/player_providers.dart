@@ -10,6 +10,9 @@ import '../services/tracking/tracking_event.dart';
 import '../services/tracking/tracking_service.dart';
 import '../services/offline_list_cache.dart';
 import 'user_registration_providers.dart';
+import 'parent_providers.dart' show parentRepositoryWithTenantProvider, parentsProvider;
+import '../utils/parent_registration.dart';
+import '../../data/models/parent/parent_model.dart';
 
 /// Initialized player repository with tenant context
 /// SOL_FIX1: per-tenant immutable instance, so a tenant switch never
@@ -234,10 +237,21 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     // the account role in B.
     final repo = _repo;
     final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
+    final parents = ref.read(parentRepositoryWithTenantProvider);
     state = const AsyncValue.loading();
     try {
-      await repo.approvePlayer(player);
-      await _notifyApproval(registration, player);
+      final parent = parentRegistrationOf(player);
+      if (parent != null && (player.appId ?? '').isNotEmpty) {
+        // Elternteil first: when that fails, the child stays in Freigaben.
+        final newParent =
+            await _approveChild(repo, registration, parents, player, parent);
+        await repo.approvePlayer(player.copyWith(appId: null, email: null));
+        ref.invalidate(parentsProvider);
+        if (newParent) await _notifyParentApproval(registration, parent);
+      } else {
+        await repo.approvePlayer(player);
+        await _notifyApproval(registration, player);
+      }
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(playersProvider);
@@ -251,9 +265,19 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     // SOL_FIX4: both repositories bound before the first await.
     final repo = _repo;
     final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
+    final parent = parentRegistrationOf(player);
     state = const AsyncValue.loading();
     try {
-      await repo.declinePlayer(player, reason);
+      // Parent registration: the account stays when it is already more
+      // than an applicant here (e.g. the Elternteil of an approved sibling).
+      var declined = player;
+      if (parent != null && (player.appId ?? '').isNotEmpty) {
+        final role = await registration.getTenantUserRole(player.appId!);
+        if (role != null && role != Role.applicant) {
+          declined = player.copyWith(appId: null);
+        }
+      }
+      await repo.declinePlayer(declined, reason);
       await _notifyReject(registration, player);
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
@@ -287,12 +311,59 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
+  /// Parent registration ("Mein Kind"), after the child is approved: the
+  /// registering account becomes the child's Elternteil (one per account,
+  /// siblings share it), an applicant account gets the role Elternteil and
+  /// the approval mail, and the child no longer carries the account.
+  /// True when the account just became an Elternteil (send the mail).
+  Future<bool> _approveChild(
+    PlayerRepository players,
+    UserRegistrationRepository registration,
+    ParentRepository parents,
+    Person child,
+    ParentRegistration parent,
+  ) async {
+    final appId = child.appId!;
+    final existing = await parents.getParentByAppId(appId);
+    final parentRow = existing ??
+        await parents.createParent(ParentModel(
+          appId: appId,
+          email: parent.email,
+          firstName: parent.firstName,
+          lastName: parent.lastName,
+        ));
+    await players.linkChildToParent(
+        child.id!, parentRow.id!, withoutParentRegistration(child.additionalFields));
+    final role = await registration.getTenantUserRole(appId);
+    if (role == Role.applicant) {
+      await registration.updateTenantUserRole(appId, Role.parent);
+    }
+    if (role == Role.applicant || role == Role.parent) {
+      await registration.linkParentToTenantUser(appId, parentRow.id!);
+    }
+    return role == Role.applicant;
+  }
+
+  /// Approval mail of a new Elternteil (non-blocking like [_notifyApproval]).
+  Future<void> _notifyParentApproval(
+      UserRegistrationRepository registration, ParentRegistration parent) async {
+    try {
+      await registration.informUserAboutApproval(
+          parent.email, parent.firstName, Role.parent);
+    } catch (e) {
+      debugPrint('approveChild: notify failed (non-blocking): $e');
+    }
+  }
+
   Future<void> _notifyReject(
       UserRegistrationRepository registration, Person player) async {
     if (!registration.hasTenantId) return;
-    if (player.email == null || player.email!.isEmpty) return;
+    // A child registered by an Elternteil: the mail goes to the parent.
+    final parent = parentRegistrationOf(player);
+    final email = parent?.email ?? player.email;
+    if (email == null || email.isEmpty) return;
     try {
-      await registration.informUserAboutReject(player.email!, player.firstName);
+      await registration.informUserAboutReject(email, parent?.firstName ?? player.firstName);
     } catch (e) {
       debugPrint('declinePlayer: notify failed (non-blocking): $e');
     }

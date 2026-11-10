@@ -16,6 +16,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/utils/parent_registration.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
@@ -964,7 +965,13 @@ class _MemberRow extends StatelessWidget {
         hints.add(l10n.redesignMembersAbsentFrom(short.format(from)));
       }
     }
-    if (!readOnly && person.pending && (person.email ?? '').isNotEmpty) hints.add(person.email!);
+    final parentReg = person.pending ? parentRegistrationOf(person) : null;
+    if (!readOnly && parentReg != null) {
+      // Registered by an Elternteil via the link ("Mein Kind").
+      hints.add(l10n.parentRegisterChildOf(parentReg.fullName));
+    } else if (!readOnly && person.pending && (person.email ?? '').isNotEmpty) {
+      hints.add(person.email!);
+    }
 
     final pct = percent;
     final low = pct != null && pct < 50;

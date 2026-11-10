@@ -1298,6 +1298,32 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Parent registration, on approval: the child belongs to the Elternteil
+  /// [parentId] and no longer to the parent's account (`appId`, e-mail and
+  /// the parent marker are removed).
+  Future<void> linkChildToParent(
+    int playerId,
+    int parentId,
+    Map<String, dynamic> additionalFields,
+  ) async {
+    ensureNotDemo('linkChildToParent'); // DEMO_GUARD
+    try {
+      await supabase
+          .from('player')
+          .update({
+            'parent_id': parentId,
+            'appId': null,
+            'email': null,
+            'additional_fields': additionalFields,
+          })
+          .eq('id', playerId)
+          .eq('tenantId', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'linkChildToParent');
+      rethrow;
+    }
+  }
+
   /// E-mail of the signed-in user (Ionic `tenantUser().email`) for history
   /// entries like 'Person genehmigt von …'.
   String _actorEmail() {

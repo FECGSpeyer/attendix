@@ -6897,6 +6897,98 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orgValidName => 'Please enter a valid name.';
 
   @override
+  String get parentRegisterAddChild => 'Add another child';
+
+  @override
+  String get parentRegisterChange => 'Change';
+
+  @override
+  String get parentRegisterChild => 'My child';
+
+  @override
+  String get parentRegisterChildBirthDateRequired =>
+      'Please enter the date of birth for each child.';
+
+  @override
+  String get parentRegisterChildHint =>
+      'I am a parent, also for several children';
+
+  @override
+  String get parentRegisterChildNameRequired =>
+      'Please enter first and last name for each child.';
+
+  @override
+  String parentRegisterChildOf(Object name) {
+    return 'Child of $name';
+  }
+
+  @override
+  String parentRegisterChildTitle(Object number) {
+    return 'Child $number';
+  }
+
+  @override
+  String parentRegisterFinish(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Register $count children',
+      one: 'Register child',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get parentRegisterForChild => 'Registering: my child';
+
+  @override
+  String get parentRegisterForSelf => 'Registering: myself';
+
+  @override
+  String get parentRegisterInviteByEmail => 'Invite by email';
+
+  @override
+  String get parentRegisterParentData => 'Your details (parent)';
+
+  @override
+  String get parentRegisterRemoveChild => 'Remove child';
+
+  @override
+  String get parentRegisterReviewParent => 'Parent';
+
+  @override
+  String parentRegisterReviewParentHint(Object name) {
+    return 'When you accept, $name gets access as a parent and sees the child\'s events.';
+  }
+
+  @override
+  String get parentRegisterSelf => 'Myself';
+
+  @override
+  String get parentRegisterSelfHint => 'I play or sing myself';
+
+  @override
+  String get parentRegisterShareButton => 'Share sign-up link';
+
+  @override
+  String get parentRegisterShareHint =>
+      'Send the parents the sign-up link. They choose \"My child\" there and you approve.';
+
+  @override
+  String get parentRegisterShareTitle => 'New child joining?';
+
+  @override
+  String get parentRegisterSuccessNewPending =>
+      'Your account has been created and the registration is waiting for approval by the leaders. Please confirm your email. Once you are approved, you will see your children\'s events in the app and can sign them in and out.';
+
+  @override
+  String get parentRegisterSuccessPending =>
+      'The registration is waiting for approval by the leaders. Once you are approved, you will see your children\'s events in the app and can sign them in and out.';
+
+  @override
+  String get parentRegisterWhoTitle => 'Who would you like to register?';
+
+  @override
   String get peopleActivate => 'Activate';
 
   @override

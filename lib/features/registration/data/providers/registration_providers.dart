@@ -7,6 +7,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/table_names.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/utils/db_helpers.dart';
+import '../../../../core/utils/parent_registration.dart';
 import '../../../../core/utils/profile_image_path.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
@@ -95,6 +96,21 @@ Map<String, dynamic> registrationFieldDefaults(
   };
 }
 
+/// One child in a parent registration ("Mein Kind").
+class ChildRegistrationData {
+  ChildRegistrationData({
+    this.firstName = '',
+    this.lastName = '',
+    this.groupId,
+    this.birthDate,
+  });
+
+  String firstName;
+  String lastName;
+  int? groupId;
+  DateTime? birthDate;
+}
+
 /// Model for registration form data
 class RegistrationFormData {
   String email;
@@ -111,6 +127,11 @@ class RegistrationFormData {
 
   /// Content type of [profileImageBytes] (as picked, not re-encoded).
   String? profileImageMimeType;
+
+  /// "Mein Kind": an Elternteil registers [children]; [firstName] /
+  /// [lastName] / [phone] are then the parent's own.
+  bool forChildren = false;
+  final List<ChildRegistrationData> children = [ChildRegistrationData()];
 
   RegistrationFormData({
     this.email = '',
@@ -147,6 +168,56 @@ class RegistrationService {
   ///   account with the same password is signed in instead
   /// * signed in (password login or e-mail code) → registerUser with
   ///   `self_register` (no inform mail)
+  /// "Mein Kind": an Elternteil registers one or more children. The
+  /// parent's account gets access as applicant (if it has none yet) and
+  /// each child becomes a pending person with the parent marker. The lead
+  /// approves each child in Freigaben; that makes the account an Elternteil
+  /// (see PlayerNotifier.approvePlayer). Always pending, also with
+  /// auto-approve, because only a lead may create the Elternteil.
+  Future<RegistrationResult> registerChildren({
+    required Tenant tenant,
+    required RegistrationFormData formData,
+    bool otpMode = false,
+  }) async {
+    final tenantId = tenant.id!;
+    final email = (supabase.auth.currentUser?.email ?? formData.email)
+        .toLowerCase()
+        .trim();
+    try {
+      final (userId, created) = await _parentAccount(tenant, formData, email);
+      final today = DateTime.now();
+      final todayIso =
+          DateTime.utc(today.year, today.month, today.day).toIso8601String();
+      final hasBirthDate =
+          (tenant.registrationFields ?? const []).contains('birthDate');
+      for (final child in formData.children) {
+        await supabase.from('player').insert({
+          ...buildChildRegistrationPlayerData(
+            tenantId: tenantId,
+            parentAppId: userId,
+            formData: formData,
+            child: child,
+            parentEmail: email,
+            hasBirthDate: hasBirthDate,
+            todayIso: todayIso,
+          ),
+          'id': generateIonicId(),
+        });
+      }
+      return RegistrationResult.success(
+        isNewAccount: created && !otpMode,
+        role: Role.applicant,
+        children: formData.children.length,
+      );
+    } on AccountFlowException catch (e) {
+      return RegistrationResult.error(e.message);
+    } catch (e) {
+      debugPrint('Child registration failed: $e');
+      return RegistrationResult.error(
+          l10nWithoutContext.tenantRegisterFlutterRegisterFailedRetry);
+    }
+  }
+
   Future<RegistrationResult> register({
     required Tenant tenant,
     required RegistrationFormData formData,
@@ -341,6 +412,113 @@ class RegistrationService {
   }
 }
 
+/// Account step of a parent registration: the signed-in / new / existing
+/// account of the Elternteil gets access to [tenantId] as applicant unless
+/// it already has a role there (e.g. a parent adding another child later).
+extension _ParentAccount on RegistrationService {
+  Future<(String, bool)> _parentAccount(
+      Tenant tenant, RegistrationFormData formData, String email) async {
+    final tenantId = tenant.id!;
+    final registration = _registrationRepo(tenantId);
+    final currentUser = supabase.auth.currentUser;
+    String userId;
+    var created = false;
+    if (currentUser == null) {
+      final AuthResponse signUp;
+      try {
+        signUp = await supabase.auth.signUp(
+          email: email,
+          password: formData.password,
+          emailRedirectTo: '${authRedirectBase()}/login',
+          data: {
+            AccountRepository.termsAcceptedAtKey:
+                DateTime.now().toUtc().toIso8601String(),
+          },
+        );
+      } catch (_) {
+        throw AccountFlowException(
+            '${l10nWithoutContext.dbCreateAccountFailed}: ${l10nWithoutContext.dbRegisterFailed}');
+      }
+      final user = signUp.user;
+      if (user == null) {
+        throw AccountFlowException(
+            '${l10nWithoutContext.dbCreateAccountFailed}: ${l10nWithoutContext.dbRegisterFailed}');
+      }
+      if (user.identities?.isEmpty ?? true) {
+        // E-mail already registered → sign in with the password.
+        try {
+          final login = await supabase.auth.signInWithPassword(
+            email: email,
+            password: formData.password,
+          );
+          if (login.user == null) throw const AuthException('no user');
+          userId = login.user!.id;
+        } catch (_) {
+          throw AccountFlowException(
+            '${l10nWithoutContext.dbCreateAccountFailed}: ${l10nWithoutContext.dbEmailExists}',
+          );
+        }
+      } else {
+        userId = user.id;
+        created = true;
+      }
+    } else {
+      userId = currentUser.id;
+    }
+    final role = created
+        ? null
+        : await registration.getTenantUserRole(userId, tenantId: tenantId);
+    if (role == null) {
+      await registration.addUserToTenant(userId, Role.applicant, email,
+          tenantId: tenantId);
+    }
+    return (userId, created);
+  }
+}
+
+/// Player row of one child in a parent registration: the shared form data
+/// with the child's name / group / birth date, always pending (the lead
+/// approves the parent with the child), the parent's account as `appId`
+/// and the parent marker (see [kParentRegistrationKey]).
+Map<String, dynamic> buildChildRegistrationPlayerData({
+  required int tenantId,
+  required String parentAppId,
+  required RegistrationFormData formData,
+  required ChildRegistrationData child,
+  required String parentEmail,
+  required bool hasBirthDate,
+  required String todayIso,
+}) {
+  final data = buildRegistrationPlayerData(
+    tenantId: tenantId,
+    appId: parentAppId,
+    formData: formData,
+    email: parentEmail,
+    pending: true,
+    hasBirthDate: hasBirthDate,
+    phone: formData.phone?.replaceAll(RegExp(r'\s+'), ''),
+    todayIso: todayIso,
+  );
+  return {
+    ...data,
+    'firstName': child.firstName.trim(),
+    'lastName': child.lastName.trim(),
+    'instrument': child.groupId,
+    'birthday': hasBirthDate
+        ? child.birthDate?.toIso8601String().split('T').first
+        : null,
+    'img': kDefaultAvatarUrl,
+    'additional_fields': {
+      ...formData.additionalFields,
+      kParentRegistrationKey: ParentRegistration(
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: parentEmail,
+      ).toJson(),
+    },
+  };
+}
+
 /// Person used for the attendance backfill after a self registration:
 /// the stored player row (Ionic passes the inserted/updated `data`).
 Person registrationBackfillPerson(Map<String, dynamic> storedRow) =>
@@ -403,30 +581,40 @@ class RegistrationResult {
   final bool autoApproved;
   final Role role;
 
+  /// Number of children of a parent registration (0: self registration).
+  final int children;
+
   const RegistrationResult._({
     required this.success,
     this.errorMessage,
     this.isNewAccount = false,
     this.autoApproved = false,
     this.role = Role.applicant,
+    this.children = 0,
   });
 
   factory RegistrationResult.success({
     bool isNewAccount = false,
     bool autoApproved = false,
     Role role = Role.applicant,
+    int children = 0,
   }) {
     return RegistrationResult._(
       success: true,
       isNewAccount: isNewAccount,
       autoApproved: autoApproved,
       role: role,
+      children: children,
     );
   }
 
-  /// Ionic tenantRegister.success.* texts.
-  String get successMessage => successMessageFor(
-      autoApproved: autoApproved, isNewAccount: isNewAccount);
+  /// Ionic tenantRegister.success.* texts (parent registration: its own).
+  String get successMessage => children > 0
+      ? (isNewAccount
+          ? l10nWithoutContext.parentRegisterSuccessNewPending
+          : l10nWithoutContext.parentRegisterSuccessPending)
+      : successMessageFor(
+          autoApproved: autoApproved, isNewAccount: isNewAccount);
 
   static String successMessageFor({
     required bool autoApproved,

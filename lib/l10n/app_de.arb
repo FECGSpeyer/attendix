@@ -8619,6 +8619,116 @@
   "@orgValidName": {
     "description": "org.validName"
   },
+  "parentRegisterAddChild": "Weiteres Kind hinzufügen",
+  "@parentRegisterAddChild": {
+    "description": "parentRegister.addChild"
+  },
+  "parentRegisterChange": "Ändern",
+  "@parentRegisterChange": {
+    "description": "parentRegister.change"
+  },
+  "parentRegisterChild": "Mein Kind",
+  "@parentRegisterChild": {
+    "description": "parentRegister.child"
+  },
+  "parentRegisterChildBirthDateRequired": "Bitte gib für jedes Kind das Geburtsdatum an.",
+  "@parentRegisterChildBirthDateRequired": {
+    "description": "parentRegister.childBirthDateRequired"
+  },
+  "parentRegisterChildHint": "Ich bin Elternteil, auch für mehrere Kinder",
+  "@parentRegisterChildHint": {
+    "description": "parentRegister.childHint"
+  },
+  "parentRegisterChildNameRequired": "Bitte gib für jedes Kind Vor- und Nachnamen an.",
+  "@parentRegisterChildNameRequired": {
+    "description": "parentRegister.childNameRequired"
+  },
+  "parentRegisterChildOf": "Kind von {name}",
+  "@parentRegisterChildOf": {
+    "description": "parentRegister.childOf",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "parentRegisterChildTitle": "Kind {number}",
+  "@parentRegisterChildTitle": {
+    "description": "parentRegister.childTitle",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "parentRegisterFinish": "{count, plural, one {Kind anmelden} other {{count} Kinder anmelden}}",
+  "@parentRegisterFinish": {
+    "description": "parentRegister.finish",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "parentRegisterForChild": "Anmeldung für: Mein Kind",
+  "@parentRegisterForChild": {
+    "description": "parentRegister.forChild"
+  },
+  "parentRegisterForSelf": "Anmeldung für: Mich selbst",
+  "@parentRegisterForSelf": {
+    "description": "parentRegister.forSelf"
+  },
+  "parentRegisterInviteByEmail": "Per E-Mail einladen",
+  "@parentRegisterInviteByEmail": {
+    "description": "parentRegister.inviteByEmail"
+  },
+  "parentRegisterParentData": "Deine Angaben (Elternteil)",
+  "@parentRegisterParentData": {
+    "description": "parentRegister.parentData"
+  },
+  "parentRegisterRemoveChild": "Kind entfernen",
+  "@parentRegisterRemoveChild": {
+    "description": "parentRegister.removeChild"
+  },
+  "parentRegisterReviewParent": "Elternteil",
+  "@parentRegisterReviewParent": {
+    "description": "parentRegister.reviewParent"
+  },
+  "parentRegisterReviewParentHint": "Beim Aufnehmen bekommt {name} Zugang als Elternteil und sieht die Termine des Kindes.",
+  "@parentRegisterReviewParentHint": {
+    "description": "parentRegister.reviewParentHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "parentRegisterSelf": "Mich selbst",
+  "@parentRegisterSelf": {
+    "description": "parentRegister.self"
+  },
+  "parentRegisterSelfHint": "Ich spiele oder singe selbst mit",
+  "@parentRegisterSelfHint": {
+    "description": "parentRegister.selfHint"
+  },
+  "parentRegisterShareButton": "Anmeldelink teilen",
+  "@parentRegisterShareButton": {
+    "description": "parentRegister.shareButton"
+  },
+  "parentRegisterShareHint": "Schick den Eltern den Anmeldelink. Sie wählen dort „Mein Kind“ und du schaltest frei.",
+  "@parentRegisterShareHint": {
+    "description": "parentRegister.shareHint"
+  },
+  "parentRegisterShareTitle": "Kind neu dabei?",
+  "@parentRegisterShareTitle": {
+    "description": "parentRegister.shareTitle"
+  },
+  "parentRegisterSuccessNewPending": "Dein Konto wurde erstellt und die Anmeldung wartet auf die Freigabe durch die Leitung. Bitte bestätige deine E-Mail. Sobald du freigeschaltet bist, siehst du in der App die Termine deiner Kinder und kannst sie an- und abmelden.",
+  "@parentRegisterSuccessNewPending": {
+    "description": "parentRegister.successNewPending"
+  },
+  "parentRegisterSuccessPending": "Die Anmeldung wartet auf die Freigabe durch die Leitung. Sobald du freigeschaltet bist, siehst du in der App die Termine deiner Kinder und kannst sie an- und abmelden.",
+  "@parentRegisterSuccessPending": {
+    "description": "parentRegister.successPending"
+  },
+  "parentRegisterWhoTitle": "Wen möchtest du anmelden?",
+  "@parentRegisterWhoTitle": {
+    "description": "parentRegister.whoTitle"
+  },
   "peopleActivate": "Aktivieren",
   "@peopleActivate": {
     "description": "people.activate"
