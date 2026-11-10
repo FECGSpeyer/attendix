@@ -937,14 +937,15 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         ));
         // Programm and Ablauf can be prepared before anyone is invited
         // (Reiter Programm), the Vorbereitung too (Überblick).
+        final phase = rdEventPhase(_span(attendance, type), archived: attendance.archived);
+        final over = phase == RdEventPhase.after ||
+            (phase == RdEventPhase.archived &&
+                EventListUtils.hasEnded(attendance.date, _effectiveDays(attendance, type)));
         if (tab == RdEventTab.overview &&
-            canMutate &&
-            ref.watch(canViewAttendanceChecklistProvider) &&
-            !attendance.archived &&
-            rdEventPhase(_span(attendance, type), archived: false) != RdEventPhase.after) {
+            _showPrep(attendance, over: over, canMutate: canMutate, canView: ref.watch(canViewAttendanceChecklistProvider))) {
           content.addAll([
             const SizedBox(height: 24),
-            RdEventChecklistSection(attendance: attendance, type: type, canEdit: true),
+            RdEventChecklistSection(attendance: attendance, type: type, canEdit: canMutate),
           ]);
         }
       } else if (tab == RdEventTab.overview) {
@@ -1392,6 +1393,15 @@ class _MoreRow extends StatelessWidget {
 /// * danach: "35 von 38 · 92 %" and the Abschluss.
 /// Below: Programm (opens the Reiter), Vorbereitung, "Für Mitglieder",
 /// "Nur Leitung", Dienst and Protokoll.
+/// "Vorbereitung" in the Überblick: always for the Leitung before the
+/// Termin (empty with "+ Aufgabe"); afterwards only while tasks are open.
+bool _showPrep(Attendance attendance, {required bool over, required bool canMutate, required bool canView}) {
+  if (!canView) return false;
+  final items = attendance.checklist ?? const <ChecklistItem>[];
+  if (items.isNotEmpty) return !(over && items.every((c) => c.completed));
+  return canMutate && !over && !attendance.archived;
+}
+
 class _Overview extends ConsumerWidget {
   const _Overview({
     required this.attendance,
@@ -1659,10 +1669,7 @@ class _Overview extends ConsumerWidget {
           ),
         // "Vorbereitung": always there for the Leitung before the Termin
         // (empty with "+ Aufgabe"); afterwards only while tasks are open.
-        if (ref.watch(canViewAttendanceChecklistProvider) &&
-            ((attendance.checklist?.isNotEmpty ?? false)
-                ? !(over && attendance.checklist!.every((c) => c.completed))
-                : canMutate && !over && !attendance.archived)) ...[
+        if (_showPrep(attendance, over: over, canMutate: canMutate, canView: ref.watch(canViewAttendanceChecklistProvider))) ...[
           const SizedBox(height: 24),
           RdEventChecklistSection(attendance: attendance, type: type, canEdit: canMutate),
         ],
