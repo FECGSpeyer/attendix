@@ -154,7 +154,8 @@
         "deadline": "Antwort bis {date}",
         "unrecorded": "{count, plural, one {1 Termin noch nicht erfasst} other {{count} Termine noch nicht erfasst}}",
         "viewerHint": "Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.",
-        "changeAnswer": "Ändern"
+        "changeAnswer": "Ändern",
+        "prepDue": "{count, plural, one {1 Aufgabe zur Vorbereitung fällig} other {{count} Aufgaben zur Vorbereitung fällig}}"
       },
       "applicant": {
         "title": "Bewerbung",
@@ -357,7 +358,10 @@
         "countAbsentStarted": "{count} abwesend",
         "editBasics": "Grunddaten",
         "noPlanYet": "Noch kein Ablauf",
-        "planEditShort": "Bearbeiten"
+        "planEditShort": "Bearbeiten",
+        "prepTitle": "Vorbereitung",
+        "prepEmpty": "Was vor dem Termin erledigt sein muss, z. B. Raum aufschließen oder Noten kopieren. Abhaken kannst du direkt hier, sehen kann es nur die Leitung.",
+        "prepTakeOver": "{count, plural, one {1 Aufgabe der Terminart übernehmen} other {{count} Aufgaben der Terminart übernehmen}}"
       },
       "own": {
         "notFound": "Dieser Termin ist nicht mehr in deiner Liste.",
@@ -1757,7 +1761,8 @@
         "deadline": "Answer by {date}",
         "unrecorded": "{count, plural, one {1 event not recorded yet} other {{count} events not recorded yet}}",
         "viewerHint": "As an observer you see the overview. Leaders open single events.",
-        "changeAnswer": "Change"
+        "changeAnswer": "Change",
+        "prepDue": "{count, plural, one {1 preparation task due} other {{count} preparation tasks due}}"
       },
       "applicant": {
         "title": "Application",
@@ -1960,7 +1965,10 @@
         "countAbsentStarted": "{count} absent",
         "editBasics": "Basics",
         "noPlanYet": "No schedule yet",
-        "planEditShort": "Edit"
+        "planEditShort": "Edit",
+        "prepTitle": "Preparation",
+        "prepEmpty": "What has to be done before the event, e.g. unlock the room or copy the sheet music. Tick it off right here; only leaders can see it.",
+        "prepTakeOver": "{count, plural, one {Add 1 task of the event type} other {Add {count} tasks of the event type}}"
       },
       "own": {
         "notFound": "This event is no longer in your list.",

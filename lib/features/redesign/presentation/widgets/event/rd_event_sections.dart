@@ -607,13 +607,18 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
 // Vorbereitung (Checkliste)
 // ---------------------------------------------------------------------------
 
-/// The Termin's checklist: tick off, "+ Aufgabe", delete. Only shown while
-/// it has items (an empty one is started from "Aktionen", like the Termin
-/// page menu).
+/// "Vorbereitung": what the Leitung has to get done before the Termin
+/// (the Termin's checklist). Tick off, "+ Aufgabe", delete. A new Termin
+/// already carries the tasks of its Terminart (Verwaltung › Terminarten);
+/// without any the section explains itself and, when the Terminart has
+/// tasks, offers to take them over.
 class RdEventChecklistSection extends ConsumerStatefulWidget {
-  const RdEventChecklistSection({super.key, required this.attendance});
+  const RdEventChecklistSection({super.key, required this.attendance, this.type});
 
   final Attendance attendance;
+
+  /// The Termin's Terminart: its tasks can be taken over into an empty list.
+  final AttendanceType? type;
 
   @override
   ConsumerState<RdEventChecklistSection> createState() => _RdEventChecklistSectionState();
@@ -656,6 +661,12 @@ class _RdEventChecklistSectionState extends ConsumerState<RdEventChecklistSectio
     await _save([..._items, item]);
   }
 
+  Future<void> _takeOverTemplate() async {
+    final type = widget.type;
+    if (type == null) return;
+    await _save(rdDefaultChecklist(type, widget.attendance));
+  }
+
   Future<void> _delete(int index) async {
     final l10n = context.l10n;
     final confirmed = await DialogHelper.showConfirmation(
@@ -674,7 +685,41 @@ class _RdEventChecklistSectionState extends ConsumerState<RdEventChecklistSectio
     final p = context.rd;
     final l10n = context.l10n;
     final items = _items;
-    if (items.isEmpty) return const SizedBox.shrink();
+    if (items.isEmpty) {
+      final templateCount = widget.type?.checklist?.length ?? 0;
+      return Column(
+        key: const Key('rd-event-prep-empty'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          RdSectionLabel(
+            l10n.redesignEventPrepTitle,
+            actionLabel: l10n.redesignEventAddTask,
+            actionSemantics: l10n.redesignEventAddTaskLabel,
+            onAction: _add,
+          ),
+          RdCard(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.redesignEventPrepEmpty, style: RdType.meta(p, size: 14)),
+                if (templateCount > 0) ...[
+                  const SizedBox(height: 10),
+                  RdPillButton(
+                    key: const Key('rd-event-prep-template'),
+                    icon: Icons.playlist_add_check_rounded,
+                    label: l10n.redesignEventPrepTakeOver(templateCount),
+                    onPressed: _takeOverTemplate,
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (_local != null && _local != widget.attendance.checklist)
+            LinearProgressIndicator(minHeight: 2, color: p.primary, backgroundColor: p.track),
+        ],
+      );
+    }
     final done = items.where((i) => i.completed).length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

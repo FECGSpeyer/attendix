@@ -982,17 +982,22 @@ void main() {
       expect(find.byKey(const Key('rd-person-remove')), findsNothing);
     });
 
-    testWidgets('••• opens the Status-Übersicht', (tester) async {
+    testWidgets('a count of Rückmeldungen opens the Anwesenheit filtered; ••• keeps only actions', (tester) async {
       _size(tester, const Size(393, 852));
       await tester.pumpWidget(_Harness().app());
       await _settle(tester);
       await tester.tap(find.byKey(const Key('rd-event-menu')));
       await _settle(tester);
       expect(find.text('Als Excel exportieren'), findsOneWidget);
-      await tester.tap(find.text('Status-Übersicht'));
+      expect(find.text('Status-Übersicht'), findsNothing);
+      expect(find.text('Checkliste starten'), findsNothing);
+      await tester.tap(find.text('Abbrechen'));
       await _settle(tester);
-      expect(find.text('Gesamt: 5 Personen'), findsOneWidget);
-      expect(find.text('0 von 2 da'), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('rd-event-count-excused')));
+      await _settle(tester);
+      expect(find.byKey(const ValueKey('rd-record-3')), findsOneWidget);
+      expect(find.byKey(const ValueKey('rd-record-2')), findsNothing);
     });
   });
 }

@@ -20398,6 +20398,24 @@ abstract class AppLocalizations {
   /// **'Vorbereitung · {done} von {total} erledigt'**
   String redesignEventPrep(Object done, Object total);
 
+  /// redesign.event.prepEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Was vor dem Termin erledigt sein muss, z. B. Raum aufschließen oder Noten kopieren. Abhaken kannst du direkt hier, sehen kann es nur die Leitung.'**
+  String get redesignEventPrepEmpty;
+
+  /// redesign.event.prepTakeOver
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Aufgabe der Terminart übernehmen} other {{count} Aufgaben der Terminart übernehmen}}'**
+  String redesignEventPrepTakeOver(num count);
+
+  /// redesign.event.prepTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Vorbereitung'**
+  String get redesignEventPrepTitle;
+
   /// redesign.event.presentOf
   ///
   /// In de, this message translates to:
@@ -26253,6 +26271,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Prüfen und freischalten'**
   String get redesignTodayPendingHint;
+
+  /// redesign.today.prepDue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Aufgabe zur Vorbereitung fällig} other {{count} Aufgaben zur Vorbereitung fällig}}'**
+  String redesignTodayPrepDue(num count);
 
   /// redesign.today.question
   ///

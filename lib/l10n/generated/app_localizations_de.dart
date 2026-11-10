@@ -12661,6 +12661,24 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignEventPrepEmpty =>
+      'Was vor dem Termin erledigt sein muss, z. B. Raum aufschließen oder Noten kopieren. Abhaken kannst du direkt hier, sehen kann es nur die Leitung.';
+
+  @override
+  String redesignEventPrepTakeOver(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben der Terminart übernehmen',
+      one: '1 Aufgabe der Terminart übernehmen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventPrepTitle => 'Vorbereitung';
+
+  @override
   String redesignEventPresentOf(Object present, Object total, Object percent) {
     return '$present von $total · $percent %';
   }
@@ -16476,6 +16494,17 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignTodayPendingHint => 'Prüfen und freischalten';
+
+  @override
+  String redesignTodayPrepDue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben zur Vorbereitung fällig',
+      one: '1 Aufgabe zur Vorbereitung fällig',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignTodayQuestion => 'Bist du dabei?';

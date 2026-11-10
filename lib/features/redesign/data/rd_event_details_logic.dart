@@ -66,6 +66,22 @@ RdDue rdChecklistDue(ChecklistItem item, {DateTime? now}) {
   return RdDue.none;
 }
 
+/// Open Vorbereitung tasks of [attendances] that are due within a day or
+/// overdue, the most urgent first (for "Heute" of the Leitung).
+List<({Attendance attendance, ChecklistItem item})> rdDuePrepTasks(
+  Iterable<Attendance> attendances, {
+  DateTime? now,
+}) {
+  final n = now ?? DateTime.now();
+  final result = [
+    for (final a in attendances)
+      for (final item in a.checklist ?? const <ChecklistItem>[])
+        if (rdChecklistDue(item, now: n) != RdDue.none) (attendance: a, item: item),
+  ];
+  result.sort((x, y) => DateTime.parse(x.item.dueDate!).compareTo(DateTime.parse(y.item.dueDate!)));
+  return result;
+}
+
 /// "in 2 Tagen", "überfällig seit 3 Tagen" … (Ionic formatDeadline); '' without a date.
 String rdChecklistDueText(AppLocalizations l10n, ChecklistItem item, {DateTime? now}) {
   final due = item.dueDate == null ? null : DateTime.tryParse(item.dueDate!);
