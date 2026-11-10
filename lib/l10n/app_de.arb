@@ -12447,9 +12447,21 @@
       }
     }
   },
-  "rdCriticalListShow": "In Mitglieder ansehen",
+  "rdCriticalListShow": "Personen ansehen",
   "@rdCriticalListShow": {
     "description": "rdCritical.listShow"
+  },
+  "rdCriticalMembersEmpty": "Gerade ist niemand Problemfall.",
+  "@rdCriticalMembersEmpty": {
+    "description": "rdCritical.membersEmpty"
+  },
+  "rdCriticalMembersIntro": "Wer gerade nach einer Regel auffällt, mit dem Grund. Antippen öffnet die Person.",
+  "@rdCriticalMembersIntro": {
+    "description": "rdCritical.membersIntro"
+  },
+  "rdCriticalMembersTitle": "Aktuelle Problemfälle",
+  "@rdCriticalMembersTitle": {
+    "description": "rdCritical.membersTitle"
   },
   "rdCriticalModeCount": "Anzahl",
   "@rdCriticalModeCount": {
@@ -16160,9 +16172,46 @@
   "@redesignFilesRename": {
     "description": "redesign.files.rename"
   },
-  "redesignFilesReplace": "Ersetzen",
+  "redesignFilesReplace": "Durch neue Version ersetzen …",
   "@redesignFilesReplace": {
     "description": "redesign.files.replace"
+  },
+  "redesignFilesReplaceConfirm": "Ersetzen",
+  "@redesignFilesReplaceConfirm": {
+    "description": "redesign.files.replaceConfirm"
+  },
+  "redesignFilesReplaceGone": "„{name}“ gibt es an diesem Werk nicht mehr.",
+  "@redesignFilesReplaceGone": {
+    "description": "redesign.files.replaceGone",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFilesReplaceMessage": "„{old}“ wird durch „{picked}“ ersetzt. Name und Stimme bleiben, die bisherige Fassung wird gelöscht.",
+  "@redesignFilesReplaceMessage": {
+    "description": "redesign.files.replaceMessage",
+    "placeholders": {
+      "old": {},
+      "picked": {}
+    }
+  },
+  "redesignFilesReplaceTitle": "Datei ersetzen?",
+  "@redesignFilesReplaceTitle": {
+    "description": "redesign.files.replaceTitle"
+  },
+  "redesignFilesReplaceWrongType": "Bitte eine Datei vom gleichen Typ wählen (.{ext}).",
+  "@redesignFilesReplaceWrongType": {
+    "description": "redesign.files.replaceWrongType",
+    "placeholders": {
+      "ext": {}
+    }
+  },
+  "redesignFilesReplaced": "„{name}“ ersetzt",
+  "@redesignFilesReplaced": {
+    "description": "redesign.files.replaced",
+    "placeholders": {
+      "name": {}
+    }
   },
   "redesignFilesRestored": "Wiederhergestellt",
   "@redesignFilesRestored": {
@@ -16385,6 +16434,47 @@
   "redesignFilesWaiting": "Wartet",
   "@redesignFilesWaiting": {
     "description": "redesign.files.waiting"
+  },
+  "redesignFilesWordCopySuffix": "(aus Word)",
+  "@redesignFilesWordCopySuffix": {
+    "description": "redesign.files.wordCopySuffix"
+  },
+  "redesignFilesWordEdit": "In Word bearbeiten",
+  "@redesignFilesWordEdit": {
+    "description": "redesign.files.wordEdit"
+  },
+  "redesignFilesWordNotOpened": "Die Datei ließ sich nicht öffnen. Ist Microsoft Word installiert? Sie liegt in „Downloads › Attendix Noten“.",
+  "@redesignFilesWordNotOpened": {
+    "description": "redesign.files.wordNotOpened"
+  },
+  "redesignFilesWordOpened": "„{name}“ wird in Word geöffnet (bzw. deinem Standardprogramm für .docx). Jedes Speichern als .docx lädt die Datei hier hoch.",
+  "@redesignFilesWordOpened": {
+    "description": "redesign.files.wordOpened",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFilesWordSaved": "„{name}“ aus Word in Attendix gespeichert",
+  "@redesignFilesWordSaved": {
+    "description": "redesign.files.wordSaved",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFilesWordSavedAsCopy": "„{name}“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Word liegt jetzt als „{copy}“ dabei.",
+  "@redesignFilesWordSavedAsCopy": {
+    "description": "redesign.files.wordSavedAsCopy",
+    "placeholders": {
+      "name": {},
+      "copy": {}
+    }
+  },
+  "redesignFilesWordUploadedLater": "Wieder online: „{name}“ aus Word ist jetzt in Attendix gespeichert",
+  "@redesignFilesWordUploadedLater": {
+    "description": "redesign.files.wordUploadedLater",
+    "placeholders": {
+      "name": {}
+    }
   },
   "redesignFilesZipPreparing": "ZIP wird erstellt …",
   "@redesignFilesZipPreparing": {
@@ -18193,6 +18283,10 @@
   "@redesignMembersBirthdayTomorrow": {
     "description": "redesign.members.birthdayTomorrow"
   },
+  "redesignMembersByRegisterChip": "Nach Register",
+  "@redesignMembersByRegisterChip": {
+    "description": "redesign.members.byRegisterChip"
+  },
   "redesignMembersCritical": "Problemfälle · {count}",
   "@redesignMembersCritical": {
     "description": "redesign.members.critical",
@@ -18326,6 +18420,18 @@
       "title": {},
       "count": {}
     }
+  },
+  "redesignMembersSplitBy": "Gliedern nach",
+  "@redesignMembersSplitBy": {
+    "description": "redesign.members.splitBy"
+  },
+  "redesignMembersSplitCategory": "Kategorie",
+  "@redesignMembersSplitCategory": {
+    "description": "redesign.members.splitCategory"
+  },
+  "redesignMembersSplitRegister": "Register",
+  "@redesignMembersSplitRegister": {
+    "description": "redesign.members.splitRegister"
   },
   "redesignMembersStats": "Auswertung",
   "@redesignMembersStats": {

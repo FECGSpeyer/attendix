@@ -31,6 +31,17 @@ bool rdIsSibeliusFile(SongFile file) {
   return Uri.tryParse(file.url)?.path.toLowerCase().endsWith('.sib') ?? false;
 }
 
+/// Whether [file] is a Word document (.docx): the Mac app opens it in Word
+/// the same way as a Sibelius score ("In Word bearbeiten").
+bool rdIsWordFile(SongFile file) {
+  for (final name in [file.fileName, file.storageName ?? '']) {
+    if (rdIsWordName(name)) return true;
+  }
+  return rdIsWordName(Uri.tryParse(file.url)?.path ?? '');
+}
+
+bool rdIsWordName(String name) => name.toLowerCase().endsWith('.docx');
+
 /// [name] as one segment of a macOS path: no "/" or ":" (Finder shows ":" as
 /// "/"), no control characters, no leading dots, at most 80 characters.
 String rdSafePathSegment(String name, {String fallback = 'Werk'}) {

@@ -14,6 +14,8 @@ void main() {
     expect(rdIsSibeliusFile(_file('Partitur', storageName: 'Partitur_123.sib')), isTrue);
     expect(rdIsSibeliusFile(_file('Partitur', url: 'https://x/songs/1/2/p_1.sib?t=1')), isTrue);
     expect(rdIsSibeliusFile(_file('06 Viola.pdf')), isFalse);
+    expect(rdIsWordFile(_file('Ablauf.DOCX')), isTrue);
+    expect(rdIsWordFile(_file('Ablauf.doc')), isFalse);
   });
 
   test('work folders are safe path segments', () {

@@ -30,7 +30,6 @@ import '../widgets/rd_widgets.dart';
 import '../widgets/rd_split_view.dart' show RdManageBackLink;
 import 'rd_critical_rule_page.dart';
 import '../../data/providers/rd_critical_providers.dart';
-import '../../data/providers/rd_members_providers.dart';
 import '../../data/rd_critical_logic.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/person/person.dart';
@@ -750,7 +749,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
   }
 }
 
-/// "Gerade 2 Problemfälle · In Mitglieder ansehen": what the server decided
+/// "Gerade 2 Problemfälle · Personen ansehen": what the server decided
 /// (the same set as Heute and the Mitglieder filter).
 class _CriticalNow extends ConsumerWidget {
   const _CriticalNow();
@@ -774,10 +773,8 @@ class _CriticalNow extends ConsumerWidget {
           showChevron: count > 0,
           onTap: count == 0
               ? null
-              : () {
-                  ref.read(rdMembersCriticalOnlyProvider.notifier).state = true;
-                  context.go(RedesignRoutes.members);
-                },
+              // Pushed, so back (and the swipe) returns to the rules.
+              : () => context.push(RedesignRoutes.criticalMembers(from: 'verwaltung')),
         ),
       ],
     );

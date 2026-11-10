@@ -16352,8 +16352,26 @@ abstract class AppLocalizations {
   /// rdCritical.listShow
   ///
   /// In de, this message translates to:
-  /// **'In Mitglieder ansehen'**
+  /// **'Personen ansehen'**
   String get rdCriticalListShow;
+
+  /// rdCritical.membersEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Gerade ist niemand Problemfall.'**
+  String get rdCriticalMembersEmpty;
+
+  /// rdCritical.membersIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Wer gerade nach einer Regel auffällt, mit dem Grund. Antippen öffnet die Person.'**
+  String get rdCriticalMembersIntro;
+
+  /// rdCritical.membersTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Aktuelle Problemfälle'**
+  String get rdCriticalMembersTitle;
 
   /// rdCritical.modeCount
   ///
@@ -21019,8 +21037,44 @@ abstract class AppLocalizations {
   /// redesign.files.replace
   ///
   /// In de, this message translates to:
-  /// **'Ersetzen'**
+  /// **'Durch neue Version ersetzen …'**
   String get redesignFilesReplace;
+
+  /// redesign.files.replaceConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Ersetzen'**
+  String get redesignFilesReplaceConfirm;
+
+  /// redesign.files.replaceGone
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ gibt es an diesem Werk nicht mehr.'**
+  String redesignFilesReplaceGone(Object name);
+
+  /// redesign.files.replaceMessage
+  ///
+  /// In de, this message translates to:
+  /// **'„{old}“ wird durch „{picked}“ ersetzt. Name und Stimme bleiben, die bisherige Fassung wird gelöscht.'**
+  String redesignFilesReplaceMessage(Object old, Object picked);
+
+  /// redesign.files.replaceTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Datei ersetzen?'**
+  String get redesignFilesReplaceTitle;
+
+  /// redesign.files.replaceWrongType
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte eine Datei vom gleichen Typ wählen (.{ext}).'**
+  String redesignFilesReplaceWrongType(Object ext);
+
+  /// redesign.files.replaced
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ ersetzt'**
+  String redesignFilesReplaced(Object name);
 
   /// redesign.files.restored
   ///
@@ -21285,6 +21339,48 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Wartet'**
   String get redesignFilesWaiting;
+
+  /// redesign.files.wordCopySuffix
+  ///
+  /// In de, this message translates to:
+  /// **'(aus Word)'**
+  String get redesignFilesWordCopySuffix;
+
+  /// redesign.files.wordEdit
+  ///
+  /// In de, this message translates to:
+  /// **'In Word bearbeiten'**
+  String get redesignFilesWordEdit;
+
+  /// redesign.files.wordNotOpened
+  ///
+  /// In de, this message translates to:
+  /// **'Die Datei ließ sich nicht öffnen. Ist Microsoft Word installiert? Sie liegt in „Downloads › Attendix Noten“.'**
+  String get redesignFilesWordNotOpened;
+
+  /// redesign.files.wordOpened
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ wird in Word geöffnet (bzw. deinem Standardprogramm für .docx). Jedes Speichern als .docx lädt die Datei hier hoch.'**
+  String redesignFilesWordOpened(Object name);
+
+  /// redesign.files.wordSaved
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ aus Word in Attendix gespeichert'**
+  String redesignFilesWordSaved(Object name);
+
+  /// redesign.files.wordSavedAsCopy
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Word liegt jetzt als „{copy}“ dabei.'**
+  String redesignFilesWordSavedAsCopy(Object name, Object copy);
+
+  /// redesign.files.wordUploadedLater
+  ///
+  /// In de, this message translates to:
+  /// **'Wieder online: „{name}“ aus Word ist jetzt in Attendix gespeichert'**
+  String redesignFilesWordUploadedLater(Object name);
 
   /// redesign.files.zipPreparing
   ///
@@ -23584,6 +23680,12 @@ abstract class AppLocalizations {
   /// **'Geburtstag morgen'**
   String get redesignMembersBirthdayTomorrow;
 
+  /// redesign.members.byRegisterChip
+  ///
+  /// In de, this message translates to:
+  /// **'Nach Register'**
+  String get redesignMembersByRegisterChip;
+
   /// redesign.members.critical
   ///
   /// In de, this message translates to:
@@ -23733,6 +23835,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{title} · {count}'**
   String redesignMembersSection(Object title, Object count);
+
+  /// redesign.members.splitBy
+  ///
+  /// In de, this message translates to:
+  /// **'Gliedern nach'**
+  String get redesignMembersSplitBy;
+
+  /// redesign.members.splitCategory
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorie'**
+  String get redesignMembersSplitCategory;
+
+  /// redesign.members.splitRegister
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get redesignMembersSplitRegister;
 
   /// redesign.members.stats
   ///

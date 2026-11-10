@@ -33,13 +33,14 @@ class RdMemberSection {
 }
 
 /// Persons in group order, split into registers (group categories) or,
-/// without categories, groups. Inside a register the groups stay
-/// together; leaders come first within their own group.
+/// without categories or with [byCategory] off, groups. Inside a register
+/// the groups stay together; leaders come first within their own group.
 List<RdMemberSection> rdMemberSections(
   List<Person> persons, {
   required List<Group> groups,
   required Map<int, int> percentages,
   required String noGroupLabel,
+  bool byCategory = true,
 }) {
   final byId = {for (final g in groups) g.id: g};
   final sorted = sortPersonsByGroup(
@@ -47,7 +48,7 @@ List<RdMemberSection> rdMemberSections(
     groups: groups,
     mainGroupId: mainGroupIdOf(groups),
   );
-  final useRegisters = groups.any((g) => g.categoryData != null);
+  final useRegisters = byCategory && rdHasGroupCategories(groups);
 
   final keys = <String>[];
   final titles = <String, String>{};
@@ -75,6 +76,10 @@ List<RdMemberSection> rdMemberSections(
       ),
   ];
 }
+
+/// The groups are sorted into categories (Holzbläser, Sopran und Alt …),
+/// so the list can be split by them.
+bool rdHasGroupCategories(List<Group> groups) => groups.any((g) => g.categoryData != null);
 
 /// Leaders on top of their own group, otherwise the given order (stable).
 /// [people] is in group order, so a register keeps Violine 1 before

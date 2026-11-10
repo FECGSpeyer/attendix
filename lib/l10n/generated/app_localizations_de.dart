@@ -10014,7 +10014,17 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get rdCriticalListShow => 'In Mitglieder ansehen';
+  String get rdCriticalListShow => 'Personen ansehen';
+
+  @override
+  String get rdCriticalMembersEmpty => 'Gerade ist niemand Problemfall.';
+
+  @override
+  String get rdCriticalMembersIntro =>
+      'Wer gerade nach einer Regel auffällt, mit dem Grund. Antippen öffnet die Person.';
+
+  @override
+  String get rdCriticalMembersTitle => 'Aktuelle Problemfälle';
 
   @override
   String get rdCriticalModeCount => 'Anzahl';
@@ -13073,7 +13083,33 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignFilesRename => 'Umbenennen';
 
   @override
-  String get redesignFilesReplace => 'Ersetzen';
+  String get redesignFilesReplace => 'Durch neue Version ersetzen …';
+
+  @override
+  String get redesignFilesReplaceConfirm => 'Ersetzen';
+
+  @override
+  String redesignFilesReplaceGone(Object name) {
+    return '„$name“ gibt es an diesem Werk nicht mehr.';
+  }
+
+  @override
+  String redesignFilesReplaceMessage(Object old, Object picked) {
+    return '„$old“ wird durch „$picked“ ersetzt. Name und Stimme bleiben, die bisherige Fassung wird gelöscht.';
+  }
+
+  @override
+  String get redesignFilesReplaceTitle => 'Datei ersetzen?';
+
+  @override
+  String redesignFilesReplaceWrongType(Object ext) {
+    return 'Bitte eine Datei vom gleichen Typ wählen (.$ext).';
+  }
+
+  @override
+  String redesignFilesReplaced(Object name) {
+    return '„$name“ ersetzt';
+  }
 
   @override
   String get redesignFilesRestored => 'Wiederhergestellt';
@@ -13253,6 +13289,36 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignFilesWaiting => 'Wartet';
+
+  @override
+  String get redesignFilesWordCopySuffix => '(aus Word)';
+
+  @override
+  String get redesignFilesWordEdit => 'In Word bearbeiten';
+
+  @override
+  String get redesignFilesWordNotOpened =>
+      'Die Datei ließ sich nicht öffnen. Ist Microsoft Word installiert? Sie liegt in „Downloads › Attendix Noten“.';
+
+  @override
+  String redesignFilesWordOpened(Object name) {
+    return '„$name“ wird in Word geöffnet (bzw. deinem Standardprogramm für .docx). Jedes Speichern als .docx lädt die Datei hier hoch.';
+  }
+
+  @override
+  String redesignFilesWordSaved(Object name) {
+    return '„$name“ aus Word in Attendix gespeichert';
+  }
+
+  @override
+  String redesignFilesWordSavedAsCopy(Object name, Object copy) {
+    return '„$name“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Word liegt jetzt als „$copy“ dabei.';
+  }
+
+  @override
+  String redesignFilesWordUploadedLater(Object name) {
+    return 'Wieder online: „$name“ aus Word ist jetzt in Attendix gespeichert';
+  }
 
   @override
   String get redesignFilesZipPreparing => 'ZIP wird erstellt …';
@@ -14817,6 +14883,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMembersBirthdayTomorrow => 'Geburtstag morgen';
 
   @override
+  String get redesignMembersByRegisterChip => 'Nach Register';
+
+  @override
   String redesignMembersCritical(Object count) {
     return 'Problemfälle · $count';
   }
@@ -14918,6 +14987,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignMembersSection(Object title, Object count) {
     return '$title · $count';
   }
+
+  @override
+  String get redesignMembersSplitBy => 'Gliedern nach';
+
+  @override
+  String get redesignMembersSplitCategory => 'Kategorie';
+
+  @override
+  String get redesignMembersSplitRegister => 'Register';
 
   @override
   String get redesignMembersStats => 'Auswertung';

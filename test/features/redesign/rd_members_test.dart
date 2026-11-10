@@ -315,6 +315,20 @@ void main() {
       // Violine: Anna (leader), Ben; then Flöte: Fritz (leader), Clara.
       expect(sections.first.people.map((p) => p.id), [1, 2, 6, 3]);
     });
+
+    test('byCategory off: one section per group despite categories', () {
+      const other = GroupCategory(id: 9, name: 'Sonstiges');
+      final groups = [for (final g in _groups) g.copyWith(categoryData: other)];
+      final sections = rdMemberSections(
+        [_anna, _ben, _clara],
+        groups: groups,
+        percentages: const {},
+        noGroupLabel: 'Ohne',
+        byCategory: false,
+      );
+      expect(sections.map((s) => s.title), ['Violine', 'Flöte']);
+      expect(sections.first.isRegister, isFalse);
+    });
   });
 
   group('helpers', () {

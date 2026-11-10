@@ -1,6 +1,36 @@
 {
   "versions": [
     {
+      "version": "0.117.0",
+      "date": "10.11.2026",
+      "changes": [
+        "✨ Beta: Mitglieder lassen sich unter „Sortieren & Filtern“ nach Kategorie oder Register gliedern (gemerkt pro Gruppe)"
+      ]
+    },
+    {
+      "version": "0.116.1",
+      "date": "10.11.2026",
+      "changes": [
+        "🐛 Beta: „Gerade N Problemfälle“ (Heute und Verwaltung › Problemfälle) öffnet eine eigene Liste mit Zurück und Wischgeste statt den Mitglieder-Tab mit Filter"
+      ]
+    },
+    {
+      "version": "0.116.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Beta: Werk-Dateien „Durch neue Version ersetzen …“ (Name und Stimme bleiben)",
+        "✨ Mac-App: Word-Dateien „In Word bearbeiten“, jedes Speichern lädt sie automatisch hoch"
+      ]
+    },
+    {
+      "version": "0.115.1",
+      "date": "9.11.2026",
+      "changes": [
+        "🐛 Beta: Tempo- und Schließen-Knopf im Audio-Player größer und nebeneinander, leichter zu treffen",
+        "✨ Beta: Abspieltempo im Audio-Player von 0,5× bis 1,5× wählbar"
+      ]
+    },
+    {
       "version": "0.115.0",
       "date": "9.11.2026",
       "changes": [
