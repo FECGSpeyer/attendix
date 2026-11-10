@@ -16539,9 +16539,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.';
 
   @override
-  String get redesignTodayWeekEmpty => 'Diese Woche kommt sonst nichts.';
-
-  @override
   String get redesignTodayWhyNot => 'Warum kannst du nicht?';
 
   @override

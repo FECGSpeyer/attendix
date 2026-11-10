@@ -4367,7 +4367,6 @@
   "redesignTodayUnrecorded": "{count, plural, one {1 event not recorded yet} other {{count} events not recorded yet}}",
   "redesignTodayUpNext": "Up next",
   "redesignTodayViewerHint": "As an observer you see the overview. Leaders open single events.",
-  "redesignTodayWeekEmpty": "Nothing else this week.",
   "redesignTodayWhyNot": "Why can't you make it?",
   "redesignTodayYes": "I'm coming",
   "redesignTodayYesAfterAll": "Coming after all",

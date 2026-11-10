@@ -20361,10 +20361,6 @@
   "@redesignTodayViewerHint": {
     "description": "redesign.today.viewerHint"
   },
-  "redesignTodayWeekEmpty": "Diese Woche kommt sonst nichts.",
-  "@redesignTodayWeekEmpty": {
-    "description": "redesign.today.weekEmpty"
-  },
   "redesignTodayWhyNot": "Warum kannst du nicht?",
   "@redesignTodayWhyNot": {
     "description": "redesign.today.whyNot"

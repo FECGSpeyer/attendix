@@ -27,7 +27,7 @@ import 'rd_duty_section.dart';
 
 /// REDESIGN: "Heute" of Dirigent, Verantwortlich, Beobachter and Helfer
 /// (canvas D1, R3): next Termin with its answers, what needs attention,
-/// this week.
+/// upcoming birthdays.
 class RdLeaderToday extends ConsumerWidget {
   const RdLeaderToday({super.key, required this.role});
 
@@ -70,7 +70,6 @@ class RdLeaderToday extends ConsumerWidget {
     final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
     final upcoming = upcomingOf(all, types: types);
     final next = upcoming.firstOrNull;
-    final week = rdThisWeek(upcoming.skip(1).toList());
 
     final nextCard = <Widget>[
       // UX V1: Beobachter cannot open Termine (Ionic); say so once
@@ -98,34 +97,22 @@ class RdLeaderToday extends ConsumerWidget {
         const RdDutySection(),
       ],
     ];
-    final weekSection = <Widget>[
-      RdSectionHeader(
-        l10n.redesignTodayThisWeek,
-        trailing: isLead ? _birthdayLine(context, ref) : null,
-        action: RdLinkButton(
-          label: l10n.redesignCommonAll,
-          onPressed: () => context.go(RedesignRoutes.events),
-        ),
-      ),
-      if (week.isEmpty)
-        RdInfoCard(text: l10n.redesignTodayWeekEmpty)
-      else
-        RdGroupedList(
-          children: [
-            for (final a in week) _WeekRow(attendance: a, canOpen: role.canAddAttendance),
-          ],
-        ),
+    // The week list was dropped from Heute (it mostly repeated the next
+    // Termin, the Termine tab shows the rest); only upcoming birthdays stay.
+    final birthday = isLead ? _birthdayLine(context, ref) : null;
+    final birthdaySection = <Widget>[
+      if (birthday != null) RdInfoCard(text: birthday, icon: Icons.cake_outlined),
     ];
 
-    // Desktop: the next Termin on the left, what needs attention and the
-    // week on the right (canvas "Beta: Desktop-UX").
+    // Desktop: the next Termin on the left, what needs attention and
+    // birthdays on the right (canvas "Beta: Desktop-UX").
     if (rdTodayColumns(context)) {
       return RdDesktopColumns(
         minWidth: 0,
         left: [...nextCard, ...own],
         right: [
           if (isLead) _AttentionSection(next: next, padding: const EdgeInsets.only(bottom: 24)),
-          ...weekSection,
+          ...birthdaySection,
         ],
       );
     }
@@ -135,8 +122,10 @@ class RdLeaderToday extends ConsumerWidget {
         ...nextCard,
         if (isLead) _AttentionSection(next: next),
         ...own,
-        const SizedBox(height: 24),
-        ...weekSection,
+        if (birthdaySection.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          ...birthdaySection,
+        ],
       ],
     );
   }
@@ -371,27 +360,6 @@ String _unrecordedLine(WidgetRef ref, List<int> ids) {
           if (EventListUtils.parse(a.date) case final d?) '${d.day}.${d.month}.',
         ].join(' '),
   ].join(', ');
-}
-
-class _WeekRow extends ConsumerWidget {
-  const _WeekRow({required this.attendance, required this.canOpen});
-
-  final Attendance attendance;
-  final bool canOpen;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final type = ref.watch(rdAttendanceTypeProvider(attendance.typeId));
-    final info = rdEventInfo(attendance, type);
-    final id = attendance.id;
-    return RdEventRow(
-      date: attendance.date,
-      title: info.title,
-      meta: [info.timeRange, info.place].where((s) => s.isNotEmpty).join(' · '),
-      // UX V1: no chevron and no tap for Beobachter (route guard).
-      onTap: id != null && canOpen ? () => context.push(RedesignRoutes.event(id)) : null,
-    );
-  }
 }
 
 /// "Anna Becker, Jonas Klein und 2 weitere" (the Problemfälle on Heute).

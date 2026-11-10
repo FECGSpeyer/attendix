@@ -26338,12 +26338,6 @@ abstract class AppLocalizations {
   /// **'Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.'**
   String get redesignTodayViewerHint;
 
-  /// redesign.today.weekEmpty
-  ///
-  /// In de, this message translates to:
-  /// **'Diese Woche kommt sonst nichts.'**
-  String get redesignTodayWeekEmpty;
-
   /// redesign.today.whyNot
   ///
   /// In de, this message translates to:
