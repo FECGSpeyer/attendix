@@ -264,16 +264,19 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     final parent = parentRegistrationOf(player);
     state = const AsyncValue.loading();
     try {
-      await repo.declinePlayer(player, reason);
       // Parent registration (the child has no appId): the parent's account
       // loses its access only while it is still an applicant without
-      // another child waiting here.
+      // another child waiting here. Checked BEFORE the child is archived, so
+      // a failed check leaves the child in Freigaben for a retry.
+      var removeParentAccess = false;
       if (parent != null) {
         final role = await registration.getTenantUserRole(parent.appId);
-        if (role == Role.applicant &&
-            !await repo.hasPendingChildOf(parent.appId, exceptId: player.id)) {
-          await repo.removeUserFromTenant(parent.appId, personId: player.id);
-        }
+        removeParentAccess = role == Role.applicant &&
+            !await repo.hasPendingChildOf(parent.appId, exceptId: player.id);
+      }
+      await repo.declinePlayer(player, reason);
+      if (removeParentAccess) {
+        await repo.removeUserFromTenant(parent!.appId, personId: player.id);
       }
       await _notifyReject(registration, player);
       state = const AsyncValue.data(null);
