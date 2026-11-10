@@ -16265,6 +16265,12 @@ abstract class AppLocalizations {
   /// **'Im Werke-Tab unter •••'**
   String get rdAdminHomeWorks;
 
+  /// rdAdmin.homeWorksCategories
+  ///
+  /// In de, this message translates to:
+  /// **'Im Werke-Tab bei den Kategorien'**
+  String get rdAdminHomeWorksCategories;
+
   /// rdAdmin.manageGroups
   ///
   /// In de, this message translates to:
@@ -18975,6 +18981,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Welche Werke wann gespielt wurden. Tippe auf einen Eintrag, um ihn zu entfernen.'**
   String get rdWmHistoryIntro;
+
+  /// rdWm.listPdf
+  ///
+  /// In de, this message translates to:
+  /// **'Werkliste als PDF'**
+  String get rdWmListPdf;
+
+  /// rdWm.manageCategories
+  ///
+  /// In de, this message translates to:
+  /// **'Verwalten'**
+  String get rdWmManageCategories;
 
   /// rdWm.worksCount
   ///

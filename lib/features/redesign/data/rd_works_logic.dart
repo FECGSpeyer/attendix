@@ -95,6 +95,17 @@ List<String> rdCategoryNames(Song song, List<SongCategory> categories) {
   ];
 }
 
+/// The categories for the chips under the Sammlungen: only those given to
+/// at least one of [songs], plus the [selected] one (to clear it), in
+/// category order.
+List<SongCategory> rdUsedCategories(List<SongCategory> categories, List<Song> songs, {String? selected}) {
+  final used = {for (final s in songs) ...?s.categoryIds};
+  return [
+    for (final c in [...categories]..sort((a, b) => a.index.compareTo(b.index)))
+      if (c.id != null && (used.contains(c.id) || c.id == selected)) c,
+  ];
+}
+
 /// "PDF", "MP3" … from the file type or name.
 String rdFileKind(SongFile file) {
   if (SongUtils.isPdf(file)) return 'PDF';

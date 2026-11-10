@@ -78,6 +78,7 @@ void main() {
       expect(rdTabForLocation('/people/3'), RdTab.members);
       expect(rdTabForLocation('/mitglieder/3'), RdTab.members);
       expect(rdTabForLocation('/members'), RdTab.members);
+      expect(rdTabForLocation('/settings/files'), RdTab.me);
       expect(rdTabForLocation('/songs-tab'), RdTab.works);
       expect(rdTabForLocation('/werke/12'), RdTab.works);
       expect(rdTabForLocation('/settings/songs/4'), RdTab.works);

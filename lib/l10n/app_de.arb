@@ -12383,6 +12383,10 @@
   "@rdAdminHomeWorks": {
     "description": "rdAdmin.homeWorks"
   },
+  "rdAdminHomeWorksCategories": "Im Werke-Tab bei den Kategorien",
+  "@rdAdminHomeWorksCategories": {
+    "description": "rdAdmin.homeWorksCategories"
+  },
   "rdAdminManageGroups": "Register verwalten",
   "@rdAdminManageGroups": {
     "description": "rdAdmin.manageGroups"
@@ -14482,6 +14486,14 @@
   "rdWmHistoryIntro": "Welche Werke wann gespielt wurden. Tippe auf einen Eintrag, um ihn zu entfernen.",
   "@rdWmHistoryIntro": {
     "description": "rdWm.historyIntro"
+  },
+  "rdWmListPdf": "Werkliste als PDF",
+  "@rdWmListPdf": {
+    "description": "rdWm.listPdf"
+  },
+  "rdWmManageCategories": "Verwalten",
+  "@rdWmManageCategories": {
+    "description": "rdWm.manageCategories"
   },
   "rdWmWorksCount": "{count, plural, one {{count} Werk} other {{count} Werke}}",
   "@rdWmWorksCount": {

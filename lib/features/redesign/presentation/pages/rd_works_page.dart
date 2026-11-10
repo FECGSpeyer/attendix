@@ -9,7 +9,6 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
-import '../../../../core/providers/role_permission_providers.dart' show canAccessFilesProvider;
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/song_filter_providers.dart';
 import '../../../../core/providers/song_providers.dart';
@@ -53,10 +52,11 @@ final rdWorksQueryProvider = StateProvider<String>((ref) {
 /// cards with the Werke played right now, a tap opens the own part or, for
 /// the conductor, the score), categories as chips, sort and filter, every Werk with one status
 /// line. "+" adds, imports or takes over Werke; "Noten nach Stimme",
-/// categories, the share link and the PDF list sit behind "•••". With Sammlungen (canvas
-/// "Noten-Bereich neu gedacht") their chips replace the category chips (the
-/// categories move into the filter sheet), the list shows the chosen
-/// Sammlung and a search looks through every Sammlung the viewer sees.
+/// Sammlungen, the share link and the PDF list sit behind "•••". With
+/// Sammlungen (canvas "Noten-Bereich neu gedacht") their chips come first
+/// and a second row shows the categories used in the chosen Sammlung; the
+/// list shows the chosen Sammlung and a search looks through every
+/// Sammlung the viewer sees. Leads manage the categories at their chips.
 class RdWorksPage extends ConsumerStatefulWidget {
   const RdWorksPage({super.key});
 
@@ -110,25 +110,19 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
             icon: Icons.folder_copy_outlined,
             label: l10n.collectionsManage,
           ),
-        if (isAdmin)
-          AppActionSheetAction(
-            value: 'categories',
-            icon: Icons.local_library_outlined,
-            label: l10n.redesignWorkEditManageCategories,
-          ),
         // From the old Verwaltung (canvas "Werke-Tab: •••"): Werkhistorie
-        // for leads and helpers, the Dateiablage for everyone with access.
+        // for leads and helpers. The categories are managed next to their
+        // chips, the Dateiablage sits under Ich (it is not about Werke).
         if (isAdmin || role.isHelperRole)
           AppActionSheetAction(value: 'history', icon: Icons.history, label: l10n.rdAdminWorkHistory),
-        if (ref.read(canAccessFilesProvider))
-          AppActionSheetAction(value: 'files', icon: Icons.folder_outlined, label: l10n.settingsFileStorage),
         // Leads switch sharing here (from the old "Allgemein"), the sheet
         // also copies the link.
         if (isAdmin)
           AppActionSheetAction(value: 'sharing', icon: Icons.share_outlined, label: l10n.rdAdminSharing)
         else if (sharingId != null && sharingId.isNotEmpty)
           AppActionSheetAction(value: 'share', icon: Icons.link, label: l10n.songsCopyLink),
-        AppActionSheetAction(value: 'pdf', icon: Icons.description_outlined, label: l10n.songsCatalogPdf),
+        // A list of the Werke, not their Noten ("Alle als PDF" at Aktuell).
+        AppActionSheetAction(value: 'pdf', icon: Icons.description_outlined, label: l10n.rdWmListPdf),
       ],
     );
     if (!mounted || action == null) return;
@@ -137,12 +131,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         await context.push(RedesignRoutes.folder);
       case 'collections':
         await context.push(RedesignRoutes.collections);
-      case 'categories':
-        await showSongCategoriesSheet(context);
       case 'history':
         await showHistoryModal(context);
-      case 'files':
-        await context.push('/settings/files');
       case 'sharing':
         await showRdSharingSheet(context);
       case 'share':
@@ -354,10 +344,12 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final categories = [...data.categories.where((c) => c.id != null)]..sort((a, b) => a.index.compareTo(b.index));
     final sort = filter.sortOption;
     final byLast = sort == SongSortOption.lastSungAsc || sort == SongSortOption.lastSungDesc;
-    // With Sammlungen the category sits in the filter sheet and counts there.
-    final filterCount =
-        filter.activeFilterCount + only.length + (withCollections && filter.category != null ? 1 : 0);
+    final filterCount = filter.activeFilterCount + only.length;
     final listData = _scoped(data);
+    // Categories (several per Werk) as chips: with Sammlungen a second row
+    // with only those used in the shown Werke.
+    final chipCategories =
+        withCollections ? rdUsedCategories(categories, listData.songs, selected: filter.category) : categories;
     final searching = _query.trim().isNotEmpty;
 
     String baseStatus(Song song) {
@@ -423,28 +415,46 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
             collections: visibleCollections,
             songs: rdVisibleWorks(data.songs, visibleCollections),
             selected: chosenCollection,
-            onSelected: (id) => ref.read(rdWorksCollectionProvider.notifier).state = id,
+            onSelected: (id) {
+              // A category of the old Sammlung may not exist in the new one.
+              if (id != chosenCollection) filterNotifier.setCategory(null);
+              ref.read(rdWorksCollectionProvider.notifier).state = id;
+            },
           ),
           const SizedBox(height: 10),
-        ] else if (categories.isNotEmpty) ...[
+        ],
+        if (chipCategories.isNotEmpty) ...[
           SingleChildScrollView(
+            key: const Key('rd-works-categories'),
             scrollDirection: Axis.horizontal,
             clipBehavior: Clip.none,
             child: Row(
               children: [
-                RdChoiceChip(
-                  label: l10n.redesignWorksAll(listData.songs.length),
-                  selected: filter.category == null,
-                  onTap: () => filterNotifier.setCategory(null),
-                ),
-                for (final c in categories) ...[
-                  const SizedBox(width: 8),
+                // Under the Sammlungen a tap on the chosen chip clears it
+                // (a second "Alle" would read like the Sammlung's).
+                if (!withCollections) ...[
                   RdChoiceChip(
+                    label: l10n.redesignWorksAll(listData.songs.length),
+                    selected: filter.category == null,
+                    onTap: () => filterNotifier.setCategory(null),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                for (final c in chipCategories) ...[
+                  RdChoiceChip(
+                    key: Key('rd-works-category-${c.id}'),
                     label: c.name,
                     selected: filter.category == c.id,
                     onTap: () => filterNotifier.setCategory(filter.category == c.id ? null : c.id),
                   ),
+                  const SizedBox(width: 8),
                 ],
+                if (isAdmin)
+                  RdTextLink(
+                    key: const Key('rd-works-categories-manage'),
+                    label: l10n.rdWmManageCategories,
+                    onTap: () => showSongCategoriesSheet(context),
+                  ),
               ],
             ),
           ),
@@ -475,7 +485,6 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
                     groupId: ownGroup?.id,
                     playerCounts: counts,
                     query: _query,
-                    withCategories: withCollections,
                   ),
             ),
           ],
@@ -496,7 +505,6 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
                       label: l10n.redesignWorksResetFilter,
                       onPressed: () {
                         filterNotifier.reset();
-                        if (withCollections) filterNotifier.setCategory(null);
                         ref.read(rdWorksOnlyProvider.notifier).state = const {};
                       },
                     )

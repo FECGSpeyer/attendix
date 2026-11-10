@@ -110,7 +110,6 @@ RdTab rdTabForLocation(String location) {
   if (under(RedesignRoutes.works) ||
       under('/songs-tab') ||
       under('/settings/songs') ||
-      under('/settings/files') ||
       // Werkhistorie and Werk-Kategorien open from the Werke tab's "•••".
       under(RedesignRoutes.workHistory) ||
       under(RedesignRoutes.workCategories)) {
@@ -128,6 +127,8 @@ const _mePages = [
   '/settings/team-organization',
   '/settings/delete-account',
   '/settings/administration',
+  // The Dateiablage opens from "Ich" (not part of the Verwaltung).
+  '/settings/files',
 ];
 
 /// Whether [location] belongs to the Verwaltung (its page, its sub pages

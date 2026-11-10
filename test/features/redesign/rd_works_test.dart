@@ -386,6 +386,10 @@ void main() {
       expect(rdRecording(_ouverture)?.fileName, 'probe.mp3');
       expect(rdScore(_ouverture)?.fileName, 'partitur.pdf');
       expect(rdCategoryNames(_ouverture, const [_kirche, _konzert]), ['Konzert']);
+      // Chips under the Sammlungen: only used ones, the selected one stays.
+      expect(rdUsedCategories(const [_kirche, _konzert], [_ouverture]), [_konzert]);
+      expect(rdUsedCategories(const [_kirche, _konzert], [_ouverture], selected: 'c'), [_konzert, _kirche]);
+      expect(rdUsedCategories(const [_kirche, _konzert], const []), isEmpty);
       expect(rdFileKind(_ouverture.files![3]), 'MP3');
       expect(rdFileKind(_ouverture.files![0]), 'PDF');
     });
@@ -683,11 +687,22 @@ void main() {
       expect(find.byKey(const Key('rd-collection-chip-2')), findsNothing);
       expect(row(5), findsOneWidget);
       expect(row(6), findsNothing);
+      // Second row: only the categories used in the Sammlung, no "Verwalten"
+      // for a player.
+      Finder category(String id) => find.byKey(Key('rd-works-category-$id'));
+      expect(category('k'), findsOneWidget);
+      expect(category('c'), findsNothing);
+      expect(find.byKey(const Key('rd-works-categories-manage')), findsNothing);
 
+      // A chosen category is cleared when the Sammlung changes.
+      await tester.tap(category('k'));
+      await _settle(tester);
       await tester.tap(find.text('Einspielen · 1'));
       await _settle(tester);
       expect(row(6), findsOneWidget);
       expect(row(5), findsNothing);
+      expect(category('c'), findsOneWidget);
+      expect(category('k'), findsNothing);
 
       // The search covers every Sammlung the player sees, not the hidden one.
       await tester.enterText(find.byType(TextField), 'e');
@@ -731,6 +746,8 @@ void main() {
       await tester.tap(find.bySemanticsLabel('Sortierung „Am längsten nicht gespielt“ entfernen'));
       await _settle(tester);
       expect(find.text('Kirche'), findsNWidgets(3)); // chip and two rows
+      // Leads manage the categories next to their chips.
+      expect(find.byKey(const Key('rd-works-categories-manage')), findsOneWidget);
 
       await tester.tap(find.byType(FloatingActionButton));
       await _settle(tester);
