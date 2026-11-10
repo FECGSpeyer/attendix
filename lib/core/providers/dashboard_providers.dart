@@ -19,6 +19,7 @@ import 'church_providers.dart';
 import 'debug_providers.dart';
 import 'team_org_providers.dart';
 import 'tenant_providers.dart';
+import '../utils/helper_member.dart';
 
 // =============================================================================
 // Super-Developer
@@ -246,7 +247,8 @@ final dashboardMemberChangesProvider = FutureProvider<List<MemberChange>>((ref) 
 
 final dashboardCriticalPersonsProvider = FutureProvider<List<Person>>((ref) async {
   final persons = await ref.watch(dashboardPersonsProvider.future);
-  return persons.where((p) => p.isCritical).toList();
+  // Aushilfen ("dabei bis") are never a Problemfall.
+  return persons.where((p) => p.isCritical && !isHelperMember(p)).toList();
 });
 
 final dashboardAbsencesProvider = FutureProvider<List<AbsenceEntry>>((ref) async {

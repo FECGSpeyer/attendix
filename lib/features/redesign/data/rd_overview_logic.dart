@@ -1,6 +1,7 @@
 import '../../../data/models/person/person.dart';
 import '../../../data/models/song/song.dart';
 import 'rd_members_logic.dart' show rdDaysToBirthday;
+import '../../../core/utils/helper_member.dart';
 
 /// REDESIGN: pure logic of the overview shown in the empty detail column of
 /// the split view (Werke / Mitglieder, nothing chosen on the left).
@@ -104,7 +105,7 @@ RdMembersOverview rdMembersOverview(List<Person> people, {DateTime? now, int bir
       if (rdDaysToBirthday(x.birthday, now: now) case final days? when days <= birthdayDays) (person: x, days: days),
   ]..sort((a, b) => a.days.compareTo(b.days));
   final critical =
-      active.where((x) => x.isCritical).toList()
+      active.where((x) => x.isCritical && !isHelperMember(x)).toList()
         ..sort((a, b) => a.lastName.toLowerCase().compareTo(b.lastName.toLowerCase()));
   return RdMembersOverview(
     active: active.length,

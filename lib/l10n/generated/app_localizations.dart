@@ -2186,6 +2186,12 @@ abstract class AppLocalizations {
   /// **'Bitte gib Vor- und Nachnamen ein.'**
   String get attendanceNewPersonNameMissing;
 
+  /// attendance.newPerson.othersMissing
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde angelegt und hinzugefügt, fehlt aber noch in anderen kommenden Terminen.'**
+  String attendanceNewPersonOthersMissing(Object name);
+
   /// attendance.newPerson.title
   ///
   /// In de, this message translates to:
@@ -16834,6 +16840,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Was'**
   String get rdDataWhat;
+
+  /// rdHelper.formHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aushilfen kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert.'**
+  String get rdHelperFormHint;
+
+  /// rdHelper.lastDay
+  ///
+  /// In de, this message translates to:
+  /// **'Dabei bis'**
+  String get rdHelperLastDay;
+
+  /// rdHelper.personHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kommt nur in Termine bis zu diesem Tag und wird danach automatisch archiviert.'**
+  String get rdHelperPersonHint;
+
+  /// rdHelper.switchHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur für eine bestimmte Zeit dabei, z. B. für ein Konzert'**
+  String get rdHelperSwitchHint;
+
+  /// rdHelper.title
+  ///
+  /// In de, this message translates to:
+  /// **'Aushilfe'**
+  String get rdHelperTitle;
+
+  /// rdHelper.until
+  ///
+  /// In de, this message translates to:
+  /// **'Aushilfe bis {date}'**
+  String rdHelperUntil(Object date);
 
   /// rdOrg.archiveNote
   ///

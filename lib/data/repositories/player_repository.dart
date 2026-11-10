@@ -15,6 +15,7 @@ import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import '../../core/utils/db_helpers.dart';
 import '../../core/utils/duty_utils.dart' show dutySyncFieldsForStatus;
+import '../../core/utils/helper_member.dart';
 import '../../core/utils/paged_query.dart';
 import '../../core/config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
@@ -1018,6 +1019,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       final rows = <Map<String, dynamic>>[];
       for (final att in upcomingAttendances) {
         if (existing.contains(att['id']?.toString())) continue;
+        // Aushilfen only until their last day ("dabei bis").
+        if (!helperCoversDate(player.additionalFields, att['date']?.toString())) continue;
         final type = types.where((t) => t.id == att['type_id']).firstOrNull;
         if (type == null) continue;
         if (!_matchesType(player, type, defaults, checkPaused: false)) continue;
@@ -1198,6 +1201,41 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     row['status'] = status;
     row['notes'] = notes;
     if (updates.containsKey('duty_state')) row['duty_state'] = updates['duty_state'];
+  }
+
+  /// Aushilfen whose last day ("dabei bis") has passed are archived with
+  /// that day as leave date (no cron: runs when the member list opens, like
+  /// [checkAndUnpausePlayers]). Returns how many were archived.
+  Future<int> archiveExpiredHelpers() async {
+    if (!hasTenantId) return 0;
+    var archived = 0;
+    try {
+      final today = DateTime.now().toIso8601String().substring(0, 10);
+      final rows = await supabase
+          .from('player')
+          .select('*')
+          .eq('tenantId', currentTenantId)
+          .isFilter('left', null)
+          .not('additional_fields->>$helperUntilKey', 'is', null)
+          .lt('additional_fields->>$helperUntilKey', today);
+      for (final row in rows as List) {
+        ensureNotDemo('archiveExpiredHelpers'); // DEMO_GUARD
+        final player = Person.fromJson(row as Map<String, dynamic>);
+        final until = helperUntil(player);
+        if (player.id == null || until == null || until.compareTo(today) >= 0) continue;
+        // Left the day after the last day: archivePlayer keeps every Termin
+        // up to the end of the last day and drops the later ones.
+        final lastDay = DateTime.parse(until);
+        final leftDay = helperDay(DateTime(lastDay.year, lastDay.month, lastDay.day + 1));
+        await archivePlayer(player, leftDay, 'Aushilfe beendet (dabei bis erreicht)');
+        archived++;
+      }
+    } catch (e, stack) {
+      if (e is DemoModeException) rethrow;
+      // Background check: the next opening tries again.
+      ErrorReporter.report(e, stack, where: 'PlayerRepository.archiveExpiredHelpers');
+    }
+    return archived;
   }
 
   /// Check for players whose pause period has ended and unpause them
@@ -2276,6 +2314,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       final rows = <Map<String, dynamic>>[];
       for (final att in attendances) {
         if (existing.contains(att['id']?.toString())) continue;
+        // Aushilfen only until their last day ("dabei bis").
+        if (!helperCoversDate(player.additionalFields, att['date']?.toString())) continue;
         final type = types.where((t) => t.id == att['type_id']).firstOrNull;
         if (type == null) continue;
         if (!_matchesType(player, type, defaults, checkPaused: false)) continue;
@@ -2309,8 +2349,13 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     final playerId = player.id;
     if (playerId == null) return;
     try {
+      // Aushilfe: a changed last day ("dabei bis") touches every type.
+      final helperChanged = oldAdditionalFields != null &&
+          oldAdditionalFields.containsKey(helperUntilKey) &&
+          helperUntilOf(oldAdditionalFields) != helperUntilOf(player.additionalFields);
       final types = (await _loadTypeFilters())
           .where((t) =>
+              helperChanged ||
               t.relevantGroups.isNotEmpty ||
               (t.filterKey != null && t.filterOption != null))
           .toList();
@@ -2334,7 +2379,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
             : oldAdditionalFields?[key] ?? defaults[key];
         if (oldValue != newValue) changedFields.add(key);
       }
-      if (!groupChanged && changedFields.isEmpty) return;
+      if (!groupChanged && changedFields.isEmpty && !helperChanged) return;
 
       final today = DateTime.now().toIso8601String().substring(0, 10);
       // SOL_FIX4: paginated, stable order by id.
@@ -2342,7 +2387,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           await fetchAllPages<Map<String, dynamic>>((from, to) async {
         final page = await supabase
             .from('attendance')
-            .select('id, type_id')
+            .select('id, type_id, date')
             .eq('tenantId', currentTenantId)
             .gte('date', today)
             .order('id', ascending: true)
@@ -2360,9 +2405,10 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         final affectsGroup = groupChanged && type.relevantGroups.isNotEmpty;
         final affectsField =
             type.filterKey != null && changedFields.contains(type.filterKey);
-        if (!affectsGroup && !affectsField) continue;
+        if (!affectsGroup && !affectsField && !helperChanged) continue;
 
-        final should = _matchesType(player, type, defaults);
+        final should = _matchesType(player, type, defaults) &&
+            helperCoversDate(player.additionalFields, att['date']?.toString());
         final isIn = existing.contains(att['id']?.toString());
         if (should && !isIn) {
           toAdd.add({

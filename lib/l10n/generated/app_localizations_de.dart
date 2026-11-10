@@ -1281,6 +1281,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Bitte gib Vor- und Nachnamen ein.';
 
   @override
+  String attendanceNewPersonOthersMissing(Object name) {
+    return '$name wurde angelegt und hinzugefügt, fehlt aber noch in anderen kommenden Terminen.';
+  }
+
+  @override
   String get attendanceNewPersonTitle => 'Neue Person';
 
   @override
@@ -10337,6 +10342,29 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdDataWhat => 'Was';
+
+  @override
+  String get rdHelperFormHint =>
+      'Aushilfen kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert.';
+
+  @override
+  String get rdHelperLastDay => 'Dabei bis';
+
+  @override
+  String get rdHelperPersonHint =>
+      'Kommt nur in Termine bis zu diesem Tag und wird danach automatisch archiviert.';
+
+  @override
+  String get rdHelperSwitchHint =>
+      'Nur für eine bestimmte Zeit dabei, z. B. für ein Konzert';
+
+  @override
+  String get rdHelperTitle => 'Aushilfe';
+
+  @override
+  String rdHelperUntil(Object date) {
+    return 'Aushilfe bis $date';
+  }
 
   @override
   String get rdOrgArchiveNote =>

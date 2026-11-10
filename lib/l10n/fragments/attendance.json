@@ -83,7 +83,8 @@
         "hint": "Die Person wird Mitglied der Gruppe und gleich zu diesem Termin hinzugefügt. Weitere Angaben ergänzt du später bei der Person.",
         "failed": "Die Person konnte nicht angelegt werden.",
         "added": "{name} angelegt und hinzugefügt",
-        "addFailed": "{name} wurde angelegt, konnte aber nicht zum Termin hinzugefügt werden."
+        "addFailed": "{name} wurde angelegt, konnte aber nicht zum Termin hinzugefügt werden.",
+        "othersMissing": "{name} wurde angelegt und hinzugefügt, fehlt aber noch in anderen kommenden Terminen."
       }
     },
     "history": {
@@ -200,7 +201,8 @@
         "hint": "The person becomes a member of the group and is added to this event right away. Add more details later on the person.",
         "failed": "The person could not be created.",
         "added": "{name} created and added",
-        "addFailed": "{name} was created but could not be added to the event."
+        "addFailed": "{name} was created but could not be added to the event.",
+        "othersMissing": "{name} was created and added, but is still missing in other upcoming events."
       }
     },
     "history": {

@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../../core/providers/attendance_providers.dart';
 import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/player_providers.dart';
+import '../../../../../core/providers/realtime_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../core/utils/helper_member.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../data/repositories/player_repository.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../people/person_write.dart';
 import '../manage/rd_settings_sheets.dart';
 import '../rd_widgets.dart';
@@ -20,14 +24,16 @@ import 'rd_form_widgets.dart' show rdInputDecoration;
 
 /// REDESIGN: "Neue Person anlegen" from "Person hinzufügen" of a Termin
 /// (e.g. a helper who only joins for one concert). One sheet with
-/// "Abbrechen · Neue Person · Anlegen", first and last name and the
-/// Register; everything else is added later on the person's page.
+/// "Abbrechen · Neue Person · Anlegen", first and last name, the Register
+/// and "Aushilfe" with its last day ("dabei bis", the Termin's day at
+/// first); everything else is added later on the person's page.
 ///
 /// The person is created like "Neue Person" (Ionic addPerson: duplicate
-/// question, joins every Termin since today) and then added to this
-/// Termin when it is not part of it yet (a Termin of today or the past, or
-/// a Termin-Art for other Register) with the type's default status.
-/// Writes go through the tenant repositories (id + tenantId).
+/// question, joins every Termin since today, an Aushilfe only up to the
+/// last day) and then added to this Termin when it is not part of it yet
+/// (a Termin of today or the past, or a Termin-Art for other Register)
+/// with the type's default status. Writes and the check go through the
+/// tenant repositories bound before the first await (id + tenantId).
 Future<void> createPersonForAttendance(BuildContext context, WidgetRef ref, {required int attendanceId}) async {
   final container = ProviderScope.containerOf(context, listen: false);
   final players = container.read(playerRepositoryWithTenantProvider);
@@ -35,10 +41,13 @@ Future<void> createPersonForAttendance(BuildContext context, WidgetRef ref, {req
   final List<Group> groups;
   final AttendanceType? type;
   final Group? mainGroup;
+  final DateTime? eventDay;
   try {
     groups = (await container.read(groupsProvider.future)).where((g) => g.id != null).toList();
     type = await container.read(attendanceTypeForAttendanceProvider(attendanceId).future);
     mainGroup = await container.read(mainGroupProvider.future).catchError((Object _) => null);
+    final attendance = await container.read(attendanceDetailProvider(attendanceId).future);
+    eventDay = DateTime.tryParse(attendance?.date ?? '')?.toLocal();
   } catch (_) {
     if (context.mounted) ToastHelper.showError(context, context.l10n.attendanceLoadPeopleFailed);
     return;
@@ -50,12 +59,15 @@ Future<void> createPersonForAttendance(BuildContext context, WidgetRef ref, {req
   final relevant = type?.relevantGroups ?? const <int>[];
   final initialGroup = groups.where((g) => relevant.contains(g.id)).firstOrNull?.id ?? groups.firstOrNull?.id;
 
+  // Saved, but not added to (all) other Termine since today.
+  var otherTermineMissing = false;
   Future<Person?>? pending;
   final created = await showRdSettingsSheet<Person>(
     context,
     (_) => RdNewPersonSheet(
       groups: groups,
       initialGroup: initialGroup,
+      eventDay: eventDay,
       onStarted: (write) => pending = write,
       create: (sheetContext, person) async {
         if (!players.hasTenantId || !identical(container.read(playerRepositoryWithTenantProvider), players)) {
@@ -70,7 +82,12 @@ Future<void> createPersonForAttendance(BuildContext context, WidgetRef ref, {req
             repo: players,
           );
         } on PersonNotAddedToAttendancesException catch (e) {
-          // Saved, only the other Termine are missing: never create twice.
+          // Saved, only the other Termine are missing: never create twice,
+          // refresh the person lists, report it below.
+          otherTermineMissing = true;
+          container
+            ..invalidate(realtimePlayersProvider)
+            ..invalidate(playersProvider);
           return e.person;
         }
       },
@@ -82,9 +99,7 @@ Future<void> createPersonForAttendance(BuildContext context, WidgetRef ref, {req
 
   final name = '${person.firstName} ${person.lastName}'.trim();
   try {
-    container.invalidate(personAttendancesForAttendanceProvider(attendanceId));
-    final rows = await container.read(personAttendancesForAttendanceProvider(attendanceId).future);
-    if (!rows.any((r) => r.personId == personId)) {
+    if (!await attendances.hasPersonAttendance(attendanceId, personId)) {
       await attendances.createPersonAttendances([
         PersonAttendance(
           attendanceId: attendanceId,
@@ -93,11 +108,20 @@ Future<void> createPersonForAttendance(BuildContext context, WidgetRef ref, {req
           notes: '',
         ),
       ]);
-      container.invalidate(personAttendancesForAttendanceProvider(attendanceId));
     }
-    if (context.mounted) ToastHelper.showSuccess(context, context.l10n.attendanceNewPersonAdded(name));
+    if (!context.mounted) return;
+    if (otherTermineMissing) {
+      ToastHelper.showWarning(context, context.l10n.attendanceNewPersonOthersMissing(name));
+    } else {
+      ToastHelper.showSuccess(context, context.l10n.attendanceNewPersonAdded(name));
+    }
   } catch (_) {
     if (context.mounted) ToastHelper.showError(context, context.l10n.attendanceNewPersonAddFailed(name));
+  } finally {
+    // The Termin page lists its persons from both providers.
+    container
+      ..invalidate(allPersonsForAttendanceProvider)
+      ..invalidate(personAttendancesForAttendanceProvider(attendanceId));
   }
 }
 
@@ -106,10 +130,20 @@ Future<void> createPersonForAttendance(BuildContext context, WidgetRef ref, {req
 /// when the user cancelled there.
 @visibleForTesting
 class RdNewPersonSheet extends StatefulWidget {
-  const RdNewPersonSheet({super.key, required this.groups, required this.create, this.initialGroup, this.onStarted});
+  const RdNewPersonSheet({
+    super.key,
+    required this.groups,
+    required this.create,
+    this.initialGroup,
+    this.eventDay,
+    this.onStarted,
+  });
 
   final List<Group> groups;
   final int? initialGroup;
+
+  /// Day of the Termin: first last day of an Aushilfe.
+  final DateTime? eventDay;
   final Future<Person?> Function(BuildContext context, Person person) create;
 
   /// Gets each started write (so the caller can await it when the sheet is
@@ -124,6 +158,15 @@ class _RdNewPersonSheetState extends State<RdNewPersonSheet> {
   final _first = TextEditingController();
   final _last = TextEditingController();
   late int? _group = widget.initialGroup;
+
+  /// Aushilfe ("dabei bis") and its last day.
+  bool _helper = false;
+  late DateTime _helperUntil = () {
+    final today = DateTime.now();
+    final day = widget.eventDay;
+    final start = DateTime(today.year, today.month, today.day);
+    return day == null || day.isBefore(start) ? start : DateTime(day.year, day.month, day.day);
+  }();
 
   /// Errors show only after the first "Anlegen".
   bool _tried = false;
@@ -156,6 +199,7 @@ class _RdNewPersonSheetState extends State<RdNewPersonSheet> {
       playsSince: today,
       joined: today,
       correctBirthday: false,
+      additionalFields: _helper ? {helperUntilKey: helperDay(_helperUntil)} : null,
     );
     setState(() {
       _busy = true;
@@ -180,6 +224,17 @@ class _RdNewPersonSheetState extends State<RdNewPersonSheet> {
       return;
     }
     Navigator.of(context).pop(created);
+  }
+
+  Future<void> _pickHelperDay() async {
+    final today = DateTime.now();
+    final picked = await showAppDatePicker(
+      context: context,
+      initialDate: _helperUntil,
+      firstDate: DateTime(today.year, today.month, today.day),
+      lastDate: DateTime(today.year + 5),
+    );
+    if (picked != null && mounted) setState(() => _helperUntil = picked);
   }
 
   @override
@@ -263,7 +318,34 @@ class _RdNewPersonSheetState extends State<RdNewPersonSheet> {
                   ),
                 ),
               ],
-              note(l10n.attendanceNewPersonHint),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: RdGroupedList(
+                  children: [
+                    RdListRow(
+                      key: const Key('rd-new-person-helper'),
+                      title: l10n.rdHelperTitle,
+                      subtitle: l10n.rdHelperSwitchHint,
+                      showChevron: false,
+                      trailing: Switch.adaptive(
+                        value: _helper,
+                        activeTrackColor: p.primary,
+                        onChanged: _busy ? null : (v) => setState(() => _helper = v),
+                      ),
+                      onTap: _busy ? null : () => setState(() => _helper = !_helper),
+                    ),
+                    if (_helper)
+                      RdListRow(
+                        key: const Key('rd-new-person-helper-until'),
+                        title: l10n.rdHelperLastDay,
+                        value: DateFormat.yMMMd(currentIntlLocale()).format(_helperUntil),
+                        onTap: _busy ? null : _pickHelperDay,
+                      ),
+                  ],
+                ),
+              ),
+              note(_helper ? l10n.rdHelperFormHint : l10n.attendanceNewPersonHint),
               if (_failed) note(l10n.attendanceNewPersonFailed, error: true),
               if (_busy)
                 const Padding(

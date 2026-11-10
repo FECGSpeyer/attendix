@@ -1274,6 +1274,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please enter first and last name.';
 
   @override
+  String attendanceNewPersonOthersMissing(Object name) {
+    return '$name was created and added, but is still missing in other upcoming events.';
+  }
+
+  @override
   String get attendanceNewPersonTitle => 'New person';
 
   @override
@@ -10227,6 +10232,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdDataWhat => 'What';
+
+  @override
+  String get rdHelperFormHint =>
+      'Helpers are only added to events up to this day, never count as a problem case and are archived automatically afterwards.';
+
+  @override
+  String get rdHelperLastDay => 'Last day';
+
+  @override
+  String get rdHelperPersonHint =>
+      'Only added to events up to this day and archived automatically afterwards.';
+
+  @override
+  String get rdHelperSwitchHint =>
+      'Only joins for a while, e.g. for one concert';
+
+  @override
+  String get rdHelperTitle => 'Helper';
+
+  @override
+  String rdHelperUntil(Object date) {
+    return 'Helper until $date';
+  }
 
   @override
   String get rdOrgArchiveNote =>

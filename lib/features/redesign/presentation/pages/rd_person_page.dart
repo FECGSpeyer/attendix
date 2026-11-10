@@ -38,6 +38,7 @@ import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import 'rd_members_page.dart' show rdPercentColor;
+import '../../../../core/utils/helper_member.dart';
 
 /// REDESIGN: a person (canvas "PersonDetail"): contact, attendance with
 /// the last ten Termine, birthday, absence, note, Pausieren / Archivieren.
@@ -594,6 +595,14 @@ class _InfoList extends ConsumerWidget {
     final joined = DateTime.tryParse(person.joined ?? '');
     if (joined != null) {
       rows.add(RdListRow(title: l10n.redesignPersonJoined, value: long.format(joined), showChevron: false));
+    }
+    if (helperUntil(person) case final until?) {
+      rows.add(RdListRow(
+        title: l10n.rdHelperTitle,
+        subtitle: l10n.rdHelperPersonHint,
+        value: l10n.rdHelperUntil(long.format(DateTime.parse(until))),
+        showChevron: false,
+      ));
     }
     if (person.paused) {
       final until = DateTime.tryParse(person.pausedUntil ?? '');

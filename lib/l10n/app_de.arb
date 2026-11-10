@@ -1614,6 +1614,13 @@
   "@attendanceNewPersonNameMissing": {
     "description": "attendance.newPerson.nameMissing"
   },
+  "attendanceNewPersonOthersMissing": "{name} wurde angelegt und hinzugefügt, fehlt aber noch in anderen kommenden Terminen.",
+  "@attendanceNewPersonOthersMissing": {
+    "description": "attendance.newPerson.othersMissing",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "attendanceNewPersonTitle": "Neue Person",
   "@attendanceNewPersonTitle": {
     "description": "attendance.newPerson.title"
@@ -12845,6 +12852,33 @@
   "rdDataWhat": "Was",
   "@rdDataWhat": {
     "description": "rdData.what"
+  },
+  "rdHelperFormHint": "Aushilfen kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert.",
+  "@rdHelperFormHint": {
+    "description": "rdHelper.formHint"
+  },
+  "rdHelperLastDay": "Dabei bis",
+  "@rdHelperLastDay": {
+    "description": "rdHelper.lastDay"
+  },
+  "rdHelperPersonHint": "Kommt nur in Termine bis zu diesem Tag und wird danach automatisch archiviert.",
+  "@rdHelperPersonHint": {
+    "description": "rdHelper.personHint"
+  },
+  "rdHelperSwitchHint": "Nur für eine bestimmte Zeit dabei, z. B. für ein Konzert",
+  "@rdHelperSwitchHint": {
+    "description": "rdHelper.switchHint"
+  },
+  "rdHelperTitle": "Aushilfe",
+  "@rdHelperTitle": {
+    "description": "rdHelper.title"
+  },
+  "rdHelperUntil": "Aushilfe bis {date}",
+  "@rdHelperUntil": {
+    "description": "rdHelper.until",
+    "placeholders": {
+      "date": {}
+    }
   },
   "rdOrgArchiveNote": "Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.",
   "@rdOrgArchiveNote": {

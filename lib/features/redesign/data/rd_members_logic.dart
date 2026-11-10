@@ -5,6 +5,7 @@ import '../../../data/models/player_absence/player_absence.dart';
 import '../../attendance/presentation/widgets/attendance_detail/attendance_grid.dart'
     show sortPersonsByGroup, mainGroupIdOf;
 import 'rd_dates.dart';
+import '../../../core/utils/helper_member.dart';
 
 /// REDESIGN: pure logic of the Mitglieder tab (canvas "Menschen",
 /// "PersonDetail").
@@ -159,5 +160,6 @@ String _key(DateTime d) =>
 
 /// Active members the server flags as critical (`isCritical`, set by the
 /// attendance rules of the group), as "Heute" counts them (UX D3).
+/// Aushilfen ("dabei bis") are never a Problemfall.
 List<Person> rdCriticalMembers(Iterable<Person> active) =>
-    active.where((x) => x.isCritical && !x.paused && !x.pending).toList();
+    active.where((x) => x.isCritical && !x.paused && !x.pending && !isHelperMember(x)).toList();
