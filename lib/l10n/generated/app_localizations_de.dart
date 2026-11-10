@@ -14883,6 +14883,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMembersBirthdayTomorrow => 'Geburtstag morgen';
 
   @override
+  String get redesignMembersByRegisterChip => 'Nach Register';
+
+  @override
   String redesignMembersCritical(Object count) {
     return 'Problemfälle · $count';
   }
@@ -14984,6 +14987,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignMembersSection(Object title, Object count) {
     return '$title · $count';
   }
+
+  @override
+  String get redesignMembersSplitBy => 'Gliedern nach';
+
+  @override
+  String get redesignMembersSplitCategory => 'Kategorie';
+
+  @override
+  String get redesignMembersSplitRegister => 'Register';
 
   @override
   String get redesignMembersStats => 'Auswertung';

@@ -138,6 +138,9 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
 
     // "Sortieren & Filtern" (old list: filter, sort; plus groups).
     final listFilter = ref.watch(rdMembersListFilterProvider);
+    // "Gliedern nach": only a choice when the groups have categories.
+    final hasCategories = rdHasGroupCategories(groups);
+    final byCategory = ref.watch(rdMembersByCategoryProvider);
     final tenant = ref.watch(currentTenantProvider);
     final vos = tenant?.shortName == 'VoS';
     final general = tenant?.type == 'general';
@@ -216,6 +219,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
             groups: groups,
             percentages: percentages,
             noGroupLabel: l10n.attendanceNoGroup,
+            byCategory: byCategory,
           )
         : [
             if (shown.isNotEmpty)
@@ -262,6 +266,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
           vos: vos,
           general: general,
           withCritical: filter == RdMembersFilter.active,
+          withCategories: hasCategories,
         );
     }
 
@@ -347,6 +352,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
                   for (final chip in _activeChips(
                     context,
                     listFilter: listFilter,
+                    byRegister: hasCategories && !byCategory,
                     criticalOnly: criticalOnly,
                     groups: groups,
                     fields: fields,
@@ -573,6 +579,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
   List<Widget> _activeChips(
     BuildContext context, {
     required RdMembersListFilter listFilter,
+    required bool byRegister,
     required bool criticalOnly,
     required List<Group> groups,
     required List<ExtraField> fields,
@@ -592,6 +599,14 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
           label: rdMembersSortLabel(l10n, listFilter.sort),
           semanticLabel: l10n.redesignWorksSortRemove(rdMembersSortLabel(l10n, listFilter.sort)),
           onRemove: () => set(listFilter.copyWith(sort: RdMembersSort.group)),
+        ),
+      // Split by register instead of category (a view, so not counted).
+      if (byRegister && listFilter.sort == RdMembersSort.group)
+        RdRemovableChip(
+          key: const Key('rd-members-by-register-chip'),
+          label: l10n.redesignMembersByRegisterChip,
+          semanticLabel: l10n.redesignWorksSortRemove(l10n.redesignMembersByRegisterChip),
+          onRemove: () => ref.read(rdMembersByCategoryProvider.notifier).set(true),
         ),
       if (criticalOnly)
         chip(l10n.redesignMembersFilterCritical, () => ref.read(rdMembersCriticalOnlyProvider.notifier).state = false),

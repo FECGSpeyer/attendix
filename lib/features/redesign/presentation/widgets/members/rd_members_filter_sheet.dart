@@ -75,6 +75,7 @@ Future<void> showRdMembersFilterSheet(
   required bool vos,
   required bool general,
   required bool withCritical,
+  bool withCategories = false,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -99,6 +100,7 @@ Future<void> showRdMembersFilterSheet(
                 vos: vos,
                 general: general,
                 withCritical: withCritical,
+                withCategories: withCategories,
               ),
         ),
   );
@@ -115,6 +117,7 @@ class _FilterSheet extends ConsumerStatefulWidget {
     required this.vos,
     required this.general,
     required this.withCritical,
+    required this.withCategories,
   });
 
   final ScrollController controller;
@@ -128,6 +131,9 @@ class _FilterSheet extends ConsumerStatefulWidget {
 
   /// "Fehlen oft" (only on Aktiv).
   final bool withCritical;
+
+  /// "Gliedern nach" Kategorie / Register (the groups have categories).
+  final bool withCategories;
 
   @override
   ConsumerState<_FilterSheet> createState() => _FilterSheetState();
@@ -162,6 +168,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
     final l10n = context.l10n;
     final filter = ref.watch(rdMembersListFilterProvider);
     final critical = widget.withCritical && ref.watch(rdMembersCriticalOnlyProvider);
+    final byCategory = ref.watch(rdMembersByCategoryProvider);
     // "Auch Mitglied in" still loading or failed: no number until it is
     // there (it would count everybody).
     final otherAsync =
@@ -197,6 +204,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
               label: l10n.redesignWorksFilterReset,
               onTap: () {
                 _set(const RdMembersListFilter());
+                ref.read(rdMembersByCategoryProvider.notifier).set(true);
                 ref.read(rdMembersCriticalOnlyProvider.notifier).state = false;
                 for (final c in _numbers.values) {
                   c.clear();
@@ -208,6 +216,33 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
         const SizedBox(height: 12),
         RdGroupedList(
           children: [
+            // Mixed ensembles: many registers under one category ("Sonstiges")
+            // read better split by register.
+            if (widget.withCategories && filter.sort == RdMembersSort.group)
+              RdListRow(
+                key: const Key('rd-members-split'),
+                title: l10n.redesignMembersSplitBy,
+                value: byCategory ? l10n.redesignMembersSplitCategory : l10n.redesignMembersSplitRegister,
+                onTap: () async {
+                  final choice = await showAppActionSheet<bool>(
+                    context,
+                    title: l10n.redesignMembersSplitBy,
+                    actions: [
+                      AppActionSheetAction(
+                        value: true,
+                        icon: byCategory ? Icons.check : null,
+                        label: l10n.redesignMembersSplitCategory,
+                      ),
+                      AppActionSheetAction(
+                        value: false,
+                        icon: byCategory ? null : Icons.check,
+                        label: l10n.redesignMembersSplitRegister,
+                      ),
+                    ],
+                  );
+                  if (choice != null) ref.read(rdMembersByCategoryProvider.notifier).set(choice);
+                },
+              ),
             RdListRow(
               key: const Key('rd-members-sort'),
               title: l10n.redesignWorksSort,
