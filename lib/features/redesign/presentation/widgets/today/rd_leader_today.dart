@@ -8,15 +8,19 @@ import '../../../../../core/providers/attendance_type_providers.dart';
 import '../../../../../core/providers/dashboard_providers.dart';
 import '../../../../../core/providers/player_providers.dart';
 import '../../../../../core/providers/realtime_providers.dart';
+import '../../../../../core/providers/role_permission_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../core/utils/dashboard_utils.dart' show BirthdayEntry;
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurationDays, rdSortStartOf, rdUnrecordedProvider;
 import '../../../data/providers/rd_today_providers.dart';
+import '../../../data/rd_event_details_logic.dart';
+import '../../../data/rd_event_phase.dart' show rdEventSpan;
 import '../manage/rd_manage_list.dart' show rdLoadedValue;
 import '../rd_desktop.dart';
 import '../rd_widgets.dart';
@@ -27,7 +31,7 @@ import 'rd_duty_section.dart';
 
 /// REDESIGN: "Heute" of Dirigent, Verantwortlich, Beobachter and Helfer
 /// (canvas D1, R3): next Termin with its answers, what needs attention,
-/// this week.
+/// upcoming birthdays.
 class RdLeaderToday extends ConsumerWidget {
   const RdLeaderToday({super.key, required this.role});
 
@@ -70,7 +74,6 @@ class RdLeaderToday extends ConsumerWidget {
     final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
     final upcoming = upcomingOf(all, types: types);
     final next = upcoming.firstOrNull;
-    final week = rdThisWeek(upcoming.skip(1).toList());
 
     final nextCard = <Widget>[
       // UX V1: Beobachter cannot open Termine (Ionic); say so once
@@ -98,34 +101,22 @@ class RdLeaderToday extends ConsumerWidget {
         const RdDutySection(),
       ],
     ];
-    final weekSection = <Widget>[
-      RdSectionHeader(
-        l10n.redesignTodayThisWeek,
-        trailing: isLead ? _birthdayLine(context, ref) : null,
-        action: RdLinkButton(
-          label: l10n.redesignCommonAll,
-          onPressed: () => context.go(RedesignRoutes.events),
-        ),
-      ),
-      if (week.isEmpty)
-        RdInfoCard(text: l10n.redesignTodayWeekEmpty)
-      else
-        RdGroupedList(
-          children: [
-            for (final a in week) _WeekRow(attendance: a, canOpen: role.canAddAttendance),
-          ],
-        ),
+    // The week list was dropped from Heute (it mostly repeated the next
+    // Termin, the Termine tab shows the rest); only upcoming birthdays stay.
+    final birthday = isLead ? _birthdayLine(context, ref) : null;
+    final birthdaySection = <Widget>[
+      if (birthday != null) RdInfoCard(text: birthday, icon: Icons.cake_outlined),
     ];
 
-    // Desktop: the next Termin on the left, what needs attention and the
-    // week on the right (canvas "Beta: Desktop-UX").
+    // Desktop: the next Termin on the left, what needs attention and
+    // birthdays on the right (canvas "Beta: Desktop-UX").
     if (rdTodayColumns(context)) {
       return RdDesktopColumns(
         minWidth: 0,
         left: [...nextCard, ...own],
         right: [
           if (isLead) _AttentionSection(next: next, padding: const EdgeInsets.only(bottom: 24)),
-          ...weekSection,
+          ...birthdaySection,
         ],
       );
     }
@@ -135,27 +126,31 @@ class RdLeaderToday extends ConsumerWidget {
         ...nextCard,
         if (isLead) _AttentionSection(next: next),
         ...own,
-        const SizedBox(height: 24),
-        ...weekSection,
+        if (birthdaySection.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          ...birthdaySection,
+        ],
       ],
     );
   }
 
-  /// "Geburtstag: Lea (Sa)" for the coming days.
+  /// "Geburtstag: Lea (Sa)" or "Geburtstage: Lea (Sa), Jonas (Mo)" for
+  /// the coming 7 days.
   String? _birthdayLine(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final birthdays = ref.watch(dashboardBirthdaysProvider).valueOrNull ?? const [];
     final soon = birthdays.where((b) => b.daysOffset >= 0 && b.daysOffset <= 7).toList()
       ..sort((a, b) => a.daysOffset.compareTo(b.daysOffset));
     if (soon.isEmpty) return null;
-    final first = soon.first;
-    final day = first.daysOffset == 0
-        ? context.l10n.redesignTodayDayToday
-        : DateFormat.E(currentIntlLocale()).format(first.date).replaceAll('.', '');
-    final name = first.person.firstName;
-    return soon.length == 1
-        ? context.l10n.redesignTodayBirthday(name, day)
-        : context.l10n.redesignTodayBirthdayMore(name, day, soon.length - 1);
+    String day(BirthdayEntry b) => b.daysOffset == 0
+        ? l10n.redesignTodayDayToday
+        : DateFormat.E(currentIntlLocale()).format(b.date).replaceAll('.', '');
+    if (soon.length == 1) return l10n.redesignTodayBirthday(soon.first.person.firstName, day(soon.first));
+    return l10n.redesignTodayBirthdays(
+      soon.map((b) => '${b.person.firstName} (${day(b)})').join(', '),
+    );
   }
+
 }
 
 class _NextEventCard extends ConsumerWidget {
@@ -307,6 +302,16 @@ class _AttentionSection extends ConsumerWidget {
     final excused = nextId == null
         ? 0
         : ref.watch(rdAttendanceCountsProvider(nextId)).valueOrNull?.excused ?? 0;
+    // Vorbereitung tasks due within a day or overdue (Termine still ahead).
+    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    final prep = ref.watch(canViewAttendanceChecklistProvider)
+        ? rdDuePrepTasks(
+            (ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const <Attendance>[]).where(
+              (a) => a.id != null && !a.archived && !_eventOver(a, types),
+            ),
+          )
+        : const <({Attendance attendance, ChecklistItem item})>[];
+    final prepOverdue = prep.any((t) => rdChecklistDue(t.item) == RdDue.overdue);
 
     final rows = <Widget>[
       if (pending > 0)
@@ -335,6 +340,20 @@ class _AttentionSection extends ConsumerWidget {
           // Newest first: the one most likely still to be recorded.
           onTap: () => context.push(RedesignRoutes.event(unrecorded.last, record: true)),
         ),
+      if (prep.isNotEmpty)
+        RdListRow(
+          key: const Key('rd-today-prep'),
+          leading: RdRowIcon(
+            Icons.task_alt_rounded,
+            color: prepOverdue ? p.absent : p.late,
+            background: prepOverdue ? p.absentSoft : p.lateSoft,
+          ),
+          title: l10n.redesignTodayPrepDue(prep.length),
+          subtitle: _prepLine(ref, prep.first),
+          trailing: RdCountBadge(prep.length, tone: prepOverdue ? RdTone.absent : RdTone.late),
+          // The most urgent one: its Termin shows the Vorbereitung in the Überblick.
+          onTap: () => context.push(RedesignRoutes.event(prep.first.attendance.id!)),
+        ),
       if (excused > 0 && nextId != null)
         RdListRow(
           leading: RdRowIcon(Icons.event_busy_outlined, color: p.excused, background: p.excusedSoft),
@@ -358,6 +377,31 @@ class _AttentionSection extends ConsumerWidget {
   }
 }
 
+/// Whether the Termin [a] is over, with its end time (or its type's).
+bool _eventOver(Attendance a, List<AttendanceType> types, {DateTime? now}) {
+  final type = types.where((t) => t.id == a.typeId).firstOrNull;
+  final span = rdEventSpan(
+    day: EventListUtils.parse(a.date),
+    startTime: a.startTime ?? type?.startTime,
+    endTime: a.endTime ?? type?.endTime,
+    durationDays: rdAttendanceDurationDays(a, types),
+  );
+  if (span == null) return EventListUtils.hasEnded(a.date, rdAttendanceDurationDays(a, types), now: now);
+  return !(now ?? DateTime.now()).isBefore(span.end);
+}
+
+/// "Raum aufschließen · Probe 17.11." for the most urgent Vorbereitung task.
+String _prepLine(WidgetRef ref, ({Attendance attendance, ChecklistItem item}) task) {
+  final a = task.attendance;
+  return [
+    task.item.text,
+    [
+      rdEventInfo(a, ref.watch(rdAttendanceTypeProvider(a.typeId))).title,
+      if (EventListUtils.parse(a.date) case final d?) '${d.day}.${d.month}.',
+    ].join(' '),
+  ].join(' · ');
+}
+
 /// "Probe 29.10., Probe 22.10." for the not yet recorded Termine (newest
 /// first, at most three).
 String _unrecordedLine(WidgetRef ref, List<int> ids) {
@@ -371,27 +415,6 @@ String _unrecordedLine(WidgetRef ref, List<int> ids) {
           if (EventListUtils.parse(a.date) case final d?) '${d.day}.${d.month}.',
         ].join(' '),
   ].join(', ');
-}
-
-class _WeekRow extends ConsumerWidget {
-  const _WeekRow({required this.attendance, required this.canOpen});
-
-  final Attendance attendance;
-  final bool canOpen;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final type = ref.watch(rdAttendanceTypeProvider(attendance.typeId));
-    final info = rdEventInfo(attendance, type);
-    final id = attendance.id;
-    return RdEventRow(
-      date: attendance.date,
-      title: info.title,
-      meta: [info.timeRange, info.place].where((s) => s.isNotEmpty).join(' · '),
-      // UX V1: no chevron and no tap for Beobachter (route guard).
-      onTap: id != null && canOpen ? () => context.push(RedesignRoutes.event(id)) : null,
-    );
-  }
 }
 
 /// "Anna Becker, Jonas Klein und 2 weitere" (the Problemfälle on Heute).

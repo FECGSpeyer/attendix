@@ -794,6 +794,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceConnectionRestored => 'Verbindung wiederhergestellt';
 
   @override
+  String get attendanceCreateNewPerson => 'Neue Person anlegen';
+
+  @override
+  String get attendanceCreateNewPersonHint =>
+      'Wird angelegt und gleich zu diesem Termin hinzugefügt.';
+
+  @override
   String get attendanceCreateRunSheet => 'Ablaufplan erstellen';
 
   @override
@@ -1238,6 +1245,48 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return 'Benötigt: $_temp0';
   }
+
+  @override
+  String attendanceNewPersonAddFailed(Object name) {
+    return '$name wurde angelegt, konnte aber nicht zum Termin hinzugefügt werden.';
+  }
+
+  @override
+  String attendanceNewPersonAdded(Object name) {
+    return '$name angelegt und hinzugefügt';
+  }
+
+  @override
+  String get attendanceNewPersonCreate => 'Anlegen';
+
+  @override
+  String get attendanceNewPersonFailed =>
+      'Die Person konnte nicht angelegt werden.';
+
+  @override
+  String get attendanceNewPersonFirstName => 'Vorname';
+
+  @override
+  String get attendanceNewPersonGroup => 'Register';
+
+  @override
+  String get attendanceNewPersonHint =>
+      'Die Person wird Mitglied der Gruppe und gleich zu diesem Termin hinzugefügt. Weitere Angaben ergänzt du später bei der Person.';
+
+  @override
+  String get attendanceNewPersonLastName => 'Nachname';
+
+  @override
+  String get attendanceNewPersonNameMissing =>
+      'Bitte gib Vor- und Nachnamen ein.';
+
+  @override
+  String attendanceNewPersonOthersMissing(Object name) {
+    return '$name wurde angelegt und hinzugefügt, fehlt aber noch in anderen kommenden Terminen.';
+  }
+
+  @override
+  String get attendanceNewPersonTitle => 'Neue Person';
 
   @override
   String get attendanceNoConnection => 'Keine Internetverbindung vorhanden';
@@ -10387,6 +10436,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdDataWhat => 'Was';
 
   @override
+  String get rdHelperFormHint =>
+      'Aushilfen kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert.';
+
+  @override
+  String get rdHelperLastDay => 'Dabei bis';
+
+  @override
+  String get rdHelperPersonHint =>
+      'Kommt nur in Termine bis zu diesem Tag und wird danach automatisch archiviert.';
+
+  @override
+  String get rdHelperSwitchHint =>
+      'Nur für eine bestimmte Zeit dabei, z. B. für ein Konzert';
+
+  @override
+  String get rdHelperTitle => 'Aushilfe';
+
+  @override
+  String rdHelperUntil(Object date) {
+    return 'Aushilfe bis $date';
+  }
+
+  @override
   String get rdOrgArchiveNote =>
       'Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.';
 
@@ -12721,6 +12793,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventPlanEditShort => 'Bearbeiten';
 
   @override
+  String redesignEventPlanFree(Object count) {
+    return '$count Min frei bis Terminende';
+  }
+
+  @override
   String get redesignEventPlanHint => 'Ablaufplan, am Termin-Tag live';
 
   @override
@@ -12751,6 +12828,24 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignEventPrep(Object done, Object total) {
     return 'Vorbereitung · $done von $total erledigt';
   }
+
+  @override
+  String get redesignEventPrepEmpty =>
+      'Was vor dem Termin erledigt sein muss, z. B. Raum aufschließen oder Noten kopieren. Abhaken kannst du direkt hier, sehen kann es nur die Leitung.';
+
+  @override
+  String redesignEventPrepTakeOver(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben der Terminart übernehmen',
+      one: '1 Aufgabe der Terminart übernehmen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventPrepTitle => 'Vorbereitung';
 
   @override
   String redesignEventPresentOf(Object present, Object total, Object percent) {
@@ -16397,8 +16492,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String redesignTodayBirthdayMore(Object name, Object day, Object count) {
-    return 'Geburtstag: $name ($day) +$count';
+  String redesignTodayBirthdays(Object list) {
+    return 'Geburtstage: $list';
   }
 
   @override
@@ -16587,6 +16682,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayPendingHint => 'Prüfen und freischalten';
 
   @override
+  String redesignTodayPrepDue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben zur Vorbereitung fällig',
+      one: '1 Aufgabe zur Vorbereitung fällig',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignTodayQuestion => 'Bist du dabei?';
 
   @override
@@ -16629,9 +16735,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get redesignTodayViewerHint =>
       'Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.';
-
-  @override
-  String get redesignTodayWeekEmpty => 'Diese Woche kommt sonst nichts.';
 
   @override
   String get redesignTodayWhyNot => 'Warum kannst du nicht?';

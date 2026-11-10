@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/app_colors.dart';
@@ -158,7 +159,7 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
               const SizedBox(height: 8),
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.link, color: AppColors.medium),
+                leading: Icon(AppIcons.link, color: AppColors.medium),
                 title: Text(context.l10n.attendanceEmailLink, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
                 subtitle: SelectableText(widget.attendanceLink!),
               ),
@@ -172,7 +173,7 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
                         neutralOnly: _neutralOnly,
                       ))
                   : null,
-              icon: const Icon(Icons.notifications_outlined),
+              icon: Icon(AppIcons.notificationsOutlined),
               label: IonButtonLabel(context.l10n.attendanceSend),
             ),
           ],

@@ -1,5 +1,6 @@
 // U1: Person bearbeiten, Verlauf and Neue Person in the new design (Beta).
 // Without the Beta the old pages keep their Ionic look (FAB, accordions).
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:io';
 
 import 'package:attendix/core/config/supabase_config.dart';
@@ -94,6 +95,10 @@ Future<void> _pump(
 }
 
 void main() {
+  // ICONS: the Beta keeps the Material icons.
+  setUpAll(() => AppIcons.ionic = false);
+  tearDownAll(() => AppIcons.ionic = true);
+
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   group('Neue Person', () {

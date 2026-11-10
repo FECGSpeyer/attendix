@@ -14,7 +14,6 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart'
     show CrossTenantPersonAttendance;
 import '../../../../l10n/l10n.dart';
-import '../rd_dates.dart';
 
 /// REDESIGN: data of "Heute". Only reads through the existing
 /// `…RepositoryWithTenantProvider`s (no new queries, no writes).
@@ -227,20 +226,3 @@ final rdAttendanceTypeProvider =
   final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
   return types.where((t) => t.id == typeId).firstOrNull;
 });
-
-/// Termine of the coming 7 days after [current] (at most [limit]).
-List<Attendance> rdThisWeek(
-  List<Attendance> upcoming, {
-  DateTime? now,
-  int limit = 3,
-}) {
-  final today = now ?? DateTime.now();
-  final end = rdAddDays(today, 8);
-  return upcoming
-      .where((a) {
-        final d = EventListUtils.parse(a.date);
-        return d != null && d.isBefore(end);
-      })
-      .take(limit)
-      .toList();
-}

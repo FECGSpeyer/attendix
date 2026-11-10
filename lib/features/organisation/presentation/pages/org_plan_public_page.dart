@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -161,8 +162,8 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
       context,
       title: context.l10n.plansSubscribeCalendar,
       actions: [
-        PlanSheetAction(base, context.l10n.plansSimpleCalendar, icon: Icons.event),
-        PlanSheetAction('$base&detailed=true', context.l10n.plansDetailedCalendar, icon: Icons.event_note),
+        PlanSheetAction(base, context.l10n.plansSimpleCalendar, icon: AppIcons.event),
+        PlanSheetAction('$base&detailed=true', context.l10n.plansDetailedCalendar, icon: AppIcons.eventNote),
       ],
     );
     if (link == null || !mounted) return;
@@ -234,7 +235,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
         trailing: liveNow
             ? IconButton(
                 tooltip: context.l10n.planningFlutterLive,
-                icon: Icon(live ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                icon: Icon(live ? AppIcons.radioButtonChecked : AppIcons.radioButtonUnchecked,
                     color: live ? AppColors.danger : AppColors.primary),
                 onPressed: () => setState(() => live ? _live.remove(e.key) : _live.add(e.key)),
               )
@@ -242,7 +243,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
         children: [
           const Divider(height: 1),
           ListTile(
-            leading: const Icon(Icons.ios_share, color: AppColors.primary),
+            leading: Icon(AppIcons.iosShare, color: AppColors.primary),
             title: Text(context.l10n.planningExport, style: const TextStyle(color: AppColors.primary)),
             onTap: () => _export(e),
           ),
@@ -264,7 +265,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
           actions: [
             IconButton(
               tooltip: ctx.l10n.commonClose,
-              icon: const Icon(Icons.close),
+              icon: Icon(AppIcons.close),
               onPressed: () => Navigator.of(ctx).pop(),
             ),
           ],
@@ -296,13 +297,13 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
         actions: [
           IconButton(
             tooltip: context.l10n.plansSubscribeCalendar,
-            icon: const Icon(Icons.calendar_month_outlined),
+            icon: Icon(AppIcons.calendarMonthOutlined),
             onPressed: _subscribeCalendar,
           ),
           if (_past.isNotEmpty)
             IconButton(
               tooltip: context.l10n.plansPastPlans,
-              icon: const Icon(Icons.schedule),
+              icon: Icon(AppIcons.schedule),
               onPressed: _showHistory,
             ),
         ],
@@ -338,7 +339,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
                       ...top,
                       if (_upcoming.isEmpty)
                         ListTile(
-                          leading: const Icon(Icons.event_outlined, color: AppColors.medium),
+                          leading: Icon(AppIcons.eventOutlined, color: AppColors.medium),
                           title: Text(context.l10n.plansNoUpcomingPlans),
                         ),
                       for (var i = 0; i < _upcoming.length; i++)

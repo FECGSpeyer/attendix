@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart' show CupertinoButton;
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -74,8 +76,8 @@ class MainShell extends ConsumerWidget {
       destinations.add(_NavDestination(
         route: '/home-dashboard',
         label: l10n.tabsDashboard,
-        icon: Icons.grid_view_outlined,
-        selectedIcon: Icons.grid_view_outlined,
+        icon: Ionicons.gridOutline,
+        selectedIcon: Ionicons.gridOutline,
       ));
     }
 
@@ -84,8 +86,8 @@ class MainShell extends ConsumerWidget {
       destinations.add(_NavDestination(
         route: '/parents',
         label: l10n.tabsEvents,
-        icon: Icons.person_outline,
-        selectedIcon: Icons.person_outline,
+        icon: Ionicons.personOutline,
+        selectedIcon: Ionicons.personOutline,
       ));
     }
 
@@ -94,8 +96,8 @@ class MainShell extends ConsumerWidget {
       destinations.add(_NavDestination(
         route: '/signout',
         label: l10n.tabsMyEvents,
-        icon: Icons.person_outline,
-        selectedIcon: Icons.person_outline,
+        icon: Ionicons.personOutline,
+        selectedIcon: Ionicons.personOutline,
       ));
     }
 
@@ -106,8 +108,8 @@ class MainShell extends ConsumerWidget {
       destinations.add(_NavDestination(
         route: '/members',
         label: l10n.tabsMembers,
-        icon: Icons.people_outline,
-        selectedIcon: Icons.people_outline,
+        icon: Ionicons.peopleOutline,
+        selectedIcon: Ionicons.peopleOutline,
       ));
     }
 
@@ -116,8 +118,8 @@ class MainShell extends ConsumerWidget {
       destinations.add(_NavDestination(
         route: '/overview',
         label: l10n.tabsOverview,
-        icon: Icons.calendar_today_outlined,
-        selectedIcon: Icons.calendar_today_outlined,
+        icon: Ionicons.calendarOutline,
+        selectedIcon: Ionicons.calendarOutline,
       ));
     }
 
@@ -126,8 +128,8 @@ class MainShell extends ConsumerWidget {
       destinations.add(_NavDestination(
         route: '/people',
         label: l10n.commonPeople,
-        icon: Icons.people_outline,
-        selectedIcon: Icons.people_outline,
+        icon: Ionicons.peopleOutline,
+        selectedIcon: Ionicons.peopleOutline,
       ));
     }
 
@@ -136,8 +138,8 @@ class MainShell extends ConsumerWidget {
       destinations.add(_NavDestination(
         route: '/attendance',
         label: l10n.tabsEvents,
-        icon: Icons.check_box_outlined,
-        selectedIcon: Icons.check_box_outlined,
+        icon: Ionicons.checkboxOutline,
+        selectedIcon: Ionicons.checkboxOutline,
       ));
     }
 
@@ -146,16 +148,16 @@ class MainShell extends ConsumerWidget {
       destinations.add(_NavDestination(
         route: '/songs-tab',
         label: l10n.tabsSongs,
-        icon: Icons.music_note_outlined,
-        selectedIcon: Icons.music_note_outlined,
+        icon: Ionicons.musicalNotesOutline,
+        selectedIcon: Ionicons.musicalNotesOutline,
       ));
     }
     if (showOrgPlansTab) {
       destinations.add(_NavDestination(
         route: '/org-plans-tab',
         label: l10n.tabsOrg,
-        icon: Icons.business_outlined,
-        selectedIcon: Icons.business_outlined,
+        icon: Ionicons.businessOutline,
+        selectedIcon: Ionicons.businessOutline,
       ));
     }
 
@@ -163,8 +165,8 @@ class MainShell extends ConsumerWidget {
     destinations.add(_NavDestination(
       route: '/settings',
       label: l10n.tabsMore,
-      icon: Icons.more_horiz,
-      selectedIcon: Icons.more_horiz,
+      icon: Ionicons.ellipsisHorizontal,
+      selectedIcon: Ionicons.ellipsisHorizontal,
     ));
 
     return destinations;
@@ -690,7 +692,7 @@ class _IosUpdateToast extends StatelessWidget {
           padding: const EdgeInsets.only(left: 16, right: 4),
           child: Row(
             children: [
-              Icon(Icons.cloud_download_outlined,
+              Icon(AppIcons.cloudDownloadOutlined,
                   size: 20, color: theme.colorScheme.primary),
               const SizedBox(width: 10),
               Expanded(
@@ -722,7 +724,7 @@ class _IosUpdateToast extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   minSize: 36,
                   onPressed: onClose,
-                  child: Icon(Icons.close,
+                  child: Icon(AppIcons.close,
                       size: 18, color: text.withValues(alpha: 0.6)),
                 ),
               ),

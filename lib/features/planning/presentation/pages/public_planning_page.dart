@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -793,8 +794,8 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       imageFileName: _imageFileName,
       branding: _branding,
       extraActions: [
-        PlanSheetAction('read', context.l10n.planningReadOnlyLink, icon: Icons.link),
-        PlanSheetAction('edit', context.l10n.planningEditLink, icon: Icons.edit_note),
+        PlanSheetAction('read', context.l10n.planningReadOnlyLink, icon: AppIcons.link),
+        PlanSheetAction('edit', context.l10n.planningEditLink, icon: AppIcons.editNote),
       ],
       onExtraAction: (a) => _doShare(a == 'edit'),
     );
@@ -887,8 +888,8 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       actions: [
         ToolbarButtonGroup(children: [
           if (loggedIn)
-            IconButton(tooltip: context.l10n.plansMyPlans, icon: const Icon(Icons.list), onPressed: _openMyPlans),
-          IconButton(tooltip: context.l10n.plansShareExport, icon: const Icon(Icons.ios_share), onPressed: _shareCurrentPlan),
+            IconButton(tooltip: context.l10n.plansMyPlans, icon: Icon(AppIcons.list), onPressed: _openMyPlans),
+          IconButton(tooltip: context.l10n.plansShareExport, icon: Icon(AppIcons.iosShare), onPressed: _shareCurrentPlan),
         ]),
       ],
       bodyBuilder: (context, largeTitle) => !_ready
@@ -966,13 +967,13 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                       ),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.refresh, color: AppColors.primary),
+                      leading: Icon(AppIcons.refresh, color: AppColors.primary),
                       title: Text(context.l10n.plansRestoreTemplate, style: const TextStyle(color: AppColors.primary)),
                       onTap: _resetToTemplate,
                     ),
                     if (org != null)
                       ListTile(
-                        leading: Icon(_isOrgPlan ? Icons.check_circle : Icons.business_outlined,
+                        leading: Icon(_isOrgPlan ? AppIcons.checkCircle : AppIcons.businessOutlined,
                             color: _isOrgPlan ? AppColors.success : AppColors.primary),
                         title: Text(
                           _isOrgPlan ? context.l10n.plansInOrg(org.name) : context.l10n.plansAddToOrg,
@@ -982,7 +983,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                       ),
                     if (loggedIn)
                       ListTile(
-                        leading: const Icon(Icons.add_circle_outline, color: AppColors.medium),
+                        leading: Icon(AppIcons.addCircleOutline, color: AppColors.medium),
                         title: Text(context.l10n.plansNewPlan, style: const TextStyle(color: AppColors.medium)),
                         onTap: _newPlan,
                       ),
@@ -998,7 +999,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                         key: const ValueKey('plan-add-trigger'),
                         color: AppColors.primary,
                         tooltip: context.l10n.planningAddField,
-                        icon: const Icon(Icons.add),
+                        icon: Icon(AppIcons.add),
                         onPressed: () => _showAddMenu(anchor),
                       ),
                     ),
@@ -1038,7 +1039,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                   padding: const EdgeInsets.all(AppDimensions.paddingM),
                   child: FilledButton.icon(
                     onPressed: _showExportOptions,
-                    icon: const Icon(Icons.ios_share),
+                    icon: Icon(AppIcons.iosShare),
                     label: IonButtonLabel(context.l10n.planningExport),
                   ),
                 ),
@@ -1133,7 +1134,7 @@ class _MyPlanTile extends ConsumerWidget {
             onPressed: (_) => _delete(context, ref, title),
             backgroundColor: AppColors.danger,
             foregroundColor: Colors.white,
-            icon: Icons.delete_outline,
+            icon: AppIcons.deleteOutline,
           ),
         ],
       ),

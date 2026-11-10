@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
@@ -167,11 +168,11 @@ void main() {
           appBar: AppBar(actions: [
             Builder(
               builder: (bc) => IconButton(
-                icon: const Icon(Icons.more_vert),
+                icon: Icon(AppIcons.moreVert),
                 onPressed: () async {
-                  onResult(await showAppPopoverMenu<String>(context: bc, items: const [
-                    AppPopoverMenuItem(value: 'filter', label: 'Status-Filter', icon: Icons.filter_list, submenu: true),
-                    AppPopoverMenuItem(value: 'legend', label: 'Legende', icon: Icons.info_outline),
+                  onResult(await showAppPopoverMenu<String>(context: bc, items: [
+                    AppPopoverMenuItem(value: 'filter', label: 'Status-Filter', icon: AppIcons.filterList, submenu: true),
+                    AppPopoverMenuItem(value: 'legend', label: 'Legende', icon: AppIcons.infoOutline),
                   ]));
                 },
               ),
@@ -182,7 +183,7 @@ void main() {
     widgetTest('iOS: chevron on sub menu entries, returns the value', (tester) async {
       String? result;
       await tester.pumpApp(ios(host((v) => result = v)));
-      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.tap(find.byIcon(AppIcons.moreVert));
       await tester.pumpAndSettle();
       expect(find.byType(PopupMenuItem<String>), findsNothing);
       // IOS27_SWEEP: the ios27 detail chevron (IonDetailChevron)
@@ -195,12 +196,12 @@ void main() {
     widgetTest('Material: Ionic md popover card, returns the value', (tester) async {
       String? result;
       await tester.pumpApp(host((v) => result = v));
-      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.tap(find.byIcon(AppIcons.moreVert));
       await tester.pumpAndSettle();
       // PARITY_R3: own md popover (no Material popup menu items)
       expect(find.byType(PopupMenuItem<String>), findsNothing);
       // IOS_THEME2: Ionic md popover shows the sub menu chevron too.
-      expect(find.byIcon(Icons.chevron_right), findsOneWidget);
+      expect(find.byIcon(AppIcons.chevronRight), findsOneWidget);
       await tester.tap(find.text('Status-Filter'));
       await tester.pumpAndSettle();
       expect(result, 'filter');
@@ -231,7 +232,7 @@ void main() {
             appBar: AppBar(actions: [
               Builder(
                 builder: (bc) => IconButton(
-                  icon: const Icon(Icons.more_vert),
+                  icon: Icon(AppIcons.moreVert),
                   onPressed: () async {
                     result = await showAppPopoverMenu<String>(
                         context: bc, items: items(), itemsBuilder: items);
@@ -240,7 +241,7 @@ void main() {
               ),
             ]),
           )));
-        await tester.tap(find.byIcon(Icons.more_vert));
+        await tester.tap(find.byIcon(AppIcons.moreVert));
         await tester.pumpAndSettle();
         await tester.tap(find.text('Status-Filter'));
         await tester.pumpAndSettle();

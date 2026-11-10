@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -74,7 +75,7 @@ class TenantSwitcherTitle extends ConsumerWidget {
           ),
         ),
         const SizedBox(width: 4),
-        Icon(Icons.keyboard_arrow_down, size: 20, color: textColor),
+        Icon(AppIcons.keyboardArrowDown, size: 20, color: textColor),
       ],
     );
     final trigger = ios

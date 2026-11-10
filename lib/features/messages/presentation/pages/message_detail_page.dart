@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -198,7 +199,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
             ToolbarButtonGroup(children: [
               IconButton(
                 tooltip: l10n.messagesDeleteMessage,
-                icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
                 onPressed: _delete,
               ),
             ]),
@@ -215,7 +216,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.campaign_outlined, size: 48, color: AppColors.medium),
+                    Icon(AppIcons.campaignOutlined, size: 48, color: AppColors.medium),
                     const SizedBox(height: AppDimensions.paddingM),
                     Text(
                       l10n.messagesNotAvailable,
@@ -252,7 +253,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
               SettingsListSection(
                 children: [
                   SettingsListTile(
-                    icon: Icons.calendar_today_outlined,
+                    icon: AppIcons.calendarTodayOutlined,
                     title: l10n.autoMessagesOpenTermin,
                     onTap: () => context.push('/attendance/${autoInfo!.attendanceId}'),
                   ),
@@ -376,7 +377,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       actions: [
         AppActionSheetAction(
           value: 'delete',
-          icon: Icons.delete_outline,
+          icon: AppIcons.deleteOutline,
           label: l10n.messagesDeleteMessage,
           destructive: true,
         ),
@@ -478,7 +479,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       ),
       subtitle: Text(meta),
       trailing: Icon(
-        showContent ? Icons.expand_less : Icons.expand_more,
+        showContent ? AppIcons.expandLess : AppIcons.expandMore,
         color: AppColors.medium,
       ),
       onTap: () => setState(() => _showContent = !showContent),

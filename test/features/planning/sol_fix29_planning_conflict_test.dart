@@ -7,6 +7,7 @@
 //    before their dialog.
 // 3. Loading a Termin adopts the newest stored row together with its
 //    sequence number (never marks a stale copy as current).
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:convert';
 
 import 'package:attendix/core/config/supabase_config.dart';
@@ -334,16 +335,16 @@ void main() {
       const p8 = Plan(id: 'q', time: '10:00', title: 'Acht', fields: [PlanField(id: 'c', name: 'X', time: '10')]);
       await openEditor(tester, const [_p1, _p2], others: [row(8, const [p8], days: 5)]);
       expect(titleField('Eins'), findsOneWidget);
-      await tester.ensureVisible(find.byIcon(Icons.arrow_forward));
-      await tester.tap(find.byIcon(Icons.arrow_forward));
+      await tester.ensureVisible(find.byIcon(AppIcons.arrowForward));
+      await tester.tap(find.byIcon(AppIcons.arrowForward));
       await tester.pumpAndSettle();
       expect(titleField('Acht'), findsOneWidget);
 
       // B stores plan 2 of Termin 7 while A shows Termin 8.
       otherEditorStores(row(7, [_p1, _p2.copyWith(title: 'Von B')]));
 
-      await tester.ensureVisible(find.byIcon(Icons.arrow_back));
-      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.ensureVisible(find.byIcon(AppIcons.arrowBack));
+      await tester.tap(find.byIcon(AppIcons.arrowBack));
       await tester.pumpAndSettle();
       expect(titleField('Eins'), findsOneWidget);
 

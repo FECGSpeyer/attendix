@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_beamer.dart';
 import '../../../../data/models/plan/plan.dart';
@@ -249,7 +250,7 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
       if (_beamerOn)
         ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: Icon(Icons.tv_outlined, color: file != null ? AppColors.primary : AppColors.warning),
+          leading: Icon(AppIcons.tvOutlined, color: file != null ? AppColors.primary : AppColors.warning),
           title: Text(file?.name ?? l10n.planningBeamerNoFile),
           subtitle: Text(file != null ? l10n.planningBeamerChangeInApp : l10n.planningBeamerLinkInApp),
         ),

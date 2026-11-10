@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -184,7 +185,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
               _iosGroup([
                 ListTile(
                   leading:
-                      const Icon(Icons.send_outlined, color: AppColors.primary),
+                      Icon(AppIcons.sendOutlined, color: AppColors.primary),
                   title: Text(context.l10n.settingsContactTelegram,
                       style: const TextStyle(color: AppColors.primary)),
                   onTap: () {
@@ -409,7 +410,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                   margin: EdgeInsets.zero,
                   clipBehavior: Clip.antiAlias,
                   child: ListTile(
-                    leading: const Icon(Icons.send_outlined, color: AppColors.primary),
+                    leading: Icon(AppIcons.sendOutlined, color: AppColors.primary),
                     title: Text(context.l10n.settingsContactTelegram,
                         style: const TextStyle(color: AppColors.primary)),
                     onTap: () {
@@ -576,7 +577,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                       child: Padding(
                         padding: const EdgeInsets.only(left: 6),
                         child: Icon(
-                          Icons.star,
+                          AppIcons.star,
                           size: 22,
                           color: star <= _rating ? AppColors.warning : AppColors.medium,
                         ),
@@ -641,7 +642,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
               helperText: context.l10n.settingsContactOnly,
               hintText: context.l10n.settingsPhonePh,
               border: const OutlineInputBorder(),
-              prefixIcon: const Icon(Icons.phone),
+              prefixIcon: Icon(AppIcons.phone),
             ),
           ),
           const SizedBox(height: AppDimensions.paddingL),
@@ -658,7 +659,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                         color: Colors.white,
                       ),
                     )
-                  : const Icon(Icons.send),
+                  : Icon(AppIcons.send),
               label: Text(context.l10n.settingsSubmit),
             ),
           ),
@@ -689,7 +690,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                   iconSize: 40,
                   onPressed: () => setState(() => _rating = starValue),
                   icon: Icon(
-                    starValue <= _rating ? Icons.star : Icons.star_border,
+                    starValue <= _rating ? AppIcons.star : AppIcons.starBorder,
                     color: AppColors.warning,
                     semanticLabel: context.l10n.a11yRating(starValue),
                   ),
@@ -730,7 +731,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                 helperText: context.l10n.settingsContactOnly,
                 hintText: context.l10n.settingsPhonePh,
                 border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.phone),
+                prefixIcon: Icon(AppIcons.phone),
               ),
             ),
           ],
@@ -748,7 +749,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                         color: Colors.white,
                       ),
                     )
-                  : const Icon(Icons.send),
+                  : Icon(AppIcons.send),
               label: Text(context.l10n.settingsSubmit),
             ),
           ),

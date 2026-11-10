@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -150,7 +151,7 @@ class _TenantRadioList extends StatelessWidget {
             ListTile(
               title: Text(tenants[i].longName.isNotEmpty ? tenants[i].longName : tenants[i].shortName),
               trailing: tenants[i].id != null && tenants[i].id == selectedId
-                  ? const Icon(Icons.check, color: AppColors.primary)
+                  ? Icon(AppIcons.check, color: AppColors.primary)
                   : null,
               onTap: tenants[i].id == null ? null : () => onChanged(tenants[i].id),
             ),

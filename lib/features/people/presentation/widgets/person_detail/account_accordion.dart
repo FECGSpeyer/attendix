@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -82,7 +83,7 @@ class AccountAccordion extends ConsumerWidget {
       children: [
         // Email
         IonFieldRow(
-          icon: Icons.email,
+          icon: AppIcons.email,
           label: context.l10n.peopleEmail,
           value: (draftEmail ?? person.email) ?? context.l10n.personFlutterNotSpecified,
           editable: canEdit && person.appId == null,
@@ -101,7 +102,7 @@ class AccountAccordion extends ConsumerWidget {
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
               onPressed: onSearchOtherInstance,
-              icon: const Icon(Icons.search, size: 18),
+              icon: Icon(AppIcons.search, size: 18),
               label: IonButtonLabel(context.l10n.personFlutterSearchOtherInstance),
             ),
           ),
@@ -110,7 +111,7 @@ class AccountAccordion extends ConsumerWidget {
         // Account linked status
         if (person.appId != null) ...[
           IonFieldRow(
-            icon: Icons.badge,
+            icon: AppIcons.badge,
             label: context.l10n.personAccount,
             value: context.l10n.personFlutterLinked,
           ),
@@ -129,7 +130,7 @@ class AccountAccordion extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
               child: OutlinedButton.icon(
                 onPressed: onUnlinkAccount,
-                icon: const Icon(Icons.link_off, color: AppColors.danger),
+                icon: Icon(AppIcons.linkOff, color: AppColors.danger),
                 label: IonButtonLabel(context.l10n.personFlutterUnlinkAccount),
                 style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
               ),
@@ -144,7 +145,7 @@ class AccountAccordion extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
               child: FilledButton.icon(
                 onPressed: onCreateAccount,
-                icon: const Icon(Icons.person_add),
+                icon: Icon(AppIcons.personAdd),
                 label: IonButtonLabel(context.l10n.personFlutterCreateAccount),
               ),
             ),
@@ -158,7 +159,7 @@ class AccountAccordion extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline, color: AppColors.primary, size: 20),
+                  Icon(AppIcons.infoOutline, color: AppColors.primary, size: 20),
                   const SizedBox(width: AppDimensions.paddingS),
                   Expanded(
                     child: Text(
@@ -178,7 +179,7 @@ class AccountAccordion extends ConsumerWidget {
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
               onPressed: () => _showHelp(context),
-              icon: const Icon(Icons.help_outline, size: 18),
+              icon: Icon(AppIcons.helpOutline, size: 18),
               label: IonButtonLabel(context.l10n.personHelp),
             ),
           ),
@@ -193,7 +194,7 @@ class AccountAccordion extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline, color: AppColors.warning),
+                Icon(AppIcons.infoOutline, color: AppColors.warning),
                 const SizedBox(width: AppDimensions.paddingS),
                 Expanded(
                   child: Text(
@@ -309,7 +310,7 @@ class AccountAccordion extends ConsumerWidget {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.close, semanticLabel: ctx.l10n.commonClose),
+                    icon: Icon(AppIcons.close, semanticLabel: ctx.l10n.commonClose),
                     onPressed: () => Navigator.pop(ctx),
                   ),
                 ],
@@ -372,16 +373,16 @@ class AccountAccordion extends ConsumerWidget {
 
   IconData _getRoleIcon(Role role) {
     return switch (role) {
-      Role.admin => Icons.admin_panel_settings,
-      Role.responsible => Icons.manage_accounts,
-      Role.helper => Icons.handshake,
-      Role.viewer => Icons.visibility,
-      Role.player => Icons.person,
-      Role.voiceLeader => Icons.record_voice_over,
-      Role.voiceLeaderHelper => Icons.support_agent,
-      Role.parent => Icons.family_restroom,
-      Role.applicant => Icons.pending,
-      Role.none => Icons.person_off,
+      Role.admin => AppIcons.adminPanelSettings,
+      Role.responsible => AppIcons.manageAccounts,
+      Role.helper => AppIcons.handshake,
+      Role.viewer => AppIcons.visibility,
+      Role.player => AppIcons.person,
+      Role.voiceLeader => AppIcons.recordVoiceOver,
+      Role.voiceLeaderHelper => AppIcons.supportAgent,
+      Role.parent => AppIcons.familyRestroom,
+      Role.applicant => AppIcons.pending,
+      Role.none => AppIcons.personOff,
     };
   }
 }

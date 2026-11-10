@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/theme/app_colors.dart';
@@ -39,7 +40,7 @@ class PersonHeader extends ConsumerWidget {
       color: dark ? const Color(0xFF222428) : AppColors.light,
       alignment: Alignment.bottomCenter,
       child: Icon(
-        Icons.person,
+        AppIcons.person,
         size: 104,
         color: dark ? const Color(0xFF555555) : const Color(0xFFC5C5C5),
       ),
@@ -96,7 +97,7 @@ class PersonHeader extends ConsumerWidget {
                           shape: BoxShape.circle,
                           border: Border.all(color: ringColor, width: 3),
                         ),
-                        child: const Icon(Icons.camera_alt,
+                        child: Icon(AppIcons.cameraAlt,
                             size: 16, color: Colors.white),
                       ),
                     ),
@@ -129,7 +130,7 @@ class PersonHeader extends ConsumerWidget {
                       child: IconButton(
                         padding: EdgeInsets.zero,
                         tooltip: context.l10n.personEditName,
-                        icon: const Icon(Icons.edit_note,
+                        icon: Icon(AppIcons.editNote,
                             size: 20, color: AppColors.medium),
                         onPressed: onEditName,
                       ),
@@ -156,12 +157,12 @@ class PersonHeader extends ConsumerWidget {
           if (canEdit) ...[
             ImageViewerAction(
               label: context.l10n.personReplace,
-              icon: Icons.photo_camera_outlined,
+              icon: AppIcons.photoCameraOutlined,
               onPressed: () => replacePersonPhoto(context, ref, person),
             ),
             ImageViewerAction(
               label: context.l10n.commonRemove,
-              icon: Icons.delete_outline,
+              icon: AppIcons.deleteOutline,
               destructive: true,
               onPressed: () => removePersonPhoto(context, ref, person),
             ),

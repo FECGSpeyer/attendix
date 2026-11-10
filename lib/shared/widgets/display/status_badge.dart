@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/theme/app_colors.dart';
@@ -253,17 +254,17 @@ class StatusChip extends StatelessWidget {
   IconData get _icon {
     switch (status) {
       case AttendanceStatus.present:
-        return Icons.check;
+        return AppIcons.check;
       case AttendanceStatus.absent:
-        return Icons.close;
+        return AppIcons.close;
       case AttendanceStatus.excused:
-        return Icons.event_busy;
+        return AppIcons.eventBusy;
       case AttendanceStatus.late:
-        return Icons.schedule;
+        return AppIcons.schedule;
       case AttendanceStatus.lateExcused:
-        return Icons.history;
+        return AppIcons.history;
       case AttendanceStatus.neutral:
-        return Icons.remove;
+        return AppIcons.remove;
     }
   }
 

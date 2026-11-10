@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -66,12 +67,12 @@ class SongFilterSheet extends ConsumerWidget {
                     child: IonButtonLabel(l10n.dateDialogReset),
                   ),
                 IconButton(
-                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                  icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
-            _Header(icon: Icons.sort, title: l10n.attendanceSorting),
+            _Header(icon: AppIcons.sort, title: l10n.attendanceSorting),
             DropdownButtonFormField<SongSortOption>(
               value: sortOptions.contains(filter.sortOption)
                   ? filter.sortOption
@@ -85,7 +86,7 @@ class SongFilterSheet extends ConsumerWidget {
                 if (v != null) notifier.setSortOption(v);
               },
             ),
-            _Header(icon: Icons.speed, title: l10n.songsDifficulty),
+            _Header(icon: AppIcons.speed, title: l10n.songsDifficulty),
             DropdownButtonFormField<int?>(
               value: filter.difficulty,
               isDense: true,
@@ -100,20 +101,20 @@ class SongFilterSheet extends ConsumerWidget {
             const SizedBox(height: AppDimensions.paddingS),
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
-              secondary: const Icon(Icons.people),
+              secondary: Icon(AppIcons.people),
               title: Text(l10n.songsChoirOrchestra),
               value: filter.withChoir,
               onChanged: notifier.setWithChoir,
             ),
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
-              secondary: const Icon(Icons.person),
+              secondary: Icon(AppIcons.person),
               title: Text(l10n.songsSolo),
               value: filter.withSolo,
               onChanged: notifier.setWithSolo,
             ),
             if (data.categories.isNotEmpty) ...[
-              _Header(icon: Icons.sell_outlined, title: l10n.songsCategories),
+              _Header(icon: AppIcons.sellOutlined, title: l10n.songsCategories),
               Wrap(
                 spacing: 8,
                 runSpacing: 4,
@@ -132,7 +133,7 @@ class SongFilterSheet extends ConsumerWidget {
               ),
             ],
             if (data.instruments.isNotEmpty) ...[
-              _Header(icon: Icons.music_note, title: l10n.settingsGroups),
+              _Header(icon: AppIcons.musicNote, title: l10n.settingsGroups),
               Wrap(
                 spacing: 8,
                 runSpacing: 4,
@@ -152,7 +153,7 @@ class SongFilterSheet extends ConsumerWidget {
             ],
             for (final field in data.additionalFields)
               if (field.isSelect || field.isBoolean) ...[
-                _Header(icon: Icons.filter_alt_outlined, title: field.name),
+                _Header(icon: AppIcons.filterAltOutlined, title: field.name),
                 DropdownButtonFormField<String>(
                   value: filter.fieldFilters[field.id] ?? '',
                   isDense: true,
@@ -168,7 +169,7 @@ class SongFilterSheet extends ConsumerWidget {
                   onChanged: (v) => notifier.setFieldFilter(field.id, v ?? ''),
                 ),
               ],
-            _Header(icon: Icons.visibility, title: l10n.attendanceView),
+            _Header(icon: AppIcons.visibility, title: l10n.attendanceView),
             for (final entry in viewEntries)
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
@@ -261,7 +262,7 @@ class SongFilterMenu extends ConsumerWidget {
     );
     Widget check(bool on) => SizedBox(
           width: 24,
-          child: on ? const Icon(Icons.check, size: 20, color: AppColors.primary) : null,
+          child: on ? Icon(AppIcons.check, size: 20, color: AppColors.primary) : null,
         );
     // Ionic: ion-select slot="end" shows the value (or placeholder) at the end
     Widget valueText(String text, {bool placeholder = false}) => SizedBox(
@@ -364,13 +365,13 @@ class SongFilterMenu extends ConsumerWidget {
       style: menuStyle,
       menuChildren: [
         select<SongSortOption>(
-          icon: Icons.filter_list,
+          icon: AppIcons.filterList,
           value: sortOptions.contains(filter.sortOption) ? filter.sortOption : SongSortOption.numberAsc,
           options: [for (final o in sortOptions) (o, o.labelFor(orchestra: orchestra))],
           onSelected: notifier.setSortOption,
         ),
         select<int?>(
-          icon: Icons.speed,
+          icon: AppIcons.speed,
           value: filter.difficulty,
           options: [
             (null, l10n.commonAll),
@@ -381,20 +382,20 @@ class SongFilterMenu extends ConsumerWidget {
           onSelected: notifier.setDifficulty,
         ),
         toggle(
-          icon: Icons.people,
+          icon: AppIcons.people,
           label: l10n.songsChoirOrchestra,
           value: filter.withChoir,
           onChanged: notifier.setWithChoir,
         ),
         toggle(
-          icon: Icons.person,
+          icon: AppIcons.person,
           label: l10n.songsSolo,
           value: filter.withSolo,
           onChanged: notifier.setWithSolo,
         ),
         if (data.categories.isNotEmpty)
           multi<String>(
-            icon: Icons.sell_outlined,
+            icon: AppIcons.sellOutlined,
             selected: filter.categoryIds,
             options: [
               for (final c in data.categories)
@@ -404,7 +405,7 @@ class SongFilterMenu extends ConsumerWidget {
           ),
         if (instruments.isNotEmpty)
           multi<int>(
-            icon: Icons.music_note,
+            icon: AppIcons.musicNote,
             selected: filter.instrumentIds,
             options: [
               for (final g in instruments)
@@ -413,7 +414,7 @@ class SongFilterMenu extends ConsumerWidget {
             onChanged: (id, on) => notifier.setInstrumentIds(toggled(filter.instrumentIds, id, on)),
           ),
         multi<String>(
-          icon: Icons.visibility,
+          icon: AppIcons.visibility,
           selected: [for (final e in viewEntries) if (view.has(e.$1)) e.$1],
           options: viewEntries,
           onChanged: (id, _) => viewNotifier.toggle(id),
@@ -421,7 +422,7 @@ class SongFilterMenu extends ConsumerWidget {
         for (final field in data.additionalFields)
           if (field.isSelect || field.isBoolean)
             select<String>(
-              icon: Icons.filter_alt_outlined,
+              icon: AppIcons.filterAltOutlined,
               value: filter.fieldFilters[field.id] ?? '',
               placeholder: filter.fieldFilters.containsKey(field.id) ? null : field.name,
               options: [

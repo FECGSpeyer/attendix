@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -51,7 +52,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                 title: context.l10n.songsSongCategories,
                 end: [
                   IconButton(
-                    icon: const Icon(Icons.add),
+                    icon: Icon(AppIcons.add),
                     onPressed: () => _showAddCategoryDialog(context),
                     tooltip: context.l10n.songsAddCategory,
                   ),
@@ -68,7 +69,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.error_outline,
+                        Icon(AppIcons.errorOutline,
                             size: 48, color: AppColors.danger),
                         const SizedBox(height: AppDimensions.paddingM),
                         Text(context.l10n.songsFlutterErrorWith(friendlyErrorMessage(error))),
@@ -314,20 +315,20 @@ class _CategoryTile extends StatelessWidget {
         children: [
           Expanded(child: Text(category.name, style: const TextStyle(fontSize: 16))),
           IconButton(
-            icon: const Icon(Icons.edit, size: 20, color: AppColors.warning),
+            icon: Icon(AppIcons.edit, size: 20, color: AppColors.warning),
             onPressed: onEdit,
             tooltip: context.l10n.commonEdit,
           ),
           IconButton(
-            icon: const Icon(Icons.delete, size: 20, color: AppColors.danger),
+            icon: Icon(AppIcons.delete, size: 20, color: AppColors.danger),
             onPressed: onDelete,
             tooltip: context.l10n.commonDelete,
           ),
           ReorderableDragStartListener(
             index: index,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.all(8),
-              child: Icon(Icons.reorder, color: AppColors.medium),
+              child: Icon(AppIcons.reorder, color: AppColors.medium),
             ),
           ),
         ],

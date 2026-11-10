@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -98,12 +99,12 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
           if (isLeader && task != null) ...[
             IconButton(
               tooltip: l10n.commonEdit,
-              icon: const Icon(Icons.edit_outlined),
+              icon: Icon(AppIcons.editOutlined),
               onPressed: () => showTaskFormSheet(context, task: task),
             ),
             IconButton(
               tooltip: l10n.commonDelete,
-              icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+              icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
               onPressed: () => _delete(task),
             ),
           ],
@@ -126,7 +127,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                         textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                       ),
                       onPressed: _savingStatus ? null : () => _setStatus(task, 'completed'),
-                      icon: const Icon(Icons.check),
+                      icon: Icon(AppIcons.check),
                       label: IonButtonLabel(l10n.tasksMarkDone),
                     ),
                   ),
@@ -143,7 +144,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     children: [
                       IonEmptyState(
-                  icon: Icons.search,
+                  icon: AppIcons.search,
                   iconSize: 48,
                   padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 32),
                   text: l10n.tasksNotAvailable,
@@ -271,7 +272,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
             children: [
               if (task.attendanceId != null)
                 ListTile(
-                  leading: const Icon(Icons.description_outlined, color: AppColors.primary),
+                  leading: Icon(AppIcons.descriptionOutlined, color: AppColors.primary),
                   title: Text(l10n.tasksProtocol),
                   subtitle: attendanceLabel != null
                       ? Text(attendanceLabel, style: const TextStyle(color: AppColors.medium))
@@ -282,7 +283,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
               if (task.agendaItemId != null)
                 if (isLeader)
                   ListTile(
-                    leading: const Icon(Icons.list, color: AppColors.primary),
+                    leading: Icon(AppIcons.list, color: AppColors.primary),
                     title: Text(l10n.tasksTopic),
                     subtitle: Text(task.agendaItem?.title ?? l10n.teamOrgOpenTopic,
                         style: const TextStyle(color: AppColors.medium)),
@@ -291,7 +292,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                   )
                 else if (task.agendaItem?.title != null)
                   ListTile(
-                    leading: const Icon(Icons.list, color: AppColors.medium),
+                    leading: Icon(AppIcons.list, color: AppColors.medium),
                     title: Text(l10n.tasksTopic),
                     subtitle: Text(task.agendaItem!.title!, style: const TextStyle(color: AppColors.medium)),
                   ),

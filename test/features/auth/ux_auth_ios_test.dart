@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:io';
 
 import 'package:attendix/core/theme/app_theme.dart';
@@ -77,7 +78,7 @@ void main() {
       await setPhone(tester);
       await tester.pumpWidget(app(const TenantCreatePage()));
       await tester.pumpAndSettle();
-      expect(find.byIcon(Icons.close), findsOneWidget);
+      expect(find.byIcon(AppIcons.close), findsOneWidget);
       expect(find.byKey(const ValueKey('register-account-menu')), findsNothing);
       final appBar = tester.widget<AppBar>(find.byType(AppBar));
       expect(appBar.leading, isNull);
@@ -89,7 +90,7 @@ void main() {
       await tester
           .pumpWidget(app(const TenantCreatePage(canDismiss: false)));
       await tester.pumpAndSettle();
-      expect(find.byIcon(Icons.close), findsNothing);
+      expect(find.byIcon(AppIcons.close), findsNothing);
       await tester.tap(find.byKey(const ValueKey('register-account-menu')));
       await tester.pumpAndSettle();
       expect(find.text('Abmelden'), findsOneWidget);

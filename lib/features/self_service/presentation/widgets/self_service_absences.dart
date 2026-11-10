@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -333,7 +334,7 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
     if (_from == null || _until == null) {
       content = Row(
         children: [
-          const Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.medium),
+          Icon(AppIcons.calendarTodayOutlined, size: 18, color: AppColors.medium),
           const SizedBox(width: 6),
           Text(
             _from == null ? context.l10n.signoutChooseStart : context.l10n.signoutChooseEnd,
@@ -344,7 +345,7 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
     } else {
       content = Row(
         children: [
-          const Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.primary),
+          Icon(AppIcons.calendarTodayOutlined, size: 18, color: AppColors.primary),
           const SizedBox(width: 6),
           Expanded(
             child: Text(
@@ -356,7 +357,7 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.cancel_outlined, color: AppColors.medium),
+            icon: Icon(AppIcons.cancelOutlined, color: AppColors.medium),
             tooltip: context.l10n.dateDialogReset,
             onPressed: _reset,
           ),
@@ -383,7 +384,7 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
               title: context.l10n.signoutReportAbsence,
               end: [
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(AppIcons.close),
                   tooltip: context.l10n.commonClose,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -428,7 +429,7 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               child: FilledButton.icon(
                 onPressed: _valid ? _confirm : null,
-                icon: const Icon(Icons.calendar_today_outlined),
+                icon: Icon(AppIcons.calendarTodayOutlined),
                 label: IonButtonLabel(context.l10n.signoutEnterAbsence),
               ),
             ),
@@ -481,7 +482,7 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
               title: context.l10n.signoutPause,
               end: [
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(AppIcons.close),
                   tooltip: context.l10n.commonClose,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -513,10 +514,10 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
                 children: [
                   if (_until != null)
                     IconButton(
-                      icon: Icon(Icons.cancel_outlined, color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
+                      icon: Icon(AppIcons.cancelOutlined, color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
                       onPressed: () => setState(() => _until = null),
                     ),
-                  Icon(_calendarOpen ? Icons.expand_less : Icons.expand_more),
+                  Icon(_calendarOpen ? AppIcons.expandLess : AppIcons.expandMore),
                 ],
               ),
               onTap: () => setState(() => _calendarOpen = !_calendarOpen),

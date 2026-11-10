@@ -46,7 +46,11 @@ class RdRecordFilterChips extends StatelessWidget {
           RdRecordFilter.excused => (l10n.redesignStatusExcused, p.excused),
           RdRecordFilter.absent => (l10n.redesignStatusAbsent, p.absent),
           RdRecordFilter.open => (l10n.redesignStatusOpen, p.text2),
+          RdRecordFilter.yes => (l10n.redesignStatusYes, p.present),
+          RdRecordFilter.later => (l10n.redesignStatusLater, p.late),
         };
+    // The answer filters only while chosen from the Rückmeldungen card.
+    bool ownChip(RdRecordFilter f) => f != RdRecordFilter.yes && f != RdRecordFilter.later;
     return Wrap(
       spacing: 6,
       runSpacing: 6,
@@ -54,7 +58,7 @@ class RdRecordFilterChips extends StatelessWidget {
         for (final f in RdRecordFilter.values)
           if (f == RdRecordFilter.all ||
               f == selected ||
-              members.any((m) => rdFilterMatches(f, m.status)))
+              (ownChip(f) && members.any((m) => rdFilterMatches(f, m.status))))
             _FilterChip(
               key: ValueKey('rd-filter-${f.name}'),
               label: labelOf(f).$1,

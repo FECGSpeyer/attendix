@@ -82,7 +82,10 @@ AttendanceStatus rdToggleTarget(
 }
 
 /// Filter of the Anwesenheit tab.
-enum RdRecordFilter { all, present, late, excused, absent, open }
+/// [yes] and [later] are the answers before the start (from the counts of
+/// the Rückmeldungen card): "zugesagt" holds present and late, "kommt
+/// später" only the announced lateness. They are no chips of their own.
+enum RdRecordFilter { all, present, late, excused, absent, open, yes, later }
 
 /// Whether [status] belongs to the filter [filter] ("Verspätet" holds
 /// both late statuses).
@@ -93,6 +96,8 @@ bool rdFilterMatches(RdRecordFilter filter, AttendanceStatus status) => switch (
       RdRecordFilter.excused => status == AttendanceStatus.excused,
       RdRecordFilter.absent => status == AttendanceStatus.absent,
       RdRecordFilter.open => status == AttendanceStatus.neutral,
+      RdRecordFilter.yes => status == AttendanceStatus.present || status == AttendanceStatus.late,
+      RdRecordFilter.later => status == AttendanceStatus.lateExcused,
     };
 
 /// Whether [member] matches the search [query] (first or last name).

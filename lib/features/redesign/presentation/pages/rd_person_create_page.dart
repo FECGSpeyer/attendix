@@ -314,7 +314,7 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
         isMainGroup: _isMainGroup(groupId),
         imageBytes: _pickedImage,
       );
-      if (!created || !mounted) return;
+      if (created == null || !mounted) return;
       _touched = false;
       _first.clear();
       _last.clear();

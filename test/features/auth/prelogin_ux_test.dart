@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -272,7 +273,7 @@ void main() {
       await tester.pump();
       expect(find.byType(ErrorStateView), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.refresh));
+      await tester.tap(find.byIcon(AppIcons.refresh));
       await tester.pump();
       expect(find.byType(ErrorStateView), findsNothing);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);

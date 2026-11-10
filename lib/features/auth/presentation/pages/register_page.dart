@@ -1,4 +1,5 @@
 import 'package:flutter/gestures.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -347,7 +348,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         actions: [
           ToolbarButtonGroup(children: [
             IconButton(
-              icon: const Icon(Icons.close),
+              icon: Icon(AppIcons.close),
               tooltip: context.l10n.commonClose,
               onPressed: _isLoading ? null : _close,
             ),
@@ -421,8 +422,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       iconSize: ios ? 22 : 20,
                       icon: Icon(
                         _obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
+                            ? AppIcons.visibilityOutlined
+                            : AppIcons.visibilityOffOutlined,
                       ),
                       onPressed: () {
                         setState(() {

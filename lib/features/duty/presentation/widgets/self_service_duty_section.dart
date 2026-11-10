@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -76,10 +77,10 @@ class SelfServiceDutySection extends ConsumerWidget {
         children.add(Card(
           margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
           child: ListTile(
-            leading: const Icon(Icons.headset_mic_outlined, color: AppColors.primary),
+            leading: Icon(AppIcons.headsetMicOutlined, color: AppColors.primary),
             title: Text(context.l10n.signoutOpenDuties),
             subtitle: Text(openDutiesTileSubtitle(overview.openDuties.length)),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: Icon(AppIcons.chevronRight),
             onTap: () => showOpenDutiesSheet(context),
           ),
         ));
@@ -245,20 +246,20 @@ class SelfServiceDutySection extends ConsumerWidget {
                 subtitle: Text(otherTermineNames.isEmpty
                     ? '$otherTermineCount'
                     : '$otherTermineCount · $otherTermineNames'),
-                trailing: Icon(showOtherTermine ? Icons.expand_less : Icons.expand_more),
+                trailing: Icon(showOtherTermine ? AppIcons.expandLess : AppIcons.expandMore),
                 onTap: onToggleOtherTermine,
               ),
             ListTile(
-              leading: const Icon(Icons.event_busy_outlined),
+              leading: Icon(AppIcons.eventBusyOutlined),
               title: Text(context.l10n.signoutRegularlyUnavailable),
-              trailing: const Icon(Icons.chevron_right),
+              trailing: Icon(AppIcons.chevronRight),
               onTap: () => openUnavailabilityPage(context, personId: overview.person!.id!),
             ),
             if (onReportAbsence != null)
               ListTile(
-                leading: const Icon(Icons.calendar_today_outlined),
+                leading: Icon(AppIcons.calendarTodayOutlined),
                 title: Text(context.l10n.signoutReportAbsence),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: Icon(AppIcons.chevronRight),
                 onTap: onReportAbsence,
               ),
           ],
@@ -371,10 +372,10 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
               const Divider(),
               if (overview?.person?.id != null)
                 ListTile(
-                  leading: const Icon(Icons.event_busy_outlined),
+                  leading: Icon(AppIcons.eventBusyOutlined),
                   title: Text(context.l10n.signoutRegularlyUnavailable),
                   subtitle: Text(context.l10n.signoutRegularlyUnavailableHint),
-                  trailing: const Icon(Icons.chevron_right),
+                  trailing: Icon(AppIcons.chevronRight),
                   onTap: () {
                     Navigator.of(ctx).pop();
                     openUnavailabilityPage(context, personId: overview!.person!.id!);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -146,7 +147,7 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
               automaticallyImplyLeading: false,
               actions: [
                 IconButton(
-                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                  icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -166,7 +167,7 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.event),
+              leading: Icon(AppIcons.event),
               title: Text(context.l10n.personFromRequired),
               subtitle: Text(_from != null
                   ? _dateFormat.format(_from!)
@@ -174,14 +175,14 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
               onTap: _pickRange,
             ),
             ListTile(
-              leading: const Icon(Icons.event_available),
+              leading: Icon(AppIcons.eventAvailable),
               title: Text(context.l10n.personUntilRequired),
               subtitle: Text(_until != null
                   ? _dateFormat.format(_until!)
                   : context.l10n.personNoDateChosen),
               trailing: _from != null
                   ? IconButton(
-                      icon: Icon(Icons.cancel_outlined,
+                      icon: Icon(AppIcons.cancelOutlined,
                           color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
                       onPressed: () => setState(() {
                         _from = null;
@@ -205,7 +206,7 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: FilledButton.icon(
                 onPressed: _isValid ? _submit : null,
-                icon: const Icon(Icons.calendar_month),
+                icon: Icon(AppIcons.calendarMonth),
                 label: IonButtonLabel(context.l10n.personEnterAbsence),
               ),
             ),
@@ -339,7 +340,7 @@ class PlannedAbsenceTile extends StatelessWidget {
       title: Text('${_fmt(absence.fromDate)} – ${_fmt(absence.untilDate)}'),
       subtitle: absence.reason.isNotEmpty ? Text(absence.reason) : null,
       trailing: IconButton(
-        icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+        icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
         tooltip: context.l10n.signoutDeleteAbsence,
         onPressed: onDelete,
       ),
@@ -402,7 +403,7 @@ class _PlannedAbsencesAccordionState
                 ),
               ),
             ListTile(
-              leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+              leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
               title: Text(
                 context.l10n.personAddAbsence,
                 style: const TextStyle(color: AppColors.primary),

@@ -1,4 +1,5 @@
 import 'package:flutter/gestures.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -715,7 +716,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             visualDensity: VisualDensity.compact,
                           ),
                           onPressed: () => ref.read(appUpdateServiceProvider).applyUpdate(),
-                          icon: const Icon(Icons.cloud_download_outlined, size: 18),
+                          icon: Icon(AppIcons.cloudDownloadOutlined, size: 18),
                           label: IonButtonLabel(context.l10n.loginInstallUpdate),
                         ),
                       ),
@@ -975,8 +976,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 iconSize: ios ? 22 : 20,
                 icon: Icon(
                   _obscurePassword
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
+                      ? AppIcons.visibilityOutlined
+                      : AppIcons.visibilityOffOutlined,
                 ),
                 onPressed: () {
                   setState(() {

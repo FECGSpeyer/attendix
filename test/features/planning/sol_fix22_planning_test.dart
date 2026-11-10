@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
@@ -159,7 +160,7 @@ void main() {
     }
 
     Future<void> close(WidgetTester tester) async {
-      await tester.tap(find.byIcon(Icons.close));
+      await tester.tap(find.byIcon(AppIcons.close));
       await tester.pumpAndSettle();
     }
 

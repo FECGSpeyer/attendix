@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -143,7 +144,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.home_outlined),
+            icon: Icon(AppIcons.homeOutlined),
             tooltip: context.l10n.coreFlutterRouterGoHome,
             onPressed: _goHome,
           ),
@@ -268,7 +269,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             ),
             child: Column(
               children: [
-                const Icon(Icons.business_outlined,
+                Icon(AppIcons.businessOutlined,
                     size: 64, color: Color(0xFF666666)),
                 const SizedBox(height: 12),
                 Text(
@@ -314,7 +315,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                         ? MemoryImage(_profileImageBytes!)
                         : null,
                     child: _profileImageBytes == null
-                        ? const Icon(Icons.person, color: AppColors.medium)
+                        ? Icon(AppIcons.person, color: AppColors.medium)
                         : null,
                   ),
                   label: _profileImageBytes != null
@@ -394,7 +395,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                     return ColoredBox(
                       color: AppColors.warning,
                       child: IonItem(
-                        start: const Icon(Icons.warning_amber_outlined,
+                        start: Icon(AppIcons.warningAmberOutlined,
                             color: Colors.black),
                         title: Text(
                           context.l10n.tenantRegisterNoGroups,
@@ -470,7 +471,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               IonButtonItem(
                 key: const ValueKey('tenant-register-finish'),
                 filled: true,
-                icon: Icons.check_circle_outline,
+                icon: AppIcons.checkCircleOutline,
                 label: _finishLabel,
                 onTap: _isLoading ||
                         _noGroupsAvailable ||
@@ -545,9 +546,9 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         margin: _betaGroupMargin,
         color: _betaGroupColor,
         children: [
-          tile(const ValueKey('tenant-register-self'), Icons.person_outline, l10n.parentRegisterSelf,
+          tile(const ValueKey('tenant-register-self'), AppIcons.personOutline, l10n.parentRegisterSelf,
               l10n.parentRegisterSelfHint, false),
-          tile(const ValueKey('tenant-register-child'), Icons.family_restroom_outlined, l10n.parentRegisterChild,
+          tile(const ValueKey('tenant-register-child'), AppIcons.familyRestroom, l10n.parentRegisterChild,
               l10n.parentRegisterChildHint, true),
         ],
       ),
@@ -636,7 +637,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               )
             else if (groups.isEmpty)
               IonItem(
-                start: const Icon(Icons.warning_amber_outlined, color: AppColors.warning),
+                start: Icon(AppIcons.warningAmberOutlined, color: AppColors.warning),
                 label: l10n.tenantRegisterNoGroups,
               )
             else
@@ -682,7 +683,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         children: [
           IonItem(
             key: const ValueKey('tenant-register-add-child'),
-            start: const Icon(Icons.add, color: AppColors.primary),
+            start: Icon(AppIcons.add, color: AppColors.primary),
             label: l10n.parentRegisterAddChild,
             labelColor: AppColors.primary,
             onTap: _isLoading
@@ -796,7 +797,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             right: 0,
             child: SafeArea(
               child: IconButton(
-                icon: const Icon(Icons.home_outlined, color: Colors.white),
+                icon: Icon(AppIcons.homeOutlined, color: Colors.white),
                 tooltip: l10n.coreFlutterRouterGoHome,
                 onPressed: _goHome,
               ),
@@ -1003,12 +1004,12 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             AppActionSheetAction(
               label: context.l10n.attendanceFlutterCamera,
               value: ImageSource.camera,
-              icon: Icons.photo_camera_outlined,
+              icon: AppIcons.photoCameraOutlined,
             ),
             AppActionSheetAction(
               label: context.l10n.attendanceFlutterGallery,
               value: ImageSource.gallery,
-              icon: Icons.photo_library_outlined,
+              icon: AppIcons.photoLibraryOutlined,
             ),
           ],
         );
@@ -1162,7 +1163,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                     controller: emailController,
                     decoration: InputDecoration(
                       labelText: context.l10n.loginEmail,
-                      prefixIcon: const Icon(Icons.email_outlined),
+                      prefixIcon: Icon(AppIcons.emailOutlined),
                     ),
                     keyboardType: TextInputType.emailAddress,
                   ),
@@ -1171,7 +1172,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                     controller: passwordController,
                     decoration: InputDecoration(
                       labelText: context.l10n.loginPassword,
-                      prefixIcon: const Icon(Icons.lock_outlined),
+                      prefixIcon: Icon(AppIcons.lockOutlined),
                     ),
                     obscureText: true,
                   ),

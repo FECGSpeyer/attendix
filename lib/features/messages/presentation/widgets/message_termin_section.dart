@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/attendance_type_providers.dart';
@@ -154,7 +155,7 @@ class _MessageTerminSectionState extends ConsumerState<MessageTerminSection> {
             child: Row(
               children: [
                 Icon(
-                  own.state == 'rejected' ? Icons.cancel_outlined : Icons.check_circle_outline,
+                  own.state == 'rejected' ? AppIcons.cancelOutlined : AppIcons.checkCircleOutline,
                   size: 20,
                 ),
                 const SizedBox(width: 10),

@@ -20,11 +20,15 @@ import 'widgets/attendance_detail/add_persons_sheet.dart';
 /// default status (or the status of their shift). [currentPersonIds] are
 /// the persons the Termin already has. Writes go through the tenant
 /// repository (`tenantId` filtered).
+///
+/// [onCreateNew] (Beta): offers "Neue Person anlegen" in the sheet and runs
+/// when it is tapped (the new person is created and added to this Termin).
 Future<void> addPersonsToAttendance(
   BuildContext context,
   WidgetRef ref, {
   required int attendanceId,
   required Set<int> currentPersonIds,
+  Future<void> Function()? onCreateNew,
 }) async {
   final repo = ref.read(attendanceRepositoryWithTenantProvider);
   final AddPersonCandidates candidates;
@@ -45,12 +49,19 @@ Future<void> addPersonsToAttendance(
     return;
   }
   if (!context.mounted) return;
-  final selected = await showAddPersonsSheet(
+  final pick = await showAddPersonsSheet(
     context,
     candidates: candidates,
     groupNameOf: (p) => p.groupName ?? context.l10n.attendanceNoGroup,
+    offerCreate: onCreateNew != null,
   );
-  if (selected == null || selected.isEmpty || !context.mounted) return;
+  if (pick == null || !context.mounted) return;
+  if (pick.createNew) {
+    await onCreateNew?.call();
+    return;
+  }
+  final selected = pick.personIds;
+  if (selected.isEmpty) return;
 
   try {
     final attendance = ref.read(attendanceDetailProvider(attendanceId)).valueOrNull;

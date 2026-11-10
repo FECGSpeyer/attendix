@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -269,7 +270,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+            icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
             onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
           ),
         ],
@@ -331,8 +332,8 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
               padding: const EdgeInsets.only(top: AppDimensions.paddingXL),
               child: Column(
                 children: [
-                  const Icon(
-                    Icons.edit_note,
+                  Icon(
+                    AppIcons.editNote,
                     size: 48,
                     color: AppColors.medium,
                   ),
@@ -355,7 +356,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
                   end: [
                     OutlinedButton.icon(
                       onPressed: _applyToAll,
-                      icon: const Icon(Icons.done_all, size: 18),
+                      icon: Icon(AppIcons.doneAll, size: 18),
                       label: IonButtonLabel(context.l10n.peopleSetForAll),
                       style: OutlinedButton.styleFrom(
                         visualDensity: VisualDensity.compact,

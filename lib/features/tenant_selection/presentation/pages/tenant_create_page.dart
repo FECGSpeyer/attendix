@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -82,7 +83,7 @@ class TenantTypeTexts {
           namePlaceholder: l10n.registerPlaceholderGeneralName,
           shortPlaceholder: l10n.registerPlaceholderGeneralShort,
           mainGroupPlaceholder: l10n.registerPlaceholderGeneralMain,
-          icon: Icons.groups_outlined,
+          icon: AppIcons.groupsOutlined,
         ),
         'choir': TenantTypeTexts(
           option: l10n.registerTypeChoirOption,
@@ -91,7 +92,7 @@ class TenantTypeTexts {
           namePlaceholder: l10n.registerPlaceholderChoirName,
           shortPlaceholder: l10n.registerPlaceholderChoirShort,
           mainGroupPlaceholder: l10n.registerPlaceholderChoirMain,
-          icon: Icons.mic_none,
+          icon: AppIcons.micNone,
         ),
         'orchestra': TenantTypeTexts(
           option: l10n.registerTypeOrchestraOption,
@@ -100,7 +101,7 @@ class TenantTypeTexts {
           namePlaceholder: l10n.registerPlaceholderOrchestraName,
           shortPlaceholder: l10n.registerPlaceholderOrchestraShort,
           mainGroupPlaceholder: l10n.registerPlaceholderOrchestraMain,
-          icon: Icons.music_note_outlined,
+          icon: AppIcons.musicNoteOutlined,
         ),
       };
 
@@ -171,7 +172,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
           actions: [
             if (_canDismiss)
               IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(AppIcons.close),
                 tooltip: l10n.commonClose,
                 onPressed: _isLoading
                     ? null
@@ -185,7 +186,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
               // Ionic register-account-menu popover: Abmelden / Konto löschen
               PopupMenuButton<String>(
                 key: const ValueKey('register-account-menu'),
-                icon: Icon(ios ? Icons.more_horiz : Icons.more_vert),
+                icon: Icon(ios ? AppIcons.moreHoriz : AppIcons.moreVert),
                 position: PopupMenuPosition.under,
                 onSelected: (value) =>
                     value == 'logout' ? _logout() : _confirmDeleteAccount(),
@@ -193,7 +194,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                   PopupMenuItem(
                     value: 'logout',
                     child: Row(children: [
-                      const Icon(Icons.logout),
+                      Icon(AppIcons.logout),
                       const SizedBox(width: 12),
                       Text(l10n.registerLogout),
                     ]),
@@ -201,7 +202,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                   PopupMenuItem(
                     value: 'delete',
                     child: Row(children: [
-                      const Icon(Icons.delete_outline, color: AppColors.danger),
+                      Icon(AppIcons.deleteOutline, color: AppColors.danger),
                       const SizedBox(width: 12),
                       Text(l10n.registerDeleteAccount,
                           style: const TextStyle(color: AppColors.danger)),
@@ -218,7 +219,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
             _IonCard(
               child: Column(
                 children: [
-                  const Icon(Icons.rocket_launch_outlined,
+                  Icon(AppIcons.rocketLaunchOutlined,
                       size: 48, color: AppColors.primary),
                   const SizedBox(height: 8),
                   Text(
@@ -302,7 +303,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                       Text(texts.option, style: inputStyle),
                     ],
                   ),
-                  end: const Icon(Icons.arrow_drop_down,
+                  end: Icon(AppIcons.arrowDropDown,
                       color: AppColors.medium),
                 ),
               ],
@@ -313,9 +314,9 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(top: 1),
-                    child: Icon(Icons.check_circle,
+                    child: Icon(AppIcons.checkCircle,
                         color: AppColors.success, size: 17.6),
                   ),
                   const SizedBox(width: 6),
@@ -376,7 +377,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                   tooltip: l10n.registerFlutterMainGroupInfo,
                   visualDensity: VisualDensity.compact,
                   color: AppColors.primary,
-                  icon: const Icon(Icons.help_outline),
+                  icon: Icon(AppIcons.helpOutline),
                   onPressed: () => _showMainGroupInfo(buttonContext),
                 ),
               ),
@@ -441,7 +442,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                               children: [
                                 Row(
                                   children: [
-                                    const Icon(Icons.error_outline,
+                                    Icon(AppIcons.errorOutline,
                                         color: AppColors.medium, size: 16),
                                     const SizedBox(width: 4),
                                     Expanded(
@@ -483,7 +484,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                         height: 18,
                         child: AppSpinner(strokeWidth: 2),
                       )
-                    : const Icon(Icons.add_circle_outline),
+                    : Icon(AppIcons.addCircleOutline),
                 label: IonButtonLabel(
                     _isLoading ? l10n.registerCreating : l10n.registerCreate),
               ),

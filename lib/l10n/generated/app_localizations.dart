@@ -1382,6 +1382,18 @@ abstract class AppLocalizations {
   /// **'Verbindung wiederhergestellt'**
   String get attendanceConnectionRestored;
 
+  /// attendance.createNewPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Person anlegen'**
+  String get attendanceCreateNewPerson;
+
+  /// attendance.createNewPersonHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wird angelegt und gleich zu diesem Termin hinzugefügt.'**
+  String get attendanceCreateNewPersonHint;
+
   /// attendance.createRunSheet
   ///
   /// In de, this message translates to:
@@ -2119,6 +2131,72 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Benötigt: {count, plural, one {{count} Person} other {{count} Personen}}'**
   String attendanceNeeded(num count);
+
+  /// attendance.newPerson.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde angelegt, konnte aber nicht zum Termin hinzugefügt werden.'**
+  String attendanceNewPersonAddFailed(Object name);
+
+  /// attendance.newPerson.added
+  ///
+  /// In de, this message translates to:
+  /// **'{name} angelegt und hinzugefügt'**
+  String attendanceNewPersonAdded(Object name);
+
+  /// attendance.newPerson.create
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get attendanceNewPersonCreate;
+
+  /// attendance.newPerson.failed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Person konnte nicht angelegt werden.'**
+  String get attendanceNewPersonFailed;
+
+  /// attendance.newPerson.firstName
+  ///
+  /// In de, this message translates to:
+  /// **'Vorname'**
+  String get attendanceNewPersonFirstName;
+
+  /// attendance.newPerson.group
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get attendanceNewPersonGroup;
+
+  /// attendance.newPerson.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Person wird Mitglied der Gruppe und gleich zu diesem Termin hinzugefügt. Weitere Angaben ergänzt du später bei der Person.'**
+  String get attendanceNewPersonHint;
+
+  /// attendance.newPerson.lastName
+  ///
+  /// In de, this message translates to:
+  /// **'Nachname'**
+  String get attendanceNewPersonLastName;
+
+  /// attendance.newPerson.nameMissing
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib Vor- und Nachnamen ein.'**
+  String get attendanceNewPersonNameMissing;
+
+  /// attendance.newPerson.othersMissing
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde angelegt und hinzugefügt, fehlt aber noch in anderen kommenden Terminen.'**
+  String attendanceNewPersonOthersMissing(Object name);
+
+  /// attendance.newPerson.title
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Person'**
+  String get attendanceNewPersonTitle;
 
   /// attendance.noConnection
   ///
@@ -16907,6 +16985,42 @@ abstract class AppLocalizations {
   /// **'Was'**
   String get rdDataWhat;
 
+  /// rdHelper.formHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aushilfen kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert.'**
+  String get rdHelperFormHint;
+
+  /// rdHelper.lastDay
+  ///
+  /// In de, this message translates to:
+  /// **'Dabei bis'**
+  String get rdHelperLastDay;
+
+  /// rdHelper.personHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kommt nur in Termine bis zu diesem Tag und wird danach automatisch archiviert.'**
+  String get rdHelperPersonHint;
+
+  /// rdHelper.switchHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur für eine bestimmte Zeit dabei, z. B. für ein Konzert'**
+  String get rdHelperSwitchHint;
+
+  /// rdHelper.title
+  ///
+  /// In de, this message translates to:
+  /// **'Aushilfe'**
+  String get rdHelperTitle;
+
+  /// rdHelper.until
+  ///
+  /// In de, this message translates to:
+  /// **'Aushilfe bis {date}'**
+  String rdHelperUntil(Object date);
+
   /// rdOrg.archiveNote
   ///
   /// In de, this message translates to:
@@ -20488,6 +20602,12 @@ abstract class AppLocalizations {
   /// **'Bearbeiten'**
   String get redesignEventPlanEditShort;
 
+  /// redesign.event.planFree
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Min frei bis Terminende'**
+  String redesignEventPlanFree(Object count);
+
   /// redesign.event.planHint
   ///
   /// In de, this message translates to:
@@ -20541,6 +20661,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Vorbereitung · {done} von {total} erledigt'**
   String redesignEventPrep(Object done, Object total);
+
+  /// redesign.event.prepEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Was vor dem Termin erledigt sein muss, z. B. Raum aufschließen oder Noten kopieren. Abhaken kannst du direkt hier, sehen kann es nur die Leitung.'**
+  String get redesignEventPrepEmpty;
+
+  /// redesign.event.prepTakeOver
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Aufgabe der Terminart übernehmen} other {{count} Aufgaben der Terminart übernehmen}}'**
+  String redesignEventPrepTakeOver(num count);
+
+  /// redesign.event.prepTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Vorbereitung'**
+  String get redesignEventPrepTitle;
 
   /// redesign.event.presentOf
   ///
@@ -26176,11 +26314,11 @@ abstract class AppLocalizations {
   /// **'Geburtstag: {name} ({day})'**
   String redesignTodayBirthday(Object name, Object day);
 
-  /// redesign.today.birthdayMore
+  /// redesign.today.birthdays
   ///
   /// In de, this message translates to:
-  /// **'Geburtstag: {name} ({day}) +{count}'**
-  String redesignTodayBirthdayMore(Object name, Object day, Object count);
+  /// **'Geburtstage: {list}'**
+  String redesignTodayBirthdays(Object list);
 
   /// redesign.today.changeAnswer
   ///
@@ -26428,6 +26566,12 @@ abstract class AppLocalizations {
   /// **'Prüfen und freischalten'**
   String get redesignTodayPendingHint;
 
+  /// redesign.today.prepDue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Aufgabe zur Vorbereitung fällig} other {{count} Aufgaben zur Vorbereitung fällig}}'**
+  String redesignTodayPrepDue(num count);
+
   /// redesign.today.question
   ///
   /// In de, this message translates to:
@@ -26481,12 +26625,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.'**
   String get redesignTodayViewerHint;
-
-  /// redesign.today.weekEmpty
-  ///
-  /// In de, this message translates to:
-  /// **'Diese Woche kommt sonst nichts.'**
-  String get redesignTodayWeekEmpty;
 
   /// redesign.today.whyNot
   ///

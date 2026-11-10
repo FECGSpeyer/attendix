@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -370,7 +371,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
               if (_isPreset)
                 _ComposeBox(
                   child: ListTile(
-                    leading: const Icon(Icons.people_outline),
+                    leading: Icon(AppIcons.peopleOutline),
                     title: Text(_preset!.recipientsLabel),
                   ),
                 )
@@ -481,7 +482,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
               ),
               FilledButton.icon(
                 onPressed: _canSend ? _confirmSend : null,
-                icon: const Icon(Icons.send_outlined),
+                icon: Icon(AppIcons.sendOutlined),
                 label: IonButtonLabel(l10n.messagesSend),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(48),

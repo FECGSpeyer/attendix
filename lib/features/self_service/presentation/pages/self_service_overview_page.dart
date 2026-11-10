@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/self_service_providers.dart';
@@ -170,7 +171,7 @@ class _SelfServiceOverviewPageState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
+              Icon(AppIcons.errorOutline, size: 48, color: AppColors.danger),
               const SizedBox(height: 8),
               Text(context.l10n.signoutFlutterError(friendlyErrorMessage(error)), textAlign: TextAlign.center),
               TextButton(onPressed: _refresh, child: IonButtonLabel(context.l10n.messagesRetry)),
@@ -277,7 +278,7 @@ class _SelfServiceOverviewPageState
       trailing: [
         if (past && actions.hasFilesFolder(att))
           IconButton(
-            icon: const Icon(Icons.folder_open_outlined),
+            icon: Icon(AppIcons.folderOpenOutlined),
             tooltip: context.l10n.signoutOpenFiles,
             onPressed: () => actions.openFilesFolder(context, att),
           ),

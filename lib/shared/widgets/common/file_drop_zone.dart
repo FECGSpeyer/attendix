@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
@@ -91,7 +92,7 @@ class _FileDropZoneState extends State<FileDropZone> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.cloud_upload_outlined, size: 40, color: color),
+              Icon(AppIcons.cloudUploadOutlined, size: 40, color: color),
               const SizedBox(height: 8),
               Text(
                 widget.label ?? context.l10n.songsDropHere,

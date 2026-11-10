@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -263,7 +264,7 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
         leading: ToolbarButtonGroup(children: [
           IconButton(
             tooltip: context.l10n.commonClose,
-            icon: const Icon(Icons.close),
+            icon: Icon(AppIcons.close),
             onPressed: () => Navigator.of(context).maybePop(),
           ),
         ]),
@@ -275,13 +276,13 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
               tooltip: _live ? context.l10n.planningFlutterLiveModeEnd : context.l10n.planningFlutterLiveMode,
               // Ionic: radio / radio-outline, danger while live.
               color: _live ? AppColors.danger : AppColors.primary,
-              icon: Icon(_live ? Icons.sensors : Icons.sensors_outlined),
+              icon: Icon(_live ? AppIcons.sensors : AppIcons.sensorsOutlined),
               onPressed: () => setState(() => _live = !_live),
             ),
           if (widget.onEdit != null)
             IconButton(
               tooltip: context.l10n.attendanceEditRunSheet,
-              icon: const Icon(Icons.edit_outlined),
+              icon: Icon(AppIcons.editOutlined),
               onPressed: () {
                 Navigator.of(context).pop();
                 widget.onEdit!(_index);
@@ -289,7 +290,7 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
             ),
           IconButton(
             tooltip: context.l10n.planningExport,
-            icon: const Icon(Icons.ios_share),
+            icon: Icon(AppIcons.iosShare),
             onPressed: _export,
           ),
           ]),

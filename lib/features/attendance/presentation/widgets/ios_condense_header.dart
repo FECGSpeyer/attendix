@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import '../../../../l10n/l10n.dart';
 
 import '../../../../shared/widgets/layout/ionic_ios.dart' show IonSearchIcon, IonIos; // PARITY_R5, IOS27_SWEEP
@@ -155,7 +156,7 @@ class IonSearchbar extends StatelessWidget {
         final clear = value.text.isEmpty
             ? null
             : IconButton(
-                icon: Icon(ios ? Icons.cancel : Icons.clear, size: ios ? 18 : null, semanticLabel: context.l10n.a11yClearInput),
+                icon: Icon(ios ? AppIcons.cancel : AppIcons.clear, size: ios ? 18 : null, semanticLabel: context.l10n.a11yClearInput),
                 color: ios ? Colors.grey : null,
                 onPressed: () {
                   controller.clear();
@@ -169,7 +170,7 @@ class IonSearchbar extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             // PARITY_R5: ios27 search-outline in the text colour
-            prefixIcon: ios ? const IonSearchIcon() : const Icon(Icons.search),
+            prefixIcon: ios ? const IonSearchIcon() : Icon(AppIcons.search),
             suffixIcon: clear,
             filled: ios ? false : null,
             border: ios ? InputBorder.none : null,

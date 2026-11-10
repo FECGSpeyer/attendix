@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
@@ -80,7 +81,7 @@ class AttendanceLegendSheet extends StatelessWidget {
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 child: Row(
                   children: [
-                    const Icon(Icons.help_outline, color: AppColors.primary),
+                    Icon(AppIcons.helpOutline, color: AppColors.primary),
                     const SizedBox(width: 8),
                     Text(
                       context.l10n.signoutLegend,
@@ -90,7 +91,7 @@ class AttendanceLegendSheet extends StatelessWidget {
                     ),
                     const Spacer(),
                     IconButton(
-                      icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                      icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -336,7 +337,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
                   child:
                       _saving
                           ? const SizedBox(width: 22, height: 22, child: AppSpinner(strokeWidth: 2))
-                          : const Icon(Icons.save_outlined),
+                          : Icon(AppIcons.saveOutlined),
                 ),
               )
               : null,
@@ -545,7 +546,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.lock_outline, size: 18, color: AppColors.primary),
+            Icon(AppIcons.lockOutline, size: 18, color: AppColors.primary),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -750,7 +751,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
           icon:
               _previewLoading
                   ? const SizedBox(width: 16, height: 16, child: AppSpinner(strokeWidth: 2))
-                  : const Icon(Icons.visibility_outlined),
+                  : Icon(AppIcons.visibilityOutlined),
           label: IonButtonLabel(l10n.autoMessagesShowPreview),
           style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
         ),
@@ -939,13 +940,13 @@ class _StepperTile extends StatelessWidget {
         children: [
           IconButton(
             tooltip: context.l10n.autoMessagesLess,
-            icon: const Icon(Icons.remove, color: AppColors.primary),
+            icon: Icon(AppIcons.remove, color: AppColors.primary),
             onPressed: onLess,
           ),
           Text(value, style: const TextStyle(fontWeight: FontWeight.w700)),
           IconButton(
             tooltip: context.l10n.autoMessagesMore,
-            icon: const Icon(Icons.add, color: AppColors.primary),
+            icon: Icon(AppIcons.add, color: AppColors.primary),
             onPressed: onMore,
           ),
         ],
@@ -991,7 +992,7 @@ class _SelectTile<T> extends StatelessWidget {
               const SizedBox(width: 4),
               ios
                   ? const IonSelectIcon()
-                  : const Icon(Icons.arrow_drop_down, color: AppColors.medium),
+                  : Icon(AppIcons.arrowDropDown, color: AppColors.medium),
             ],
           );
         },

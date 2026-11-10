@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -184,7 +185,7 @@ class _TenantInfoSection extends ConsumerWidget {
               ),
             ),
             _InfoRow(
-              icon: Icons.people,
+              icon: AppIcons.people,
               label: context.l10n.tabsMembers,
               value: memberCountAsync.when(
                 data: (count) => '$count',
@@ -194,18 +195,18 @@ class _TenantInfoSection extends ConsumerWidget {
             ),
             if (tenant.createdAt != null)
               _InfoRow(
-                icon: Icons.calendar_today,
+                icon: AppIcons.calendarToday,
                 label: context.l10n.tenantSelectFlutterCreatedAt,
                 value: DateFormat(dateFmt()).format(tenant.createdAt!),
               ),
             if (tenant.region != null && tenant.region!.isNotEmpty)
               _InfoRow(
-                icon: Icons.location_on,
+                icon: AppIcons.locationOn,
                 label: context.l10n.tenantSelectFlutterRegion,
                 value: tenant.region!,
               ),
             _InfoRow(
-              icon: Icons.badge,
+              icon: AppIcons.badge,
               label: context.l10n.tenantSelectFlutterYourRole,
               value: _roleName(role, context.l10n),
             ),
@@ -273,7 +274,7 @@ class _DangerZone extends ConsumerWidget {
             side: BorderSide(color: AppColors.danger.withValues(alpha: 0.3)),
           ),
           child: ListTile(
-            leading: Icon(Icons.delete_forever, color: AppColors.danger),
+            leading: Icon(AppIcons.deleteForever, color: AppColors.danger),
             title: Text(
               context.l10n.tenantSelectFlutterDeleteTenant,
               style: TextStyle(
@@ -285,7 +286,7 @@ class _DangerZone extends ConsumerWidget {
               context.l10n.tenantSelectFlutterDeleteTenantHint,
               style: TextStyle(fontSize: 13, color: AppColors.medium),
             ),
-            trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
+            trailing: Icon(AppIcons.chevronRight, color: AppColors.medium),
             onTap: () => _showDeleteTenantDialog(context, ref, tenant),
           ),
         ),

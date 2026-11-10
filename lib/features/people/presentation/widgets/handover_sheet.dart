@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -114,7 +115,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                 _stayInInstance ? context.l10n.peopleFlutterHandoverCopyTitle : context.l10n.peopleFlutterHandoverTransferTitle,
               ),
               leading: IconButton(
-                icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                 onPressed: () => Navigator.pop(context),
               ),
               automaticallyImplyLeading: false,
@@ -194,8 +195,8 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                                     AppSpinner(strokeWidth: 2),
                               )
                             : Icon(_stayInInstance
-                                ? Icons.copy
-                                : Icons.swap_horiz),
+                                ? AppIcons.copy
+                                : AppIcons.swapHoriz),
                         label: IonButtonLabel(_isTransferring
                             ? context.l10n.peopleFlutterHandoverTransferring
                             : _stayInInstance
@@ -228,7 +229,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.business_outlined,
+            Icon(AppIcons.businessOutlined,
                 size: 64, color: AppColors.medium),
             const SizedBox(height: AppDimensions.paddingM),
             Text(
@@ -268,7 +269,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           children: [
             Row(
               children: [
-                const Icon(Icons.people, color: AppColors.primary),
+                Icon(AppIcons.people, color: AppColors.primary),
                 const SizedBox(width: AppDimensions.paddingS),
                 Text(
                   context.l10n.peopleFlutterHandoverCount(players.length, widget.selectedPlayers.length),
@@ -351,7 +352,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
       padding: const EdgeInsets.only(top: AppDimensions.paddingS),
       child: Row(
         children: [
-          const Icon(Icons.cake_outlined, size: 16, color: AppColors.medium),
+          Icon(AppIcons.cakeOutlined, size: 16, color: AppColors.medium),
           const SizedBox(width: 8),
           SizedBox(
             width: 70,
@@ -389,7 +390,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           if (_minAge != null || _maxAge != null) ...[
             const SizedBox(width: 8),
             IconButton(
-              icon: Icon(Icons.clear, size: 18, semanticLabel: context.l10n.a11yClearInput),
+              icon: Icon(AppIcons.clear, size: 18, semanticLabel: context.l10n.a11yClearInput),
               onPressed: () => setState(() {
                 _minAge = null;
                 _maxAge = null;
@@ -459,8 +460,8 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             AppDropdownFormField<int>(
               iosInterface: AppSelectInterface.alert,
               value: _targetTenantId,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.business),
+              decoration: InputDecoration(
+                prefixIcon: Icon(AppIcons.business),
               ),
               items: tenants
                   .map((t) => DropdownMenuItem(
@@ -549,7 +550,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ),
-                    const Icon(Icons.arrow_forward, color: AppColors.medium),
+                    Icon(AppIcons.arrowForward, color: AppColors.medium),
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: AppDropdownFormField<int?>(
@@ -603,7 +604,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             Row(
               children: [
                 Icon(
-                  _stayInInstance ? Icons.info_outline : Icons.warning_amber,
+                  _stayInInstance ? AppIcons.infoOutline : AppIcons.warningAmber,
                   color: _stayInInstance ? AppColors.info : AppColors.warning,
                 ),
                 const SizedBox(width: AppDimensions.paddingS),

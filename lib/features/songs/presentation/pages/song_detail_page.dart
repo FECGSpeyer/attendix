@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -394,7 +395,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                     onRetry: () => ref.invalidate(songDetailDataProvider(_params)),
                   )
                 : ErrorStateView(
-                    icon: Icons.link_off,
+                    icon: AppIcons.linkOff,
                     message: widget.songSharingId != null
                         ? context.l10n.songsInvalidShareLink
                         : context.l10n.songsFlutterNotFound,
@@ -429,13 +430,13 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               if (sharingId != null && sharingId.isNotEmpty)
                 IconButton(
                   tooltip: context.l10n.songsCopyLink,
-                  icon: const Icon(Icons.link),
+                  icon: Icon(AppIcons.link),
                   onPressed: () => _copyShareLink(sharingId, song.id!),
                 ),
               if (!data.readOnly)
                 IconButton(
                   tooltip: context.l10n.songsDeleteSong,
-                  icon: const Icon(Icons.delete_outline),
+                  icon: Icon(AppIcons.deleteOutline),
                   onPressed: () => _confirmDelete(data),
                 ),
             ]),
@@ -449,7 +450,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               onPressed: () => ref
                   .read(audioPlayerServiceProvider.notifier)
                   .playFromUrl(aufnahme.url, aufnahme.fileName, song.name),
-              child: const Icon(Icons.play_arrow),
+              child: Icon(AppIcons.playArrow),
             )),
       bottomNavigationBar: data.isPublic ? const AudioPlayerWidget() : null,
       body: IonRefresher(
@@ -963,7 +964,7 @@ class _MultiSelectTile<T> extends StatelessWidget {
           const SizedBox(width: 4),
           isIosLook(context)
               ? const IonSelectIcon()
-              : const Icon(Icons.arrow_drop_down),
+              : Icon(AppIcons.arrowDropDown),
         ],
       ),
       onTap: options.isEmpty ? null : () => _open(context),
@@ -986,7 +987,7 @@ class _SongOrigin extends StatelessWidget {
   Widget build(BuildContext context) {
     return IonInsetList(children: [
       IonItem(
-        leading: const Icon(Icons.call_split, color: AppColors.medium),
+        leading: Icon(AppIcons.callSplit, color: AppColors.medium),
         title: Text(
           context.l10n.orgSongsCopiedFrom(origin.tenantName, SongUtils.formatDate(origin.copiedAt)),
           style: const TextStyle(fontSize: 14, color: AppColors.medium),
@@ -1023,7 +1024,7 @@ class _CopyToOtherInstance extends ConsumerWidget {
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 4),
       children: [
         IonItem(
-          leading: const Icon(Icons.copy_outlined, color: AppColors.medium),
+          leading: Icon(AppIcons.copyOutlined, color: AppColors.medium),
           title: Text(context.l10n.songsCopyToOther),
           onTap: () => showModalBottomSheet(
             context: context,
@@ -1182,18 +1183,18 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
             if (data.readOnly && files.isNotEmpty)
               IconButton(
                 tooltip: context.l10n.songsDownloadAll,
-                icon: const Icon(Icons.download_outlined),
+                icon: Icon(AppIcons.downloadOutlined),
                 onPressed: _busy ? null : _downloadAll,
               ),
             if (!data.readOnly)
               IconButton(
                 tooltip: context.l10n.songsUploadFiles,
-                icon: const Icon(Icons.cloud_upload_outlined),
+                icon: Icon(AppIcons.cloudUploadOutlined),
                 onPressed: _busy ? null : () => _upload(),
               ),
             if (!data.readOnly && files.isNotEmpty)
               PopupMenuButton<String>(
-                icon: const Icon(Icons.more_horiz),
+                icon: Icon(AppIcons.moreHoriz),
                 onSelected: (v) {
                   switch (v) {
                     case 'print':
@@ -1208,7 +1209,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
                   PopupMenuItem(
                     value: 'print',
                     child: ListTile(
-                      leading: const Icon(Icons.print_outlined),
+                      leading: Icon(AppIcons.printOutlined),
                       title: Text(context.l10n.songsPrintGroupPdfs),
                       contentPadding: EdgeInsets.zero,
                     ),
@@ -1216,7 +1217,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
                   PopupMenuItem(
                     value: 'download',
                     child: ListTile(
-                      leading: const Icon(Icons.download_outlined),
+                      leading: Icon(AppIcons.downloadOutlined),
                       title: Text(context.l10n.songsDownloadAll),
                       contentPadding: EdgeInsets.zero,
                     ),
@@ -1224,7 +1225,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
                   PopupMenuItem(
                     value: 'delete',
                     child: ListTile(
-                      leading: const Icon(Icons.delete_outline),
+                      leading: Icon(AppIcons.deleteOutline),
                       title: Text(context.l10n.songsDeleteAll),
                       contentPadding: EdgeInsets.zero,
                     ),
@@ -1274,12 +1275,12 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
       context,
       title: context.l10n.songsFileActions,
       actions: [
-        AppActionSheetAction(value: 'open', icon: isAudio ? Icons.play_circle_outline : Icons.open_in_new, label: isAudio ? context.l10n.songsPlayRecording : context.l10n.songsOpenFile),
-        if (!isAudio) AppActionSheetAction(value: 'print', icon: Icons.print_outlined, label: context.l10n.songsPrintFile),
-        if (!_isIos || isAudio) AppActionSheetAction(value: 'download', icon: Icons.download_outlined, label: isAudio ? context.l10n.songsDownloadRecording : context.l10n.songsDownloadFile),
-        if (!data.readOnly) AppActionSheetAction(value: 'category', icon: Icons.swap_horiz, label: context.l10n.songsChangeCategory),
-        if (telegramChatId != null && telegramChatId.isNotEmpty) AppActionSheetAction(value: 'telegram', icon: Icons.send_outlined, label: context.l10n.songsSendTelegram),
-        if (!data.readOnly) AppActionSheetAction(value: 'delete', icon: Icons.delete_outline, label: context.l10n.songsDeleteFile, destructive: true),
+        AppActionSheetAction(value: 'open', icon: isAudio ? AppIcons.playCircleOutline : AppIcons.openInNew, label: isAudio ? context.l10n.songsPlayRecording : context.l10n.songsOpenFile),
+        if (!isAudio) AppActionSheetAction(value: 'print', icon: AppIcons.printOutlined, label: context.l10n.songsPrintFile),
+        if (!_isIos || isAudio) AppActionSheetAction(value: 'download', icon: AppIcons.downloadOutlined, label: isAudio ? context.l10n.songsDownloadRecording : context.l10n.songsDownloadFile),
+        if (!data.readOnly) AppActionSheetAction(value: 'category', icon: AppIcons.swapHoriz, label: context.l10n.songsChangeCategory),
+        if (telegramChatId != null && telegramChatId.isNotEmpty) AppActionSheetAction(value: 'telegram', icon: AppIcons.sendOutlined, label: context.l10n.songsSendTelegram),
+        if (!data.readOnly) AppActionSheetAction(value: 'delete', icon: AppIcons.deleteOutline, label: context.l10n.songsDeleteFile, destructive: true),
       ],
     );
     if (!mounted || action == null) return;
@@ -1535,7 +1536,7 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
                     suffixIcon: value.text.isEmpty
                         ? null
                         : IconButton(
-                            icon: const Icon(Icons.cancel, size: 18),
+                            icon: Icon(AppIcons.cancel, size: 18),
                             tooltip: context.l10n.a11yClearInput,
                             onPressed: _note.clear,
                           ),

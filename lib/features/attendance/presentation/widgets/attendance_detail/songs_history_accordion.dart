@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../l10n/l10n.dart';
@@ -39,7 +40,7 @@ class SongsHistoryAccordion extends StatelessWidget {
               ),
               subtitle: Text(entries[index].displayConductor),
               trailing: IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(AppIcons.close),
                 tooltip: context.l10n.commonRemove,
                 onPressed: () => onRemove(index),
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../l10n/l10n.dart';
@@ -98,7 +99,7 @@ class DemoGuard {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.warning, color: Colors.white),
+            Icon(AppIcons.warning, color: Colors.white),
             const SizedBox(width: 12),
             Expanded(
               child: Text(

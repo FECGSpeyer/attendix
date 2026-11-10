@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -153,7 +154,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
               );
     final addButton = IconButton(
       tooltip: context.l10n.extraFieldsAddNew,
-      icon: Icon(Icons.add, color: ios ? AppColors.primary : null),
+      icon: Icon(AppIcons.add, color: ios ? AppColors.primary : null),
       onPressed: isSuperAdmin && org?.id != null ? () => _add(org!.id!) : null,
     );
 
@@ -165,14 +166,14 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
       // IOS_R6: `ion-header translucent` (blur once condensed)
       appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: IonCondenseTitle(context.l10n.orgPersonFields, collapsed: collapsed),
         actions: [
           IconButton(
             tooltip: context.l10n.commonSave,
-            icon: const Icon(Icons.check),
+            icon: Icon(AppIcons.check),
             onPressed: _saving || !isSuperAdmin || org?.id == null ? null : () => _save(org!.id!),
           ),
         ],
@@ -189,7 +190,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
                     SettingsListSection(
                       children: [
                         SettingsListTile(
-                          icon: Icons.info_outline,
+                          icon: AppIcons.infoOutline,
                           iconColor: AppColors.medium,
                           title: context.l10n.orgFieldsIntro,
                           titleWidget: Text(
@@ -211,7 +212,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
               padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 24)),
               children: [
                 ListTile(
-                  leading: const Icon(Icons.info_outline, color: AppColors.medium),
+                  leading: Icon(AppIcons.infoOutline, color: AppColors.medium),
                   title: Text(
                     context.l10n.orgFieldsIntro,
                     style: const TextStyle(fontSize: 13, color: AppColors.medium),
@@ -255,14 +256,14 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            icon: Icon(Icons.edit_outlined, color: AppColors.primary, semanticLabel: context.l10n.commonEdit),
+            icon: Icon(AppIcons.editOutlined, color: AppColors.primary, semanticLabel: context.l10n.commonEdit),
             onPressed: isSuperAdmin ? () => _edit(i) : null,
           ),
           IconButton(
-            icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
+            icon: Icon(AppIcons.deleteOutline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
             onPressed: isSuperAdmin ? () => _remove(i) : null,
           ),
-          if (isSuperAdmin) ReorderableDragStartListener(index: i, child: const Icon(Icons.drag_handle)),
+          if (isSuperAdmin) ReorderableDragStartListener(index: i, child: Icon(AppIcons.dragHandle)),
         ],
       ),
     );
@@ -463,7 +464,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                   children: [
                     Expanded(child: Text(context.l10n.typeSettingsOptions, style: const TextStyle(fontWeight: FontWeight.bold))),
                     IconButton(
-                      icon: Icon(Icons.add, semanticLabel: context.l10n.a11yAdd),
+                      icon: Icon(AppIcons.add, semanticLabel: context.l10n.a11yAdd),
                       onPressed: () => setState(() => _options.add(TextEditingController())),
                     ),
                   ],
@@ -483,7 +484,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
+                        icon: Icon(AppIcons.deleteOutline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
                         onPressed: () => setState(() => _options.removeAt(i).dispose()),
                       ),
                     ],
@@ -507,7 +508,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                       // The default is optional: allow clearing a picked date.
                       if (_dateLabel().isNotEmpty)
                         IconButton(
-                          icon: const Icon(Icons.close),
+                          icon: Icon(AppIcons.close),
                           tooltip: context.l10n.orgFieldsFlutterClearDefault,
                           onPressed: () => setState(() => _defaultValue = ''),
                         ),

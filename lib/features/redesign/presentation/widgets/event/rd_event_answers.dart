@@ -8,12 +8,9 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../attendance/presentation/widgets/attendance_detail/auto_message_panel.dart';
-import '../../../../attendance/presentation/widgets/attendance_detail/status_chip.dart'
-    show ionicStatusLabel;
 import '../../../data/rd_dates.dart';
 import '../../../data/rd_event_logic.dart';
 import '../rd_widgets.dart';
-import 'rd_record_widgets.dart' show rdStatusLook;
 
 /// "07:12" today, "gestern", "Mo" within a week, else "3.11.".
 String rdChangedShort(AppLocalizations l10n, String? changedAt, {DateTime? now}) {
@@ -299,105 +296,6 @@ Future<void> showRdSignoutsSheet(
                   ),
                 ),
                 const SizedBox(height: 8),
-                RdPrimaryButton(label: l10n.redesignCommonDone, onPressed: () => Navigator.of(sheet).pop()),
-              ],
-            ),
-          ),
-        ),
-      );
-    },
-  );
-}
-
-/// "Status-Übersicht" of the ••• menu (concept L6): every status with its
-/// count, then per voice "8 von 9 da" and who is missing how.
-Future<void> showRdStatusOverviewSheet(BuildContext context, {required List<RdMember> members}) {
-  final l10n = context.l10n;
-  const order = [
-    AttendanceStatus.present,
-    AttendanceStatus.late,
-    AttendanceStatus.lateExcused,
-    AttendanceStatus.excused,
-    AttendanceStatus.absent,
-    AttendanceStatus.neutral,
-  ];
-  final counts = {for (final s in order) s: members.where((m) => m.status == s).length};
-  // Same word as the filter chips of the Anwesenheit: "Offen", not "Neutral".
-  String label(AttendanceStatus s) => s == AttendanceStatus.neutral ? l10n.redesignStatusOpen : ionicStatusLabel(s);
-  final groups = <int?, List<RdMember>>{};
-  for (final m in members) {
-    groups.putIfAbsent(m.person.instrument, () => []).add(m);
-  }
-  return showModalBottomSheet<void>(
-    context: context,
-    useRootNavigator: true,
-    isScrollControlled: true,
-    showDragHandle: true,
-    backgroundColor: context.rd.bg,
-    constraints: const BoxConstraints(maxWidth: 560),
-    builder: (sheet) {
-      final p = sheet.rd;
-      return ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(sheet).height * 0.85),
-        child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(l10n.attendanceStatusOverview, style: RdType.cardTitle(p)),
-                Text(l10n.attendanceTotalPeople(members.length), style: RdType.meta(p, size: 14)),
-                const SizedBox(height: 12),
-                Flexible(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        RdGroupedList(
-                          children: [
-                            for (final s in order)
-                              if (counts[s]! > 0)
-                                RdListRow(
-                                  leading: RdRowIcon(
-                                    rdStatusLook(p, s).icon,
-                                    color: rdStatusLook(p, s).color,
-                                    background: rdStatusLook(p, s).soft,
-                                  ),
-                                  title: label(s),
-                                  value: '${counts[s]}',
-                                  showChevron: false,
-                                ),
-                          ],
-                        ),
-                        if (groups.length > 1) ...[
-                          const SizedBox(height: 16),
-                          RdGroupLabel(l10n.redesignEventByGroup),
-                          RdGroupedList(
-                            children: [
-                              for (final list in groups.values)
-                                RdListRow(
-                                  title: list.first.groupName ?? l10n.attendanceNoGroup,
-                                  subtitle: [
-                                    for (final s in order.skip(1))
-                                      if (list.any((m) => m.status == s))
-                                        '${label(s)} ${list.where((m) => m.status == s).length}',
-                                  ].join(' · '),
-                                  value: l10n.redesignEventRegisterPresent(
-                                    list.where((m) => m.status.countsAsPresent).length,
-                                    list.length,
-                                  ),
-                                  showChevron: false,
-                                ),
-                            ],
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
                 RdPrimaryButton(label: l10n.redesignCommonDone, onPressed: () => Navigator.of(sheet).pop()),
               ],
             ),

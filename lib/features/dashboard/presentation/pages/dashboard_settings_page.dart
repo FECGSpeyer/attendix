@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/dashboard_providers.dart';
@@ -61,7 +62,7 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
             tooltip: _isReordering
                 ? context.l10n.personDone
                 : context.l10n.dashSettingsFlutterReorder,
-            icon: Icon(_isReordering ? Icons.check : Icons.reorder),
+            icon: Icon(_isReordering ? AppIcons.check : AppIcons.reorder),
             onPressed: () => setState(() => _isReordering = !_isReordering),
           ),
         ],
@@ -97,7 +98,7 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
                         leading: _isReordering
                             ? ReorderableDragStartListener(
                                 index: i,
-                                child: const Icon(Icons.drag_handle),
+                                child: Icon(AppIcons.dragHandle),
                               )
                             : null,
                         title: Text(dashboardCardLabels(context.l10n)[shown[i].id] ?? shown[i].id),
@@ -120,7 +121,7 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
                       ? Theme.of(context).scaffoldBackgroundColor
                       : Colors.transparent,
                   child: ListTile(
-                    leading: const Icon(Icons.refresh, color: AppColors.medium),
+                    leading: Icon(AppIcons.refresh, color: AppColors.medium),
                     title: Text(context.l10n.dashSettingsReset, style: const TextStyle(color: AppColors.medium)),
                     onTap: () => _guard(notifier.resetCards),
                   ),

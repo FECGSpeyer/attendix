@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -457,7 +458,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
+                Icon(AppIcons.errorOutline, size: 64, color: AppColors.danger),
                 const SizedBox(height: AppDimensions.paddingM),
                 Text(
                   context.l10n.attendanceLoadFailedReopen,
@@ -466,7 +467,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                 const SizedBox(height: AppDimensions.paddingM),
                 OutlinedButton.icon(
                   onPressed: () => ref.invalidate(attendanceDetailProvider(widget.attendanceId)),
-                  icon: const Icon(Icons.refresh),
+                  icon: Icon(AppIcons.refresh),
                   label: IonButtonLabel(context.l10n.attendanceReload),
                 ),
               ],
@@ -515,13 +516,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           label: context.l10n.commonClose,
                           child: GestureDetector(
                             onTap: () => Navigator.of(context).maybePop(),
-                            child: const IosCircleIcon(icon: Icons.close, size: 44, iconSize: 22),
+                            child: IosCircleIcon(icon: AppIcons.close, size: 44, iconSize: 22),
                           ),
                         ),
                       )
                     : IconButton(
                         tooltip: context.l10n.commonClose,
-                        icon: const Icon(Icons.close),
+                        icon: Icon(AppIcons.close),
                         onPressed: () => Navigator.of(context).maybePop(),
                       ))
                 : ios && canPop
@@ -531,8 +532,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       label: MaterialLocalizations.of(context).backButtonTooltip,
                       child: GestureDetector(
                         onTap: () => Navigator.of(context).maybePop(),
-                        child: const IosCircleIcon(
-                          icon: Icons.arrow_back_ios_new,
+                        child: IosCircleIcon(
+                          icon: AppIcons.arrowBackIosNew,
                           size: 44,
                           iconSize: 20,
                         ),
@@ -555,7 +556,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                     visualDensity: VisualDensity.compact,
                     backgroundColor: AppColors.warning,
                     side: BorderSide.none,
-                    avatar: const Icon(Icons.cloud_off, size: 16, color: Colors.black),
+                    avatar: Icon(AppIcons.cloudOff, size: 16, color: Colors.black),
                     label: Text(
                       pendingOffline > 0 ? context.l10n.attendancePending(pendingOffline) : context.l10n.attendanceOffline,
                       style: const TextStyle(fontSize: 12, color: Colors.black),
@@ -579,7 +580,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                         textStyle: ionBadgeTextStyle(fontSize: 10, height: null),
                         label: Text('${_statusFilter.length}'),
                         child: Icon(
-                          Icons.more_vert,
+                          AppIcons.moreVert,
                           color: _statusFilter.isNotEmpty ? AppColors.primary : null,
                         ),
                       ),
@@ -862,7 +863,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               ? TabBarFab(
                   child: IonFabButton(
                     heroTag: 'att-detail-plan-fab',
-                    icon: Icons.format_list_bulleted,
+                    icon: AppIcons.formatListBulleted,
                     onPressed: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
                   ),
                 )
@@ -1163,30 +1164,30 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         );
 
     return [
-      item('status_filter', Icons.filter_list, context.l10n.attendanceStatusFilter,
+      item('status_filter', AppIcons.filterList, context.l10n.attendanceStatusFilter,
           subtitle: _statusFilter.isEmpty ? null : context.l10n.attendanceFilterActive(_statusFilter.length),
           highlight: _statusFilter.isNotEmpty, submenu: true,
           submenuItems: _statusFilterSubItems),
       if (sortFields.isNotEmpty)
-        item('sort', Icons.swap_vert, context.l10n.attendanceSorting,
+        item('sort', AppIcons.swapVert, context.l10n.attendanceSorting,
             subtitle: activeSort == null ? null : '${activeSort.name} ${_sort.ascending ? '↑' : '↓'}'),
-      item('view', Icons.visibility_outlined, context.l10n.attendanceView, submenu: true,
+      item('view', AppIcons.visibilityOutlined, context.l10n.attendanceView, submenu: true,
           submenuItems: _viewSubItems),
-      if (canMutate) item('add_person', Icons.person_add_alt_1_outlined, context.l10n.attendanceAddPerson),
+      if (canMutate) item('add_person', AppIcons.personAddAlt1Outlined, context.l10n.attendanceAddPerson),
       if (canMutate && checklistEmpty)
-        item('start_checklist', Icons.check_box_outlined, context.l10n.attendanceStartChecklist),
+        item('start_checklist', AppIcons.checkBoxOutlined, context.l10n.attendanceStartChecklist),
       if (canMutate && canRestore)
-        item('reset_checklist', Icons.refresh, context.l10n.attendanceResetChecklist),
+        item('reset_checklist', AppIcons.refresh, context.l10n.attendanceResetChecklist),
       // UX_ATT: Ionic order continues with Status-Übersicht, Gemeinde-Übersicht,
       // Legende, Erinnerung versenden
-      item('stats', Icons.bar_chart, context.l10n.attendanceStatusOverview),
-      if (hasChurch) item('church', Icons.business_outlined, context.l10n.attendanceChurchOverview),
-      item('legend', Icons.info_outline, context.l10n.signoutLegend),
-      if (canMutate) item('reminder', Icons.notifications_outlined, context.l10n.attendanceSendReminder),
+      item('stats', AppIcons.barChart, context.l10n.attendanceStatusOverview),
+      if (hasChurch) item('church', AppIcons.businessOutlined, context.l10n.attendanceChurchOverview),
+      item('legend', AppIcons.infoOutline, context.l10n.signoutLegend),
+      if (canMutate) item('reminder', AppIcons.notificationsOutlined, context.l10n.attendanceSendReminder),
       // AUTO_MESSAGES (Ionic 4.18 b1977e29): "Unentschuldigte anschreiben (n)"
       // for admins/responsibles once the Termin has started.
       if (_canWriteUnexcused(attendance, type))
-        item('write_unexcused', Icons.chat_bubble_outline,
+        item('write_unexcused', AppIcons.chatBubbleOutline,
             context.l10n.autoMessagesWriteUnexcusedMenu(_unexcusedCount())),
       // No "Foto" entry: Ionic has the photo upload commented out, and the
       // switch from Ionic should not add menu entries (_takePhoto stays).
@@ -1199,7 +1200,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ))
         item(
           'archive',
-          attendance.archived ? Icons.undo : Icons.archive_outlined,
+          attendance.archived ? AppIcons.undo : AppIcons.archiveOutlined,
           attendance.archived ? context.l10n.attendanceRestore : context.l10n.attendanceArchive,
         ),
     ];
@@ -1293,7 +1294,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (_statusFilter.isNotEmpty)
         AppPopoverSubItem(
           label: context.l10n.attendanceClearFilter,
-          icon: Icons.highlight_off,
+          icon: AppIcons.highlightOff,
           color: AppColors.danger,
           onTap: () {
             if (mounted) setState(() => _statusFilter = {});
@@ -1550,7 +1551,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             ),
             OutlinedButton.icon(
               onPressed: _reloadFromBanner,
-              icon: const Icon(Icons.refresh),
+              icon: Icon(AppIcons.refresh),
               label: IonButtonLabel(context.l10n.attendanceReload),
             ),
           ],
@@ -1983,13 +1984,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.description),
+              leading: Icon(AppIcons.description),
               title: Text(context.l10n.attendanceFlutterA4Standard),
               subtitle: Text(context.l10n.attendanceFlutterOnePlanPerPage),
               onTap: () => Navigator.pop(context, 'a4'),
             ),
             ListTile(
-              leading: const Icon(Icons.content_cut),
+              leading: Icon(AppIcons.contentCut),
               title: Text(context.l10n.attendanceFlutterA5OnA4),
               subtitle: Text(context.l10n.attendanceFlutterTwoIdenticalPlans),
               onTap: () => Navigator.pop(context, '2xa5'),
@@ -2052,19 +2053,19 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       actions: [
         AppActionSheetAction(
           value: 'pdf',
-          icon: Icons.picture_as_pdf,
+          icon: AppIcons.pictureAsPdf,
           label: 'PDF (A4)',
           subtitle: context.l10n.attendanceFlutterStandardFormat,
         ),
         AppActionSheetAction(
           value: '2xa5',
-          icon: Icons.content_cut,
+          icon: AppIcons.contentCut,
           label: 'PDF (2x A5)',
           subtitle: context.l10n.attendanceFlutterTwoPlansOnePage,
         ),
         AppActionSheetAction(
           value: 'image',
-          icon: Icons.image,
+          icon: AppIcons.image,
           label: context.l10n.attendanceFlutterAsImage,
           subtitle: context.l10n.attendanceFlutterQuickPreview,
         ),
@@ -2257,12 +2258,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       actions: [
         AppActionSheetAction(
           value: 'conductor',
-          icon: Icons.person_outline,
+          icon: AppIcons.personOutline,
           label: context.l10n.attendanceChangeConductor,
         ),
         AppActionSheetAction(
           value: 'song',
-          icon: Icons.music_note_outlined,
+          icon: AppIcons.musicNoteOutlined,
           label: context.l10n.attendanceToSong,
         ),
       ],
@@ -2782,7 +2783,7 @@ class _ArchivedBanner extends StatelessWidget {
           child: ListTile(
             iconColor: Colors.white,
             textColor: Colors.white,
-            leading: const Icon(Icons.archive_outlined),
+            leading: Icon(AppIcons.archiveOutlined),
             title: Text(context.l10n.attendanceArchivedBanner,
                 style: const TextStyle(fontWeight: FontWeight.w600)),
             subtitle: Text(context.l10n.attendanceArchivedBannerHint,

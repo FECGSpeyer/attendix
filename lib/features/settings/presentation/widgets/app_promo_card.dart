@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -100,7 +101,7 @@ class _AppPromoCardState extends ConsumerState<AppPromoCard> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.close, color: Colors.white, semanticLabel: context.l10n.commonClose),
+                    icon: Icon(AppIcons.close, color: Colors.white, semanticLabel: context.l10n.commonClose),
                     onPressed: _dismiss,
                   ),
                 ],
@@ -113,7 +114,7 @@ class _AppPromoCardState extends ConsumerState<AppPromoCard> {
               if (isMobile)
                 FilledButton.icon(
                   style: buttonStyle,
-                  icon: Icon(isIos ? Icons.apple : Icons.shop),
+                  icon: Icon(isIos ? AppIcons.apple : AppIcons.shop),
                   label: IonButtonLabel(isIos ? context.l10n.settingsAppStore : context.l10n.settingsGooglePlay),
                   onPressed: () =>
                       _open(isIos ? AppPromoCard.iosUrl : AppPromoCard.androidUrl),
@@ -121,14 +122,14 @@ class _AppPromoCardState extends ConsumerState<AppPromoCard> {
               else ...[
                 FilledButton.icon(
                   style: buttonStyle,
-                  icon: const Icon(Icons.apple),
+                  icon: Icon(AppIcons.apple),
                   label: IonButtonLabel(context.l10n.settingsAppStore),
                   onPressed: () => _open(AppPromoCard.iosUrl),
                 ),
                 const SizedBox(height: 8),
                 FilledButton.icon(
                   style: buttonStyle,
-                  icon: const Icon(Icons.shop),
+                  icon: Icon(AppIcons.shop),
                   label: IonButtonLabel(context.l10n.settingsGooglePlay),
                   onPressed: () => _open(AppPromoCard.androidUrl),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -81,7 +82,7 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
     }
 
     return DashboardCard(
-      icon: Icons.check_box_outlined,
+      icon: Ionicons.checkboxOutline,
       title: l10n.tasksMyTasks,
       subtitle: subtitle,
       strip: _strip,
@@ -94,7 +95,7 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
               contentPadding: const EdgeInsets.only(left: 4, right: 12),
               leading: IconButton(
                 tooltip: l10n.tasksMarkDone,
-                icon: const Icon(Icons.radio_button_unchecked, color: AppColors.medium),
+                icon: const Icon(Ionicons.ellipseOutline, color: AppColors.medium),
                 onPressed: () => _complete(task),
               ),
               title: Text(task.title, style: const TextStyle(fontSize: 15)),

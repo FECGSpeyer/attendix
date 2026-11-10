@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
@@ -167,7 +168,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     final archivedCount = ref.watch(categorizedAttendancesProvider.select((c) => c.archivedCount));
     return PopupMenuButton<String>(
       tooltip: context.l10n.teamOrgFilter,
-      icon: Icon(Icons.tune, color: active || showArchived ? AppColors.primary : null),
+      icon: Icon(AppIcons.tune, color: active || showArchived ? AppColors.primary : null),
       onSelected: (value) {
         if (value == '__archived__') {
           ref.read(attendanceListShowArchivedProvider.notifier).state = !showArchived;
@@ -189,7 +190,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                   style: TextStyle(color: !active ? AppColors.primary : null),
                 ),
               ),
-              if (!active) const Icon(Icons.check, color: AppColors.primary, size: 20),
+              if (!active) Icon(AppIcons.check, color: AppColors.primary, size: 20),
             ],
           ),
         ),
@@ -199,7 +200,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
               value: type.id!,
               child: Row(
                 children: [
-                  Icon(Icons.circle, size: 20, color: ColorUtils.parseNamedColor(type.color)),
+                  Icon(AppIcons.circle, size: 20, color: ColorUtils.parseNamedColor(type.color)),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -208,7 +209,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                     ),
                   ),
                   if (filter == type.id)
-                    const Icon(Icons.check, color: AppColors.primary, size: 20),
+                    Icon(AppIcons.check, color: AppColors.primary, size: 20),
                 ],
               ),
             ),
@@ -217,7 +218,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             value: '__archived__',
             child: Row(
               children: [
-                Icon(Icons.archive_outlined, size: 20, color: showArchived ? AppColors.primary : null),
+                Icon(AppIcons.archiveOutlined, size: 20, color: showArchived ? AppColors.primary : null),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -236,7 +237,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                     ],
                   ),
                 ),
-                if (showArchived) const Icon(Icons.check, color: AppColors.primary, size: 20),
+                if (showArchived) Icon(AppIcons.check, color: AppColors.primary, size: 20),
               ],
             ),
           ),
@@ -285,7 +286,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    Icons.check_box_outlined,
+                    AppIcons.checkBoxOutlined,
                     size: 80,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
@@ -317,7 +318,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   Widget _buildFab(BuildContext context) => IonFabButton(
         onPressed: _openCreate,
         tooltip: context.l10n.attListAddEvent,
-        icon: Icons.add,
+        icon: AppIcons.add,
       );
 
   @override
@@ -394,7 +395,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           // LOGIC_SELF: Ionic isConductor = ADMIN || RESPONSIBLE (no viewer)
           if ((role.isAdmin || role.isResponsible) && ref.watch(hasDutyTypesProvider))
             IconButton(
-              icon: const Icon(Icons.shuffle),
+              icon: Icon(AppIcons.shuffle),
               tooltip: context.l10n.attListDistributeDuties,
               onPressed: () async {
                 final saved = await openDutyDistributePage(context);
@@ -423,7 +424,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           ],
         ),
         error: (error, stack) => EmptyStateWidget(
-          icon: Icons.error_outline,
+          icon: AppIcons.errorOutline,
           title: context.l10n.attendanceFlutterLoadError,
           subtitle: context.l10n.attendanceFlutterListLoadFailed,
           actionLabel: context.l10n.messagesRetry,
@@ -548,7 +549,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                     onPressed: (_) => _confirmDelete(context, att),
                     backgroundColor: AppColors.danger,
                     foregroundColor: Colors.white,
-                    icon: Icons.delete_outline,
+                    icon: AppIcons.deleteOutline,
                   ),
                 ],
               ),
@@ -584,7 +585,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                         stats: current.id == null ? const [] : _todayStats(current, currentDuty),
                         ctas: [
                           EventTodayCta(
-                            icon: Icons.check_box_outlined,
+                            icon: AppIcons.checkBoxOutlined,
                             label: _hasPlan(current)
                                 ? context.l10n.signoutAttendance
                                 : context.l10n.attendanceFlutterRecordAttendance,
@@ -593,7 +594,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                           // ATT_DETAIL: Ablaufplan
                           if (_hasPlan(current))
                             EventTodayCta(
-                              icon: Icons.description_outlined,
+                              icon: AppIcons.descriptionOutlined,
                               label: context.l10n.signoutRunSheet,
                               secondary: true,
                               onTap: () => _openPlanViewer(current),
@@ -616,7 +617,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                               title: title(att),
                               // DUTY: headset icon before duty Termine
                               titleLeading: dutyTermine[att.id] != null
-                                  ? const Icon(Icons.headset_mic_outlined, size: 16, color: AppColors.primary)
+                                  ? Icon(AppIcons.headsetMicOutlined, size: 16, color: AppColors.primary)
                                   : null,
                               subtitle: meta(att),
                               extra: [
@@ -637,7 +638,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                                   IconButton(
                                     tooltip: context.l10n.signoutShowRunSheet,
                                     visualDensity: VisualDensity.compact,
-                                    icon: const Icon(Icons.description_outlined, color: AppColors.primary),
+                                    icon: Icon(AppIcons.descriptionOutlined, color: AppColors.primary),
                                     onPressed: () => _openPlanViewer(att),
                                   ),
                                 percentPill(att),
@@ -675,7 +676,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                               titleLeading: att.archived
                                   ? Semantics(
                                       label: context.l10n.attListArchived,
-                                      child: const Icon(Icons.archive_outlined,
+                                      child: Icon(AppIcons.archiveOutlined,
                                           size: 16, color: AppColors.medium),
                                     )
                                   : null,

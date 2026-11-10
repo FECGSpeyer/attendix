@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -102,7 +103,7 @@ class ChecklistAccordion extends StatelessWidget {
                       onPressed: (_) => onRemove(index),
                       backgroundColor: AppColors.danger,
                       foregroundColor: Colors.white,
-                      icon: Icons.delete_outline,
+                      icon: AppIcons.deleteOutline,
                     ),
                   ],
                 ),
@@ -142,7 +143,7 @@ class ChecklistAccordion extends StatelessWidget {
           // UX_ATT: Ionic "To-Do hinzufügen" row (primary, add-circle icon)
           ListTile(
             dense: true,
-            leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+            leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
             title: Text(context.l10n.attendanceAddTodo, style: const TextStyle(color: AppColors.primary)),
             onTap: onAdd,
           ),

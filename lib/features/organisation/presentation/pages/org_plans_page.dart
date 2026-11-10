@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -70,7 +71,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
       context,
       title: entry.title,
       actions: [
-        PlanSheetAction('delete', context.l10n.planningDeletePlan, icon: Icons.delete_outline, destructive: true),
+        PlanSheetAction('delete', context.l10n.planningDeletePlan, icon: AppIcons.deleteOutline, destructive: true),
       ],
     );
     if (action != 'delete') return;
@@ -86,8 +87,8 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
       context,
       title: context.l10n.plansSubscribeCalendar,
       actions: [
-        PlanSheetAction(base, context.l10n.plansSimpleCalendar, icon: Icons.event),
-        PlanSheetAction('$base&detailed=true', context.l10n.plansDetailedCalendar, icon: Icons.event_note),
+        PlanSheetAction(base, context.l10n.plansSimpleCalendar, icon: AppIcons.event),
+        PlanSheetAction('$base&detailed=true', context.l10n.plansDetailedCalendar, icon: AppIcons.eventNote),
       ],
     );
     if (link == null || !mounted) return;
@@ -126,8 +127,8 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
         context,
         title: context.l10n.plansPublicLink,
         actions: [
-          PlanSheetAction('copy', context.l10n.plansCopyLink, icon: Icons.copy),
-          PlanSheetAction('revoke', context.l10n.plansRevokeLink, icon: Icons.link_off, destructive: true),
+          PlanSheetAction('copy', context.l10n.plansCopyLink, icon: AppIcons.copy),
+          PlanSheetAction('revoke', context.l10n.plansRevokeLink, icon: AppIcons.linkOff, destructive: true),
         ],
       );
       if (!mounted) return;
@@ -182,10 +183,10 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
       ),
       trailing: entry.isAdHoc
           ? IconButton(
-              icon: Icon(Icons.delete_outline, color: AppColors.medium, semanticLabel: context.l10n.commonDelete),
+              icon: Icon(AppIcons.deleteOutline, color: AppColors.medium, semanticLabel: context.l10n.commonDelete),
               onPressed: () => _deleteAdHoc(entry),
             )
-          : const Icon(Icons.chevron_right),
+          : Icon(AppIcons.chevronRight),
       onTap: () => openOrgPlanEntry(context, entry),
     );
   }
@@ -348,8 +349,8 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                 ? context.l10n.plansFlutterHideTab
                 : context.l10n.plansFlutterShowAsTab,
             icon: Icon(ref.watch(optionalTabsNotifierProvider).orgPlans
-                ? Icons.bookmark
-                : Icons.bookmark_outline),
+                ? AppIcons.bookmark
+                : AppIcons.bookmarkOutline),
             onPressed: () async {
               final current = ref.read(optionalTabsNotifierProvider).orgPlans;
               try {
@@ -364,13 +365,13 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
           if (key != null)
             IconButton(
               tooltip: context.l10n.plansSubscribeCalendar,
-              icon: const Icon(Icons.calendar_month_outlined),
+              icon: Icon(AppIcons.calendarMonthOutlined),
               onPressed: () => _subscribeCalendar(key),
             ),
           if (org != null)
             IconButton(
               tooltip: context.l10n.plansPublicLink,
-              icon: Icon(key != null ? Icons.link : Icons.add_link),
+              icon: Icon(key != null ? AppIcons.link : AppIcons.addLink),
               onPressed: () => _managePublicLink(key),
             ),
         ],
@@ -382,7 +383,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                 heroTag: 'orgPlansTabFab',
                 tooltip: context.l10n.plansOpenPlanning,
                 onPressed: () => context.push(_planningRoute(context)),
-                child: const Icon(Icons.add),
+                child: Icon(AppIcons.add),
               ),
             )
           : null,
@@ -403,7 +404,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
             else if (org == null)
               _orgPlansBox(context, [
                 ListTile(
-                  leading: const Icon(Icons.info_outline, color: AppColors.medium),
+                  leading: Icon(AppIcons.infoOutline, color: AppColors.medium),
                   title: Text(context.l10n.plansNoOrg),
                 ),
               ], margin: const EdgeInsets.all(16), bare: true)
@@ -419,7 +420,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                     if (split.upcoming.isEmpty)
                       _orgPlansBox(context, [
                         ListTile(
-                          leading: const Icon(Icons.event_outlined, color: AppColors.medium),
+                          leading: Icon(AppIcons.eventOutlined, color: AppColors.medium),
                           title: Text(context.l10n.plansNoUpcomingOrgPlans),
                         ),
                       ], margin: ionIsIos(context) ? const EdgeInsets.all(16) : EdgeInsets.zero, bare: true)
@@ -428,23 +429,23 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                           margin: EdgeInsets.all(ionIsIos(context) ? 16 : 12)),
                     _orgPlansBox(context, margin: EdgeInsets.symmetric(horizontal: ionIsIos(context) ? 16 : 12), [
                           ListTile(
-                            leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+                            leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
                             title: Text(context.l10n.plansOpenPlanning, style: const TextStyle(color: AppColors.primary)),
                             trailing: ionIsIos(context)
                                 ? const IonDetailChevron()
-                                : const Icon(Icons.chevron_right),
+                                : Icon(AppIcons.chevronRight),
                             onTap: () => context.push(_planningRoute(context)),
                           ),
                           if (split.past.isNotEmpty)
                             ListTile(
-                              leading: const Icon(Icons.history, color: AppColors.medium),
+                              leading: Icon(AppIcons.history, color: AppColors.medium),
                               title: Text(context.l10n.plansPastPlans, style: const TextStyle(color: AppColors.medium)),
                               onTap: _showHistory,
                             ),
                     ]),
                     if (key != null)
                       _orgPlansBox(context, margin: EdgeInsets.all(ionIsIos(context) ? 16 : 12), [ListTile(
-                          leading: const Icon(Icons.public, color: AppColors.success),
+                          leading: Icon(AppIcons.public, color: AppColors.success),
                           title: Text(context.l10n.plansPublicLinkActive),
                           trailing: TextButton(
                             onPressed: () => _managePublicLink(key),
