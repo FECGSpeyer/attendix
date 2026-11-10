@@ -20090,13 +20090,11 @@
       "day": {}
     }
   },
-  "redesignTodayBirthdayMore": "Geburtstag: {name} ({day}) +{count}",
-  "@redesignTodayBirthdayMore": {
-    "description": "redesign.today.birthdayMore",
+  "redesignTodayBirthdays": "Geburtstage: {list}",
+  "@redesignTodayBirthdays": {
+    "description": "redesign.today.birthdays",
     "placeholders": {
-      "name": {},
-      "day": {},
-      "count": {}
+      "list": {}
     }
   },
   "redesignTodayChangeAnswer": "Ändern",

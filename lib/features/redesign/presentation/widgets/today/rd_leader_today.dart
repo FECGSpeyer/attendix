@@ -11,6 +11,7 @@ import '../../../../../core/providers/realtime_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../core/utils/dashboard_utils.dart' show BirthdayEntry;
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/person/person.dart';
@@ -130,21 +131,23 @@ class RdLeaderToday extends ConsumerWidget {
     );
   }
 
-  /// "Geburtstag: Lea (Sa)" for the coming days.
+  /// "Geburtstag: Lea (Sa)" or "Geburtstage: Lea (Sa), Jonas (Mo)" for
+  /// the coming 7 days.
   String? _birthdayLine(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final birthdays = ref.watch(dashboardBirthdaysProvider).valueOrNull ?? const [];
     final soon = birthdays.where((b) => b.daysOffset >= 0 && b.daysOffset <= 7).toList()
       ..sort((a, b) => a.daysOffset.compareTo(b.daysOffset));
     if (soon.isEmpty) return null;
-    final first = soon.first;
-    final day = first.daysOffset == 0
-        ? context.l10n.redesignTodayDayToday
-        : DateFormat.E(currentIntlLocale()).format(first.date).replaceAll('.', '');
-    final name = first.person.firstName;
-    return soon.length == 1
-        ? context.l10n.redesignTodayBirthday(name, day)
-        : context.l10n.redesignTodayBirthdayMore(name, day, soon.length - 1);
+    String day(BirthdayEntry b) => b.daysOffset == 0
+        ? l10n.redesignTodayDayToday
+        : DateFormat.E(currentIntlLocale()).format(b.date).replaceAll('.', '');
+    if (soon.length == 1) return l10n.redesignTodayBirthday(soon.first.person.firstName, day(soon.first));
+    return l10n.redesignTodayBirthdays(
+      soon.map((b) => '${b.person.firstName} (${day(b)})').join(', '),
+    );
   }
+
 }
 
 class _NextEventCard extends ConsumerWidget {

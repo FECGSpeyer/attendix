@@ -26032,11 +26032,11 @@ abstract class AppLocalizations {
   /// **'Geburtstag: {name} ({day})'**
   String redesignTodayBirthday(Object name, Object day);
 
-  /// redesign.today.birthdayMore
+  /// redesign.today.birthdays
   ///
   /// In de, this message translates to:
-  /// **'Geburtstag: {name} ({day}) +{count}'**
-  String redesignTodayBirthdayMore(Object name, Object day, Object count);
+  /// **'Geburtstage: {list}'**
+  String redesignTodayBirthdays(Object list);
 
   /// redesign.today.changeAnswer
   ///

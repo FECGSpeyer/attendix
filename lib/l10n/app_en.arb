@@ -4316,7 +4316,7 @@
   "redesignTodayAnsweredYes": "Great, you are coming.",
   "redesignTodayAttention": "Needs your attention",
   "redesignTodayBirthday": "Birthday: {name} ({day})",
-  "redesignTodayBirthdayMore": "Birthday: {name} ({day}) +{count}",
+  "redesignTodayBirthdays": "Birthdays: {list}",
   "redesignTodayChangeAnswer": "Change",
   "redesignTodayChildFailed": "That didn't work. Please try again.",
   "redesignTodayChildIn": "Attending",

@@ -16156,8 +16156,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String redesignTodayBirthdayMore(Object name, Object day, Object count) {
-    return 'Birthday: $name ($day) +$count';
+  String redesignTodayBirthdays(Object list) {
+    return 'Birthdays: $list';
   }
 
   @override
