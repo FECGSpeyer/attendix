@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.117.0",
+      "date": "10.11.2026",
+      "changes": [
+        "✨ Beta: Mitglieder lassen sich unter „Sortieren & Filtern“ nach Kategorie oder Register gliedern (gemerkt pro Gruppe)"
+      ]
+    },
+    {
       "version": "0.116.1",
       "date": "10.11.2026",
       "changes": [
