@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.125.0",
+      "date": "11.11.2026",
+      "changes": [
+        "✨ Beta-Ablauf: Registerprobe als Block einfügen (Runden als Unterpunkte mit Uhrzeiten, Gruppen und Dirigenten ändern, als Tabelle teilen)"
+      ]
+    },
+    {
       "version": "0.124.0",
       "date": "11.11.2026",
       "changes": [
