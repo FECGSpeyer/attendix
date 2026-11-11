@@ -12569,6 +12569,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdWmManageCategories => 'Manage categories';
 
   @override
+  String get rdWmShareEnable => 'Create link';
+
+  @override
   String rdWmWorksCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

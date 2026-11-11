@@ -20474,6 +20474,12 @@ abstract class AppLocalizations {
   /// **'Kategorien verwalten'**
   String get rdWmManageCategories;
 
+  /// rdWm.shareEnable
+  ///
+  /// In de, this message translates to:
+  /// **'Link erstellen'**
+  String get rdWmShareEnable;
+
   /// rdWm.worksCount
   ///
   /// In de, this message translates to:
