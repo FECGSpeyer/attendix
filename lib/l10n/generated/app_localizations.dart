@@ -854,6 +854,348 @@ abstract class AppLocalizations {
   /// **'Der Link zum Zurücksetzen ist ungültig oder abgelaufen.'**
   String get appResetLinkInvalid;
 
+  /// assistant.beta
+  ///
+  /// In de, this message translates to:
+  /// **'Beta'**
+  String get assistantBeta;
+
+  /// assistant.birthdays.age
+  ///
+  /// In de, this message translates to:
+  /// **'wird {age}'**
+  String assistantBirthdaysAge(Object age);
+
+  /// assistant.birthdays.title
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtstage'**
+  String get assistantBirthdaysTitle;
+
+  /// assistant.choice.which
+  ///
+  /// In de, this message translates to:
+  /// **'Wen meinst du mit „{name}“?'**
+  String assistantChoiceWhich(Object name);
+
+  /// assistant.clear
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Chat'**
+  String get assistantClear;
+
+  /// assistant.entryEnableHint
+  ///
+  /// In de, this message translates to:
+  /// **'Für diese Gruppe noch aus. Tippen, um ihn einzuschalten.'**
+  String get assistantEntryEnableHint;
+
+  /// assistant.entryHint
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit, nächster Termin, wer kommt: einfach fragen'**
+  String get assistantEntryHint;
+
+  /// assistant.entryTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Frag den Assistenten'**
+  String get assistantEntryTitle;
+
+  /// assistant.event.absent
+  ///
+  /// In de, this message translates to:
+  /// **'Abgemeldet'**
+  String get assistantEventAbsent;
+
+  /// assistant.event.absentNames
+  ///
+  /// In de, this message translates to:
+  /// **'Abgemeldet'**
+  String get assistantEventAbsentNames;
+
+  /// assistant.event.allAnswered
+  ///
+  /// In de, this message translates to:
+  /// **'Alle haben sich gemeldet.'**
+  String get assistantEventAllAnswered;
+
+  /// assistant.event.open
+  ///
+  /// In de, this message translates to:
+  /// **'Offen'**
+  String get assistantEventOpen;
+
+  /// assistant.event.openEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Termin öffnen'**
+  String get assistantEventOpenEvent;
+
+  /// assistant.event.openNames
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Rückmeldung'**
+  String get assistantEventOpenNames;
+
+  /// assistant.event.present
+  ///
+  /// In de, this message translates to:
+  /// **'Kommen'**
+  String get assistantEventPresent;
+
+  /// assistant.event.time
+  ///
+  /// In de, this message translates to:
+  /// **'{time} Uhr'**
+  String assistantEventTime(Object time);
+
+  /// assistant.help.title
+  ///
+  /// In de, this message translates to:
+  /// **'Das könnte helfen'**
+  String get assistantHelpTitle;
+
+  /// assistant.inputHint
+  ///
+  /// In de, this message translates to:
+  /// **'Frag etwas …'**
+  String get assistantInputHint;
+
+  /// assistant.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo! Ich beantworte Fragen zu deiner Gruppe. Ändern kann ich noch nichts.'**
+  String get assistantIntro;
+
+  /// assistant.next.title
+  ///
+  /// In de, this message translates to:
+  /// **'Nächster Termin'**
+  String get assistantNextTitle;
+
+  /// assistant.notice.changeLater
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern kann ich noch nichts, das kommt bald. Bis dahin geht es wie gewohnt in der App.'**
+  String get assistantNoticeChangeLater;
+
+  /// assistant.notice.disabled
+  ///
+  /// In de, this message translates to:
+  /// **'Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.'**
+  String get assistantNoticeDisabled;
+
+  /// assistant.notice.failed
+  ///
+  /// In de, this message translates to:
+  /// **'Das hat gerade nicht geklappt. Bitte versuch es noch einmal.'**
+  String get assistantNoticeFailed;
+
+  /// assistant.notice.groupNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Ich finde keine Gruppe „{name}“.'**
+  String assistantNoticeGroupNotFound(Object name);
+
+  /// assistant.notice.limit
+  ///
+  /// In de, this message translates to:
+  /// **'Für heute ist das Limit erreicht. Morgen geht es weiter.'**
+  String get assistantNoticeLimit;
+
+  /// assistant.notice.noBirthdays
+  ///
+  /// In de, this message translates to:
+  /// **'In diesem Zeitraum hat niemand Geburtstag.'**
+  String get assistantNoticeNoBirthdays;
+
+  /// assistant.notice.noData
+  ///
+  /// In de, this message translates to:
+  /// **'In diesem Zeitraum gibt es keine Termine, die zählen.'**
+  String get assistantNoticeNoData;
+
+  /// assistant.notice.noEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Dazu finde ich keinen Termin.'**
+  String get assistantNoticeNoEvent;
+
+  /// assistant.notice.noHelp
+  ///
+  /// In de, this message translates to:
+  /// **'Dazu finde ich nichts in der Hilfe.'**
+  String get assistantNoticeNoHelp;
+
+  /// assistant.notice.noOwnPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist in dieser Gruppe nicht als Person eingetragen, deshalb gibt es keine eigene Anwesenheit.'**
+  String get assistantNoticeNoOwnPerson;
+
+  /// assistant.notice.noRights
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Frage kann ich dir mit deiner Rolle nicht beantworten.'**
+  String get assistantNoticeNoRights;
+
+  /// assistant.notice.notUnderstood
+  ///
+  /// In de, this message translates to:
+  /// **'Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.'**
+  String get assistantNoticeNotUnderstood;
+
+  /// assistant.notice.personNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Ich finde niemanden mit dem Namen „{name}“.'**
+  String assistantNoticePersonNotFound(Object name);
+
+  /// assistant.notice.songNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Ich finde kein Werk „{name}“.'**
+  String assistantNoticeSongNotFound(Object name);
+
+  /// assistant.notice.tooLong
+  ///
+  /// In de, this message translates to:
+  /// **'Die Nachricht ist zu lang. Bitte höchstens {max} Zeichen.'**
+  String assistantNoticeTooLong(Object max);
+
+  /// assistant.privacy
+  ///
+  /// In de, this message translates to:
+  /// **'Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten.'**
+  String get assistantPrivacy;
+
+  /// assistant.rate.all
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit aller'**
+  String get assistantRateAll;
+
+  /// assistant.rate.detail
+  ///
+  /// In de, this message translates to:
+  /// **'{attended} von {total} Terminen besucht'**
+  String assistantRateDetail(Object attended, Object total);
+
+  /// assistant.rate.lowest
+  ///
+  /// In de, this message translates to:
+  /// **'Am seltensten da'**
+  String get assistantRateLowest;
+
+  /// assistant.rate.me
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Anwesenheit'**
+  String get assistantRateMe;
+
+  /// assistant.rate.of
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit von {name}'**
+  String assistantRateOf(Object name);
+
+  /// assistant.rate.onlyType
+  ///
+  /// In de, this message translates to:
+  /// **'Nur {type}'**
+  String assistantRateOnlyType(Object type);
+
+  /// assistant.rate.openPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Person öffnen'**
+  String get assistantRateOpenPerson;
+
+  /// assistant.rate.range
+  ///
+  /// In de, this message translates to:
+  /// **'{from} bis {to}'**
+  String assistantRateRange(Object from, Object to);
+
+  /// assistant.send
+  ///
+  /// In de, this message translates to:
+  /// **'Senden'**
+  String get assistantSend;
+
+  /// assistant.settings.toggle
+  ///
+  /// In de, this message translates to:
+  /// **'Chat-Assistent (Beta)'**
+  String get assistantSettingsToggle;
+
+  /// assistant.settings.toggleHint
+  ///
+  /// In de, this message translates to:
+  /// **'Alle in der Gruppe können per Chat Fragen zu Anwesenheit, Terminen und Werken stellen. Nur die getippte Nachricht geht an den KI-Dienst.'**
+  String get assistantSettingsToggleHint;
+
+  /// assistant.song.lastSung
+  ///
+  /// In de, this message translates to:
+  /// **'Zuletzt gesungen am {date}'**
+  String assistantSongLastSung(Object date);
+
+  /// assistant.song.never
+  ///
+  /// In de, this message translates to:
+  /// **'Laut Verlauf noch nicht gesungen.'**
+  String get assistantSongNever;
+
+  /// assistant.song.open
+  ///
+  /// In de, this message translates to:
+  /// **'Werk öffnen'**
+  String get assistantSongOpen;
+
+  /// assistant.suggest.birthdays
+  ///
+  /// In de, this message translates to:
+  /// **'Wer hat diesen Monat Geburtstag?'**
+  String get assistantSuggestBirthdays;
+
+  /// assistant.suggest.help
+  ///
+  /// In de, this message translates to:
+  /// **'Wie melde ich mich ab?'**
+  String get assistantSuggestHelp;
+
+  /// assistant.suggest.myRate
+  ///
+  /// In de, this message translates to:
+  /// **'Wie war meine Anwesenheit in den letzten 3 Monaten?'**
+  String get assistantSuggestMyRate;
+
+  /// assistant.suggest.nextEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Wann ist der nächste Termin?'**
+  String get assistantSuggestNextEvent;
+
+  /// assistant.suggest.whoComes
+  ///
+  /// In de, this message translates to:
+  /// **'Wer kommt zum nächsten Termin?'**
+  String get assistantSuggestWhoComes;
+
+  /// assistant.thinking
+  ///
+  /// In de, this message translates to:
+  /// **'Einen Moment …'**
+  String get assistantThinking;
+
+  /// assistant.title
+  ///
+  /// In de, this message translates to:
+  /// **'Assistent'**
+  String get assistantTitle;
+
   /// attList.addEvent
   ///
   /// In de, this message translates to:

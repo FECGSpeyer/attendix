@@ -599,6 +599,15 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
                 value: t.showMembersList,
                 onChanged: on((v) => _save(t.id, {'showMembersList': v}, (c) => c.copyWith(showMembersList: v))),
               ),
+              // Chat-Assistent: switched on per tenant (admins).
+              RdSwitchRow(
+                title: l10n.assistantSettingsToggle,
+                subtitle: l10n.assistantSettingsToggleHint,
+                value: t.aiAssistantEnabled,
+                onChanged: on(
+                  (v) => _save(t.id, {'ai_assistant_enabled': v}, (c) => c.copyWith(aiAssistantEnabled: v)),
+                ),
+              ),
             ],
           ),
         ];

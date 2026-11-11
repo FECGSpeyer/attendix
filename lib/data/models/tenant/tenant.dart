@@ -51,6 +51,8 @@ class Tenant with _$Tenant {
     @JsonKey(name: 'duty_view') @Default(false) bool dutyView,
     // SETTINGS2: schicht-/arbeitsbedingt entschuldigt zählt als anwesend
     @JsonKey(name: 'shift_excused_as_present') @Default(false) bool shiftExcusedAsPresent,
+    // Chat-Assistent: switched on per tenant by an admin (default off).
+    @JsonKey(name: 'ai_assistant_enabled') @Default(false) bool aiAssistantEnabled,
   }) = _Tenant;
 
   factory Tenant.fromJson(Map<String, dynamic> json) => _$TenantFromJson(json);

@@ -113,6 +113,12 @@ final List<_Gate> _gates = [
         (role.canAddAttendance &&
             int.tryParse(uri.queryParameters['attendanceId'] ?? '') != null),
   ),
+  // Chat-Assistent: every member (not applicants, not without role); the
+  // tenant switch is checked on the page and in the Edge Function.
+  _Gate(
+    (l) => _matches(l, '/settings/assistant'),
+    (role, _, __) => role.canView,
+  ),
   // Werk anlegen/bearbeiten: Ionic songs page `isAdmin` (admin/responsible).
   _Gate(
     (l) =>

@@ -28,6 +28,7 @@ import '../widgets/vorkurs_certificates.dart';
 import '../../../../core/providers/admin_providers.dart';
 import '../../../../core/services/app_update_service.dart';
 import '../widgets/app_promo_card.dart';
+import '../../../assistant/presentation/widgets/assistant_entry_card.dart';
 import '../widgets/settings_admins_sheet.dart';
 import '../widgets/calendar_subscription_dialog.dart';
 import '../widgets/settings_list.dart';
@@ -194,6 +195,9 @@ class SettingsPage extends ConsumerWidget {
 
             // PROFILE_OFFLINE: profile card ("Meine Stammdaten")
             const ProfileHeroCard(),
+
+            // Chat-Assistent: coloured card right under the profile.
+            const AssistantEntryCard(margin: EdgeInsets.only(top: 12, bottom: 4)),
 
             // ============ STIMMFÜHRER ============
             if (isVoiceLeader && !isGeneral && !sp)

@@ -65,6 +65,7 @@ _$TenantImpl _$$TenantImplFromJson(Map<String, dynamic> json) => _$TenantImpl(
           .toList(),
   dutyView: json['duty_view'] as bool? ?? false,
   shiftExcusedAsPresent: json['shift_excused_as_present'] as bool? ?? false,
+  aiAssistantEnabled: json['ai_assistant_enabled'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$$TenantImplToJson(_$TenantImpl instance) =>
@@ -105,6 +106,7 @@ Map<String, dynamic> _$$TenantImplToJson(_$TenantImpl instance) =>
       'late_reasons': instance.lateReasons,
       'duty_view': instance.dutyView,
       'shift_excused_as_present': instance.shiftExcusedAsPresent,
+      'ai_assistant_enabled': instance.aiAssistantEnabled,
     };
 
 _$ExtraFieldImpl _$$ExtraFieldImplFromJson(Map<String, dynamic> json) =>
