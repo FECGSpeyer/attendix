@@ -10,7 +10,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../team_org_utils.dart';
 import '../pages/rd_meeting_page.dart' show rdMeetingRoute;
-import 'quick_create_attendance.dart';
+import 'rd_new_meeting_sheet.dart';
 import 'tasks_tab.dart' show TeamOrgListSkeleton;
 
 /// Topics page of the Team area (suggestions, Themenspeicher).
@@ -32,8 +32,9 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
     if (_creating) return;
     setState(() => _creating = true);
     try {
-      final id = await promptCreateProtocolAttendance(context, ref);
-      if (id != null) ref.invalidate(upcomingProtocolAttendancesProvider);
+      final id = await showNewMeetingSheet(context);
+      // Straight on to the agenda of the new Besprechung.
+      if (id != null && mounted) context.push(rdMeetingRoute(id));
     } finally {
       if (mounted) setState(() => _creating = false);
     }

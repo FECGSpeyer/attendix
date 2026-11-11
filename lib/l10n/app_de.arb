@@ -14243,6 +14243,43 @@
       "count": {}
     }
   },
+  "rdTeamCircleAppliesToType": "Das gilt für alle Besprechungen dieser Art.",
+  "@rdTeamCircleAppliesToType": {
+    "description": "rdTeam.circleAppliesToType"
+  },
+  "rdTeamCircleChoose": "Auswählen",
+  "@rdTeamCircleChoose": {
+    "description": "rdTeam.circleChoose"
+  },
+  "rdTeamCircleEveryone": "Alle Mitglieder",
+  "@rdTeamCircleEveryone": {
+    "description": "rdTeam.circleEveryone"
+  },
+  "rdTeamCircleGroups": "Gruppen",
+  "@rdTeamCircleGroups": {
+    "description": "rdTeam.circleGroups"
+  },
+  "rdTeamCircleLeadersHint": "Die Leitung ist immer dabei.",
+  "@rdTeamCircleLeadersHint": {
+    "description": "rdTeam.circleLeadersHint"
+  },
+  "rdTeamCirclePersons": "Einzelne Personen",
+  "@rdTeamCirclePersons": {
+    "description": "rdTeam.circlePersons"
+  },
+  "rdTeamCirclePersonsCount": "{count, plural, one {1 Person} other {{count} Personen}}",
+  "@rdTeamCirclePersonsCount": {
+    "description": "rdTeam.circlePersonsCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTeamCircleSearch": "Person suchen",
+  "@rdTeamCircleSearch": {
+    "description": "rdTeam.circleSearch"
+  },
   "rdTeamEmptyLeader": "Lege mit + die erste an. Themen sammelt ihr vorher, Ergebnisse und Aufgaben haltet ihr im Protokoll fest.",
   "@rdTeamEmptyLeader": {
     "description": "rdTeam.emptyLeader"
@@ -14271,13 +14308,25 @@
   "@rdTeamLoadFailed": {
     "description": "rdTeam.loadFailed"
   },
+  "rdTeamMeetingDay": "Tag",
+  "@rdTeamMeetingDay": {
+    "description": "rdTeam.meetingDay"
+  },
   "rdTeamMeetingGone": "Diese Besprechung ist nicht mehr geplant.",
   "@rdTeamMeetingGone": {
     "description": "rdTeam.meetingGone"
   },
+  "rdTeamMeetingKind": "Art",
+  "@rdTeamMeetingKind": {
+    "description": "rdTeam.meetingKind"
+  },
   "rdTeamMeetingPlanned": "Besprechung · geplant",
   "@rdTeamMeetingPlanned": {
     "description": "rdTeam.meetingPlanned"
+  },
+  "rdTeamMeetingTypeName": "Besprechung",
+  "@rdTeamMeetingTypeName": {
+    "description": "rdTeam.meetingTypeName"
   },
   "rdTeamNewMeeting": "Neue Besprechung",
   "@rdTeamNewMeeting": {
@@ -14324,6 +14373,14 @@
   "rdTeamPast": "Vergangen",
   "@rdTeamPast": {
     "description": "rdTeam.past"
+  },
+  "rdTeamPlanMeeting": "Besprechung planen",
+  "@rdTeamPlanMeeting": {
+    "description": "rdTeam.planMeeting"
+  },
+  "rdTeamPlanMeetingHint": "Mit Tagesordnung und Protokoll",
+  "@rdTeamPlanMeetingHint": {
+    "description": "rdTeam.planMeetingHint"
   },
   "rdTeamPlanned": "Geplant",
   "@rdTeamPlanned": {
@@ -14392,6 +14449,14 @@
   "rdTeamUnplannedGroup": "Noch ohne Besprechung",
   "@rdTeamUnplannedGroup": {
     "description": "rdTeam.unplannedGroup"
+  },
+  "rdTeamWhoIsIn": "Wer ist dabei?",
+  "@rdTeamWhoIsIn": {
+    "description": "rdTeam.whoIsIn"
+  },
+  "rdTeamWhoIsInHint": "Wer dabei ist, wird eingeladen und sieht Tagesordnung, Protokoll und Aufgaben.",
+  "@rdTeamWhoIsInHint": {
+    "description": "rdTeam.whoIsInHint"
   },
   "rdTypeAdd": "Hinzufügen",
   "@rdTypeAdd": {

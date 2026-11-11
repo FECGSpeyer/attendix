@@ -40,7 +40,22 @@
       "suggestedBy": "{name} · {when}",
       "openTopicsCount": "{count, plural, one {1 wartet auf eine Besprechung} other {{count} warten auf eine Besprechung}}",
       "showDone": "Besprochene Themen anzeigen ({count})",
-      "hideDone": "Besprochene Themen ausblenden"
+      "hideDone": "Besprochene Themen ausblenden",
+      "whoIsIn": "Wer ist dabei?",
+      "whoIsInHint": "Wer dabei ist, wird eingeladen und sieht Tagesordnung, Protokoll und Aufgaben.",
+      "circleAppliesToType": "Das gilt für alle Besprechungen dieser Art.",
+      "circleEveryone": "Alle Mitglieder",
+      "circleChoose": "Auswählen",
+      "circleGroups": "Gruppen",
+      "circlePersons": "Einzelne Personen",
+      "circlePersonsCount": "{count, plural, one {1 Person} other {{count} Personen}}",
+      "circleLeadersHint": "Die Leitung ist immer dabei.",
+      "circleSearch": "Person suchen",
+      "meetingDay": "Tag",
+      "meetingKind": "Art",
+      "meetingTypeName": "Besprechung",
+      "planMeeting": "Besprechung planen",
+      "planMeetingHint": "Mit Tagesordnung und Protokoll"
     }
   },
   "en": {
@@ -84,7 +99,22 @@
       "suggestedBy": "{name} · {when}",
       "openTopicsCount": "{count, plural, one {1 is waiting for a meeting} other {{count} are waiting for a meeting}}",
       "showDone": "Show discussed topics ({count})",
-      "hideDone": "Hide discussed topics"
+      "hideDone": "Hide discussed topics",
+      "whoIsIn": "Who takes part?",
+      "whoIsInHint": "Everyone taking part is invited and sees the agenda, the minutes and the tasks.",
+      "circleAppliesToType": "This applies to all meetings of this kind.",
+      "circleEveryone": "All members",
+      "circleChoose": "Choose",
+      "circleGroups": "Groups",
+      "circlePersons": "Single persons",
+      "circlePersonsCount": "{count, plural, one {1 person} other {{count} persons}}",
+      "circleLeadersHint": "The leadership always takes part.",
+      "circleSearch": "Search person",
+      "meetingDay": "Day",
+      "meetingKind": "Kind",
+      "meetingTypeName": "Meeting",
+      "planMeeting": "Plan a meeting",
+      "planMeetingHint": "With agenda and minutes"
     }
   }
 }

@@ -80,8 +80,10 @@ final rdManageAccessProvider = Provider.autoDispose<RdManageAccess>((ref) {
 /// leaders, the team circle and everyone with own tasks, like the old
 /// settings entries Teamorganisation, Meine Aufgaben, Themen, Protokolle.
 final rdShowTeamProvider = Provider.autoDispose<bool>((ref) {
+  // The leadership plans the first Besprechung from there.
+  if (ref.watch(isTeamLeaderProvider)) return true;
   if (!ref.watch(teamOrgEnabledProvider)) return false;
-  if (ref.watch(isTeamLeaderProvider) || ref.watch(inTeamCircleProvider)) return true;
+  if (ref.watch(inTeamCircleProvider)) return true;
   return ref.watch(myTasksProvider).valueOrNull?.isNotEmpty ?? false;
 });
 

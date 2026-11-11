@@ -13,6 +13,7 @@ import '../models/shift/shift_plan.dart';
 import '../../core/utils/people_shift_status.dart';
 import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
+import '../../core/utils/type_circle.dart';
 import '../../core/utils/db_helpers.dart';
 import '../../core/utils/duty_utils.dart' show dutySyncFieldsForStatus;
 import '../../core/utils/helper_member.dart';
@@ -2193,7 +2194,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     final types = await supabase
         .from('attendance_types')
         .select(
-            'id, relevant_groups, default_status, additional_fields_filter, all_day, start_time, end_time')
+            'id, relevant_groups, relevant_persons, default_status, additional_fields_filter, all_day, start_time, end_time')
         .eq('tenant_id', tenantId ?? currentTenantId);
     return (types as List).map((t) {
       final raw = t['default_status'];
@@ -2208,6 +2209,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       return _TypeFilter(
         id: t['id'],
         relevantGroups: groups is List ? groups.whereType<int>().toList() : const [],
+        relevantPersons: typeCirclePersonsFromJson(t['relevant_persons']),
         defaultStatus: status,
         filterKey: filter is Map ? filter['key']?.toString() : null,
         filterOption: filter is Map ? filter['option'] : null,
@@ -2285,8 +2287,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     bool checkPaused = true,
   }) {
     if (checkPaused && player.paused) return false;
-    if (type.relevantGroups.isNotEmpty &&
-        !type.relevantGroups.contains(player.instrument)) {
+    if (!typeCircleCovers(type.relevantGroups, type.relevantPersons,
+        groupId: player.instrument, personId: player.id)) {
       return false;
     }
     final key = type.filterKey;
@@ -2379,7 +2381,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       final types = (await _loadTypeFilters())
           .where((t) =>
               helperChanged ||
-              t.relevantGroups.isNotEmpty ||
+              t.hasCircle ||
               (t.filterKey != null && t.filterOption != null))
           .toList();
       if (types.isEmpty) return;
@@ -2425,7 +2427,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       for (final att in upcoming) {
         final type = types.where((t) => t.id == att['type_id']).firstOrNull;
         if (type == null) continue;
-        final affectsGroup = groupChanged && type.relevantGroups.isNotEmpty;
+        final affectsGroup = groupChanged && type.hasCircle;
         final affectsField =
             type.filterKey != null && changedFields.contains(type.filterKey);
         if (!affectsGroup && !affectsField && !helperChanged) continue;
@@ -2585,6 +2587,7 @@ class _TypeFilter {
   const _TypeFilter({
     required this.id,
     required this.relevantGroups,
+    this.relevantPersons = const [],
     required this.defaultStatus,
     this.filterKey,
     this.filterOption,
@@ -2595,6 +2598,10 @@ class _TypeFilter {
 
   final dynamic id;
   final List<int> relevantGroups;
+
+  /// Single persons of the circle (Besprechungen), next to the groups.
+  final List<int> relevantPersons;
+  bool get hasCircle => !typeCircleIsEveryone(relevantGroups, relevantPersons);
   final int defaultStatus;
   final String? filterKey;
   final dynamic filterOption;

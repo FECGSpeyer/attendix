@@ -9,6 +9,7 @@ import '../../../../core/providers/holiday_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/team_org_providers.dart' show isTeamLeaderProvider;
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -17,6 +18,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../core/utils/type_circle.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/route_leave_guard.dart';
@@ -25,6 +27,8 @@ import '../../../../shared/widgets/adaptive/adaptive.dart'
 import '../../../attendance/presentation/attendance_create_writes.dart';
 import '../../../attendance/presentation/widgets/multi_date_calendar.dart';
 import '../../../attendance/presentation/widgets/songs_selection_sheet.dart';
+import '../../../team_organization/presentation/pages/rd_meeting_page.dart' show rdMeetingRoute;
+import '../../../team_organization/presentation/widgets/rd_new_meeting_sheet.dart';
 import '../../data/rd_create_logic.dart';
 import '../../data/rd_type_flags.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
@@ -462,6 +466,21 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     final holidayHits = [for (final d in dates) if (rdHolidayOn(holidays, d) != null) d];
 
     return RdFormBody(children: [
+      if (ref.watch(isTeamLeaderProvider)) ...[
+        RdGroupedList(children: [
+          RdListRow(
+            key: const ValueKey('rd-create-meeting'),
+            leading: const RdRowIcon(Icons.forum_outlined),
+            title: l10n.rdTeamPlanMeeting,
+            subtitle: l10n.rdTeamPlanMeetingHint,
+            onTap: () async {
+              final id = await showNewMeetingSheet(context);
+              if (id != null && context.mounted) context.pushReplacement(rdMeetingRoute(id));
+            },
+          ),
+        ]),
+        const SizedBox(height: 16),
+      ],
       if (templates.length > 1) ...[
         _Label(l10n.redesignCreateTemplate),
         Wrap(
@@ -740,12 +759,17 @@ class _InvitedRow extends ConsumerWidget {
     final players = ref.watch(playersProvider).valueOrNull;
     final fields = ref.watch(personExtraFieldsProvider).valueOrNull ?? const [];
     final groups = ref.watch(groupsMapProvider).valueOrNull ?? const <int, String>{};
-    final count = players == null ? '…' : '${rdInvitedPersons(players, type, fields).length}';
+    final persons = ref.watch(typeCirclePersonsProvider).valueOrNull?[type.id] ?? const <int>[];
+    final count =
+        players == null ? '…' : '${rdInvitedPersons(players, type, fields, circlePersons: persons).length}';
     final relevant = type.relevantGroups ?? const <int>[];
-    final value = relevant.isEmpty
+    final value = typeCircleIsEveryone(relevant, persons)
         ? l10n.redesignCreateInvitedAll(count)
         : l10n.redesignCreateInvitedGroups(
-            [for (final id in relevant) if (groups[id] != null) groups[id]!].join(', '),
+            [
+              for (final id in relevant) if (groups[id] != null) groups[id]!,
+              if (persons.isNotEmpty) l10n.rdTeamCirclePersonsCount(persons.length),
+            ].join(', '),
             count,
           );
     return RdListRow(

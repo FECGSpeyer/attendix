@@ -11464,6 +11464,39 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get rdTeamCircleAppliesToType =>
+      'Das gilt für alle Besprechungen dieser Art.';
+
+  @override
+  String get rdTeamCircleChoose => 'Auswählen';
+
+  @override
+  String get rdTeamCircleEveryone => 'Alle Mitglieder';
+
+  @override
+  String get rdTeamCircleGroups => 'Gruppen';
+
+  @override
+  String get rdTeamCircleLeadersHint => 'Die Leitung ist immer dabei.';
+
+  @override
+  String get rdTeamCirclePersons => 'Einzelne Personen';
+
+  @override
+  String rdTeamCirclePersonsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen',
+      one: '1 Person',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTeamCircleSearch => 'Person suchen';
+
+  @override
   String get rdTeamEmptyLeader =>
       'Lege mit + die erste an. Themen sammelt ihr vorher, Ergebnisse und Aufgaben haltet ihr im Protokoll fest.';
 
@@ -11487,10 +11520,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdTeamLoadFailed => 'Besprechungen konnten nicht geladen werden';
 
   @override
+  String get rdTeamMeetingDay => 'Tag';
+
+  @override
   String get rdTeamMeetingGone => 'Diese Besprechung ist nicht mehr geplant.';
 
   @override
+  String get rdTeamMeetingKind => 'Art';
+
+  @override
   String get rdTeamMeetingPlanned => 'Besprechung · geplant';
+
+  @override
+  String get rdTeamMeetingTypeName => 'Besprechung';
 
   @override
   String get rdTeamNewMeeting => 'Neue Besprechung';
@@ -11535,6 +11577,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdTeamPast => 'Vergangen';
+
+  @override
+  String get rdTeamPlanMeeting => 'Besprechung planen';
+
+  @override
+  String get rdTeamPlanMeetingHint => 'Mit Tagesordnung und Protokoll';
 
   @override
   String get rdTeamPlanned => 'Geplant';
@@ -11589,6 +11637,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdTeamUnplannedGroup => 'Noch ohne Besprechung';
+
+  @override
+  String get rdTeamWhoIsIn => 'Wer ist dabei?';
+
+  @override
+  String get rdTeamWhoIsInHint =>
+      'Wer dabei ist, wird eingeladen und sieht Tagesordnung, Protokoll und Aufgaben.';
 
   @override
   String get rdTypeAdd => 'Hinzufügen';
