@@ -51,6 +51,7 @@ import '../../../../data/repositories/plan_repository.dart';
 import '../../../../core/services/offline_queue_service.dart' show rootScaffoldMessengerKey;
 import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
 import '../../../../core/services/planning_draft_store.dart';
+import '../../../../core/services/register_plan_service.dart';
 import '../../data/planning_write_sync.dart';
 import '../../../../core/providers/redesign_providers.dart' show redesignEnabledProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';

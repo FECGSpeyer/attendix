@@ -1512,7 +1512,20 @@
         "blockRow": "Block",
         "noBlock": "Kein Block",
         "pickBlock": "Block wählen",
-        "dropInBlock": "in „{name}“"
+        "dropInBlock": "in „{name}“",
+        "register": "Registerprobe",
+        "registerHint": "Gruppen proben parallel, Dirigenten wechseln",
+        "registerRound": "Runde {n}",
+        "registerInsert": "In den Ablauf einfügen",
+        "registerApply": "Übernehmen",
+        "registerShuffle": "Neu mischen",
+        "registerPreview": "{count, plural, one {Vorschau · 1 Runde} other {Vorschau · {count} Runden}}",
+        "registerStarts": "Beginnt um {time}",
+        "registerChange": "Gruppen und Dirigenten ändern",
+        "registerChangeHint": "Die Runden werden neu gebaut",
+        "registerShare": "Als Tabelle teilen",
+        "registerShareHint": "PDF oder Telegram",
+        "registerTime": "Uhrzeit"
       },
       "messages": {
         "intro": "Alles, was an die Gruppe ging, mit Lesestatus.",
@@ -3143,7 +3156,20 @@
         "blockRow": "Block",
         "noBlock": "No block",
         "pickBlock": "Choose block",
-        "dropInBlock": "into “{name}”"
+        "dropInBlock": "into “{name}”",
+        "register": "Sectional rehearsal",
+        "registerHint": "Groups rehearse in parallel, conductors rotate",
+        "registerRound": "Round {n}",
+        "registerInsert": "Insert into the schedule",
+        "registerApply": "Apply",
+        "registerShuffle": "Shuffle again",
+        "registerPreview": "{count, plural, one {Preview · 1 round} other {Preview · {count} rounds}}",
+        "registerStarts": "Starts at {time}",
+        "registerChange": "Change groups and conductors",
+        "registerChangeHint": "The rounds are rebuilt",
+        "registerShare": "Share as table",
+        "registerShareHint": "PDF or Telegram",
+        "registerTime": "Time"
       },
       "messages": {
         "intro": "Everything sent to the group, with read status.",

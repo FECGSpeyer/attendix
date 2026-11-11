@@ -25354,6 +25354,84 @@ abstract class AppLocalizations {
   /// **'Neue Punkte kommen ans Ende des Blocks'**
   String get redesignPlanQuickAddInBlockHint;
 
+  /// redesign.plan.register
+  ///
+  /// In de, this message translates to:
+  /// **'Registerprobe'**
+  String get redesignPlanRegister;
+
+  /// redesign.plan.registerApply
+  ///
+  /// In de, this message translates to:
+  /// **'Übernehmen'**
+  String get redesignPlanRegisterApply;
+
+  /// redesign.plan.registerChange
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen und Dirigenten ändern'**
+  String get redesignPlanRegisterChange;
+
+  /// redesign.plan.registerChangeHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Runden werden neu gebaut'**
+  String get redesignPlanRegisterChangeHint;
+
+  /// redesign.plan.registerHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen proben parallel, Dirigenten wechseln'**
+  String get redesignPlanRegisterHint;
+
+  /// redesign.plan.registerInsert
+  ///
+  /// In de, this message translates to:
+  /// **'In den Ablauf einfügen'**
+  String get redesignPlanRegisterInsert;
+
+  /// redesign.plan.registerPreview
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Vorschau · 1 Runde} other {Vorschau · {count} Runden}}'**
+  String redesignPlanRegisterPreview(num count);
+
+  /// redesign.plan.registerRound
+  ///
+  /// In de, this message translates to:
+  /// **'Runde {n}'**
+  String redesignPlanRegisterRound(Object n);
+
+  /// redesign.plan.registerShare
+  ///
+  /// In de, this message translates to:
+  /// **'Als Tabelle teilen'**
+  String get redesignPlanRegisterShare;
+
+  /// redesign.plan.registerShareHint
+  ///
+  /// In de, this message translates to:
+  /// **'PDF oder Telegram'**
+  String get redesignPlanRegisterShareHint;
+
+  /// redesign.plan.registerShuffle
+  ///
+  /// In de, this message translates to:
+  /// **'Neu mischen'**
+  String get redesignPlanRegisterShuffle;
+
+  /// redesign.plan.registerStarts
+  ///
+  /// In de, this message translates to:
+  /// **'Beginnt um {time}'**
+  String redesignPlanRegisterStarts(Object time);
+
+  /// redesign.plan.registerTime
+  ///
+  /// In de, this message translates to:
+  /// **'Uhrzeit'**
+  String get redesignPlanRegisterTime;
+
   /// redesign.plan.removed
   ///
   /// In de, this message translates to:

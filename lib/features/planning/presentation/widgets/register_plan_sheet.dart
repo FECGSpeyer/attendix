@@ -20,6 +20,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../data/models/plan/plan.dart' show RegisterPlanSettings;
+import '../../../../core/utils/plan_utils.dart';
 import '../../../../l10n/l10n.dart';
 import 'ion_items.dart';
 import 'plan_export_actions.dart';
@@ -49,13 +51,69 @@ Future<void> showRegisterPlanSheet(BuildContext context, {DateTime? attendanceDa
   );
 }
 
+/// What the Registerprobe sheet hands to the Beta Ablauf: the groups, the
+/// conductors in the drawn order and the total minutes.
+class RegisterPlanChoice {
+  const RegisterPlanChoice({required this.groups, required this.conductors, required this.minutes});
+
+  final List<String> groups;
+  final List<String> conductors;
+  final num minutes;
+}
+
+/// Beta Ablauf: the same generator with a preview (clock times from
+/// [startMinutes]) and "In den Ablauf einfügen" ([initial]: change an
+/// existing Registerprobe, "Übernehmen"). Null when closed without.
+Future<RegisterPlanChoice?> showRegisterPlanInsertSheet(
+  BuildContext context, {
+  RegisterPlanSettings? initial,
+  num? initialMinutes,
+  int? startMinutes,
+  String? subtitle,
+}) {
+  return showModalBottomSheet<RegisterPlanChoice>(
+    context: context,
+    useRootNavigator: true,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: context.rd.bg,
+    builder:
+        (context) => FractionallySizedBox(
+          heightFactor: 1,
+          child: RegisterPlanSheet(
+            insert: true,
+            initial: initial,
+            initialMinutes: initialMinutes,
+            startMinutes: startMinutes,
+            subtitle: subtitle,
+          ),
+        ),
+  );
+}
+
 /// Registerprobenplan generator (Ionic planning.page `createPlan` modal):
 /// editable groups (persisted per instance), editable conductors
 /// ("Vorname N."), total time, export as PDF or per Telegram (PDF / Bild).
 class RegisterPlanSheet extends ConsumerStatefulWidget {
-  const RegisterPlanSheet({super.key, this.attendanceDate});
+  const RegisterPlanSheet({
+    super.key,
+    this.attendanceDate,
+    this.insert = false,
+    this.initial,
+    this.initialMinutes,
+    this.startMinutes,
+    this.subtitle,
+  });
 
   final DateTime? attendanceDate;
+
+  /// Beta Ablauf: preview and "In den Ablauf einfügen" instead of exports
+  /// (see [showRegisterPlanInsertSheet]).
+  final bool insert;
+  final RegisterPlanSettings? initial;
+  final num? initialMinutes;
+  final int? startMinutes;
+  final String? subtitle;
 
   @override
   ConsumerState<RegisterPlanSheet> createState() => _RegisterPlanSheetState();
@@ -70,7 +128,9 @@ class _Entry {
 class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
   final List<_Entry> _groups = [];
   final List<_Entry> _conductors = [];
-  final _minutesController = TextEditingController(text: '60');
+  late final _minutesController = TextEditingController(text: _fmtMinutes(widget.initialMinutes ?? 60));
+
+  static String _fmtMinutes(num m) => m == m.roundToDouble() ? '${m.round()}' : '$m';
   int _nextId = 0;
   bool _loading = true;
   bool _busy = false;
@@ -129,8 +189,12 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
         stored = prefs.getString(RegisterPlanService.groupsStorageKey(tenant!.id!));
       } catch (_) {}
     }
-    final groups = RegisterPlanService.parseStoredGroups(stored, defaults);
-    final names = RegisterPlanService.conductorNames(conductors);
+    final initial = widget.initial;
+    final groups = initial != null ? initial.groups : RegisterPlanService.parseStoredGroups(stored, defaults);
+    var names = initial != null ? initial.conductors : RegisterPlanService.conductorNames(conductors);
+    // Inserting: drawn once now, so the preview is what gets inserted
+    // ("Neu mischen" draws again). Changing keeps the inserted order.
+    if (widget.insert && initial == null) names = RegisterPlanService.shuffle(names);
     if (!mounted) return;
     setState(() {
       _groups.addAll(groups.map(_entry));
@@ -164,7 +228,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     final l10n = context.l10n;
     // Telegram buttons only when the user linked Telegram (Ionic `telegram_chat_id`).
     ref.watch(notificationConfigProvider);
-    final chatId = planTelegramChatId(ref);
+    final chatId = widget.insert ? null : planTelegramChatId(ref);
     final theme = Theme.of(context);
     if (context.rdSkin != null) return _buildBeta(context, chatId);
 
@@ -348,12 +412,19 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                     Expanded(
                       child: Semantics(
                         header: true,
-                        child: Text(l10n.planningSectionalPlan, style: RdType.title(p)),
+                        child: Text(
+                          widget.insert ? l10n.redesignPlanRegister : l10n.planningSectionalPlan,
+                          style: RdType.title(p),
+                        ),
                       ),
                     ),
                     RdCircleButton(icon: Icons.close, label: l10n.commonClose, onPressed: () => Navigator.pop(context)),
                   ],
                 ),
+                if ((widget.subtitle ?? '').isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(widget.subtitle!, style: RdType.meta(p, size: 15)),
+                ],
                 const SizedBox(height: 16),
                 RdGroupLabel(l10n.planningGroups),
                 RdGroupedList(
@@ -415,6 +486,17 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                     ],
                   ),
                 ),
+                if (widget.insert) ...[
+                  const SizedBox(height: 16),
+                  ..._preview(context),
+                  const SizedBox(height: 24),
+                  RdPrimaryButton(
+                    key: const Key('rd-register-insert'),
+                    icon: widget.initial == null ? Icons.add : Icons.check,
+                    label: widget.initial == null ? l10n.redesignPlanRegisterInsert : l10n.redesignPlanRegisterApply,
+                    onPressed: _disabled ? null : _choose,
+                  ),
+                ] else ...[
                 const SizedBox(height: 24),
                 RdPrimaryButton(
                   icon: Icons.description_outlined,
@@ -436,9 +518,91 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                     onPressed: _disabled ? null : () => _createPlan(perTelegram: true, asImage: true),
                   ),
                 ],
+                ],
               ],
             ),
       ),
+    );
+  }
+
+  num get _minutes => num.tryParse(_minutesController.text.trim()) ?? 0;
+
+  /// The rounds as they will be inserted, with clock times when the start
+  /// is known, and "Neu mischen".
+  List<Widget> _preview(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final groups = _groupValues;
+    final ok =
+        !RegisterPlanService.isExportDisabled(
+          conductors: _conductorValues,
+          groups: groups,
+          time: _minutesController.text.trim(),
+        );
+    final plan =
+        ok
+            ? RegisterPlanService.generate(conductors: _conductorValues, groups: groups, totalMinutes: _minutes)
+            : null;
+    String time(String minute) {
+      final m = int.tryParse(minute) ?? 0;
+      final start = widget.startMinutes;
+      return start == null ? '+$m' : PlanUtils.formatMinutes(start + m);
+    }
+
+    TextStyle head = TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: p.text2);
+    TextStyle cell = TextStyle(fontSize: 14, color: p.text);
+    Widget pad(Widget w) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8), child: w);
+    return [
+      Row(
+        children: [
+          Expanded(child: RdGroupLabel(l10n.redesignPlanRegisterPreview(plan?.rows.length ?? 0))),
+          TextButton.icon(
+            key: const Key('rd-register-shuffle'),
+            onPressed:
+                _conductors.length < 2
+                    ? null
+                    : () => setState(() {
+                      final order = RegisterPlanService.shuffle(_conductors);
+                      _conductors
+                        ..clear()
+                        ..addAll(order);
+                    }),
+            icon: const Icon(Icons.shuffle, size: 18),
+            label: Text(l10n.redesignPlanRegisterShuffle),
+          ),
+        ],
+      ),
+      if (plan != null)
+        RdCard(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Table(
+              defaultColumnWidth: const IntrinsicColumnWidth(),
+              children: [
+                TableRow(children: [pad(Text('', style: head)), for (final g in plan.groups) pad(Text(g, style: head))]),
+                for (final r in plan.rows)
+                  TableRow(
+                    decoration: BoxDecoration(border: Border(top: BorderSide(color: p.line))),
+                    children: [
+                      pad(Text(time(r.first), style: cell.copyWith(fontWeight: FontWeight.w700, color: p.softText))),
+                      for (final c in r.skip(1)) pad(Text(c.trim().isEmpty ? '–' : c, style: cell)),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+        ),
+    ];
+  }
+
+  Future<void> _choose() async {
+    final groups = _groupValues;
+    await _saveGroups(groups);
+    if (!mounted) return;
+    Navigator.pop(
+      context,
+      RegisterPlanChoice(groups: groups, conductors: _conductorValues, minutes: _minutes),
     );
   }
 
@@ -510,7 +674,6 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
 
   /// Ionic `createPlan(timeString, modal, perTelegram, asImage)`.
   Future<void> _createPlan({bool perTelegram = false, bool asImage = false}) async {
-    final l10n = context.l10n;
     final groups = _groupValues;
     await _saveGroups(groups);
 
@@ -519,57 +682,79 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
       groups: groups,
       totalMinutes: num.tryParse(_minutesController.text.trim()) ?? 0,
     );
-    final tenant = ref.read(currentTenantProvider);
-    final shortName = tenant?.shortName ?? '';
-    final date = DateFormat(dateFmt()).format(widget.attendanceDate ?? DateTime.now());
-
+    if (!mounted) return;
     setState(() => _busy = true);
-    try {
-      final branding = ref.read(includeBrandingProvider) ? await resolvePdfBranding(ref) : null;
-      final pdf = await buildRegisterPlanPdf(
-        plan,
-        title: l10n.planningSectionalPlanTitle(shortName),
-        subtitle: l10n.planningAsOf(date),
-        minutesLabel: l10n.planningMinutes,
-        branding: branding,
-      );
-
-      if (perTelegram) {
-        final chatId = planTelegramChatId(ref);
-        if (chatId == null) return;
-        var bytes = pdf;
-        if (asImage) {
-          await for (final page in Printing.raster(pdf, pages: const [0], dpi: 150)) {
-            bytes = await page.toPng();
-            break;
-          }
-        }
-        final now = DateTime.now();
-        final stamp = '${now.day.toString().padLeft(2, '0')}_${now.month.toString().padLeft(2, '0')}_${now.year}';
-        try {
-          await ref.read(telegramServiceProvider).sendPlanPerTelegram(
-                fileBytes: bytes,
-                name: 'Registerprobenplan_$stamp',
-                chatId: chatId,
-                asImage: asImage,
-              );
-          if (mounted) ToastHelper.showSuccess(context, l10n.svcMessageSent);
-        } catch (_) {
-          if (mounted) ToastHelper.showError(context, l10n.svcSendMessageFailed);
-        }
-      } else {
-        // Ionic `Utils.downloadFileNative`: save, not print.
-        await NativeFileService.saveBytes(pdf, '$shortName Registerprobenplan: $date.pdf');
-      }
-    } catch (e) {
-      if (mounted) ToastHelper.showError(context, l10n.planningFlutterExportFailed(friendlyErrorMessage(e)));
-      return;
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-
-    if (mounted) Navigator.pop(context);
+    final ok = await exportRegisterPlan(
+      context,
+      ref,
+      plan,
+      attendanceDate: widget.attendanceDate,
+      perTelegram: perTelegram,
+      asImage: asImage,
+    );
+    if (mounted) setState(() => _busy = false);
+    if (ok && mounted) Navigator.pop(context);
   }
+}
+
+/// Saves [plan] as PDF, or sends it per Telegram (PDF or [asImage]).
+/// [timeLabel]: the first column's header ("Minuten" by default). False
+/// when it failed (a toast says why) or Telegram is not linked.
+Future<bool> exportRegisterPlan(
+  BuildContext context,
+  WidgetRef ref,
+  RegisterPlan plan, {
+  DateTime? attendanceDate,
+  String? timeLabel,
+  bool perTelegram = false,
+  bool asImage = false,
+}) async {
+  final l10n = context.l10n;
+  final tenant = ref.read(currentTenantProvider);
+  final shortName = tenant?.shortName ?? '';
+  final date = DateFormat(dateFmt()).format(attendanceDate ?? DateTime.now());
+  try {
+    final branding = ref.read(includeBrandingProvider) ? await resolvePdfBranding(ref) : null;
+    final pdf = await buildRegisterPlanPdf(
+      plan,
+      title: l10n.planningSectionalPlanTitle(shortName),
+      subtitle: l10n.planningAsOf(date),
+      minutesLabel: timeLabel ?? l10n.planningMinutes,
+      branding: branding,
+    );
+
+    if (perTelegram) {
+      final chatId = planTelegramChatId(ref);
+      if (chatId == null) return false;
+      var bytes = pdf;
+      if (asImage) {
+        await for (final page in Printing.raster(pdf, pages: const [0], dpi: 150)) {
+          bytes = await page.toPng();
+          break;
+        }
+      }
+      final now = DateTime.now();
+      final stamp = '${now.day.toString().padLeft(2, '0')}_${now.month.toString().padLeft(2, '0')}_${now.year}';
+      try {
+        await ref.read(telegramServiceProvider).sendPlanPerTelegram(
+              fileBytes: bytes,
+              name: 'Registerprobenplan_$stamp',
+              chatId: chatId,
+              asImage: asImage,
+            );
+        if (context.mounted) ToastHelper.showSuccess(context, l10n.svcMessageSent);
+      } catch (_) {
+        if (context.mounted) ToastHelper.showError(context, l10n.svcSendMessageFailed);
+      }
+    } else {
+      // Ionic `Utils.downloadFileNative`: save, not print.
+      await NativeFileService.saveBytes(pdf, '$shortName Registerprobenplan: $date.pdf');
+    }
+  } catch (e) {
+    if (context.mounted) ToastHelper.showError(context, l10n.planningFlutterExportFailed(friendlyErrorMessage(e)));
+    return false;
+  }
+  return true;
 }
 
 /// PDF of a Registerprobenplan (Ionic autoTable, `theme: 'plain'`, A4

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 
 import '../../data/models/person/person.dart';
+import '../../data/models/plan/plan.dart';
+import '../utils/plan_utils.dart';
 
 /// Register rehearsal plan (Ionic `planning.page.ts` `createPlan`).
 class RegisterPlan {
@@ -107,6 +109,63 @@ class RegisterPlanService {
       rows.add(row);
     }
     return RegisterPlan(groups: [...groups], rows: rows);
+  }
+
+  /// Minutes of each round of [plan] (the gaps between the start minutes,
+  /// the last one up to [totalMinutes]).
+  static List<int> roundMinutes(RegisterPlan plan, num totalMinutes) {
+    final starts = [for (final r in plan.rows) int.tryParse(r.first) ?? 0];
+    final total = _jsRound(totalMinutes);
+    return [for (var i = 0; i < starts.length; i++) (i + 1 < starts.length ? starts[i + 1] : total) - starts[i]];
+  }
+
+  /// "Streicher: Anna M. · Holzbläser: Ben K." for round [row] ([empty]
+  /// for a group without conductor).
+  static String roundInfo(RegisterPlan plan, int row, {String empty = '–'}) => [
+        for (var g = 0; g < plan.groups.length; g++)
+          '${plan.groups[g]}: ${plan.rows[row][g + 1].trim().isEmpty ? empty : plan.rows[row][g + 1]}',
+      ].join(' · ');
+
+  /// The Ablauf rows of a Registerprobe (Beta): a block [name] that keeps
+  /// the groups and the drawn order of the [conductors], and one
+  /// Unterpunkt per round ("[roundName] n", its minutes, the distribution
+  /// as info). [conductors] are used in the given order (shuffle first).
+  static List<PlanField> blockFields({
+    required String name,
+    required String Function(int round) roundName,
+    required List<String> groups,
+    required List<String> conductors,
+    required num totalMinutes,
+  }) {
+    final plan = generate(conductors: conductors, groups: groups, totalMinutes: totalMinutes);
+    final minutes = roundMinutes(plan, totalMinutes);
+    final head = PlanUtils.newGroupHead(name)
+        .copyWith(registerPlan: RegisterPlanSettings(groups: [...groups], conductors: [...conductors]));
+    return [
+      head,
+      for (var i = 0; i < plan.rows.length; i++)
+        PlanField(
+          id: 'fld-${PlanUtils.uuid()}',
+          name: roundName(i + 1),
+          time: '${minutes[i]}',
+          info: roundInfo(plan, i),
+          groupId: head.id,
+        ),
+    ];
+  }
+
+  /// The table of a Registerprobe block (same rotation as when it was
+  /// inserted) with the rounds' clock times [startTimes] in the first
+  /// column where there is one.
+  static RegisterPlan tableOf(RegisterPlanSettings settings, num totalMinutes, List<String> startTimes) {
+    final plan = generate(conductors: settings.conductors, groups: settings.groups, totalMinutes: totalMinutes);
+    return RegisterPlan(
+      groups: plan.groups,
+      rows: [
+        for (var i = 0; i < plan.rows.length; i++)
+          [if (i < startTimes.length) startTimes[i] else plan.rows[i].first, ...plan.rows[i].skip(1)],
+      ],
+    );
   }
 
   /// JavaScript `Math.round` (halves round up, also for negatives).

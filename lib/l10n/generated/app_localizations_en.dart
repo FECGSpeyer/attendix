@@ -15771,6 +15771,58 @@ class AppLocalizationsEn extends AppLocalizations {
       'New items go to the end of the block';
 
   @override
+  String get redesignPlanRegister => 'Sectional rehearsal';
+
+  @override
+  String get redesignPlanRegisterApply => 'Apply';
+
+  @override
+  String get redesignPlanRegisterChange => 'Change groups and conductors';
+
+  @override
+  String get redesignPlanRegisterChangeHint => 'The rounds are rebuilt';
+
+  @override
+  String get redesignPlanRegisterHint =>
+      'Groups rehearse in parallel, conductors rotate';
+
+  @override
+  String get redesignPlanRegisterInsert => 'Insert into the schedule';
+
+  @override
+  String redesignPlanRegisterPreview(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Preview · $count rounds',
+      one: 'Preview · 1 round',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanRegisterRound(Object n) {
+    return 'Round $n';
+  }
+
+  @override
+  String get redesignPlanRegisterShare => 'Share as table';
+
+  @override
+  String get redesignPlanRegisterShareHint => 'PDF or Telegram';
+
+  @override
+  String get redesignPlanRegisterShuffle => 'Shuffle again';
+
+  @override
+  String redesignPlanRegisterStarts(Object time) {
+    return 'Starts at $time';
+  }
+
+  @override
+  String get redesignPlanRegisterTime => 'Time';
+
+  @override
   String redesignPlanRemoved(Object name) {
     return '“$name” removed';
   }

@@ -4,6 +4,7 @@
 // (dropped above it = inside, below = behind it) and adds several items.
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/branding_providers.dart';
+import 'package:attendix/core/providers/conductor_providers.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/organisation_providers.dart';
@@ -79,6 +80,12 @@ void main() {
         groupCategoriesProvider.overrideWith((ref) async => const []),
         protocolTypesProvider.overrideWith((ref) async => const []),
         currentOrganisationProvider.overrideWith((ref) async => null),
+        conductorsProvider.overrideWith(
+          (ref) async => [
+            TestFactories.createPerson(id: 1, firstName: 'Anna', lastName: 'Meier'),
+            TestFactories.createPerson(id: 2, firstName: 'Ben', lastName: 'Kurz'),
+          ],
+        ),
         hasBrandingProvider.overrideWithValue(false),
         effectiveRoleProvider.overrideWithValue(Role.admin),
       ],
@@ -309,6 +316,81 @@ void main() {
         'Anbetung',
         'Lied 1',
       ]);
+      await close(tester);
+    });
+  });
+
+  group('Registerprobe', () {
+    List<Map<String, dynamic>> fields() => [
+      for (final f in ((calls.last['plan'] as Map<String, dynamic>)['fields'] as List)) f as Map<String, dynamic>,
+    ];
+
+    testWidgets('Hinzufügen › Registerprobe inserts a block with its rounds as Unterpunkte', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      await pump(tester);
+      await tester.tap(find.byKey(const Key('rd-plan-add')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('rd-plan-add-register')));
+      await tester.pumpAndSettle();
+      // Starts behind the plan (16:30); 60 minutes, 2 conductors, 3 groups
+      // (Streicher, Holzbläser, Sonstige): 3 rounds of 20 minutes.
+      expect(find.text('Beginnt um 16:30'), findsOneWidget);
+      expect(find.text('VORSCHAU · 3 RUNDEN'), findsOneWidget);
+      expect(find.text('16:50'), findsOneWidget);
+      await tester.ensureVisible(find.byKey(const Key('rd-register-insert')));
+      await tester.tap(find.byKey(const Key('rd-register-insert')));
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+      final f = fields();
+      expect(f.length, 7);
+      final head = f[3];
+      expect(head['isGroup'], true);
+      expect(head['name'], 'Registerprobe');
+      expect((head['registerPlan'] as Map)['groups'], hasLength(3));
+      expect([for (final r in f.skip(4)) r['name']], ['Runde 1', 'Runde 2', 'Runde 3']);
+      expect([for (final r in f.skip(4)) r['time']], ['20', '20', '20']);
+      expect([for (final r in f.skip(4)) r['groupId']], everyElement(head['id']));
+      // The footer changes groups and conductors instead of adding a Punkt.
+      expect(find.text('Gruppen und Dirigenten ändern'), findsOneWidget);
+      await close(tester);
+    });
+
+    testWidgets('Gruppen und Dirigenten ändern rebuilds the rounds', (tester) async {
+      final att = _att.copyWith(
+        plan: const Plan(
+          time: '16:00',
+          end: '2026-01-01T17:00',
+          title: 'Konzert',
+          fields: [
+            PlanField(
+              id: 'r',
+              name: 'Registerprobe',
+              time: '0',
+              isGroup: true,
+              registerPlan: RegisterPlanSettings(groups: ['Sopran', 'Alt'], conductors: ['Anna M.', 'Ben K.']),
+            ),
+            PlanField(id: 'r1', name: 'Runde 1', time: '15', groupId: 'r', info: 'Sopran: Anna M. · Alt: Ben K.'),
+            PlanField(id: 'r2', name: 'Runde 2', time: '15', groupId: 'r', info: 'Sopran: Ben K. · Alt: Anna M.'),
+            PlanField(id: 'c', name: 'Schlusslied', time: '5'),
+          ],
+        ),
+      );
+      await pump(tester, attendance: att);
+      // One line per group.
+      expect(find.text('Sopran: Anna M.'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('rd-plan-block-add-r')));
+      await tester.pumpAndSettle();
+      expect(find.text('Übernehmen'), findsOneWidget);
+      await tester.enterText(find.widgetWithText(TextField, '30'), '40');
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const Key('rd-register-insert')));
+      await tester.tap(find.byKey(const Key('rd-register-insert')));
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+      final f = fields();
+      expect([for (final r in f) r['name']], ['Registerprobe', 'Runde 1', 'Runde 2', 'Schlusslied']);
+      expect([for (final r in f) r['time']], ['0', '20', '20', '5']);
+      expect(f[1]['info'], 'Sopran: Anna M. · Alt: Ben K.');
       await close(tester);
     });
   });

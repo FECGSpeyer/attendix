@@ -560,22 +560,23 @@ extension _PlanningBeta on _PlanningPageState {
     final p = context.rd;
     final l10n = context.l10n;
     final head = _fields[s.index];
+    final register = head.registerPlan != null;
     return Material(
       color: Colors.transparent,
       child: InkWell(
         key: ValueKey('rd-plan-block-add-${s.footer}'),
-        onTap: () => _rdQuickAdd(group: s.footer),
+        onTap: () => register ? _rdChangeRegister(head.id) : _rdQuickAdd(group: s.footer),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 44),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(30, 10, 14, 10),
             child: Row(
               children: [
-                Icon(Icons.add, size: 18, color: p.link),
+                Icon(register ? Icons.groups_outlined : Icons.add, size: 18, color: p.link),
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
-                    l10n.redesignPlanAddInBlock(head.name),
+                    register ? l10n.redesignPlanRegisterChange : l10n.redesignPlanAddInBlock(head.name),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.link),
@@ -633,7 +634,16 @@ extension _PlanningBeta on _PlanningPageState {
     }
     if (metaLine != null) sub.add(Text(metaLine, style: RdType.meta(p, size: 13)));
     if (!isNote && !isAgenda && (field.info ?? '').isNotEmpty) {
-      sub.add(Text(field.info!, style: RdType.meta(p, size: 13).copyWith(fontStyle: FontStyle.italic)));
+      // A Registerprobe round: one line per group ("Streicher: Anna").
+      final round =
+          field.groupId != null && _fields.any((f) => f.id == field.groupId && f.registerPlan != null);
+      if (round) {
+        for (final line in field.info!.split(' · ')) {
+          sub.add(Text(line, style: RdType.meta(p, size: 13)));
+        }
+      } else {
+        sub.add(Text(field.info!, style: RdType.meta(p, size: 13).copyWith(fontStyle: FontStyle.italic)));
+      }
     }
     final warning = isHead || isNote ? null : _missingGroups(field);
     if (warning != null && warning.isNotEmpty) {
@@ -1170,6 +1180,10 @@ extension _PlanningBeta on _PlanningPageState {
       await _rdQuickAdd(kind: action, group: action == 'group' ? null : group, after: after == null ? null : before[after]);
       return;
     }
+    if (action == 'register') {
+      await _rdInsertRegister(after: after == null ? null : before[after]);
+      return;
+    }
     await _runAddAction(action);
     if (!mounted || after == null || loadGen != _loadGen) return;
     final now = _fields;
@@ -1197,6 +1211,126 @@ extension _PlanningBeta on _PlanningPageState {
       _rdCollapsed.remove(join);
     }
     _rdApply([...now.sublist(0, pos), ...tail, ...now.sublist(pos, before.length)]);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Registerprobe (a block whose rounds are Unterpunkte)
+  // ---------------------------------------------------------------------------
+
+  /// "Registerprobe": the calculator with a preview, then a block with one
+  /// Unterpunkt per round behind [after] (behind its whole block when it
+  /// is in one) or at the end.
+  Future<void> _rdInsertRegister({PlanField? after}) async {
+    final l10n = context.l10n;
+    final loadGen = _loadGen;
+    int pos() {
+      if (after == null) return _fields.length;
+      final i = _fields.indexWhere((f) => _rdSame(f, after));
+      if (i < 0) return _fields.length;
+      final block = PlanUtils.isGroupHead(after) ? after.id : after.groupId;
+      return block == null ? i + 1 : PlanUtils.lastIndexOfGroup(_fields, block) + 1;
+    }
+
+    final start = PlanUtils.parseTimeToMinutes(_time);
+    final at = start == null ? null : PlanUtils.startMinutesAt(start, _fields, pos());
+    final choice = await showRegisterPlanInsertSheet(
+      context,
+      startMinutes: at,
+      subtitle: at == null ? null : l10n.redesignPlanRegisterStarts(PlanUtils.formatMinutes(at)),
+    );
+    if (choice == null || !mounted || loadGen != _loadGen) return;
+    final rows = RegisterPlanService.blockFields(
+      name: l10n.redesignPlanRegister,
+      roundName: (n) => l10n.redesignPlanRegisterRound(n),
+      groups: choice.groups,
+      conductors: choice.conductors,
+      totalMinutes: choice.minutes,
+    );
+    final i = pos();
+    _rdApply([..._fields.sublist(0, i), ...rows, ..._fields.sublist(i)]);
+  }
+
+  /// "Gruppen und Dirigenten ändern": the same sheet with the block's
+  /// groups, order and minutes; the rounds are built again.
+  Future<void> _rdChangeRegister(String headId) async {
+    final l10n = context.l10n;
+    final loadGen = _loadGen;
+    final index = _fields.indexWhere((f) => f.id == headId);
+    if (index < 0) return;
+    final head = _fields[index];
+    final settings = head.registerPlan;
+    if (settings == null) return;
+    final start = PlanUtils.parseTimeToMinutes(_time);
+    final at = start == null ? null : PlanUtils.startMinutesAt(start, _fields, index);
+    final choice = await showRegisterPlanInsertSheet(
+      context,
+      initial: settings,
+      initialMinutes: PlanUtils.groupDuration(_fields, head.id),
+      startMinutes: at,
+      subtitle: at == null ? null : l10n.redesignPlanRegisterStarts(PlanUtils.formatMinutes(at)),
+    );
+    if (choice == null || !mounted || !_rdStill(loadGen, index, head)) return;
+    final rows = RegisterPlanService.blockFields(
+      name: head.name,
+      roundName: (n) => l10n.redesignPlanRegisterRound(n),
+      groups: choice.groups,
+      conductors: choice.conductors,
+      totalMinutes: choice.minutes,
+    );
+    final newHead = head.copyWith(registerPlan: rows.first.registerPlan);
+    final rounds = [for (final r in rows.skip(1)) r.copyWith(groupId: head.id)];
+    final rest = [for (final f in _fields) if (f.groupId != head.id) f];
+    final at2 = rest.indexWhere((f) => f.id == head.id);
+    _rdCollapsed.remove(head.id);
+    _rdApply([...rest.sublist(0, at2), newHead, ...rounds, ...rest.sublist(at2 + 1)]);
+  }
+
+  /// "Als Tabelle teilen": the old Registerprobenplan (PDF, Telegram) with
+  /// the rounds' clock times.
+  Future<void> _rdShareRegister(String headId) async {
+    final l10n = context.l10n;
+    final index = _fields.indexWhere((f) => f.id == headId);
+    if (index < 0) return;
+    final head = _fields[index];
+    final settings = head.registerPlan;
+    if (settings == null) return;
+    final chatId = planTelegramChatId(ref);
+    var how = 'pdf';
+    if (chatId != null) {
+      final picked = await _rdSheet<String>(
+        title: l10n.redesignPlanRegisterShare,
+        subtitle: head.name,
+        builder:
+            (ctx, pop) => [
+              RdGroupedList(
+                children: [
+                  _rdSheetRow(Icons.description_outlined, l10n.planningExport, null, () => pop('pdf')),
+                  _rdSheetRow(Icons.send_outlined, l10n.planningTelegramPdfShort, null, () => pop('tg')),
+                  _rdSheetRow(Icons.image_outlined, l10n.planningTelegramImageShort, null, () => pop('img')),
+                ],
+              ),
+            ],
+      );
+      if (picked == null || !mounted) return;
+      how = picked;
+    }
+    final start = PlanUtils.parseTimeToMinutes(_time);
+    final times = <String>[];
+    if (start != null) {
+      for (var i = index + 1; i < _fields.length && _fields[i].groupId == head.id; i++) {
+        times.add(PlanUtils.formatMinutes(PlanUtils.startMinutesAt(start, _fields, i)));
+      }
+    }
+    final plan = RegisterPlanService.tableOf(settings, PlanUtils.groupDuration(_fields, head.id), times);
+    await exportRegisterPlan(
+      context,
+      ref,
+      plan,
+      attendanceDate: DateTime.tryParse(_att?.date ?? ''),
+      timeLabel: start == null ? null : l10n.redesignPlanRegisterTime,
+      perTelegram: how != 'pdf',
+      asImage: how == 'img',
+    );
   }
 
   /// Adds several entries in a row: Punkt or Notiz (form), Werk (picker),
@@ -1399,6 +1533,7 @@ extension _PlanningBeta on _PlanningPageState {
     final hasProtocol = ref.read(protocolTypeByIdProvider(_att?.typeId))?.enableProtocol ?? false;
     final canInsertAgenda = hasProtocol && _planIndex == 0 && !_fields.any(PlanUtils.isAgendaPlaceholder);
     final canAddTopics = _canAddTopics;
+    final canRegister = tenant?.type == 'choir' || tenant?.type == 'orchestra';
     return _rdSheet<String>(
       title: l10n.redesignPlanAddTitle,
       subtitle: subtitle,
@@ -1434,6 +1569,14 @@ extension _PlanningBeta on _PlanningPageState {
                   ),
                 if (!isGeneral && _songs.isNotEmpty)
                   _rdSheetRow(Icons.music_note_outlined, l10n.redesignPlanAddSong, null, () => pop('song')),
+                if (canRegister)
+                  _rdSheetRow(
+                    Icons.groups_outlined,
+                    l10n.redesignPlanRegister,
+                    l10n.redesignPlanRegisterHint,
+                    () => pop('register'),
+                    key: const Key('rd-plan-add-register'),
+                  ),
                 if (canAddTopics)
                   _rdSheetRow(Icons.playlist_add_circle_outlined, l10n.attendanceAddTopics, null, () => pop('topics')),
                 if (canInsertAgenda) _rdSheetRow(Icons.commit, l10n.planningInsertAgenda, null, () => pop('agenda')),
@@ -1651,13 +1794,29 @@ extension _PlanningBeta on _PlanningPageState {
             const SizedBox(height: 16),
             RdGroupedList(
               children: [
-                _rdSheetRow(
-                  Icons.subdirectory_arrow_right,
-                  l10n.planningAddSubItem,
-                  null,
-                  () => pop('sub'),
-                  key: const Key('rd-plan-block-sub'),
-                ),
+                if (head.registerPlan != null) ...[
+                  _rdSheetRow(
+                    Icons.groups_outlined,
+                    l10n.redesignPlanRegisterChange,
+                    l10n.redesignPlanRegisterChangeHint,
+                    () => pop('register'),
+                    key: const Key('rd-plan-block-register'),
+                  ),
+                  _rdSheetRow(
+                    Icons.ios_share,
+                    l10n.redesignPlanRegisterShare,
+                    l10n.redesignPlanRegisterShareHint,
+                    () => pop('share'),
+                    key: const Key('rd-plan-block-share'),
+                  ),
+                ] else
+                  _rdSheetRow(
+                    Icons.subdirectory_arrow_right,
+                    l10n.planningAddSubItem,
+                    null,
+                    () => pop('sub'),
+                    key: const Key('rd-plan-block-sub'),
+                  ),
                 _rdSheetRow(Icons.add, l10n.redesignPlanAfterBlock, null, () => pop('insert')),
                 if (isAdmin && children.isNotEmpty)
                   _rdSheetRow(
@@ -1698,6 +1857,10 @@ extension _PlanningBeta on _PlanningPageState {
     switch (action) {
       case 'sub':
         await _rdQuickAdd(group: head.id);
+      case 'register':
+        await _rdChangeRegister(head.id);
+      case 'share':
+        await _rdShareRegister(head.id);
       case 'insert':
         await _rdAdd(after: PlanUtils.lastIndexOfGroup(_fields, head.id));
       case 'template':
@@ -1816,8 +1979,6 @@ extension _PlanningBeta on _PlanningPageState {
     final att = _att;
     if (att == null) return;
     final plans = PlanUtils.allPlans(att);
-    final tenant = ref.read(currentTenantProvider);
-    final showSectional = tenant?.type == 'choir' || tenant?.type == 'orchestra';
     final multi = plans.length > 1;
     final planName = multi ? PlanUtils.planLabel(att, _planIndex, plans) : '';
     final loadGen = _loadGen;
@@ -1846,8 +2007,6 @@ extension _PlanningBeta on _PlanningPageState {
                   () => pop('addPlan'),
                   key: const Key('rd-plan-add-plan-more'),
                 ),
-                if (showSectional)
-                  _rdSheetRow(Icons.groups_outlined, l10n.planningCreateSectionalPlan, null, () => pop('sectional')),
               ],
             ),
             if (multi) ...[
@@ -1895,8 +2054,6 @@ extension _PlanningBeta on _PlanningPageState {
         await _addPlan();
       case 'rename' || 'day' || 'left' || 'right' || 'delete':
         await _showPlanOptions(preset: action);
-      case 'sectional':
-        await showRegisterPlanSheet(context, attendanceDate: DateTime.tryParse(_att?.date ?? ''));
       case 'reset':
         await _resetPlan();
       case 'takeOver':
