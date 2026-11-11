@@ -148,6 +148,7 @@ class NextEventReply extends AssistantReply {
     this.startTime,
     this.endTime,
     this.place,
+    this.tenantName,
   });
 
   final int attendanceId;
@@ -156,6 +157,9 @@ class NextEventReply extends AssistantReply {
   final String? startTime;
   final String? endTime;
   final String? place;
+
+  /// Set when the Termin belongs to another group of the account.
+  final String? tenantName;
 }
 
 class BirthdaysReply extends AssistantReply {
@@ -211,6 +215,8 @@ class StatusChange {
     required this.oldNotes,
     required this.newStatus,
     this.occupiesDuty = false,
+    this.tenantId,
+    this.tenantName,
   });
 
   final String personAttendanceId;
@@ -224,6 +230,10 @@ class StatusChange {
 
   /// Own assigned duty that a sign-out leaves open (duty-notify).
   final bool occupiesDuty;
+
+  /// Group of the Termin (own changes can span all groups of the account).
+  final int? tenantId;
+  final String? tenantName;
 }
 
 class StatusPlan {
@@ -248,6 +258,9 @@ class StatusPlan {
   final int skippedWindow;
 
   bool get needsSecondConfirm => changes.length >= assistantConfirmTwiceFrom;
+
+  /// Rows of more than one group: the preview names the group.
+  bool get spansGroups => {for (final c in changes) c.tenantId}.length > 1;
 }
 
 class AbsencePlan {

@@ -249,7 +249,9 @@ class AssistantAccess {
       NextEventCommand() => true,
       SongLastSungCommand() => true,
       HelpCommand() => true,
-      SetStatusCommand(onlyMe: true) => hasOwnPerson,
+      // Own rows of all groups of the account (like the Übersicht); the rows
+      // themselves are checked against the account when saving.
+      SetStatusCommand(onlyMe: true) => true,
       SetStatusCommand() => changesOthers,
       PlannedAbsenceCommand(who: MeSubject()) => hasOwnPerson && (canSelfReportAbsence || canManageAbsences),
       PlannedAbsenceCommand() => canManageAbsences,

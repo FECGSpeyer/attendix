@@ -81,7 +81,8 @@ class AssistantExecutor {
   /// A command about the person themself without an own person in the tenant.
   static bool _needsOwnPerson(AssistantCommand c) => switch (c) {
         AttendanceRateCommand(subject: MeSubject()) => true,
-        SetStatusCommand(:final who) => who.any((w) => w is MeSubject),
+        // Only "me": own rows in any group, no own person here needed.
+        SetStatusCommand(:final who, :final onlyMe) => !onlyMe && who.any((w) => w is MeSubject),
         PlannedAbsenceCommand(who: MeSubject()) => true,
         _ => false,
       };
@@ -290,6 +291,22 @@ class AssistantExecutor {
   }
 
   Future<AssistantReply> _nextEvent(NextEventCommand c) async {
+    // Members: the next own Termin in any group (like the Übersicht).
+    final role = ref.read(currentRoleProvider);
+    if (!(role.isConductor || role.isHelperRole)) {
+      final own = await _ownUpcomingAcrossTenants(c.typeName);
+      if (own.isEmpty) return const NoticeReply(AssistantNotice.noEvent);
+      final a = own.first;
+      return NextEventReply(
+        attendanceId: a.attendanceId!,
+        title: a.eventTitle,
+        date: _when(a),
+        startTime: a.startTime ?? a.attendanceType?.startTime,
+        endTime: a.endTime ?? a.attendanceType?.endTime,
+        place: a.place,
+        tenantName: a.tenantId == _tenantId ? null : a.tenantName,
+      );
+    }
     final types = await _types();
     final event = await _findEvent(const NextEventRef(), _type(types, c.typeName));
     if (event?.id == null) return const NoticeReply(AssistantNotice.noEvent);
@@ -341,39 +358,55 @@ class AssistantExecutor {
 
   bool _inDay(DateTime date, DateTime day) => dayOf(date) == dayOf(day);
 
-  /// Own status: the rows and the rules of "Meine Termine".
-  Future<AssistantReply> _ownStatus(SetStatusCommand c) async {
-    final target = targetStatus(c.status, self: true);
-    if (target == null) return const NoticeReply(AssistantNotice.selfStatusNotAllowed);
-    final own = await ref.read(currentSelfServicePlayerProvider.future);
-    if (own?.id == null) return const NoticeReply(AssistantNotice.noOwnPerson);
+  /// Own rows of upcoming Termine in ALL groups of the account (like the
+  /// Übersicht), optionally only of the type named [typeName] (matched by
+  /// name, the types differ per group). Unassigned duties never count.
+  Future<List<CrossTenantPersonAttendance>> _ownUpcomingAcrossTenants(String? typeName) async {
+    final all = await ref.read(allPersonAttendancesAcrossTenantsProvider.future);
     final now = _clock();
-    final type = _type(await _types(), c.typeName);
-    final raw = await ref.read(signoutDataProvider.future);
-    var rows = absenceCandidates(raw, useDutyView: false)
+    var rows = all
         .where((a) =>
             a.isMember &&
             a.id != null &&
             a.attendanceId != null &&
-            a.tenantId == _tenantId &&
-            (type == null || a.typeId == type.id))
-        .toList();
-    DateTime when(CrossTenantPersonAttendance a) => EventListUtils.parse(a.date) ?? DateTime(1970);
+            !overviewHasEnded(a, now: now) &&
+            !isUnassignedDutyAttendance(a))
+        .toList()
+      ..sort((a, b) => _when(a).compareTo(_when(b)));
+    if (typeName != null) {
+      final names = {for (final a in rows) if (a.attendanceType != null) a.attendanceType!.name};
+      final best = bestMatches(typeName, names, (n) => [n]).toSet();
+      if (best.isEmpty) return const [];
+      rows = rows.where((a) => best.contains(a.attendanceType?.name)).toList();
+    }
+    return rows;
+  }
+
+  static DateTime _when(CrossTenantPersonAttendance a) => EventListUtils.parse(a.date) ?? DateTime(1970);
+
+  /// Own status in all groups: the rows and the rules of "Meine Termine" /
+  /// the Übersicht of each group.
+  Future<AssistantReply> _ownStatus(SetStatusCommand c) async {
+    final target = targetStatus(c.status, self: true);
+    if (target == null) return const NoticeReply(AssistantNotice.selfStatusNotAllowed);
+    final now = _clock();
+    var rows = await _ownUpcomingAcrossTenants(c.typeName);
     if (c.period != null) {
       final range = resolvePeriod(c.period!, now, _seasonStart);
-      rows = rows.where((a) => !dayOf(when(a)).isBefore(range.from) && !dayOf(when(a)).isAfter(range.to)).toList();
+      rows = rows.where((a) => !dayOf(_when(a)).isBefore(range.from) && !dayOf(_when(a)).isAfter(range.to)).toList();
     } else {
       final day = resolveEventDay(c.event!, now);
-      rows = day == null ? rows.take(1).toList() : rows.where((a) => _inDay(when(a), day)).toList();
+      rows = day == null ? rows.take(1).toList() : rows.where((a) => _inDay(_when(a), day)).toList();
     }
     if (rows.isEmpty) return const NoticeReply(AssistantNotice.noEvent);
 
-    final name = _name(own!);
+    final own = await ref.read(currentSelfServicePlayerProvider.future);
+    final name = own == null ? '' : _name(own);
     final changes = <StatusChange>[];
     var locked = 0;
     var window = 0;
     for (final a in rows) {
-      if (!inChangeWindow(when(a), now)) {
+      if (!inChangeWindow(_when(a), now)) {
         window++;
         continue;
       }
@@ -393,11 +426,13 @@ class AssistantExecutor {
         attendanceId: a.attendanceId!,
         personName: name,
         title: a.eventTitle,
-        date: when(a),
+        date: _when(a),
         oldStatus: a.status,
         oldNotes: a.notes,
         newStatus: target,
         occupiesDuty: target != AttendanceStatus.present && a.isDutyType && occupiesDutyRaw(a.dutyState, a.status),
+        tenantId: a.tenantId,
+        tenantName: a.tenantName,
       ));
     }
     return _statusPreview(StatusPlan(
@@ -543,22 +578,36 @@ class AssistantExecutor {
     final status = plan.status;
     var count = 0;
     if (plan.self) {
+      // Own rows may lie in other groups (Übersicht): ownership is checked
+      // per row by the account (ownAcrossTenants), like the Übersicht does.
       if (status == AttendanceStatus.present) {
         for (final c in plan.changes) {
-          await _signs.signIn(c.personAttendanceId, SignInType.fromStatus(c.oldStatus), notes: plan.reason ?? '');
+          await _signs.signIn(c.personAttendanceId, SignInType.fromStatus(c.oldStatus),
+              notes: plan.reason ?? '', ownAcrossTenants: true);
           count++;
         }
       } else {
-        await _signs.signOut(
-          [for (final c in plan.changes) c.personAttendanceId],
-          plan.reason ?? '',
-          isLateComing: status == AttendanceStatus.lateExcused,
-          isSelf: true,
-        );
-        count = plan.changes.length;
-        // Like "Meine Termine": a cancelled own duty asks for a substitute.
-        for (final id in {for (final c in plan.changes) if (c.occupiesDuty) c.attendanceId}) {
-          unawaited(_duty.notify(DutyNotifyType.understaffed, id));
+        // One call per group, so each group's leaders get their notification.
+        final byTenant = <int?, List<StatusChange>>{};
+        for (final c in plan.changes) {
+          byTenant.putIfAbsent(c.tenantId, () => []).add(c);
+        }
+        for (final entry in byTenant.entries) {
+          await _signs.signOut(
+            [for (final c in entry.value) c.personAttendanceId],
+            plan.reason ?? '',
+            isLateComing: status == AttendanceStatus.lateExcused,
+            isSelf: true,
+            ownAcrossTenants: true,
+          );
+          count += entry.value.length;
+          // Like "Meine Termine": a cancelled own duty asks for a substitute.
+          final duty = entry.key == null || entry.key == _tenantId
+              ? _duty
+              : ref.read(dutyRepositoryForTenantProvider(entry.key));
+          for (final id in {for (final c in entry.value) if (c.occupiesDuty) c.attendanceId}) {
+            unawaited(duty.notify(DutyNotifyType.understaffed, id));
+          }
         }
       }
     } else {
@@ -579,7 +628,7 @@ class AssistantExecutor {
     if (plan.self) {
       await _signs.restoreOwnStatuses([
         for (final c in plan.changes) (id: c.personAttendanceId, status: c.oldStatus, notes: c.oldNotes ?? ''),
-      ]);
+      ], acrossTenants: true);
     } else {
       for (final c in plan.changes) {
         await _events.updatePersonAttendance(c.personAttendanceId, {

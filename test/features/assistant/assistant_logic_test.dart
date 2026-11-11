@@ -203,7 +203,8 @@ void main() {
 
       const viewer = AssistantAccess(role: Role.viewer, hasOwnPerson: false);
       expect(viewer.allows(jonas), isFalse);
-      expect(viewer.allows(me), isFalse);
+      // Own sign-out works across groups (rows are checked by account).
+      expect(viewer.allows(me), isTrue);
 
       for (final role in [Role.admin, Role.responsible, Role.helper, Role.voiceLeaderHelper]) {
         final a = AssistantAccess(role: role, hasOwnPerson: false, canManageAbsences: role == Role.admin);
