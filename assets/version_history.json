@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.130.1",
+      "date": "11.11.2026",
+      "changes": [
+        "💄 Beta Team: Formular „Thema“ mit „Speichern“ oben statt schwebendem Knopf, Dauer als Auswahl, ohne Priorität"
+      ]
+    },
+    {
       "version": "0.130.0",
       "date": "11.11.2026",
       "changes": [
