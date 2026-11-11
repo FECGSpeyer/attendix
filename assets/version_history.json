@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.138.0",
+      "date": "12.11.2026",
+      "changes": [
+        "✨ Beta: Glocke fasst Meldungen pro Termin zusammen (kurze Zeilen, „Zur Anwesenheit“), Symbole pro Art, Zeiten wie „Gestern“, öffnet auch ohne Einträge",
+        "✨ Beta: Benachrichtigungs-Einstellungen mit Erklärungen, Hinweis wenn das Gerät Mitteilungen blockiert, Leitungs-Bereich nur für Leitung"
+      ]
+    },
+    {
       "version": "0.137.1",
       "date": "11.11.2026",
       "changes": [
