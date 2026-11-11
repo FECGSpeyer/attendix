@@ -48,6 +48,10 @@ class _Row {
 
   /// null = not postponed; '' = postponed without date.
   final String? postponedOn;
+
+  /// When this row was ticked or created: topics go into the plan in the
+  /// order they were chosen, not in the list's order.
+  int pickedAt = 0;
 }
 
 class AgendaPickerSheet extends ConsumerStatefulWidget {
@@ -69,6 +73,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
   final _searchController = TextEditingController();
   List<_Row> _postponedRows = [];
   List<_Row> _otherRows = [];
+  int _picks = 0;
 
   @override
   void initState() {
@@ -139,7 +144,14 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
   }
 
   List<_Row> get _all => [..._postponedRows, ..._otherRows];
-  List<_Row> get _newSelections => _all.where((r) => r.selected && !r.inPlan).toList();
+  List<_Row> get _newSelections {
+    final rows = _all.indexed.where((e) => e.$2.selected && !e.$2.inPlan).toList();
+    rows.sort((a, b) {
+      final byPick = a.$2.pickedAt - b.$2.pickedAt;
+      return byPick != 0 ? byPick : a.$1 - b.$1;
+    });
+    return [for (final e in rows) e.$2];
+  }
   List<_Row> get _removals => _all.where((r) => r.inPlan && !r.selected).toList();
   bool get _hasChanges => _newSelections.isNotEmpty || _removals.isNotEmpty;
 
@@ -177,13 +189,16 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
   Future<void> _createFromSearch() async {
     final title = _search.trim();
     if (title.isEmpty) return;
+    // Reserved before the request: a topic ticked while it runs comes after.
+    final pick = ++_picks;
     try {
       final item = await ref
           .read(agendaItemNotifierProvider.notifier)
           .create(AgendaItem(title: title, status: 'open', priority: 'medium'));
       setState(() {
         _otherRows = [
-          _Row(item: item, selected: true, inPlan: false, duration: defaultTopicDuration(item, widget.type)),
+          _Row(item: item, selected: true, inPlan: false, duration: defaultTopicDuration(item, widget.type))
+            ..pickedAt = pick,
           ..._otherRows,
         ];
         _search = '';
@@ -251,7 +266,10 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
           : l10n.agendaPostponed;
     }
     return ListTile(
-      onTap: () => setState(() => row.selected = !row.selected),
+      onTap: () => setState(() {
+        row.selected = !row.selected;
+        if (row.selected) row.pickedAt = ++_picks;
+      }),
       leading: Icon(
         row.selected ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
         color: row.selected ? AppColors.primary : AppColors.medium,
