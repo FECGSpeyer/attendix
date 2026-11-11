@@ -15914,6 +15914,58 @@ class AppLocalizationsDe extends AppLocalizations {
       'Neue Punkte kommen ans Ende des Blocks';
 
   @override
+  String get redesignPlanRegister => 'Registerprobe';
+
+  @override
+  String get redesignPlanRegisterApply => 'Übernehmen';
+
+  @override
+  String get redesignPlanRegisterChange => 'Gruppen und Dirigenten ändern';
+
+  @override
+  String get redesignPlanRegisterChangeHint => 'Die Runden werden neu gebaut';
+
+  @override
+  String get redesignPlanRegisterHint =>
+      'Gruppen proben parallel, Dirigenten wechseln';
+
+  @override
+  String get redesignPlanRegisterInsert => 'In den Ablauf einfügen';
+
+  @override
+  String redesignPlanRegisterPreview(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Vorschau · $count Runden',
+      one: 'Vorschau · 1 Runde',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanRegisterRound(Object n) {
+    return 'Runde $n';
+  }
+
+  @override
+  String get redesignPlanRegisterShare => 'Als Tabelle teilen';
+
+  @override
+  String get redesignPlanRegisterShareHint => 'PDF oder Telegram';
+
+  @override
+  String get redesignPlanRegisterShuffle => 'Neu mischen';
+
+  @override
+  String redesignPlanRegisterStarts(Object time) {
+    return 'Beginnt um $time';
+  }
+
+  @override
+  String get redesignPlanRegisterTime => 'Uhrzeit';
+
+  @override
   String redesignPlanRemoved(Object name) {
     return '„$name“ entfernt';
   }

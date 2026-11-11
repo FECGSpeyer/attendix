@@ -31,6 +31,9 @@ _$PlanFieldImpl _$$PlanFieldImplFromJson(Map<String, dynamic> json) =>
       uid: json['uid'] as String?,
       needsBeamer: json['needsBeamer'] as bool?,
       beamerFile: const BeamerFileConverter().fromJson(json['beamerFile']),
+      registerPlan: const RegisterPlanSettingsConverter().fromJson(
+        json['registerPlan'],
+      ),
     );
 
 Map<String, dynamic> _$$PlanFieldImplToJson(
@@ -55,6 +58,29 @@ Map<String, dynamic> _$$PlanFieldImplToJson(
   if (instance.needsBeamer case final value?) 'needsBeamer': value,
   if (const BeamerFileConverter().toJson(instance.beamerFile) case final value?)
     'beamerFile': value,
+  if (const RegisterPlanSettingsConverter().toJson(instance.registerPlan)
+      case final value?)
+    'registerPlan': value,
+};
+
+_$RegisterPlanSettingsImpl _$$RegisterPlanSettingsImplFromJson(
+  Map<String, dynamic> json,
+) => _$RegisterPlanSettingsImpl(
+  groups:
+      (json['groups'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      const <String>[],
+  conductors:
+      (json['conductors'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const <String>[],
+);
+
+Map<String, dynamic> _$$RegisterPlanSettingsImplToJson(
+  _$RegisterPlanSettingsImpl instance,
+) => <String, dynamic>{
+  'groups': instance.groups,
+  'conductors': instance.conductors,
 };
 
 _$BeamerFileImpl _$$BeamerFileImplFromJson(Map<String, dynamic> json) =>

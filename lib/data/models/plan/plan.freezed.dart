@@ -60,6 +60,12 @@ mixin _$PlanField {
   @BeamerFileConverter()
   BeamerFile? get beamerFile => throw _privateConstructorUsedError;
 
+  /// Head of a Registerprobe block (Beta): the groups and the conductors
+  /// in the drawn order, so the rounds can be changed later. The rounds
+  /// are normal Unterpunkte, so every app shows them without this.
+  @RegisterPlanSettingsConverter()
+  RegisterPlanSettings? get registerPlan => throw _privateConstructorUsedError;
+
   /// Serializes this PlanField to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -90,9 +96,11 @@ abstract class $PlanFieldCopyWith<$Res> {
     String? uid,
     bool? needsBeamer,
     @BeamerFileConverter() BeamerFile? beamerFile,
+    @RegisterPlanSettingsConverter() RegisterPlanSettings? registerPlan,
   });
 
   $BeamerFileCopyWith<$Res>? get beamerFile;
+  $RegisterPlanSettingsCopyWith<$Res>? get registerPlan;
 }
 
 /// @nodoc
@@ -124,6 +132,7 @@ class _$PlanFieldCopyWithImpl<$Res, $Val extends PlanField>
     Object? uid = freezed,
     Object? needsBeamer = freezed,
     Object? beamerFile = freezed,
+    Object? registerPlan = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -197,6 +206,11 @@ class _$PlanFieldCopyWithImpl<$Res, $Val extends PlanField>
                     ? _value.beamerFile
                     : beamerFile // ignore: cast_nullable_to_non_nullable
                         as BeamerFile?,
+            registerPlan:
+                freezed == registerPlan
+                    ? _value.registerPlan
+                    : registerPlan // ignore: cast_nullable_to_non_nullable
+                        as RegisterPlanSettings?,
           )
           as $Val,
     );
@@ -213,6 +227,20 @@ class _$PlanFieldCopyWithImpl<$Res, $Val extends PlanField>
 
     return $BeamerFileCopyWith<$Res>(_value.beamerFile!, (value) {
       return _then(_value.copyWith(beamerFile: value) as $Val);
+    });
+  }
+
+  /// Create a copy of PlanField
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $RegisterPlanSettingsCopyWith<$Res>? get registerPlan {
+    if (_value.registerPlan == null) {
+      return null;
+    }
+
+    return $RegisterPlanSettingsCopyWith<$Res>(_value.registerPlan!, (value) {
+      return _then(_value.copyWith(registerPlan: value) as $Val);
     });
   }
 }
@@ -241,10 +269,13 @@ abstract class _$$PlanFieldImplCopyWith<$Res>
     String? uid,
     bool? needsBeamer,
     @BeamerFileConverter() BeamerFile? beamerFile,
+    @RegisterPlanSettingsConverter() RegisterPlanSettings? registerPlan,
   });
 
   @override
   $BeamerFileCopyWith<$Res>? get beamerFile;
+  @override
+  $RegisterPlanSettingsCopyWith<$Res>? get registerPlan;
 }
 
 /// @nodoc
@@ -275,6 +306,7 @@ class __$$PlanFieldImplCopyWithImpl<$Res>
     Object? uid = freezed,
     Object? needsBeamer = freezed,
     Object? beamerFile = freezed,
+    Object? registerPlan = freezed,
   }) {
     return _then(
       _$PlanFieldImpl(
@@ -348,6 +380,11 @@ class __$$PlanFieldImplCopyWithImpl<$Res>
                 ? _value.beamerFile
                 : beamerFile // ignore: cast_nullable_to_non_nullable
                     as BeamerFile?,
+        registerPlan:
+            freezed == registerPlan
+                ? _value.registerPlan
+                : registerPlan // ignore: cast_nullable_to_non_nullable
+                    as RegisterPlanSettings?,
       ),
     );
   }
@@ -372,6 +409,7 @@ class _$PlanFieldImpl implements _PlanField {
     this.uid,
     this.needsBeamer,
     @BeamerFileConverter() this.beamerFile,
+    @RegisterPlanSettingsConverter() this.registerPlan,
   });
 
   factory _$PlanFieldImpl.fromJson(Map<String, dynamic> json) =>
@@ -432,9 +470,16 @@ class _$PlanFieldImpl implements _PlanField {
   @BeamerFileConverter()
   final BeamerFile? beamerFile;
 
+  /// Head of a Registerprobe block (Beta): the groups and the conductors
+  /// in the drawn order, so the rounds can be changed later. The rounds
+  /// are normal Unterpunkte, so every app shows them without this.
+  @override
+  @RegisterPlanSettingsConverter()
+  final RegisterPlanSettings? registerPlan;
+
   @override
   String toString() {
-    return 'PlanField(id: $id, name: $name, time: $time, conductor: $conductor, currentTime: $currentTime, songId: $songId, info: $info, agendaItemId: $agendaItemId, isGroup: $isGroup, groupId: $groupId, isNote: $isNote, uid: $uid, needsBeamer: $needsBeamer, beamerFile: $beamerFile)';
+    return 'PlanField(id: $id, name: $name, time: $time, conductor: $conductor, currentTime: $currentTime, songId: $songId, info: $info, agendaItemId: $agendaItemId, isGroup: $isGroup, groupId: $groupId, isNote: $isNote, uid: $uid, needsBeamer: $needsBeamer, beamerFile: $beamerFile, registerPlan: $registerPlan)';
   }
 
   @override
@@ -460,7 +505,9 @@ class _$PlanFieldImpl implements _PlanField {
             (identical(other.needsBeamer, needsBeamer) ||
                 other.needsBeamer == needsBeamer) &&
             (identical(other.beamerFile, beamerFile) ||
-                other.beamerFile == beamerFile));
+                other.beamerFile == beamerFile) &&
+            (identical(other.registerPlan, registerPlan) ||
+                other.registerPlan == registerPlan));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -481,6 +528,7 @@ class _$PlanFieldImpl implements _PlanField {
     uid,
     needsBeamer,
     beamerFile,
+    registerPlan,
   );
 
   /// Create a copy of PlanField
@@ -513,6 +561,7 @@ abstract class _PlanField implements PlanField {
     final String? uid,
     final bool? needsBeamer,
     @BeamerFileConverter() final BeamerFile? beamerFile,
+    @RegisterPlanSettingsConverter() final RegisterPlanSettings? registerPlan,
   }) = _$PlanFieldImpl;
 
   factory _PlanField.fromJson(Map<String, dynamic> json) =
@@ -571,12 +620,222 @@ abstract class _PlanField implements PlanField {
   @BeamerFileConverter()
   BeamerFile? get beamerFile;
 
+  /// Head of a Registerprobe block (Beta): the groups and the conductors
+  /// in the drawn order, so the rounds can be changed later. The rounds
+  /// are normal Unterpunkte, so every app shows them without this.
+  @override
+  @RegisterPlanSettingsConverter()
+  RegisterPlanSettings? get registerPlan;
+
   /// Create a copy of PlanField
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PlanFieldImplCopyWith<_$PlanFieldImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+RegisterPlanSettings _$RegisterPlanSettingsFromJson(Map<String, dynamic> json) {
+  return _RegisterPlanSettings.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RegisterPlanSettings {
+  List<String> get groups => throw _privateConstructorUsedError;
+  List<String> get conductors => throw _privateConstructorUsedError;
+
+  /// Serializes this RegisterPlanSettings to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of RegisterPlanSettings
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $RegisterPlanSettingsCopyWith<RegisterPlanSettings> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RegisterPlanSettingsCopyWith<$Res> {
+  factory $RegisterPlanSettingsCopyWith(
+    RegisterPlanSettings value,
+    $Res Function(RegisterPlanSettings) then,
+  ) = _$RegisterPlanSettingsCopyWithImpl<$Res, RegisterPlanSettings>;
+  @useResult
+  $Res call({List<String> groups, List<String> conductors});
+}
+
+/// @nodoc
+class _$RegisterPlanSettingsCopyWithImpl<
+  $Res,
+  $Val extends RegisterPlanSettings
+>
+    implements $RegisterPlanSettingsCopyWith<$Res> {
+  _$RegisterPlanSettingsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of RegisterPlanSettings
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? groups = null, Object? conductors = null}) {
+    return _then(
+      _value.copyWith(
+            groups:
+                null == groups
+                    ? _value.groups
+                    : groups // ignore: cast_nullable_to_non_nullable
+                        as List<String>,
+            conductors:
+                null == conductors
+                    ? _value.conductors
+                    : conductors // ignore: cast_nullable_to_non_nullable
+                        as List<String>,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$RegisterPlanSettingsImplCopyWith<$Res>
+    implements $RegisterPlanSettingsCopyWith<$Res> {
+  factory _$$RegisterPlanSettingsImplCopyWith(
+    _$RegisterPlanSettingsImpl value,
+    $Res Function(_$RegisterPlanSettingsImpl) then,
+  ) = __$$RegisterPlanSettingsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<String> groups, List<String> conductors});
+}
+
+/// @nodoc
+class __$$RegisterPlanSettingsImplCopyWithImpl<$Res>
+    extends _$RegisterPlanSettingsCopyWithImpl<$Res, _$RegisterPlanSettingsImpl>
+    implements _$$RegisterPlanSettingsImplCopyWith<$Res> {
+  __$$RegisterPlanSettingsImplCopyWithImpl(
+    _$RegisterPlanSettingsImpl _value,
+    $Res Function(_$RegisterPlanSettingsImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of RegisterPlanSettings
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? groups = null, Object? conductors = null}) {
+    return _then(
+      _$RegisterPlanSettingsImpl(
+        groups:
+            null == groups
+                ? _value._groups
+                : groups // ignore: cast_nullable_to_non_nullable
+                    as List<String>,
+        conductors:
+            null == conductors
+                ? _value._conductors
+                : conductors // ignore: cast_nullable_to_non_nullable
+                    as List<String>,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RegisterPlanSettingsImpl implements _RegisterPlanSettings {
+  const _$RegisterPlanSettingsImpl({
+    final List<String> groups = const <String>[],
+    final List<String> conductors = const <String>[],
+  }) : _groups = groups,
+       _conductors = conductors;
+
+  factory _$RegisterPlanSettingsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RegisterPlanSettingsImplFromJson(json);
+
+  final List<String> _groups;
+  @override
+  @JsonKey()
+  List<String> get groups {
+    if (_groups is EqualUnmodifiableListView) return _groups;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_groups);
+  }
+
+  final List<String> _conductors;
+  @override
+  @JsonKey()
+  List<String> get conductors {
+    if (_conductors is EqualUnmodifiableListView) return _conductors;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_conductors);
+  }
+
+  @override
+  String toString() {
+    return 'RegisterPlanSettings(groups: $groups, conductors: $conductors)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RegisterPlanSettingsImpl &&
+            const DeepCollectionEquality().equals(other._groups, _groups) &&
+            const DeepCollectionEquality().equals(
+              other._conductors,
+              _conductors,
+            ));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    const DeepCollectionEquality().hash(_groups),
+    const DeepCollectionEquality().hash(_conductors),
+  );
+
+  /// Create a copy of RegisterPlanSettings
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RegisterPlanSettingsImplCopyWith<_$RegisterPlanSettingsImpl>
+  get copyWith =>
+      __$$RegisterPlanSettingsImplCopyWithImpl<_$RegisterPlanSettingsImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RegisterPlanSettingsImplToJson(this);
+  }
+}
+
+abstract class _RegisterPlanSettings implements RegisterPlanSettings {
+  const factory _RegisterPlanSettings({
+    final List<String> groups,
+    final List<String> conductors,
+  }) = _$RegisterPlanSettingsImpl;
+
+  factory _RegisterPlanSettings.fromJson(Map<String, dynamic> json) =
+      _$RegisterPlanSettingsImpl.fromJson;
+
+  @override
+  List<String> get groups;
+  @override
+  List<String> get conductors;
+
+  /// Create a copy of RegisterPlanSettings
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$RegisterPlanSettingsImplCopyWith<_$RegisterPlanSettingsImpl>
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 BeamerFile _$BeamerFileFromJson(Map<String, dynamic> json) {

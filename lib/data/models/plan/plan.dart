@@ -96,10 +96,44 @@ class PlanField with _$PlanField {
 
     /// SongBeamer file linked in the Gemeinde App.
     @BeamerFileConverter() BeamerFile? beamerFile,
+
+    /// Head of a Registerprobe block (Beta): the groups and the conductors
+    /// in the drawn order, so the rounds can be changed later. The rounds
+    /// are normal Unterpunkte, so every app shows them without this.
+    @RegisterPlanSettingsConverter() RegisterPlanSettings? registerPlan,
   }) = _PlanField;
 
   factory PlanField.fromJson(Map<String, dynamic> json) =>
       _$PlanFieldFromJson(json);
+}
+
+/// Groups and conductors of a Registerprobe block (`PlanField.registerPlan`).
+@freezed
+class RegisterPlanSettings with _$RegisterPlanSettings {
+  const factory RegisterPlanSettings({
+    @Default(<String>[]) List<String> groups,
+    @Default(<String>[]) List<String> conductors,
+  }) = _RegisterPlanSettings;
+
+  factory RegisterPlanSettings.fromJson(Map<String, dynamic> json) => _$RegisterPlanSettingsFromJson(json);
+}
+
+/// Reads [RegisterPlanSettings] leniently: anything but an object with at
+/// least one group is null.
+class RegisterPlanSettingsConverter implements JsonConverter<RegisterPlanSettings?, dynamic> {
+  const RegisterPlanSettingsConverter();
+
+  @override
+  RegisterPlanSettings? fromJson(dynamic json) {
+    if (json is! Map) return null;
+    List<String> strings(dynamic v) => v is List ? [for (final e in v) e?.toString() ?? ''] : const [];
+    final groups = strings(json['groups']);
+    if (groups.isEmpty) return null;
+    return RegisterPlanSettings(groups: groups, conductors: strings(json['conductors']));
+  }
+
+  @override
+  dynamic toJson(RegisterPlanSettings? object) => object?.toJson();
 }
 
 /// SongBeamer file in the Gemeinde App's Mediathek, written by the Gemeinde

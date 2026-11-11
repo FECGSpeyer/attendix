@@ -19587,6 +19587,69 @@
   "@redesignPlanQuickAddInBlockHint": {
     "description": "redesign.plan.quickAddInBlockHint"
   },
+  "redesignPlanRegister": "Registerprobe",
+  "@redesignPlanRegister": {
+    "description": "redesign.plan.register"
+  },
+  "redesignPlanRegisterApply": "Übernehmen",
+  "@redesignPlanRegisterApply": {
+    "description": "redesign.plan.registerApply"
+  },
+  "redesignPlanRegisterChange": "Gruppen und Dirigenten ändern",
+  "@redesignPlanRegisterChange": {
+    "description": "redesign.plan.registerChange"
+  },
+  "redesignPlanRegisterChangeHint": "Die Runden werden neu gebaut",
+  "@redesignPlanRegisterChangeHint": {
+    "description": "redesign.plan.registerChangeHint"
+  },
+  "redesignPlanRegisterHint": "Gruppen proben parallel, Dirigenten wechseln",
+  "@redesignPlanRegisterHint": {
+    "description": "redesign.plan.registerHint"
+  },
+  "redesignPlanRegisterInsert": "In den Ablauf einfügen",
+  "@redesignPlanRegisterInsert": {
+    "description": "redesign.plan.registerInsert"
+  },
+  "redesignPlanRegisterPreview": "{count, plural, one {Vorschau · 1 Runde} other {Vorschau · {count} Runden}}",
+  "@redesignPlanRegisterPreview": {
+    "description": "redesign.plan.registerPreview",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignPlanRegisterRound": "Runde {n}",
+  "@redesignPlanRegisterRound": {
+    "description": "redesign.plan.registerRound",
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "redesignPlanRegisterShare": "Als Tabelle teilen",
+  "@redesignPlanRegisterShare": {
+    "description": "redesign.plan.registerShare"
+  },
+  "redesignPlanRegisterShareHint": "PDF oder Telegram",
+  "@redesignPlanRegisterShareHint": {
+    "description": "redesign.plan.registerShareHint"
+  },
+  "redesignPlanRegisterShuffle": "Neu mischen",
+  "@redesignPlanRegisterShuffle": {
+    "description": "redesign.plan.registerShuffle"
+  },
+  "redesignPlanRegisterStarts": "Beginnt um {time}",
+  "@redesignPlanRegisterStarts": {
+    "description": "redesign.plan.registerStarts",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "redesignPlanRegisterTime": "Uhrzeit",
+  "@redesignPlanRegisterTime": {
+    "description": "redesign.plan.registerTime"
+  },
   "redesignPlanRemoved": "„{name}“ entfernt",
   "@redesignPlanRemoved": {
     "description": "redesign.plan.removed",
