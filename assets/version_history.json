@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.126.0",
+      "date": "11.11.2026",
+      "changes": [
+        "🐛 Beta: „Neue Terminart“ und andere Blätter lassen sich wieder schließen (Schließen-Knopf, bleiben unter der Statusleiste, Anlegen-Knopf über der Tastatur)",
+        "✨ Beta: Schalter „Für neue Termine anbieten“ entfällt. „Terminart löschen“ blendet eine noch benutzte Art nur aus: bestehende Termine behalten sie, für neue steht sie nicht mehr zur Wahl (wiederherstellbar)"
+      ]
+    },
+    {
       "version": "0.125.0",
       "date": "11.11.2026",
       "changes": [
