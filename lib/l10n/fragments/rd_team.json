@@ -2,7 +2,7 @@
   "de": {
     "rdTeam": {
       "title": "Team",
-        "tabMeetings": "Besprechungen",
+      "tabMeetings": "Besprechungen",
       "planned": "Geplant",
       "past": "Vergangen",
       "topicsCount": "{count, plural, one {1 Thema} other {{count} Themen}}",
@@ -19,13 +19,33 @@
       "protocolRead": "Protokoll lesen",
       "chipTeam": "Team · {count}",
       "emptyTeamTasks": "Im Team ist gerade nichts offen.",
-    "loadFailed": "Besprechungen konnten nicht geladen werden"
+      "loadFailed": "Besprechungen konnten nicht geladen werden",
+      "meetingPlanned": "Besprechung · geplant",
+      "agenda": "Tagesordnung",
+      "addTopic": "Thema hinzufügen",
+      "addTopicHint": "Neu oder aus den offenen Themen",
+      "later": "Später",
+      "accept": "Aufnehmen",
+      "suggestions": "Vorschläge",
+      "openEvent": "Termin öffnen",
+      "openEventHint": "Anwesenheit und Ablaufplan",
+      "openTopics": "Offene Themen",
+      "openTopicsIntro": "Alles, was noch besprochen werden soll: Vorschläge, Vertagtes und eigene Ideen.",
+      "plannedGroup": "Eingeplant",
+      "unplannedGroup": "Noch ohne Besprechung",
+      "acceptedToMeeting": "Auf die Tagesordnung genommen",
+      "acceptedLater": "Für später vorgemerkt",
+      "meetingGone": "Diese Besprechung ist nicht mehr geplant.",
+      "suggestedBy": "{name} · {when}",
+      "openTopicsCount": "{count, plural, one {1 wartet auf eine Besprechung} other {{count} warten auf eine Besprechung}}",
+      "showDone": "Besprochene Themen anzeigen ({count})",
+      "hideDone": "Besprochene Themen ausblenden"
     }
   },
   "en": {
     "rdTeam": {
       "title": "Team",
-        "tabMeetings": "Meetings",
+      "tabMeetings": "Meetings",
       "planned": "Planned",
       "past": "Past",
       "topicsCount": "{count, plural, one {1 topic} other {{count} topics}}",
@@ -42,7 +62,27 @@
       "protocolRead": "Read minutes",
       "chipTeam": "Team · {count}",
       "emptyTeamTasks": "Nothing is open in the team right now.",
-    "loadFailed": "Meetings could not be loaded"
+      "loadFailed": "Meetings could not be loaded",
+      "meetingPlanned": "Meeting · planned",
+      "agenda": "Agenda",
+      "addTopic": "Add topic",
+      "addTopicHint": "New or from the open topics",
+      "later": "Later",
+      "accept": "Accept",
+      "suggestions": "Suggestions",
+      "openEvent": "Open event",
+      "openEventHint": "Attendance and schedule",
+      "openTopics": "Open topics",
+      "openTopicsIntro": "Everything that still needs discussing: suggestions, postponed items and your own ideas.",
+      "plannedGroup": "Planned",
+      "unplannedGroup": "Not yet in a meeting",
+      "acceptedToMeeting": "Added to the agenda",
+      "acceptedLater": "Noted for later",
+      "meetingGone": "This meeting is no longer planned.",
+      "suggestedBy": "{name} · {when}",
+      "openTopicsCount": "{count, plural, one {1 is waiting for a meeting} other {{count} are waiting for a meeting}}",
+      "showDone": "Show discussed topics ({count})",
+      "hideDone": "Hide discussed topics"
     }
   }
 }

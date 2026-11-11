@@ -18628,6 +18628,42 @@ abstract class AppLocalizations {
   /// **'Neuer Lehrer'**
   String get rdTeacherNewTitle;
 
+  /// rdTeam.accept
+  ///
+  /// In de, this message translates to:
+  /// **'Aufnehmen'**
+  String get rdTeamAccept;
+
+  /// rdTeam.acceptedLater
+  ///
+  /// In de, this message translates to:
+  /// **'Für später vorgemerkt'**
+  String get rdTeamAcceptedLater;
+
+  /// rdTeam.acceptedToMeeting
+  ///
+  /// In de, this message translates to:
+  /// **'Auf die Tagesordnung genommen'**
+  String get rdTeamAcceptedToMeeting;
+
+  /// rdTeam.addTopic
+  ///
+  /// In de, this message translates to:
+  /// **'Thema hinzufügen'**
+  String get rdTeamAddTopic;
+
+  /// rdTeam.addTopicHint
+  ///
+  /// In de, this message translates to:
+  /// **'Neu oder aus den offenen Themen'**
+  String get rdTeamAddTopicHint;
+
+  /// rdTeam.agenda
+  ///
+  /// In de, this message translates to:
+  /// **'Tagesordnung'**
+  String get rdTeamAgenda;
+
   /// rdTeam.chipTeam
   ///
   /// In de, this message translates to:
@@ -18658,11 +18694,35 @@ abstract class AppLocalizations {
   /// **'Noch keine Besprechung'**
   String get rdTeamEmptyTitle;
 
+  /// rdTeam.hideDone
+  ///
+  /// In de, this message translates to:
+  /// **'Besprochene Themen ausblenden'**
+  String get rdTeamHideDone;
+
+  /// rdTeam.later
+  ///
+  /// In de, this message translates to:
+  /// **'Später'**
+  String get rdTeamLater;
+
   /// rdTeam.loadFailed
   ///
   /// In de, this message translates to:
   /// **'Besprechungen konnten nicht geladen werden'**
   String get rdTeamLoadFailed;
+
+  /// rdTeam.meetingGone
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Besprechung ist nicht mehr geplant.'**
+  String get rdTeamMeetingGone;
+
+  /// rdTeam.meetingPlanned
+  ///
+  /// In de, this message translates to:
+  /// **'Besprechung · geplant'**
+  String get rdTeamMeetingPlanned;
 
   /// rdTeam.newMeeting
   ///
@@ -18682,6 +18742,36 @@ abstract class AppLocalizations {
   /// **'noch keine Themen'**
   String get rdTeamNoTopicsYet;
 
+  /// rdTeam.openEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Termin öffnen'**
+  String get rdTeamOpenEvent;
+
+  /// rdTeam.openEventHint
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit und Ablaufplan'**
+  String get rdTeamOpenEventHint;
+
+  /// rdTeam.openTopics
+  ///
+  /// In de, this message translates to:
+  /// **'Offene Themen'**
+  String get rdTeamOpenTopics;
+
+  /// rdTeam.openTopicsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 wartet auf eine Besprechung} other {{count} warten auf eine Besprechung}}'**
+  String rdTeamOpenTopicsCount(num count);
+
+  /// rdTeam.openTopicsIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Alles, was noch besprochen werden soll: Vorschläge, Vertagtes und eigene Ideen.'**
+  String get rdTeamOpenTopicsIntro;
+
   /// rdTeam.past
   ///
   /// In de, this message translates to:
@@ -18693,6 +18783,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Geplant'**
   String get rdTeamPlanned;
+
+  /// rdTeam.plannedGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Eingeplant'**
+  String get rdTeamPlannedGroup;
 
   /// rdTeam.protocolPublished
   ///
@@ -18706,11 +18802,29 @@ abstract class AppLocalizations {
   /// **'Protokoll lesen'**
   String get rdTeamProtocolRead;
 
+  /// rdTeam.showDone
+  ///
+  /// In de, this message translates to:
+  /// **'Besprochene Themen anzeigen ({count})'**
+  String rdTeamShowDone(Object count);
+
   /// rdTeam.suggestHint
   ///
   /// In de, this message translates to:
   /// **'Deine Vorschläge und was daraus wurde'**
   String get rdTeamSuggestHint;
+
+  /// rdTeam.suggestedBy
+  ///
+  /// In de, this message translates to:
+  /// **'{name} · {when}'**
+  String rdTeamSuggestedBy(Object name, Object when);
+
+  /// rdTeam.suggestions
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschläge'**
+  String get rdTeamSuggestions;
 
   /// rdTeam.tabMeetings
   ///
@@ -18741,6 +18855,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Sammeln, was besprochen werden soll'**
   String get rdTeamTopicsHint;
+
+  /// rdTeam.unplannedGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Noch ohne Besprechung'**
+  String get rdTeamUnplannedGroup;
 
   /// rdType.add
   ///

@@ -1,6 +1,7 @@
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/data/models/team_org/team_org.dart';
+import 'package:attendix/features/team_organization/presentation/pages/rd_meeting_page.dart';
 import 'package:attendix/features/team_organization/presentation/pages/team_organization_page.dart';
 import 'package:attendix/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ import '../../factories/test_factories.dart';
 const _me = PersonRef(id: 1, firstName: 'Leon', lastName: 'Jäger');
 const _anna = PersonRef(id: 2, firstName: 'Anna', lastName: 'Berg');
 
-Widget _app({String? tab, bool leader = true, bool circle = true}) => ProviderScope(
+Widget _app({String? tab, bool leader = true, bool circle = true, Widget? home}) => ProviderScope(
       overrides: [
         redesignEnabledProvider.overrideWithValue(true),
         isTeamLeaderProvider.overrideWithValue(leader),
@@ -31,13 +32,19 @@ Widget _app({String? tab, bool leader = true, bool circle = true}) => ProviderSc
               Protocol(id: 'p1', attendanceId: 9, attendance: AttendanceRef(id: 9, date: '2026-01-04', typeId: 'lt')),
             ]),
         upcomingProtocolAttendancesProvider
-            .overrideWith((ref) async => [ProtocolAttendance(id: 10, date: '2099-01-05', typeId: 'lt')]),
+            .overrideWith((ref) async => [
+                  ProtocolAttendance(id: 10, date: '2099-01-05', typeId: 'lt', plan: {
+                    'fields': [
+                      {'id': 'agenda-a2', 'name': 'Konzertablauf', 'time': '20', 'agendaItemId': 'a2'},
+                    ],
+                  }),
+                ]),
       ],
       child: MaterialApp(
         locale: const Locale('de'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: TeamOrganizationPage(initialTab: tab),
+        home: home ?? TeamOrganizationPage(initialTab: tab),
       ),
     );
 
@@ -67,5 +74,18 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Meine Aufgaben'), findsOneWidget);
     expect(find.text('Besprechungen'), findsNothing);
+  });
+
+  testWidgets('Beta Besprechung: members see the agenda, only leadership the suggestions', (tester) async {
+    await tester.pumpWidget(_app(leader: false, home: const RdMeetingPage(attendanceId: 10)));
+    await tester.pumpAndSettle();
+    expect(find.text('1 · Konzertablauf'), findsOneWidget);
+    expect(find.text('Aufnehmen'), findsNothing);
+    expect(find.text('Thema hinzufügen'), findsNothing);
+
+    await tester.pumpWidget(_app(home: const RdMeetingPage(attendanceId: 10)));
+    await tester.pumpAndSettle();
+    expect(find.text('Aufnehmen'), findsOneWidget);
+    expect(find.text('Thema hinzufügen'), findsOneWidget);
   });
 }

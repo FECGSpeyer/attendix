@@ -555,20 +555,23 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
 
 // ── Members ──────────────────────────────────────────────────
 
+/// "Thema vorschlagen": the member's suggestion sheet.
+Future<void> showSuggestTopicSheet(BuildContext context) async {
+  final result = await showModalBottomSheet<bool>(
+    context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    builder: (_) => const _SuggestSheet(),
+  );
+  if (result == true && context.mounted) ToastHelper.showSuccess(context, context.l10n.teamOrgSuggestionSent);
+}
+
 class _MemberTopics extends ConsumerWidget {
   const _MemberTopics();
 
-  Future<void> _suggest(BuildContext context, WidgetRef ref) async {
-    final result = await showModalBottomSheet<bool>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      builder: (_) => const _SuggestSheet(),
-    );
-    if (result == true && context.mounted) ToastHelper.showSuccess(context, context.l10n.teamOrgSuggestionSent);
-  }
+  Future<void> _suggest(BuildContext context, WidgetRef ref) => showSuggestTopicSheet(context);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
