@@ -9959,7 +9959,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdAdminTeam => 'Team';
 
   @override
-  String get rdAdminTeamHint => 'Tasks, topics, minutes';
+  String get rdAdminTeamHint => 'Meetings and tasks';
 
   @override
   String get rdAdminTypes => 'Event types';
@@ -11322,6 +11322,83 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdTeacherNewTitle => 'New teacher';
+
+  @override
+  String rdTeamChipTeam(Object count) {
+    return 'Team · $count';
+  }
+
+  @override
+  String get rdTeamEmptyLeader =>
+      'Create the first one with +. Collect topics beforehand, record results and tasks in the minutes.';
+
+  @override
+  String get rdTeamEmptyMember =>
+      'As soon as the leaders plan a meeting, it shows up here.';
+
+  @override
+  String get rdTeamEmptyTeamTasks => 'Nothing is open in the team right now.';
+
+  @override
+  String get rdTeamEmptyTitle => 'No meeting yet';
+
+  @override
+  String get rdTeamLoadFailed => 'Meetings could not be loaded';
+
+  @override
+  String get rdTeamNewMeeting => 'New meeting';
+
+  @override
+  String rdTeamNewSuggestions(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new suggestions',
+      one: '1 new suggestion',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTeamNoTopicsYet => 'no topics yet';
+
+  @override
+  String get rdTeamPast => 'Past';
+
+  @override
+  String get rdTeamPlanned => 'Planned';
+
+  @override
+  String get rdTeamProtocolPublished => 'Minutes published';
+
+  @override
+  String get rdTeamProtocolRead => 'Read minutes';
+
+  @override
+  String get rdTeamSuggestHint => 'Your suggestions and what became of them';
+
+  @override
+  String get rdTeamTabMeetings => 'Meetings';
+
+  @override
+  String get rdTeamTitle => 'Team';
+
+  @override
+  String get rdTeamTopics => 'Topics';
+
+  @override
+  String rdTeamTopicsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count topics',
+      one: '1 topic',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTeamTopicsHint => 'Collect what should be discussed';
 
   @override
   String get rdTypeAdd => 'Add';
