@@ -555,7 +555,8 @@ class _ReplyView extends ConsumerWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.assistantNextTitle, style: muted),
+            Text(n.tenantName == null ? l10n.assistantNextTitle : '${l10n.assistantNextTitle} · ${n.tenantName}',
+                style: muted),
             Text(n.title, style: title),
             const SizedBox(height: 4),
             Text(_weekdayDate(n.date), style: text),
@@ -568,7 +569,8 @@ class _ReplyView extends ConsumerWidget {
                   Flexible(child: Text(n.place!, style: muted)),
                 ],
               ),
-            if (seesOthers || redesign) link(l10n.assistantEventOpenEvent, eventLocation(n.attendanceId)),
+            if ((seesOthers || redesign) && n.tenantName == null)
+              link(l10n.assistantEventOpenEvent, eventLocation(n.attendanceId)),
           ],
         );
 
@@ -629,7 +631,9 @@ class _ReplyView extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        plan.self ? c.title : '${c.personName} · ${c.title}',
+                        plan.self
+                            ? (plan.spansGroups && c.tenantName != null ? '${c.tenantName} · ${c.title}' : c.title)
+                            : '${c.personName} · ${c.title}',
                         style: text,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
@@ -716,7 +720,7 @@ class _ReplyView extends ConsumerWidget {
               UndoState.undone => Text(l10n.assistantChangeUndone, style: muted),
               UndoState.failed => Text(l10n.assistantChangeUndoFailed, style: TextStyle(color: style.bad)),
             },
-            if (d.statusPlan != null && d.statusPlan!.changes.isNotEmpty && seesOthers)
+            if (d.statusPlan != null && d.statusPlan!.changes.isNotEmpty && !d.statusPlan!.self && seesOthers)
               link(l10n.assistantEventOpenEvent, eventLocation(d.statusPlan!.changes.first.attendanceId)),
           ],
         );

@@ -241,12 +241,14 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Chat assistant "Rückgängig": puts own rows of the current tenant back
-  /// to their previous status and note. Only rows of the signed-in person
-  /// (appId) in the current tenant; no notification.
+  /// Chat assistant "Rückgängig": puts own rows back to their previous
+  /// status and note. Only rows of the signed-in person (appId), in the
+  /// current tenant unless [acrossTenants] (own rows of all groups, like
+  /// the Übersicht); no notification.
   Future<int> restoreOwnStatuses(
-    List<({String id, AttendanceStatus status, String notes})> rows,
-  ) async {
+    List<({String id, AttendanceStatus status, String notes})> rows, {
+    bool acrossTenants = false,
+  }) async {
     if (rows.isEmpty) return 0;
     try {
       final userId = supabase.auth.currentUser?.id;
@@ -257,7 +259,8 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
           .inFilter('id', [for (final r in rows) r.id]);
       final valid = {
         for (final r in (check as List).cast<Map<String, dynamic>>())
-          if (r['person']?['appId'] == userId && r['attendance']?['tenantId'] == currentTenantId)
+          if (r['person']?['appId'] == userId &&
+              (acrossTenants || r['attendance']?['tenantId'] == currentTenantId))
             r['id'].toString(),
       };
       var count = 0;

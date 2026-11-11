@@ -88,7 +88,14 @@ void main() {
     final restore = signs.substring(signs.indexOf('Future<int> restoreOwnStatuses('));
     final body = restore.substring(0, restore.indexOf('  /// Update attendance note'));
     expect(body, contains("r['person']?['appId'] == userId"));
-    expect(body, contains("r['attendance']?['tenantId'] == currentTenantId"));
+    expect(body, contains("(acrossTenants || r['attendance']?['tenantId'] == currentTenantId)"));
     expect(body, contains('if (!valid.contains(r.id)) continue;'));
+  });
+
+  test('own changes across groups always go through the account check', () {
+    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
+    final apply = executor.substring(executor.indexOf('Future<int> applyStatus('), executor.indexOf('Future<AssistantReply> _absencePreview('));
+    expect(RegExp(r'ownAcrossTenants: true').allMatches(apply).length, 2);
+    expect(apply, contains('acrossTenants: true'));
   });
 }
