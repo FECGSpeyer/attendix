@@ -33,7 +33,7 @@ class RdNotificationsPage extends ConsumerStatefulWidget {
   ConsumerState<RdNotificationsPage> createState() => _RdNotificationsPageState();
 }
 
-class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
+class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> with WidgetsBindingObserver {
   NotificationConfig? _config;
   bool _loading = true;
   RealtimeChannel? _channel;
@@ -51,6 +51,13 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
     _supabase = ref.read(supabaseClientProvider);
     _load();
     _checkBlocked();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  /// Back from the system settings: the permission may have changed.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _checkBlocked();
   }
 
   Future<void> _checkBlocked() async {
@@ -58,15 +65,19 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
     if (mounted && blocked != _blocked) setState(() => _blocked = blocked);
   }
 
-  /// iOS: opens Attendix in the Settings app (try-catch: PWA/other platforms).
+  /// iOS: Attendix in the Settings app; macOS: the notification settings
+  /// (try-catch: PWA/other platforms).
   Future<void> _openSystemSettings() async {
     try {
-      await launchUrl(Uri.parse('app-settings:'));
+      await launchUrl(Uri.parse(defaultTargetPlatform == TargetPlatform.macOS
+          ? 'x-apple.systempreferences:com.apple.Notifications-Settings.extension'
+          : 'app-settings:'));
     } catch (_) {}
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     final channel = _channel;
     if (channel != null) _supabase.removeChannel(channel);
     super.dispose();
@@ -135,6 +146,9 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
     setState(() => _config = config.copyWith(pushEnabled: enabled));
     try {
       await ref.read(pushServiceProvider).togglePush(enabled);
+      // Turning push on may have just shown (and been refused at) the
+      // system prompt.
+      if (mounted) await _checkBlocked();
     } catch (_) {
       if (!mounted) return;
       setState(() => _config = config);
@@ -216,6 +230,7 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
     // responsible persons (edge functions: role 1 or 5) – of any group.
     final isLead = tenants.any((t) => t.role == Role.admin.value || t.role == Role.responsible.value);
     final ios = defaultTargetPlatform == TargetPlatform.iOS;
+    final macos = defaultTargetPlatform == TargetPlatform.macOS;
     NotificationConfig Function(bool) set(NotificationConfig Function(bool) f) => f;
     Widget row(String title, String? hint, bool value, NotificationConfig Function(bool) update) =>
         _switch(title, value, (v) => _update(update(v)), subtitle: hint);
@@ -242,9 +257,14 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
                 Text(l10n.redesignNotifBlockedTitle,
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.late)),
                 const SizedBox(height: 2),
-                Text(ios ? l10n.redesignNotifBlockedIos : l10n.redesignNotifBlockedAndroid,
+                Text(
+                    ios
+                        ? l10n.redesignNotifBlockedIos
+                        : macos
+                            ? l10n.redesignNotifBlockedMacos
+                            : l10n.redesignNotifBlockedAndroid,
                     style: TextStyle(fontSize: 14, color: p.text, height: 1.35)),
-                if (ios)
+                if (ios || macos)
                   Align(
                     alignment: Alignment.centerLeft,
                     child: RdTextLink(label: l10n.redesignNotifOpenSettings, onTap: _openSystemSettings),

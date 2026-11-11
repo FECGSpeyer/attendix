@@ -719,8 +719,15 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
           _readOverrides[n.id] = true;
         }
       });
-      for (final n in unread) {
-        await _guard(() => _notifier.setRead(n, true));
+      // Captured before the first await: the marks finish even when the
+      // sheet is closed meanwhile (no widget ref after dispose).
+      final notifier = _notifier;
+      final results = await Future.wait([
+        for (final n in unread)
+          notifier.setRead(n, true).then((_) => true, onError: (Object _) => false),
+      ]);
+      if (results.contains(false) && mounted) {
+        ToastHelper.showError(context, context.l10n.svcSaveFailed);
       }
     }
     if (!mounted) return;

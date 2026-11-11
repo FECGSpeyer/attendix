@@ -15154,6 +15154,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'You currently get no push notifications. Allow them in Settings.';
 
   @override
+  String get redesignNotifBlockedMacos =>
+      'You currently get no notifications. Allow them in System Settings under Notifications › Attendix.';
+
+  @override
   String get redesignNotifBlockedTitle =>
       'Your device blocks notifications from Attendix';
 

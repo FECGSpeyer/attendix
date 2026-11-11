@@ -4025,6 +4025,7 @@
   "redesignNotifBirthdaysHint": "In the morning at 8",
   "redesignNotifBlockedAndroid": "You currently get no push notifications. Allow them in the Android settings under Apps › Attendix › Notifications.",
   "redesignNotifBlockedIos": "You currently get no push notifications. Allow them in Settings.",
+  "redesignNotifBlockedMacos": "You currently get no notifications. Allow them in System Settings under Notifications › Attendix.",
   "redesignNotifBlockedTitle": "Your device blocks notifications from Attendix",
   "redesignNotifChecklistHint": "Due items of the event checklist",
   "redesignNotifCriticals": "New problem cases",

@@ -15291,6 +15291,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Du bekommst gerade keine Push-Nachrichten. Erlaube sie in den Einstellungen.';
 
   @override
+  String get redesignNotifBlockedMacos =>
+      'Du bekommst gerade keine Mitteilungen. Erlaube sie in den Systemeinstellungen unter Mitteilungen › Attendix.';
+
+  @override
   String get redesignNotifBlockedTitle =>
       'Dein Gerät blockiert Benachrichtigungen von Attendix';
 

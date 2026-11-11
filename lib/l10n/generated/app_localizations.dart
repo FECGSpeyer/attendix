@@ -24286,6 +24286,12 @@ abstract class AppLocalizations {
   /// **'Du bekommst gerade keine Push-Nachrichten. Erlaube sie in den Einstellungen.'**
   String get redesignNotifBlockedIos;
 
+  /// redesign.notif.blockedMacos
+  ///
+  /// In de, this message translates to:
+  /// **'Du bekommst gerade keine Mitteilungen. Erlaube sie in den Systemeinstellungen unter Mitteilungen › Attendix.'**
+  String get redesignNotifBlockedMacos;
+
   /// redesign.notif.blockedTitle
   ///
   /// In de, this message translates to:

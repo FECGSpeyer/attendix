@@ -18784,6 +18784,10 @@
   "@redesignNotifBlockedIos": {
     "description": "redesign.notif.blockedIos"
   },
+  "redesignNotifBlockedMacos": "Du bekommst gerade keine Mitteilungen. Erlaube sie in den Systemeinstellungen unter Mitteilungen › Attendix.",
+  "@redesignNotifBlockedMacos": {
+    "description": "redesign.notif.blockedMacos"
+  },
   "redesignNotifBlockedTitle": "Dein Gerät blockiert Benachrichtigungen von Attendix",
   "@redesignNotifBlockedTitle": {
     "description": "redesign.notif.blockedTitle"

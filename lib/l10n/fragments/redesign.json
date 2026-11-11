@@ -1113,7 +1113,8 @@
         "registrations": "Neue Registrierungen",
         "registrationsHint": "Wenn sich jemand über den Anmeldelink anmeldet",
         "criticals": "Neue Problemfälle",
-        "criticalsHint": "Wenn jemand eine Regel für Problemfälle erfüllt"
+        "criticalsHint": "Wenn jemand eine Regel für Problemfälle erfüllt",
+        "blockedMacos": "Du bekommst gerade keine Mitteilungen. Erlaube sie in den Systemeinstellungen unter Mitteilungen › Attendix."
       },
       "bulk": {
         "title": "Mehrere auswählen",
@@ -2765,7 +2766,8 @@
         "registrations": "New registrations",
         "registrationsHint": "When someone signs up via the registration link",
         "criticals": "New problem cases",
-        "criticalsHint": "When someone meets a problem case rule"
+        "criticalsHint": "When someone meets a problem case rule",
+        "blockedMacos": "You currently get no notifications. Allow them in System Settings under Notifications › Attendix."
       },
       "bulk": {
         "title": "Select several",
