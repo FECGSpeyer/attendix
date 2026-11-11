@@ -78,7 +78,9 @@ mixin _$Tenant {
   @JsonKey(name: 'duty_view')
   bool get dutyView => throw _privateConstructorUsedError; // SETTINGS2: schicht-/arbeitsbedingt entschuldigt zählt als anwesend
   @JsonKey(name: 'shift_excused_as_present')
-  bool get shiftExcusedAsPresent => throw _privateConstructorUsedError;
+  bool get shiftExcusedAsPresent => throw _privateConstructorUsedError; // Chat-Assistent: switched on per tenant by an admin (default off).
+  @JsonKey(name: 'ai_assistant_enabled')
+  bool get aiAssistantEnabled => throw _privateConstructorUsedError;
 
   /// Serializes this Tenant to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -133,6 +135,7 @@ abstract class $TenantCopyWith<$Res> {
     @JsonKey(name: 'late_reasons') List<String>? lateReasons,
     @JsonKey(name: 'duty_view') bool dutyView,
     @JsonKey(name: 'shift_excused_as_present') bool shiftExcusedAsPresent,
+    @JsonKey(name: 'ai_assistant_enabled') bool aiAssistantEnabled,
   });
 }
 
@@ -187,6 +190,7 @@ class _$TenantCopyWithImpl<$Res, $Val extends Tenant>
     Object? lateReasons = freezed,
     Object? dutyView = null,
     Object? shiftExcusedAsPresent = null,
+    Object? aiAssistantEnabled = null,
   }) {
     return _then(
       _value.copyWith(
@@ -370,6 +374,11 @@ class _$TenantCopyWithImpl<$Res, $Val extends Tenant>
                     ? _value.shiftExcusedAsPresent
                     : shiftExcusedAsPresent // ignore: cast_nullable_to_non_nullable
                         as bool,
+            aiAssistantEnabled:
+                null == aiAssistantEnabled
+                    ? _value.aiAssistantEnabled
+                    : aiAssistantEnabled // ignore: cast_nullable_to_non_nullable
+                        as bool,
           )
           as $Val,
     );
@@ -423,6 +432,7 @@ abstract class _$$TenantImplCopyWith<$Res> implements $TenantCopyWith<$Res> {
     @JsonKey(name: 'late_reasons') List<String>? lateReasons,
     @JsonKey(name: 'duty_view') bool dutyView,
     @JsonKey(name: 'shift_excused_as_present') bool shiftExcusedAsPresent,
+    @JsonKey(name: 'ai_assistant_enabled') bool aiAssistantEnabled,
   });
 }
 
@@ -476,6 +486,7 @@ class __$$TenantImplCopyWithImpl<$Res>
     Object? lateReasons = freezed,
     Object? dutyView = null,
     Object? shiftExcusedAsPresent = null,
+    Object? aiAssistantEnabled = null,
   }) {
     return _then(
       _$TenantImpl(
@@ -659,6 +670,11 @@ class __$$TenantImplCopyWithImpl<$Res>
                 ? _value.shiftExcusedAsPresent
                 : shiftExcusedAsPresent // ignore: cast_nullable_to_non_nullable
                     as bool,
+        aiAssistantEnabled:
+            null == aiAssistantEnabled
+                ? _value.aiAssistantEnabled
+                : aiAssistantEnabled // ignore: cast_nullable_to_non_nullable
+                    as bool,
       ),
     );
   }
@@ -710,6 +726,7 @@ class _$TenantImpl implements _Tenant {
     @JsonKey(name: 'duty_view') this.dutyView = false,
     @JsonKey(name: 'shift_excused_as_present')
     this.shiftExcusedAsPresent = false,
+    @JsonKey(name: 'ai_assistant_enabled') this.aiAssistantEnabled = false,
   }) : _additionalFields = additionalFields,
        _registrationFields = registrationFields,
        _criticalRules = criticalRules,
@@ -877,10 +894,14 @@ class _$TenantImpl implements _Tenant {
   @override
   @JsonKey(name: 'shift_excused_as_present')
   final bool shiftExcusedAsPresent;
+  // Chat-Assistent: switched on per tenant by an admin (default off).
+  @override
+  @JsonKey(name: 'ai_assistant_enabled')
+  final bool aiAssistantEnabled;
 
   @override
   String toString() {
-    return 'Tenant(id: $id, createdAt: $createdAt, shortName: $shortName, longName: $longName, maintainTeachers: $maintainTeachers, showHolidays: $showHolidays, type: $type, withExcuses: $withExcuses, practiceStart: $practiceStart, practiceEnd: $practiceEnd, seasonStart: $seasonStart, parents: $parents, betaProgram: $betaProgram, showMembersList: $showMembersList, region: $region, role: $role, songSharingId: $songSharingId, additionalFields: $additionalFields, perc: $perc, percColor: $percColor, registerId: $registerId, autoApproveRegistrations: $autoApproveRegistrations, registrationFields: $registrationFields, favorite: $favorite, criticalRules: $criticalRules, timezone: $timezone, songAdditionalFields: $songAdditionalFields, filesEnabled: $filesEnabled, filesShared: $filesShared, filesMaxBytes: $filesMaxBytes, showAllAttendances: $showAllAttendances, showAllAttendancesInfoText: $showAllAttendancesInfoText, absenceReasons: $absenceReasons, lateReasons: $lateReasons, dutyView: $dutyView, shiftExcusedAsPresent: $shiftExcusedAsPresent)';
+    return 'Tenant(id: $id, createdAt: $createdAt, shortName: $shortName, longName: $longName, maintainTeachers: $maintainTeachers, showHolidays: $showHolidays, type: $type, withExcuses: $withExcuses, practiceStart: $practiceStart, practiceEnd: $practiceEnd, seasonStart: $seasonStart, parents: $parents, betaProgram: $betaProgram, showMembersList: $showMembersList, region: $region, role: $role, songSharingId: $songSharingId, additionalFields: $additionalFields, perc: $perc, percColor: $percColor, registerId: $registerId, autoApproveRegistrations: $autoApproveRegistrations, registrationFields: $registrationFields, favorite: $favorite, criticalRules: $criticalRules, timezone: $timezone, songAdditionalFields: $songAdditionalFields, filesEnabled: $filesEnabled, filesShared: $filesShared, filesMaxBytes: $filesMaxBytes, showAllAttendances: $showAllAttendances, showAllAttendancesInfoText: $showAllAttendancesInfoText, absenceReasons: $absenceReasons, lateReasons: $lateReasons, dutyView: $dutyView, shiftExcusedAsPresent: $shiftExcusedAsPresent, aiAssistantEnabled: $aiAssistantEnabled)';
   }
 
   @override
@@ -972,7 +993,9 @@ class _$TenantImpl implements _Tenant {
             (identical(other.dutyView, dutyView) ||
                 other.dutyView == dutyView) &&
             (identical(other.shiftExcusedAsPresent, shiftExcusedAsPresent) ||
-                other.shiftExcusedAsPresent == shiftExcusedAsPresent));
+                other.shiftExcusedAsPresent == shiftExcusedAsPresent) &&
+            (identical(other.aiAssistantEnabled, aiAssistantEnabled) ||
+                other.aiAssistantEnabled == aiAssistantEnabled));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1015,6 +1038,7 @@ class _$TenantImpl implements _Tenant {
     const DeepCollectionEquality().hash(_lateReasons),
     dutyView,
     shiftExcusedAsPresent,
+    aiAssistantEnabled,
   ]);
 
   /// Create a copy of Tenant
@@ -1074,6 +1098,7 @@ abstract class _Tenant implements Tenant {
     @JsonKey(name: 'late_reasons') final List<String>? lateReasons,
     @JsonKey(name: 'duty_view') final bool dutyView,
     @JsonKey(name: 'shift_excused_as_present') final bool shiftExcusedAsPresent,
+    @JsonKey(name: 'ai_assistant_enabled') final bool aiAssistantEnabled,
   }) = _$TenantImpl;
 
   factory _Tenant.fromJson(Map<String, dynamic> json) = _$TenantImpl.fromJson;
@@ -1168,7 +1193,10 @@ abstract class _Tenant implements Tenant {
   bool get dutyView; // SETTINGS2: schicht-/arbeitsbedingt entschuldigt zählt als anwesend
   @override
   @JsonKey(name: 'shift_excused_as_present')
-  bool get shiftExcusedAsPresent;
+  bool get shiftExcusedAsPresent; // Chat-Assistent: switched on per tenant by an admin (default off).
+  @override
+  @JsonKey(name: 'ai_assistant_enabled')
+  bool get aiAssistantEnabled;
 
   /// Create a copy of Tenant
   /// with the given fields replaced by the non-null parameter values.

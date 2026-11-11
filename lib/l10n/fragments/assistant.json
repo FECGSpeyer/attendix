@@ -1,0 +1,326 @@
+{
+  "de": {
+    "assistant": {
+      "title": "Assistent",
+      "entryTitle": "Frag den Assistenten",
+      "entryHint": "Anwesenheit, nächster Termin, wer kommt: einfach fragen",
+      "beta": "Beta",
+      "inputHint": "Frag etwas …",
+      "send": "Senden",
+      "clear": "Neuer Chat",
+      "intro": "Hallo! Ich beantworte Fragen zu deiner Gruppe. Ändern kann ich noch nichts.",
+      "privacy": "Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten.",
+      "thinking": "Einen Moment …",
+      "suggest": {
+        "myRate": "Wie war meine Anwesenheit in den letzten 3 Monaten?",
+        "nextEvent": "Wann ist der nächste Termin?",
+        "whoComes": "Wer kommt zum nächsten Termin?",
+        "birthdays": "Wer hat diesen Monat Geburtstag?",
+        "help": "Wie melde ich mich ab?"
+      },
+      "notice": {
+        "notUnderstood": "Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.",
+        "changeLater": "Ändern kann ich noch nichts, das kommt bald. Bis dahin geht es wie gewohnt in der App.",
+        "noRights": "Diese Frage kann ich dir mit deiner Rolle nicht beantworten.",
+        "noOwnPerson": "Du bist in dieser Gruppe nicht als Person eingetragen, deshalb gibt es keine eigene Anwesenheit.",
+        "disabled": "Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.",
+        "limit": "Für heute ist das Limit erreicht. Morgen geht es weiter.",
+        "tooLong": "Die Nachricht ist zu lang. Bitte höchstens {max} Zeichen.",
+        "failed": "Das hat gerade nicht geklappt. Bitte versuch es noch einmal.",
+        "personNotFound": "Ich finde niemanden mit dem Namen „{name}“.",
+        "groupNotFound": "Ich finde keine Gruppe „{name}“.",
+        "noEvent": "Dazu finde ich keinen Termin.",
+        "noData": "In diesem Zeitraum gibt es keine Termine, die zählen.",
+        "songNotFound": "Ich finde kein Werk „{name}“.",
+        "noHelp": "Dazu finde ich nichts in der Hilfe.",
+        "noBirthdays": "In diesem Zeitraum hat niemand Geburtstag."
+      },
+      "choice": {
+        "which": "Wen meinst du mit „{name}“?"
+      },
+      "rate": {
+        "me": "Deine Anwesenheit",
+        "of": "Anwesenheit von {name}",
+        "all": "Anwesenheit aller",
+        "range": "{from} bis {to}",
+        "detail": "{attended} von {total} Terminen besucht",
+        "onlyType": "Nur {type}",
+        "lowest": "Am seltensten da",
+        "openPerson": "Person öffnen"
+      },
+      "event": {
+        "present": "Kommen",
+        "absent": "Abgemeldet",
+        "open": "Offen",
+        "openNames": "Noch keine Rückmeldung",
+        "absentNames": "Abgemeldet",
+        "allAnswered": "Alle haben sich gemeldet.",
+        "openEvent": "Termin öffnen",
+        "time": "{time} Uhr"
+      },
+      "next": {
+        "title": "Nächster Termin"
+      },
+      "birthdays": {
+        "title": "Geburtstage",
+        "age": "wird {age}"
+      },
+      "song": {
+        "lastSung": "Zuletzt gesungen am {date}",
+        "never": "Laut Verlauf noch nicht gesungen.",
+        "open": "Werk öffnen"
+      },
+      "help": {
+        "title": "Das könnte helfen"
+      },
+      "settings": {
+        "toggle": "Chat-Assistent (Beta)",
+        "toggleHint": "Alle in der Gruppe können per Chat Fragen zu Anwesenheit, Terminen und Werken stellen. Nur die getippte Nachricht geht an den KI-Dienst."
+      },
+      "entryEnableHint": "Für diese Gruppe noch aus. Tippen, um ihn einzuschalten."
+    }
+  },
+  "en": {
+    "assistant": {
+      "title": "Assistant",
+      "entryTitle": "Ask the assistant",
+      "entryHint": "Attendance, next event, who is coming: just ask",
+      "beta": "Beta",
+      "inputHint": "Ask something …",
+      "send": "Send",
+      "clear": "New chat",
+      "intro": "Hi! I answer questions about your group. I can't change anything yet.",
+      "privacy": "Only your message goes to the AI service, no data from Attendix. The app works out the answers itself, with your rights.",
+      "thinking": "One moment …",
+      "suggest": {
+        "myRate": "How was my attendance in the last 3 months?",
+        "nextEvent": "When is the next event?",
+        "whoComes": "Who is coming to the next event?",
+        "birthdays": "Who has a birthday this month?",
+        "help": "How do I sign out?"
+      },
+      "notice": {
+        "notUnderstood": "I didn't understand that. I answer questions about attendance, events, birthdays, works and the app.",
+        "changeLater": "I can't change anything yet, that is coming soon. Until then, use the app as usual.",
+        "noRights": "I can't answer this question with your role.",
+        "noOwnPerson": "You are not listed as a person in this group, so there is no attendance of your own.",
+        "disabled": "The assistant is switched off for this group. An admin can switch it on in the settings.",
+        "limit": "Today's limit is reached. You can continue tomorrow.",
+        "tooLong": "The message is too long. Please use at most {max} characters.",
+        "failed": "That didn't work just now. Please try again.",
+        "personNotFound": "I can't find anyone called “{name}”.",
+        "groupNotFound": "I can't find a group “{name}”.",
+        "noEvent": "I can't find an event for that.",
+        "noData": "There are no events that count in this period.",
+        "songNotFound": "I can't find a work “{name}”.",
+        "noHelp": "I can't find anything about that in the help.",
+        "noBirthdays": "Nobody has a birthday in this period."
+      },
+      "choice": {
+        "which": "Who do you mean by “{name}”?"
+      },
+      "rate": {
+        "me": "Your attendance",
+        "of": "Attendance of {name}",
+        "all": "Attendance of everyone",
+        "range": "{from} to {to}",
+        "detail": "Attended {attended} of {total} events",
+        "onlyType": "Only {type}",
+        "lowest": "Came least often",
+        "openPerson": "Open person"
+      },
+      "event": {
+        "present": "Coming",
+        "absent": "Signed out",
+        "open": "Open",
+        "openNames": "No answer yet",
+        "absentNames": "Signed out",
+        "allAnswered": "Everyone has answered.",
+        "openEvent": "Open event",
+        "time": "{time}"
+      },
+      "next": {
+        "title": "Next event"
+      },
+      "birthdays": {
+        "title": "Birthdays",
+        "age": "turns {age}"
+      },
+      "song": {
+        "lastSung": "Last sung on {date}",
+        "never": "Not sung yet according to the history.",
+        "open": "Open work"
+      },
+      "help": {
+        "title": "This might help"
+      },
+      "settings": {
+        "toggle": "Chat assistant (beta)",
+        "toggleHint": "Everyone in the group can ask questions about attendance, events and works in a chat. Only the typed message goes to the AI service."
+      },
+      "entryEnableHint": "Still off for this group. Tap to switch it on."
+    }
+  },
+  "ru": {
+    "assistant": {
+      "title": "Ассистент",
+      "entryTitle": "Спроси ассистента",
+      "entryHint": "Посещаемость, следующее мероприятие, кто придёт: просто спроси",
+      "beta": "Бета",
+      "inputHint": "Спроси что-нибудь …",
+      "send": "Отправить",
+      "clear": "Новый чат",
+      "intro": "Привет! Я отвечаю на вопросы о твоей группе. Изменять что-либо я пока не умею.",
+      "privacy": "В сервис ИИ уходит только твоё сообщение, никаких данных из Attendix. Ответы приложение считает само, с твоими правами.",
+      "thinking": "Минутку …",
+      "suggest": {
+        "myRate": "Какой была моя посещаемость за последние 3 месяца?",
+        "nextEvent": "Когда следующее мероприятие?",
+        "whoComes": "Кто придёт на следующее мероприятие?",
+        "birthdays": "У кого день рождения в этом месяце?",
+        "help": "Как мне отписаться?"
+      },
+      "notice": {
+        "notUnderstood": "Я не понял. Я отвечаю на вопросы о посещаемости, мероприятиях, днях рождения, произведениях и о приложении.",
+        "changeLater": "Изменять что-либо я пока не умею, это скоро появится. До тех пор пользуйся приложением как обычно.",
+        "noRights": "С твоей ролью я не могу ответить на этот вопрос.",
+        "noOwnPerson": "Ты не внесён в эту группу как участник, поэтому собственной посещаемости нет.",
+        "disabled": "Ассистент выключен для этой группы. Администратор может включить его в настройках.",
+        "limit": "Лимит на сегодня исчерпан. Продолжим завтра.",
+        "tooLong": "Сообщение слишком длинное. Не больше {max} символов.",
+        "failed": "Сейчас не получилось. Попробуй ещё раз.",
+        "personNotFound": "Я не нахожу никого с именем «{name}».",
+        "groupNotFound": "Я не нахожу группу «{name}».",
+        "noEvent": "Я не нахожу подходящего мероприятия.",
+        "noData": "В этот период нет мероприятий, которые учитываются.",
+        "songNotFound": "Я не нахожу произведение «{name}».",
+        "noHelp": "В справке ничего об этом не нашлось.",
+        "noBirthdays": "В этот период ни у кого нет дня рождения."
+      },
+      "choice": {
+        "which": "Кого ты имеешь в виду под «{name}»?"
+      },
+      "rate": {
+        "me": "Твоя посещаемость",
+        "of": "Посещаемость: {name}",
+        "all": "Посещаемость всех",
+        "range": "с {from} по {to}",
+        "detail": "Посещено {attended} из {total}",
+        "onlyType": "Только {type}",
+        "lowest": "Приходили реже всех",
+        "openPerson": "Открыть участника"
+      },
+      "event": {
+        "present": "Придут",
+        "absent": "Отписались",
+        "open": "Без ответа",
+        "openNames": "Ещё не ответили",
+        "absentNames": "Отписались",
+        "allAnswered": "Все ответили.",
+        "openEvent": "Открыть мероприятие",
+        "time": "{time}"
+      },
+      "next": {
+        "title": "Следующее мероприятие"
+      },
+      "birthdays": {
+        "title": "Дни рождения",
+        "age": "исполнится {age}"
+      },
+      "song": {
+        "lastSung": "Последний раз исполнялось {date}",
+        "never": "По истории ещё не исполнялось.",
+        "open": "Открыть произведение"
+      },
+      "help": {
+        "title": "Это может помочь"
+      },
+      "settings": {
+        "toggle": "Чат-ассистент (бета)",
+        "toggleHint": "Все в группе могут задавать в чате вопросы о посещаемости, мероприятиях и произведениях. В сервис ИИ уходит только набранное сообщение."
+      },
+      "entryEnableHint": "Для этой группы пока выключен. Нажми, чтобы включить."
+    }
+  },
+  "es": {
+    "assistant": {
+      "title": "Asistente",
+      "entryTitle": "Pregunta al asistente",
+      "entryHint": "Asistencia, próximo evento, quién viene: solo pregunta",
+      "beta": "Beta",
+      "inputHint": "Pregunta algo …",
+      "send": "Enviar",
+      "clear": "Nuevo chat",
+      "intro": "¡Hola! Respondo preguntas sobre tu grupo. Todavía no puedo cambiar nada.",
+      "privacy": "Solo tu mensaje va al servicio de IA, ningún dato de Attendix. La app calcula las respuestas ella misma, con tus permisos.",
+      "thinking": "Un momento …",
+      "suggest": {
+        "myRate": "¿Cómo fue mi asistencia en los últimos 3 meses?",
+        "nextEvent": "¿Cuándo es el próximo evento?",
+        "whoComes": "¿Quién viene al próximo evento?",
+        "birthdays": "¿Quién cumple años este mes?",
+        "help": "¿Cómo me doy de baja?"
+      },
+      "notice": {
+        "notUnderstood": "No lo he entendido. Respondo preguntas sobre asistencia, eventos, cumpleaños, obras y la app.",
+        "changeLater": "Todavía no puedo cambiar nada, llegará pronto. Hasta entonces, usa la app como siempre.",
+        "noRights": "Con tu rol no puedo responder esta pregunta.",
+        "noOwnPerson": "No figuras como persona en este grupo, así que no hay asistencia propia.",
+        "disabled": "El asistente está desactivado para este grupo. Un administrador puede activarlo en los ajustes.",
+        "limit": "Se ha alcanzado el límite de hoy. Mañana seguimos.",
+        "tooLong": "El mensaje es demasiado largo. Como máximo {max} caracteres.",
+        "failed": "Ahora no ha funcionado. Inténtalo de nuevo.",
+        "personNotFound": "No encuentro a nadie llamado «{name}».",
+        "groupNotFound": "No encuentro el grupo «{name}».",
+        "noEvent": "No encuentro ningún evento para eso.",
+        "noData": "En este periodo no hay eventos que cuenten.",
+        "songNotFound": "No encuentro la obra «{name}».",
+        "noHelp": "No encuentro nada sobre eso en la ayuda.",
+        "noBirthdays": "Nadie cumple años en este periodo."
+      },
+      "choice": {
+        "which": "¿A quién te refieres con «{name}»?"
+      },
+      "rate": {
+        "me": "Tu asistencia",
+        "of": "Asistencia de {name}",
+        "all": "Asistencia de todos",
+        "range": "del {from} al {to}",
+        "detail": "Asistió a {attended} de {total} eventos",
+        "onlyType": "Solo {type}",
+        "lowest": "Los que menos vinieron",
+        "openPerson": "Abrir persona"
+      },
+      "event": {
+        "present": "Vienen",
+        "absent": "De baja",
+        "open": "Sin respuesta",
+        "openNames": "Aún sin respuesta",
+        "absentNames": "De baja",
+        "allAnswered": "Todos han respondido.",
+        "openEvent": "Abrir evento",
+        "time": "{time}"
+      },
+      "next": {
+        "title": "Próximo evento"
+      },
+      "birthdays": {
+        "title": "Cumpleaños",
+        "age": "cumple {age}"
+      },
+      "song": {
+        "lastSung": "Cantada por última vez el {date}",
+        "never": "Según el historial, aún no se ha cantado.",
+        "open": "Abrir obra"
+      },
+      "help": {
+        "title": "Esto podría ayudar"
+      },
+      "settings": {
+        "toggle": "Asistente de chat (beta)",
+        "toggleHint": "Todos en el grupo pueden hacer preguntas sobre asistencia, eventos y obras en un chat. Solo el mensaje escrito va al servicio de IA."
+      },
+      "entryEnableHint": "Aún desactivado para este grupo. Toca para activarlo."
+    }
+  }
+}

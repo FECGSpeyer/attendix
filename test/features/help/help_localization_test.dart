@@ -1,4 +1,5 @@
 import 'package:attendix/features/help/data/help_content.dart';
+import 'package:attendix/features/help/data/help_content_app.dart';
 import 'package:attendix/features/help/data/help_content_service.dart';
 import 'package:attendix/l10n/generated/app_localizations_de.dart';
 import 'package:attendix/l10n/generated/app_localizations_en.dart';
@@ -8,7 +9,7 @@ void main() {
   group('localizedHelpContentService', () {
     test('German keeps the original content', () {
       final de = localizedHelpContentService('de');
-      expect(de.articles.length, helpArticles.length);
+      expect(de.articles.length, allHelpArticles.length);
       expect(de.articles.first.title, helpArticles.first.title);
       expect(de.categories.first.label, helpCategories.first.label);
     });
@@ -19,6 +20,11 @@ void main() {
       expect(en.articles.length, de.articles.length);
       expect(en.getArticle(helpArticles.first.id)!.title, isNot(helpArticles.first.title));
       expect(en.getCategories().map((c) => c.label), contains('Getting started'));
+      // Flutter-only articles are translated too.
+      for (final a in appHelpArticles) {
+        expect(allHelpArticlesEn.containsKey(a.id), isTrue, reason: a.id);
+        expect(en.getArticle(a.id)!.title, isNot(a.title));
+      }
 
       for (final g in glossaryTerms) {
         expect(en.findGlossaryTermByName(g.term)?.id, g.id,

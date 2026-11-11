@@ -33,6 +33,7 @@ import '../../../profile/presentation/widgets/master_data_sheet.dart';
 import '../../../profile/presentation/widgets/profile_helpers.dart';
 import '../../../self_service/presentation/widgets/self_service_absences.dart';
 import '../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
+import '../../../assistant/presentation/widgets/assistant_entry_card.dart';
 import '../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider;
 import '../../data/rd_manage_logic.dart';
 import '../rd_actions.dart';
@@ -95,6 +96,8 @@ class RdMePage extends ConsumerWidget {
         ),
         const SizedBox(height: 18),
         const _ProfileCard(),
+        // Chat-Assistent: coloured card right under the profile.
+        const AssistantEntryCard(margin: EdgeInsets.only(top: 16)),
         if (showManage) ...[
           const SizedBox(height: 20),
           RdGroupedList(

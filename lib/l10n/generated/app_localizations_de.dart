@@ -468,6 +468,216 @@ class AppLocalizationsDe extends AppLocalizations {
       'Der Link zum Zurücksetzen ist ungültig oder abgelaufen.';
 
   @override
+  String get assistantBeta => 'Beta';
+
+  @override
+  String assistantBirthdaysAge(Object age) {
+    return 'wird $age';
+  }
+
+  @override
+  String get assistantBirthdaysTitle => 'Geburtstage';
+
+  @override
+  String assistantChoiceWhich(Object name) {
+    return 'Wen meinst du mit „$name“?';
+  }
+
+  @override
+  String get assistantClear => 'Neuer Chat';
+
+  @override
+  String get assistantEntryEnableHint =>
+      'Für diese Gruppe noch aus. Tippen, um ihn einzuschalten.';
+
+  @override
+  String get assistantEntryHint =>
+      'Anwesenheit, nächster Termin, wer kommt: einfach fragen';
+
+  @override
+  String get assistantEntryTitle => 'Frag den Assistenten';
+
+  @override
+  String get assistantEventAbsent => 'Abgemeldet';
+
+  @override
+  String get assistantEventAbsentNames => 'Abgemeldet';
+
+  @override
+  String get assistantEventAllAnswered => 'Alle haben sich gemeldet.';
+
+  @override
+  String get assistantEventOpen => 'Offen';
+
+  @override
+  String get assistantEventOpenEvent => 'Termin öffnen';
+
+  @override
+  String get assistantEventOpenNames => 'Noch keine Rückmeldung';
+
+  @override
+  String get assistantEventPresent => 'Kommen';
+
+  @override
+  String assistantEventTime(Object time) {
+    return '$time Uhr';
+  }
+
+  @override
+  String get assistantHelpTitle => 'Das könnte helfen';
+
+  @override
+  String get assistantInputHint => 'Frag etwas …';
+
+  @override
+  String get assistantIntro =>
+      'Hallo! Ich beantworte Fragen zu deiner Gruppe. Ändern kann ich noch nichts.';
+
+  @override
+  String get assistantNextTitle => 'Nächster Termin';
+
+  @override
+  String get assistantNoticeChangeLater =>
+      'Ändern kann ich noch nichts, das kommt bald. Bis dahin geht es wie gewohnt in der App.';
+
+  @override
+  String get assistantNoticeDisabled =>
+      'Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.';
+
+  @override
+  String get assistantNoticeFailed =>
+      'Das hat gerade nicht geklappt. Bitte versuch es noch einmal.';
+
+  @override
+  String assistantNoticeGroupNotFound(Object name) {
+    return 'Ich finde keine Gruppe „$name“.';
+  }
+
+  @override
+  String get assistantNoticeLimit =>
+      'Für heute ist das Limit erreicht. Morgen geht es weiter.';
+
+  @override
+  String get assistantNoticeNoBirthdays =>
+      'In diesem Zeitraum hat niemand Geburtstag.';
+
+  @override
+  String get assistantNoticeNoData =>
+      'In diesem Zeitraum gibt es keine Termine, die zählen.';
+
+  @override
+  String get assistantNoticeNoEvent => 'Dazu finde ich keinen Termin.';
+
+  @override
+  String get assistantNoticeNoHelp => 'Dazu finde ich nichts in der Hilfe.';
+
+  @override
+  String get assistantNoticeNoOwnPerson =>
+      'Du bist in dieser Gruppe nicht als Person eingetragen, deshalb gibt es keine eigene Anwesenheit.';
+
+  @override
+  String get assistantNoticeNoRights =>
+      'Diese Frage kann ich dir mit deiner Rolle nicht beantworten.';
+
+  @override
+  String get assistantNoticeNotUnderstood =>
+      'Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.';
+
+  @override
+  String assistantNoticePersonNotFound(Object name) {
+    return 'Ich finde niemanden mit dem Namen „$name“.';
+  }
+
+  @override
+  String assistantNoticeSongNotFound(Object name) {
+    return 'Ich finde kein Werk „$name“.';
+  }
+
+  @override
+  String assistantNoticeTooLong(Object max) {
+    return 'Die Nachricht ist zu lang. Bitte höchstens $max Zeichen.';
+  }
+
+  @override
+  String get assistantPrivacy =>
+      'Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten.';
+
+  @override
+  String get assistantRateAll => 'Anwesenheit aller';
+
+  @override
+  String assistantRateDetail(Object attended, Object total) {
+    return '$attended von $total Terminen besucht';
+  }
+
+  @override
+  String get assistantRateLowest => 'Am seltensten da';
+
+  @override
+  String get assistantRateMe => 'Deine Anwesenheit';
+
+  @override
+  String assistantRateOf(Object name) {
+    return 'Anwesenheit von $name';
+  }
+
+  @override
+  String assistantRateOnlyType(Object type) {
+    return 'Nur $type';
+  }
+
+  @override
+  String get assistantRateOpenPerson => 'Person öffnen';
+
+  @override
+  String assistantRateRange(Object from, Object to) {
+    return '$from bis $to';
+  }
+
+  @override
+  String get assistantSend => 'Senden';
+
+  @override
+  String get assistantSettingsToggle => 'Chat-Assistent (Beta)';
+
+  @override
+  String get assistantSettingsToggleHint =>
+      'Alle in der Gruppe können per Chat Fragen zu Anwesenheit, Terminen und Werken stellen. Nur die getippte Nachricht geht an den KI-Dienst.';
+
+  @override
+  String assistantSongLastSung(Object date) {
+    return 'Zuletzt gesungen am $date';
+  }
+
+  @override
+  String get assistantSongNever => 'Laut Verlauf noch nicht gesungen.';
+
+  @override
+  String get assistantSongOpen => 'Werk öffnen';
+
+  @override
+  String get assistantSuggestBirthdays => 'Wer hat diesen Monat Geburtstag?';
+
+  @override
+  String get assistantSuggestHelp => 'Wie melde ich mich ab?';
+
+  @override
+  String get assistantSuggestMyRate =>
+      'Wie war meine Anwesenheit in den letzten 3 Monaten?';
+
+  @override
+  String get assistantSuggestNextEvent => 'Wann ist der nächste Termin?';
+
+  @override
+  String get assistantSuggestWhoComes => 'Wer kommt zum nächsten Termin?';
+
+  @override
+  String get assistantThinking => 'Einen Moment …';
+
+  @override
+  String get assistantTitle => 'Assistent';
+
+  @override
   String get attListAddEvent => 'Termin hinzufügen';
 
   @override

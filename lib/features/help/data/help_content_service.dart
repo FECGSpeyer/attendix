@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/locale_provider.dart';
 import 'fuse_search.dart';
 import 'help_content.dart';
+import 'help_content_app.dart';
 import 'help_content_en.dart';
 import 'help_models.dart';
 
@@ -13,7 +14,7 @@ import 'help_models.dart';
 class HelpContentService {
   const HelpContentService({
     this.categories = helpCategories,
-    this.articles = helpArticles,
+    this.articles = allHelpArticles,
     this.glossary = glossaryTerms,
   });
 
@@ -99,8 +100,8 @@ HelpContentService localizedHelpContentService(String language) {
         ),
     ],
     articles: [
-      for (final a in helpArticles)
-        if (helpArticlesEn[a.id] case final t?)
+      for (final a in allHelpArticles)
+        if (allHelpArticlesEn[a.id] case final t?)
           HelpArticle(
             id: a.id,
             title: t.title,

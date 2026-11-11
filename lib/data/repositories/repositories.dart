@@ -48,3 +48,4 @@ export 'admin_repository.dart';
 export 'user_registration_repository.dart';
 export 'user_language_repository.dart';
 export 'live_activity_repository.dart';
+export 'assistant_repository.dart';

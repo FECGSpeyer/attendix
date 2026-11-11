@@ -69,6 +69,7 @@ import '../../features/legal/presentation/pages/legal_page.dart';
 import '../../features/legal/presentation/pages/terms_page.dart';
 import '../../features/help/presentation/pages/help_page.dart';
 import '../../features/help/presentation/pages/help_article_page.dart';
+import '../../features/assistant/presentation/pages/assistant_page.dart';
 import '../../features/help/presentation/pages/help_glossary_page.dart';
 import '../../features/settings/presentation/pages/delete_account_page.dart';
 import '../../features/settings/presentation/pages/files_page.dart';
@@ -1466,6 +1467,12 @@ final routerProvider = Provider<GoRouter>((ref) {
                 ],
               ),
               // ORG_PLANS end
+              // Chat-Assistent (both designs, one page)
+              GoRoute(
+                path: 'assistant',
+                name: 'assistant',
+                builder: (context, state) => const AssistantPage(),
+              ),
               // LEGAL_HELP: help center + account deletion
               GoRoute(
                 path: 'help',

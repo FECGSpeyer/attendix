@@ -83,6 +83,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
   // ATTENDANCE_SIGNOUT: show all Termine + absence/late reasons
   bool _showAllAttendances = false;
+  bool _aiAssistantEnabled = false;
   final _showAllInfoTextController = TextEditingController();
   List<String> _absenceReasons = [];
   List<String> _lateReasons = [];
@@ -142,6 +143,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       _showMembersList = tenant.showMembersList;
       _showHolidays = tenant.showHolidays;
       _showAllAttendances = tenant.showAllAttendances;
+      _aiAssistantEnabled = tenant.aiAssistantEnabled;
       _showAllInfoTextController.text = tenant.showAllAttendancesInfoText ?? '';
       _absenceReasons = EventListUtils.absenceReasonsOf(tenant.absenceReasons);
       _lateReasons = EventListUtils.lateReasonsOf(tenant.lateReasons);
@@ -244,6 +246,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         'showMembersList': _showMembersList, // DB_FIX: column is camelCase
         'shift_excused_as_present': _shiftExcusedAsPresent,
         'show_all_attendances': _showAllAttendances,
+        'ai_assistant_enabled': _aiAssistantEnabled,
         // LOGIC_SETTINGS: Ionic — null when off, otherwise trimmed or default
         'show_all_attendances_info_text': normalizeShowAllInfoText(
           enabled: _showAllAttendances,
@@ -531,6 +534,13 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         context.l10n.generalSettingsAllEventsHelper,
                         _showAllAttendances,
                         (v) => _showAllAttendances = v,
+                      ),
+                      // Chat-Assistent: switched on per tenant (admins).
+                      _toggle(
+                        context.l10n.assistantSettingsToggle,
+                        context.l10n.assistantSettingsToggleHint,
+                        _aiAssistantEnabled,
+                        (v) => _aiAssistantEnabled = v,
                       ),
                       // DUTY: Dienstplan-Ansicht (only when a type uses Dienst-Modus)
                       if (ref.watch(hasDutyTypesProvider))
