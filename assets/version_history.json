@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.138.1",
+      "date": "12.11.2026",
+      "changes": [
+        "🐛 Themen kommen in der Reihenfolge auf die Tagesordnung, in der sie ausgewählt oder angelegt wurden"
+      ]
+    },
+    {
       "version": "0.138.0",
       "date": "12.11.2026",
       "changes": [
