@@ -414,10 +414,10 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
   }
 
   /// Deleted while existing Termine still use it: only those keep it.
-  bool get _rdDeletedButUsed => !_visible && _usageCount > 0;
+  bool get _rdDeletedButUsed => !_visible && _usageCount != 0; // -1 = count unknown
 
   /// "Terminart löschen": unused → really deleted; used by existing
-  /// Termine → hidden for new ones (the classic delete would remove those
+  /// Termine (or count unknown, -1) → hidden for new ones (the classic delete would remove those
   /// Termine with it).
   Future<void> _rdDeleteType() async {
     if (_usageCount == 0) return _deleteType();
@@ -425,7 +425,7 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
     final confirmed = await DialogHelper.showConfirmation(
       context,
       title: l10n.typeSettingsDeleteType,
-      message: l10n.rdTypeDeleteUsedMessage(_nameController.text.trim(), _usageCount),
+      message: _usageCount > 0 ? l10n.rdTypeDeleteUsedMessage(_nameController.text.trim(), _usageCount) : l10n.rdTypeDeleted,
       confirmText: l10n.commonDelete,
       cancelText: l10n.commonCancel,
       isDestructive: true,
