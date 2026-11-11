@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.133.0",
+      "date": "11.11.2026",
+      "changes": [
+        "✨ Chat-Assistent (Beta): per Chat an- und abmelden, Verspätung und geplante Abwesenheit melden; Leitung setzt Status und Abwesenheiten anderer. Immer mit Vorschau, Bestätigung und Rückgängig",
+        "✨ Chat-Assistent versteht vergangene Termine („Wer war letzten Sonntag da?“)"
+      ]
+    },
+    {
       "version": "0.132.0",
       "date": "11.11.2026",
       "changes": [
