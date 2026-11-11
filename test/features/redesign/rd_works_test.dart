@@ -28,6 +28,7 @@ import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart'
 import 'package:attendix/features/redesign/presentation/pages/rd_works_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_overview.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
+import 'package:attendix/features/redesign/presentation/widgets/works/rd_current_works.dart';
 import 'package:attendix/features/redesign/presentation/widgets/works/rd_works_filter_sheet.dart';
 import 'package:attendix/features/songs/data/song_print_service.dart';
 import 'package:attendix/l10n/l10n.dart';
@@ -621,6 +622,43 @@ void main() {
       await tester.tap(find.descendant(of: find.byKey(const Key('rd-works-current')), matching: find.text('Festliche Ouvertüre')));
       await _settle(tester);
       expect(find.text('page work 5'), findsOneWidget);
+    });
+
+    testWidgets('Aktuell: two Termine on one day name the type, large text fits', (tester) async {
+      _phone(tester);
+      final day = DateTime(2026, 11, 29);
+      RdNextEvent event(int id, String type) => RdNextEvent(date: day, type: type, attendanceId: id, songs: const []);
+      const long = Song(id: 9, name: 'Warum musstest du so viel leiden für die Sünden dieser Welt', number: 91);
+      await tester.pumpWidget(ProviderScope(
+        child: MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+          home: MediaQuery(
+            data: const MediaQueryData(size: Size(393, 852), textScaler: TextScaler.linear(3)),
+            child: Scaffold(
+              body: SingleChildScrollView(
+                child: RdCurrentWorksStrip(
+                  works: [
+                    RdCurrentWork(song: long, event: event(1, 'Probe')),
+                    RdCurrentWork(song: _ave, event: event(2, 'Konzert')),
+                  ],
+                  ownGroup: _groups.first,
+                  choir: false,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ));
+      await _settle(tester);
+
+      expect(tester.takeException(), isNull);
+      expect(find.textContaining('Für '), findsNothing);
+      expect(find.textContaining('Probe'), findsOneWidget);
+      expect(find.textContaining('Konzert'), findsOneWidget);
+      expect(find.text('Keine Stimme'), findsNWidgets(2));
     });
 
     testWidgets('Alle als PDF is locked and loading while the PDF is built', (tester) async {

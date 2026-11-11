@@ -93,10 +93,17 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
     final printable = _printable();
     // All cards for one Termin: it is named once above the row; otherwise
     // the first card of each Termin names it.
-    final single = widget.works.map(_eventKey).toSet().length == 1;
+    final events = widget.works.map(_eventKey).toSet();
+    final single = events.length == 1;
+    // Two Termine on one day: the cards name the type too ("So. 29.11. ·
+    // Probe"), else the day is enough.
+    final days = events.map((e) => e.$2).toList();
+    final sameDay = days.toSet().length < days.length;
     // The cards grow with the text size (fixed height for the row).
     final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
-    final height = 128 * scale.clamp(1.0, 1.8);
+    // Padding and gaps stay, the number, three title lines and the hint grow
+    // with the text (128 at 100 %).
+    final height = 34 + 94 * scale.clamp(1.0, double.infinity);
     final width = _cardWidth * scale.clamp(1.0, 1.4);
 
     return Column(
@@ -177,6 +184,7 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
                       work: widget.works[i],
                       ownGroup: widget.ownGroup,
                       choir: widget.choir,
+                      shortWhen: !sameDay,
                       showWhen: !single && (i == 0 || _eventKey(widget.works[i]) != _eventKey(widget.works[i - 1])),
                     ),
                   ),
@@ -191,7 +199,13 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
 /// Number, title (up to three lines), the Termin when it is not named above
 /// the row, and a hint when the own part is missing.
 class _CurrentCard extends StatelessWidget {
-  const _CurrentCard({required this.work, required this.ownGroup, required this.choir, required this.showWhen});
+  const _CurrentCard({
+    required this.work,
+    required this.ownGroup,
+    required this.choir,
+    required this.showWhen,
+    required this.shortWhen,
+  });
 
   final RdCurrentWork work;
   final Group? ownGroup;
@@ -199,6 +213,9 @@ class _CurrentCard extends StatelessWidget {
 
   /// First card of its Termin while the row holds several Termine.
   final bool showWhen;
+
+  /// The day alone names the Termin (no second Termin on that day).
+  final bool shortWhen;
 
   @override
   Widget build(BuildContext context) {
@@ -246,7 +263,7 @@ class _CurrentCard extends StatelessWidget {
                   ],
                   if (showWhen)
                     Expanded(
-                      child: Text(rdCurrentWorkWhen(work, short: true), maxLines: 1, overflow: TextOverflow.ellipsis, style: RdType.meta(p, size: 12)),
+                      child: Text(rdCurrentWorkWhen(work, short: shortWhen), maxLines: 1, overflow: TextOverflow.ellipsis, style: RdType.meta(p, size: 12)),
                     ),
                 ],
               ),
