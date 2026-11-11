@@ -134,7 +134,8 @@ class UserRegistrationRepository extends BaseRepository
       return userId;
     }
 
-    // Account exists but is in no tenant yet (Ionic db.service fallback).
+    // Account exists but is not in this tenant yet: resolved server-side by
+    // e-mail (Ionic db.service fallback), never via other instances' rows.
     try {
       final rows = await supabase
           .rpc('get_user_id_by_email', params: {'email': normalizedEmail});
@@ -338,10 +339,9 @@ class UserRegistrationRepository extends BaseRepository
 
   /// Ionic `getAppIdByEmail` → (userId, alreadyThere) or null.
   ///
-  /// NOTE (Multi-Tenant): the `tenantUsers` lookup by e-mail is intentionally
-  /// cross-tenant (like Ionic) — it detects whether the person already has an
-  /// account in ANY instance. Only the user id / role is used; all writes are
-  /// scoped to [tenantId].
+  /// Multi-Tenant: only looks at [tenantId]. Whether the person has an account
+  /// elsewhere is resolved by [registerUser] via `get_user_id_by_email`, so no
+  /// membership row of another instance is read here.
   ///
   /// SOL_FIX25: with [personId], an account that is already linked to that
   /// very person (e.g. an archived / transferred person that kept its
@@ -353,15 +353,14 @@ class UserRegistrationRepository extends BaseRepository
       rows = await supabase
           .from('tenantUsers')
           .select('userId, tenantId, role')
+          .eq('tenantId', tenantId)
           // DB_REVIEW_REST (M7): case-insensitive like Ionic `ilike`.
           .ilike('email', StringUtils.exactIlikePattern(email));
     } catch (_) {
       throw AccountFlowException(l10nWithoutContext.dbLoadUserFailed);
     }
 
-    final found = rows.cast<Map<String, dynamic>>().where(
-          (row) => row['tenantId'] == tenantId,
-        );
+    final found = rows.cast<Map<String, dynamic>>();
     final foundTenantUser = found.isEmpty ? null : found.first;
 
     if (foundTenantUser != null) {
@@ -430,8 +429,7 @@ class UserRegistrationRepository extends BaseRepository
       return null;
     }
 
-    if (rows.isEmpty) return null;
-    return ((rows.first as Map<String, dynamic>)['userId'] as String, false);
+    return null;
   }
 
   /// Main group (Hauptgruppe) id of this repository's tenant (Ionic
