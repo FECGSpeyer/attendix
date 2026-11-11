@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/assistant_providers.dart';
+import '../../../../core/providers/locale_provider.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -16,6 +17,7 @@ import '../../../people/person_create_prefill.dart';
 import '../../data/assistant_command.dart';
 import '../../data/assistant_logic.dart' show assistantMaxChanges;
 import '../../data/assistant_reply.dart';
+import '../assistant_voice.dart';
 
 /// Chat assistant. One page for both designs: in the new design it takes
 /// the colours of the Beta palette.
@@ -36,8 +38,13 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
   final _scroll = ScrollController();
   final _focus = FocusNode();
 
+  /// Speech input is on (the words go into the input field).
+  bool _listening = false;
+  AssistantVoice? _voice;
+
   @override
   void dispose() {
+    if (_listening) _voice?.stop();
     _controller.dispose();
     _scroll.dispose();
     _focus.dispose();
@@ -55,7 +62,41 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
     });
   }
 
+  /// Mic button: listen and write the words into the field; tapping again
+  /// stops. Nothing is sent by itself.
+  Future<void> _toggleVoice() async {
+    final AssistantVoice voice = _voice ?? ref.read<AssistantVoice>(assistantVoiceProvider);
+    _voice = voice;
+    if (_listening) {
+      await voice.stop();
+      return;
+    }
+    final before = _controller.text.trim();
+    setState(() => _listening = true);
+    final ok = await voice.start(
+      language: ref.read(localeProvider).languageCode,
+      onText: (words) {
+        if (!mounted) return;
+        final text = before.isEmpty ? words : '$before $words';
+        _controller.value = TextEditingValue(
+          text: text.length > assistantMaxTextLength ? text.substring(0, assistantMaxTextLength) : text,
+          selection: TextSelection.collapsed(
+              offset: text.length > assistantMaxTextLength ? assistantMaxTextLength : text.length),
+        );
+      },
+      onEnd: () {
+        if (mounted) setState(() => _listening = false);
+      },
+    );
+    if (!ok && mounted) {
+      setState(() => _listening = false);
+      ScaffoldMessenger.maybeOf(context)
+          ?.showSnackBar(SnackBar(content: Text(context.l10n.assistantVoiceUnavailable)));
+    }
+  }
+
   Future<void> _send([String? text]) async {
+    if (_listening) await _voice?.stop();
     final value = (text ?? _controller.text).trim();
     if (value.isEmpty) return;
     _controller.clear();
@@ -75,9 +116,9 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
     ref.listen(assistantChatNotifierProvider, (_, __) => _scrollToEnd());
 
     final suggestions = [
-      l10n.assistantSuggestMyRate,
+      if (!role.isParent) l10n.assistantSuggestMyRate,
       l10n.assistantSuggestNextEvent,
-      l10n.assistantSuggestSignOut,
+      if (role.isParent) l10n.assistantSuggestChildren else l10n.assistantSuggestSignOut,
       l10n.assistantSuggestSongs,
       if (seesOthers) l10n.assistantSuggestWhoComes,
       if (seesOthers) l10n.assistantSuggestBirthdays,
@@ -174,6 +215,8 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
               style: style,
               enabled: enabled && !chat.busy,
               onSend: _send,
+              listening: _listening,
+              onMic: _toggleVoice,
             ),
           ],
         ),
@@ -281,6 +324,8 @@ class _InputBar extends StatelessWidget {
     required this.style,
     required this.enabled,
     required this.onSend,
+    required this.listening,
+    required this.onMic,
   });
 
   final TextEditingController controller;
@@ -288,6 +333,8 @@ class _InputBar extends StatelessWidget {
   final _ChatStyle style;
   final bool enabled;
   final Future<void> Function([String?]) onSend;
+  final bool listening;
+  final VoidCallback onMic;
 
   @override
   Widget build(BuildContext context) {
@@ -309,7 +356,7 @@ class _InputBar extends StatelessWidget {
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => onSend(),
               decoration: InputDecoration(
-                hintText: l10n.assistantInputHint,
+                hintText: listening ? l10n.assistantVoiceListening : l10n.assistantInputHint,
                 counterText: '',
                 filled: true,
                 fillColor: style.surface,
@@ -319,7 +366,17 @@ class _InputBar extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 4),
+          IconButton(
+            tooltip: listening ? l10n.assistantVoiceStop : l10n.assistantVoiceStart,
+            isSelected: listening,
+            style: IconButton.styleFrom(
+              foregroundColor: listening ? style.onAccent : style.accent,
+              backgroundColor: listening ? style.bad : null,
+            ),
+            onPressed: enabled ? onMic : null,
+            icon: Icon(listening ? Icons.stop : Icons.mic_none),
+          ),
           IconButton.filled(
             tooltip: l10n.assistantSend,
             style: IconButton.styleFrom(backgroundColor: style.accent, foregroundColor: style.onAccent),
@@ -634,7 +691,14 @@ class _ReplyView extends ConsumerWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(plan.self ? l10n.assistantChangeTitleSelf : l10n.assistantChangeTitleOthers, style: title),
+            Text(
+              plan.parents
+                  ? l10n.assistantChangeTitleChildren
+                  : plan.self
+                      ? l10n.assistantChangeTitleSelf
+                      : l10n.assistantChangeTitleOthers,
+              style: title,
+            ),
             const SizedBox(height: 4),
             _StatusChip(status: plan.status, style: style),
             if (plan.reason != null) ...[
@@ -676,7 +740,7 @@ class _ReplyView extends ConsumerWidget {
               const SizedBox(height: 6),
               Text(l10n.assistantChangeSkippedWindow(plan.skippedWindow), style: muted),
             ],
-            if (plan.self && plan.status != AttendanceStatus.present) ...[
+            if ((plan.self || plan.parents) && plan.status != AttendanceStatus.present) ...[
               const SizedBox(height: 6),
               Text(l10n.assistantChangeNotifyHint, style: muted),
             ],

@@ -393,4 +393,24 @@ void main() {
       expect(skip(occupied: 2), DutySkip.full);
     });
   });
+
+  group('parents', () {
+    SetStatusCommand cmd(List<RateSubject> who) =>
+        SetStatusCommand(who: who, status: AssistantStatus.excused, event: const NextEventRef(), reason: 'krank');
+
+    test('parents change only their children, by name or "meine Kinder"', () {
+      const parent = AssistantAccess(role: Role.parent, hasOwnPerson: false, childCount: 2);
+      expect(parent.allows(cmd([const ChildrenSubject()])), isTrue);
+      expect(parent.allows(cmd([const PersonSubject('Lena')])), isTrue);
+      expect(parent.forChildren(cmd([const PersonSubject('Lena'), const ChildrenSubject()])), isTrue);
+      // No groups, and nothing without linked children.
+      expect(parent.allows(cmd([const GroupSubject('Tenor')])), isFalse);
+      expect(const AssistantAccess(role: Role.parent, hasOwnPerson: false).allows(cmd([const PersonSubject('Lena')])),
+          isFalse);
+      // Other roles never take the children path.
+      expect(const AssistantAccess(role: Role.player, hasOwnPerson: true, childCount: 2).forChildren(cmd([const ChildrenSubject()])),
+          isFalse);
+      expect(const AssistantAccess(role: Role.player, hasOwnPerson: true).allows(cmd([const ChildrenSubject()])), isFalse);
+    });
+  });
 }

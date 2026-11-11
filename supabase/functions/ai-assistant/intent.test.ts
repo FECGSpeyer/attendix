@@ -314,3 +314,19 @@ test("package 4: broken or hostile fields become unsupported", () => {
   const draft = validateCommand({ command: "draft_message", note: "b".repeat(900) });
   assert.equal(draft.command === "draft_message" && draft.note!.length, 300);
 });
+
+test("parents: my children only for a status", () => {
+  assert.deepEqual(
+    validateCommand({ command: "set_status", who: [{ kind: "children" }, { kind: "children" }], status: "excused", reason: "krank" }),
+    { command: "set_status", who: [{ kind: "children" }], status: "excused", event: { type: "next" }, reason: "krank" },
+  );
+  // Not for an absence or a task.
+  assert.deepEqual(validateCommand({ command: "planned_absence", who: { kind: "children" }, from: "2026-12-01", to: "2026-12-03" }), {
+    command: "unsupported",
+    category: "other",
+  });
+  assert.deepEqual(validateCommand({ command: "create_task", title: "X", who: { kind: "children" } }), {
+    command: "unsupported",
+    category: "other",
+  });
+});

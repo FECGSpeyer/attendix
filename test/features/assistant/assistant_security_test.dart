@@ -208,6 +208,33 @@ void main() {
     expect(_method(executor, 'Future<AssistantReply> _dutyPreview('), contains('if (_locked(t.attendance))'));
   });
 
+  test('parents: only the own children, through the Elternportal path', () {
+    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
+    final logic = File('lib/features/assistant/data/assistant_logic.dart').readAsStringSync();
+    expect(logic, contains('role.isParent &&'));
+    expect(logic, contains('SetStatusCommand() when forChildren(command) => true'));
+    final preview = _method(executor, 'Future<AssistantReply> _childrenStatus(');
+    // Names are matched against the linked children only, rows are theirs only.
+    expect(preview, contains('bestMatches(name, children,'));
+    expect(preview, contains('ids.contains(a.childId)'));
+    expect(preview, contains('parents: true'));
+    for (final write in ['.signIn(', '.signOut(', '.updatePersonAttendance(']) {
+      expect(preview, isNot(contains(write)), reason: write);
+    }
+    final apply = _method(executor, 'Future<int> applyStatus(');
+    expect(apply, contains('isParents: true'));
+  });
+
+  test('voice input never sends by itself', () {
+    final page = File('lib/features/assistant/presentation/pages/assistant_page.dart').readAsStringSync();
+    final voice = File('lib/features/assistant/presentation/assistant_voice.dart').readAsStringSync();
+    final toggle = _method(page, 'Future<void> _toggleVoice(');
+    expect(toggle, isNot(contains('_send(')));
+    expect(toggle, isNot(contains('.send(')));
+    expect(voice, isNot(contains('supabase')));
+    expect(voice, isNot(contains('http')));
+  });
+
   test('undo of own rows checks the tenant and the own account', () {
     final signs = File('lib/data/repositories/sign_in_out_repository.dart').readAsStringSync();
     final restore = signs.substring(signs.indexOf('Future<int> restoreOwnStatuses('));

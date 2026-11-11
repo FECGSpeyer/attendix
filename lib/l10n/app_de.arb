@@ -726,6 +726,10 @@
       }
     }
   },
+  "assistantChangeTitleChildren": "Deine Kinder an- oder abmelden?",
+  "@assistantChangeTitleChildren": {
+    "description": "assistant.change.titleChildren"
+  },
   "assistantChangeTitleOthers": "Status ändern",
   "@assistantChangeTitleOthers": {
     "description": "assistant.change.titleOthers"
@@ -1175,7 +1179,7 @@
   "@assistantPersonTitle": {
     "description": "assistant.person.title"
   },
-  "assistantPrivacy": "Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten.",
+  "assistantPrivacy": "Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten. Bei der Spracheingabe erkennt dein Gerät oder Browser die Worte; gesendet wird nur der Text, wenn du auf Senden tippst.",
   "@assistantPrivacy": {
     "description": "assistant.privacy"
   },
@@ -1309,6 +1313,10 @@
   "@assistantSuggestBirthdays": {
     "description": "assistant.suggest.birthdays"
   },
+  "assistantSuggestChildren": "Melde meine Kinder für den nächsten Termin ab, sie sind krank",
+  "@assistantSuggestChildren": {
+    "description": "assistant.suggest.children"
+  },
   "assistantSuggestHelp": "Wie melde ich mich ab?",
   "@assistantSuggestHelp": {
     "description": "assistant.suggest.help"
@@ -1433,6 +1441,22 @@
   "assistantTitle": "Assistent",
   "@assistantTitle": {
     "description": "assistant.title"
+  },
+  "assistantVoiceListening": "Ich höre zu …",
+  "@assistantVoiceListening": {
+    "description": "assistant.voice.listening"
+  },
+  "assistantVoiceStart": "Spracheingabe",
+  "@assistantVoiceStart": {
+    "description": "assistant.voice.start"
+  },
+  "assistantVoiceStop": "Spracheingabe beenden",
+  "@assistantVoiceStop": {
+    "description": "assistant.voice.stop"
+  },
+  "assistantVoiceUnavailable": "Die Spracheingabe ist hier nicht verfügbar. Bitte erlaube das Mikrofon oder tippe deine Frage.",
+  "@assistantVoiceUnavailable": {
+    "description": "assistant.voice.unavailable"
   },
   "attListAddEvent": "Termin hinzufügen",
   "@attListAddEvent": {

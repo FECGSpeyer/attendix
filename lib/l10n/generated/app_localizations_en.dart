@@ -577,6 +577,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get assistantChangeTitleChildren => 'Sign your children in or out?';
+
+  @override
   String get assistantChangeTitleOthers => 'Change status';
 
   @override
@@ -965,7 +968,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantPrivacy =>
-      'Only your message goes to the AI service, no data from Attendix. The app works out the answers itself, with your rights.';
+      'Only your message goes to the AI service, no data from Attendix. The app works out the answers itself, with your rights. With voice input your device or browser recognises the words; only the text is sent, when you tap Send.';
 
   @override
   String get assistantRateAll => 'Attendance of everyone';
@@ -1063,6 +1066,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assistantSuggestBirthdays => 'Who has a birthday this month?';
 
   @override
+  String get assistantSuggestChildren =>
+      'Sign my children out for the next event, they are ill';
+
+  @override
   String get assistantSuggestHelp => 'How do I sign out?';
 
   @override
@@ -1155,6 +1162,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantTitle => 'Assistant';
+
+  @override
+  String get assistantVoiceListening => 'Listening …';
+
+  @override
+  String get assistantVoiceStart => 'Voice input';
+
+  @override
+  String get assistantVoiceStop => 'Stop voice input';
+
+  @override
+  String get assistantVoiceUnavailable =>
+      'Voice input is not available here. Please allow the microphone or type your question.';
 
   @override
   String get attListAddEvent => 'Add event';
