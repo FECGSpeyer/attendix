@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.136.0",
+      "date": "11.11.2026",
+      "changes": [
+        "✨ Chat-Assistent: offene Aufgaben und Werke eines Termins abfragen",
+        "✨ Chat-Assistent: Aufgabe anlegen und Dienst übernehmen, mit Vorschau und Rückgängig",
+        "✨ Chat-Assistent: neue Person und Mitteilung als Entwurf im normalen Formular öffnen"
+      ]
+    },
+    {
       "version": "0.135.1",
       "date": "11.11.2026",
       "changes": [
