@@ -16268,7 +16268,7 @@ abstract class AppLocalizations {
   /// rdAdmin.homeWorksCategories
   ///
   /// In de, this message translates to:
-  /// **'Im Werke-Tab bei den Kategorien'**
+  /// **'Im Werke-Tab unter •••'**
   String get rdAdminHomeWorksCategories;
 
   /// rdAdmin.manageGroups
@@ -19354,6 +19354,12 @@ abstract class AppLocalizations {
   /// **'Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.'**
   String get rdWmCategoriesIntro;
 
+  /// rdWm.categoryRemove
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorie „{name}“ entfernen'**
+  String rdWmCategoryRemove(Object name);
+
   /// rdWm.historyIntro
   ///
   /// In de, this message translates to:
@@ -19369,7 +19375,7 @@ abstract class AppLocalizations {
   /// rdWm.manageCategories
   ///
   /// In de, this message translates to:
-  /// **'Verwalten'**
+  /// **'Kategorien verwalten'**
   String get rdWmManageCategories;
 
   /// rdWm.worksCount

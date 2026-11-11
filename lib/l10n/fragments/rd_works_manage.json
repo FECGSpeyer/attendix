@@ -5,7 +5,8 @@
       "worksCount": "{count, plural, one {{count} Werk} other {{count} Werke}}",
       "historyIntro": "Welche Werke wann gespielt wurden. Tippe auf einen Eintrag, um ihn zu entfernen.",
       "listPdf": "Werkliste als PDF",
-      "manageCategories": "Verwalten"
+      "manageCategories": "Kategorien verwalten",
+      "categoryRemove": "Kategorie „{name}“ entfernen"
     }
   },
   "en": {
@@ -14,7 +15,8 @@
       "worksCount": "{count, plural, one {{count} work} other {{count} works}}",
       "historyIntro": "Which works were played when. Tap an entry to remove it.",
       "listPdf": "Works list as PDF",
-      "manageCategories": "Manage"
+      "manageCategories": "Manage categories",
+      "categoryRemove": "Remove category “{name}”"
     }
   }
 }

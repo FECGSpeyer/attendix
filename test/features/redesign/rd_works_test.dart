@@ -737,22 +737,33 @@ void main() {
       expect(find.byKey(const Key('rd-collection-chip-2')), findsNothing);
       expect(row(5), findsOneWidget);
       expect(row(6), findsNothing);
-      // Second row: only the categories used in the Sammlung, no "Verwalten"
-      // for a player.
-      Finder category(String id) => find.byKey(Key('rd-works-category-$id'));
+      // One row of chips: the categories are a filter (only those used in
+      // the Sammlung), no "Kategorien verwalten" for a player.
+      Finder category(String id) => find.byKey(Key('rd-works-filter-category-$id'));
+      expect(find.byKey(const Key('rd-works-categories')), findsNothing);
+      await tester.tap(find.text('Filter'));
+      await _settle(tester);
       expect(category('k'), findsOneWidget);
       expect(category('c'), findsNothing);
       expect(find.byKey(const Key('rd-works-categories-manage')), findsNothing);
+      await tester.tap(category('k'));
+      await tester.tapAt(const Offset(10, 10)); // closes the sheet
+      await _settle(tester);
+      expect(find.byKey(const Key('rd-works-category-chosen')), findsOneWidget);
+      expect(find.text('Filter · 1'), findsOneWidget);
 
       // A chosen category is cleared when the Sammlung changes.
-      await tester.tap(category('k'));
-      await _settle(tester);
       await tester.tap(find.text('Einspielen · 1'));
       await _settle(tester);
       expect(row(6), findsOneWidget);
       expect(row(5), findsNothing);
+      expect(find.byKey(const Key('rd-works-category-chosen')), findsNothing);
+      await tester.tap(find.text('Filter'));
+      await _settle(tester);
       expect(category('c'), findsOneWidget);
       expect(category('k'), findsNothing);
+      await tester.tapAt(const Offset(10, 10)); // closes the sheet
+      await _settle(tester);
 
       // The search covers every Sammlung the player sees, not the hidden one.
       await tester.enterText(find.byType(TextField), 'e');
@@ -762,7 +773,7 @@ void main() {
       expect(row(7), findsNothing);
     });
 
-    testWidgets('Sammlungen: leads keep "Verwalten" without used categories', (tester) async {
+    testWidgets('Sammlungen: leads find "Kategorien verwalten" in the filter', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_worksApp(
         Role.admin,
@@ -773,7 +784,9 @@ void main() {
       await _settle(tester);
       await tester.tap(find.text('Einspielen · 1'));
       await _settle(tester);
-      expect(find.byKey(const Key('rd-works-category-c')), findsNothing);
+      await tester.tap(find.text('Filter'));
+      await _settle(tester);
+      expect(find.byKey(const Key('rd-works-filter-category-c')), findsNothing);
       expect(find.byKey(const Key('rd-works-categories-manage')), findsOneWidget);
     });
 
@@ -812,8 +825,8 @@ void main() {
       await tester.tap(find.bySemanticsLabel('Sortierung „Am längsten nicht gespielt“ entfernen'));
       await _settle(tester);
       expect(find.text('Kirche'), findsNWidgets(3)); // chip and two rows
-      // Leads manage the categories next to their chips.
-      expect(find.byKey(const Key('rd-works-categories-manage')), findsOneWidget);
+      // No loose "Verwalten" next to the chips any more.
+      expect(find.byKey(const Key('rd-works-categories-manage')), findsNothing);
 
       await tester.tap(find.byType(FloatingActionButton));
       await _settle(tester);
