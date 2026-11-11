@@ -11456,6 +11456,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdTeamEmptyTitle => 'Noch keine Besprechung';
 
   @override
+  String get rdTeamLoadFailed => 'Besprechungen konnten nicht geladen werden';
+
+  @override
   String get rdTeamNewMeeting => 'Neue Besprechung';
 
   @override

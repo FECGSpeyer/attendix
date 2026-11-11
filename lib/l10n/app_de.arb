@@ -14231,6 +14231,10 @@
   "@rdTeamEmptyTitle": {
     "description": "rdTeam.emptyTitle"
   },
+  "rdTeamLoadFailed": "Besprechungen konnten nicht geladen werden",
+  "@rdTeamLoadFailed": {
+    "description": "rdTeam.loadFailed"
+  },
   "rdTeamNewMeeting": "Neue Besprechung",
   "@rdTeamNewMeeting": {
     "description": "rdTeam.newMeeting"

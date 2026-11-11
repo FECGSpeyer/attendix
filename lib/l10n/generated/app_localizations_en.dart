@@ -11343,6 +11343,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTeamEmptyTitle => 'No meeting yet';
 
   @override
+  String get rdTeamLoadFailed => 'Meetings could not be loaded';
+
+  @override
   String get rdTeamNewMeeting => 'New meeting';
 
   @override

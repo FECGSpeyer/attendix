@@ -3087,6 +3087,7 @@
   "rdTeamEmptyMember": "As soon as the leaders plan a meeting, it shows up here.",
   "rdTeamEmptyTeamTasks": "Nothing is open in the team right now.",
   "rdTeamEmptyTitle": "No meeting yet",
+  "rdTeamLoadFailed": "Meetings could not be loaded",
   "rdTeamNewMeeting": "New meeting",
   "rdTeamNewSuggestions": "{count, plural, one {1 new suggestion} other {{count} new suggestions}}",
   "rdTeamNoTopicsYet": "no topics yet",

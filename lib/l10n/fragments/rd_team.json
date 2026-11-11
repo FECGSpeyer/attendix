@@ -18,7 +18,8 @@
       "protocolPublished": "Protokoll freigegeben",
       "protocolRead": "Protokoll lesen",
       "chipTeam": "Team · {count}",
-      "emptyTeamTasks": "Im Team ist gerade nichts offen."
+      "emptyTeamTasks": "Im Team ist gerade nichts offen.",
+    "loadFailed": "Besprechungen konnten nicht geladen werden"
     }
   },
   "en": {
@@ -40,7 +41,8 @@
       "protocolPublished": "Minutes published",
       "protocolRead": "Read minutes",
       "chipTeam": "Team · {count}",
-      "emptyTeamTasks": "Nothing is open in the team right now."
+      "emptyTeamTasks": "Nothing is open in the team right now.",
+    "loadFailed": "Meetings could not be loaded"
     }
   }
 }

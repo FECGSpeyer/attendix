@@ -18658,6 +18658,12 @@ abstract class AppLocalizations {
   /// **'Noch keine Besprechung'**
   String get rdTeamEmptyTitle;
 
+  /// rdTeam.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Besprechungen konnten nicht geladen werden'**
+  String get rdTeamLoadFailed;
+
   /// rdTeam.newMeeting
   ///
   /// In de, this message translates to:

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
@@ -65,7 +67,20 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
     final topics = splitTopics(ref.watch(agendaItemsProvider).valueOrNull);
 
     final upcoming = upcomingAsync.valueOrNull ?? const <ProtocolAttendance>[];
-    final past = (protocolsAsync.valueOrNull ?? const <Protocol>[]).where((x) => x.attendanceId != null).toList();
+    // A protocol started ahead of its meeting stays under "Geplant" only.
+    final upcomingIds = upcoming.map((a) => a.id).toSet();
+    final past = (protocolsAsync.valueOrNull ?? const <Protocol>[])
+        .where((x) => x.attendanceId != null && !upcomingIds.contains(x.attendanceId))
+        .toList();
+    // Only who may open a Termin gets there (others are sent back to the list).
+    final canOpenEvent = ref.watch(effectiveRoleProvider).canAddAttendance;
+    final failed = upcomingAsync.hasError || protocolsAsync.hasError;
+    void Function(AsyncValue<Object?>?, AsyncValue<Object?>) onError(String Function() text) => (_, next) {
+          if (next is AsyncError && !next.isLoading) ToastHelper.showError(context, text());
+        };
+    ref.listen(upcomingProtocolAttendancesProvider, onError(() => context.l10n.rdTeamLoadFailed));
+    ref.listen(protocolsProvider, onError(() => context.l10n.rdTeamLoadFailed));
+    ref.listen(agendaItemsProvider, onError(() => context.l10n.agendaLoadFailed));
     final loading = (upcomingAsync.isLoading && !upcomingAsync.hasValue) ||
         (protocolsAsync.isLoading && !protocolsAsync.hasValue);
 
@@ -102,7 +117,7 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
       if (loading)
         const TeamOrgListSkeleton()
       else ...[
-        if (upcoming.isEmpty && past.isEmpty)
+        if (upcoming.isEmpty && past.isEmpty && !failed)
           Padding(
             padding: const EdgeInsets.only(bottom: 18),
             child: RdCard(
@@ -126,7 +141,8 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
                   leading: _dateTile(att.date, highlight: att == upcoming.first),
                   title: attendanceTitle(att.typeInfo, _type(att.typeId, types)),
                   subtitle: plannedSubtitle(att),
-                  onTap: () => context.push(RedesignRoutes.betaTarget('/attendance/${att.id}')),
+                  showChevron: canOpenEvent,
+                  onTap: canOpenEvent ? () => context.push(RedesignRoutes.betaTarget('/attendance/${att.id}')) : null,
                 ),
             ],
           ),
