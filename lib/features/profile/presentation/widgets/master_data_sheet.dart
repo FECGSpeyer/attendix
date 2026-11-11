@@ -11,6 +11,7 @@ import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../redesign/presentation/widgets/members/rd_person_form.dart' show RdPersonAvatar;
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -42,9 +43,10 @@ Future<void> showMasterDataSheet(BuildContext context) {
       // first (pulling down would pop past PopScope).
       enableDrag: false,
       backgroundColor: context.rd.bg,
-      builder: (_) => const FractionallySizedBox(
-        heightFactor: 0.95,
-        child: MasterDataSheet(beta: true),
+      // Only as high as the fields (few fields left a big empty sheet).
+      builder: (sheetContext) => ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(sheetContext).height * 0.95),
+        child: const MasterDataSheet(beta: true),
       ),
     );
   }
@@ -539,7 +541,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     final p = context.rd;
     final l10n = context.l10n;
     Widget text(String label, TextEditingController c,
-            {TextInputType? keyboard, TextCapitalization caps = TextCapitalization.none, int lines = 1}) =>
+            {TextInputType? keyboard, TextCapitalization caps = TextCapitalization.none, int lines = 1, String hint = ''}) =>
         RdFieldRow(
           label: label,
           child: TextField(
@@ -548,43 +550,69 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
             textCapitalization: caps,
             minLines: 1,
             maxLines: lines,
-            decoration: rdInputDecoration(p, ''),
+            style: TextStyle(fontSize: 17, color: p.text),
+            decoration: rdInputDecoration(p, hint),
             onChanged: (_) => _changed(),
           ),
         );
     final Widget body;
     if (!_initialized) {
-      body = Center(
-        child: profileAsync.hasError
-            ? Text(l10n.signoutFlutterError(friendlyErrorMessage(profileAsync.error)), style: RdType.body(p))
-            : profileAsync.hasValue && profile == null
-                ? Text(l10n.settingsFlutterNoProfile, style: RdType.body(p))
-                : const AppSpinner(),
+      body = SizedBox(
+        height: 200,
+        child: Center(
+          child: profileAsync.hasError
+              ? Text(l10n.signoutFlutterError(friendlyErrorMessage(profileAsync.error)), style: RdType.body(p))
+              : profileAsync.hasValue && profile == null
+                  ? Text(l10n.settingsFlutterNoProfile, style: RdType.body(p))
+                  : const AppSpinner(),
+        ),
       );
     } else {
       body = RdFormBody(
+        shrinkWrap: true,
         children: [
           const SizedBox(height: 8),
-          Center(
-            child: Avatar(
-              imageUrl: hasCustomProfileImage(_img) ? _img : null,
-              firstName: _firstName.text,
-              lastName: _lastName.text,
-              size: 84,
+          // Name card like "Neue Person": Passbild (initials + camera
+          // badge) beside Vorname/Nachname.
+          RdCard(
+            padding: EdgeInsets.zero,
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: RdPersonAvatar(
+                    name: '${_firstName.text} ${_lastName.text}',
+                    imageUrl: hasCustomProfileImage(_img) ? _img : null,
+                    onTap: _changeImg,
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      text(l10n.peopleFirstName, _firstName, caps: TextCapitalization.words),
+                      Divider(height: 1, thickness: 1, color: p.line),
+                      text(l10n.peopleLastName, _lastName, caps: TextCapitalization.words),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          Center(child: RdTextLink(label: l10n.redesignMePhotoChange, onTap: _changeImg)),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
+          RdGroupLabel(l10n.redesignPersonFormContact),
           RdGroupedList(
             children: [
-              text(l10n.peopleFirstName, _firstName, caps: TextCapitalization.words),
-              text(l10n.peopleLastName, _lastName, caps: TextCapitalization.words),
+              text(l10n.settingsMobile, _phone, keyboard: TextInputType.phone, hint: '+49 123 456789'),
+            ],
+          ),
+          const SizedBox(height: 20),
+          RdGroupedList(
+            children: [
               RdListRow(
                 title: l10n.peopleBirthday,
                 value: (_birthday ?? '').isEmpty ? l10n.orgChoose : formatIonDateButton(_birthday),
                 onTap: _pickBirthday,
               ),
-              text(l10n.settingsMobile, _phone, keyboard: TextInputType.phone),
             ],
           ),
           if (_visibleFields.isNotEmpty) ...[
@@ -596,8 +624,8 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
               ],
             ),
           ],
-          const SizedBox(height: 12),
-          Center(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
             child: Text(
               _saving
                   ? l10n.redesignMeSaving
@@ -621,6 +649,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
         // Keep the lower fields above the keyboard.
         padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             RdFormTopBar(
               title: l10n.settingsMyData,
@@ -630,7 +659,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
               onCancel: null,
               onSubmit: _done,
             ),
-            Expanded(child: IgnorePointer(ignoring: _closing, child: body)),
+            Flexible(child: IgnorePointer(ignoring: _closing, child: body)),
           ],
         ),
       ),
@@ -641,7 +670,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     ProfileExtraField field,
     List<Church> churches,
     Widget Function(String label, TextEditingController c,
-            {TextInputType? keyboard, TextCapitalization caps, int lines})
+            {TextInputType? keyboard, TextCapitalization caps, int lines, String hint})
         text,
   ) {
     final p = context.rd;

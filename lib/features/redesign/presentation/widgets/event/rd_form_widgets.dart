@@ -22,12 +22,16 @@ InputDecoration rdInputDecoration(RdPalette p, String hint) => InputDecoration(
 
 /// Scrolling content of the page (max width on tablets).
 class RdFormBody extends StatelessWidget {
-  const RdFormBody({super.key, required this.children});
+  const RdFormBody({super.key, required this.children, this.shrinkWrap = false});
 
   final List<Widget> children;
 
+  /// Only as high as the content (sheets that size to their fields).
+  final bool shrinkWrap;
+
   @override
   Widget build(BuildContext context) => ListView(
+        shrinkWrap: shrinkWrap,
         padding: EdgeInsets.fromLTRB(16, 4, 16, 32 + MediaQuery.paddingOf(context).bottom),
         children: [
           Center(
