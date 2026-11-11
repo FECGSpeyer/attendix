@@ -279,7 +279,9 @@ class _CircleSheetState extends ConsumerState<_CircleSheet> {
     final playersAsync = ref.watch(playersProvider);
     // "Fertig" only with both lists loaded: an empty list would drop the
     // stored groups and persons and turn the circle into "everyone".
-    final loaded = groupsAsync.hasValue && playersAsync.hasValue;
+    // Kept values of a failed or running reload do not count either.
+    bool fresh(AsyncValue<Object?> v) => v.hasValue && !v.isLoading && !v.hasError;
+    final loaded = fresh(groupsAsync) && fresh(playersAsync);
     final groups = (groupsAsync.valueOrNull ?? const <Group>[]).where((g) => g.id != null).toList();
     final players = (playersAsync.valueOrNull ?? const <Person>[])
         .where((x) => x.id != null && !x.pending && (x.left == null || x.left!.isEmpty))
