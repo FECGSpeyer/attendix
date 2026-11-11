@@ -124,7 +124,9 @@ class _RdTypeCreateFormState extends ConsumerState<_RdTypeCreateForm> {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
-    final types = (ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[]).where((t) => t.id != null).toList();
+    final types = (ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
+        .where((t) => t.id != null && t.visible)
+        .toList();
     if (!_templateSet && types.isNotEmpty) {
       _templateSet = true;
       _template = types.first.id;

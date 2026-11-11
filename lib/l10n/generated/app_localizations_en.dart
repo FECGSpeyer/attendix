@@ -11374,6 +11374,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTypeDefaultStatus => 'Preset to';
 
   @override
+  String rdTypeDeleteUsedMessage(Object name, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count existing events',
+      one: 'one existing event',
+    );
+    return '“$name” is used by $_temp0. They keep the type, but it is no longer offered for new events.';
+  }
+
+  @override
+  String get rdTypeDeleted =>
+      'Deleted: no longer offered for new events. Existing events keep it.';
+
+  @override
+  String get rdTypeDeletedSection => 'Deleted, only on existing events';
+
+  @override
   String get rdTypeDuty => 'Assign duties';
 
   @override
@@ -11449,13 +11467,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTypeNewTitle => 'New event type';
 
   @override
-  String get rdTypeOffer => 'Offer for new events';
-
-  @override
-  String get rdTypeOfferHint =>
-      'Off: no longer offered when creating, existing events stay';
-
-  @override
   String get rdTypeOn => 'on';
 
   @override
@@ -11498,6 +11509,15 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get rdTypeRestore => 'Restore';
+
+  @override
+  String get rdTypeRestoreHint => 'Offer for new events again';
+
+  @override
+  String get rdTypeRestored => 'Event type restored';
 
   @override
   String get rdTypeSignup => 'Sign-up questions';
