@@ -276,9 +276,7 @@ class RdWorkPage extends ConsumerWidget {
                 rdFileKind(part.first),
                 if (part.length > 1) l10n.redesignWorkFileCount(part.length),
               ].join(' · '),
-              moreLabel: l10n.redesignWorkFileMore(SongUtils.fileLabel(part.first, groups, isChoir: data.isChoir)),
               onOpen: () => rdOpenWorkFile(context, ref, song, part.first),
-              onMore: (button) => cardMore(button, part.first),
               recordings: recordingRows,
             ),
             const SizedBox(height: 12),
@@ -288,9 +286,7 @@ class RdWorkPage extends ConsumerWidget {
               eyebrow: l10n.redesignWorkForConductors,
               title: l10n.redesignWorkScore,
               detail: rdFileKind(score!),
-              moreLabel: l10n.redesignWorkFileMore(l10n.redesignWorkScore),
               onOpen: () => rdOpenWorkFile(context, ref, song, score),
-              onMore: (button) => cardMore(button, score),
               recordings: recordingRows,
             ),
             const SizedBox(height: 12),
@@ -842,16 +838,14 @@ class _AddFilesCard extends StatelessWidget {
 }
 
 /// The top card with "Öffnen": "Deine Stimme" (the person's part), or for
-/// conductors the score or all parts. The whole card opens it too; "•••"
-/// has sharing and the rest.
+/// conductors the score or all parts. The whole card opens it too; sharing
+/// and the rest are in the file's "•••" under Noten & Dateien.
 class _PartCard extends StatelessWidget {
   const _PartCard({
     required this.eyebrow,
     required this.title,
     required this.detail,
     required this.onOpen,
-    this.onMore,
-    this.moreLabel,
     this.recordings = const [],
   });
 
@@ -860,10 +854,6 @@ class _PartCard extends StatelessWidget {
   final String detail;
   final VoidCallback onOpen;
 
-  /// "•••" of the file; gets the button as anchor for the sheets.
-  final void Function(BuildContext button)? onMore;
-  final String? moreLabel;
-
   /// Recording rows in the same card, below the file.
   final List<Widget> recordings;
 
@@ -871,36 +861,8 @@ class _PartCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
-    // "•••" and "Öffnen" as one calm pair: both 44 px high, the "•••" a
-    // round neutral button (like the page header's), "Öffnen" with the
-    // app's button radius and font.
+    // Only "Öffnen": the file's "•••" is in Noten & Dateien below.
     final actions = [
-      if (onMore != null) ...[
-        Builder(
-          builder:
-              (button) => Tooltip(
-                message: moreLabel ?? '',
-                child: Semantics(
-                  button: true,
-                  label: moreLabel,
-                  // The excluded InkWell no longer offers the tap.
-                  onTap: () => onMore!(button),
-                  excludeSemantics: true,
-                  child: Material(
-                    color: p.bg,
-                    shape: const CircleBorder(),
-                    child: InkWell(
-                      key: const Key('rd-work-part-more'),
-                      customBorder: const CircleBorder(),
-                      onTap: () => onMore!(button),
-                      child: SizedBox.square(dimension: 44, child: Icon(Icons.more_horiz, size: 22, color: p.text)),
-                    ),
-                  ),
-                ),
-              ),
-        ),
-        const SizedBox(width: 8),
-      ],
       FilledButton(
         style: FilledButton.styleFrom(
           backgroundColor: p.primary,
