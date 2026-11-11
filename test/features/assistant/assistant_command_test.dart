@@ -83,4 +83,75 @@ void main() {
       expect(c.title.length, 80);
     });
   });
+
+  group('package 2 commands', () {
+    test('set_status for me and others', () {
+      final c = AssistantCommand.fromJson({
+        'command': 'set_status',
+        'who': [
+          {'kind': 'me'},
+          {'kind': 'person', 'name': 'Jonas'},
+          {'kind': 'person', 'name': 'JONAS'},
+          {'kind': 'group', 'name': 'Tenor'},
+        ],
+        'status': 'late_excused',
+        'event': {'type': 'past_weekday', 'day': 'wed'},
+        'reason': 'Stau',
+      }) as SetStatusCommand;
+      expect(c.who.length, 3);
+      expect(c.onlyMe, isFalse);
+      expect(c.status, AssistantStatus.lateExcused);
+      expect((c.event as PastWeekdayEventRef).day, AssistantWeekday.wed);
+      expect(c.period, isNull);
+      expect(c.reason, 'Stau');
+    });
+
+    test('set_status: period wins, event defaults to the next one', () {
+      final p = AssistantCommand.fromJson({
+        'command': 'set_status',
+        'who': {'kind': 'me'},
+        'status': 'excused',
+        'period': {'type': 'next', 'unit': 'week', 'count': 1},
+      }) as SetStatusCommand;
+      expect(p.period, isA<NextPeriod>());
+      expect(p.event, isNull);
+      expect(p.onlyMe, isTrue);
+      final n = AssistantCommand.fromJson({'command': 'set_status', 'who': [{'kind': 'me'}], 'status': 'present'}) as SetStatusCommand;
+      expect(n.event, isA<NextEventRef>());
+    });
+
+    test('set_status: hostile or broken answers are refused', () {
+      for (final raw in [
+        {'command': 'set_status', 'status': 'excused'},
+        {'command': 'set_status', 'people': ['Jonas'], 'status': 'excused'},
+        {'command': 'set_status', 'who': [], 'status': 'excused'},
+        {'command': 'set_status', 'who': [{'kind': 'all'}], 'status': 'excused'},
+        {'command': 'set_status', 'who': List.generate(11, (i) => {'kind': 'person', 'name': 'P$i'}), 'status': 'excused'},
+        {'command': 'set_status', 'who': [{'kind': 'me'}], 'status': 'deleted'},
+        {'command': 'set_status', 'who': [{'kind': 'me'}], 'status': 'excused', 'period': {'type': 'range', 'from': '2026-12-01', 'to': '2026-01-01'}},
+        {'command': 'delete_events', 'all': true},
+      ]) {
+        expect(AssistantCommand.fromJson(raw), isA<UnsupportedCommand>(), reason: '$raw');
+      }
+    });
+
+    test('planned_absence', () {
+      final c = AssistantCommand.fromJson({
+        'command': 'planned_absence',
+        'who': {'kind': 'person', 'name': 'Lena'},
+        'from': '2026-11-12',
+        'to': '2027-01-31',
+        'reason': 'Ausland',
+      }) as PlannedAbsenceCommand;
+      expect((c.who as PersonSubject).name, 'Lena');
+      expect(c.to, DateTime(2027, 1, 31));
+      for (final raw in [
+        {'command': 'planned_absence', 'who': {'kind': 'group', 'name': 'Tenor'}, 'from': '2026-11-12', 'to': '2026-11-20'},
+        {'command': 'planned_absence', 'from': '2026-11-12', 'to': '2026-11-20'},
+        {'command': 'planned_absence', 'who': {'kind': 'me'}, 'from': '2026-11-20', 'to': '2026-11-12'},
+      ]) {
+        expect(AssistantCommand.fromJson(raw), isA<UnsupportedCommand>(), reason: '$raw');
+      }
+    });
+  });
 }

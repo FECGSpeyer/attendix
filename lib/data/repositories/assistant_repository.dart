@@ -40,7 +40,9 @@ class AssistantException implements Exception {
 /// Multi-tenant: every read joins `attendance!inner` and filters
 /// `attendance.tenantId = currentTenantId` (person_attendances has no
 /// tenantId column); the Edge Function checks the membership itself.
-/// Read only: the assistant changes nothing in package 1.
+/// Reads only: changes of package 2 (status, absence) go through the
+/// existing write paths (AttendanceRepository, SignInOutRepository,
+/// PlayerAbsenceRepository) after the person confirmed the preview.
 class AssistantRepository extends BaseRepository with TenantAwareRepository {
   AssistantRepository(super.ref);
 
@@ -162,6 +164,64 @@ class AssistantRepository extends BaseRepository with TenantAwareRepository {
       ];
     } catch (e, stack) {
       handleError(e, stack, 'getEventStatuses');
+      rethrow;
+    }
+  }
+
+  /// Rows a status change would touch: person_attendances of [personIds]
+  /// either of Termin [attendanceId] or of Termine in [range]. Archived
+  /// Termine are left out (they are not changed by the chat).
+  Future<List<StatusRow>> getStatusRows({
+    required List<int> personIds,
+    int? attendanceId,
+    DayRange? range,
+  }) async {
+    if (personIds.isEmpty || (attendanceId == null && range == null)) return const [];
+    try {
+      final rows = <Map<String, dynamic>>[];
+      for (var i = 0; i < personIds.length; i += 200) {
+        final chunk = personIds.sublist(i, i + 200 > personIds.length ? personIds.length : i + 200);
+        rows.addAll(await fetchAllPages<Map<String, dynamic>>((a, b) async {
+          var q = supabase
+              .from('person_attendances')
+              .select('id, person_id, status, notes, '
+                  'attendance:attendance_id!inner(id, date, tenantId, type_id, typeInfo, start_time, archived)')
+              .eq('attendance.tenantId', currentTenantId)
+              .inFilter('person_id', chunk);
+          if (attendanceId != null) {
+            q = q.eq('attendance_id', attendanceId);
+          } else {
+            q = q
+                .gte('attendance.date', _isoDay(range!.from))
+                .lt('attendance.date', _isoDay(range.to.add(const Duration(days: 1))));
+          }
+          final page = await q.order('id', ascending: true).range(a, b);
+          return (page as List).cast<Map<String, dynamic>>();
+        }));
+      }
+      final result = <StatusRow>[];
+      for (final r in rows) {
+        final att = (r['attendance'] as Map?)?.cast<String, dynamic>();
+        final personId = r['person_id'] as int?;
+        final attId = att?['id'] as int?;
+        final date = DateTime.tryParse('${att?['date']}');
+        if (att == null || personId == null || attId == null || date == null || r['id'] == null) continue;
+        if (isArchivedRow(att)) continue;
+        result.add((
+          id: r['id'].toString(),
+          personId: personId,
+          attendanceId: attId,
+          date: date.toLocal(),
+          typeId: att['type_id']?.toString(),
+          typeInfo: att['typeInfo'] as String?,
+          startTime: att['start_time'] as String?,
+          status: AttendanceStatus.fromValue(r['status'] as int? ?? 0),
+          notes: r['notes'] as String?,
+        ));
+      }
+      return result;
+    } catch (e, stack) {
+      handleError(e, stack, 'getStatusRows');
       rethrow;
     }
   }

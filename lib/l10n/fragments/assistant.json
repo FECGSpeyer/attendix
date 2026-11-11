@@ -3,12 +3,12 @@
     "assistant": {
       "title": "Assistent",
       "entryTitle": "Frag den Assistenten",
-      "entryHint": "Anwesenheit, nächster Termin, wer kommt: einfach fragen",
+      "entryHint": "Anwesenheit, wer kommt, abmelden: einfach schreiben",
       "beta": "Beta",
       "inputHint": "Frag etwas …",
       "send": "Senden",
       "clear": "Neuer Chat",
-      "intro": "Hallo! Ich beantworte Fragen zu deiner Gruppe. Ändern kann ich noch nichts.",
+      "intro": "Hallo! Ich beantworte Fragen zu deiner Gruppe und kann dich an- oder abmelden. Bevor ich etwas ändere, zeige ich dir genau, was passiert.",
       "privacy": "Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten.",
       "thinking": "Einen Moment …",
       "suggest": {
@@ -16,11 +16,12 @@
         "nextEvent": "Wann ist der nächste Termin?",
         "whoComes": "Wer kommt zum nächsten Termin?",
         "birthdays": "Wer hat diesen Monat Geburtstag?",
-        "help": "Wie melde ich mich ab?"
+        "help": "Wie melde ich mich ab?",
+        "signOut": "Melde mich für den nächsten Termin ab"
       },
       "notice": {
         "notUnderstood": "Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.",
-        "changeLater": "Ändern kann ich noch nichts, das kommt bald. Bis dahin geht es wie gewohnt in der App.",
+        "changeLater": "Das kann ich noch nicht ändern. An- und Abmelden, Status und Abwesenheiten gehen schon, Termine und Personen kommen bald.",
         "noRights": "Diese Frage kann ich dir mit deiner Rolle nicht beantworten.",
         "noOwnPerson": "Du bist in dieser Gruppe nicht als Person eingetragen, deshalb gibt es keine eigene Anwesenheit.",
         "disabled": "Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.",
@@ -33,7 +34,12 @@
         "noData": "In diesem Zeitraum gibt es keine Termine, die zählen.",
         "songNotFound": "Ich finde kein Werk „{name}“.",
         "noHelp": "Dazu finde ich nichts in der Hilfe.",
-        "noBirthdays": "In diesem Zeitraum hat niemand Geburtstag."
+        "noBirthdays": "In diesem Zeitraum hat niemand Geburtstag.",
+        "selfStatusNotAllowed": "Du kannst dich an- oder abmelden oder eine Verspätung melden. Andere Status setzt die Leitung.",
+        "nothingToChange": "Da gibt es nichts zu ändern: Der Status ist schon so gesetzt, oder der Termin lässt es nicht zu (zum Beispiel Anmeldefrist vorbei).",
+        "tooManyChanges": "Das wären {count} Änderungen. Über den Chat gehen höchstens {max} auf einmal. Grenz es bitte ein, zum Beispiel auf einen Termin oder eine Gruppe.",
+        "absenceOutOfRange": "Eine Abwesenheit trage ich ab heute und höchstens 6 Monate im Voraus ein.",
+        "noAbsenceRights": "Geplante Abwesenheiten kannst du mit deiner Rolle hier nicht eintragen."
       },
       "choice": {
         "which": "Wen meinst du mit „{name}“?"
@@ -75,21 +81,56 @@
       },
       "settings": {
         "toggle": "Chat-Assistent (Beta)",
-        "toggleHint": "Alle in der Gruppe können per Chat Fragen zu Anwesenheit, Terminen und Werken stellen. Nur die getippte Nachricht geht an den KI-Dienst."
+        "toggleHint": "Alle in der Gruppe können per Chat Fragen stellen und sich an- oder abmelden, die Leitung auch Status und Abwesenheiten anderer setzen. Jede Änderung braucht eine Bestätigung. Nur die getippte Nachricht geht an den KI-Dienst."
       },
-      "entryEnableHint": "Für diese Gruppe noch aus. Tippen, um ihn einzuschalten."
+      "entryEnableHint": "Für diese Gruppe noch aus. Tippen, um ihn einzuschalten.",
+      "status": {
+        "present": "Anwesend",
+        "excused": "Entschuldigt",
+        "lateExcused": "Verspätung gemeldet",
+        "late": "Verspätet",
+        "absent": "Abwesend",
+        "neutral": "Offen"
+      },
+      "change": {
+        "titleSelf": "Soll ich das so eintragen?",
+        "titleOthers": "Status ändern",
+        "newStatus": "Neu: {status}",
+        "reason": "Grund: {reason}",
+        "more": "und {count} weitere",
+        "skippedLocked": "{count, plural, one {1 Termin bleibt, wie er ist (Frist vorbei, Anmeldefelder oder schon abgemeldet).} other {{count} Termine bleiben, wie sie sind (Frist vorbei, Anmeldefelder oder schon abgemeldet).}}",
+        "skippedWindow": "{count, plural, one {1 Termin liegt außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).} other {{count} Termine liegen außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).}}",
+        "notifyHint": "Die Leitung bekommt wie gewohnt Bescheid.",
+        "save": "Speichern",
+        "confirmAgain": "Wirklich alle {count} ändern?",
+        "cancel": "Abbrechen",
+        "cancelled": "Abgebrochen, nichts geändert.",
+        "saving": "Speichere …",
+        "done": "{count, plural, =0 {Nichts geändert.} one {1 Änderung gespeichert.} other {{count} Änderungen gespeichert.}}",
+        "undo": "Rückgängig",
+        "undone": "Rückgängig gemacht.",
+        "undoFailed": "Rückgängig hat nicht geklappt. Bitte prüf es im Termin."
+      },
+      "absence": {
+        "title": "Geplante Abwesenheit",
+        "forMe": "Für dich",
+        "forPerson": "Für {name}",
+        "affected": "{count, plural, =0 {Kein kommender Termin ist betroffen.} one {1 Termin wird auf Entschuldigt gesetzt.} other {{count} Termine werden auf Entschuldigt gesetzt.}}",
+        "done": "Abwesenheit eingetragen.",
+        "defaultReason": "Abwesend"
+      }
     }
   },
   "en": {
     "assistant": {
       "title": "Assistant",
       "entryTitle": "Ask the assistant",
-      "entryHint": "Attendance, next event, who is coming: just ask",
+      "entryHint": "Attendance, who is coming, signing out: just write",
       "beta": "Beta",
       "inputHint": "Ask something …",
       "send": "Send",
       "clear": "New chat",
-      "intro": "Hi! I answer questions about your group. I can't change anything yet.",
+      "intro": "Hi! I answer questions about your group and can sign you in or out. Before I change anything, I show you exactly what will happen.",
       "privacy": "Only your message goes to the AI service, no data from Attendix. The app works out the answers itself, with your rights.",
       "thinking": "One moment …",
       "suggest": {
@@ -97,11 +138,12 @@
         "nextEvent": "When is the next event?",
         "whoComes": "Who is coming to the next event?",
         "birthdays": "Who has a birthday this month?",
-        "help": "How do I sign out?"
+        "help": "How do I sign out?",
+        "signOut": "Sign me out of the next event"
       },
       "notice": {
         "notUnderstood": "I didn't understand that. I answer questions about attendance, events, birthdays, works and the app.",
-        "changeLater": "I can't change anything yet, that is coming soon. Until then, use the app as usual.",
+        "changeLater": "I can't change that yet. Signing in and out, statuses and absences already work, events and people come soon.",
         "noRights": "I can't answer this question with your role.",
         "noOwnPerson": "You are not listed as a person in this group, so there is no attendance of your own.",
         "disabled": "The assistant is switched off for this group. An admin can switch it on in the settings.",
@@ -114,7 +156,12 @@
         "noData": "There are no events that count in this period.",
         "songNotFound": "I can't find a work “{name}”.",
         "noHelp": "I can't find anything about that in the help.",
-        "noBirthdays": "Nobody has a birthday in this period."
+        "noBirthdays": "Nobody has a birthday in this period.",
+        "selfStatusNotAllowed": "You can sign in, sign out or report being late. Other statuses are set by the leaders.",
+        "nothingToChange": "There is nothing to change: the status is already set, or the event does not allow it (for example the deadline has passed).",
+        "tooManyChanges": "That would be {count} changes. The chat does at most {max} at once. Please narrow it down, for example to one event or one group.",
+        "absenceOutOfRange": "I can enter an absence starting today and up to 6 months ahead.",
+        "noAbsenceRights": "Your role can't enter planned absences here."
       },
       "choice": {
         "which": "Who do you mean by “{name}”?"
@@ -156,21 +203,56 @@
       },
       "settings": {
         "toggle": "Chat assistant (beta)",
-        "toggleHint": "Everyone in the group can ask questions about attendance, events and works in a chat. Only the typed message goes to the AI service."
+        "toggleHint": "Everyone in the group can ask questions and sign in or out by chat, leaders can also set statuses and absences of others. Every change needs a confirmation. Only the typed message goes to the AI service."
       },
-      "entryEnableHint": "Still off for this group. Tap to switch it on."
+      "entryEnableHint": "Still off for this group. Tap to switch it on.",
+      "status": {
+        "present": "Present",
+        "excused": "Excused",
+        "lateExcused": "Late (reported)",
+        "late": "Late",
+        "absent": "Absent",
+        "neutral": "Open"
+      },
+      "change": {
+        "titleSelf": "Shall I enter this?",
+        "titleOthers": "Change status",
+        "newStatus": "New: {status}",
+        "reason": "Reason: {reason}",
+        "more": "and {count} more",
+        "skippedLocked": "{count, plural, one {1 event stays as it is (deadline passed, registration fields or already signed out).} other {{count} events stay as they are (deadline passed, registration fields or already signed out).}}",
+        "skippedWindow": "{count, plural, one {1 event is outside the limit (14 days back to 6 months ahead).} other {{count} events are outside the limit (14 days back to 6 months ahead).}}",
+        "notifyHint": "The leaders are notified as usual.",
+        "save": "Save",
+        "confirmAgain": "Really change all {count}?",
+        "cancel": "Cancel",
+        "cancelled": "Cancelled, nothing changed.",
+        "saving": "Saving …",
+        "done": "{count, plural, =0 {Nothing changed.} one {1 change saved.} other {{count} changes saved.}}",
+        "undo": "Undo",
+        "undone": "Undone.",
+        "undoFailed": "Undo did not work. Please check the event."
+      },
+      "absence": {
+        "title": "Planned absence",
+        "forMe": "For you",
+        "forPerson": "For {name}",
+        "affected": "{count, plural, =0 {No upcoming event is affected.} one {1 event will be set to excused.} other {{count} events will be set to excused.}}",
+        "done": "Absence entered.",
+        "defaultReason": "Absent"
+      }
     }
   },
   "ru": {
     "assistant": {
       "title": "Ассистент",
       "entryTitle": "Спроси ассистента",
-      "entryHint": "Посещаемость, следующее мероприятие, кто придёт: просто спроси",
+      "entryHint": "Посещаемость, кто придёт, отписаться: просто напиши",
       "beta": "Бета",
       "inputHint": "Спроси что-нибудь …",
       "send": "Отправить",
       "clear": "Новый чат",
-      "intro": "Привет! Я отвечаю на вопросы о твоей группе. Изменять что-либо я пока не умею.",
+      "intro": "Привет! Я отвечаю на вопросы о твоей группе и могу записать или отписать тебя. Перед любым изменением я покажу, что именно произойдёт.",
       "privacy": "В сервис ИИ уходит только твоё сообщение, никаких данных из Attendix. Ответы приложение считает само, с твоими правами.",
       "thinking": "Минутку …",
       "suggest": {
@@ -178,11 +260,12 @@
         "nextEvent": "Когда следующее мероприятие?",
         "whoComes": "Кто придёт на следующее мероприятие?",
         "birthdays": "У кого день рождения в этом месяце?",
-        "help": "Как мне отписаться?"
+        "help": "Как мне отписаться?",
+        "signOut": "Отпиши меня от следующего события"
       },
       "notice": {
         "notUnderstood": "Я не понял. Я отвечаю на вопросы о посещаемости, мероприятиях, днях рождения, произведениях и о приложении.",
-        "changeLater": "Изменять что-либо я пока не умею, это скоро появится. До тех пор пользуйся приложением как обычно.",
+        "changeLater": "Это я пока изменить не могу. Запись, отписка, статусы и отсутствия уже работают, события и люди появятся скоро.",
         "noRights": "С твоей ролью я не могу ответить на этот вопрос.",
         "noOwnPerson": "Ты не внесён в эту группу как участник, поэтому собственной посещаемости нет.",
         "disabled": "Ассистент выключен для этой группы. Администратор может включить его в настройках.",
@@ -195,7 +278,12 @@
         "noData": "В этот период нет мероприятий, которые учитываются.",
         "songNotFound": "Я не нахожу произведение «{name}».",
         "noHelp": "В справке ничего об этом не нашлось.",
-        "noBirthdays": "В этот период ни у кого нет дня рождения."
+        "noBirthdays": "В этот период ни у кого нет дня рождения.",
+        "selfStatusNotAllowed": "Ты можешь записаться, отписаться или сообщить об опоздании. Другие статусы ставит руководство.",
+        "nothingToChange": "Менять нечего: статус уже стоит, или событие этого не позволяет (например, срок прошёл).",
+        "tooManyChanges": "Это было бы {count} изменений. Через чат можно не больше {max} за раз. Пожалуйста, сузь запрос, например до одного события или группы.",
+        "absenceOutOfRange": "Отсутствие я вношу начиная с сегодняшнего дня и не дальше чем на 6 месяцев вперёд.",
+        "noAbsenceRights": "С твоей ролью здесь нельзя вносить запланированные отсутствия."
       },
       "choice": {
         "which": "Кого ты имеешь в виду под «{name}»?"
@@ -237,21 +325,56 @@
       },
       "settings": {
         "toggle": "Чат-ассистент (бета)",
-        "toggleHint": "Все в группе могут задавать в чате вопросы о посещаемости, мероприятиях и произведениях. В сервис ИИ уходит только набранное сообщение."
+        "toggleHint": "Все в группе могут задавать вопросы и записываться или отписываться через чат, руководство также может ставить статусы и отсутствия других. Каждое изменение нужно подтвердить. В ИИ-сервис уходит только набранное сообщение."
       },
-      "entryEnableHint": "Для этой группы пока выключен. Нажми, чтобы включить."
+      "entryEnableHint": "Для этой группы пока выключен. Нажми, чтобы включить.",
+      "status": {
+        "present": "Присутствует",
+        "excused": "Уважительная причина",
+        "lateExcused": "Сообщил об опоздании",
+        "late": "Опоздал",
+        "absent": "Отсутствует",
+        "neutral": "Открыто"
+      },
+      "change": {
+        "titleSelf": "Внести так?",
+        "titleOthers": "Изменить статус",
+        "newStatus": "Новый: {status}",
+        "reason": "Причина: {reason}",
+        "more": "и ещё {count}",
+        "skippedLocked": "{count, plural, one {{count} событие остаётся без изменений (срок прошёл, поля регистрации или уже отписан).} few {{count} события остаются без изменений (срок прошёл, поля регистрации или уже отписан).} many {{count} событий остаются без изменений (срок прошёл, поля регистрации или уже отписан).} other {{count} события остаются без изменений (срок прошёл, поля регистрации или уже отписан).}}",
+        "skippedWindow": "{count, plural, one {{count} событие вне границы (14 дней назад до 6 месяцев вперёд).} few {{count} события вне границы (14 дней назад до 6 месяцев вперёд).} many {{count} событий вне границы (14 дней назад до 6 месяцев вперёд).} other {{count} события вне границы (14 дней назад до 6 месяцев вперёд).}}",
+        "notifyHint": "Руководство получит уведомление как обычно.",
+        "save": "Сохранить",
+        "confirmAgain": "Правда изменить все {count}?",
+        "cancel": "Отмена",
+        "cancelled": "Отменено, ничего не изменено.",
+        "saving": "Сохраняю …",
+        "done": "{count, plural, =0 {Ничего не изменено.} one {Сохранено {count} изменение.} few {Сохранено {count} изменения.} many {Сохранено {count} изменений.} other {Сохранено {count} изменения.}}",
+        "undo": "Отменить",
+        "undone": "Отменено.",
+        "undoFailed": "Отменить не получилось. Пожалуйста, проверь событие."
+      },
+      "absence": {
+        "title": "Запланированное отсутствие",
+        "forMe": "Для тебя",
+        "forPerson": "Для {name}",
+        "affected": "{count, plural, =0 {Ни одно предстоящее событие не затронуто.} one {{count} событие получит статус «уважительная причина».} few {{count} события получат статус «уважительная причина».} many {{count} событий получат статус «уважительная причина».} other {{count} события получат статус «уважительная причина».}}",
+        "done": "Отсутствие внесено.",
+        "defaultReason": "Отсутствует"
+      }
     }
   },
   "es": {
     "assistant": {
       "title": "Asistente",
       "entryTitle": "Pregunta al asistente",
-      "entryHint": "Asistencia, próximo evento, quién viene: solo pregunta",
+      "entryHint": "Asistencia, quién viene, darse de baja: solo escribe",
       "beta": "Beta",
       "inputHint": "Pregunta algo …",
       "send": "Enviar",
       "clear": "Nuevo chat",
-      "intro": "¡Hola! Respondo preguntas sobre tu grupo. Todavía no puedo cambiar nada.",
+      "intro": "¡Hola! Respondo preguntas sobre tu grupo y puedo apuntarte o darte de baja. Antes de cambiar algo, te muestro exactamente qué pasará.",
       "privacy": "Solo tu mensaje va al servicio de IA, ningún dato de Attendix. La app calcula las respuestas ella misma, con tus permisos.",
       "thinking": "Un momento …",
       "suggest": {
@@ -259,11 +382,12 @@
         "nextEvent": "¿Cuándo es el próximo evento?",
         "whoComes": "¿Quién viene al próximo evento?",
         "birthdays": "¿Quién cumple años este mes?",
-        "help": "¿Cómo me doy de baja?"
+        "help": "¿Cómo me doy de baja?",
+        "signOut": "Dame de baja del próximo evento"
       },
       "notice": {
         "notUnderstood": "No lo he entendido. Respondo preguntas sobre asistencia, eventos, cumpleaños, obras y la app.",
-        "changeLater": "Todavía no puedo cambiar nada, llegará pronto. Hasta entonces, usa la app como siempre.",
+        "changeLater": "Eso aún no lo puedo cambiar. Apuntarse, darse de baja, estados y ausencias ya funcionan, eventos y personas llegan pronto.",
         "noRights": "Con tu rol no puedo responder esta pregunta.",
         "noOwnPerson": "No figuras como persona en este grupo, así que no hay asistencia propia.",
         "disabled": "El asistente está desactivado para este grupo. Un administrador puede activarlo en los ajustes.",
@@ -276,7 +400,12 @@
         "noData": "En este periodo no hay eventos que cuenten.",
         "songNotFound": "No encuentro la obra «{name}».",
         "noHelp": "No encuentro nada sobre eso en la ayuda.",
-        "noBirthdays": "Nadie cumple años en este periodo."
+        "noBirthdays": "Nadie cumple años en este periodo.",
+        "selfStatusNotAllowed": "Puedes apuntarte, darte de baja o avisar de un retraso. Los demás estados los pone la dirección.",
+        "nothingToChange": "No hay nada que cambiar: el estado ya está puesto o el evento no lo permite (por ejemplo, el plazo ha pasado).",
+        "tooManyChanges": "Serían {count} cambios. Por el chat van como máximo {max} a la vez. Acótalo, por ejemplo a un evento o a un grupo.",
+        "absenceOutOfRange": "Registro una ausencia a partir de hoy y como máximo 6 meses por adelantado.",
+        "noAbsenceRights": "Con tu rol no puedes registrar ausencias planificadas aquí."
       },
       "choice": {
         "which": "¿A quién te refieres con «{name}»?"
@@ -318,9 +447,44 @@
       },
       "settings": {
         "toggle": "Asistente de chat (beta)",
-        "toggleHint": "Todos en el grupo pueden hacer preguntas sobre asistencia, eventos y obras en un chat. Solo el mensaje escrito va al servicio de IA."
+        "toggleHint": "Todos en el grupo pueden hacer preguntas y apuntarse o darse de baja por chat, la dirección también puede poner estados y ausencias de otros. Cada cambio necesita confirmación. Solo el mensaje escrito va al servicio de IA."
       },
-      "entryEnableHint": "Aún desactivado para este grupo. Toca para activarlo."
+      "entryEnableHint": "Aún desactivado para este grupo. Toca para activarlo.",
+      "status": {
+        "present": "Presente",
+        "excused": "Justificado",
+        "lateExcused": "Retraso avisado",
+        "late": "Tarde",
+        "absent": "Ausente",
+        "neutral": "Abierto"
+      },
+      "change": {
+        "titleSelf": "¿Lo registro así?",
+        "titleOthers": "Cambiar estado",
+        "newStatus": "Nuevo: {status}",
+        "reason": "Motivo: {reason}",
+        "more": "y {count} más",
+        "skippedLocked": "{count, plural, one {1 evento queda como está (plazo pasado, campos de inscripción o ya dado de baja).} other {{count} eventos quedan como están (plazo pasado, campos de inscripción o ya dado de baja).}}",
+        "skippedWindow": "{count, plural, one {1 evento está fuera del límite (14 días atrás a 6 meses adelante).} other {{count} eventos están fuera del límite (14 días atrás a 6 meses adelante).}}",
+        "notifyHint": "La dirección recibe el aviso como siempre.",
+        "save": "Guardar",
+        "confirmAgain": "¿De verdad cambiar los {count}?",
+        "cancel": "Cancelar",
+        "cancelled": "Cancelado, nada cambiado.",
+        "saving": "Guardando …",
+        "done": "{count, plural, =0 {Nada cambiado.} one {1 cambio guardado.} other {{count} cambios guardados.}}",
+        "undo": "Deshacer",
+        "undone": "Deshecho.",
+        "undoFailed": "No se pudo deshacer. Revisa el evento, por favor."
+      },
+      "absence": {
+        "title": "Ausencia planificada",
+        "forMe": "Para ti",
+        "forPerson": "Para {name}",
+        "affected": "{count, plural, =0 {Ningún evento próximo se ve afectado.} one {1 evento pasará a justificado.} other {{count} eventos pasarán a justificado.}}",
+        "done": "Ausencia registrada.",
+        "defaultReason": "Ausente"
+      }
     }
   }
 }

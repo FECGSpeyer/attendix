@@ -465,6 +465,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appResetLinkInvalid => 'The reset link is invalid or has expired.';
 
   @override
+  String assistantAbsenceAffected(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events will be set to excused.',
+      one: '1 event will be set to excused.',
+      zero: 'No upcoming event is affected.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get assistantAbsenceDefaultReason => 'Absent';
+
+  @override
+  String get assistantAbsenceDone => 'Absence entered.';
+
+  @override
+  String get assistantAbsenceForMe => 'For you';
+
+  @override
+  String assistantAbsenceForPerson(Object name) {
+    return 'For $name';
+  }
+
+  @override
+  String get assistantAbsenceTitle => 'Planned absence';
+
+  @override
   String get assistantBeta => 'Beta';
 
   @override
@@ -474,6 +503,94 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantBirthdaysTitle => 'Birthdays';
+
+  @override
+  String get assistantChangeCancel => 'Cancel';
+
+  @override
+  String get assistantChangeCancelled => 'Cancelled, nothing changed.';
+
+  @override
+  String assistantChangeConfirmAgain(Object count) {
+    return 'Really change all $count?';
+  }
+
+  @override
+  String assistantChangeDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count changes saved.',
+      one: '1 change saved.',
+      zero: 'Nothing changed.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String assistantChangeMore(Object count) {
+    return 'and $count more';
+  }
+
+  @override
+  String assistantChangeNewStatus(Object status) {
+    return 'New: $status';
+  }
+
+  @override
+  String get assistantChangeNotifyHint => 'The leaders are notified as usual.';
+
+  @override
+  String assistantChangeReason(Object reason) {
+    return 'Reason: $reason';
+  }
+
+  @override
+  String get assistantChangeSave => 'Save';
+
+  @override
+  String get assistantChangeSaving => 'Saving …';
+
+  @override
+  String assistantChangeSkippedLocked(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count events stay as they are (deadline passed, registration fields or already signed out).',
+      one:
+          '1 event stays as it is (deadline passed, registration fields or already signed out).',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String assistantChangeSkippedWindow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count events are outside the limit (14 days back to 6 months ahead).',
+      one: '1 event is outside the limit (14 days back to 6 months ahead).',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get assistantChangeTitleOthers => 'Change status';
+
+  @override
+  String get assistantChangeTitleSelf => 'Shall I enter this?';
+
+  @override
+  String get assistantChangeUndo => 'Undo';
+
+  @override
+  String get assistantChangeUndoFailed =>
+      'Undo did not work. Please check the event.';
+
+  @override
+  String get assistantChangeUndone => 'Undone.';
 
   @override
   String assistantChoiceWhich(Object name) {
@@ -489,7 +606,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantEntryHint =>
-      'Attendance, next event, who is coming: just ask';
+      'Attendance, who is coming, signing out: just write';
 
   @override
   String get assistantEntryTitle => 'Ask the assistant';
@@ -528,14 +645,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantIntro =>
-      'Hi! I answer questions about your group. I can\'t change anything yet.';
+      'Hi! I answer questions about your group and can sign you in or out. Before I change anything, I show you exactly what will happen.';
 
   @override
   String get assistantNextTitle => 'Next event';
 
   @override
+  String get assistantNoticeAbsenceOutOfRange =>
+      'I can enter an absence starting today and up to 6 months ahead.';
+
+  @override
   String get assistantNoticeChangeLater =>
-      'I can\'t change anything yet, that is coming soon. Until then, use the app as usual.';
+      'I can\'t change that yet. Signing in and out, statuses and absences already work, events and people come soon.';
 
   @override
   String get assistantNoticeDisabled =>
@@ -553,6 +674,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get assistantNoticeLimit =>
       'Today\'s limit is reached. You can continue tomorrow.';
+
+  @override
+  String get assistantNoticeNoAbsenceRights =>
+      'Your role can\'t enter planned absences here.';
 
   @override
   String get assistantNoticeNoBirthdays =>
@@ -582,9 +707,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'I didn\'t understand that. I answer questions about attendance, events, birthdays, works and the app.';
 
   @override
+  String get assistantNoticeNothingToChange =>
+      'There is nothing to change: the status is already set, or the event does not allow it (for example the deadline has passed).';
+
+  @override
   String assistantNoticePersonNotFound(Object name) {
     return 'I can\'t find anyone called “$name”.';
   }
+
+  @override
+  String get assistantNoticeSelfStatusNotAllowed =>
+      'You can sign in, sign out or report being late. Other statuses are set by the leaders.';
 
   @override
   String assistantNoticeSongNotFound(Object name) {
@@ -594,6 +727,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String assistantNoticeTooLong(Object max) {
     return 'The message is too long. Please use at most $max characters.';
+  }
+
+  @override
+  String assistantNoticeTooManyChanges(Object count, Object max) {
+    return 'That would be $count changes. The chat does at most $max at once. Please narrow it down, for example to one event or one group.';
   }
 
   @override
@@ -640,7 +778,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantSettingsToggleHint =>
-      'Everyone in the group can ask questions about attendance, events and works in a chat. Only the typed message goes to the AI service.';
+      'Everyone in the group can ask questions and sign in or out by chat, leaders can also set statuses and absences of others. Every change needs a confirmation. Only the typed message goes to the AI service.';
 
   @override
   String assistantSongLastSung(Object date) {
@@ -654,6 +792,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assistantSongOpen => 'Open work';
 
   @override
+  String get assistantStatusAbsent => 'Absent';
+
+  @override
+  String get assistantStatusExcused => 'Excused';
+
+  @override
+  String get assistantStatusLate => 'Late';
+
+  @override
+  String get assistantStatusLateExcused => 'Late (reported)';
+
+  @override
+  String get assistantStatusNeutral => 'Open';
+
+  @override
+  String get assistantStatusPresent => 'Present';
+
+  @override
   String get assistantSuggestBirthdays => 'Who has a birthday this month?';
 
   @override
@@ -665,6 +821,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantSuggestNextEvent => 'When is the next event?';
+
+  @override
+  String get assistantSuggestSignOut => 'Sign me out of the next event';
 
   @override
   String get assistantSuggestWhoComes => 'Who is coming to the next event?';

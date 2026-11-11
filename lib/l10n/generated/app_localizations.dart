@@ -854,6 +854,42 @@ abstract class AppLocalizations {
   /// **'Der Link zum Zurücksetzen ist ungültig oder abgelaufen.'**
   String get appResetLinkInvalid;
 
+  /// assistant.absence.affected
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Kein kommender Termin ist betroffen.} one {1 Termin wird auf Entschuldigt gesetzt.} other {{count} Termine werden auf Entschuldigt gesetzt.}}'**
+  String assistantAbsenceAffected(num count);
+
+  /// assistant.absence.defaultReason
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesend'**
+  String get assistantAbsenceDefaultReason;
+
+  /// assistant.absence.done
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesenheit eingetragen.'**
+  String get assistantAbsenceDone;
+
+  /// assistant.absence.forMe
+  ///
+  /// In de, this message translates to:
+  /// **'Für dich'**
+  String get assistantAbsenceForMe;
+
+  /// assistant.absence.forPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Für {name}'**
+  String assistantAbsenceForPerson(Object name);
+
+  /// assistant.absence.title
+  ///
+  /// In de, this message translates to:
+  /// **'Geplante Abwesenheit'**
+  String get assistantAbsenceTitle;
+
   /// assistant.beta
   ///
   /// In de, this message translates to:
@@ -871,6 +907,108 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Geburtstage'**
   String get assistantBirthdaysTitle;
+
+  /// assistant.change.cancel
+  ///
+  /// In de, this message translates to:
+  /// **'Abbrechen'**
+  String get assistantChangeCancel;
+
+  /// assistant.change.cancelled
+  ///
+  /// In de, this message translates to:
+  /// **'Abgebrochen, nichts geändert.'**
+  String get assistantChangeCancelled;
+
+  /// assistant.change.confirmAgain
+  ///
+  /// In de, this message translates to:
+  /// **'Wirklich alle {count} ändern?'**
+  String assistantChangeConfirmAgain(Object count);
+
+  /// assistant.change.done
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Nichts geändert.} one {1 Änderung gespeichert.} other {{count} Änderungen gespeichert.}}'**
+  String assistantChangeDone(num count);
+
+  /// assistant.change.more
+  ///
+  /// In de, this message translates to:
+  /// **'und {count} weitere'**
+  String assistantChangeMore(Object count);
+
+  /// assistant.change.newStatus
+  ///
+  /// In de, this message translates to:
+  /// **'Neu: {status}'**
+  String assistantChangeNewStatus(Object status);
+
+  /// assistant.change.notifyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Leitung bekommt wie gewohnt Bescheid.'**
+  String get assistantChangeNotifyHint;
+
+  /// assistant.change.reason
+  ///
+  /// In de, this message translates to:
+  /// **'Grund: {reason}'**
+  String assistantChangeReason(Object reason);
+
+  /// assistant.change.save
+  ///
+  /// In de, this message translates to:
+  /// **'Speichern'**
+  String get assistantChangeSave;
+
+  /// assistant.change.saving
+  ///
+  /// In de, this message translates to:
+  /// **'Speichere …'**
+  String get assistantChangeSaving;
+
+  /// assistant.change.skippedLocked
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin bleibt, wie er ist (Frist vorbei, Anmeldefelder oder schon abgemeldet).} other {{count} Termine bleiben, wie sie sind (Frist vorbei, Anmeldefelder oder schon abgemeldet).}}'**
+  String assistantChangeSkippedLocked(num count);
+
+  /// assistant.change.skippedWindow
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin liegt außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).} other {{count} Termine liegen außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).}}'**
+  String assistantChangeSkippedWindow(num count);
+
+  /// assistant.change.titleOthers
+  ///
+  /// In de, this message translates to:
+  /// **'Status ändern'**
+  String get assistantChangeTitleOthers;
+
+  /// assistant.change.titleSelf
+  ///
+  /// In de, this message translates to:
+  /// **'Soll ich das so eintragen?'**
+  String get assistantChangeTitleSelf;
+
+  /// assistant.change.undo
+  ///
+  /// In de, this message translates to:
+  /// **'Rückgängig'**
+  String get assistantChangeUndo;
+
+  /// assistant.change.undoFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Rückgängig hat nicht geklappt. Bitte prüf es im Termin.'**
+  String get assistantChangeUndoFailed;
+
+  /// assistant.change.undone
+  ///
+  /// In de, this message translates to:
+  /// **'Rückgängig gemacht.'**
+  String get assistantChangeUndone;
 
   /// assistant.choice.which
   ///
@@ -893,7 +1031,7 @@ abstract class AppLocalizations {
   /// assistant.entryHint
   ///
   /// In de, this message translates to:
-  /// **'Anwesenheit, nächster Termin, wer kommt: einfach fragen'**
+  /// **'Anwesenheit, wer kommt, abmelden: einfach schreiben'**
   String get assistantEntryHint;
 
   /// assistant.entryTitle
@@ -965,7 +1103,7 @@ abstract class AppLocalizations {
   /// assistant.intro
   ///
   /// In de, this message translates to:
-  /// **'Hallo! Ich beantworte Fragen zu deiner Gruppe. Ändern kann ich noch nichts.'**
+  /// **'Hallo! Ich beantworte Fragen zu deiner Gruppe und kann dich an- oder abmelden. Bevor ich etwas ändere, zeige ich dir genau, was passiert.'**
   String get assistantIntro;
 
   /// assistant.next.title
@@ -974,10 +1112,16 @@ abstract class AppLocalizations {
   /// **'Nächster Termin'**
   String get assistantNextTitle;
 
+  /// assistant.notice.absenceOutOfRange
+  ///
+  /// In de, this message translates to:
+  /// **'Eine Abwesenheit trage ich ab heute und höchstens 6 Monate im Voraus ein.'**
+  String get assistantNoticeAbsenceOutOfRange;
+
   /// assistant.notice.changeLater
   ///
   /// In de, this message translates to:
-  /// **'Ändern kann ich noch nichts, das kommt bald. Bis dahin geht es wie gewohnt in der App.'**
+  /// **'Das kann ich noch nicht ändern. An- und Abmelden, Status und Abwesenheiten gehen schon, Termine und Personen kommen bald.'**
   String get assistantNoticeChangeLater;
 
   /// assistant.notice.disabled
@@ -1003,6 +1147,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Für heute ist das Limit erreicht. Morgen geht es weiter.'**
   String get assistantNoticeLimit;
+
+  /// assistant.notice.noAbsenceRights
+  ///
+  /// In de, this message translates to:
+  /// **'Geplante Abwesenheiten kannst du mit deiner Rolle hier nicht eintragen.'**
+  String get assistantNoticeNoAbsenceRights;
 
   /// assistant.notice.noBirthdays
   ///
@@ -1046,11 +1196,23 @@ abstract class AppLocalizations {
   /// **'Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.'**
   String get assistantNoticeNotUnderstood;
 
+  /// assistant.notice.nothingToChange
+  ///
+  /// In de, this message translates to:
+  /// **'Da gibt es nichts zu ändern: Der Status ist schon so gesetzt, oder der Termin lässt es nicht zu (zum Beispiel Anmeldefrist vorbei).'**
+  String get assistantNoticeNothingToChange;
+
   /// assistant.notice.personNotFound
   ///
   /// In de, this message translates to:
   /// **'Ich finde niemanden mit dem Namen „{name}“.'**
   String assistantNoticePersonNotFound(Object name);
+
+  /// assistant.notice.selfStatusNotAllowed
+  ///
+  /// In de, this message translates to:
+  /// **'Du kannst dich an- oder abmelden oder eine Verspätung melden. Andere Status setzt die Leitung.'**
+  String get assistantNoticeSelfStatusNotAllowed;
 
   /// assistant.notice.songNotFound
   ///
@@ -1063,6 +1225,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Die Nachricht ist zu lang. Bitte höchstens {max} Zeichen.'**
   String assistantNoticeTooLong(Object max);
+
+  /// assistant.notice.tooManyChanges
+  ///
+  /// In de, this message translates to:
+  /// **'Das wären {count} Änderungen. Über den Chat gehen höchstens {max} auf einmal. Grenz es bitte ein, zum Beispiel auf einen Termin oder eine Gruppe.'**
+  String assistantNoticeTooManyChanges(Object count, Object max);
 
   /// assistant.privacy
   ///
@@ -1133,7 +1301,7 @@ abstract class AppLocalizations {
   /// assistant.settings.toggleHint
   ///
   /// In de, this message translates to:
-  /// **'Alle in der Gruppe können per Chat Fragen zu Anwesenheit, Terminen und Werken stellen. Nur die getippte Nachricht geht an den KI-Dienst.'**
+  /// **'Alle in der Gruppe können per Chat Fragen stellen und sich an- oder abmelden, die Leitung auch Status und Abwesenheiten anderer setzen. Jede Änderung braucht eine Bestätigung. Nur die getippte Nachricht geht an den KI-Dienst.'**
   String get assistantSettingsToggleHint;
 
   /// assistant.song.lastSung
@@ -1153,6 +1321,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werk öffnen'**
   String get assistantSongOpen;
+
+  /// assistant.status.absent
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesend'**
+  String get assistantStatusAbsent;
+
+  /// assistant.status.excused
+  ///
+  /// In de, this message translates to:
+  /// **'Entschuldigt'**
+  String get assistantStatusExcused;
+
+  /// assistant.status.late
+  ///
+  /// In de, this message translates to:
+  /// **'Verspätet'**
+  String get assistantStatusLate;
+
+  /// assistant.status.lateExcused
+  ///
+  /// In de, this message translates to:
+  /// **'Verspätung gemeldet'**
+  String get assistantStatusLateExcused;
+
+  /// assistant.status.neutral
+  ///
+  /// In de, this message translates to:
+  /// **'Offen'**
+  String get assistantStatusNeutral;
+
+  /// assistant.status.present
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesend'**
+  String get assistantStatusPresent;
 
   /// assistant.suggest.birthdays
   ///
@@ -1177,6 +1381,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Wann ist der nächste Termin?'**
   String get assistantSuggestNextEvent;
+
+  /// assistant.suggest.signOut
+  ///
+  /// In de, this message translates to:
+  /// **'Melde mich für den nächsten Termin ab'**
+  String get assistantSuggestSignOut;
 
   /// assistant.suggest.whoComes
   ///

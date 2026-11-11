@@ -468,6 +468,35 @@ class AppLocalizationsDe extends AppLocalizations {
       'Der Link zum Zurücksetzen ist ungültig oder abgelaufen.';
 
   @override
+  String assistantAbsenceAffected(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine werden auf Entschuldigt gesetzt.',
+      one: '1 Termin wird auf Entschuldigt gesetzt.',
+      zero: 'Kein kommender Termin ist betroffen.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get assistantAbsenceDefaultReason => 'Abwesend';
+
+  @override
+  String get assistantAbsenceDone => 'Abwesenheit eingetragen.';
+
+  @override
+  String get assistantAbsenceForMe => 'Für dich';
+
+  @override
+  String assistantAbsenceForPerson(Object name) {
+    return 'Für $name';
+  }
+
+  @override
+  String get assistantAbsenceTitle => 'Geplante Abwesenheit';
+
+  @override
   String get assistantBeta => 'Beta';
 
   @override
@@ -477,6 +506,96 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get assistantBirthdaysTitle => 'Geburtstage';
+
+  @override
+  String get assistantChangeCancel => 'Abbrechen';
+
+  @override
+  String get assistantChangeCancelled => 'Abgebrochen, nichts geändert.';
+
+  @override
+  String assistantChangeConfirmAgain(Object count) {
+    return 'Wirklich alle $count ändern?';
+  }
+
+  @override
+  String assistantChangeDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Änderungen gespeichert.',
+      one: '1 Änderung gespeichert.',
+      zero: 'Nichts geändert.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String assistantChangeMore(Object count) {
+    return 'und $count weitere';
+  }
+
+  @override
+  String assistantChangeNewStatus(Object status) {
+    return 'Neu: $status';
+  }
+
+  @override
+  String get assistantChangeNotifyHint =>
+      'Die Leitung bekommt wie gewohnt Bescheid.';
+
+  @override
+  String assistantChangeReason(Object reason) {
+    return 'Grund: $reason';
+  }
+
+  @override
+  String get assistantChangeSave => 'Speichern';
+
+  @override
+  String get assistantChangeSaving => 'Speichere …';
+
+  @override
+  String assistantChangeSkippedLocked(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count Termine bleiben, wie sie sind (Frist vorbei, Anmeldefelder oder schon abgemeldet).',
+      one:
+          '1 Termin bleibt, wie er ist (Frist vorbei, Anmeldefelder oder schon abgemeldet).',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String assistantChangeSkippedWindow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count Termine liegen außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).',
+      one:
+          '1 Termin liegt außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get assistantChangeTitleOthers => 'Status ändern';
+
+  @override
+  String get assistantChangeTitleSelf => 'Soll ich das so eintragen?';
+
+  @override
+  String get assistantChangeUndo => 'Rückgängig';
+
+  @override
+  String get assistantChangeUndoFailed =>
+      'Rückgängig hat nicht geklappt. Bitte prüf es im Termin.';
+
+  @override
+  String get assistantChangeUndone => 'Rückgängig gemacht.';
 
   @override
   String assistantChoiceWhich(Object name) {
@@ -492,7 +611,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get assistantEntryHint =>
-      'Anwesenheit, nächster Termin, wer kommt: einfach fragen';
+      'Anwesenheit, wer kommt, abmelden: einfach schreiben';
 
   @override
   String get assistantEntryTitle => 'Frag den Assistenten';
@@ -531,14 +650,18 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get assistantIntro =>
-      'Hallo! Ich beantworte Fragen zu deiner Gruppe. Ändern kann ich noch nichts.';
+      'Hallo! Ich beantworte Fragen zu deiner Gruppe und kann dich an- oder abmelden. Bevor ich etwas ändere, zeige ich dir genau, was passiert.';
 
   @override
   String get assistantNextTitle => 'Nächster Termin';
 
   @override
+  String get assistantNoticeAbsenceOutOfRange =>
+      'Eine Abwesenheit trage ich ab heute und höchstens 6 Monate im Voraus ein.';
+
+  @override
   String get assistantNoticeChangeLater =>
-      'Ändern kann ich noch nichts, das kommt bald. Bis dahin geht es wie gewohnt in der App.';
+      'Das kann ich noch nicht ändern. An- und Abmelden, Status und Abwesenheiten gehen schon, Termine und Personen kommen bald.';
 
   @override
   String get assistantNoticeDisabled =>
@@ -556,6 +679,10 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get assistantNoticeLimit =>
       'Für heute ist das Limit erreicht. Morgen geht es weiter.';
+
+  @override
+  String get assistantNoticeNoAbsenceRights =>
+      'Geplante Abwesenheiten kannst du mit deiner Rolle hier nicht eintragen.';
 
   @override
   String get assistantNoticeNoBirthdays =>
@@ -584,9 +711,17 @@ class AppLocalizationsDe extends AppLocalizations {
       'Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.';
 
   @override
+  String get assistantNoticeNothingToChange =>
+      'Da gibt es nichts zu ändern: Der Status ist schon so gesetzt, oder der Termin lässt es nicht zu (zum Beispiel Anmeldefrist vorbei).';
+
+  @override
   String assistantNoticePersonNotFound(Object name) {
     return 'Ich finde niemanden mit dem Namen „$name“.';
   }
+
+  @override
+  String get assistantNoticeSelfStatusNotAllowed =>
+      'Du kannst dich an- oder abmelden oder eine Verspätung melden. Andere Status setzt die Leitung.';
 
   @override
   String assistantNoticeSongNotFound(Object name) {
@@ -596,6 +731,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String assistantNoticeTooLong(Object max) {
     return 'Die Nachricht ist zu lang. Bitte höchstens $max Zeichen.';
+  }
+
+  @override
+  String assistantNoticeTooManyChanges(Object count, Object max) {
+    return 'Das wären $count Änderungen. Über den Chat gehen höchstens $max auf einmal. Grenz es bitte ein, zum Beispiel auf einen Termin oder eine Gruppe.';
   }
 
   @override
@@ -642,7 +782,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get assistantSettingsToggleHint =>
-      'Alle in der Gruppe können per Chat Fragen zu Anwesenheit, Terminen und Werken stellen. Nur die getippte Nachricht geht an den KI-Dienst.';
+      'Alle in der Gruppe können per Chat Fragen stellen und sich an- oder abmelden, die Leitung auch Status und Abwesenheiten anderer setzen. Jede Änderung braucht eine Bestätigung. Nur die getippte Nachricht geht an den KI-Dienst.';
 
   @override
   String assistantSongLastSung(Object date) {
@@ -656,6 +796,24 @@ class AppLocalizationsDe extends AppLocalizations {
   String get assistantSongOpen => 'Werk öffnen';
 
   @override
+  String get assistantStatusAbsent => 'Abwesend';
+
+  @override
+  String get assistantStatusExcused => 'Entschuldigt';
+
+  @override
+  String get assistantStatusLate => 'Verspätet';
+
+  @override
+  String get assistantStatusLateExcused => 'Verspätung gemeldet';
+
+  @override
+  String get assistantStatusNeutral => 'Offen';
+
+  @override
+  String get assistantStatusPresent => 'Anwesend';
+
+  @override
   String get assistantSuggestBirthdays => 'Wer hat diesen Monat Geburtstag?';
 
   @override
@@ -667,6 +825,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get assistantSuggestNextEvent => 'Wann ist der nächste Termin?';
+
+  @override
+  String get assistantSuggestSignOut => 'Melde mich für den nächsten Termin ab';
 
   @override
   String get assistantSuggestWhoComes => 'Wer kommt zum nächsten Termin?';

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/assistant_providers.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
@@ -10,13 +11,16 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/assistant_command.dart';
+import '../../data/assistant_logic.dart' show assistantMaxChanges;
 import '../../data/assistant_reply.dart';
 
-/// Chat assistant (package 1: questions only). One page for both designs:
-/// in the new design it takes the colours of the Beta palette.
+/// Chat assistant. One page for both designs: in the new design it takes
+/// the colours of the Beta palette.
 ///
 /// Every answer is a card the app fills itself; the model only picks the
-/// command (see assistant_executor.dart), its text is never shown.
+/// command (see assistant_executor.dart), its text is never shown. Changes
+/// (package 2) show a preview with "Speichern" / "Abbrechen" first and
+/// "Rückgängig" after saving.
 class AssistantPage extends ConsumerStatefulWidget {
   const AssistantPage({super.key});
 
@@ -70,6 +74,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
     final suggestions = [
       l10n.assistantSuggestMyRate,
       l10n.assistantSuggestNextEvent,
+      l10n.assistantSuggestSignOut,
       if (seesOthers) l10n.assistantSuggestWhoComes,
       if (seesOthers) l10n.assistantSuggestBirthdays,
       l10n.assistantSuggestHelp,
@@ -123,10 +128,19 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
                     ),
                   if (!enabled)
                     _Bubble(style: style, child: Text(l10n.assistantNoticeDisabled, style: TextStyle(color: style.text))),
-                  for (final m in chat.messages)
+                  for (final (i, m) in chat.messages.indexed)
                     m.fromUser
                         ? _Bubble(style: style, fromUser: true, child: Text(m.text!, style: TextStyle(color: style.onAccent)))
-                        : _Bubble(style: style, child: _ReplyView(reply: m.reply!, style: style, seesOthers: seesOthers)),
+                        : _Bubble(
+                            style: style,
+                            child: _ReplyView(
+                              reply: m.reply!,
+                              index: i,
+                              busy: chat.busy,
+                              style: style,
+                              seesOthers: seesOthers,
+                            ),
+                          ),
                   if (chat.busy)
                     _Bubble(
                       style: style,
@@ -324,9 +338,19 @@ String _weekdayDate(DateTime d) => DateFormat.yMMMMEEEEd(currentIntlLocale()).fo
 String _time(String t) => t.length >= 5 ? t.substring(0, 5) : t;
 
 class _ReplyView extends ConsumerWidget {
-  const _ReplyView({required this.reply, required this.style, required this.seesOthers});
+  const _ReplyView({
+    required this.reply,
+    required this.index,
+    required this.busy,
+    required this.style,
+    required this.seesOthers,
+  });
 
   final AssistantReply reply;
+
+  /// Position in the chat (for "Speichern" / "Rückgängig").
+  final int index;
+  final bool busy;
   final _ChatStyle style;
   final bool seesOthers;
 
@@ -351,7 +375,7 @@ class _ReplyView extends ConsumerWidget {
     String eventLocation(int id) => RedesignRoutes.betaTarget('/attendance/$id');
 
     switch (reply) {
-      case NoticeReply(:final notice, :final subject):
+      case NoticeReply(:final notice, :final subject, :final count):
         final s = subject ?? '';
         return Text(
           switch (notice) {
@@ -370,6 +394,12 @@ class _ReplyView extends ConsumerWidget {
             AssistantNotice.songNotFound => l10n.assistantNoticeSongNotFound(s),
             AssistantNotice.noHelp => l10n.assistantNoticeNoHelp,
             AssistantNotice.noBirthdays => l10n.assistantNoticeNoBirthdays,
+            AssistantNotice.selfStatusNotAllowed => l10n.assistantNoticeSelfStatusNotAllowed,
+            AssistantNotice.nothingToChange => l10n.assistantNoticeNothingToChange,
+            AssistantNotice.tooManyChanges =>
+              l10n.assistantNoticeTooManyChanges(count ?? 0, assistantMaxChanges),
+            AssistantNotice.absenceOutOfRange => l10n.assistantNoticeAbsenceOutOfRange,
+            AssistantNotice.noAbsenceRights => l10n.assistantNoticeNoAbsenceRights,
           },
           style: text,
         );
@@ -578,12 +608,218 @@ class _ReplyView extends ConsumerWidget {
           ],
         );
 
+      case StatusPreviewReply(:final plan, state: final st):
+        const shown = 8;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(plan.self ? l10n.assistantChangeTitleSelf : l10n.assistantChangeTitleOthers, style: title),
+            const SizedBox(height: 4),
+            _StatusChip(status: plan.status, style: style),
+            if (plan.reason != null) ...[
+              const SizedBox(height: 4),
+              Text(l10n.assistantChangeReason(plan.reason!), style: muted),
+            ],
+            const SizedBox(height: 8),
+            for (final c in plan.changes.take(shown))
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        plan.self ? c.title : '${c.personName} · ${c.title}',
+                        style: text,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(_day(c.date), style: muted),
+                  ],
+                ),
+              ),
+            if (plan.changes.length > shown)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(l10n.assistantChangeMore(plan.changes.length - shown), style: muted),
+              ),
+            if (plan.skippedLocked > 0) ...[
+              const SizedBox(height: 6),
+              Text(l10n.assistantChangeSkippedLocked(plan.skippedLocked), style: muted),
+            ],
+            if (plan.skippedWindow > 0) ...[
+              const SizedBox(height: 6),
+              Text(l10n.assistantChangeSkippedWindow(plan.skippedWindow), style: muted),
+            ],
+            if (plan.self && plan.status != AttendanceStatus.present) ...[
+              const SizedBox(height: 6),
+              Text(l10n.assistantChangeNotifyHint, style: muted),
+            ],
+            const SizedBox(height: 10),
+            _ActionButtons(index: index, state: st, busy: busy, count: plan.changes.length, style: style),
+          ],
+        );
+
+      case AbsencePreviewReply(:final plan, state: final st):
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.assistantAbsenceTitle, style: title),
+            Text(plan.isMe ? l10n.assistantAbsenceForMe : l10n.assistantAbsenceForPerson(plan.personName), style: text),
+            Text(l10n.assistantRateRange(_day(plan.from), _day(plan.to)), style: text),
+            Text(l10n.assistantChangeReason(plan.reason), style: muted),
+            const SizedBox(height: 6),
+            Text(l10n.assistantAbsenceAffected(plan.affected), style: muted),
+            if (plan.isMe && plan.affected > 0) Text(l10n.assistantChangeNotifyHint, style: muted),
+            const SizedBox(height: 10),
+            _ActionButtons(index: index, state: st, busy: busy, count: 1, style: style),
+          ],
+        );
+
+      case ActionDoneReply d:
+        final notifier = ref.read(assistantChatNotifierProvider.notifier);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  d.undo == UndoState.undone ? Icons.undo : Icons.check_circle,
+                  size: 20,
+                  color: d.undo == UndoState.undone ? style.muted : style.good,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    d.absencePlan != null
+                        ? '${l10n.assistantAbsenceDone} ${l10n.assistantChangeDone(d.count)}'
+                        : l10n.assistantChangeDone(d.count),
+                    style: text.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            switch (d.undo) {
+              UndoState.available => Align(
+                  alignment: Alignment.centerLeft,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(foregroundColor: style.accent),
+                    onPressed: busy ? null : () => notifier.undo(index),
+                    icon: const Icon(Icons.undo, size: 18),
+                    label: Text(l10n.assistantChangeUndo),
+                  ),
+                ),
+              UndoState.working => Text(l10n.assistantChangeSaving, style: muted),
+              UndoState.undone => Text(l10n.assistantChangeUndone, style: muted),
+              UndoState.failed => Text(l10n.assistantChangeUndoFailed, style: TextStyle(color: style.bad)),
+            },
+            if (d.statusPlan != null && d.statusPlan!.changes.isNotEmpty && seesOthers)
+              link(l10n.assistantEventOpenEvent, eventLocation(d.statusPlan!.changes.first.attendanceId)),
+          ],
+        );
+
       case HelpReply h:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(l10n.assistantHelpTitle, style: title),
             for (final a in h.articles) link(a.title, '/settings/help/article/${a.id}'),
+          ],
+        );
+    }
+  }
+}
+
+/// Status as a small coloured label.
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({required this.status, required this.style});
+
+  final AttendanceStatus status;
+  final _ChatStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final label = switch (status) {
+      AttendanceStatus.present => l10n.assistantStatusPresent,
+      AttendanceStatus.excused => l10n.assistantStatusExcused,
+      AttendanceStatus.lateExcused => l10n.assistantStatusLateExcused,
+      AttendanceStatus.late => l10n.assistantStatusLate,
+      AttendanceStatus.absent => l10n.assistantStatusAbsent,
+      AttendanceStatus.neutral => l10n.assistantStatusNeutral,
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: status.color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(status.icon, size: 16, color: status.color),
+          const SizedBox(width: 6),
+          Text(l10n.assistantChangeNewStatus(label),
+              style: TextStyle(color: style.text, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+}
+
+/// "Speichern" / "Abbrechen" of a preview, or where it stands.
+class _ActionButtons extends ConsumerWidget {
+  const _ActionButtons({
+    required this.index,
+    required this.state,
+    required this.busy,
+    required this.count,
+    required this.style,
+  });
+
+  final int index;
+  final ActionState state;
+  final bool busy;
+  final int count;
+  final _ChatStyle style;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final muted = TextStyle(color: style.muted, fontSize: 13);
+    final notifier = ref.read(assistantChatNotifierProvider.notifier);
+    switch (state) {
+      case ActionState.cancelled:
+        return Text(l10n.assistantChangeCancelled, style: muted);
+      case ActionState.saving:
+        return Text(l10n.assistantChangeSaving, style: muted);
+      case ActionState.done:
+        return const SizedBox.shrink();
+      case ActionState.pending:
+      case ActionState.confirmAgain:
+        return Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: state == ActionState.confirmAgain ? style.bad : style.accent,
+                foregroundColor: style.onAccent,
+              ),
+              onPressed: busy ? null : () => notifier.confirm(index),
+              icon: const Icon(Icons.check, size: 18),
+              label: Text(state == ActionState.confirmAgain
+                  ? l10n.assistantChangeConfirmAgain(count)
+                  : l10n.assistantChangeSave),
+            ),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(foregroundColor: style.text),
+              onPressed: busy ? null : () => notifier.cancel(index),
+              child: Text(l10n.assistantChangeCancel),
+            ),
           ],
         );
     }

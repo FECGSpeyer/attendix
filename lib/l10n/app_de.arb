@@ -604,6 +604,38 @@
   "@appResetLinkInvalid": {
     "description": "app.resetLinkInvalid"
   },
+  "assistantAbsenceAffected": "{count, plural, =0 {Kein kommender Termin ist betroffen.} one {1 Termin wird auf Entschuldigt gesetzt.} other {{count} Termine werden auf Entschuldigt gesetzt.}}",
+  "@assistantAbsenceAffected": {
+    "description": "assistant.absence.affected",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "assistantAbsenceDefaultReason": "Abwesend",
+  "@assistantAbsenceDefaultReason": {
+    "description": "assistant.absence.defaultReason"
+  },
+  "assistantAbsenceDone": "Abwesenheit eingetragen.",
+  "@assistantAbsenceDone": {
+    "description": "assistant.absence.done"
+  },
+  "assistantAbsenceForMe": "Für dich",
+  "@assistantAbsenceForMe": {
+    "description": "assistant.absence.forMe"
+  },
+  "assistantAbsenceForPerson": "Für {name}",
+  "@assistantAbsenceForPerson": {
+    "description": "assistant.absence.forPerson",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "assistantAbsenceTitle": "Geplante Abwesenheit",
+  "@assistantAbsenceTitle": {
+    "description": "assistant.absence.title"
+  },
   "assistantBeta": "Beta",
   "@assistantBeta": {
     "description": "assistant.beta"
@@ -618,6 +650,101 @@
   "assistantBirthdaysTitle": "Geburtstage",
   "@assistantBirthdaysTitle": {
     "description": "assistant.birthdays.title"
+  },
+  "assistantChangeCancel": "Abbrechen",
+  "@assistantChangeCancel": {
+    "description": "assistant.change.cancel"
+  },
+  "assistantChangeCancelled": "Abgebrochen, nichts geändert.",
+  "@assistantChangeCancelled": {
+    "description": "assistant.change.cancelled"
+  },
+  "assistantChangeConfirmAgain": "Wirklich alle {count} ändern?",
+  "@assistantChangeConfirmAgain": {
+    "description": "assistant.change.confirmAgain",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "assistantChangeDone": "{count, plural, =0 {Nichts geändert.} one {1 Änderung gespeichert.} other {{count} Änderungen gespeichert.}}",
+  "@assistantChangeDone": {
+    "description": "assistant.change.done",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "assistantChangeMore": "und {count} weitere",
+  "@assistantChangeMore": {
+    "description": "assistant.change.more",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "assistantChangeNewStatus": "Neu: {status}",
+  "@assistantChangeNewStatus": {
+    "description": "assistant.change.newStatus",
+    "placeholders": {
+      "status": {}
+    }
+  },
+  "assistantChangeNotifyHint": "Die Leitung bekommt wie gewohnt Bescheid.",
+  "@assistantChangeNotifyHint": {
+    "description": "assistant.change.notifyHint"
+  },
+  "assistantChangeReason": "Grund: {reason}",
+  "@assistantChangeReason": {
+    "description": "assistant.change.reason",
+    "placeholders": {
+      "reason": {}
+    }
+  },
+  "assistantChangeSave": "Speichern",
+  "@assistantChangeSave": {
+    "description": "assistant.change.save"
+  },
+  "assistantChangeSaving": "Speichere …",
+  "@assistantChangeSaving": {
+    "description": "assistant.change.saving"
+  },
+  "assistantChangeSkippedLocked": "{count, plural, one {1 Termin bleibt, wie er ist (Frist vorbei, Anmeldefelder oder schon abgemeldet).} other {{count} Termine bleiben, wie sie sind (Frist vorbei, Anmeldefelder oder schon abgemeldet).}}",
+  "@assistantChangeSkippedLocked": {
+    "description": "assistant.change.skippedLocked",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "assistantChangeSkippedWindow": "{count, plural, one {1 Termin liegt außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).} other {{count} Termine liegen außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).}}",
+  "@assistantChangeSkippedWindow": {
+    "description": "assistant.change.skippedWindow",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "assistantChangeTitleOthers": "Status ändern",
+  "@assistantChangeTitleOthers": {
+    "description": "assistant.change.titleOthers"
+  },
+  "assistantChangeTitleSelf": "Soll ich das so eintragen?",
+  "@assistantChangeTitleSelf": {
+    "description": "assistant.change.titleSelf"
+  },
+  "assistantChangeUndo": "Rückgängig",
+  "@assistantChangeUndo": {
+    "description": "assistant.change.undo"
+  },
+  "assistantChangeUndoFailed": "Rückgängig hat nicht geklappt. Bitte prüf es im Termin.",
+  "@assistantChangeUndoFailed": {
+    "description": "assistant.change.undoFailed"
+  },
+  "assistantChangeUndone": "Rückgängig gemacht.",
+  "@assistantChangeUndone": {
+    "description": "assistant.change.undone"
   },
   "assistantChoiceWhich": "Wen meinst du mit „{name}“?",
   "@assistantChoiceWhich": {
@@ -634,7 +761,7 @@
   "@assistantEntryEnableHint": {
     "description": "assistant.entryEnableHint"
   },
-  "assistantEntryHint": "Anwesenheit, nächster Termin, wer kommt: einfach fragen",
+  "assistantEntryHint": "Anwesenheit, wer kommt, abmelden: einfach schreiben",
   "@assistantEntryHint": {
     "description": "assistant.entryHint"
   },
@@ -685,7 +812,7 @@
   "@assistantInputHint": {
     "description": "assistant.inputHint"
   },
-  "assistantIntro": "Hallo! Ich beantworte Fragen zu deiner Gruppe. Ändern kann ich noch nichts.",
+  "assistantIntro": "Hallo! Ich beantworte Fragen zu deiner Gruppe und kann dich an- oder abmelden. Bevor ich etwas ändere, zeige ich dir genau, was passiert.",
   "@assistantIntro": {
     "description": "assistant.intro"
   },
@@ -693,7 +820,11 @@
   "@assistantNextTitle": {
     "description": "assistant.next.title"
   },
-  "assistantNoticeChangeLater": "Ändern kann ich noch nichts, das kommt bald. Bis dahin geht es wie gewohnt in der App.",
+  "assistantNoticeAbsenceOutOfRange": "Eine Abwesenheit trage ich ab heute und höchstens 6 Monate im Voraus ein.",
+  "@assistantNoticeAbsenceOutOfRange": {
+    "description": "assistant.notice.absenceOutOfRange"
+  },
+  "assistantNoticeChangeLater": "Das kann ich noch nicht ändern. An- und Abmelden, Status und Abwesenheiten gehen schon, Termine und Personen kommen bald.",
   "@assistantNoticeChangeLater": {
     "description": "assistant.notice.changeLater"
   },
@@ -715,6 +846,10 @@
   "assistantNoticeLimit": "Für heute ist das Limit erreicht. Morgen geht es weiter.",
   "@assistantNoticeLimit": {
     "description": "assistant.notice.limit"
+  },
+  "assistantNoticeNoAbsenceRights": "Geplante Abwesenheiten kannst du mit deiner Rolle hier nicht eintragen.",
+  "@assistantNoticeNoAbsenceRights": {
+    "description": "assistant.notice.noAbsenceRights"
   },
   "assistantNoticeNoBirthdays": "In diesem Zeitraum hat niemand Geburtstag.",
   "@assistantNoticeNoBirthdays": {
@@ -744,12 +879,20 @@
   "@assistantNoticeNotUnderstood": {
     "description": "assistant.notice.notUnderstood"
   },
+  "assistantNoticeNothingToChange": "Da gibt es nichts zu ändern: Der Status ist schon so gesetzt, oder der Termin lässt es nicht zu (zum Beispiel Anmeldefrist vorbei).",
+  "@assistantNoticeNothingToChange": {
+    "description": "assistant.notice.nothingToChange"
+  },
   "assistantNoticePersonNotFound": "Ich finde niemanden mit dem Namen „{name}“.",
   "@assistantNoticePersonNotFound": {
     "description": "assistant.notice.personNotFound",
     "placeholders": {
       "name": {}
     }
+  },
+  "assistantNoticeSelfStatusNotAllowed": "Du kannst dich an- oder abmelden oder eine Verspätung melden. Andere Status setzt die Leitung.",
+  "@assistantNoticeSelfStatusNotAllowed": {
+    "description": "assistant.notice.selfStatusNotAllowed"
   },
   "assistantNoticeSongNotFound": "Ich finde kein Werk „{name}“.",
   "@assistantNoticeSongNotFound": {
@@ -762,6 +905,14 @@
   "@assistantNoticeTooLong": {
     "description": "assistant.notice.tooLong",
     "placeholders": {
+      "max": {}
+    }
+  },
+  "assistantNoticeTooManyChanges": "Das wären {count} Änderungen. Über den Chat gehen höchstens {max} auf einmal. Grenz es bitte ein, zum Beispiel auf einen Termin oder eine Gruppe.",
+  "@assistantNoticeTooManyChanges": {
+    "description": "assistant.notice.tooManyChanges",
+    "placeholders": {
+      "count": {},
       "max": {}
     }
   },
@@ -823,7 +974,7 @@
   "@assistantSettingsToggle": {
     "description": "assistant.settings.toggle"
   },
-  "assistantSettingsToggleHint": "Alle in der Gruppe können per Chat Fragen zu Anwesenheit, Terminen und Werken stellen. Nur die getippte Nachricht geht an den KI-Dienst.",
+  "assistantSettingsToggleHint": "Alle in der Gruppe können per Chat Fragen stellen und sich an- oder abmelden, die Leitung auch Status und Abwesenheiten anderer setzen. Jede Änderung braucht eine Bestätigung. Nur die getippte Nachricht geht an den KI-Dienst.",
   "@assistantSettingsToggleHint": {
     "description": "assistant.settings.toggleHint"
   },
@@ -842,6 +993,30 @@
   "@assistantSongOpen": {
     "description": "assistant.song.open"
   },
+  "assistantStatusAbsent": "Abwesend",
+  "@assistantStatusAbsent": {
+    "description": "assistant.status.absent"
+  },
+  "assistantStatusExcused": "Entschuldigt",
+  "@assistantStatusExcused": {
+    "description": "assistant.status.excused"
+  },
+  "assistantStatusLate": "Verspätet",
+  "@assistantStatusLate": {
+    "description": "assistant.status.late"
+  },
+  "assistantStatusLateExcused": "Verspätung gemeldet",
+  "@assistantStatusLateExcused": {
+    "description": "assistant.status.lateExcused"
+  },
+  "assistantStatusNeutral": "Offen",
+  "@assistantStatusNeutral": {
+    "description": "assistant.status.neutral"
+  },
+  "assistantStatusPresent": "Anwesend",
+  "@assistantStatusPresent": {
+    "description": "assistant.status.present"
+  },
   "assistantSuggestBirthdays": "Wer hat diesen Monat Geburtstag?",
   "@assistantSuggestBirthdays": {
     "description": "assistant.suggest.birthdays"
@@ -857,6 +1032,10 @@
   "assistantSuggestNextEvent": "Wann ist der nächste Termin?",
   "@assistantSuggestNextEvent": {
     "description": "assistant.suggest.nextEvent"
+  },
+  "assistantSuggestSignOut": "Melde mich für den nächsten Termin ab",
+  "@assistantSuggestSignOut": {
+    "description": "assistant.suggest.signOut"
   },
   "assistantSuggestWhoComes": "Wer kommt zum nächsten Termin?",
   "@assistantSuggestWhoComes": {

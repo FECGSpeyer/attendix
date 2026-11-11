@@ -43,7 +43,7 @@ void main() {
 
   test('every read of the repository filters the tenant and nothing is written', () {
     final reads = RegExp(r"\.from\('person_attendances'\)").allMatches(repo).length;
-    expect(reads, 2);
+    expect(reads, 3);
     expect(RegExp(r"\.eq\('attendance\.tenantId', currentTenantId\)").allMatches(repo).length, reads);
     for (final write in ['.insert(', '.update(', '.delete(', '.upsert(']) {
       expect(repo, isNot(contains(write)), reason: write);
@@ -54,5 +54,41 @@ void main() {
     expect(sql, contains('enable row level security'));
     expect(sql, contains('from public, anon, authenticated'));
     expect(sql, contains('default false'));
+  });
+
+  test('changes: the preview writes nothing, saving only after confirm', () {
+    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
+    final notifier = File('lib/core/providers/assistant_providers.dart').readAsStringSync();
+    // Writes only inside apply*/revert*, never in run() or the previews.
+    final runPart = executor.substring(executor.indexOf('Future<AssistantReply> run('), executor.indexOf('Future<int> applyStatus('));
+    for (final write in ['signIn(', 'signOut(', 'updatePersonAttendance(', 'addAbsence(', 'excuseUpcomingAttendances(', 'deleteAbsence(', 'restoreOwnStatuses(']) {
+      expect(runPart, isNot(contains('.$write')), reason: write);
+    }
+    // apply* is only called from confirm(), revert* only from undo().
+    expect(RegExp(r'executor\.apply').allMatches(notifier).length, 2);
+    expect(notifier.indexOf('executor.apply'), greaterThan(notifier.indexOf('Future<void> confirm(')));
+    expect(notifier.indexOf('executor.revert'), greaterThan(notifier.indexOf('Future<void> undo(')));
+  });
+
+  test('changes: limits and rights are in the app, no delete of Termine or people', () {
+    final logic = File('lib/features/assistant/data/assistant_logic.dart').readAsStringSync();
+    expect(logic, contains('assistantMaxChanges = 30'));
+    expect(logic, contains('assistantPastDays = 14'));
+    expect(logic, contains('assistantFutureDays = 183'));
+    expect(logic, contains('SetStatusCommand() => changesOthers'));
+    expect(logic, contains('PlannedAbsenceCommand() => canManageAbsences'));
+    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
+    for (final forbidden in ['deleteAttendance', 'deletePlayer', 'archivePlayer', ".from('tenants')", ".from('tenantUsers')"]) {
+      expect(executor, isNot(contains(forbidden)), reason: forbidden);
+    }
+  });
+
+  test('undo of own rows checks the tenant and the own account', () {
+    final signs = File('lib/data/repositories/sign_in_out_repository.dart').readAsStringSync();
+    final restore = signs.substring(signs.indexOf('Future<int> restoreOwnStatuses('));
+    final body = restore.substring(0, restore.indexOf('  /// Update attendance note'));
+    expect(body, contains("r['person']?['appId'] == userId"));
+    expect(body, contains("r['attendance']?['tenantId'] == currentTenantId"));
+    expect(body, contains('if (!valid.contains(r.id)) continue;'));
   });
 }

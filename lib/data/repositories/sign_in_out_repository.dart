@@ -241,6 +241,43 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Chat assistant "Rückgängig": puts own rows of the current tenant back
+  /// to their previous status and note. Only rows of the signed-in person
+  /// (appId) in the current tenant; no notification.
+  Future<int> restoreOwnStatuses(
+    List<({String id, AttendanceStatus status, String notes})> rows,
+  ) async {
+    if (rows.isEmpty) return 0;
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) return 0;
+      final check = await supabase
+          .from('person_attendances')
+          .select('id, person:person_id(appId), attendance:attendance_id(tenantId)')
+          .inFilter('id', [for (final r in rows) r.id]);
+      final valid = {
+        for (final r in (check as List).cast<Map<String, dynamic>>())
+          if (r['person']?['appId'] == userId && r['attendance']?['tenantId'] == currentTenantId)
+            r['id'].toString(),
+      };
+      var count = 0;
+      for (final r in rows) {
+        if (!valid.contains(r.id)) continue;
+        final dutyUpdate = await _dutyUpdateForStatus(r.id, r.status);
+        await _updatePersonAttendances([r.id], {
+          'status': r.status.value,
+          'notes': r.notes,
+          ...dutyUpdate,
+        });
+        count++;
+      }
+      return count;
+    } catch (e, stack) {
+      handleError(e, stack, 'restoreOwnStatuses');
+      rethrow;
+    }
+  }
+
   /// Update attendance note
   Future<void> updateAttendanceNote(
     String personAttendanceId,

@@ -1,8 +1,10 @@
 // ai-assistant: the chat assistant ("Assistent" under "Mehr" / "Ich").
 // Turns ONE typed message into ONE of the fixed commands of intent.ts
 // (attendance rate, who comes, next Termin, birthdays, Werk last sung,
-// help). The app then loads and shows the data itself with the person's
-// rights; this function never reads or returns data of people.
+// help, and since package 2 set a status / planned absence). The app then
+// loads and shows the data itself with the person's rights; changes are
+// only a preview in the app until the person confirms. This function never
+// reads, returns or writes data of people.
 //
 // Input (JSON):  { tenantId: number, text: string (≤ 500), today: "YYYY-MM-DD",
 //                  language: "de" | "en" | "ru" | "es" }
