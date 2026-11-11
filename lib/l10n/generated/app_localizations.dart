@@ -24820,6 +24820,12 @@ abstract class AppLocalizations {
   /// **'Wird ans Ende gesetzt'**
   String get redesignPlanAddEnd;
 
+  /// redesign.plan.addInBlock
+  ///
+  /// In de, this message translates to:
+  /// **'Punkt in „{name}“'**
+  String redesignPlanAddInBlock(Object name);
+
   /// redesign.plan.addItem
   ///
   /// In de, this message translates to:
@@ -24873,6 +24879,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Termin'**
   String get redesignPlanBack;
+
+  /// redesign.plan.blockItems
+  ///
+  /// In de, this message translates to:
+  /// **'Punkte im Block'**
+  String get redesignPlanBlockItems;
+
+  /// redesign.plan.blockName
+  ///
+  /// In de, this message translates to:
+  /// **'Name des Blocks'**
+  String get redesignPlanBlockName;
+
+  /// redesign.plan.blockRow
+  ///
+  /// In de, this message translates to:
+  /// **'Block'**
+  String get redesignPlanBlockRow;
 
   /// redesign.plan.blockTemplateHint
   ///
@@ -24945,6 +24969,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ziehen zum Sortieren'**
   String get redesignPlanDrag;
+
+  /// redesign.plan.dropInBlock
+  ///
+  /// In de, this message translates to:
+  /// **'in „{name}“'**
+  String redesignPlanDropInBlock(Object name);
 
   /// redesign.plan.duration
   ///
@@ -25021,7 +25051,7 @@ abstract class AppLocalizations {
   /// redesign.plan.hint
   ///
   /// In de, this message translates to:
-  /// **'Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.'**
+  /// **'Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff ziehen sortiert um: über „+ Punkt in …“ landet ein Punkt im Block, darunter dahinter.'**
   String get redesignPlanHint;
 
   /// redesign.plan.hintDismiss
@@ -25071,6 +25101,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'In den Block darüber'**
   String get redesignPlanJoinBlock;
+
+  /// redesign.plan.kindSong
+  ///
+  /// In de, this message translates to:
+  /// **'Werk'**
+  String get redesignPlanKindSong;
 
   /// redesign.plan.leaveBlock
   ///
@@ -25126,6 +25162,12 @@ abstract class AppLocalizations {
   /// **'Name (optional)'**
   String get redesignPlanNameHint;
 
+  /// redesign.plan.newBlock
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Block'**
+  String get redesignPlanNewBlock;
+
   /// redesign.plan.newPlan
   ///
   /// In de, this message translates to:
@@ -25137,6 +25179,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Nächster Termin'**
   String get redesignPlanNext;
+
+  /// redesign.plan.noBlock
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Block'**
+  String get redesignPlanNoBlock;
 
   /// redesign.plan.notes
   ///
@@ -25180,6 +25228,12 @@ abstract class AppLocalizations {
   /// **'Weiteres'**
   String get redesignPlanOther;
 
+  /// redesign.plan.pickBlock
+  ///
+  /// In de, this message translates to:
+  /// **'Block wählen'**
+  String get redesignPlanPickBlock;
+
   /// redesign.plan.planPick
   ///
   /// In de, this message translates to:
@@ -25221,6 +25275,36 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Geteilt · zum Ändern oder Beenden tippen'**
   String get redesignPlanPublicLinkShared;
+
+  /// redesign.plan.quickAddAdded
+  ///
+  /// In de, this message translates to:
+  /// **'Hinzugefügt'**
+  String get redesignPlanQuickAddAdded;
+
+  /// redesign.plan.quickAddButton
+  ///
+  /// In de, this message translates to:
+  /// **'Hinzufügen'**
+  String get redesignPlanQuickAddButton;
+
+  /// redesign.plan.quickAddHint
+  ///
+  /// In de, this message translates to:
+  /// **'Enter fügt hinzu, danach geht es gleich mit dem nächsten weiter.'**
+  String get redesignPlanQuickAddHint;
+
+  /// redesign.plan.quickAddInBlock
+  ///
+  /// In de, this message translates to:
+  /// **'In „{name}“'**
+  String redesignPlanQuickAddInBlock(Object name);
+
+  /// redesign.plan.quickAddInBlockHint
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Punkte kommen ans Ende des Blocks'**
+  String get redesignPlanQuickAddInBlockHint;
 
   /// redesign.plan.removed
   ///

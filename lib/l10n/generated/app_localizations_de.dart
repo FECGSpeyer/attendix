@@ -15592,6 +15592,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanAddEnd => 'Wird ans Ende gesetzt';
 
   @override
+  String redesignPlanAddInBlock(Object name) {
+    return 'Punkt in „$name“';
+  }
+
+  @override
   String get redesignPlanAddItem => 'Punkt';
 
   @override
@@ -15617,6 +15622,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanBack => 'Termin';
+
+  @override
+  String get redesignPlanBlockItems => 'Punkte im Block';
+
+  @override
+  String get redesignPlanBlockName => 'Name des Blocks';
+
+  @override
+  String get redesignPlanBlockRow => 'Block';
 
   @override
   String redesignPlanBlockTemplateHint(Object count) {
@@ -15661,6 +15675,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanDrag => 'Ziehen zum Sortieren';
 
   @override
+  String redesignPlanDropInBlock(Object name) {
+    return 'in „$name“';
+  }
+
+  @override
   String get redesignPlanDuration => 'Dauer';
 
   @override
@@ -15703,7 +15722,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanHint =>
-      'Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.';
+      'Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff ziehen sortiert um: über „+ Punkt in …“ landet ein Punkt im Block, darunter dahinter.';
 
   @override
   String get redesignPlanHintDismiss => 'Verstanden';
@@ -15745,6 +15764,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanJoinBlock => 'In den Block darüber';
 
   @override
+  String get redesignPlanKindSong => 'Werk';
+
+  @override
   String get redesignPlanLeaveBlock => 'Aus dem Block nehmen';
 
   @override
@@ -15774,10 +15796,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanNameHint => 'Name (optional)';
 
   @override
+  String get redesignPlanNewBlock => 'Neuer Block';
+
+  @override
   String get redesignPlanNewPlan => 'Neuer Plan';
 
   @override
   String get redesignPlanNext => 'Nächster Termin';
+
+  @override
+  String get redesignPlanNoBlock => 'Kein Block';
 
   @override
   String get redesignPlanNotes => 'Notizen zum Termin';
@@ -15805,6 +15833,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanOther => 'Weiteres';
 
   @override
+  String get redesignPlanPickBlock => 'Block wählen';
+
+  @override
   String get redesignPlanPlanPick => 'Termin wählen';
 
   @override
@@ -15828,6 +15859,25 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get redesignPlanPublicLinkShared =>
       'Geteilt · zum Ändern oder Beenden tippen';
+
+  @override
+  String get redesignPlanQuickAddAdded => 'Hinzugefügt';
+
+  @override
+  String get redesignPlanQuickAddButton => 'Hinzufügen';
+
+  @override
+  String get redesignPlanQuickAddHint =>
+      'Enter fügt hinzu, danach geht es gleich mit dem nächsten weiter.';
+
+  @override
+  String redesignPlanQuickAddInBlock(Object name) {
+    return 'In „$name“';
+  }
+
+  @override
+  String get redesignPlanQuickAddInBlockHint =>
+      'Neue Punkte kommen ans Ende des Blocks';
 
   @override
   String redesignPlanRemoved(Object name) {

@@ -249,6 +249,7 @@ class RdPlanFieldForm extends StatefulWidget {
     this.withInfo = true,
     this.withMinutes = true,
     this.autofocus = false,
+    this.singleLineName = false,
     this.beamer,
     required this.onChanged,
     this.onSubmitted,
@@ -263,6 +264,9 @@ class RdPlanFieldForm extends StatefulWidget {
   final bool withInfo;
   final bool withMinutes;
   final bool autofocus;
+
+  /// The name in one line, so Enter submits (quick adding several items).
+  final bool singleLineName;
   final PlanFieldBeamerOptions? beamer;
   final ValueChanged<PlanFieldInput> onChanged;
   final VoidCallback? onSubmitted;
@@ -373,7 +377,7 @@ class _RdPlanFieldFormState extends State<RdPlanFieldForm> {
               widget.labels.nameHint ?? l10n.planningEnterItem,
               key: const Key('rd-plan-field-name'),
               autofocus: widget.autofocus,
-              maxLines: 3,
+              maxLines: widget.singleLineName ? 1 : 3,
             ),
             if (widget.withConductor)
               _text(
