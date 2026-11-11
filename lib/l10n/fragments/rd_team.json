@@ -55,7 +55,11 @@
       "meetingKind": "Art",
       "meetingTypeName": "Besprechung",
       "planMeeting": "Besprechung planen",
-      "planMeetingHint": "Mit Tagesordnung und Protokoll"
+      "planMeetingHint": "Mit Tagesordnung und Protokoll",
+      "startMeeting": "Besprechung starten",
+      "prepareProtocol": "Protokoll vorbereiten",
+      "prepareProtocolHint": "Notizen, Ergebnisse und Aufgaben je Thema",
+      "finishMeeting": "Abschließen"
     }
   },
   "en": {
@@ -114,7 +118,11 @@
       "meetingKind": "Kind",
       "meetingTypeName": "Meeting",
       "planMeeting": "Plan a meeting",
-      "planMeetingHint": "With agenda and minutes"
+      "planMeetingHint": "With agenda and minutes",
+      "startMeeting": "Start meeting",
+      "prepareProtocol": "Prepare minutes",
+      "prepareProtocolHint": "Notes, results and tasks per topic",
+      "finishMeeting": "Finish"
     }
   }
 }

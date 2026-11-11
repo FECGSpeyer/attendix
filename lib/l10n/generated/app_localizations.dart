@@ -18748,6 +18748,12 @@ abstract class AppLocalizations {
   /// **'Noch keine Besprechung'**
   String get rdTeamEmptyTitle;
 
+  /// rdTeam.finishMeeting
+  ///
+  /// In de, this message translates to:
+  /// **'Abschließen'**
+  String get rdTeamFinishMeeting;
+
   /// rdTeam.hideDone
   ///
   /// In de, this message translates to:
@@ -18874,6 +18880,18 @@ abstract class AppLocalizations {
   /// **'Eingeplant'**
   String get rdTeamPlannedGroup;
 
+  /// rdTeam.prepareProtocol
+  ///
+  /// In de, this message translates to:
+  /// **'Protokoll vorbereiten'**
+  String get rdTeamPrepareProtocol;
+
+  /// rdTeam.prepareProtocolHint
+  ///
+  /// In de, this message translates to:
+  /// **'Notizen, Ergebnisse und Aufgaben je Thema'**
+  String get rdTeamPrepareProtocolHint;
+
   /// rdTeam.protocolPublished
   ///
   /// In de, this message translates to:
@@ -18891,6 +18909,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Besprochene Themen anzeigen ({count})'**
   String rdTeamShowDone(Object count);
+
+  /// rdTeam.startMeeting
+  ///
+  /// In de, this message translates to:
+  /// **'Besprechung starten'**
+  String get rdTeamStartMeeting;
 
   /// rdTeam.suggestHint
   ///

@@ -184,6 +184,17 @@ final teamTasksProvider = FutureProvider<List<TeamTask>>((ref) async {
   return ref.watch(myTasksProvider.future);
 });
 
+/// Beta "Aufgaben": like [teamTasksProvider], and the circle also gets the
+/// tasks of its Besprechungen (the server only returns those it may read).
+final rdTeamTasksProvider = FutureProvider<List<TeamTask>>((ref) async {
+  // Reloads together with the classic list.
+  final own = await ref.watch(teamTasksProvider.future);
+  if (ref.watch(isTeamLeaderProvider) || !ref.watch(inTeamCircleProvider)) return own;
+  final repo = ref.watch(taskRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return own;
+  return repo.getTasks();
+});
+
 final taskByIdProvider = FutureProvider.family<TeamTask?, String>((ref, id) async {
   // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
   // and protocol results) – never keep them across an account switch.

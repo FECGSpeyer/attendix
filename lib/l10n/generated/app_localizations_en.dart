@@ -11398,6 +11398,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTeamEmptyTitle => 'No meeting yet';
 
   @override
+  String get rdTeamFinishMeeting => 'Finish';
+
+  @override
   String get rdTeamHideDone => 'Hide discussed topics';
 
   @override
@@ -11478,6 +11481,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTeamPlannedGroup => 'Planned';
 
   @override
+  String get rdTeamPrepareProtocol => 'Prepare minutes';
+
+  @override
+  String get rdTeamPrepareProtocolHint => 'Notes, results and tasks per topic';
+
+  @override
   String get rdTeamProtocolPublished => 'Minutes published';
 
   @override
@@ -11487,6 +11496,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String rdTeamShowDone(Object count) {
     return 'Show discussed topics ($count)';
   }
+
+  @override
+  String get rdTeamStartMeeting => 'Start meeting';
 
   @override
   String get rdTeamSuggestHint => 'Your suggestions and what became of them';

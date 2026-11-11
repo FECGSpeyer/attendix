@@ -91,6 +91,9 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
     final task = taskAsync.valueOrNull;
     final today = localToday();
     final l10n = context.l10n;
+    // Tasks of others (visible to who attended their Besprechung) are
+    // read-only for members.
+    final canChange = task != null && (isLeader || (me?.id != null && task.responsiblePersonId == me!.id));
 
     return Scaffold(
       appBar: AppBar(
@@ -110,7 +113,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
           ],
         ],
       ),
-      bottomNavigationBar: task != null && task.status != 'completed'
+      bottomNavigationBar: task != null && canChange && task.status != 'completed'
           // Ionic `.task-footer`: round success button (50px, 600).
           ? ColoredBox(
               color: Theme.of(context).scaffoldBackgroundColor,
@@ -227,7 +230,9 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
               for (final s in const ['open', 'in_progress', 'completed'])
                 IonSegmentItem<String>(value: s, label: Text(taskStatusLabels[s]!)),
             ],
-            onChanged: _savingStatus ? null : (s) => _setStatus(task, s),
+            onChanged: _savingStatus || !(isLeader || (myId != null && task.responsiblePersonId == myId))
+                ? null
+                : (s) => _setStatus(task, s),
           ),
         ),
         IonInsetList(

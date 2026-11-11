@@ -152,6 +152,10 @@ class _RdMeetingPageState extends ConsumerState<RdMeetingPage> with RouteReturnR
     final pending = isLeader ? splitTopics(items).pending : const <AgendaItem>[];
     final time = [meeting.startTime, meeting.endTime].where((t) => t != null && t.isNotEmpty).join('–');
     final meta = [formatShortWeekdayDate(meeting.date), if (time.isNotEmpty) time].join(' · ');
+    // From the day of the Besprechung on, writing the protocol is the one
+    // main action.
+    final day = DateTime.tryParse(meeting.date)?.toLocal();
+    final started = day != null && !DateTime(day.year, day.month, day.day).isAfter(DateTime.now());
 
     String topSubtitle(PlanField top) {
       final parts = [
@@ -216,10 +220,27 @@ class _RdMeetingPageState extends ConsumerState<RdMeetingPage> with RouteReturnR
               ),
           ],
         ),
-        if (canOpenEvent) ...[
+        if (isLeader && started) ...[
+          const SizedBox(height: 18),
+          RdPrimaryButton(
+            key: const ValueKey('rd-meeting-start'),
+            label: l10n.rdTeamStartMeeting,
+            onPressed: () => context.push('/settings/protocol/${meeting.id}'),
+          ),
+        ],
+        if (canOpenEvent || (isLeader && !started)) ...[
           const SizedBox(height: 18),
           RdGroupedList(
             children: [
+              if (isLeader && !started)
+                RdListRow(
+                  key: const ValueKey('rd-meeting-protocol'),
+                  leading: const RdRowIcon(Icons.description_outlined),
+                  title: l10n.rdTeamPrepareProtocol,
+                  subtitle: l10n.rdTeamPrepareProtocolHint,
+                  onTap: () => context.push('/settings/protocol/${meeting.id}'),
+                ),
+              if (canOpenEvent)
               RdListRow(
                 leading: const RdRowIcon(Icons.event_outlined),
                 title: l10n.rdTeamOpenEvent,

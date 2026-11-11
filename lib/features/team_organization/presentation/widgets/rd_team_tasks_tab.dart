@@ -37,7 +37,7 @@ class _RdTeamTasksTabState extends ConsumerState<RdTeamTasksTab> {
       await ref.read(teamTaskNotifierProvider.notifier).update(id, {'status': next});
       // Keep the optimistic status until the reloaded list carries it.
       try {
-        await ref.read(teamTasksProvider.future);
+        await ref.read(rdTeamTasksProvider.future);
       } catch (e, st) {
         ErrorReporter.report(e, st, where: 'rd_team_tasks_tab');
       }
@@ -53,8 +53,10 @@ class _RdTeamTasksTabState extends ConsumerState<RdTeamTasksTab> {
     final p = context.rd;
     final l10n = context.l10n;
     final isLeader = ref.watch(isTeamLeaderProvider);
-    final tasksAsync = ref.watch(teamTasksProvider);
-    ref.listen(teamTasksProvider, (_, next) {
+    final tasksAsync = ref.watch(rdTeamTasksProvider);
+    // The circle sees the tasks of its Besprechungen next to its own.
+    final hasTeam = isLeader || ref.watch(inTeamCircleProvider);
+    ref.listen(rdTeamTasksProvider, (_, next) {
       if (next is AsyncError && !next.isLoading) {
         ToastHelper.showError(context, context.l10n.teamOrgTasksLoadFailed);
       }
@@ -71,8 +73,8 @@ class _RdTeamTasksTabState extends ConsumerState<RdTeamTasksTab> {
             : t)
         .toList();
     // Leadership without an own person row only has the team view.
-    final team = isLeader && (_team || myPersonId == null);
-    final visible = isLeader ? filterTasks(tasks, team ? 'all' : 'mine', myPersonId) : tasks;
+    final team = hasTeam && (_team || (isLeader && myPersonId == null));
+    final visible = hasTeam ? filterTasks(tasks, team ? 'all' : 'mine', myPersonId) : tasks;
     final archivedCount = visible.where((t) => isCompletedTaskArchived(t)).length;
     final groups = groupTasksByDue(visible, today, includeArchived: _includeArchived);
     final allOpen = tasks.where((t) => t.status != 'completed').length;
@@ -96,6 +98,8 @@ class _RdTeamTasksTabState extends ConsumerState<RdTeamTasksTab> {
 
     Widget row(TeamTask task) {
       final done = task.status == 'completed';
+      // Members tick off their own tasks only.
+      final mayToggle = isLeader || task.responsiblePersonId == myPersonId;
       return RdListRow(
         key: ValueKey('rd-team-task-${task.id}'),
         leading: IconButton(
@@ -105,7 +109,8 @@ class _RdTeamTasksTabState extends ConsumerState<RdTeamTasksTab> {
             done ? Icons.check_circle : Icons.radio_button_unchecked,
             color: done ? p.primary : p.text2,
           ),
-          onPressed: () => _toggle(task),
+          disabledColor: done ? p.primary : p.text2,
+          onPressed: mayToggle ? () => _toggle(task) : null,
         ),
         title: task.title,
         titleColor: done ? p.text2 : null,
@@ -134,7 +139,7 @@ class _RdTeamTasksTabState extends ConsumerState<RdTeamTasksTab> {
             )
           : null,
       children: [
-        if (isLeader && myPersonId != null)
+        if (hasTeam && myPersonId != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 14),
             child: Wrap(
@@ -160,7 +165,7 @@ class _RdTeamTasksTabState extends ConsumerState<RdTeamTasksTab> {
             padding: const EdgeInsets.only(bottom: 18),
             child: RdCard(
               child: Text(
-                !isLeader
+                !hasTeam
                     ? l10n.teamOrgEmptyMineAssigned
                     : tasks.isEmpty
                         ? l10n.teamOrgEmptyAll
