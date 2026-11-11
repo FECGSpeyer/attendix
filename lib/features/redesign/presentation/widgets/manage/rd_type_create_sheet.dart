@@ -81,6 +81,7 @@ class _RdTypeCreateFormState extends ConsumerState<_RdTypeCreateForm> {
     }
     final notifier = ref.read(attendanceTypeNotifierProvider.notifier);
     _busyValue = true;
+    var done = false;
     try {
       final template = _template;
       final AttendanceType created;
@@ -92,13 +93,17 @@ class _RdTypeCreateFormState extends ConsumerState<_RdTypeCreateForm> {
       }
       if (!mounted) return;
       final id = created.id;
-      if (id != null) widget.onCreated(id);
+      if (id != null) {
+        // The sheet closes; keep "Anlegen" disabled during its animation.
+        done = true;
+        widget.onCreated(id);
+      }
     } on DemoModeException {
       // DEMO_GUARD: the demo warning toast was already shown.
     } catch (_) {
       if (mounted) ToastHelper.showError(context, l10n.typeSettingsCreateFailed);
     } finally {
-      if (mounted) _busyValue = false;
+      if (mounted && !done) _busyValue = false;
     }
   }
 

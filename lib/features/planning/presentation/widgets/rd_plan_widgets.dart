@@ -34,6 +34,8 @@ Future<T?> showRdPlanSheet<T>(
   required List<Widget> Function(BuildContext ctx, void Function(T value) pop) builder,
   Widget Function(BuildContext ctx, void Function(T value) pop)? footer,
 }) {
+  // Inside the sheet the status bar padding is already consumed.
+  final statusBar = MediaQuery.paddingOf(context).top;
   return showModalBottomSheet<T>(
     context: context,
     useRootNavigator: true,
@@ -48,7 +50,7 @@ Future<T?> showRdPlanSheet<T>(
       // Room above the keyboard (the sheet already sits below the status
       // bar); keep a strip of the dimmed page visible so a tap outside
       // closes it too.
-      final room = mq.size.height - mq.viewInsets.bottom - mq.padding.top - 48 - kMinInteractiveDimension;
+      final room = mq.size.height - mq.viewInsets.bottom - statusBar - 48 - kMinInteractiveDimension;
       final maxHeight = room.clamp(120.0, mq.size.height * 0.88);
       final footerWidget = footer?.call(ctx, pop);
       return Padding(
