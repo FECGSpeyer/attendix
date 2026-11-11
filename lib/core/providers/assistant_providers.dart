@@ -64,13 +64,16 @@ class AssistantChatNotifier extends Notifier<AssistantChatState> {
       return;
     }
     state = state.copyWith(busy: true);
+    // Repositories bound to the current tenant before the first await.
+    final repo = ref.read(assistantRepositoryWithTenantProvider);
+    final executor = AssistantExecutor(ref);
     try {
-      final command = await ref.read(assistantRepositoryWithTenantProvider).ask(
+      final command = await repo.ask(
             text: clean,
             today: DateTime.now(),
             language: ref.read(localeProvider).languageCode,
           );
-      _add(AssistantMessage.assistant(await _answer(command)));
+      _add(AssistantMessage.assistant(await _answer(executor, command)));
     } on AssistantException catch (e) {
       _add(AssistantMessage.assistant(NoticeReply(switch (e.failure) {
         AssistantFailure.disabled => AssistantNotice.disabled,
@@ -90,8 +93,9 @@ class AssistantChatNotifier extends Notifier<AssistantChatState> {
     if (state.busy) return;
     _add(AssistantMessage.user(label));
     state = state.copyWith(busy: true);
+    final executor = AssistantExecutor(ref);
     try {
-      _add(AssistantMessage.assistant(await _answer(command)));
+      _add(AssistantMessage.assistant(await _answer(executor, command)));
     } catch (_) {
       _add(const AssistantMessage.assistant(NoticeReply(AssistantNotice.failed)));
     } finally {
@@ -101,9 +105,9 @@ class AssistantChatNotifier extends Notifier<AssistantChatState> {
 
   void clear() => state = const AssistantChatState();
 
-  Future<AssistantReply> _answer(AssistantCommand command) async {
+  Future<AssistantReply> _answer(AssistantExecutor executor, AssistantCommand command) async {
     try {
-      return await AssistantExecutor(ref).run(command);
+      return await executor.run(command);
     } catch (_) {
       return const NoticeReply(AssistantNotice.failed);
     }

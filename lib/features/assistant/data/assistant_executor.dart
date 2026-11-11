@@ -16,19 +16,25 @@ import '../../../data/models/instrument/instrument.dart';
 import '../../../data/models/person/person.dart';
 import '../../../data/models/song/song.dart';
 import '../../../data/repositories/assistant_repository.dart';
+import '../../../data/repositories/attendance_repository.dart' show AttendanceRepository;
 import '../../help/data/help_content_service.dart';
 import 'assistant_command.dart';
 import 'assistant_logic.dart';
 import 'assistant_reply.dart';
 
 class AssistantExecutor {
-  AssistantExecutor(this.ref, {DateTime Function()? clock}) : _clock = clock ?? DateTime.now;
+  /// The repositories are bound to the tenant here, before the first await
+  /// (a tenant switch while the answer loads never reads another tenant).
+  AssistantExecutor(this.ref, {DateTime Function()? clock})
+      : _clock = clock ?? DateTime.now,
+        _reads = ref.read(assistantRepositoryForTenantProvider(ref.read(currentTenantIdProvider))),
+        _events = ref.read(attendanceRepositoryWithTenantProvider);
 
   final Ref ref;
   final DateTime Function() _clock;
 
-  AssistantRepository get _repo =>
-      ref.read(assistantRepositoryForTenantProvider(ref.read(currentTenantIdProvider)));
+  final AssistantRepository _reads;
+  final AttendanceRepository _events;
 
   Future<AssistantAccess> access() async {
     final role = ref.read(currentRoleProvider);
@@ -140,7 +146,7 @@ class AssistantExecutor {
         people = (await _activePlayers()).where((p) => !p.paused).toList();
     }
 
-    final rows = await _repo.getRateRows(personIds: [for (final p in people) p.id!], range: range);
+    final rows = await _reads.getRateRows(personIds: [for (final p in people) p.id!], range: range);
     final rate = computeRate(rows,
         range: range, today: now, countedTypeIds: counted, dutyTypeIds: duty, shiftExcusedAsPresent: shiftExcused);
     if (rate.total == 0) return const NoticeReply(AssistantNotice.noData);
@@ -184,7 +190,7 @@ class AssistantExecutor {
           .where((a) => fits(a) && !dayOf(DateTime.parse(a.date).toLocal()).isBefore(today))
           .firstOrNull;
     }
-    final onDay = await ref.read(attendanceRepositoryWithTenantProvider).getAttendancesByDate(day);
+    final onDay = await _events.getAttendancesByDate(day);
     return onDay.where(fits).firstOrNull;
   }
 
@@ -199,7 +205,7 @@ class AssistantExecutor {
       if (onlyGroup == null) return NoticeReply(AssistantNotice.groupNotFound, subject: c.group);
     }
     final players = {for (final p in await ref.read(playersProvider.future)) if (p.id != null) p.id!: p};
-    final statuses = await _repo.getEventStatuses(event!.id!);
+    final statuses = await _reads.getEventStatuses(event!.id!);
     final counts = <int?, ({int present, int absent, int open})>{};
     final open = <String>[];
     final absent = <String>[];

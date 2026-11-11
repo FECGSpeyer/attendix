@@ -25,6 +25,12 @@ const Map<String, Set<String>> kDbColumns = {
     'tenant_id',
     'title',
   },
+  'ai_assistant_usage': {
+    'calls',
+    'day',
+    'tenantId',
+    'userId',
+  },
   'attendance': {
     'archived',
     'archived_at',
@@ -608,6 +614,7 @@ const Map<String, Set<String>> kDbColumns = {
   'tenants': {
     'absence_reasons',
     'additional_fields',
+    'ai_assistant_enabled',
     'auto_approve_registrations',
     'betaProgram',
     'branding_text',
