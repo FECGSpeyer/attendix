@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.135.0",
+      "date": "11.11.2026",
+      "changes": [
+        "✨ Chat-Assistent: Termine anlegen (bis zu 20 auf einmal), verschieben, absagen (alle entschuldigt, nur mit Grund) und Werke zum Termin setzen, jeweils mit Vorschau und Rückgängig"
+      ]
+    },
+    {
       "version": "0.134.0",
       "date": "11.11.2026",
       "changes": [
