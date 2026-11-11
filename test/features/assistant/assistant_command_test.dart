@@ -197,7 +197,7 @@ void main() {
       }
     });
 
-    test('set_songs and cancel_event', () {
+    test('set_songs; cancel_event is no command', () {
       final s = AssistantCommand.fromJson({
         'command': 'set_songs',
         'titles': ['Großer Gott', 12, 'großer gott'],
@@ -205,13 +205,7 @@ void main() {
       expect(s.titles, ['Großer Gott', '12']);
       expect(s.replace, isFalse);
       expect(AssistantCommand.fromJson({'command': 'set_songs', 'titles': []}), isA<UnsupportedCommand>());
-      final c = AssistantCommand.fromJson({
-        'command': 'cancel_event',
-        'event': {'type': 'weekday', 'day': 'sun'},
-        'reason': 'Saal belegt',
-      }) as CancelEventCommand;
-      expect(c.reason, 'Saal belegt');
-      expect((AssistantCommand.fromJson({'command': 'cancel_event'}) as CancelEventCommand).reason, isNull);
+      expect(AssistantCommand.fromJson({'command': 'cancel_event', 'reason': 'Saal'}), isA<UnsupportedCommand>());
     });
   });
 }

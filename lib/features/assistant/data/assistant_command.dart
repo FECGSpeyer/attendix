@@ -235,14 +235,6 @@ sealed class AssistantCommand {
           titles: titles,
           replace: m['mode'] == 'replace',
         );
-      case 'cancel_event':
-        final event = m['event'] == null ? const NextEventRef() : _eventRef(m['event']);
-        if (event == null) return const UnsupportedCommand();
-        return CancelEventCommand(
-          event: event,
-          typeName: _optName(m['typeName']),
-          reason: cleanAssistantText(m['reason'], _maxReason),
-        );
       case 'unsupported':
         return UnsupportedCommand(isChange: m['category'] == 'change');
       default:
@@ -354,17 +346,6 @@ class SetSongsCommand extends AssistantCommand {
   final String? typeName;
   final List<String> titles;
   final bool replace;
-}
-
-/// "Die Probe am Sonntag fällt aus, Saal belegt": everybody of the Termin
-/// gets Entschuldigt with the reason. Without [reason] the app asks for one
-/// (Matthias: cancelling only with a reason).
-class CancelEventCommand extends AssistantCommand {
-  const CancelEventCommand({required this.event, this.typeName, this.reason});
-
-  final EventRef event;
-  final String? typeName;
-  final String? reason;
 }
 
 /// "Wie war die Anwesenheit von Jonas in den letzten 3 Monaten?"

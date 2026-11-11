@@ -242,13 +242,8 @@ test("set songs: titles and numbers, add by default", () => {
   }
 });
 
-test("cancel event: reason optional in the command, the app asks for it", () => {
-  assert.deepEqual(
-    validateCommand({ command: "cancel_event", event: { type: "weekday", day: "sun" }, reason: "Saal belegt" }),
-    { command: "cancel_event", event: { type: "weekday", day: "sun" }, reason: "Saal belegt" },
-  );
-  assert.deepEqual(validateCommand({ command: "cancel_event" }), { command: "cancel_event", event: { type: "next" } });
-  assert.deepEqual(validateCommand({ command: "cancel_event", event: { type: "someday" } }), {
+test("cancelling a whole event is not a command", () => {
+  assert.deepEqual(validateCommand({ command: "cancel_event", reason: "Saal belegt" }), {
     command: "unsupported",
     category: "other",
   });

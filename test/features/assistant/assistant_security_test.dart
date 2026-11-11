@@ -65,7 +65,7 @@ void main() {
       expect(runPart, isNot(contains('.$write')), reason: write);
     }
     // Package 3 previews write nothing either.
-    for (final preview in ['_createPreview(', '_movePreview(', '_songsPreview(', '_cancelPreview(']) {
+    for (final preview in ['_createPreview(', '_movePreview(', '_songsPreview(']) {
       final body = _method(executor, 'Future<AssistantReply> $preview');
       for (final write in [
         ...['signIn(', 'signOut(', 'updatePersonAttendance(', 'addAbsence(', 'deleteAbsence('],
@@ -112,7 +112,6 @@ void main() {
     expect(logic, contains('CreateEventsCommand() => canCreateEvents'));
     expect(logic, contains('MoveEventCommand() => editsEvents'));
     expect(logic, contains('SetSongsCommand() => editsEvents'));
-    expect(logic, contains('CancelEventCommand() => changesOthers'));
     // Creating: the shared writer of both create pages, permission again in
     // the write path, writer bound to the tenant of the chat.
     final create = _method(executor, 'Future<List<int>> applyCreate(');
@@ -125,12 +124,13 @@ void main() {
     expect(move.indexOf('getAbsencesForTenant()'), lessThan(move.indexOf('updateAttendance(')));
     expect(move, contains('resetStatuses: false'));
     // Archived and out-of-window Termine are never changed.
-    for (final preview in ['_movePreview(', '_songsPreview(', '_cancelPreview(']) {
+    for (final preview in ['_movePreview(', '_songsPreview(']) {
       expect(_method(executor, 'Future<AssistantReply> $preview'), contains('if (_locked(a!))'), reason: preview);
     }
-    // Cancelling only with a reason.
-    expect(_method(executor, 'Future<AssistantReply> _cancelPreview('),
-        startsWith('Future<AssistantReply> _cancelPreview(CancelEventCommand c) async {\n    if (c.reason == null)'));
+    // Entschuldigt and Verspätung only with a reason, checked before any preview.
+    final run = _method(executor, 'Future<AssistantReply> run(');
+    expect(run, contains('if (command is SetStatusCommand && statusNeedsReason(command))'));
+    expect(executor, isNot(contains('cancel_event')));
   });
 
   test('undo of own rows checks the tenant and the own account', () {

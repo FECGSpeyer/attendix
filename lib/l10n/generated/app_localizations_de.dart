@@ -508,20 +508,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get assistantBirthdaysTitle => 'Geburtstage';
 
   @override
-  String assistantCancelAffected(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Personen werden auf Entschuldigt gesetzt.',
-      one: '1 Person wird auf Entschuldigt gesetzt.',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get assistantCancelTitle => 'Termin absagen';
-
-  @override
   String get assistantChangeCancel => 'Abbrechen';
 
   @override
@@ -752,12 +738,8 @@ class AppLocalizationsDe extends AppLocalizations {
       'Eine Abwesenheit trage ich ab heute und höchstens 6 Monate im Voraus ein.';
 
   @override
-  String get assistantNoticeCancelNeedsReason =>
-      'Einen Termin sage ich nur mit Grund ab. Schreib zum Beispiel: „Sag die Probe am Sonntag ab, Grund: Saal belegt“.';
-
-  @override
   String get assistantNoticeChangeLater =>
-      'Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, absagen, Werke) gehen schon, Personen kommen bald.';
+      'Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, Werke) gehen schon, Personen kommen bald.';
 
   @override
   String get assistantNoticeDateOutOfRange =>
@@ -774,6 +756,10 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get assistantNoticeEventsExist =>
       'An diesen Tagen gibt es schon einen Termin dieses Typs.';
+
+  @override
+  String get assistantNoticeExcuseNeedsReason =>
+      'Entschuldigen oder eine Verspätung melden geht nur mit Grund. Schreib zum Beispiel: „Melde mich Sonntag ab, ich bin krank“.';
 
   @override
   String get assistantNoticeFailed =>
@@ -969,7 +955,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get assistantSuggestNextEvent => 'Wann ist der nächste Termin?';
 
   @override
-  String get assistantSuggestSignOut => 'Melde mich für den nächsten Termin ab';
+  String get assistantSuggestSignOut =>
+      'Melde mich für den nächsten Termin ab, ich bin krank';
 
   @override
   String get assistantSuggestWhoComes => 'Wer kommt zum nächsten Termin?';

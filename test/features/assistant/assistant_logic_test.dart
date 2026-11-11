@@ -221,14 +221,13 @@ void main() {
     const create = CreateEventsCommand(dates: []);
     const move = MoveEventCommand(event: NextEventRef(), startTime: '10:00');
     const songs = SetSongsCommand(event: NextEventRef(), titles: ['A']);
-    const cancel = CancelEventCommand(event: NextEventRef(), reason: 'Saal');
 
     test('creating needs the confirmed create permission', () {
       expect(const AssistantAccess(role: Role.admin, hasOwnPerson: true).allows(create), isFalse);
       expect(const AssistantAccess(role: Role.helper, hasOwnPerson: true, canCreateEvents: true).allows(create), isTrue);
     });
 
-    test('moving and Werke: roles that edit Termine; cancel: roles that record attendance', () {
+    test('moving and Werke: roles that edit Termine', () {
       for (final role in [Role.admin, Role.responsible, Role.helper, Role.voiceLeaderHelper]) {
         final a = AssistantAccess(role: role, hasOwnPerson: false);
         expect(a.allows(move), isTrue, reason: '$role');
@@ -238,9 +237,7 @@ void main() {
         final a = AssistantAccess(role: role, hasOwnPerson: true);
         expect(a.allows(move), isFalse, reason: '$role');
         expect(a.allows(songs), isFalse, reason: '$role');
-        expect(a.allows(cancel), isFalse, reason: '$role');
       }
-      expect(const AssistantAccess(role: Role.admin, hasOwnPerson: false).allows(cancel), isTrue);
     });
 
     test('future window and moved end time', () {
@@ -252,5 +249,15 @@ void main() {
       expect(shiftedEndTime('22:00', '23:30', '23:00'), '00:30');
       expect(shiftedEndTime('19:00', null, '20:00'), isNull);
     });
+  });
+
+  test('Entschuldigt and Verspätung need a reason', () {
+    SetStatusCommand cmd(AssistantStatus s, [String? reason]) =>
+        SetStatusCommand(who: const [MeSubject()], status: s, event: const NextEventRef(), reason: reason);
+    expect(statusNeedsReason(cmd(AssistantStatus.excused)), isTrue);
+    expect(statusNeedsReason(cmd(AssistantStatus.lateExcused)), isTrue);
+    expect(statusNeedsReason(cmd(AssistantStatus.excused, 'krank')), isFalse);
+    expect(statusNeedsReason(cmd(AssistantStatus.present)), isFalse);
+    expect(statusNeedsReason(cmd(AssistantStatus.absent)), isFalse);
   });
 }

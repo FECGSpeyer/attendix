@@ -406,7 +406,7 @@ class _ReplyView extends ConsumerWidget {
             AssistantNotice.eventsExist => l10n.assistantNoticeEventsExist,
             AssistantNotice.noSongsForType => l10n.assistantNoticeNoSongsForType,
             AssistantNotice.songsNotFound => l10n.assistantNoticeSongsNotFound(s),
-            AssistantNotice.cancelNeedsReason => l10n.assistantNoticeCancelNeedsReason,
+            AssistantNotice.excuseNeedsReason => l10n.assistantNoticeExcuseNeedsReason,
           },
           style: text,
         );
@@ -615,23 +615,6 @@ class _ReplyView extends ConsumerWidget {
               style: text,
             ),
             link(l10n.assistantSongOpen, redesign ? RedesignRoutes.work(s.songId) : '/settings/songs/${s.songId}'),
-          ],
-        );
-
-      case StatusPreviewReply(:final plan, state: final st) when plan.cancelTitle != null:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(l10n.assistantCancelTitle, style: title),
-            Text(plan.cancelTitle!, style: text.copyWith(fontWeight: FontWeight.w600)),
-            Text(_weekdayDate(plan.changes.first.date), style: muted),
-            const SizedBox(height: 6),
-            _StatusChip(status: plan.status, style: style),
-            const SizedBox(height: 4),
-            Text(l10n.assistantChangeReason(plan.reason ?? ''), style: muted),
-            Text(l10n.assistantCancelAffected(plan.changes.length), style: muted),
-            const SizedBox(height: 10),
-            _ActionButtons(index: index, state: st, busy: busy, count: plan.changes.length, style: style),
           ],
         );
 

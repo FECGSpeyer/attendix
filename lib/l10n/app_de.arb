@@ -651,19 +651,6 @@
   "@assistantBirthdaysTitle": {
     "description": "assistant.birthdays.title"
   },
-  "assistantCancelAffected": "{count, plural, one {1 Person wird auf Entschuldigt gesetzt.} other {{count} Personen werden auf Entschuldigt gesetzt.}}",
-  "@assistantCancelAffected": {
-    "description": "assistant.cancel.affected",
-    "placeholders": {
-      "count": {
-        "type": "num"
-      }
-    }
-  },
-  "assistantCancelTitle": "Termin absagen",
-  "@assistantCancelTitle": {
-    "description": "assistant.cancel.title"
-  },
   "assistantChangeCancel": "Abbrechen",
   "@assistantChangeCancel": {
     "description": "assistant.change.cancel"
@@ -914,11 +901,7 @@
   "@assistantNoticeAbsenceOutOfRange": {
     "description": "assistant.notice.absenceOutOfRange"
   },
-  "assistantNoticeCancelNeedsReason": "Einen Termin sage ich nur mit Grund ab. Schreib zum Beispiel: „Sag die Probe am Sonntag ab, Grund: Saal belegt“.",
-  "@assistantNoticeCancelNeedsReason": {
-    "description": "assistant.notice.cancelNeedsReason"
-  },
-  "assistantNoticeChangeLater": "Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, absagen, Werke) gehen schon, Personen kommen bald.",
+  "assistantNoticeChangeLater": "Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, Werke) gehen schon, Personen kommen bald.",
   "@assistantNoticeChangeLater": {
     "description": "assistant.notice.changeLater"
   },
@@ -937,6 +920,10 @@
   "assistantNoticeEventsExist": "An diesen Tagen gibt es schon einen Termin dieses Typs.",
   "@assistantNoticeEventsExist": {
     "description": "assistant.notice.eventsExist"
+  },
+  "assistantNoticeExcuseNeedsReason": "Entschuldigen oder eine Verspätung melden geht nur mit Grund. Schreib zum Beispiel: „Melde mich Sonntag ab, ich bin krank“.",
+  "@assistantNoticeExcuseNeedsReason": {
+    "description": "assistant.notice.excuseNeedsReason"
   },
   "assistantNoticeFailed": "Das hat gerade nicht geklappt. Bitte versuch es noch einmal.",
   "@assistantNoticeFailed": {
@@ -1183,7 +1170,7 @@
   "@assistantSuggestNextEvent": {
     "description": "assistant.suggest.nextEvent"
   },
-  "assistantSuggestSignOut": "Melde mich für den nächsten Termin ab",
+  "assistantSuggestSignOut": "Melde mich für den nächsten Termin ab, ich bin krank",
   "@assistantSuggestSignOut": {
     "description": "assistant.suggest.signOut"
   },

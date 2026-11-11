@@ -267,7 +267,6 @@ class AssistantAccess {
       CreateEventsCommand() => canCreateEvents,
       MoveEventCommand() => editsEvents,
       SetSongsCommand() => editsEvents,
-      CancelEventCommand() => changesOthers,
       UnsupportedCommand() => true,
     };
   }
@@ -392,3 +391,8 @@ String? shiftedEndTime(String? oldStart, String? oldEnd, String newStart) {
   final e = end < 0 ? end + 24 * 60 : end;
   return '${(e ~/ 60).toString().padLeft(2, '0')}:${(e % 60).toString().padLeft(2, '0')}';
 }
+
+/// Entschuldigt and Verspätung need a reason, like the sign-out sheet of the
+/// app (Matthias, 11.11.2026). Without one the chat asks for it.
+bool statusNeedsReason(SetStatusCommand c) =>
+    (c.status == AssistantStatus.excused || c.status == AssistantStatus.lateExcused) && c.reason == null;
