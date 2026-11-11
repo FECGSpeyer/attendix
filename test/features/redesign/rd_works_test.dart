@@ -28,11 +28,13 @@ import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart'
 import 'package:attendix/features/redesign/presentation/pages/rd_works_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_overview.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
+import 'package:attendix/features/redesign/presentation/widgets/works/rd_current_works.dart';
 import 'package:attendix/features/redesign/presentation/widgets/works/rd_works_filter_sheet.dart';
 import 'package:attendix/features/songs/data/song_print_service.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/features/songs/presentation/utils/song_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -586,7 +588,9 @@ void main() {
       expect(find.text('Titel oder Nummer'), findsOneWidget);
       // The Werke of the coming Termine as cards, each once.
       expect(find.text('Aktuell'), findsOneWidget);
-      expect(find.text('Deine Stimme: Klarinette'), findsOneWidget);
+      // All cards for one Termin: it is named once above the row.
+      expect(find.textContaining('Für '), findsOneWidget);
+      expect(find.text('Deine Stimme: Klarinette'), findsNothing);
       final cards = find.byKey(const Key('rd-works-current'));
       expect(find.descendant(of: cards, matching: find.byType(RdCard)), findsNWidgets(2));
       expect(find.descendant(of: cards, matching: find.text('Keine Stimme')), findsOneWidget);
@@ -619,6 +623,52 @@ void main() {
       await tester.tap(find.descendant(of: find.byKey(const Key('rd-works-current')), matching: find.text('Festliche Ouvertüre')));
       await _settle(tester);
       expect(find.text('page work 5'), findsOneWidget);
+    });
+
+    testWidgets('Aktuell: two Termine on one day name the type, large text fits', (tester) async {
+      _phone(tester);
+      final day = DateTime(2026, 11, 29);
+      RdNextEvent event(int id, String type) => RdNextEvent(date: day, type: type, attendanceId: id, songs: const []);
+      const long = Song(id: 9, name: 'Warum musstest du so viel leiden für die Sünden dieser Welt', number: 91);
+      Widget app(double scale) => ProviderScope(
+            child: MaterialApp(
+              locale: const Locale('de'),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+              home: MediaQuery(
+                data: MediaQueryData(size: const Size(393, 852), textScaler: TextScaler.linear(scale)),
+                child: Scaffold(
+                  body: SingleChildScrollView(
+                    child: RdCurrentWorksStrip(
+                      works: [
+                        RdCurrentWork(song: long, event: event(1, 'Probe')),
+                        RdCurrentWork(song: _ave, event: event(2, 'Konzert')),
+                      ],
+                      ownGroup: _groups.first,
+                      choir: false,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+
+      // 300 %: number, Termin, three title lines and the hint fit the card.
+      await tester.pumpWidget(app(3));
+      await _settle(tester);
+      expect(tester.takeException(), isNull);
+      expect(find.text('Keine Stimme'), findsNWidgets(2));
+
+      // 200 % (the test font is about twice as wide as the real one): day and
+      // type stay readable, nothing cut off.
+      await tester.pumpWidget(app(2));
+      await _settle(tester);
+      expect(tester.takeException(), isNull);
+      expect(find.textContaining('Für '), findsNothing);
+      for (final type in ['Probe', 'Konzert']) {
+        expect(tester.renderObject<RenderParagraph>(find.textContaining(type)).didExceedMaxLines, isFalse, reason: type);
+      }
     });
 
     testWidgets('Alle als PDF is locked and loading while the PDF is built', (tester) async {
@@ -706,7 +756,8 @@ void main() {
       // "Aktuell" for leads too: without a group of their own the score.
       expect(find.text('Aktuell'), findsOneWidget);
       final cards = find.byKey(const Key('rd-works-current'));
-      expect(find.descendant(of: cards, matching: find.text('Partitur')), findsOneWidget);
+      // Only a missing part is named on a card.
+      expect(find.descendant(of: cards, matching: find.text('Partitur')), findsNothing);
       expect(find.descendant(of: cards, matching: find.text('Keine Stimme')), findsOneWidget);
       expect(find.text('ohne Noten'), findsOneWidget);
       // A single missing part is normal: no pill in the list.

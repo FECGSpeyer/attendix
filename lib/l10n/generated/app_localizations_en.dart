@@ -17174,6 +17174,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorksCurrentBack => 'Scroll back';
 
   @override
+  String redesignWorksCurrentFor(Object when) {
+    return 'For $when';
+  }
+
+  @override
   String get redesignWorksCurrentForward => 'Scroll forward';
 
   @override
@@ -17183,11 +17188,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignWorksCurrentNoPart => 'No part';
-
-  @override
-  String redesignWorksCurrentPart(Object name) {
-    return 'Your part: $name';
-  }
 
   @override
   String get redesignWorksEmpty => 'No works yet.';

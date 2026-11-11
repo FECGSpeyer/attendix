@@ -17328,6 +17328,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorksCurrentBack => 'Zurück blättern';
 
   @override
+  String redesignWorksCurrentFor(Object when) {
+    return 'Für $when';
+  }
+
+  @override
   String get redesignWorksCurrentForward => 'Weiter blättern';
 
   @override
@@ -17337,11 +17342,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignWorksCurrentNoPart => 'Keine Stimme';
-
-  @override
-  String redesignWorksCurrentPart(Object name) {
-    return 'Deine Stimme: $name';
-  }
 
   @override
   String get redesignWorksEmpty => 'Noch keine Werke.';
