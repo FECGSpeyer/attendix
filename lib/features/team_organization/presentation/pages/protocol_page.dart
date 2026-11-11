@@ -1963,7 +1963,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         const SizedBox(height: AppDimensions.paddingM),
         FilledButton(
           onPressed: _openPublish,
-          child: IonButtonLabel(_isPublished ? context.l10n.protocolRepublish : context.l10n.protocolPublish),
+          child: IonButtonLabel(_isPublished
+              ? context.l10n.protocolRepublish
+              : (ref.watch(redesignEnabledProvider) ? context.l10n.rdTeamFinishMeeting : context.l10n.protocolPublish)),
         ),
       ],
     );
