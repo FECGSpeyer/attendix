@@ -97,6 +97,12 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
   bool _otherConductorSaved = false;
   final _otherConductorController = TextEditingController();
 
+  /// Beta: conductor of single Werke that differs from "Dirigent für alle".
+  final Map<int, _RdConductor> _rdOverrides = {};
+
+  /// Beta: Werk whose conductor chips are open.
+  int? _rdExpandedSongId;
+
   @override
   void dispose() {
     _otherConductorController.dispose();
@@ -149,12 +155,16 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
     super.initState();
     // Pre-select first conductor if available
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final conductors = ref.read(activeConductorsProvider).valueOrNull;
       if (conductors != null && conductors.isNotEmpty) {
         setState(() {
           _selectedConductorId = conductors.first.id;
         });
       }
+      // Beta: straight into "Werke auswählen" (all Werke at once, the
+      // conductor is set per Werk afterwards); cancelling closes the sheet.
+      if (context.rdSkin != null) _rdOpenPickerFirst();
     });
   }
 
@@ -303,7 +313,8 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
   }
 
   /// Full-screen "Werke auswählen" with "Werk suchen..." (Ionic songSelectModal).
-  Future<void> _openSongPicker() async {
+  /// Returns false when it was cancelled.
+  Future<bool> _openSongPicker() async {
     final result = await Navigator.of(context, rootNavigator: true).push<Set<int>>(
       MaterialPageRoute(
         fullscreenDialog: true,
@@ -319,12 +330,19 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
         _selectedSongIds
           ..clear()
           ..addAll(result);
+        _rdOverrides.removeWhere((id, _) => !_selectedSongIds.contains(id));
+        if (!_selectedSongIds.contains(_rdExpandedSongId)) _rdExpandedSongId = null;
       });
     }
+    return result != null;
   }
 
   bool _canAdd() {
     if (_selectedSongIds.isEmpty) return false;
+    if (context.rdSkin != null) {
+      final conductors = ref.read(activeConductorsProvider).valueOrNull ?? const <Person>[];
+      return _selectedSongIds.every((id) => _rdConductorFor(id, conductors) != null);
+    }
     if (_useOtherConductor) {
       return _otherConductorName != null && _otherConductorName!.isNotEmpty;
     }
@@ -340,12 +358,23 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
 
     // Create entries for each selected song
     final newEntries = <SongHistoryEntry>[];
+    final beta = context.rdSkin != null;
     for (final songId in _selectedSongIds) {
       final song = songs.firstWhere((s) => s.id == songId, orElse: () => Song(name: context.l10n.commonUnknown));
 
+      // Beta: conductor per Werk; classic: one conductor for all (Ionic).
+      final choice =
+          beta
+              ? _rdConductorFor(songId, conductors)
+              : (
+                id: _useOtherConductor ? null : _selectedConductorId,
+                other: _useOtherConductor ? _otherConductorName : null,
+              );
+      if (choice == null) continue;
+
       String? conductorName;
-      if (!_useOtherConductor && _selectedConductorId != null) {
-        final conductor = conductors.firstWhere((c) => c.id == _selectedConductorId, orElse: () => const Person());
+      if (choice.other == null && choice.id != null) {
+        final conductor = conductors.firstWhere((c) => c.id == choice.id, orElse: () => const Person());
         conductorName = conductor.fullName;
       }
 
@@ -353,9 +382,9 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
         SongHistoryEntry(
           songId: songId,
           songName: song.displayName,
-          conductorId: _useOtherConductor ? null : _selectedConductorId,
+          conductorId: choice.other == null ? choice.id : null,
           conductorName: conductorName,
-          otherConductor: _useOtherConductor ? _otherConductorName : null,
+          otherConductor: choice.other,
         ),
       );
     }

@@ -20170,6 +20170,12 @@ abstract class AppLocalizations {
   /// **'Werk hinzufügen'**
   String get redesignEventAddWorkLabel;
 
+  /// redesign.event.addWorksTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk hinzufügen} other {{count} Werke hinzufügen}}'**
+  String redesignEventAddWorksTitle(num count);
+
   /// redesign.event.allDone
   ///
   /// In de, this message translates to:
@@ -20242,11 +20248,29 @@ abstract class AppLocalizations {
   /// **'Zuletzt geändert von {name} · {when}'**
   String redesignEventChangedBy(Object name, Object when);
 
+  /// redesign.event.chooseConductor
+  ///
+  /// In de, this message translates to:
+  /// **'Dirigent wählen'**
+  String get redesignEventChooseConductor;
+
   /// redesign.event.closing
   ///
   /// In de, this message translates to:
   /// **'Abschluss'**
   String get redesignEventClosing;
+
+  /// redesign.event.conductorFor
+  ///
+  /// In de, this message translates to:
+  /// **'Dirigent für „{name}“'**
+  String redesignEventConductorFor(Object name);
+
+  /// redesign.event.conductorForAll
+  ///
+  /// In de, this message translates to:
+  /// **'Dirigent für alle'**
+  String get redesignEventConductorForAll;
 
   /// redesign.event.countAbsent
   ///
@@ -20493,6 +20517,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Weitere Status und Notiz für {name}'**
   String redesignEventMoreStatus(Object name);
+
+  /// redesign.event.moreWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Werke'**
+  String get redesignEventMoreWorks;
 
   /// redesign.event.neutralHint
   ///
