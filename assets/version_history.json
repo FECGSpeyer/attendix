@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.130.3",
+      "date": "11.11.2026",
+      "changes": [
+        "✨ Beta Werk: Link zum Werk teilen direkt oben als Teilen-Symbol",
+        "⚡ Beta Werk: \"Alle Dateien herunterladen\" zeigt sofort den Fortschritt und lädt die Dateien parallel"
+      ]
+    },
+    {
       "version": "0.130.2",
       "date": "11.11.2026",
       "changes": [
