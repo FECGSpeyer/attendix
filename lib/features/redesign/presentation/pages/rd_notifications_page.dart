@@ -66,11 +66,12 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> with 
   }
 
   /// iOS: Attendix in the Settings app; macOS: the notification settings
+  /// (legacy pane id: macOS 12, and still mapped by System Settings 13+)
   /// (try-catch: PWA/other platforms).
   Future<void> _openSystemSettings() async {
     try {
       await launchUrl(Uri.parse(defaultTargetPlatform == TargetPlatform.macOS
-          ? 'x-apple.systempreferences:com.apple.Notifications-Settings.extension'
+          ? 'x-apple.systempreferences:com.apple.preference.notifications'
           : 'app-settings:'));
     } catch (_) {}
   }
