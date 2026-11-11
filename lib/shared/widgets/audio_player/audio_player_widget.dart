@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import 'package:attendix/core/services/audio_player/audio_player_service.dart';
 import '../../../l10n/l10n.dart';
 import '../../../core/utils/toast_helper.dart';
 import '../../../core/utils/error_message.dart';
-import '../adaptive/app_select.dart';
 
 /// Mini audio player bar. Hidden when no file is loaded.
 ///
@@ -15,11 +13,11 @@ import '../adaptive/app_select.dart';
 /// `[play/pause] [title]   [close]
 ///                [time]   [slider]   [time]`
 class AudioPlayerWidget extends ConsumerStatefulWidget {
-  const AudioPlayerWidget({super.key, this.showSpeed = false});
+  const AudioPlayerWidget({super.key, this.largeClose = false});
 
-  /// REDESIGN: "0,8×" in the bar (Beta: the only player, the Werk page
-  /// shows the recordings as rows without own controls).
-  final bool showSpeed;
+  /// REDESIGN: close button on the right with a 44px tap target (Beta: the
+  /// only player, the Werk page shows the recordings as rows).
+  final bool largeClose;
 
   @override
   ConsumerState<AudioPlayerWidget> createState() => _AudioPlayerWidgetState();
@@ -135,9 +133,9 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
                                 style: const TextStyle(fontSize: 10, color: medium),
                               ),
                             ],
-                            // REDESIGN: close sits next to the speed button
-                            // with a full 44px tap target (see below).
-                            if (!widget.showSpeed) ...[
+                            // REDESIGN: close sits on the right with a full
+                            // 44px tap target (see below).
+                            if (!widget.largeClose) ...[
                               const SizedBox(width: 8),
                               iconButton(AppIcons.cancel, 18, medium, svc.stop,
                                   tooltip: context.l10n.commonClose),
@@ -204,80 +202,12 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
                     ],
                   ),
                 ),
-                // REDESIGN: speed and close side by side, vertically centred,
-                // each with a 44px tap target (old: 18px ✕ above a 24px pill).
-                if (widget.showSpeed) ...[
+                // REDESIGN: close vertically centred with a 44px tap target.
+                if (widget.largeClose) ...[
                   const SizedBox(width: 4),
-                  _SpeedButton(primary: primary),
                   _CloseButton(onTap: svc.stop),
                 ],
               ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// REDESIGN: playback speeds offered by [_SpeedButton] (same for every
-/// track; 0,5×–0,9× to practise along, 1,25× / 1,5× to skim).
-const _kSpeeds = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5];
-
-/// REDESIGN: shows the current speed; a tap opens the speed menu.
-class _SpeedButton extends ConsumerWidget {
-  const _SpeedButton({required this.primary});
-
-  final Color primary;
-
-  static String _format(double speed) =>
-      '${NumberFormat.decimalPattern(currentIntlLocale()).format(speed)}×';
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final current = ref.watch(audioPlaybackSpeedProvider);
-    final changed = current != 1.0;
-    final label = _format(current);
-    return Semantics(
-      button: true,
-      label: label,
-      excludeSemantics: true,
-      child: Builder(
-        builder: (buttonContext) => InkWell(
-          borderRadius: BorderRadius.circular(22),
-          onTap: () async {
-            final picked = await showAppSelect<double>(
-              context: buttonContext,
-              value: current,
-              options: [
-                for (final speed in _kSpeeds)
-                  AppSelectOption<double>(value: speed, label: _format(speed)),
-              ],
-            );
-            if (picked == null || picked.value == current) return;
-            await ref.read(audioPlayerServiceProvider.notifier).setSpeed(picked.value);
-          },
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: 48, minHeight: 44),
-            child: Center(
-              child: Container(
-                height: 28,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(14),
-                  color: changed ? primary.withValues(alpha: 0.15) : null,
-                  border: Border.all(color: changed ? primary : const Color(0x8092949C)),
-                ),
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: changed ? primary : null,
-                  ),
-                ),
-              ),
             ),
           ),
         ),

@@ -77,10 +77,6 @@ class AudioQueueInfo {
 /// [AudioPlayerState] so the player bar can show next/previous buttons).
 final audioQueueInfoProvider = StateProvider<AudioQueueInfo>((_) => const AudioQueueInfo());
 
-/// REDESIGN: playback speed of [AudioPlayerService.setSpeed], so every
-/// "0,8×" button on a page shows the same value.
-final audioPlaybackSpeedProvider = StateProvider<double>((_) => 1.0);
-
 /// Cross-cutting audio playback service.
 ///
 /// Mirrors Ionic v4.0.5 `AudioPlayerService` (`audio-player.service.ts`).
@@ -117,17 +113,6 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
 
   List<AudioQueueItem> _queue = const [];
   int _queueIndex = -1;
-
-  /// REDESIGN: playback speed (Werk page "0,8×" to practise along); kept
-  /// for the following tracks.
-  double _speed = 1.0;
-  double get speed => _speed;
-
-  Future<void> setSpeed(double speed) async {
-    _speed = speed;
-    ref.read(audioPlaybackSpeedProvider.notifier).state = speed;
-    await _player?.setSpeed(speed);
-  }
 
   /// Incremented on every track change to ignore stale URL resolutions.
   int _loadToken = 0;
@@ -276,7 +261,6 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
           loadedDuration = await player.setFilePath(local);
         }
       }
-      if (_speed != 1.0) await player.setSpeed(_speed);
 
       // Race guard: a newer playFromUrl call may have superseded us
       // while setUrl was loading. If so, _player no longer points to
