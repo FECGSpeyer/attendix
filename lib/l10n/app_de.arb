@@ -19210,6 +19210,13 @@
   "@redesignPlanAddEnd": {
     "description": "redesign.plan.addEnd"
   },
+  "redesignPlanAddInBlock": "Punkt in „{name}“",
+  "@redesignPlanAddInBlock": {
+    "description": "redesign.plan.addInBlock",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignPlanAddItem": "Punkt",
   "@redesignPlanAddItem": {
     "description": "redesign.plan.addItem"
@@ -19245,6 +19252,18 @@
   "redesignPlanBack": "Termin",
   "@redesignPlanBack": {
     "description": "redesign.plan.back"
+  },
+  "redesignPlanBlockItems": "Punkte im Block",
+  "@redesignPlanBlockItems": {
+    "description": "redesign.plan.blockItems"
+  },
+  "redesignPlanBlockName": "Name des Blocks",
+  "@redesignPlanBlockName": {
+    "description": "redesign.plan.blockName"
+  },
+  "redesignPlanBlockRow": "Block",
+  "@redesignPlanBlockRow": {
+    "description": "redesign.plan.blockRow"
   },
   "redesignPlanBlockTemplateHint": "Block · {count} Min",
   "@redesignPlanBlockTemplateHint": {
@@ -19303,6 +19322,13 @@
   "@redesignPlanDrag": {
     "description": "redesign.plan.drag"
   },
+  "redesignPlanDropInBlock": "in „{name}“",
+  "@redesignPlanDropInBlock": {
+    "description": "redesign.plan.dropInBlock",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignPlanDuration": "Dauer",
   "@redesignPlanDuration": {
     "description": "redesign.plan.duration"
@@ -19359,7 +19385,7 @@
   "@redesignPlanHeading": {
     "description": "redesign.plan.heading"
   },
-  "redesignPlanHint": "Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.",
+  "redesignPlanHint": "Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff ziehen sortiert um: über „+ Punkt in …“ landet ein Punkt im Block, darunter dahinter.",
   "@redesignPlanHint": {
     "description": "redesign.plan.hint"
   },
@@ -19410,6 +19436,10 @@
   "@redesignPlanJoinBlock": {
     "description": "redesign.plan.joinBlock"
   },
+  "redesignPlanKindSong": "Werk",
+  "@redesignPlanKindSong": {
+    "description": "redesign.plan.kindSong"
+  },
   "redesignPlanLeaveBlock": "Aus dem Block nehmen",
   "@redesignPlanLeaveBlock": {
     "description": "redesign.plan.leaveBlock"
@@ -19449,6 +19479,10 @@
   "@redesignPlanNameHint": {
     "description": "redesign.plan.nameHint"
   },
+  "redesignPlanNewBlock": "Neuer Block",
+  "@redesignPlanNewBlock": {
+    "description": "redesign.plan.newBlock"
+  },
   "redesignPlanNewPlan": "Neuer Plan",
   "@redesignPlanNewPlan": {
     "description": "redesign.plan.newPlan"
@@ -19456,6 +19490,10 @@
   "redesignPlanNext": "Nächster Termin",
   "@redesignPlanNext": {
     "description": "redesign.plan.next"
+  },
+  "redesignPlanNoBlock": "Kein Block",
+  "@redesignPlanNoBlock": {
+    "description": "redesign.plan.noBlock"
   },
   "redesignPlanNotes": "Notizen zum Termin",
   "@redesignPlanNotes": {
@@ -19491,6 +19529,10 @@
   "@redesignPlanOther": {
     "description": "redesign.plan.other"
   },
+  "redesignPlanPickBlock": "Block wählen",
+  "@redesignPlanPickBlock": {
+    "description": "redesign.plan.pickBlock"
+  },
   "redesignPlanPlanPick": "Termin wählen",
   "@redesignPlanPlanPick": {
     "description": "redesign.plan.planPick"
@@ -19521,6 +19563,29 @@
   "redesignPlanPublicLinkShared": "Geteilt · zum Ändern oder Beenden tippen",
   "@redesignPlanPublicLinkShared": {
     "description": "redesign.plan.publicLinkShared"
+  },
+  "redesignPlanQuickAddAdded": "Hinzugefügt",
+  "@redesignPlanQuickAddAdded": {
+    "description": "redesign.plan.quickAddAdded"
+  },
+  "redesignPlanQuickAddButton": "Hinzufügen",
+  "@redesignPlanQuickAddButton": {
+    "description": "redesign.plan.quickAddButton"
+  },
+  "redesignPlanQuickAddHint": "Enter fügt hinzu, danach geht es gleich mit dem nächsten weiter.",
+  "@redesignPlanQuickAddHint": {
+    "description": "redesign.plan.quickAddHint"
+  },
+  "redesignPlanQuickAddInBlock": "In „{name}“",
+  "@redesignPlanQuickAddInBlock": {
+    "description": "redesign.plan.quickAddInBlock",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanQuickAddInBlockHint": "Neue Punkte kommen ans Ende des Blocks",
+  "@redesignPlanQuickAddInBlockHint": {
+    "description": "redesign.plan.quickAddInBlockHint"
   },
   "redesignPlanRemoved": "„{name}“ entfernt",
   "@redesignPlanRemoved": {

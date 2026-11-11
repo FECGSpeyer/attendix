@@ -416,16 +416,41 @@ extension _PlanningBeta on _PlanningPageState {
   // Timeline
   // ---------------------------------------------------------------------------
 
-  /// Indexes (in [_fields]) of the visible rows: Unterpunkte of collapsed
-  /// blocks are hidden.
-  List<int> _rdVisible() => [
-    for (var i = 0; i < _fields.length; i++)
-      if (_fields[i].groupId == null || !_rdCollapsed.contains(_fields[i].groupId)) i,
-  ];
+  /// The visible rows: fields (Unterpunkte of collapsed blocks are hidden)
+  /// and, after the last row of every open block, its "+ Punkt in „…“"
+  /// row. That row is the block's end: an item dropped above it lands in
+  /// the block, below it behind the block.
+  List<_RdSlot> _rdSlots() {
+    final slots = <_RdSlot>[];
+    for (var i = 0; i < _fields.length; i++) {
+      final f = _fields[i];
+      if (f.groupId != null && _rdCollapsed.contains(f.groupId)) continue;
+      slots.add(_RdSlot(i));
+      final block = PlanUtils.isGroupHead(f) ? f.id : f.groupId;
+      if (block == null || _rdCollapsed.contains(block)) continue;
+      final head = _fields.indexWhere((x) => x.id == block);
+      if (head >= 0 && PlanUtils.lastIndexOfGroup(_fields, block) == i) slots.add(_RdSlot(head, footer: block));
+    }
+    return slots;
+  }
+
+  /// The block a row belongs to (its head, Unterpunkt or end row).
+  String? _rdBlockOf(_RdSlot s) {
+    if (s.isFooter) return s.footer;
+    final f = _fields[s.index];
+    return PlanUtils.isGroupHead(f) ? f.id : f.groupId;
+  }
+
+  _RdPart _rdPartOf(_RdSlot s) {
+    if (s.isFooter) return _RdPart.bottom;
+    final f = _fields[s.index];
+    if (PlanUtils.isGroupHead(f)) return _rdCollapsed.contains(f.id) ? _RdPart.single : _RdPart.top;
+    return f.groupId != null ? _RdPart.middle : _RdPart.none;
+  }
 
   Widget _rdTimeline(int? start, {required bool showBeamer}) {
     final p = context.rd;
-    final visible = _rdVisible();
+    final slots = _rdSlots();
     final seen = <String, int>{};
     String rowKey(String id) {
       final n = (seen[id] ?? 0) + 1;
@@ -434,11 +459,15 @@ extension _PlanningBeta on _PlanningPageState {
     }
 
     final numbers = PlanUtils.topNumbers(_fields);
-    final keys = [for (final i in visible) rowKey(_fields[i].id)];
+    final keys = [for (final s in slots) s.isFooter ? 'end:${s.footer}' : rowKey(_fields[s.index].id)];
+    _rdSlotOrder = [for (final k in keys) _rdSlotKeys.putIfAbsent(k, GlobalKey.new)];
     return Listener(
+      onPointerDown: (e) => _rdPointerDown = e.localPosition,
+      onPointerMove: (e) => _rdDragHover(slots, e.localPosition.dy),
       onPointerUp: (_) => _rdDragCancel(later: true),
       onPointerCancel: (_) => _rdDragCancel(),
       child: DecoratedBox(
+        key: _rdListKey,
         decoration: BoxDecoration(
           color: p.surface,
           borderRadius: BorderRadius.circular(p.listRadius),
@@ -453,29 +482,107 @@ extension _PlanningBeta on _PlanningPageState {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             buildDefaultDragHandles: false,
-            itemCount: visible.length,
-            onReorderStart: (row) => _rdDragStart(visible, row),
-            onReorderEnd: (row) => _rdDragEnd(visible, row),
-            onReorderItem: (o, n) => _rdReorder(visible, o, n),
-            proxyDecorator: (child, row, _) => _rdDragProxy(visible, row, child),
+            itemCount: slots.length,
+            onReorderStart: (row) => _rdDragStart(slots, row),
+            onReorderEnd: (row) => _rdDragEnd(slots, row),
+            onReorderItem: (o, n) => _rdReorder(slots, o, n),
+            proxyDecorator:
+                (child, row, _) => _rdDragProxy(
+                  slots,
+                  row,
+                  child,
+                  () => _rdRow(slots[row].index, row, start, numbers, divider: false, showBeamer: showBeamer, proxy: true),
+                ),
             itemBuilder: (context, row) {
-              final index = visible[row];
-              // Unterpunkte of the dragged block fold into its head (the row
-              // count stays the same: a changed count cancels the drag).
-              final folded = _rdDragBlock != null && _fields[index].groupId == _rdDragBlock;
+              final s = slots[row];
+              final block = _rdBlockOf(s);
+              // Unterpunkte and the end row of the dragged block fold into
+              // its head (the row count stays the same: a changed count
+              // cancels the drag).
+              final folded =
+                  _rdDragBlock != null && block == _rdDragBlock && (s.isFooter || _fields[s.index].id != block);
+              final next = row + 1 < slots.length ? slots[row + 1] : null;
+              final part = _rdPartOf(s);
+              // A line between two rows of the same block or two rows
+              // outside of blocks; blocks are set off by their frame.
+              final divider = next != null && part != _RdPart.single && !s.isFooter && _rdBlockOf(next) == block;
+              final Widget body =
+                  s.isFooter
+                      ? _rdBlockEnd(s)
+                      : _rdRow(s.index, row, start, numbers, divider: divider, showBeamer: showBeamer);
               return KeyedSubtree(
                 key: ValueKey(keys[row]),
-                child: AnimatedSize(
-                  duration: const Duration(milliseconds: 180),
-                  curve: Curves.easeOut,
-                  alignment: Alignment.topCenter,
-                  child:
-                      folded
-                          ? const SizedBox(width: double.infinity)
-                          : _rdRow(index, row, start, numbers, last: row == visible.length - 1, showBeamer: showBeamer),
+                child: KeyedSubtree(
+                  key: _rdSlotOrder[row],
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 180),
+                    curve: Curves.easeOut,
+                    alignment: Alignment.topCenter,
+                    child:
+                        folded
+                            ? const SizedBox(width: double.infinity)
+                            : _rdFramed(body, part, hot: block != null && block == _rdHotBlock),
+                  ),
                 ),
               );
             },
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The frame of a block around its rows: a rounded box drawn in parts
+  /// (head = top, Unterpunkte = sides, end row = bottom), highlighted while
+  /// a dragged item would land in it. Only colours change while dragging,
+  /// so the rows keep their size.
+  Widget _rdFramed(Widget child, _RdPart part, {required bool hot}) {
+    if (part == _RdPart.none) return child;
+    final p = context.rd;
+    const r = Radius.circular(12);
+    final top = part == _RdPart.top || part == _RdPart.single;
+    final bottom = part == _RdPart.bottom || part == _RdPart.single;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(6, top ? 6 : 0, 6, bottom ? 6 : 0),
+      child: CustomPaint(
+        foregroundPainter: _RdBlockFramePainter(part: part, color: hot ? p.link : p.line, width: hot ? 2.5 : 1.5),
+        child: ClipRRect(
+          borderRadius: BorderRadius.vertical(top: top ? r : Radius.zero, bottom: bottom ? r : Radius.zero),
+          child: hot ? ColoredBox(color: p.soft.withValues(alpha: 0.35), child: child) : child,
+        ),
+      ),
+    );
+  }
+
+  /// "+ Punkt in „Block“": the end of an open block and the way to add
+  /// several items into it.
+  Widget _rdBlockEnd(_RdSlot s) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final head = _fields[s.index];
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        key: ValueKey('rd-plan-block-add-${s.footer}'),
+        onTap: () => _rdQuickAdd(group: s.footer),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(30, 10, 14, 10),
+            child: Row(
+              children: [
+                Icon(Icons.add, size: 18, color: p.link),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    l10n.redesignPlanAddInBlock(head.name),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.link),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -487,8 +594,9 @@ extension _PlanningBeta on _PlanningPageState {
     int row,
     int? start,
     Map<String, int> numbers, {
-    required bool last,
+    required bool divider,
     required bool showBeamer,
+    bool proxy = false,
   }) {
     final p = context.rd;
     final l10n = context.l10n;
@@ -496,7 +604,8 @@ extension _PlanningBeta on _PlanningPageState {
     final isHead = PlanUtils.isGroupHead(field);
     final isNote = PlanUtils.isNote(field);
     final isAgenda = PlanUtils.isAgendaPlaceholder(field);
-    final isChild = field.groupId != null;
+    // The card under the finger is indented while it would land in a block.
+    final isChild = proxy ? _rdHotBlock != null : field.groupId != null;
     final at = start == null ? null : PlanUtils.startMinutesAt(start, _fields, index);
     final collapsed = isHead && _rdCollapsed.contains(field.id);
 
@@ -643,57 +752,167 @@ extension _PlanningBeta on _PlanningPageState {
       ],
     );
 
-    Widget content = Padding(padding: EdgeInsets.only(left: isChild ? 30 : 14), child: rowBody);
-    if (isChild) {
-      content = Stack(
-        children: [content, Positioned(left: 20, top: 0, bottom: 0, child: Container(width: 2, color: p.line))],
-      );
-    }
+    final Widget content = Padding(padding: EdgeInsets.only(left: isChild ? 30 : 14), child: rowBody);
     return Material(
-      color: isHead ? p.soft : p.surface,
+      color: isHead ? p.soft : (proxy ? p.surface : Colors.transparent),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          InkWell(
-            key: ValueKey('rd-plan-row-$index'),
-            onTap: () => isHead ? _rdBlockSheet(index) : _rdItemSheet(index),
-            child: content,
+          // "Nach oben" / "Nach unten" stay for screen readers (no buttons:
+          // sighted users drag).
+          Semantics(
+            customSemanticsActions: {
+              if (index > 0) CustomSemanticsAction(label: l10n.redesignPlanMoveUp): () => _rdMove(index, -1),
+              if (index < _fields.length - 1)
+                CustomSemanticsAction(label: l10n.redesignPlanMoveDown): () => _rdMove(index, 1),
+            },
+            child: InkWell(
+              key: proxy ? null : ValueKey('rd-plan-row-$index'),
+              onTap: proxy ? null : () => isHead ? _rdBlockSheet(index) : _rdItemSheet(index),
+              child: content,
+            ),
           ),
-          if (open)
+          if (open && !proxy)
             _RdDurationEditor(
               key: ValueKey('rd-plan-dur-editor-$index'),
               value: field.time,
               start: at,
               onChanged: (v) => _rdSetMinutes(index, v),
             ),
-          if (!last) Divider(height: 1, thickness: 1, color: p.line),
+          if (divider) Divider(height: 1, thickness: 1, color: p.line),
         ],
       ),
     );
   }
 
   // ---------------------------------------------------------------------------
-  // Dragging a block
+  // Dragging
   // ---------------------------------------------------------------------------
 
-  /// An open block with Unterpunkte is dragged as one card: they fold into
-  /// the head while the finger moves and unfold at the new place.
-  void _rdDragStart(List<int> visible, int row) {
-    if (row >= visible.length) return;
-    final field = _fields[visible[row]];
+  /// Remembers where the rows are, for the live drop target. An open block
+  /// with Unterpunkte is dragged as one card: they fold into the head while
+  /// the finger moves and unfold at the new place.
+  void _rdDragStart(List<_RdSlot> slots, int row) {
+    if (row >= slots.length) return;
+    _rdDragGen++;
+    _rdDragFrom = row;
+    _rdDragInsert = row;
+    _rdHotBlock = null;
+    _rdDragRects = _rdMeasure(slots.length);
+    final rects = _rdDragRects;
+    final down = _rdPointerDown;
+    _rdDragOffset = rects != null && down != null ? down.dy - rects[row].top : 0;
+    final s = slots[row];
+    if (s.isFooter) return;
+    final field = _fields[s.index];
     if (!PlanUtils.isGroupHead(field) || _rdCollapsed.contains(field.id)) return;
     if (PlanUtils.childrenOf(_fields, field.id).isEmpty) return;
-    _rdDragGen++;
     _rdSet(() => _rdDragBlock = field.id);
+  }
+
+  /// The rows' rectangles in the coordinates of the list (null when one is
+  /// not laid out).
+  List<Rect>? _rdMeasure(int count) {
+    final list = _rdListKey.currentContext?.findRenderObject();
+    if (list is! RenderBox || !list.hasSize || _rdSlotOrder.length != count) return null;
+    final rects = <Rect>[];
+    for (final key in _rdSlotOrder) {
+      final box = key.currentContext?.findRenderObject();
+      if (box is! RenderBox || !box.hasSize) return null;
+      rects.add(list.globalToLocal(box.localToGlobal(Offset.zero)) & box.size);
+    }
+    return rects;
+  }
+
+  /// Follows the finger like the list does (same gap rule as
+  /// `SliverReorderableList._dragUpdateItems`) and lights up the block the
+  /// dragged item would land in. Blocks and the Tagesordnung marker never
+  /// join a block, so nothing lights up for them.
+  void _rdDragHover(List<_RdSlot> slots, double y) {
+    final from = _rdDragFrom;
+    final rects = _rdDragRects;
+    if (from == null || rects == null || rects.length != slots.length || from >= slots.length) return;
+    final moved = slots[from];
+    if (moved.isFooter) return;
+    final field = _fields[moved.index];
+    if (PlanUtils.isGroupHead(field) || PlanUtils.isAgendaPlaceholder(field)) return;
+    final gap = rects[from].height;
+    final proxyStart = y - _rdDragOffset;
+    final proxyEnd = proxyStart + gap;
+    final current = _rdDragInsert;
+    var insert = current;
+    for (var i = 0; i < slots.length; i++) {
+      var shift = 0.0;
+      if (i != from) {
+        if (current < from && i < from && i >= current) {
+          shift = gap;
+        } else if (current > from && i > from && i < current) {
+          shift = -gap;
+        }
+      }
+      final top = rects[i].top + shift;
+      final end = top + rects[i].height;
+      final middle = top + rects[i].height / 2;
+      if (i == from) {
+        if (middle <= proxyEnd && proxyEnd <= end) insert = from;
+      } else if (top <= proxyStart && proxyStart <= middle) {
+        insert = i;
+        break;
+      } else if (middle <= proxyEnd && proxyEnd <= end) {
+        insert = i + 1;
+        break;
+      } else if (end < proxyStart && insert < i + 1) {
+        insert = i + 1;
+      } else if (proxyEnd < top && insert > i) {
+        insert = i;
+      }
+    }
+    _rdDragInsert = insert;
+    final rest = [...slots]..removeAt(from);
+    final target = _rdDropTarget(rest, insert > from ? insert - 1 : insert, moved: field);
+    if (target.group != _rdHotBlock) _rdSet(() => _rdHotBlock = target.group);
+  }
+
+  /// Where a row dropped at [at] (index in [rest], the rows without the
+  /// dragged one) goes: behind [anchor] (null: first), in block [group].
+  /// Right below a head or below an Unterpunkt is inside the block, below
+  /// its "+ Punkt in" row (or a collapsed block) is behind it.
+  ({PlanField? anchor, String? group}) _rdDropTarget(List<_RdSlot> rest, int at, {PlanField? moved}) {
+    if (at <= 0 || rest.isEmpty) return (anchor: null, group: null);
+    final prev = rest[(at - 1).clamp(0, rest.length - 1)];
+    if (prev.isFooter) return (anchor: _rdLastOfBlock(prev.footer!, moved), group: null);
+    final f = _fields[prev.index];
+    if (PlanUtils.isGroupHead(f)) {
+      if (_rdCollapsed.contains(f.id)) return (anchor: _rdLastOfBlock(f.id, moved), group: null);
+      return (anchor: f, group: f.id);
+    }
+    return (anchor: f, group: f.groupId);
+  }
+
+  /// The last row of [block] other than [moved] (the head when it has no
+  /// other row): what goes behind the block goes behind this one.
+  PlanField _rdLastOfBlock(String block, [PlanField? moved]) {
+    var i = PlanUtils.lastIndexOfGroup(_fields, block);
+    while (i > 0 && identical(_fields[i], moved)) {
+      i--;
+    }
+    return _fields[i];
   }
 
   /// Dropped where it was: no reorder follows, so unfold here. A real move
   /// unfolds in [_rdReorder], together with the new order, so the
   /// Unterpunkte never show up at the old place during the drop.
-  void _rdDragEnd(List<int> visible, int row) {
-    if (_rdDragBlock == null) return;
-    final from = visible.indexWhere((i) => _fields[i].id == _rdDragBlock);
+  void _rdDragEnd(List<_RdSlot> slots, int row) {
+    final hot = _rdHotBlock != null;
+    _rdDragFrom = null;
+    _rdDragRects = null;
+    _rdHotBlock = null;
+    if (_rdDragBlock == null) {
+      if (hot) _rdSet(() {});
+      return;
+    }
+    final from = slots.indexWhere((s) => !s.isFooter && _fields[s.index].id == _rdDragBlock);
     if (from < 0 || row == from || row == from + 1) _rdSet(() => _rdDragBlock = null);
   }
 
@@ -702,23 +921,43 @@ extension _PlanningBeta on _PlanningPageState {
   /// end or the reorder unfolded already, this only catches a drag the list
   /// cancelled itself (e.g. the plan changed meanwhile).
   void _rdDragCancel({bool later = false}) {
-    if (_rdDragBlock == null) return;
+    if (_rdDragBlock == null && _rdHotBlock == null && _rdDragFrom == null) return;
     if (!later) {
-      _rdSet(() => _rdDragBlock = null);
+      _rdSet(() {
+        _rdDragBlock = null;
+        _rdHotBlock = null;
+        _rdDragFrom = null;
+      });
       return;
     }
     // Only this drag: a new one started meanwhile (even of the same block)
     // keeps its folded Unterpunkte.
     final gen = _rdDragGen;
     Future<void>.delayed(const Duration(milliseconds: 400), () {
-      if (mounted && _rdDragGen == gen && _rdDragBlock != null) _rdSet(() => _rdDragBlock = null);
+      if (!mounted || _rdDragGen != gen) return;
+      if (_rdDragBlock != null || _rdHotBlock != null) {
+        _rdSet(() {
+          _rdDragBlock = null;
+          _rdHotBlock = null;
+        });
+      }
+      _rdDragFrom = null;
     });
   }
 
-  Widget _rdDragProxy(List<int> visible, int row, Widget child) {
+  /// The card under the finger: the row on its own (no block frame),
+  /// indented while it would land in a block.
+  Widget _rdDragProxy(List<_RdSlot> slots, int row, Widget child, Widget Function() bare) {
     final p = context.rd;
-    final card = Material(color: p.surface, elevation: 6, child: child);
-    final isBlock = _rdDragBlock != null && row < visible.length && _fields[visible[row]].id == _rdDragBlock;
+    if (row >= slots.length || slots[row].isFooter) return child;
+    final card = Material(
+      color: p.surface,
+      elevation: 6,
+      borderRadius: BorderRadius.circular(10),
+      clipBehavior: Clip.antiAlias,
+      child: bare(),
+    );
+    final isBlock = _rdDragBlock != null && _fields[slots[row].index].id == _rdDragBlock;
     if (!isBlock) return card;
     // Folded cards along the bottom edge: the Unterpunkte travel with it
     // (inside the head's size, the proxy keeps the dragged row's extent).
@@ -763,19 +1002,46 @@ extension _PlanningBeta on _PlanningPageState {
     _changed();
   }
 
-  /// [newIndex] as `onReorderItem` reports it (already without the moved row).
-  void _rdReorder(List<int> visible, int oldIndex, int newIndex) {
+  /// [newIndex] as `onReorderItem` reports it (already without the moved
+  /// row). An item takes the block of its new place ([_rdDropTarget]); a
+  /// block moves with its Unterpunkte and never lands inside another one.
+  void _rdReorder(List<_RdSlot> slots, int oldIndex, int newIndex) {
     _rdDragBlock = null; // unfolds with the new order (same frame)
-    final reordered = [...visible]..removeAt(oldIndex);
-    final from = visible[oldIndex];
-    reordered.insert(newIndex, from);
-    // Target: right before the next visible row (positions without the
-    // moved field, see [PlanUtils.moveField]).
-    final next = newIndex + 1 < reordered.length ? reordered[newIndex + 1] : null;
-    final to = next == null ? _fields.length - 1 : (next > from ? next - 1 : next);
-    final result = _rdMoveField(from, to);
+    _rdHotBlock = null;
+    _rdDragFrom = null;
+    _rdDragRects = null;
+    final moved = slots[oldIndex];
+    if (moved.isFooter) return _rdSet(() {});
+    final field = _fields[moved.index];
+    final isHead = PlanUtils.isGroupHead(field);
+    final rest = [...slots]..removeAt(oldIndex);
+    var at = newIndex;
+    // The dragged block's own (folded) rows are no place for it.
+    while (isHead && at > 0 && _rdBlockOf(rest[at - 1]) == field.id) {
+      at--;
+    }
+    var (:anchor, :group) = _rdDropTarget(rest, at, moved: field);
+    if (group != null && (isHead || PlanUtils.isAgendaPlaceholder(field))) {
+      anchor = _rdLastOfBlock(group, field);
+      group = null;
+    }
+    final moving = isHead ? [field, ..._fields.where((f) => f.groupId == field.id)] : [field];
+    final result = _rdPlace(moving, anchor, group, keepGroups: isHead);
     _rdOpenBlocksOf(result);
     _rdApply(result);
+  }
+
+  /// [moving] behind [anchor] (null: at the start); items take [group]
+  /// unless [keepGroups] (a whole block).
+  List<PlanField> _rdPlace(List<PlanField> moving, PlanField? anchor, String? group, {bool keepGroups = false}) {
+    final rows = [
+      for (final f in _fields)
+        if (!moving.any((m) => identical(m, f))) f,
+    ];
+    var at = anchor == null ? 0 : rows.indexWhere((f) => identical(f, anchor)) + 1;
+    if (anchor != null && at == 0) at = rows.length;
+    rows.insertAll(at, keepGroups ? moving : [for (final m in moving) m.copyWith(groupId: group)]);
+    return PlanUtils.normalizeGroups(rows);
   }
 
   /// A field that lands in a collapsed block opens it, so it stays visible.
@@ -899,6 +1165,11 @@ extension _PlanningBeta on _PlanningPageState {
       after = null;
     }
     if (group != null && !before.any((f) => f.id == group)) group = null;
+    // Punkt, Notiz and Block: one sheet that stays open for several entries.
+    if (action == 'field' || action == 'note' || action == 'group') {
+      await _rdQuickAdd(kind: action, group: action == 'group' ? null : group, after: after == null ? null : before[after]);
+      return;
+    }
     await _runAddAction(action);
     if (!mounted || after == null || loadGen != _loadGen) return;
     final now = _fields;
@@ -926,6 +1197,194 @@ extension _PlanningBeta on _PlanningPageState {
       _rdCollapsed.remove(join);
     }
     _rdApply([...now.sublist(0, pos), ...tail, ...now.sublist(pos, before.length)]);
+  }
+
+  /// Adds several entries in a row: Punkt or Notiz (form), Werk (picker),
+  /// Aktuelle Werke. [group]: into that block (at its end, or behind
+  /// [after] when it is inside); [kind] `group`: a new block, its name at
+  /// the top and its Unterpunkte right below. Every entry is stored at
+  /// once (autosave), the sheet stays open until "Fertig".
+  Future<void> _rdQuickAdd({String kind = 'field', String? group, PlanField? after}) async {
+    final l10n = context.l10n;
+    final loadGen = _loadGen;
+    final newBlock = kind == 'group';
+    var join = group;
+    // Where the next entry goes: behind this row. A position, not the row
+    // itself: autosave may replace rows by copies (UIDs of the Gemeinde-App)
+    // while the sheet is open; the rows only move by these inserts.
+    int? lastAt;
+    if (after != null) {
+      final i = _fields.indexWhere((f) => identical(f, after));
+      if (i >= 0) {
+        lastAt = i;
+        // A new block never sits inside another one: behind the whole block.
+        final block = PlanUtils.isGroupHead(after) ? after.id : after.groupId;
+        if (newBlock && block != null) lastAt = PlanUtils.lastIndexOfGroup(_fields, block);
+      }
+    }
+    // A block of its own: still there after the plan changed meanwhile.
+    bool alive() => mounted && loadGen == _loadGen && (join == null || _fields.any((f) => f.id == join));
+
+    void insert(List<PlanField> rows) {
+      final anchor = lastAt ?? -1;
+      final int at;
+      if (anchor >= 0 && anchor < _fields.length) {
+        at = anchor + 1;
+      } else if (join != null) {
+        at = PlanUtils.lastIndexOfGroup(_fields, join!) + 1;
+      } else {
+        at = _fields.length;
+      }
+      final placed = [
+        for (final r in rows)
+          PlanUtils.isGroupHead(r) || PlanUtils.isAgendaPlaceholder(r) ? r : r.copyWith(groupId: join),
+      ];
+      if (join != null) _rdCollapsed.remove(join);
+      _rdApply(PlanUtils.normalizeGroups([..._fields]..insertAll(at, placed)));
+      lastAt = (at + placed.length - 1).clamp(0, _fields.length - 1);
+    }
+
+    String blockName = '';
+    String? headId;
+    // The block itself is created with its first entry (or on "Fertig").
+    bool ensureBlock() {
+      if (!newBlock || headId != null) return true;
+      if (blockName.trim().isEmpty) return false;
+      final h = PlanUtils.newGroupHead(blockName.trim());
+      join = null;
+      insert([h]);
+      headId = h.id;
+      join = h.id;
+      return true;
+    }
+
+    String? headTitle() => join == null ? null : _fields.where((f) => f.id == join).firstOrNull?.name;
+    final title =
+        newBlock ? l10n.redesignPlanNewBlock : (headTitle() != null ? l10n.redesignPlanQuickAddInBlock(headTitle()!) : l10n.redesignPlanAddTitle);
+    final subtitle =
+        newBlock
+            ? null
+            : join != null && after == null
+            ? l10n.redesignPlanQuickAddInBlockHint
+            : after != null
+            ? l10n.redesignPlanAddAfter(after.name)
+            : l10n.redesignPlanAddEnd;
+    final isGeneral = ref.read(currentTenantProvider)?.type == 'general';
+
+    await _rdSheet<void>(
+      title: title,
+      subtitle: subtitle,
+      action: Builder(
+        builder:
+            (ctx) => TextButton(
+              key: const Key('rd-plan-quick-done'),
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(l10n.redesignCommonDone),
+            ),
+      ),
+      builder:
+          (ctx, pop) => [
+            _RdQuickAddBody(
+              newBlock: newBlock,
+              initialKind: kind == 'note' ? 'note' : 'field',
+              initialMinutes: join != null || newBlock ? 5 : 20,
+              withSongs: !isGeneral && _songs.isNotEmpty,
+              withCurrent: !isGeneral,
+              onBlockName: (v) {
+                blockName = v;
+                final id = headId;
+                if (id == null || !alive() || v.trim().isEmpty) return;
+                // By the block's id: every change copies the head.
+                final i = _fields.indexWhere((f) => f.id == id);
+                if (i < 0) return;
+                _rdApply([..._fields]..[i] = _fields[i].copyWith(name: v.trim()));
+              },
+              onAdd: (kind, input) async {
+                if (!alive()) return null;
+                if (!ensureBlock()) return null;
+                final PlanField row;
+                if (kind == 'note') {
+                  row = PlanField(id: 'noteFld ${input.name}', name: input.name, conductor: '', time: '0');
+                } else {
+                  row = PlanField(
+                    id: 'fld-${PlanUtils.uuid()}',
+                    name: input.name,
+                    conductor: input.conductor,
+                    info: input.info,
+                    time: '${input.minutes ?? 0}',
+                  );
+                }
+                insert([row]);
+                return [row.name];
+              },
+              onSong: () async {
+                if (!alive()) return null;
+                final row = await _pickSongField();
+                if (row == null || !alive() || !ensureBlock()) return null;
+                insert([row]);
+                return [row.name];
+              },
+              onCurrent: () async {
+                if (!alive()) return null;
+                final rows = await _currentSongFieldsOrAsk();
+                if (rows.isEmpty || !alive() || !ensureBlock()) return null;
+                insert(rows);
+                return [for (final r in rows) r.name];
+              },
+            ),
+          ],
+    );
+    // "Fertig" with a name and nothing in it yet: the block on its own.
+    if (newBlock && headId == null && alive()) ensureBlock();
+  }
+
+  /// "Block: …" in the item sheet: the block it belongs to, from a list.
+  Future<void> _rdPickBlock(int index) async {
+    final l10n = context.l10n;
+    final field = _fields[index];
+    final heads = _fields.where(PlanUtils.isGroupHead).toList();
+    final loadGen = _loadGen;
+    final choice = await _rdSheet<String>(
+      title: l10n.redesignPlanPickBlock,
+      subtitle: field.name,
+      builder:
+          (ctx, pop) => [
+            RdGroupedList(
+              children: [
+                for (final (id, name) in [('', l10n.redesignPlanNoBlock), for (final h in heads) (h.id, h.name)])
+                  RdListRow(
+                    key: ValueKey('rd-plan-pick-block-$id'),
+                    title: name,
+                    showChevron: false,
+                    onTap: () => pop(id),
+                    trailing: Icon(
+                      (field.groupId ?? '') == id ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                      color: (field.groupId ?? '') == id ? ctx.rd.link : ctx.rd.text2,
+                    ),
+                  ),
+              ],
+            ),
+          ],
+    );
+    if (choice == null || !_rdStill(loadGen, index, field) || choice == (field.groupId ?? '')) return;
+    final PlanField? anchor;
+    final String? group;
+    if (choice.isEmpty) {
+      // Out of the block: right behind it.
+      anchor = _fields[PlanUtils.lastIndexOfGroup(_fields, field.groupId!)];
+      group = null;
+    } else {
+      if (!_fields.any((f) => f.id == choice)) return;
+      anchor = _fields[PlanUtils.lastIndexOfGroup(_fields, choice)];
+      group = choice;
+      _rdCollapsed.remove(choice);
+    }
+    // The item itself may be the anchor (last of its block): stays in place.
+    final result =
+        identical(anchor, field)
+            ? PlanUtils.normalizeGroups([..._fields]..[index] = field.copyWith(groupId: group))
+            : _rdPlace([field], anchor, group);
+    _rdApply(result);
   }
 
   Future<String?> _rdAddSheet(String subtitle) {
@@ -1040,8 +1499,10 @@ extension _PlanningBeta on _PlanningPageState {
         '${PlanUtils.formatMinutes(at)}–${PlanUtils.formatMinutes(at + PlanUtils.minutesOf(field))}',
       if (head != null) l10n.redesignPlanInBlock(head.name),
     ].join(' · ');
-    final canIndent = PlanUtils.canIndent(_fields, index);
     final isAgenda = PlanUtils.isAgendaPlaceholder(field);
+    // "Block: …" picks the block from a list (also far away ones); the
+    // Tagesordnung marker never joins a block.
+    final hasBlocks = !isAgenda && _fields.any(PlanUtils.isGroupHead);
     final org = ref.read(currentOrganisationProvider).valueOrNull;
     final showBeamer = PlanBeamer.active(org, _isOrgPlan) && !isNote;
     final loadGen = _loadGen;
@@ -1083,17 +1544,20 @@ extension _PlanningBeta on _PlanningPageState {
             ],
             RdGroupedList(
               children: [
-                if (!isAgenda) _rdSheetRow(Icons.add, l10n.redesignPlanInsertAfter, null, () => pop('insert')),
-                if (index > 0) _rdSheetRow(Icons.arrow_upward, l10n.redesignPlanMoveUp, null, () => pop('up')),
-                if (index < _fields.length - 1)
-                  _rdSheetRow(Icons.arrow_downward, l10n.redesignPlanMoveDown, null, () => pop('down')),
-                if (canIndent)
-                  _rdSheetRow(
-                    field.groupId == null ? Icons.format_indent_increase : Icons.format_indent_decrease,
-                    field.groupId == null ? l10n.redesignPlanJoinBlock : l10n.redesignPlanLeaveBlock,
-                    null,
-                    () => pop('indent'),
+                if (hasBlocks)
+                  RdListRow(
+                    key: const Key('rd-plan-item-block'),
+                    leading: const RdRowIcon(Icons.view_agenda_outlined),
+                    title: l10n.redesignPlanBlockRow,
+                    subtitle: head?.name ?? l10n.redesignPlanNoBlock,
+                    onTap: () => pop('block'),
                   ),
+                if (!isAgenda) _rdSheetRow(Icons.add, l10n.redesignPlanInsertAfter, null, () => pop('insert')),
+                // Without any other entry the Tagesordnung marker can still move.
+                if (isAgenda && index > 0)
+                  _rdSheetRow(Icons.arrow_upward, l10n.redesignPlanMoveUp, null, () => pop('up')),
+                if (isAgenda && index < _fields.length - 1)
+                  _rdSheetRow(Icons.arrow_downward, l10n.redesignPlanMoveDown, null, () => pop('down')),
               ],
             ),
             const SizedBox(height: 12),
@@ -1141,11 +1605,8 @@ extension _PlanningBeta on _PlanningPageState {
         _rdMove(index, -1);
       case 'down':
         _rdMove(index, 1);
-      case 'indent':
-        final result = PlanUtils.toggleIndent(_fields, index);
-        final joined = result[index].groupId;
-        if (joined != null) _rdCollapsed.remove(joined);
-        _rdApply(result);
+      case 'block':
+        await _rdPickBlock(index);
       case 'delete':
         _rdRemove([..._fields]..removeAt(index), current.name);
     }
@@ -1162,7 +1623,6 @@ extension _PlanningBeta on _PlanningPageState {
     final exists = (ref.read(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[]).any(
       (t) => t.name == head.name,
     );
-    final end = PlanUtils.lastIndexOfGroup(_fields, head.id);
     final loadGen = _loadGen;
     PlanFieldInput? edit;
     final action = await _rdSheet<String>(
@@ -1199,9 +1659,6 @@ extension _PlanningBeta on _PlanningPageState {
                   key: const Key('rd-plan-block-sub'),
                 ),
                 _rdSheetRow(Icons.add, l10n.redesignPlanAfterBlock, null, () => pop('insert')),
-                if (index > 0) _rdSheetRow(Icons.arrow_upward, l10n.redesignPlanMoveUp, null, () => pop('up')),
-                if (end < _fields.length - 1)
-                  _rdSheetRow(Icons.arrow_downward, l10n.redesignPlanMoveDown, null, () => pop('down')),
                 if (isAdmin && children.isNotEmpty)
                   _rdSheetRow(
                     Icons.bookmark_add_outlined,
@@ -1240,35 +1697,9 @@ extension _PlanningBeta on _PlanningPageState {
     if (action == null || !_rdStill(loadGen, index, current)) return;
     switch (action) {
       case 'sub':
-        final r = await showPlanFieldDialog(
-          context,
-          title: context.l10n.planningAddSubItem,
-          subtitle: current.name,
-          nameHint: context.l10n.planningSubItemPlaceholder,
-          infoHint: context.l10n.planningSubItemInfoPlaceholder,
-          initialMinutes: 5,
-        );
-        if (r == null || !mounted || !_rdStill(loadGen, index, current)) return;
-        _rdCollapsed.remove(head.id);
-        _rdApply(
-          PlanUtils.addSubItem(
-            _fields,
-            head.id,
-            PlanField(
-              id: 'fld-${PlanUtils.uuid()}',
-              name: r.name,
-              conductor: r.conductor,
-              info: r.info,
-              time: '${r.minutes ?? 5}',
-            ),
-          ),
-        );
+        await _rdQuickAdd(group: head.id);
       case 'insert':
         await _rdAdd(after: PlanUtils.lastIndexOfGroup(_fields, head.id));
-      case 'up':
-        _rdMove(index, -1);
-      case 'down':
-        _rdMove(index, 1);
       case 'template':
         await _saveBlockTemplate(head);
       case 'dissolve':
@@ -1686,6 +2117,7 @@ extension _PlanningBeta on _PlanningPageState {
   Future<T?> _rdSheet<T>({
     required String title,
     String? subtitle,
+    Widget? action,
     required List<Widget> Function(BuildContext ctx, void Function(T value) pop) builder,
   }) => showModalBottomSheet<T>(
     context: context,
@@ -1706,7 +2138,12 @@ extension _PlanningBeta on _PlanningPageState {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Semantics(header: true, child: Text(title, style: RdType.cardTitle(p))),
+                  Row(
+                    children: [
+                      Expanded(child: Semantics(header: true, child: Text(title, style: RdType.cardTitle(p)))),
+                      if (action != null) action,
+                    ],
+                  ),
                   if (subtitle != null && subtitle.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(subtitle, style: RdType.meta(p, size: 15)),
@@ -1875,6 +2312,290 @@ class _RdDurationEditorState extends State<_RdDurationEditor> {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// One row of the Beta timeline: a field ([index] in the plan) or the
+/// "+ Punkt in „…“" end row of the open block [footer] ([index]: its head).
+class _RdSlot {
+  const _RdSlot(this.index, {this.footer});
+
+  final int index;
+  final String? footer;
+
+  bool get isFooter => footer != null;
+}
+
+/// Which part of a block's frame a row draws.
+enum _RdPart { none, top, middle, bottom, single }
+
+/// The frame of a block, drawn row by row (see `_rdFramed`).
+class _RdBlockFramePainter extends CustomPainter {
+  const _RdBlockFramePainter({required this.part, required this.color, required this.width});
+
+  final _RdPart part;
+  final Color color;
+  final double width;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = width;
+    final h = width / 2;
+    final left = h;
+    final right = size.width - h;
+    final top = h;
+    final bottom = size.height - h;
+    const r = 12.0;
+    const radius = Radius.circular(r);
+    switch (part) {
+      case _RdPart.none:
+        return;
+      case _RdPart.single:
+        canvas.drawRRect(RRect.fromLTRBR(left, top, right, bottom, radius), paint);
+      case _RdPart.top:
+        canvas.drawPath(
+          Path()
+            ..moveTo(left, size.height)
+            ..lineTo(left, top + r)
+            ..arcToPoint(Offset(left + r, top), radius: radius)
+            ..lineTo(right - r, top)
+            ..arcToPoint(Offset(right, top + r), radius: radius)
+            ..lineTo(right, size.height),
+          paint,
+        );
+      case _RdPart.middle:
+        canvas
+          ..drawLine(Offset(left, 0), Offset(left, size.height), paint)
+          ..drawLine(Offset(right, 0), Offset(right, size.height), paint);
+      case _RdPart.bottom:
+        canvas.drawPath(
+          Path()
+            ..moveTo(left, 0)
+            ..lineTo(left, bottom - r)
+            ..arcToPoint(Offset(left + r, bottom), radius: radius, clockwise: false)
+            ..lineTo(right - r, bottom)
+            ..arcToPoint(Offset(right, bottom - r), radius: radius, clockwise: false)
+            ..lineTo(right, 0),
+          paint,
+        );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_RdBlockFramePainter old) => old.part != part || old.color != color || old.width != width;
+}
+
+/// Content of the "Hinzufügen" sheet that stays open (see `_rdQuickAdd`):
+/// optional block name, what was added so far, the kind (Punkt, Notiz,
+/// Werk, Aktuelle Werke), the form and one "Hinzufügen".
+class _RdQuickAddBody extends StatefulWidget {
+  const _RdQuickAddBody({
+    required this.newBlock,
+    required this.initialKind,
+    required this.initialMinutes,
+    required this.withSongs,
+    required this.withCurrent,
+    required this.onBlockName,
+    required this.onAdd,
+    required this.onSong,
+    required this.onCurrent,
+  });
+
+  final bool newBlock;
+  final String initialKind;
+  final int initialMinutes;
+  final bool withSongs;
+  final bool withCurrent;
+  final ValueChanged<String> onBlockName;
+
+  /// The names of what was added; null when nothing was.
+  final Future<List<String>?> Function(String kind, PlanFieldInput input) onAdd;
+  final Future<List<String>?> Function() onSong;
+  final Future<List<String>?> Function() onCurrent;
+
+  @override
+  State<_RdQuickAddBody> createState() => _RdQuickAddBodyState();
+}
+
+class _RdQuickAddBodyState extends State<_RdQuickAddBody> {
+  late String _kind = widget.initialKind;
+  late int _minutes = widget.initialMinutes;
+  final _name = TextEditingController();
+  final _added = <String>[];
+  PlanFieldInput? _input;
+  String? _error;
+  int _gen = 0;
+  bool _busy = false;
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
+  bool _nameMissing() {
+    if (!widget.newBlock || _name.text.trim().isNotEmpty) return false;
+    setState(() => _error = context.l10n.planningEnterNamePlease);
+    return true;
+  }
+
+  Future<void> _submit() async {
+    if (_nameMissing()) return;
+    final input = _input;
+    if (input == null || input.name.isEmpty) {
+      setState(
+        () => _error = _kind == 'note' ? context.l10n.plansEnterNotePlease : context.l10n.planningEnterNamePlease,
+      );
+      return;
+    }
+    await _run(() => widget.onAdd(_kind, input), minutes: input.minutes);
+  }
+
+  Future<void> _run(Future<List<String>?> Function() add, {int? minutes}) async {
+    if (_busy || _nameMissing()) return;
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    final labels = await add();
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      if (labels == null) return;
+      _added.addAll(labels);
+      // The next Punkt starts with the same length.
+      if (minutes != null) _minutes = minutes;
+      _input = null;
+      _gen++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final note = _kind == 'note';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (widget.newBlock) ...[
+          RdGroupedList(
+            children: [
+              RdFieldRow(
+                label: l10n.redesignPlanBlockName,
+                child: TextField(
+                  key: const Key('rd-plan-quick-block-name'),
+                  controller: _name,
+                  autofocus: true,
+                  textCapitalization: TextCapitalization.sentences,
+                  style: TextStyle(fontSize: 17, color: p.text),
+                  decoration: rdInputDecoration(p, l10n.planningBlockNamePlaceholder),
+                  onChanged: widget.onBlockName,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          RdGroupLabel(l10n.redesignPlanBlockItems),
+        ] else if (_added.isNotEmpty)
+          RdGroupLabel(l10n.redesignPlanQuickAddAdded),
+        if (_added.isNotEmpty) ...[
+          RdGroupedList(
+            children: [
+              for (final (i, label) in _added.indexed)
+                RdListRow(
+                  key: ValueKey('rd-plan-quick-added-$i'),
+                  leading: RdRowIcon(Icons.check, color: p.present, background: p.presentSoft),
+                  title: label,
+                  showChevron: false,
+                ),
+            ],
+          ),
+          const SizedBox(height: 16),
+        ],
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            RdChoiceChip(
+              key: const Key('rd-plan-quick-kind-field'),
+              label: l10n.redesignPlanAddItem,
+              selected: !note,
+              onTap: () => setState(() {
+                if (_kind == 'field') return;
+                // A new form: the old entry is gone with it.
+                _kind = 'field';
+                _input = null;
+                _error = null;
+              }),
+            ),
+            RdChoiceChip(
+              key: const Key('rd-plan-quick-kind-note'),
+              label: l10n.redesignPlanAddNote,
+              selected: note,
+              onTap: () => setState(() {
+                if (_kind == 'note') return;
+                _kind = 'note';
+                _input = null;
+                _error = null;
+              }),
+            ),
+            if (widget.withSongs)
+              RdChoiceChip(
+                key: const Key('rd-plan-quick-song'),
+                label: l10n.redesignPlanKindSong,
+                icon: Icons.add,
+                selected: false,
+                onTap: () => _run(widget.onSong),
+              ),
+            if (widget.withCurrent)
+              RdChoiceChip(
+                key: const Key('rd-plan-quick-current'),
+                label: l10n.redesignPlanAddCurrent,
+                icon: Icons.add,
+                selected: false,
+                onTap: () => _run(widget.onCurrent),
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        RdPlanFieldForm(
+          key: ValueKey('rd-plan-quick-form-$_kind-$_gen'),
+          labels:
+              note
+                  ? RdPlanFieldLabels(name: l10n.planningNote, nameHint: l10n.planningEnterNote)
+                  : RdPlanFieldLabels(infoHint: l10n.planningInfoOptionalEllipsis),
+          initialMinutes: note ? null : _minutes,
+          withConductor: !note,
+          withInfo: !note,
+          withMinutes: !note,
+          // A new block starts in its name; afterwards the cursor waits in
+          // the next item's name.
+          autofocus: !widget.newBlock || _gen > 0,
+          singleLineName: true,
+          onChanged: (v) => _input = v,
+          onSubmitted: _submit,
+        ),
+        if (_error != null) ...[
+          const SizedBox(height: 8),
+          Text(_error!, style: TextStyle(fontSize: 14, color: p.absent)),
+        ],
+        const SizedBox(height: 16),
+        RdPrimaryButton(
+          key: const Key('rd-plan-quick-add'),
+          icon: Icons.add,
+          label: l10n.redesignPlanQuickAddButton,
+          loading: _busy,
+          onPressed: _submit,
+        ),
+        const SizedBox(height: 8),
+        Text(l10n.redesignPlanQuickAddHint, textAlign: TextAlign.center, style: RdType.meta(p, size: 13)),
+      ],
     );
   }
 }

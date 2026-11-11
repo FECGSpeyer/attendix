@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
+import 'package:flutter/semantics.dart' show CustomSemanticsAction;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -54,6 +55,7 @@ import '../../data/planning_write_sync.dart';
 import '../../../../core/providers/redesign_providers.dart' show redesignEnabledProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
 import '../../../redesign/presentation/widgets/event/rd_plan_take_over.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
 
@@ -220,6 +222,20 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// REDESIGN: counts drag starts, so a delayed unfold of an earlier drag
   /// never ends a newer one (see `_rdDragCancel`).
   int _rdDragGen = 0;
+
+  /// REDESIGN: live drop target while an item is dragged. The rows' places
+  /// at the drag start (in list coordinates) and the gap index as the list
+  /// computes it, so the block the item would join ([_rdHotBlock]) lights
+  /// up before the drop (see `_rdDragHover`).
+  final GlobalKey _rdListKey = GlobalKey();
+  final Map<String, GlobalKey> _rdSlotKeys = {};
+  List<GlobalKey> _rdSlotOrder = const [];
+  List<Rect>? _rdDragRects;
+  int? _rdDragFrom;
+  int _rdDragInsert = 0;
+  double _rdDragOffset = 0;
+  Offset? _rdPointerDown;
+  String? _rdHotBlock;
 
   /// REDESIGN: the "Tipp auf die Dauer …" hint was dismissed with
   /// "Verstanden" (null while the preference loads: no flash).
@@ -1607,6 +1623,16 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// Ionic 4.17.25 `addCurrentSongs`: adds the current Werke missing in the
   /// open plan; when all are already there, asks whether to add them again.
   Future<void> _addCurrentSongs() async {
+    final loadGen = _loadGen;
+    final added = await _currentSongFieldsOrAsk();
+    if (added.isEmpty || !_samePlan(loadGen)) return;
+    setState(() => _fields = [..._fields, ...added]);
+    _changed();
+  }
+
+  /// The rows of the current Werke missing in the open plan (asks whether
+  /// to add them again when all are there; empty: nothing to add).
+  Future<List<PlanField>> _currentSongFieldsOrAsk() async {
     final prefix = _songPrefix(_typeOf(_att));
     final all = PlanSongHelper.currentSongFields(
       const [],
@@ -1616,30 +1642,36 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     );
     if (all.isEmpty) {
       ToastHelper.showWarning(context, context.l10n.planningNoCurrentSongs);
-      return;
+      return const [];
     }
-    var added = PlanSongHelper.currentSongFields(
+    final added = PlanSongHelper.currentSongFields(
       _fields,
       history: _history,
       songs: _songs,
       prefix: prefix,
     );
-    if (added.isEmpty) {
-      final loadGen = _loadGen;
-      final again = await showPlanConfirm(
-        context,
-        title: context.l10n.planningCurrentSongsAlreadyAddedHeader,
-        message: context.l10n.planningCurrentSongsAlreadyAddedMessage,
-        confirmText: context.l10n.planningAddAgain,
-      );
-      if (!again || !_samePlan(loadGen)) return;
-      added = all;
-    }
-    setState(() => _fields = [..._fields, ...added]);
-    _changed();
+    if (added.isNotEmpty) return added;
+    final loadGen = _loadGen;
+    final again = await showPlanConfirm(
+      context,
+      title: context.l10n.planningCurrentSongsAlreadyAddedHeader,
+      message: context.l10n.planningCurrentSongsAlreadyAddedMessage,
+      confirmText: context.l10n.planningAddAgain,
+    );
+    if (!again || !_samePlan(loadGen)) return const [];
+    return all;
   }
 
   Future<void> _addSong() async {
+    final loadGen = _loadGen;
+    final field = await _pickSongField();
+    if (field == null || !_samePlan(loadGen)) return;
+    setState(() => _fields = [..._fields, field]);
+    _changed();
+  }
+
+  /// The row of a Werk picked from the list (null: none picked).
+  Future<PlanField?> _pickSongField() async {
     final loadGen = _loadGen;
     final song = await showPlanSongPicker(
       context,
@@ -1647,12 +1679,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       currentIds: _history.map((h) => h.songId).whereType<int>().toSet(),
       inPlanIds: _fields.map((f) => f.songId).whereType<int>().toSet(),
     );
-    if (song == null || !_samePlan(loadGen)) return;
-    setState(() => _fields = [
-          ..._fields,
-          PlanSongHelper.songField(song, history: _history, prefix: _songPrefix(_typeOf(_att))),
-        ]);
-    _changed();
+    if (song == null || !_samePlan(loadGen)) return null;
+    return PlanSongHelper.songField(song, history: _history, prefix: _songPrefix(_typeOf(_att)));
   }
 
   void _insertBlockTemplate(PlanBlockTemplate tpl) {
