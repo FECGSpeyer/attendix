@@ -9,8 +9,11 @@
 // sentence) ends as `unsupported`. The app then loads and shows the data
 // itself, with the rights of the signed-in person.
 //
-// Package 1 only reads. Changes (`category: "change"`) are recognised but
-// answered with "kann ich noch nicht".
+// Package 1 reads. Package 2 adds two changes, `set_status` and
+// `planned_absence`: the app only shows them as a preview, checks the
+// rights and limits itself and saves nothing before the person confirms.
+// Other changes (`category: "change"`) are answered with "kann ich noch
+// nicht".
 
 export type Unit = "day" | "week" | "month" | "year";
 
@@ -26,7 +29,9 @@ export type EventRef =
   | { type: "next" }
   | { type: "today" }
   | { type: "tomorrow" }
+  | { type: "yesterday" }
   | { type: "weekday"; day: Weekday }
+  | { type: "past_weekday"; day: Weekday }
   | { type: "date"; date: string };
 
 export type Weekday = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
@@ -37,6 +42,14 @@ export type Subject =
   | { kind: "group"; name: string }
   | { kind: "all" };
 
+/// Whose status / absence: the user, a person, or (status only, leaders) a group.
+export type Who =
+  | { kind: "me" }
+  | { kind: "person"; name: string }
+  | { kind: "group"; name: string };
+
+export type Status = "present" | "excused" | "late_excused" | "late" | "absent" | "neutral";
+
 export type Command =
   | { command: "attendance_rate"; subject: Subject; period: Period; typeName?: string }
   | { command: "event_overview"; event: EventRef; typeName?: string; group?: string }
@@ -44,11 +57,25 @@ export type Command =
   | { command: "birthdays"; period: Period }
   | { command: "song_last_sung"; title: string }
   | { command: "help"; query: string }
+  | {
+    command: "set_status";
+    who: Who[];
+    status: Status;
+    event?: EventRef;
+    period?: Period;
+    typeName?: string;
+    reason?: string;
+  }
+  | { command: "planned_absence"; who: Who; from: string; to: string; reason?: string }
   | { command: "unsupported"; category: "change" | "other" };
 
 export const MAX_TEXT = 500;
 export const MAX_NAME = 80;
 const MAX_COUNT = 36;
+/// At most this many names / groups in one status command.
+export const MAX_WHO = 10;
+export const MAX_REASON = 120;
+const STATUSES = new Set<Status>(["present", "excused", "late_excused", "late", "absent", "neutral"]);
 
 const UNITS = new Set<Unit>(["day", "week", "month", "year"]);
 const WEEKDAYS = new Set<Weekday>(["mon", "tue", "wed", "thu", "fri", "sat", "sun"]);
@@ -114,9 +141,11 @@ export function eventRef(value: unknown): EventRef | null {
     case "next":
     case "today":
     case "tomorrow":
+    case "yesterday":
       return { type: value.type };
     case "weekday":
-      return WEEKDAYS.has(value.day as Weekday) ? { type: "weekday", day: value.day as Weekday } : null;
+    case "past_weekday":
+      return WEEKDAYS.has(value.day as Weekday) ? { type: value.type, day: value.day as Weekday } : null;
     case "date": {
       const date = isoDate(value.date);
       return date ? { type: "date", date } : null;
@@ -140,6 +169,42 @@ function subject(value: unknown): Subject | null {
     default:
       return null;
   }
+}
+
+function who(value: unknown, allowGroup: boolean): Who | null {
+  if (!isRecord(value)) return null;
+  switch (value.kind) {
+    case "me":
+      return { kind: "me" };
+    case "person":
+    case "group": {
+      if (value.kind === "group" && !allowGroup) return null;
+      const name = cleanText(value.name, MAX_NAME);
+      return name ? { kind: value.kind, name } : null;
+    }
+    default:
+      return null;
+  }
+}
+
+/// 1..MAX_WHO entries, duplicates removed; missing or any invalid entry →
+/// null (never a silent "me": a misnamed field must not change the user).
+function whoList(value: unknown): Who[] | null {
+  if (value === undefined || value === null) return null;
+  const list = Array.isArray(value) ? value : [value];
+  if (list.length === 0 || list.length > MAX_WHO) return null;
+  const out: Who[] = [];
+  const seen = new Set<string>();
+  for (const v of list) {
+    const w = who(v, true);
+    if (!w) return null;
+    const key = w.kind === "me" ? "me" : `${w.kind}:${w.name.toLowerCase()}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      out.push(w);
+    }
+  }
+  return out;
 }
 
 /// Optional name: absent or empty → undefined, otherwise a clean text.
@@ -189,6 +254,34 @@ export function validateCommand(raw: unknown): Command {
       const query = cleanText(raw.query, MAX_NAME);
       return query ? { command: "help", query } : UNSUPPORTED;
     }
+    case "set_status": {
+      const w = whoList(raw.who);
+      const status = raw.status as Status;
+      if (!w || !STATUSES.has(status)) return UNSUPPORTED;
+      const hasPeriod = raw.period !== undefined && raw.period !== null;
+      const p = hasPeriod ? period(raw.period) : null;
+      if (hasPeriod && !p) return UNSUPPORTED;
+      const e = p ? null : raw.event === undefined || raw.event === null ? { type: "next" as const } : eventRef(raw.event);
+      if (!p && !e) return UNSUPPORTED;
+      const typeName = optionalName(raw.typeName);
+      const reason = cleanText(raw.reason, MAX_REASON) ?? undefined;
+      return {
+        command: "set_status",
+        who: w,
+        status,
+        ...(p ? { period: p } : { event: e! }),
+        ...(typeName ? { typeName } : {}),
+        ...(reason ? { reason } : {}),
+      };
+    }
+    case "planned_absence": {
+      const w = who(raw.who, false);
+      const from = isoDate(raw.from);
+      const to = isoDate(raw.to);
+      if (!w || !from || !to || from > to) return UNSUPPORTED;
+      const reason = cleanText(raw.reason, MAX_REASON) ?? undefined;
+      return { command: "planned_absence", who: w, from, to, ...(reason ? { reason } : {}) };
+    }
     case "unsupported":
       return { command: "unsupported", category: raw.category === "change" ? "change" : "other" };
     default:
@@ -225,14 +318,18 @@ export const SYSTEM_PROMPT = [
   '4. {"command":"birthdays","period"?:P} - whose birthday is in a period (default this month).',
   '5. {"command":"song_last_sung","title":"<song title as written>"} - when a song / piece was last sung or played.',
   '6. {"command":"help","query":"<short search words in the user language>"} - how to do something in the app.',
-  '7. {"command":"unsupported","category":"change"} - the user wants to CHANGE something (create, move or cancel events, sign out, set a status, add people, send messages).',
-  '8. {"command":"unsupported","category":"other"} - anything else (chat, jokes, poems, general knowledge, other apps, unclear).',
+  '7. {"command":"set_status","who":[W,...],"status":"present|excused|late_excused|late|absent|neutral","event"?:E,"period"?:P,"typeName"?:T,"reason"?:"<short reason as written>"} - sign in / sign out / set the attendance status for one event (event) or all events in a period (period, e.g. "next week").',
+  '   who is always given. W is {"kind":"me"}, {"kind":"person","name":"<name exactly as written>"} or {"kind":"group","name":"<group>"} (max 10).',
+  '   "abmelden", "absagen", "kann nicht", "entschuldigt" = excused; "komme später", "verspätet mich" = late_excused; "anmelden", "zusagen", "komme", "war da", "anwesend" = present; "war zu spät" = late; "fehlte unentschuldigt" = absent; "zurücksetzen", "offen" = neutral.',
+  '8. {"command":"planned_absence","who":W,"from":"YYYY-MM-DD","to":"YYYY-MM-DD","reason"?:"<short reason>"} - a planned absence for a longer time ("bis Ende Januar im Ausland", "vom 3. bis 10. März im Urlaub"). W is me or a person (no group), always given. Without a start, from is today.',
+  '9. {"command":"unsupported","category":"change"} - any OTHER change (create, move or cancel events, add or delete people, roles, settings, send messages, delete anything).',
+  '10. {"command":"unsupported","category":"other"} - anything else (chat, jokes, poems, general knowledge, other apps, unclear).',
   "Periods P (dates as YYYY-MM-DD, compute them from today in the user message only for type range):",
   '{"type":"last","unit":"day|week|month|year","count":N} e.g. "letzte 3 Monate" = last month 3;',
   '{"type":"this","unit":"week|month|year"}; {"type":"previous","unit":"week|month|year"} e.g. "im letzten Monat", "letztes Jahr";',
   '{"type":"next","unit":"day|week|month","count":N}; {"type":"season"} (since the season start, the default for rates);',
   '{"type":"range","from":"YYYY-MM-DD","to":"YYYY-MM-DD"} for named months or dates, e.g. "im Oktober" = the last October up to today.',
-  'Events E: {"type":"next"}, {"type":"today"}, {"type":"tomorrow"}, {"type":"weekday","day":"mon|tue|wed|thu|fri|sat|sun"} (the next such day, e.g. "am Sonntag"), {"type":"date","date":"YYYY-MM-DD"}.',
+  'Events E: {"type":"next"}, {"type":"today"}, {"type":"tomorrow"}, {"type":"yesterday"}, {"type":"weekday","day":"mon|tue|wed|thu|fri|sat|sun"} (the next such day, e.g. "am Sonntag", "kommt am Sonntag"), {"type":"past_weekday","day":"..."} (the last such day before today, for past tense or "letzten Sonntag", e.g. "wer war am Sonntag da", "Jonas fehlte am Mittwoch"), {"type":"date","date":"YYYY-MM-DD"}.',
   "T is one of the event type names given (choose the closest, e.g. \"Probe\" for \"Proben\"), group names are from the given groups when one fits, otherwise as written.",
   'Keep person names, song titles and group names exactly as written (do not translate them). "ich", "mein", "I", "my", "я", "yo" mean {"kind":"me"}.',
 ].join("\n");

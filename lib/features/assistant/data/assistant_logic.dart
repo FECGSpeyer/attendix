@@ -54,15 +54,19 @@ DayRange resolvePeriod(AssistantPeriod period, DateTime today, DateTime seasonSt
 }
 
 /// The day an [EventRef] points at; null for "der nächste Termin".
-/// A weekday is the next such day, today included.
+/// A weekday is the next such day, today included; a past weekday the
+/// last such day before today.
 DateTime? resolveEventDay(EventRef ref, DateTime today) {
   final t = dayOf(today);
   return switch (ref) {
     NextEventRef() => null,
     TodayEventRef() => t,
     TomorrowEventRef() => DateTime(t.year, t.month, t.day + 1),
+    YesterdayEventRef() => DateTime(t.year, t.month, t.day - 1),
     WeekdayEventRef(:final day) =>
       DateTime(t.year, t.month, t.day + ((day.index + 1 - t.weekday) % 7)),
+    PastWeekdayEventRef(:final day) =>
+      DateTime(t.year, t.month, t.day - (((t.weekday - (day.index + 1)) % 7) == 0 ? 7 : (t.weekday - (day.index + 1)) % 7)),
     DateEventRef(:final date) => dayOf(date),
   };
 }
@@ -211,12 +215,27 @@ int ageOn(String birthday, DateTime day) {
 /// the people or manage the attendance; the own rate only with an own
 /// person; everything else for every member.
 class AssistantAccess {
-  const AssistantAccess({required this.role, required this.hasOwnPerson});
+  const AssistantAccess({
+    required this.role,
+    required this.hasOwnPerson,
+    this.canManageAbsences = false,
+    this.canSelfReportAbsence = false,
+  });
 
   final Role role;
   final bool hasOwnPerson;
 
+  /// Planned absences of others (Admin, Verantwortliche or the role's
+  /// permission `player_planned_absence`).
+  final bool canManageAbsences;
+
+  /// Own planned absence (permission of the own role).
+  final bool canSelfReportAbsence;
+
   bool get seesOthers => role.isConductor || role.isHelperRole;
+
+  /// Status of others: the roles that may record attendance (not Viewer).
+  bool get changesOthers => role.canAddAttendance;
 
   bool get canUse => role.canView;
 
@@ -230,7 +249,103 @@ class AssistantAccess {
       NextEventCommand() => true,
       SongLastSungCommand() => true,
       HelpCommand() => true,
+      SetStatusCommand(onlyMe: true) => hasOwnPerson,
+      SetStatusCommand() => changesOthers,
+      PlannedAbsenceCommand(who: MeSubject()) => hasOwnPerson && (canSelfReportAbsence || canManageAbsences),
+      PlannedAbsenceCommand() => canManageAbsences,
       UnsupportedCommand() => true,
     };
   }
+}
+
+// ---------------------------------------------------------------------------
+// Package 2: limits of the changes (Schutzgrenzen, concept section 12).
+
+/// At most this many status rows in one chat command.
+const int assistantMaxChanges = 30;
+
+/// From this many rows on the person confirms twice.
+const int assistantConfirmTwiceFrom = 11;
+
+/// Termine older than this many days are not changed by the chat.
+const int assistantPastDays = 14;
+
+/// Termine / absences further ahead than this are not changed (≈ 6 months).
+const int assistantFutureDays = 183;
+
+/// One person_attendances row a status change may touch.
+typedef StatusRow = ({
+  String id,
+  int personId,
+  int attendanceId,
+  DateTime date,
+  String? typeId,
+  String? typeInfo,
+  String? startTime,
+  AttendanceStatus status,
+  String? notes,
+});
+
+/// The status that is written. Members only sign in, sign out or report
+/// being late (like "Meine Termine"): "zu spät" becomes Verspätung gemeldet
+/// and the leader statuses are refused (null).
+AttendanceStatus? targetStatus(AssistantStatus s, {required bool self}) => switch (s) {
+      AssistantStatus.present => AttendanceStatus.present,
+      AssistantStatus.excused => AttendanceStatus.excused,
+      AssistantStatus.lateExcused => AttendanceStatus.lateExcused,
+      AssistantStatus.late => self ? AttendanceStatus.lateExcused : AttendanceStatus.late,
+      AssistantStatus.absent => self ? null : AttendanceStatus.absent,
+      AssistantStatus.neutral => self ? null : AttendanceStatus.neutral,
+    };
+
+/// Whether a Termin on [date] may be changed by the chat today.
+bool inChangeWindow(DateTime date, DateTime now) {
+  final day = dayOf(date);
+  final today = dayOf(now);
+  return !day.isBefore(today.subtract(const Duration(days: assistantPastDays))) &&
+      !day.isAfter(today.add(const Duration(days: assistantFutureDays)));
+}
+
+/// Why a row is left out of a change.
+enum StatusSkip {
+  /// Already has the status.
+  same,
+
+  /// Not allowed for this Termin (deadline over, registration fields,
+  /// status not offered by the type, already signed out / marked absent).
+  locked,
+
+  /// Older than [assistantPastDays] days or further ahead than
+  /// [assistantFutureDays].
+  window,
+}
+
+/// Own row: the same rules as the buttons of "Meine Termine"
+/// (self_service_event_actions.dart `quickActions`).
+StatusSkip? selfStatusSkip({
+  required AttendanceStatus current,
+  required AttendanceStatus target,
+  required bool signinOpen,
+  required bool hasRegistrationFields,
+  required bool typeAllowsTarget,
+}) {
+  if (current == target) return StatusSkip.same;
+  if (target == AttendanceStatus.present) {
+    // Zusagen: open deadline; registration fields need the form.
+    return signinOpen && !hasRegistrationFields ? null : StatusSkip.locked;
+  }
+  // Absagen / Verspätung: blocked once signed out or marked absent.
+  final blocked = current == AttendanceStatus.excused ||
+      current == AttendanceStatus.lateExcused ||
+      current == AttendanceStatus.absent;
+  return blocked || !typeAllowsTarget ? StatusSkip.locked : null;
+}
+
+/// Whether an absence from [from] to [to] fits the limits: starts today at
+/// the earliest and ends within [assistantFutureDays].
+bool absenceInWindow(DateTime from, DateTime to, DateTime now) {
+  final today = dayOf(now);
+  return !dayOf(from).isBefore(today) &&
+      !dayOf(to).isBefore(dayOf(from)) &&
+      !dayOf(to).isAfter(today.add(const Duration(days: assistantFutureDays)));
 }

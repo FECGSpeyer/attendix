@@ -139,4 +139,80 @@ void main() {
       }
     });
   });
+
+  group('package 2 limits and rights', () {
+    test('past weekday and yesterday', () {
+      expect(resolveEventDay(const PastWeekdayEventRef(AssistantWeekday.sun), today), DateTime(2026, 11, 8));
+      expect(resolveEventDay(const PastWeekdayEventRef(AssistantWeekday.wed), today), DateTime(2026, 11, 4));
+      expect(resolveEventDay(const YesterdayEventRef(), today), DateTime(2026, 11, 10));
+    });
+
+    test('members only sign in, sign out or report being late', () {
+      expect(targetStatus(AssistantStatus.late, self: true), AttendanceStatus.lateExcused);
+      expect(targetStatus(AssistantStatus.absent, self: true), isNull);
+      expect(targetStatus(AssistantStatus.neutral, self: true), isNull);
+      expect(targetStatus(AssistantStatus.absent, self: false), AttendanceStatus.absent);
+    });
+
+    test('change window: 14 days back, 6 months ahead', () {
+      expect(inChangeWindow(DateTime(2026, 10, 28), today), isTrue);
+      expect(inChangeWindow(DateTime(2026, 10, 27), today), isFalse);
+      expect(inChangeWindow(DateTime(2027, 5, 13), today), isTrue);
+      expect(inChangeWindow(DateTime(2027, 5, 14), today), isFalse);
+    });
+
+    test('own rows follow the buttons of Meine Termine', () {
+      StatusSkip? skip(AttendanceStatus current, AttendanceStatus target,
+              {bool open = true, bool fields = false, bool allows = true}) =>
+          selfStatusSkip(
+            current: current,
+            target: target,
+            signinOpen: open,
+            hasRegistrationFields: fields,
+            typeAllowsTarget: allows,
+          );
+      expect(skip(AttendanceStatus.neutral, AttendanceStatus.excused), isNull);
+      expect(skip(AttendanceStatus.excused, AttendanceStatus.excused), StatusSkip.same);
+      expect(skip(AttendanceStatus.absent, AttendanceStatus.excused), StatusSkip.locked);
+      expect(skip(AttendanceStatus.excused, AttendanceStatus.lateExcused), StatusSkip.locked);
+      expect(skip(AttendanceStatus.neutral, AttendanceStatus.excused, allows: false), StatusSkip.locked);
+      expect(skip(AttendanceStatus.excused, AttendanceStatus.present), isNull);
+      expect(skip(AttendanceStatus.neutral, AttendanceStatus.present, open: false), StatusSkip.locked);
+      expect(skip(AttendanceStatus.neutral, AttendanceStatus.present, fields: true), StatusSkip.locked);
+    });
+
+    test('absence from today up to 6 months', () {
+      expect(absenceInWindow(DateTime(2026, 11, 11), DateTime(2027, 1, 31), today), isTrue);
+      expect(absenceInWindow(DateTime(2026, 11, 10), DateTime(2026, 11, 20), today), isFalse);
+      expect(absenceInWindow(DateTime(2026, 11, 12), DateTime(2027, 6, 1), today), isFalse);
+    });
+
+    test('rights per role', () {
+      final me = SetStatusCommand(who: const [MeSubject()], status: AssistantStatus.excused, event: const NextEventRef());
+      final jonas = SetStatusCommand(who: const [PersonSubject('Jonas')], status: AssistantStatus.excused, event: const NextEventRef());
+      final ownAbsence = PlannedAbsenceCommand(who: const MeSubject(), from: DateTime(2026, 12, 1), to: DateTime(2026, 12, 5));
+      final otherAbsence = PlannedAbsenceCommand(who: const PersonSubject('Lena'), from: DateTime(2026, 12, 1), to: DateTime(2026, 12, 5));
+
+      const player = AssistantAccess(role: Role.player, hasOwnPerson: true);
+      expect(player.allows(me), isTrue);
+      expect(player.allows(jonas), isFalse);
+      expect(player.allows(ownAbsence), isFalse);
+      const playerMayReport = AssistantAccess(role: Role.player, hasOwnPerson: true, canSelfReportAbsence: true);
+      expect(playerMayReport.allows(ownAbsence), isTrue);
+      expect(playerMayReport.allows(otherAbsence), isFalse);
+
+      const viewer = AssistantAccess(role: Role.viewer, hasOwnPerson: false);
+      expect(viewer.allows(jonas), isFalse);
+      expect(viewer.allows(me), isFalse);
+
+      for (final role in [Role.admin, Role.responsible, Role.helper, Role.voiceLeaderHelper]) {
+        final a = AssistantAccess(role: role, hasOwnPerson: false, canManageAbsences: role == Role.admin);
+        expect(a.allows(jonas), isTrue, reason: role.name);
+        expect(a.allows(otherAbsence), role == Role.admin, reason: role.name);
+      }
+      const applicant = AssistantAccess(role: Role.applicant, hasOwnPerson: true, canSelfReportAbsence: true);
+      expect(applicant.allows(me), isFalse);
+      expect(applicant.allows(ownAbsence), isFalse);
+    });
+  });
 }

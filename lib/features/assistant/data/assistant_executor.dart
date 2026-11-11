@@ -1,22 +1,40 @@
 // Chat assistant: answers a checked command with the data the app loads
 // itself (same providers, rights and tenant filter as the screens).
-// Read only: nothing is written in package 1.
+//
+// Package 2 changes (status, planned absence) are two steps: [run] only
+// builds a preview (nothing is written), [applyStatus] / [applyAbsence]
+// save after the person confirmed it, through the same repositories as
+// "Meine Termine", the Termin page and the absence sheets. Every saved
+// change can be undone ([revertStatus], [revertAbsence]).
+
+import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/attendance_providers.dart';
 import '../../../core/providers/attendance_type_providers.dart';
+import '../../../core/providers/duty_providers.dart';
 import '../../../core/providers/group_providers.dart';
+import '../../../core/providers/player_absence_providers.dart';
 import '../../../core/providers/player_providers.dart';
+import '../../../core/providers/realtime_providers.dart';
 import '../../../core/providers/self_service_providers.dart';
+import '../../../core/providers/signout_providers.dart';
 import '../../../core/providers/song_providers.dart';
 import '../../../core/providers/tenant_providers.dart';
+import '../../../core/utils/duty_utils.dart' show occupiesDutyRaw;
+import '../../../core/utils/event_list_utils.dart';
 import '../../../data/models/attendance/attendance.dart';
 import '../../../data/models/instrument/instrument.dart';
 import '../../../data/models/person/person.dart';
+import '../../../data/models/player_absence/player_absence.dart';
 import '../../../data/models/song/song.dart';
 import '../../../data/repositories/assistant_repository.dart';
 import '../../../data/repositories/attendance_repository.dart' show AttendanceRepository;
+import '../../../data/repositories/duty_repository.dart' show DutyRepository, DutyNotifyType;
+import '../../../data/repositories/player_absence_repository.dart';
+import '../../../data/repositories/sign_in_out_repository.dart';
+import '../../../l10n/l10n.dart';
 import '../../help/data/help_content_service.dart';
 import 'assistant_command.dart';
 import 'assistant_logic.dart';
@@ -27,14 +45,22 @@ class AssistantExecutor {
   /// (a tenant switch while the answer loads never reads another tenant).
   AssistantExecutor(this.ref, {DateTime Function()? clock})
       : _clock = clock ?? DateTime.now,
+        _tenantId = ref.read(currentTenantIdProvider),
         _reads = ref.read(assistantRepositoryForTenantProvider(ref.read(currentTenantIdProvider))),
-        _events = ref.read(attendanceRepositoryWithTenantProvider);
+        _events = ref.read(attendanceRepositoryWithTenantProvider),
+        _signs = ref.read(signInOutRepositoryForTenantProvider(ref.read(currentTenantIdProvider))),
+        _absences = ref.read(playerAbsenceRepositoryForTenantProvider(ref.read(currentTenantIdProvider))),
+        _duty = ref.read(dutyRepositoryForTenantProvider(ref.read(currentTenantIdProvider)));
 
   final Ref ref;
   final DateTime Function() _clock;
+  final int? _tenantId;
 
   final AssistantRepository _reads;
   final AttendanceRepository _events;
+  final SignInOutRepository _signs;
+  final PlayerAbsenceRepository _absences;
+  final DutyRepository _duty;
 
   Future<AssistantAccess> access() async {
     final role = ref.read(currentRoleProvider);
@@ -44,15 +70,31 @@ class AssistantExecutor {
     } catch (_) {
       own = null;
     }
-    return AssistantAccess(role: role, hasOwnPerson: own?.id != null);
+    return AssistantAccess(
+      role: role,
+      hasOwnPerson: own?.id != null,
+      canManageAbsences: ref.read(canManagePlannedAbsencesProvider),
+      canSelfReportAbsence: ref.read(canSelfReportAbsenceProvider),
+    );
   }
+
+  /// A command about the person themself without an own person in the tenant.
+  static bool _needsOwnPerson(AssistantCommand c) => switch (c) {
+        AttendanceRateCommand(subject: MeSubject()) => true,
+        SetStatusCommand(:final who) => who.any((w) => w is MeSubject),
+        PlannedAbsenceCommand(who: MeSubject()) => true,
+        _ => false,
+      };
 
   Future<AssistantReply> run(AssistantCommand command) async {
     final rights = await access();
-    if (command is AttendanceRateCommand && command.subject is MeSubject && !rights.hasOwnPerson) {
+    if (_needsOwnPerson(command) && !rights.hasOwnPerson) {
       return const NoticeReply(AssistantNotice.noOwnPerson);
     }
-    if (!rights.allows(command)) return const NoticeReply(AssistantNotice.noRights);
+    if (!rights.allows(command)) {
+      return NoticeReply(
+          command is PlannedAbsenceCommand ? AssistantNotice.noAbsenceRights : AssistantNotice.noRights);
+    }
     return switch (command) {
       AttendanceRateCommand() => _rate(command),
       EventOverviewCommand() => _eventOverview(command),
@@ -60,6 +102,8 @@ class AssistantExecutor {
       BirthdaysCommand() => _birthdays(command),
       SongLastSungCommand() => _song(command),
       HelpCommand() => _help(command),
+      SetStatusCommand() => command.onlyMe ? _ownStatus(command) : _othersStatus(command),
+      PlannedAbsenceCommand() => _absencePreview(command, rights),
       UnsupportedCommand(:final isChange) =>
         NoticeReply(isChange ? AssistantNotice.changeLater : AssistantNotice.notUnderstood),
     };
@@ -290,5 +334,344 @@ class AssistantExecutor {
     final found = ref.read(helpContentServiceProvider).search(c.query).articles.take(3).toList();
     if (found.isEmpty) return NoticeReply(AssistantNotice.noHelp, subject: c.query);
     return HelpReply([for (final a in found) (id: a.id, title: a.title)]);
+  }
+
+  // -------------------------------------------------------------------------
+  // Package 2: status and planned absence.
+
+  bool _inDay(DateTime date, DateTime day) => dayOf(date) == dayOf(day);
+
+  /// Own status: the rows and the rules of "Meine Termine".
+  Future<AssistantReply> _ownStatus(SetStatusCommand c) async {
+    final target = targetStatus(c.status, self: true);
+    if (target == null) return const NoticeReply(AssistantNotice.selfStatusNotAllowed);
+    final own = await ref.read(currentSelfServicePlayerProvider.future);
+    if (own?.id == null) return const NoticeReply(AssistantNotice.noOwnPerson);
+    final now = _clock();
+    final type = _type(await _types(), c.typeName);
+    final raw = await ref.read(signoutDataProvider.future);
+    var rows = absenceCandidates(raw, useDutyView: false)
+        .where((a) =>
+            a.isMember &&
+            a.id != null &&
+            a.attendanceId != null &&
+            a.tenantId == _tenantId &&
+            (type == null || a.typeId == type.id))
+        .toList();
+    DateTime when(CrossTenantPersonAttendance a) => EventListUtils.parse(a.date) ?? DateTime(1970);
+    if (c.period != null) {
+      final range = resolvePeriod(c.period!, now, _seasonStart);
+      rows = rows.where((a) => !dayOf(when(a)).isBefore(range.from) && !dayOf(when(a)).isAfter(range.to)).toList();
+    } else {
+      final day = resolveEventDay(c.event!, now);
+      rows = day == null ? rows.take(1).toList() : rows.where((a) => _inDay(when(a), day)).toList();
+    }
+    if (rows.isEmpty) return const NoticeReply(AssistantNotice.noEvent);
+
+    final name = _name(own!);
+    final changes = <StatusChange>[];
+    var locked = 0;
+    var window = 0;
+    for (final a in rows) {
+      if (!inChangeWindow(when(a), now)) {
+        window++;
+        continue;
+      }
+      final offered = a.attendanceType?.availableStatuses;
+      final askFor = target == AttendanceStatus.lateExcused ? AttendanceStatus.late : AttendanceStatus.excused;
+      final skip = selfStatusSkip(
+        current: a.status,
+        target: target,
+        signinOpen: EventListUtils.isSigninOpen(a.deadline),
+        hasRegistrationFields: a.registrationFields.isNotEmpty,
+        typeAllowsTarget: offered == null || offered.contains(askFor),
+      );
+      if (skip == StatusSkip.locked) locked++;
+      if (skip != null) continue;
+      changes.add(StatusChange(
+        personAttendanceId: a.id!,
+        attendanceId: a.attendanceId!,
+        personName: name,
+        title: a.eventTitle,
+        date: when(a),
+        oldStatus: a.status,
+        oldNotes: a.notes,
+        newStatus: target,
+        occupiesDuty: target != AttendanceStatus.present && a.isDutyType && occupiesDutyRaw(a.dutyState, a.status),
+      ));
+    }
+    return _statusPreview(StatusPlan(
+      self: true,
+      status: target,
+      reason: c.reason,
+      changes: changes,
+      skippedLocked: locked,
+      skippedWindow: window,
+    ));
+  }
+
+  AssistantReply _statusPreview(StatusPlan plan) {
+    if (plan.changes.length > assistantMaxChanges) {
+      return NoticeReply(AssistantNotice.tooManyChanges, count: plan.changes.length);
+    }
+    if (plan.changes.isEmpty) {
+      return NoticeReply(AssistantNotice.nothingToChange, count: plan.skippedLocked + plan.skippedWindow);
+    }
+    return StatusPreviewReply(plan);
+  }
+
+  /// "Welchen Jonas meinst du?" for one entry of a list of people.
+  Future<ChoiceReply> _whoChoice(String query, List<Person> matches, AssistantCommand Function(Person) command) async {
+    final groups = await ref.read(groupsProvider.future);
+    String label(Person p) {
+      final g = groups.where((g) => g.id == p.instrument).map((g) => g.name).firstOrNull;
+      return g == null ? _name(p) : '${_name(p)} · $g';
+    }
+
+    return ChoiceReply(query: query, options: [
+      for (final p in matches.take(6)) (label: label(p), command: command(p)),
+    ]);
+  }
+
+  /// Status of others (leaders): the rows of the Termin page.
+  Future<AssistantReply> _othersStatus(SetStatusCommand c) async {
+    final target = targetStatus(c.status, self: false)!;
+    final now = _clock();
+    final players = await _activePlayers();
+    final byId = {for (final p in players) p.id!: p};
+    final ids = <int>{};
+    for (var i = 0; i < c.who.length; i++) {
+      final w = c.who[i];
+      switch (w) {
+        case MeSubject():
+          final own = await ref.read(currentSelfServicePlayerProvider.future);
+          if (own?.id == null) return const NoticeReply(AssistantNotice.noOwnPerson);
+          ids.add(own!.id!);
+        case PersonIdSubject(:final personId):
+          if (!byId.containsKey(personId)) return const NoticeReply(AssistantNotice.personNotFound);
+          ids.add(personId);
+        case PersonSubject(:final name):
+          final matches = bestMatches(name, players, (p) => personNames(p.firstName, p.lastName));
+          if (matches.isEmpty) return NoticeReply(AssistantNotice.personNotFound, subject: name);
+          if (matches.length > 1) {
+            return _whoChoice(name, matches, (p) => c.withWho([...c.who]..[i] = PersonIdSubject(p.id!)));
+          }
+          ids.add(matches.first.id!);
+        case GroupSubject(:final name):
+          final group = _group(await ref.read(groupsProvider.future), name);
+          if (group == null) return NoticeReply(AssistantNotice.groupNotFound, subject: name);
+          ids.addAll(players.where((p) => p.instrument == group.id && !p.paused).map((p) => p.id!));
+        case AllSubject():
+          return const NoticeReply(AssistantNotice.notUnderstood);
+      }
+    }
+    if (ids.isEmpty) return const NoticeReply(AssistantNotice.personNotFound);
+
+    final types = await _types();
+    final type = _type(types, c.typeName);
+    List<StatusRow> rows;
+    if (c.period != null) {
+      final range = resolvePeriod(c.period!, now, _seasonStart);
+      rows = (await _reads.getStatusRows(personIds: ids.toList(), range: range))
+          .where((r) => type == null || r.typeId == type.id)
+          .toList();
+    } else {
+      final event = await _findEvent(c.event!, type);
+      if (event?.id == null) return const NoticeReply(AssistantNotice.noEvent);
+      rows = await _reads.getStatusRows(personIds: ids.toList(), attendanceId: event!.id!);
+    }
+    if (rows.isEmpty) return const NoticeReply(AssistantNotice.noEvent);
+
+    String title(StatusRow r) {
+      if ((r.typeInfo ?? '').isNotEmpty) return r.typeInfo!;
+      return types.where((t) => t.id == r.typeId).map((t) => t.name).firstOrNull ?? _day(r.date);
+    }
+
+    final changes = <StatusChange>[];
+    var window = 0;
+    for (final r in rows) {
+      if (!inChangeWindow(r.date, now)) {
+        window++;
+        continue;
+      }
+      if (r.status == target) continue;
+      final p = byId[r.personId];
+      if (p == null) continue;
+      changes.add(StatusChange(
+        personAttendanceId: r.id,
+        attendanceId: r.attendanceId,
+        personName: _name(p),
+        title: title(r),
+        date: r.date,
+        oldStatus: r.status,
+        oldNotes: r.notes,
+        newStatus: target,
+      ));
+    }
+    changes.sort((a, b) {
+      final d = a.date.compareTo(b.date);
+      return d != 0 ? d : a.personName.compareTo(b.personName);
+    });
+    return _statusPreview(StatusPlan(
+      self: false,
+      status: target,
+      reason: c.reason,
+      changes: changes,
+      skippedWindow: window,
+    ));
+  }
+
+  static String _day(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}';
+
+  static String _iso(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  void _refreshStatuses({required bool self}) {
+    if (self) {
+      ref.invalidate(signoutDataProvider);
+      ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
+      ref.invalidate(upcomingDutyTermineProvider);
+      ref.invalidate(dutyTermineByIdProvider);
+      ref.invalidate(myDutyOverviewProvider);
+    }
+    ref.invalidate(realtimeAttendanceListProvider);
+  }
+
+  /// Saves a confirmed status preview. Returns the number of rows written.
+  Future<int> applyStatus(StatusPlan plan) async {
+    final status = plan.status;
+    var count = 0;
+    if (plan.self) {
+      if (status == AttendanceStatus.present) {
+        for (final c in plan.changes) {
+          await _signs.signIn(c.personAttendanceId, SignInType.fromStatus(c.oldStatus), notes: plan.reason ?? '');
+          count++;
+        }
+      } else {
+        await _signs.signOut(
+          [for (final c in plan.changes) c.personAttendanceId],
+          plan.reason ?? '',
+          isLateComing: status == AttendanceStatus.lateExcused,
+          isSelf: true,
+        );
+        count = plan.changes.length;
+        // Like "Meine Termine": a cancelled own duty asks for a substitute.
+        for (final id in {for (final c in plan.changes) if (c.occupiesDuty) c.attendanceId}) {
+          unawaited(_duty.notify(DutyNotifyType.understaffed, id));
+        }
+      }
+    } else {
+      for (final c in plan.changes) {
+        await _events.updatePersonAttendance(c.personAttendanceId, {
+          'status': status.value,
+          if (plan.reason != null) 'notes': plan.reason,
+        });
+        count++;
+      }
+    }
+    _refreshStatuses(self: plan.self);
+    return count;
+  }
+
+  /// "Rückgängig": every row back to its status and note before the change.
+  Future<void> revertStatus(StatusPlan plan) async {
+    if (plan.self) {
+      await _signs.restoreOwnStatuses([
+        for (final c in plan.changes) (id: c.personAttendanceId, status: c.oldStatus, notes: c.oldNotes ?? ''),
+      ]);
+    } else {
+      for (final c in plan.changes) {
+        await _events.updatePersonAttendance(c.personAttendanceId, {
+          'status': c.oldStatus.value,
+          'notes': c.oldNotes ?? '',
+        });
+      }
+    }
+    _refreshStatuses(self: plan.self);
+  }
+
+  Future<AssistantReply> _absencePreview(PlannedAbsenceCommand c, AssistantAccess rights) async {
+    final now = _clock();
+    Person? person;
+    final isMe = c.who is MeSubject;
+    switch (c.who) {
+      case MeSubject():
+        person = await ref.read(currentSelfServicePlayerProvider.future);
+        if (person?.id == null) return const NoticeReply(AssistantNotice.noOwnPerson);
+      case PersonIdSubject(:final personId):
+        person = (await _activePlayers()).where((p) => p.id == personId).firstOrNull;
+        if (person == null) return const NoticeReply(AssistantNotice.personNotFound);
+      case PersonSubject(:final name):
+        final players = await _activePlayers();
+        final matches = bestMatches(name, players, (p) => personNames(p.firstName, p.lastName));
+        if (matches.isEmpty) return NoticeReply(AssistantNotice.personNotFound, subject: name);
+        if (matches.length > 1) {
+          return _whoChoice(name, matches, (p) => c.withWho(PersonIdSubject(p.id!)));
+        }
+        person = matches.first;
+      default:
+        return const NoticeReply(AssistantNotice.notUnderstood);
+    }
+    // Another person picked by name may still be the own one.
+    final own = await ref.read(currentSelfServicePlayerProvider.future);
+    final self = isMe || (own?.id != null && own!.id == person!.id);
+    if (!self && !rights.canManageAbsences) return const NoticeReply(AssistantNotice.noAbsenceRights);
+    if (!absenceInWindow(c.from, c.to, now)) return const NoticeReply(AssistantNotice.absenceOutOfRange);
+
+    // Own absence: only the Termine "Meine Termine" lists (like the sheet).
+    final onlyIds = self
+        ? absenceCandidates(await ref.read(signoutDataProvider.future), useDutyView: false)
+            .map((a) => a.id)
+            .whereType<String>()
+            .toSet()
+        : null;
+    final rows = PlayerAbsenceRepository.limitToIds(
+      await _absences.upcomingToExcuse(personId: person!.id!, fromDate: _iso(c.from), untilDate: _iso(c.to)),
+      onlyIds,
+    );
+    return AbsencePreviewReply(AbsencePlan(
+      personId: person.id!,
+      personName: _name(person),
+      isMe: self,
+      from: c.from,
+      to: c.to,
+      reason: c.reason ?? l10nWithoutContext.assistantAbsenceDefaultReason,
+      affected: rows.length,
+      onlyIds: onlyIds,
+    ));
+  }
+
+  void _refreshAbsences(int personId) {
+    ref.invalidate(playerAbsencesByPersonIdProvider(personId));
+    ref.invalidate(playerAbsencesProvider);
+    _refreshStatuses(self: true);
+  }
+
+  /// Saves a confirmed absence and excuses its Termine.
+  Future<({PlayerAbsence absence, int count})> applyAbsence(AbsencePlan plan) async {
+    final absence = await _absences.addAbsence(
+      personId: plan.personId,
+      fromDate: _iso(plan.from),
+      untilDate: _iso(plan.to),
+      reason: plan.reason,
+    );
+    final count = await _absences.excuseUpcomingAttendances(
+      personId: plan.personId,
+      fromDate: _iso(plan.from),
+      untilDate: _iso(plan.to),
+      reason: plan.reason,
+      onlyIds: plan.onlyIds,
+    );
+    _refreshAbsences(plan.personId);
+    return (absence: absence, count: count);
+  }
+
+  /// "Rückgängig": deletes the absence and resets the Termine it excused.
+  Future<void> revertAbsence(PlayerAbsence absence, AbsencePlan plan) async {
+    if (absence.id == null) return;
+    await _absences.deleteAbsence(absence.id!);
+    await _absences.resetExcusedAttendances(absence: absence, onlyIds: plan.onlyIds);
+    _refreshAbsences(plan.personId);
   }
 }

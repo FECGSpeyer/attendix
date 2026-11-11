@@ -103,7 +103,82 @@ class AssistantChatNotifier extends Notifier<AssistantChatState> {
     }
   }
 
-  void clear() => state = const AssistantChatState();
+  void clear() {
+    if (state.busy) return;
+    state = const AssistantChatState();
+  }
+
+  void _replace(int index, AssistantReply reply) {
+    final list = [...state.messages];
+    list[index] = AssistantMessage.assistant(reply);
+    state = state.copyWith(messages: list);
+  }
+
+  AssistantReply? _replyAt(int index) =>
+      index >= 0 && index < state.messages.length ? state.messages[index].reply : null;
+
+  /// "Speichern" on a preview. Saves nothing on the first tap when the
+  /// preview needs a second confirmation (many rows).
+  Future<void> confirm(int index) async {
+    final reply = _replyAt(index);
+    if (reply is! ActionPreviewReply || state.busy) return;
+    if (reply.state == ActionState.pending && reply.needsSecondConfirm) {
+      _replace(index, reply.withState(ActionState.confirmAgain));
+      return;
+    }
+    if (reply.state != ActionState.pending && reply.state != ActionState.confirmAgain) return;
+    _replace(index, reply.withState(ActionState.saving));
+    state = state.copyWith(busy: true);
+    // Repositories bound to the current tenant before the first await.
+    final executor = AssistantExecutor(ref);
+    try {
+      final AssistantReply done;
+      switch (reply) {
+        case StatusPreviewReply(:final plan):
+          final count = await executor.applyStatus(plan);
+          done = ActionDoneReply(statusPlan: plan, count: count);
+        case AbsencePreviewReply(:final plan):
+          final saved = await executor.applyAbsence(plan);
+          done = ActionDoneReply(absencePlan: plan, absence: saved.absence, count: saved.count);
+      }
+      _replace(index, reply.withState(ActionState.done));
+      _add(AssistantMessage.assistant(done));
+    } catch (_) {
+      _replace(index, reply.withState(ActionState.done));
+      _add(const AssistantMessage.assistant(NoticeReply(AssistantNotice.failed)));
+    } finally {
+      state = state.copyWith(busy: false);
+    }
+  }
+
+  /// "Abbrechen" on a preview: nothing is saved.
+  void cancel(int index) {
+    final reply = _replyAt(index);
+    if (reply is! ActionPreviewReply || state.busy) return;
+    if (reply.state != ActionState.pending && reply.state != ActionState.confirmAgain) return;
+    _replace(index, reply.withState(ActionState.cancelled));
+  }
+
+  /// "Rückgängig" on a saved change (once).
+  Future<void> undo(int index) async {
+    final reply = _replyAt(index);
+    if (reply is! ActionDoneReply || reply.undo != UndoState.available || state.busy) return;
+    _replace(index, reply.withUndo(UndoState.working));
+    state = state.copyWith(busy: true);
+    final executor = AssistantExecutor(ref);
+    try {
+      if (reply.statusPlan != null) {
+        await executor.revertStatus(reply.statusPlan!);
+      } else if (reply.absence != null && reply.absencePlan != null) {
+        await executor.revertAbsence(reply.absence!, reply.absencePlan!);
+      }
+      _replace(index, reply.withUndo(UndoState.undone));
+    } catch (_) {
+      _replace(index, reply.withUndo(UndoState.failed));
+    } finally {
+      state = state.copyWith(busy: false);
+    }
+  }
 
   Future<AssistantReply> _answer(AssistantExecutor executor, AssistantCommand command) async {
     try {
