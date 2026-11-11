@@ -28105,8 +28105,26 @@ abstract class AppLocalizations {
   /// redesign.work.zip
   ///
   /// In de, this message translates to:
-  /// **'Alle Dateien als ZIP'**
+  /// **'Alle Dateien herunterladen'**
   String get redesignWorkZip;
+
+  /// redesign.work.zipHint
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei} other {{count} Dateien}} als ZIP'**
+  String redesignWorkZipHint(num count);
+
+  /// redesign.work.zipLoading
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien werden geladen … {done} von {total}'**
+  String redesignWorkZipLoading(Object done, Object total);
+
+  /// redesign.work.zipPacking
+  ///
+  /// In de, this message translates to:
+  /// **'ZIP wird erstellt …'**
+  String get redesignWorkZipPacking;
 
   /// redesign.works.add
   ///

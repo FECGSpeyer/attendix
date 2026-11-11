@@ -17662,7 +17662,26 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkYourPart => 'Deine Stimme';
 
   @override
-  String get redesignWorkZip => 'Alle Dateien als ZIP';
+  String get redesignWorkZip => 'Alle Dateien herunterladen';
+
+  @override
+  String redesignWorkZipHint(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Dateien',
+      one: '1 Datei',
+    );
+    return '$_temp0 als ZIP';
+  }
+
+  @override
+  String redesignWorkZipLoading(Object done, Object total) {
+    return 'Dateien werden geladen … $done von $total';
+  }
+
+  @override
+  String get redesignWorkZipPacking => 'ZIP wird erstellt …';
 
   @override
   String get redesignWorksAdd => 'Werk hinzufügen';

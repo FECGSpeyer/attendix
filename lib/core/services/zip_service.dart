@@ -11,36 +11,31 @@ import '../../l10n/l10n.dart';
 
 /// Service for creating and sharing ZIP archives
 class ZipService {
-  /// Download all song files as a ZIP archive
+  /// Download all song files as a ZIP archive. [onProgress] is told how
+  /// many of the files are loaded so far (for a "3 von 19" hint);
+  /// [onPacked] runs right before the share sheet (or download) opens.
   Future<void> downloadSongFilesAsZip({
     required List<SongFile> files,
     required String songName,
+    void Function(int done, int total)? onProgress,
+    VoidCallback? onPacked,
   }) async {
     if (files.isEmpty) {
       throw Exception(l10nWithoutContext.coreFlutterNoFilesToDownload);
     }
 
-    // Create archive
+    final withUrl = files.where((f) => f.url.isNotEmpty).toList();
+    final bodies = await downloadAll(withUrl, onProgress: onProgress);
+
+    // Add in the order of the list (equal names get " (2)" etc.). Stored
+    // without compression: PDFs and MP3s hardly shrink, and deflating them
+    // only blocks the UI.
     final archive = Archive();
-
-    // Download each file and add to archive (equal names get " (2)" etc.)
     final used = <String>{};
-    for (final file in files) {
-      if (file.url.isEmpty) continue;
-
-      try {
-        final response = await http.get(Uri.parse(file.url));
-        if (response.statusCode == 200) {
-          archive.addFile(ArchiveFile(
-            uniqueArchiveName(file.fileName, used),
-            response.bodyBytes.length,
-            response.bodyBytes,
-          ));
-        }
-      } catch (e) {
-        // Skip files that fail to download
-        debugPrint('Failed to download ${file.fileName}: $e');
-      }
+    for (var i = 0; i < withUrl.length; i++) {
+      final bytes = bodies[i];
+      if (bytes == null) continue;
+      archive.addFile(ArchiveFile.noCompress(uniqueArchiveName(withUrl[i].fileName, used), bytes.length, bytes));
     }
 
     if (archive.isEmpty) {
@@ -48,18 +43,52 @@ class ZipService {
     }
 
     // Encode to ZIP
-    final zipData = ZipEncoder().encode(archive);
+    final zipData = ZipEncoder().encode(archive, level: DeflateLevel.none);
 
     // Generate safe filename
     final safeName = _sanitizeFileName(songName);
     final fileName = '${safeName}_files.zip';
 
+    onPacked?.call();
+
     // Use platform-specific implementation
-    await platform.saveZipFile(
-      Uint8List.fromList(zipData),
-      fileName,
-      text: l10nWithoutContext.coreFlutterSongFiles,
-    );
+    await platform.saveZipFile(Uint8List.fromList(zipData), fileName, text: l10nWithoutContext.coreFlutterSongFiles);
+  }
+
+  /// Loads [files] a few at a time instead of one after another; a file
+  /// that fails to load is null.
+  @visibleForTesting
+  static Future<List<Uint8List?>> downloadAll(
+    List<SongFile> files, {
+    void Function(int done, int total)? onProgress,
+    Future<Uint8List?> Function(String url)? load,
+    int parallel = 4,
+  }) async {
+    final get = load ?? _load;
+    final result = List<Uint8List?>.filled(files.length, null);
+    var next = 0;
+    var done = 0;
+    onProgress?.call(0, files.length);
+    Future<void> worker() async {
+      while (next < files.length) {
+        final i = next++;
+        try {
+          result[i] = await get(files[i].url);
+        } catch (e) {
+          // Skip files that fail to download
+          debugPrint('Failed to download ${files[i].fileName}: $e');
+        }
+        onProgress?.call(++done, files.length);
+      }
+    }
+
+    await Future.wait([for (var w = 0; w < parallel && w < files.length; w++) worker()]);
+    return result;
+  }
+
+  static Future<Uint8List?> _load(String url) async {
+    final response = await http.get(Uri.parse(url));
+    return response.statusCode == 200 ? response.bodyBytes : null;
   }
 
   /// [name], or "name (2).ext", "name (3).ext" … when [used] has it; the

@@ -187,6 +187,18 @@ class RdWorkPage extends ConsumerWidget {
         Expanded(child: back),
         if (canEdit)
           RdTextLink(label: l10n.redesignWorkEdit, onTap: () => context.push(RedesignRoutes.workEdit(songId))),
+        if (rdCanShareWorkLink(data)) ...[
+          const SizedBox(width: 4),
+          Builder(
+            builder:
+                (button) => RdCircleButton(
+                  key: const Key('rd-work-share-link'),
+                  icon: Icons.ios_share,
+                  label: l10n.redesignWorkShareLink,
+                  onPressed: () => rdShareWorkLink(button, data),
+                ),
+          ),
+        ],
         if (rdWorkMenuHasActions(data, files, copyTargets)) ...[
           const SizedBox(width: 4),
           Builder(
