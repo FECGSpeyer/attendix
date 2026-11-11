@@ -84,6 +84,10 @@ void main() {
         ['16:20', 'Ben K.', ''],
         ['16:40', '', ''],
       ]);
+      // Group names with spaces around them still find their conductor.
+      expect(RegisterPlanService.tableOf([' S '], [(start: '1', info: 'S : Anna M.')]).rows, [
+        ['1', 'Anna M.'],
+      ]);
     });
 
     test('isPlanExportDisabled', () {

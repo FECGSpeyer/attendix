@@ -174,7 +174,7 @@ class RegisterPlanService {
       groups: [...groups],
       rows: [
         for (final r in rounds)
-          [r.start, for (final g in groups) parse(r.info)[g] ?? ''],
+          [r.start, for (final g in groups) parse(r.info)[g.trim()] ?? ''],
       ],
     );
   }
