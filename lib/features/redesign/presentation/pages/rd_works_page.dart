@@ -38,7 +38,8 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/works/rd_collections_ui.dart';
 import '../widgets/works/rd_current_works.dart';
 import '../widgets/works/rd_works_filter_sheet.dart';
-import 'rd_general_settings_page.dart' show showRdSharingSheet;
+import '../rd_actions.dart' show rdShareLink;
+import 'rd_general_settings_page.dart' show rdEnableWorksSharing;
 
 /// Search text of the Werke list, shared by every copy of the list (the
 /// split view builds a new one when the first Werk opens).
@@ -120,12 +121,10 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           AppActionSheetAction(value: 'history', icon: Icons.history, label: l10n.rdAdminWorkHistory),
         if (ref.read(canAccessFilesProvider))
           AppActionSheetAction(value: 'files', icon: Icons.folder_outlined, label: l10n.settingsFileStorage),
-        // Leads switch sharing here (from the old "Allgemein"), the sheet
-        // also copies the link.
-        if (isAdmin)
-          AppActionSheetAction(value: 'sharing', icon: Icons.share_outlined, label: l10n.rdAdminSharing)
-        else if (sharingId != null && sharingId.isNotEmpty)
-          AppActionSheetAction(value: 'share', icon: Icons.link, label: l10n.songsCopyLink),
+        // The public link straight into the system share sheet; leads
+        // switch it on first if it is off (off again in Verwaltung).
+        if (isAdmin || (sharingId != null && sharingId.isNotEmpty))
+          AppActionSheetAction(value: 'share', icon: Icons.ios_share, label: l10n.generalSettingsShareSongs),
         // A list of the Werke, not their Noten ("Alle als PDF" at Aktuell).
         AppActionSheetAction(value: 'pdf', icon: Icons.description_outlined, label: l10n.rdWmListPdf),
       ],
@@ -142,11 +141,16 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         await showHistoryModal(context);
       case 'files':
         await context.push('/settings/files');
-      case 'sharing':
-        await showRdSharingSheet(context);
       case 'share':
-        await Clipboard.setData(ClipboardData(text: SongUtils.shareLink(sharingId!)));
-        if (mounted) ToastHelper.showSuccess(context, l10n.songsLinkCopied);
+        final id =
+            (sharingId ?? '').isNotEmpty ? sharingId : (isAdmin ? await rdEnableWorksSharing(context, ref) : null);
+        if (id == null || !mounted) return;
+        await rdShareLink(
+          context,
+          SongUtils.shareLink(id),
+          subject: l10n.redesignTabWorks,
+          copiedMessage: l10n.songsLinkCopied,
+        );
       case 'pdf':
         await _exportPdf(data, shown);
     }

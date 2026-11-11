@@ -6,7 +6,8 @@
       "historyIntro": "Welche Werke wann gespielt wurden. Tippe auf einen Eintrag, um ihn zu entfernen.",
       "listPdf": "Werkliste als PDF",
       "manageCategories": "Kategorien verwalten",
-      "categoryRemove": "Kategorie „{name}“ entfernen"
+      "categoryRemove": "Kategorie „{name}“ entfernen",
+      "shareEnable": "Link erstellen"
     }
   },
   "en": {
@@ -16,7 +17,8 @@
       "historyIntro": "Which works were played when. Tap an entry to remove it.",
       "listPdf": "Works list as PDF",
       "manageCategories": "Manage categories",
-      "categoryRemove": "Remove category “{name}”"
+      "categoryRemove": "Remove category “{name}”",
+      "shareEnable": "Create link"
     }
   }
 }

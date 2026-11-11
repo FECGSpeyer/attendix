@@ -3389,6 +3389,7 @@
   "rdWmHistoryIntro": "Which works were played when. Tap an entry to remove it.",
   "rdWmListPdf": "Works list as PDF",
   "rdWmManageCategories": "Manage categories",
+  "rdWmShareEnable": "Create link",
   "rdWmWorksCount": "{count, plural, one {{count} work} other {{count} works}}",
   "redesignAbsenceAffects": "{count, plural, =0 {You have no events in this period.} one {This affects 1 event} other {This affects {count} events}}",
   "redesignAbsenceAffectsOther": "{count, plural, =0 {There are no events in this period.} one {This affects 1 event} other {This affects {count} events}}",

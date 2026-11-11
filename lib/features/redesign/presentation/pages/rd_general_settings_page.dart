@@ -129,6 +129,35 @@ Future<void> showRdSharingSheet(BuildContext context) => showRdSettingsSheet<voi
       ),
     );
 
+/// Werke › ••• › "Werke öffentlich teilen" while the link is off: asks once
+/// and switches it on. Returns the sharing id, or null when cancelled or the
+/// save failed (switching it off stays in Verwaltung › Werke öffentlich
+/// teilen).
+Future<String?> rdEnableWorksSharing(BuildContext context, WidgetRef ref) async {
+  final l10n = context.l10n;
+  final ok = await showAppConfirm(
+    context,
+    title: l10n.generalSettingsShareSongs,
+    message: l10n.rdSettingsShareWorksHint,
+    confirmText: l10n.rdWmShareEnable,
+  );
+  if (!ok || !context.mounted || DemoGuard.blocked()) return null;
+  final tenantId = ref.read(currentTenantProvider)?.id;
+  if (tenantId == null) return null;
+  final id = const Uuid().v4();
+  try {
+    await ref.read(tenantSettingsRepositoryForTenantProvider(tenantId)).updateSettings({'song_sharing_id': id});
+    await ref
+        .read(currentTenantProvider.notifier)
+        .updateTenantLocalIfCurrent(tenantId, (c) => c.copyWith(songSharingId: id));
+    ref.invalidate(userTenantsProvider);
+    return id;
+  } catch (_) {
+    if (context.mounted) ToastHelper.showError(context, l10n.rdSettingsSaveFailed);
+    return null;
+  }
+}
+
 /// Title of a settings page.
 String rdTenantSettingsTitle(AppLocalizations l10n, RdTenantSettings s) => switch (s) {
       RdTenantSettings.name => l10n.rdAdminName,

@@ -15691,6 +15691,10 @@
   "@rdWmManageCategories": {
     "description": "rdWm.manageCategories"
   },
+  "rdWmShareEnable": "Link erstellen",
+  "@rdWmShareEnable": {
+    "description": "rdWm.shareEnable"
+  },
   "rdWmWorksCount": "{count, plural, one {{count} Werk} other {{count} Werke}}",
   "@rdWmWorksCount": {
     "description": "rdWm.worksCount",
