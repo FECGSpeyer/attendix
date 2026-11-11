@@ -9,7 +9,7 @@ import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../utils/route_return_reload.dart';
 import '../widgets/rd_meetings_tab.dart';
 import '../widgets/rd_team_tasks_tab.dart';
-import '../widgets/topics_tab.dart';
+import '../widgets/rd_open_topics.dart';
 
 /// Beta "Team": Besprechungen and Aufgaben. Who is neither leadership nor
 /// in a circle only has tasks, so the page is then just "Meine Aufgaben".
@@ -149,11 +149,14 @@ class _RdTeamTopicsPageState extends ConsumerState<RdTeamTopicsPage> with RouteR
                 children: [
                   RdBackLink(label: l10n.rdTeamTitle, onTap: () => rdBack(context, '/settings/team-organization')),
                   const SizedBox(height: 8),
-                  Text(l10n.rdTeamTopics, style: RdType.largeTitle(p)),
+                  Text(
+                    ref.watch(isTeamLeaderProvider) ? l10n.rdTeamOpenTopics : l10n.teamOrgSuggestTopic,
+                    style: RdType.largeTitle(p),
+                  ),
                 ],
               ),
             ),
-            const Expanded(child: TopicsTab()),
+            const Expanded(child: RdOpenTopics()),
           ],
         ),
       ),

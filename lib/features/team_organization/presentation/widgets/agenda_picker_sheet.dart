@@ -307,7 +307,10 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
       height: MediaQuery.of(context).size.height * 0.9,
       child: Column(
         children: [
-          AppBar(
+          // An AppBar with `bottom` needs a bounded height inside a Column.
+          SizedBox(
+            height: (ionModalToolbarHeight(context) ?? kToolbarHeight) + 52,
+            child: AppBar(
             toolbarHeight: ionModalToolbarHeight(context),
             automaticallyImplyLeading: false,
             primary: false,
@@ -326,6 +329,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
                 onChanged: (v) => setState(() => _search = v),
               ),
             ),
+          ),
           ),
           Expanded(
             child: _loading

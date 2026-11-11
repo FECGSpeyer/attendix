@@ -11324,6 +11324,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTeacherNewTitle => 'New teacher';
 
   @override
+  String get rdTeamAccept => 'Accept';
+
+  @override
+  String get rdTeamAcceptedLater => 'Noted for later';
+
+  @override
+  String get rdTeamAcceptedNotPlanned =>
+      'Accepted, but not on the agenda yet. Add it with “Add topic”.';
+
+  @override
+  String get rdTeamAcceptedToMeeting => 'Added to the agenda';
+
+  @override
+  String get rdTeamAddTopic => 'Add topic';
+
+  @override
+  String get rdTeamAddTopicHint => 'New or from the open topics';
+
+  @override
+  String get rdTeamAgenda => 'Agenda';
+
+  @override
   String rdTeamChipTeam(Object count) {
     return 'Team · $count';
   }
@@ -11343,7 +11365,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTeamEmptyTitle => 'No meeting yet';
 
   @override
+  String get rdTeamHideDone => 'Hide discussed topics';
+
+  @override
+  String get rdTeamLater => 'Later';
+
+  @override
   String get rdTeamLoadFailed => 'Meetings could not be loaded';
+
+  @override
+  String get rdTeamMeetingGone => 'This meeting is no longer planned.';
+
+  @override
+  String get rdTeamMeetingPlanned => 'Meeting · planned';
 
   @override
   String get rdTeamNewMeeting => 'New meeting';
@@ -11363,10 +11397,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTeamNoTopicsYet => 'no topics yet';
 
   @override
+  String get rdTeamOpenEvent => 'Open event';
+
+  @override
+  String get rdTeamOpenEventHint => 'Attendance and schedule';
+
+  @override
+  String get rdTeamOpenTopics => 'Open topics';
+
+  @override
+  String rdTeamOpenTopicsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count are waiting for a meeting',
+      one: '1 is waiting for a meeting',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTeamOpenTopicsIntro =>
+      'Everything that still needs discussing: suggestions, postponed items and your own ideas.';
+
+  @override
   String get rdTeamPast => 'Past';
 
   @override
   String get rdTeamPlanned => 'Planned';
+
+  @override
+  String get rdTeamPlannedGroup => 'Planned';
 
   @override
   String get rdTeamProtocolPublished => 'Minutes published';
@@ -11375,7 +11436,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTeamProtocolRead => 'Read minutes';
 
   @override
+  String rdTeamShowDone(Object count) {
+    return 'Show discussed topics ($count)';
+  }
+
+  @override
   String get rdTeamSuggestHint => 'Your suggestions and what became of them';
+
+  @override
+  String rdTeamSuggestedBy(Object name, Object when) {
+    return '$name · $when';
+  }
+
+  @override
+  String get rdTeamSuggestions => 'Suggestions';
 
   @override
   String get rdTeamTabMeetings => 'Meetings';
@@ -11399,6 +11473,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdTeamTopicsHint => 'Collect what should be discussed';
+
+  @override
+  String get rdTeamUnplannedGroup => 'Not yet in a meeting';
 
   @override
   String get rdTypeAdd => 'Add';

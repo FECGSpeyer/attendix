@@ -55,6 +55,7 @@ import '../../features/team_organization/presentation/pages/agenda_item_detail_p
 import '../../features/team_organization/presentation/pages/protocol_page.dart';
 import '../../features/team_organization/presentation/pages/task_detail_page.dart';
 import '../../features/team_organization/presentation/pages/team_organization_page.dart';
+import '../../features/team_organization/presentation/pages/rd_meeting_page.dart';
 import '../../features/team_organization/presentation/pages/rd_team_page.dart';
 import '../../features/team_organization/presentation/pages/teams_config_page.dart';
 import '../../features/voice_leader/presentation/pages/voice_leader_page.dart';
@@ -1303,6 +1304,19 @@ final routerProvider = Provider<GoRouter>((ref) {
                         ? null
                         : '/settings/team-organization?tab=topics',
                 builder: (context, state) => const RdTeamTopicsPage(),
+              ),
+              GoRoute(
+                path: 'team-organization/meeting/:attendanceId',
+                name: 'teamMeeting',
+                redirect: (context, state) {
+                  final id = int.tryParse(state.pathParameters['attendanceId'] ?? '');
+                  if (id == null) return '/settings/team-organization';
+                  return ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)
+                      ? null
+                      : '/settings/team-organization?tab=topics';
+                },
+                builder: (context, state) =>
+                    RdMeetingPage(attendanceId: int.parse(state.pathParameters['attendanceId']!)),
               ),
               GoRoute(
                 path: 'tasks/:id',

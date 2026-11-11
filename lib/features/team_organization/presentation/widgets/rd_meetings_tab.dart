@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
-import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../team_org_utils.dart';
+import '../pages/rd_meeting_page.dart' show rdMeetingRoute;
 import 'quick_create_attendance.dart';
 import 'tasks_tab.dart' show TeamOrgListSkeleton;
 
@@ -77,8 +76,6 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
       for (final x in protocols)
         if (x.status == 'published' && x.attendanceId != null) x.attendanceId!,
     };
-    // Only who may open a Termin gets there (others are sent back to the list).
-    final canOpenEvent = ref.watch(effectiveRoleProvider).canAddAttendance;
     final failed = upcomingAsync.hasError || protocolsAsync.hasError;
     void Function(AsyncValue<Object?>?, AsyncValue<Object?>) onError(String Function() text) => (_, next) {
           if (next is AsyncError && !next.isLoading) ToastHelper.showError(context, text());
@@ -107,7 +104,7 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
       if (!isLeader) return l10n.rdTeamSuggestHint;
       final parts = [
         if (topics.pending.isNotEmpty) l10n.rdTeamNewSuggestions(topics.pending.length),
-        if (topics.open.isNotEmpty) l10n.teamOrgOpenCount(topics.open.length),
+        if (topics.open.isNotEmpty) l10n.rdTeamOpenTopicsCount(topics.open.length),
       ];
       return parts.isEmpty ? l10n.rdTeamTopicsHint : parts.join(' · ');
     }
@@ -148,10 +145,9 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
                   leading: _dateTile(att.date, highlight: att == upcoming.first),
                   title: attendanceTitle(att.typeInfo, _type(att.typeId, types)),
                   subtitle: plannedSubtitle(att),
-                  showChevron: canOpenEvent || publishedIds.contains(att.id),
                   onTap: publishedIds.contains(att.id)
                       ? () => context.push('/settings/protocol/${att.id}')
-                      : (canOpenEvent ? () => context.push(RedesignRoutes.betaTarget('/attendance/${att.id}')) : null),
+                      : () => context.push(rdMeetingRoute(att.id)),
                 ),
             ],
           ),
@@ -162,7 +158,7 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
             RdListRow(
               key: const ValueKey('rd-meeting-topics'),
               leading: RdRowIcon(isLeader ? Icons.forum_outlined : Icons.lightbulb_outline),
-              title: isLeader ? l10n.rdTeamTopics : l10n.teamOrgSuggestTopic,
+              title: isLeader ? l10n.rdTeamOpenTopics : l10n.teamOrgSuggestTopic,
               subtitle: topicsSubtitle(),
               trailing: isLeader && topics.pending.isNotEmpty
                   ? RdCountBadge(topics.pending.length, tone: RdTone.late)

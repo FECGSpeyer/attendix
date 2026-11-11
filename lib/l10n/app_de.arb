@@ -14208,6 +14208,34 @@
   "@rdTeacherNewTitle": {
     "description": "rdTeacherNew.title"
   },
+  "rdTeamAccept": "Aufnehmen",
+  "@rdTeamAccept": {
+    "description": "rdTeam.accept"
+  },
+  "rdTeamAcceptedLater": "Für später vorgemerkt",
+  "@rdTeamAcceptedLater": {
+    "description": "rdTeam.acceptedLater"
+  },
+  "rdTeamAcceptedNotPlanned": "Angenommen, aber noch nicht auf der Tagesordnung. Nimm es über „Thema hinzufügen“ auf.",
+  "@rdTeamAcceptedNotPlanned": {
+    "description": "rdTeam.acceptedNotPlanned"
+  },
+  "rdTeamAcceptedToMeeting": "Auf die Tagesordnung genommen",
+  "@rdTeamAcceptedToMeeting": {
+    "description": "rdTeam.acceptedToMeeting"
+  },
+  "rdTeamAddTopic": "Thema hinzufügen",
+  "@rdTeamAddTopic": {
+    "description": "rdTeam.addTopic"
+  },
+  "rdTeamAddTopicHint": "Neu oder aus den offenen Themen",
+  "@rdTeamAddTopicHint": {
+    "description": "rdTeam.addTopicHint"
+  },
+  "rdTeamAgenda": "Tagesordnung",
+  "@rdTeamAgenda": {
+    "description": "rdTeam.agenda"
+  },
   "rdTeamChipTeam": "Team · {count}",
   "@rdTeamChipTeam": {
     "description": "rdTeam.chipTeam",
@@ -14231,9 +14259,25 @@
   "@rdTeamEmptyTitle": {
     "description": "rdTeam.emptyTitle"
   },
+  "rdTeamHideDone": "Besprochene Themen ausblenden",
+  "@rdTeamHideDone": {
+    "description": "rdTeam.hideDone"
+  },
+  "rdTeamLater": "Später",
+  "@rdTeamLater": {
+    "description": "rdTeam.later"
+  },
   "rdTeamLoadFailed": "Besprechungen konnten nicht geladen werden",
   "@rdTeamLoadFailed": {
     "description": "rdTeam.loadFailed"
+  },
+  "rdTeamMeetingGone": "Diese Besprechung ist nicht mehr geplant.",
+  "@rdTeamMeetingGone": {
+    "description": "rdTeam.meetingGone"
+  },
+  "rdTeamMeetingPlanned": "Besprechung · geplant",
+  "@rdTeamMeetingPlanned": {
+    "description": "rdTeam.meetingPlanned"
   },
   "rdTeamNewMeeting": "Neue Besprechung",
   "@rdTeamNewMeeting": {
@@ -14252,6 +14296,31 @@
   "@rdTeamNoTopicsYet": {
     "description": "rdTeam.noTopicsYet"
   },
+  "rdTeamOpenEvent": "Termin öffnen",
+  "@rdTeamOpenEvent": {
+    "description": "rdTeam.openEvent"
+  },
+  "rdTeamOpenEventHint": "Anwesenheit und Ablaufplan",
+  "@rdTeamOpenEventHint": {
+    "description": "rdTeam.openEventHint"
+  },
+  "rdTeamOpenTopics": "Offene Themen",
+  "@rdTeamOpenTopics": {
+    "description": "rdTeam.openTopics"
+  },
+  "rdTeamOpenTopicsCount": "{count, plural, one {1 wartet auf eine Besprechung} other {{count} warten auf eine Besprechung}}",
+  "@rdTeamOpenTopicsCount": {
+    "description": "rdTeam.openTopicsCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTeamOpenTopicsIntro": "Alles, was noch besprochen werden soll: Vorschläge, Vertagtes und eigene Ideen.",
+  "@rdTeamOpenTopicsIntro": {
+    "description": "rdTeam.openTopicsIntro"
+  },
   "rdTeamPast": "Vergangen",
   "@rdTeamPast": {
     "description": "rdTeam.past"
@@ -14259,6 +14328,10 @@
   "rdTeamPlanned": "Geplant",
   "@rdTeamPlanned": {
     "description": "rdTeam.planned"
+  },
+  "rdTeamPlannedGroup": "Eingeplant",
+  "@rdTeamPlannedGroup": {
+    "description": "rdTeam.plannedGroup"
   },
   "rdTeamProtocolPublished": "Protokoll freigegeben",
   "@rdTeamProtocolPublished": {
@@ -14268,9 +14341,28 @@
   "@rdTeamProtocolRead": {
     "description": "rdTeam.protocolRead"
   },
+  "rdTeamShowDone": "Besprochene Themen anzeigen ({count})",
+  "@rdTeamShowDone": {
+    "description": "rdTeam.showDone",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "rdTeamSuggestHint": "Deine Vorschläge und was daraus wurde",
   "@rdTeamSuggestHint": {
     "description": "rdTeam.suggestHint"
+  },
+  "rdTeamSuggestedBy": "{name} · {when}",
+  "@rdTeamSuggestedBy": {
+    "description": "rdTeam.suggestedBy",
+    "placeholders": {
+      "name": {},
+      "when": {}
+    }
+  },
+  "rdTeamSuggestions": "Vorschläge",
+  "@rdTeamSuggestions": {
+    "description": "rdTeam.suggestions"
   },
   "rdTeamTabMeetings": "Besprechungen",
   "@rdTeamTabMeetings": {
@@ -14296,6 +14388,10 @@
   "rdTeamTopicsHint": "Sammeln, was besprochen werden soll",
   "@rdTeamTopicsHint": {
     "description": "rdTeam.topicsHint"
+  },
+  "rdTeamUnplannedGroup": "Noch ohne Besprechung",
+  "@rdTeamUnplannedGroup": {
+    "description": "rdTeam.unplannedGroup"
   },
   "rdTypeAdd": "Hinzufügen",
   "@rdTypeAdd": {
