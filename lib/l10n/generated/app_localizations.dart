@@ -26311,13 +26311,13 @@ abstract class AppLocalizations {
   /// redesign.today.birthday
   ///
   /// In de, this message translates to:
-  /// **'Geburtstag: {name} ({day})'**
+  /// **'Anstehender Geburtstag: {name} ({day})'**
   String redesignTodayBirthday(Object name, Object day);
 
   /// redesign.today.birthdays
   ///
   /// In de, this message translates to:
-  /// **'Geburtstage: {list}'**
+  /// **'Anstehende Geburtstage: {list}'**
   String redesignTodayBirthdays(Object list);
 
   /// redesign.today.changeAnswer
