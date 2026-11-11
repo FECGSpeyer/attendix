@@ -1,75 +1,212 @@
 part of 'songs_selection_sheet.dart';
 
-/// Beta (redesign) layout of "Werk(e) hinzufügen": Werke row, conductor
-/// chips and the primary button.
+/// Conductor of one Werk: a group member ([id]) or a guest name ([other]).
+typedef _RdConductor = ({int? id, String? other});
+
+/// Beta (redesign) layout of "Werk(e) hinzufügen": all Werke are picked at
+/// once, then "Dirigent für alle" plus a conductor per Werk (tap a Werk to
+/// change only its conductor), so two conductors need one pass, not two.
 extension _RdSongsSelection on _SongsSelectionSheetState {
+  /// "Dirigent für alle"; without a choice yet the first conductor.
+  _RdConductor? _rdForAll(List<Person> conductors) {
+    if (_useOtherConductor) {
+      final name = _otherConductorName?.trim();
+      return name == null || name.isEmpty ? null : (id: null, other: name);
+    }
+    final id = _selectedConductorId ?? conductors.where((c) => c.id != null).firstOrNull?.id;
+    return id == null ? null : (id: id, other: null);
+  }
+
+  _RdConductor? _rdConductorFor(int songId, List<Person> conductors) => _rdOverrides[songId] ?? _rdForAll(conductors);
+
+  String _rdConductorLabel(_RdConductor? c, List<Person> conductors) {
+    if (c == null) return context.l10n.redesignEventChooseConductor;
+    if (c.other != null) return c.other!;
+    return conductors.where((p) => p.id == c.id).firstOrNull?.fullName ?? context.l10n.commonUnknown;
+  }
+
+  Future<void> _rdOpenPickerFirst() async {
+    final applied = await _openSongPicker();
+    if (!mounted) return;
+    if (!applied && _selectedSongIds.isEmpty) Navigator.of(context).pop();
+  }
+
+  /// "Dirigent für alle": sets every Werk to [c] (single changes are reset).
+  void _rdSetForAll(_RdConductor c) => _update(() {
+    _rdOverrides.clear();
+    _rdExpandedSongId = null;
+    _useOtherConductor = c.other != null;
+    _otherConductorName = c.other;
+    _otherConductorSaved = c.other != null;
+    _otherConductorController.text = c.other ?? '';
+    _selectedConductorId = c.other != null ? null : c.id;
+  });
+
+  void _rdSetFor(int songId, _RdConductor c, List<Person> conductors) => _update(() {
+    if (_rdForAll(conductors) == c) {
+      _rdOverrides.remove(songId);
+    } else {
+      _rdOverrides[songId] = c;
+    }
+    _rdExpandedSongId = null;
+  });
+
+  /// "Anderer Dirigent": asks for the name; null when cancelled or empty.
+  Future<_RdConductor?> _rdAskOther() async {
+    final l10n = context.l10n;
+    final raw = await showRdPlanTextSheet(context, title: l10n.attListEnterConductor, hint: l10n.attListConductor);
+    final name = raw?.trim();
+    if (!mounted || name == null || name.isEmpty) return null;
+    return (id: null, other: name);
+  }
+
+  List<Widget> _rdConductorChips(List<Person> conductors, _RdConductor? current, void Function(_RdConductor c) onPick) {
+    final l10n = context.l10n;
+    return [
+      for (final c in conductors)
+        if (c.id != null)
+          RdChoiceChip(
+            label: c.fullName,
+            selected: current?.other == null && current?.id == c.id,
+            onTap: () => onPick((id: c.id, other: null)),
+          ),
+      RdChoiceChip(
+        label: current?.other ?? l10n.attListOtherConductor,
+        selected: current?.other != null,
+        onTap: () async {
+          final c = await _rdAskOther();
+          if (c != null && mounted) onPick(c);
+        },
+      ),
+    ];
+  }
+
   Widget _rdBuild(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
-    const otherValue = -1;
     final conductors = ref.watch(activeConductorsProvider).valueOrNull ?? const <Person>[];
-    final current = _useOtherConductor ? otherValue : _selectedConductorId;
+    final songs = ref.watch(songsProvider).valueOrNull ?? const <Song>[];
+    final forAll = _rdForAll(conductors);
+    final count = _selectedSongIds.length;
+    String songTitle(int id) {
+      final song = songs.where((s) => s.id == id).firstOrNull;
+      if (song == null) return l10n.commonUnknown;
+      return '${song.prefix ?? ''}${song.number ?? ''} ${song.name}'.trim();
+    }
+
     return SafeArea(
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.8),
+        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.85),
         child: ListView(
           shrinkWrap: true,
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
           children: [
-            Semantics(header: true, child: Text(l10n.attListAddSongs, style: RdType.cardTitle(p))),
+            Semantics(
+              header: true,
+              child: Text(
+                count == 0 ? l10n.attListAddSongs : l10n.redesignEventAddWorksTitle(count),
+                style: RdType.cardTitle(p),
+              ),
+            ),
             const SizedBox(height: 16),
+            if (count > 1) ...[
+              RdGroupLabel(l10n.redesignEventConductorForAll),
+              Wrap(spacing: 8, runSpacing: 8, children: _rdConductorChips(conductors, forAll, _rdSetForAll)),
+              const SizedBox(height: 20),
+              RdGroupLabel(l10n.redesignEventWorks),
+            ],
             RdGroupedList(
               children: [
+                for (final id in _selectedSongIds)
+                  RdListRow(
+                    key: Key('rd-songs-row-$id'),
+                    title: songTitle(id),
+                    showChevron: false,
+                    selected: _rdExpandedSongId == id,
+                    // Open: the chips below get the full width.
+                    trailing:
+                        _rdExpandedSongId == id
+                            ? Icon(Icons.expand_less, size: 20, color: p.text2)
+                            : _RdConductorPill(
+                              label: _rdConductorLabel(_rdConductorFor(id, conductors), conductors),
+                              exception: _rdOverrides.containsKey(id),
+                            ),
+                    onTap: () => _update(() => _rdExpandedSongId = _rdExpandedSongId == id ? null : id),
+                    footer:
+                        _rdExpandedSongId == id
+                            ? Padding(
+                              padding: const EdgeInsets.only(top: 4, bottom: 4),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(l10n.redesignEventConductorFor(songTitle(id)), style: RdType.meta(p, size: 13)),
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: _rdConductorChips(
+                                      conductors,
+                                      _rdConductorFor(id, conductors),
+                                      (c) => _rdSetFor(id, c, conductors),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                            : null,
+                  ),
                 RdListRow(
                   key: const Key('rd-songs-pick'),
-                  leading: const RdRowIcon(Icons.music_note_outlined),
-                  title: l10n.attListSongsLabel,
-                  value:
-                      _selectedSongIds.isEmpty
-                          ? l10n.attListNoSongsSelected
-                          : l10n.attListSongsSelected(_selectedSongIds.length),
+                  leading: RdRowIcon(count == 0 ? Icons.music_note_outlined : Icons.add),
+                  title: count == 0 ? l10n.attListChooseSongs : l10n.redesignEventMoreWorks,
+                  titleColor: count == 0 ? null : p.link,
+                  showChevron: count == 0,
                   onTap: _openSongPicker,
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-            RdGroupLabel(l10n.attListConductor),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final c in conductors)
-                  if (c.id != null)
-                    RdChoiceChip(label: c.fullName, selected: current == c.id, onTap: () => _onConductorChanged(c.id)),
-                RdChoiceChip(
-                  label: l10n.attListOtherConductor,
-                  selected: current == otherValue,
-                  onTap: () => _onConductorChanged(otherValue),
-                ),
-              ],
-            ),
-            if (_useOtherConductor && _otherConductorSaved) ...[
-              const SizedBox(height: 12),
-              RdCard(
-                padding: EdgeInsets.zero,
-                child: RdFieldRow(
-                  label: l10n.attListConductor,
-                  child: TextField(
-                    controller: _otherConductorController,
-                    textCapitalization: TextCapitalization.words,
-                    style: TextStyle(fontSize: 17, color: p.text),
-                    decoration: rdInputDecoration(p, l10n.attListConductor),
-                    onChanged: (value) => _update(() => _otherConductorName = value),
-                  ),
-                ),
-              ),
-            ],
             const SizedBox(height: 24),
             RdPrimaryButton(
               key: const Key('rd-songs-add'),
-              label: l10n.attListAddSongs,
+              label: count == 0 ? l10n.attListAddSongs : l10n.redesignEventAddWorksTitle(count),
               onPressed: _canAdd() ? _addSongs : null,
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Conductor of a Werk at the end of its row; tap the row to change it.
+class _RdConductorPill extends StatelessWidget {
+  const _RdConductorPill({required this.label, required this.exception});
+
+  final String label;
+
+  /// Differs from "Dirigent für alle".
+  final bool exception;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 160),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(10, 5, 6, 5),
+        decoration: BoxDecoration(color: exception ? p.text : p.soft, borderRadius: BorderRadius.circular(14)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w500, color: exception ? p.bg : p.softText),
+              ),
+            ),
+            Icon(Icons.expand_more, size: 18, color: exception ? p.bg : p.softText),
           ],
         ),
       ),

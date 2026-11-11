@@ -15414,6 +15414,15 @@
   "@redesignEventAddWorkLabel": {
     "description": "redesign.event.addWorkLabel"
   },
+  "redesignEventAddWorksTitle": "{count, plural, one {1 Werk hinzufügen} other {{count} Werke hinzufügen}}",
+  "@redesignEventAddWorksTitle": {
+    "description": "redesign.event.addWorksTitle",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignEventAllDone": "{count, plural, one {1 Person als anwesend} other {{count} Personen als anwesend}}",
   "@redesignEventAllDone": {
     "description": "redesign.event.allDone",
@@ -15481,9 +15490,24 @@
       "when": {}
     }
   },
+  "redesignEventChooseConductor": "Dirigent wählen",
+  "@redesignEventChooseConductor": {
+    "description": "redesign.event.chooseConductor"
+  },
   "redesignEventClosing": "Abschluss",
   "@redesignEventClosing": {
     "description": "redesign.event.closing"
+  },
+  "redesignEventConductorFor": "Dirigent für „{name}“",
+  "@redesignEventConductorFor": {
+    "description": "redesign.event.conductorFor",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignEventConductorForAll": "Dirigent für alle",
+  "@redesignEventConductorForAll": {
+    "description": "redesign.event.conductorForAll"
   },
   "redesignEventCountAbsent": "{count} fehlt",
   "@redesignEventCountAbsent": {
@@ -15704,6 +15728,10 @@
     "placeholders": {
       "name": {}
     }
+  },
+  "redesignEventMoreWorks": "Weitere Werke",
+  "@redesignEventMoreWorks": {
+    "description": "redesign.event.moreWorks"
   },
   "redesignEventNeutralHint": "zählt nicht",
   "@redesignEventNeutralHint": {

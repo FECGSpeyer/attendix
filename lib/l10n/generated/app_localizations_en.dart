@@ -12353,6 +12353,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventAddWorkLabel => 'Add work';
 
   @override
+  String redesignEventAddWorksTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count works',
+      one: 'Add 1 work',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String redesignEventAllDone(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -12416,7 +12427,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignEventChooseConductor => 'Choose conductor';
+
+  @override
   String get redesignEventClosing => 'Wrap-up';
+
+  @override
+  String redesignEventConductorFor(Object name) {
+    return 'Conductor for “$name”';
+  }
+
+  @override
+  String get redesignEventConductorForAll => 'Conductor for all';
 
   @override
   String redesignEventCountAbsent(Object count) {
@@ -12597,6 +12619,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String redesignEventMoreStatus(Object name) {
     return 'More statuses and note for $name';
   }
+
+  @override
+  String get redesignEventMoreWorks => 'More works';
 
   @override
   String get redesignEventNeutralHint => 'does not count';
