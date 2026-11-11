@@ -20304,7 +20304,7 @@
   "@redesignTodayAttention": {
     "description": "redesign.today.attention"
   },
-  "redesignTodayBirthday": "Geburtstag: {name} ({day})",
+  "redesignTodayBirthday": "Anstehender Geburtstag: {name} ({day})",
   "@redesignTodayBirthday": {
     "description": "redesign.today.birthday",
     "placeholders": {
@@ -20312,7 +20312,7 @@
       "day": {}
     }
   },
-  "redesignTodayBirthdays": "Geburtstage: {list}",
+  "redesignTodayBirthdays": "Anstehende Geburtstage: {list}",
   "@redesignTodayBirthdays": {
     "description": "redesign.today.birthdays",
     "placeholders": {
