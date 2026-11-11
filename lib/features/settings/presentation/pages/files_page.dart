@@ -35,8 +35,6 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
-import '../../../../core/router/route_access.dart' show canOpenSongsTab;
-import '../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';

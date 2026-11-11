@@ -712,6 +712,21 @@ void main() {
       expect(row(7), findsNothing);
     });
 
+    testWidgets('Sammlungen: leads keep "Verwalten" without used categories', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_worksApp(
+        Role.admin,
+        instrument: null,
+        songs: [_ouverture, _ave.copyWith(collectionId: 1, categoryIds: const [])],
+        collections: const [SongCollection(id: 1, name: 'Einspielen', prefix: 'E')],
+      ));
+      await _settle(tester);
+      await tester.tap(find.text('Einspielen · 1'));
+      await _settle(tester);
+      expect(find.byKey(const Key('rd-works-category-c')), findsNothing);
+      expect(find.byKey(const Key('rd-works-categories-manage')), findsOneWidget);
+    });
+
     testWidgets('lead: missing Noten, sort and filter, the + menu', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_worksApp(Role.admin, instrument: null, counts: const {11: 2, 12: 1}));

@@ -350,6 +350,14 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     // with only those used in the shown Werke.
     final chipCategories =
         withCollections ? rdUsedCategories(categories, listData.songs, selected: filter.category) : categories;
+    // A stored category that no longer exists would filter without a chip
+    // to clear it (Ionic getSongs drops it too).
+    final categoryIds = categories.map((c) => c.id!).toSet();
+    if (filter.category != null && !categoryIds.contains(filter.category)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) filterNotifier.pruneCategories(categoryIds);
+      });
+    }
     final searching = _query.trim().isNotEmpty;
 
     String baseStatus(Song song) {
@@ -423,7 +431,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           ),
           const SizedBox(height: 10),
         ],
-        if (chipCategories.isNotEmpty) ...[
+        // Leads always see "Verwalten" (its only place on this page).
+        if (chipCategories.isNotEmpty || isAdmin) ...[
           SingleChildScrollView(
             key: const Key('rd-works-categories'),
             scrollDirection: Axis.horizontal,
@@ -432,7 +441,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
               children: [
                 // Under the Sammlungen a tap on the chosen chip clears it
                 // (a second "Alle" would read like the Sammlung's).
-                if (!withCollections) ...[
+                if (!withCollections && chipCategories.isNotEmpty) ...[
                   RdChoiceChip(
                     label: l10n.redesignWorksAll(listData.songs.length),
                     selected: filter.category == null,
