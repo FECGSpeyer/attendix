@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.121.3",
+      "date": "11.11.2026",
+      "changes": [
+        "💄 Beta Werke: Aktuell-Karten zeigen den Termin einmal oben, Titel bis drei Zeilen und nur noch den Hinweis „Keine Stimme“"
+      ]
+    },
+    {
       "version": "0.121.2",
       "date": "11.11.2026",
       "changes": [
