@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.123.0",
+      "date": "11.11.2026",
+      "changes": [
+        "💄 Beta: „Aus Termin entfernen“ im Personen-Blatt nur noch als leiser Link unter „Fertig“",
+        "✨ Beta: Werke für eine Probe in einem Durchgang hinzufügen, Dirigent pro Werk wählbar („Dirigent für alle“ plus Ausnahmen)"
+      ]
+    },
+    {
       "version": "0.122.0",
       "date": "11.11.2026",
       "changes": [
