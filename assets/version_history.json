@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.130.4",
+      "date": "11.11.2026",
+      "changes": [
+        "💄 Beta Werk: oberste Karte nur noch mit „Öffnen“, das ••• der Datei gibt es unten bei Noten & Dateien"
+      ]
+    },
+    {
       "version": "0.130.3",
       "date": "11.11.2026",
       "changes": [
