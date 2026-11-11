@@ -1209,19 +1209,26 @@ extension _PlanningBeta on _PlanningPageState {
     final loadGen = _loadGen;
     final newBlock = kind == 'group';
     var join = group;
-    PlanField? last = after;
-    if (newBlock && after != null) {
-      // A new block never sits inside another one: behind the whole block.
-      final block = PlanUtils.isGroupHead(after) ? after.id : after.groupId;
-      if (block != null) last = _fields[PlanUtils.lastIndexOfGroup(_fields, block)];
+    // Where the next entry goes: behind this row. A position, not the row
+    // itself: autosave may replace rows by copies (UIDs of the Gemeinde-App)
+    // while the sheet is open; the rows only move by these inserts.
+    int? lastAt;
+    if (after != null) {
+      final i = _fields.indexWhere((f) => identical(f, after));
+      if (i >= 0) {
+        lastAt = i;
+        // A new block never sits inside another one: behind the whole block.
+        final block = PlanUtils.isGroupHead(after) ? after.id : after.groupId;
+        if (newBlock && block != null) lastAt = PlanUtils.lastIndexOfGroup(_fields, block);
+      }
     }
     // A block of its own: still there after the plan changed meanwhile.
     bool alive() => mounted && loadGen == _loadGen && (join == null || _fields.any((f) => f.id == join));
 
     void insert(List<PlanField> rows) {
-      final anchor = last == null ? -1 : _fields.indexWhere((f) => identical(f, last));
+      final anchor = lastAt ?? -1;
       final int at;
-      if (anchor >= 0) {
+      if (anchor >= 0 && anchor < _fields.length) {
         at = anchor + 1;
       } else if (join != null) {
         at = PlanUtils.lastIndexOfGroup(_fields, join!) + 1;
@@ -1234,19 +1241,19 @@ extension _PlanningBeta on _PlanningPageState {
       ];
       if (join != null) _rdCollapsed.remove(join);
       _rdApply(PlanUtils.normalizeGroups([..._fields]..insertAll(at, placed)));
-      last = _fields[(at + placed.length - 1).clamp(0, _fields.length - 1)];
+      lastAt = (at + placed.length - 1).clamp(0, _fields.length - 1);
     }
 
     String blockName = '';
-    PlanField? head;
+    String? headId;
     // The block itself is created with its first entry (or on "Fertig").
     bool ensureBlock() {
-      if (!newBlock || head != null) return true;
+      if (!newBlock || headId != null) return true;
       if (blockName.trim().isEmpty) return false;
       final h = PlanUtils.newGroupHead(blockName.trim());
       join = null;
       insert([h]);
-      head = last;
+      headId = h.id;
       join = h.id;
       return true;
     }
@@ -1285,14 +1292,12 @@ extension _PlanningBeta on _PlanningPageState {
               withCurrent: !isGeneral,
               onBlockName: (v) {
                 blockName = v;
-                final h = head;
-                if (h == null || !alive() || v.trim().isEmpty) return;
-                final i = _fields.indexWhere((f) => identical(f, h));
+                final id = headId;
+                if (id == null || !alive() || v.trim().isEmpty) return;
+                // By the block's id: every change copies the head.
+                final i = _fields.indexWhere((f) => f.id == id);
                 if (i < 0) return;
-                final renamed = h.copyWith(name: v.trim());
-                _rdApply([..._fields]..[i] = renamed);
-                head = renamed;
-                if (identical(last, h)) last = renamed;
+                _rdApply([..._fields]..[i] = _fields[i].copyWith(name: v.trim()));
               },
               onAdd: (kind, input) async {
                 if (!alive()) return null;
@@ -1330,7 +1335,7 @@ extension _PlanningBeta on _PlanningPageState {
           ],
     );
     // "Fertig" with a name and nothing in it yet: the block on its own.
-    if (newBlock && head == null && alive()) ensureBlock();
+    if (newBlock && headId == null && alive()) ensureBlock();
   }
 
   /// "Block: …" in the item sheet: the block it belongs to, from a list.
@@ -2521,13 +2526,24 @@ class _RdQuickAddBodyState extends State<_RdQuickAddBody> {
               key: const Key('rd-plan-quick-kind-field'),
               label: l10n.redesignPlanAddItem,
               selected: !note,
-              onTap: () => setState(() => _kind = 'field'),
+              onTap: () => setState(() {
+                if (_kind == 'field') return;
+                // A new form: the old entry is gone with it.
+                _kind = 'field';
+                _input = null;
+                _error = null;
+              }),
             ),
             RdChoiceChip(
               key: const Key('rd-plan-quick-kind-note'),
               label: l10n.redesignPlanAddNote,
               selected: note,
-              onTap: () => setState(() => _kind = 'note'),
+              onTap: () => setState(() {
+                if (_kind == 'note') return;
+                _kind = 'note';
+                _input = null;
+                _error = null;
+              }),
             ),
             if (widget.withSongs)
               RdChoiceChip(

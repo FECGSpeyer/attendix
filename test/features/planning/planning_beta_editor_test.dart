@@ -278,5 +278,38 @@ void main() {
       expect(stored(), ['g', 'g1>g', 'g2>g', 'a>g', 'c']);
       await close(tester);
     });
+
+    testWidgets('Neuer Block: renaming after the first entry sticks; Punkt/Notiz switch empties the entry', (tester) async {
+      await pump(tester);
+      await tester.tap(find.byKey(const Key('rd-plan-add')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Block'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('rd-plan-quick-block-name')), 'Lobpreis');
+      await tester.enterText(find.byKey(const Key('rd-plan-field-name')), 'Lied 1');
+      await tester.tap(find.byKey(const Key('rd-plan-quick-add')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('rd-plan-quick-block-name')), 'Anbetung');
+      await tester.pumpAndSettle();
+      // Typed as Punkt, switched to Notiz: the form is empty, nothing is added.
+      await tester.enterText(find.byKey(const Key('rd-plan-field-name')), 'Solo');
+      await tester.tap(find.byKey(const Key('rd-plan-quick-kind-note')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('rd-plan-quick-add')));
+      await tester.pumpAndSettle();
+      expect(find.text('Bitte eine Notiz eingeben.'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('rd-plan-quick-done')));
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+      final f = (calls.last['plan'] as Map<String, dynamic>)['fields'] as List;
+      expect([for (final x in f) (x as Map<String, dynamic>)['name']], [
+        'Begrüßung',
+        'Predigt',
+        'Schlusslied',
+        'Anbetung',
+        'Lied 1',
+      ]);
+      await close(tester);
+    });
   });
 }
