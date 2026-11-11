@@ -254,10 +254,29 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
 
 /// Creates the Termin of [type] on [day] with its persons (Ionic
 /// `createAttendanceForType`) and returns its id. Throws when a write or a
-/// read the invitation depends on fails.
-Future<int> createProtocolAttendance(ProviderContainer ref, AttendanceType type, DateTime day) async {
+/// read the invitation depends on fails; a Termin whose persons could not
+/// be written is removed again.
+///
+/// [tenantId]: the group the caller started in, when it awaited something
+/// before (e.g. saved the Terminart). Nothing is written once the group
+/// has changed since.
+Future<int> createProtocolAttendance(
+  ProviderContainer ref,
+  AttendanceType type,
+  DateTime day, {
+  int? tenantId,
+}) async {
+  final boundTenant = tenantId ?? ref.read(currentTenantIdProvider);
+  void ensureTenant() {
+    if (boundTenant == null || ref.read(currentTenantIdProvider) != boundTenant) {
+      throw StateError('tenant changed');
+    }
+  }
+
+  ensureTenant();
   // UI_TENANT_HOIST: bind tenant + repositories before the first await.
   final repo = ref.read(protocolRepositoryWithTenantProvider);
+  final attendanceRepo = ref.read(attendanceRepositoryWithTenantProvider);
   final tenant = ref.read(currentTenantProvider);
   final absenceRepo = ref.read(playerAbsenceRepositoryWithTenantProvider);
   final dutyRepo = ref.read(dutyRepositoryWithTenantProvider);
@@ -307,22 +326,37 @@ Future<int> createProtocolAttendance(ProviderContainer ref, AttendanceType type,
     ],
     circlePersons: (results[4] as Map<String, List<int>>)[type.id] ?? const [],
   );
+  // The reads above went through providers of the current group.
+  ensureTenant();
   final id = await repo.createAttendance(newAttendanceRow(
     type,
     day,
     isOrgPlan: isOrgPlan,
   ));
-  await repo.createPersonAttendances(
-    id,
-    newPersonAttendanceRows(
-      persons,
-      type,
-      day,
-      absences: results[1] as List<PlayerAbsence>,
-      unavailability: results[2] as List<PersonUnavailability>,
-      shifts: results[3] as List<ShiftPlan>,
-    ),
-  );
+  try {
+    await repo.createPersonAttendances(
+      id,
+      newPersonAttendanceRows(
+        persons,
+        type,
+        day,
+        absences: results[1] as List<PlayerAbsence>,
+        unavailability: results[2] as List<PersonUnavailability>,
+        shifts: results[3] as List<ShiftPlan>,
+      ),
+    );
+  } catch (_) {
+    // No Termin without persons: a retry would otherwise add a second one.
+    try {
+      await attendanceRepo.deleteAttendance(id);
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'quick_create_attendance.rollback');
+    }
+    ref.invalidate(attendancesProvider);
+    ref.invalidate(upcomingAttendancesProvider);
+    ref.invalidate(upcomingProtocolAttendancesProvider);
+    rethrow;
+  }
   ref.invalidate(attendancesProvider);
   ref.invalidate(upcomingAttendancesProvider);
   ref.invalidate(upcomingProtocolAttendancesProvider);

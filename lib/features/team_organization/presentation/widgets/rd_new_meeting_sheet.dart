@@ -5,6 +5,7 @@ import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/type_circle.dart';
 import '../../../../data/models/attendance/attendance.dart';
@@ -73,6 +74,7 @@ class _NewMeetingSheetState extends ConsumerState<_NewMeetingSheet> {
     // UI_TENANT_HOIST: bind container + repository before the first await.
     final container = ProviderScope.containerOf(context, listen: false);
     final typeRepo = ref.read(attendanceTypeRepositoryWithTenantProvider);
+    final tenantId = ref.read(currentTenantIdProvider);
     var circle = _circle;
     if (type == null && circle == null) {
       // The first Besprechung: who is part of it is a deliberate choice.
@@ -80,6 +82,8 @@ class _NewMeetingSheetState extends ConsumerState<_NewMeetingSheet> {
       if (circle == null || !mounted) return;
       setState(() => _circle = circle);
     }
+    // The picker was open in between: never write into another group.
+    if (tenantId == null || container.read(currentTenantIdProvider) != tenantId) return;
     setState(() {
       _busy = true;
       _failed = false;
@@ -104,7 +108,7 @@ class _NewMeetingSheetState extends ConsumerState<_NewMeetingSheet> {
         ..invalidate(attendanceTypesProvider)
         ..invalidate(protocolTypesProvider)
         ..invalidate(typeCirclePersonsProvider);
-      final id = await createProtocolAttendance(container, target, _day);
+      final id = await createProtocolAttendance(container, target, _day, tenantId: tenantId);
       if (mounted) Navigator.of(context).pop(id);
     } catch (_) {
       container
@@ -271,8 +275,13 @@ class _CircleSheetState extends ConsumerState<_CircleSheet> {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
-    final groups = (ref.watch(groupsProvider).valueOrNull ?? const <Group>[]).where((g) => g.id != null).toList();
-    final players = (ref.watch(playersProvider).valueOrNull ?? const <Person>[])
+    final groupsAsync = ref.watch(groupsProvider);
+    final playersAsync = ref.watch(playersProvider);
+    // "Fertig" only with both lists loaded: an empty list would drop the
+    // stored groups and persons and turn the circle into "everyone".
+    final loaded = groupsAsync.hasValue && playersAsync.hasValue;
+    final groups = (groupsAsync.valueOrNull ?? const <Group>[]).where((g) => g.id != null).toList();
+    final players = (playersAsync.valueOrNull ?? const <Person>[])
         .where((x) => x.id != null && !x.pending && (x.left == null || x.left!.isEmpty))
         .toList()
       ..sort((a, b) => a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()));
@@ -288,12 +297,22 @@ class _CircleSheetState extends ConsumerState<_CircleSheet> {
       children: [
         RdSheetHead(
           title: l10n.rdTeamWhoIsIn,
-          onDone: () => Navigator.of(context).pop<MeetingCircle>((
+          onDone: !loaded
+              ? null
+              : () => Navigator.of(context).pop<MeetingCircle>((
             // Ids of groups and persons that no longer exist are dropped.
             groups: [for (final g in groups) if (_groups.contains(g.id)) g.id!],
-            persons: [for (final x in players) if (_persons.contains(x.id)) x.id!],
-          )),
+                    persons: [for (final x in players) if (_persons.contains(x.id)) x.id!],
+                  )),
         ),
+        if (!loaded)
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: groupsAsync.hasError || playersAsync.hasError
+                ? Text(l10n.rdTeamLoadFailed, style: RdType.meta(p), textAlign: TextAlign.center)
+                : const Center(child: CircularProgressIndicator.adaptive()),
+          )
+        else
         Flexible(
           child: ListView(
             shrinkWrap: true,
