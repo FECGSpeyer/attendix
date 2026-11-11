@@ -189,6 +189,8 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
   Future<void> _createFromSearch() async {
     final title = _search.trim();
     if (title.isEmpty) return;
+    // Reserved before the request: a topic ticked while it runs comes after.
+    final pick = ++_picks;
     try {
       final item = await ref
           .read(agendaItemNotifierProvider.notifier)
@@ -196,7 +198,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
       setState(() {
         _otherRows = [
           _Row(item: item, selected: true, inPlan: false, duration: defaultTopicDuration(item, widget.type))
-            ..pickedAt = ++_picks,
+            ..pickedAt = pick,
           ..._otherRows,
         ];
         _search = '';
