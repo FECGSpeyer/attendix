@@ -252,6 +252,16 @@ void main() {
     expect(tokens.saved, isEmpty);
   });
 
+  test('isBlockedBySystem: only a real "denied" on a native platform', () async {
+    client.permission = PushPermission.denied;
+    expect(await build(platform: 'ios').isBlockedBySystem(), isTrue);
+    // Android 13+ reports "denied" before the app ever asked: not blocked.
+    expect(await build().isBlockedBySystem(), isFalse);
+    expect(await build(native: false).isBlockedBySystem(), isFalse);
+    client.permission = PushPermission.granted;
+    expect(await build(platform: 'ios').isBlockedBySystem(), isFalse);
+  });
+
   test('permission denied (Android, already requested): remembered, no prompt', () async {
     client.permission = PushPermission.denied;
     prompt.permissionRequested = true;

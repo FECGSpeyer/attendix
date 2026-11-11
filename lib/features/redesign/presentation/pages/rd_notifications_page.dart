@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/notification_settings_providers.dart';
 import '../../../../core/providers/push_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
@@ -31,10 +33,16 @@ class RdNotificationsPage extends ConsumerStatefulWidget {
   ConsumerState<RdNotificationsPage> createState() => _RdNotificationsPageState();
 }
 
-class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
+class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> with WidgetsBindingObserver {
   NotificationConfig? _config;
   bool _loading = true;
   RealtimeChannel? _channel;
+
+  /// The system (iOS/Android settings) blocks Attendix' notifications.
+  bool _blocked = false;
+
+  /// "Weitere" in "Für mich" is open.
+  bool _showMore = false;
   late final SupabaseClient _supabase;
 
   @override
@@ -42,10 +50,35 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
     super.initState();
     _supabase = ref.read(supabaseClientProvider);
     _load();
+    _checkBlocked();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  /// Back from the system settings: the permission may have changed.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _checkBlocked();
+  }
+
+  Future<void> _checkBlocked() async {
+    final blocked = await ref.read(pushServiceProvider).isBlockedBySystem();
+    if (mounted && blocked != _blocked) setState(() => _blocked = blocked);
+  }
+
+  /// iOS: Attendix in the Settings app; macOS: the notification settings
+  /// (legacy pane id: macOS 12, and still mapped by System Settings 13+)
+  /// (try-catch: PWA/other platforms).
+  Future<void> _openSystemSettings() async {
+    try {
+      await launchUrl(Uri.parse(defaultTargetPlatform == TargetPlatform.macOS
+          ? 'x-apple.systempreferences:com.apple.preference.notifications'
+          : 'app-settings:'));
+    } catch (_) {}
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     final channel = _channel;
     if (channel != null) _supabase.removeChannel(channel);
     super.dispose();
@@ -114,6 +147,9 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
     setState(() => _config = config.copyWith(pushEnabled: enabled));
     try {
       await ref.read(pushServiceProvider).togglePush(enabled);
+      // Turning push on may have just shown (and been refused at) the
+      // system prompt.
+      if (mounted) await _checkBlocked();
     } catch (_) {
       if (!mounted) return;
       setState(() => _config = config);
@@ -191,34 +227,93 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
     final hasDutyTypes = ref.watch(tenantHasDutyTypesProvider).valueOrNull ?? false;
     final liveActivity = ref.read(liveActivityServiceProvider).hasNativePlugin;
     final connected = config.isConnected;
+    // Sign-in/out, registrations and problem cases only reach admins and
+    // responsible persons (edge functions: role 1 or 5) – of any group.
+    final isLead = tenants.any((t) => t.role == Role.admin.value || t.role == Role.responsible.value);
+    final ios = defaultTargetPlatform == TargetPlatform.iOS;
+    final macos = defaultTargetPlatform == TargetPlatform.macOS;
     NotificationConfig Function(bool) set(NotificationConfig Function(bool) f) => f;
+    Widget row(String title, String? hint, bool value, NotificationConfig Function(bool) update) =>
+        _switch(title, value, (v) => _update(update(v)), subtitle: hint);
+
+    final more = <Widget>[
+      row(l10n.notifTasks, l10n.redesignNotifTasksHint, config.tasks, set((v) => config.copyWith(tasks: v))),
+      if (isLead)
+        row(l10n.notifChecklist, l10n.redesignNotifChecklistHint, config.checklist,
+            set((v) => config.copyWith(checklist: v))),
+      row(l10n.notifAppUpdates, l10n.redesignNotifUpdatesHint, config.updates, set((v) => config.copyWith(updates: v))),
+    ];
 
     return RdPage(
       children: [
         ...header,
-        RdGroupLabel(l10n.redesignNotifHow),
+        if (_blocked && config.enabled && config.pushEnabled) ...[
+          Container(
+            key: const Key('rd-notif-blocked'),
+            padding: const EdgeInsets.fromLTRB(14, 12, 14, 6),
+            decoration: BoxDecoration(color: p.lateSoft, borderRadius: BorderRadius.circular(14)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.redesignNotifBlockedTitle,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.late)),
+                const SizedBox(height: 2),
+                Text(
+                    ios
+                        ? l10n.redesignNotifBlockedIos
+                        : macos
+                            ? l10n.redesignNotifBlockedMacos
+                            : l10n.redesignNotifBlockedAndroid,
+                    style: TextStyle(fontSize: 14, color: p.text, height: 1.35)),
+                if (ios || macos)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: RdTextLink(label: l10n.redesignNotifOpenSettings, onTap: _openSystemSettings),
+                  )
+                else
+                  const SizedBox(height: 8),
+              ],
+            ),
+          ),
+          const SizedBox(height: 18),
+        ],
         RdGroupedList(
           children: [
-            _switch(l10n.notifEnable, config.enabled, (v) => _update(config.copyWith(enabled: v))),
-            if (isNativePushPlatform)
-              _switch(l10n.notifPush, config.pushEnabled, (v) => _togglePush(config, v)),
-            RdListRow(
-              title: l10n.redesignNotifTelegram,
-              subtitle: connected ? l10n.redesignNotifTelegramConnected : null,
-              showChevron: false,
-              trailing: RdTextLink(
-                label: connected ? l10n.redesignNotifTelegramDisconnect : l10n.redesignNotifTelegramConnect,
-                onTap: connected ? () => _disconnectTelegram(config) : _connectTelegram,
+            _switch(l10n.redesignNotifMaster, config.enabled, (v) => _update(config.copyWith(enabled: v)),
+                subtitle: config.enabled ? null : l10n.redesignNotifMasterHint),
+          ],
+        ),
+        if (config.enabled) ...[
+          const SizedBox(height: 24),
+          RdGroupLabel(l10n.redesignNotifHow),
+          RdGroupedList(
+            children: [
+              if (isNativePushPlatform)
+                _switch(l10n.redesignNotifPush, config.pushEnabled, (v) => _togglePush(config, v),
+                    subtitle: l10n.redesignNotifPushHint),
+              RdListRow(
+                title: l10n.redesignNotifTelegram,
+                subtitle: connected ? l10n.redesignNotifTelegramConnected : l10n.redesignNotifTelegramHint,
+                showChevron: false,
+                trailing: RdTextLink(
+                  label: connected ? l10n.redesignNotifTelegramDisconnect : l10n.redesignNotifTelegramConnect,
+                  onTap: connected ? () => _disconnectTelegram(config) : _connectTelegram,
+                ),
               ),
-            ),
-            if (config.pushEnabled && connected)
-              _switch(
-                l10n.notifBothChannels,
-                config.pushAndTelegram,
-                (v) => _update(config.copyWith(pushAndTelegram: v)),
-                subtitle: l10n.notifBothChannelsHelper,
-              ),
-            if (liveActivity)
+              if (config.pushEnabled && connected)
+                _switch(
+                  l10n.notifBothChannels,
+                  config.pushAndTelegram,
+                  (v) => _update(config.copyWith(pushAndTelegram: v)),
+                  subtitle: l10n.notifBothChannelsHelper,
+                ),
+            ],
+          ),
+        ],
+        if (liveActivity) ...[
+          const SizedBox(height: 24),
+          RdGroupedList(
+            children: [
               _switch(
                 l10n.notifLiveActivity,
                 config.liveActivity != false,
@@ -227,13 +322,7 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
                     ? l10n.notifLiveActivityHelperIos
                     : l10n.notifLiveActivityHelper,
               ),
-          ],
-        ),
-        if (!connected) ...[
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: SelectableText('${l10n.notifUserId}: ${config.id}', style: RdType.meta(p, size: 13)),
+            ],
           ),
         ],
         if (config.enabled) ...[
@@ -241,37 +330,42 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
           RdGroupLabel(l10n.redesignNotifForMe),
           RdGroupedList(
             children: [
-              for (final (title, value, update) in [
-                (l10n.notifEventReminders, config.reminders, set((v) => config.copyWith(reminders: v))),
-                (l10n.notifAnnouncements, config.messages, set((v) => config.copyWith(messages: v))),
-                if (hasDutyTypes)
-                  (l10n.notifDuties, config.duties != false, set((v) => config.copyWith(duties: v))),
-                (l10n.notifTasks, config.tasks, set((v) => config.copyWith(tasks: v))),
-                (l10n.notifChecklist, config.checklist, set((v) => config.copyWith(checklist: v))),
-                (l10n.notifBirthdays, config.birthdays, set((v) => config.copyWith(birthdays: v))),
-                (l10n.notifAppUpdates, config.updates, set((v) => config.copyWith(updates: v))),
-              ])
-                _switch(title, value, (v) => _update(update(v))),
+              row(l10n.notifEventReminders, l10n.redesignNotifRemindersHint, config.reminders,
+                  set((v) => config.copyWith(reminders: v))),
+              row(l10n.notifAnnouncements, l10n.redesignNotifMessagesHint, config.messages,
+                  set((v) => config.copyWith(messages: v))),
+              if (hasDutyTypes)
+                row(l10n.notifDuties, l10n.redesignNotifDutiesHint, config.duties != false,
+                    set((v) => config.copyWith(duties: v))),
+              row(l10n.notifBirthdays, l10n.redesignNotifBirthdaysHint, config.birthdays,
+                  set((v) => config.copyWith(birthdays: v))),
+              if (_showMore)
+                ...more
+              else
+                RdListRow(
+                  key: const Key('rd-notif-more'),
+                  title: l10n.redesignNotifMore,
+                  value: '${more.length}',
+                  onTap: () => setState(() => _showMore = true),
+                ),
             ],
           ),
-          const SizedBox(height: 24),
-          RdGroupLabel(l10n.redesignNotifLead),
-          RdGroupedList(
-            children: [
-              for (final (title, value, update) in [
-                (l10n.notifSignOuts, config.signouts, set((v) => config.copyWith(signouts: v))),
-                (l10n.notifSignIns, config.signins, set((v) => config.copyWith(signins: v))),
-                (l10n.notifNewRegistrations, config.registrations, set((v) => config.copyWith(registrations: v))),
-                (l10n.notifNewProblemCases, config.criticals, set((v) => config.copyWith(criticals: v))),
-              ])
-                _switch(title, value, (v) => _update(update(v))),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(l10n.notifResponsibleOnly, style: RdType.meta(p, size: 13)),
-          ),
+          if (isLead) ...[
+            const SizedBox(height: 24),
+            RdGroupLabel(l10n.redesignNotifLead),
+            RdGroupedList(
+              children: [
+                row(l10n.redesignNotifSignouts, l10n.redesignNotifSignoutsHint, config.signouts,
+                    set((v) => config.copyWith(signouts: v))),
+                row(l10n.redesignNotifSignins, l10n.redesignNotifSigninsHint, config.signins,
+                    set((v) => config.copyWith(signins: v))),
+                row(l10n.redesignNotifRegistrations, l10n.redesignNotifRegistrationsHint, config.registrations,
+                    set((v) => config.copyWith(registrations: v))),
+                row(l10n.redesignNotifCriticals, l10n.redesignNotifCriticalsHint, config.criticals,
+                    set((v) => config.copyWith(criticals: v))),
+              ],
+            ),
+          ],
           if (tenants.length > 1) ...[
             const SizedBox(height: 24),
             RdGroupLabel(l10n.redesignNotifGroups),

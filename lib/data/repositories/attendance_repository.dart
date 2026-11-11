@@ -177,6 +177,38 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// REDESIGN (bell): date and name of the given Termine of this tenant –
+  /// `typeInfo`, else the type name unless it is hidden (Ionic
+  /// Utils.getTypeTitle). Ids of other tenants are simply not returned.
+  Future<Map<int, ({DateTime? date, String? name})>> getEventLabels(List<int> ids) async {
+    if (ids.isEmpty) return {};
+    try {
+      final response = await supabase
+          .from('attendance')
+          .select('id, date, typeInfo, attType:type_id(name, hide_name)')
+          .eq('tenantId', currentTenantId)
+          .inFilter('id', ids);
+      final result = <int, ({DateTime? date, String? name})>{};
+      for (final row in response as List) {
+        final map = row as Map<String, dynamic>;
+        final id = map['id'] as int?;
+        if (id == null) continue;
+        final info = (map['typeInfo'] as String? ?? '').trim();
+        final type = map['attType'] as Map<String, dynamic>?;
+        final typeName = type == null || type['hide_name'] == true ? '' : (type['name'] as String? ?? '').trim();
+        final name = info.isNotEmpty ? info : typeName;
+        result[id] = (
+          date: DateTime.tryParse('${map['date'] ?? ''}'),
+          name: name.isEmpty ? null : name,
+        );
+      }
+      return result;
+    } catch (e, stack) {
+      handleError(e, stack, 'getEventLabels');
+      rethrow;
+    }
+  }
+
   /// DB_FIX: `attendance` columns an insert may set. Attendance.toJson also
   /// holds client-only keys (percentage, lateExcused — no `attendance`
   /// columns → PGRST204), id and created_at.

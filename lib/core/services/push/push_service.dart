@@ -302,6 +302,21 @@ class PushService {
     }
   }
 
+  /// REDESIGN (Beta Benachrichtigungen): whether the system blocks this
+  /// app's notifications (iOS/Android settings). False on the web, without
+  /// Firebase, or when the permission was simply never asked for.
+  Future<bool> isBlockedBySystem() async {
+    if (!isNativePlatform) return false;
+    try {
+      await _ready();
+      if (!_available) return false;
+      return await _checkPermission() == PushPermission.denied;
+    } catch (e) {
+      _log('permission check failed', e);
+      return false;
+    }
+  }
+
   /// Ionic `PushNotifications.checkPermissions()`.
   ///
   /// Android 13+: firebase_messaging reports `denied` as long as

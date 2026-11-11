@@ -12874,6 +12874,63 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignArchiveListRestore => 'Restore';
 
   @override
+  String get redesignBellByParents => 'reported by the parents';
+
+  @override
+  String get redesignBellEvent => 'Event';
+
+  @override
+  String redesignBellLate(Object name) {
+    return '$name is running late';
+  }
+
+  @override
+  String redesignBellNote(Object name) {
+    return '$name changed the note';
+  }
+
+  @override
+  String redesignBellOnTime(Object name) {
+    return '$name is on time after all';
+  }
+
+  @override
+  String get redesignBellOpenAttendance => 'Open attendance';
+
+  @override
+  String get redesignBellOpenEvent => 'Open event';
+
+  @override
+  String redesignBellReports(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count updates',
+      one: '1 update',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignBellSignin(Object name) {
+    return '$name signed in';
+  }
+
+  @override
+  String redesignBellSignout(Object name) {
+    return '$name signed out';
+  }
+
+  @override
+  String get redesignBellToday => 'Today';
+
+  @override
+  String get redesignBellTomorrow => 'Tomorrow';
+
+  @override
+  String get redesignBellYesterday => 'Yesterday';
+
+  @override
   String get redesignBulkActionArchive => 'Archive';
 
   @override
@@ -16117,6 +16174,38 @@ class AppLocalizationsEn extends AppLocalizations {
       'Everything sent to the group, with read status.';
 
   @override
+  String get redesignNotifBirthdaysHint => 'In the morning at 8';
+
+  @override
+  String get redesignNotifBlockedAndroid =>
+      'You currently get no push notifications. Allow them in the Android settings under Apps › Attendix › Notifications.';
+
+  @override
+  String get redesignNotifBlockedIos =>
+      'You currently get no push notifications. Allow them in Settings.';
+
+  @override
+  String get redesignNotifBlockedMacos =>
+      'You currently get no notifications. Allow them in System Settings under Notifications › Attendix.';
+
+  @override
+  String get redesignNotifBlockedTitle =>
+      'Your device blocks notifications from Attendix';
+
+  @override
+  String get redesignNotifChecklistHint => 'Due items of the event checklist';
+
+  @override
+  String get redesignNotifCriticals => 'New problem cases';
+
+  @override
+  String get redesignNotifCriticalsHint =>
+      'When someone meets a problem case rule';
+
+  @override
+  String get redesignNotifDutiesHint => 'When you are assigned to a duty';
+
+  @override
   String get redesignNotifForMe => 'For me';
 
   @override
@@ -16132,6 +16221,53 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignNotifLead => 'As a leader';
 
   @override
+  String get redesignNotifMaster => 'Notifications';
+
+  @override
+  String get redesignNotifMasterHint =>
+      'Off means no notifications at all, neither push nor Telegram.';
+
+  @override
+  String get redesignNotifMessagesHint => 'Messages from the leaders';
+
+  @override
+  String get redesignNotifMore => 'More';
+
+  @override
+  String get redesignNotifOpenSettings => 'Open settings';
+
+  @override
+  String get redesignNotifPush => 'Push';
+
+  @override
+  String get redesignNotifPushHint => 'Notifications on your phone';
+
+  @override
+  String get redesignNotifRegistrations => 'New registrations';
+
+  @override
+  String get redesignNotifRegistrationsHint =>
+      'When someone signs up via the registration link';
+
+  @override
+  String get redesignNotifRemindersHint => 'Before your events';
+
+  @override
+  String get redesignNotifSignins => 'Sign-ins';
+
+  @override
+  String get redesignNotifSigninsHint => 'When someone signs (back) in';
+
+  @override
+  String get redesignNotifSignouts => 'Sign-outs and late arrivals';
+
+  @override
+  String get redesignNotifSignoutsHint => 'E.g. “Anna Example is running late”';
+
+  @override
+  String get redesignNotifTasksHint => '2 days before your tasks are due';
+
+  @override
   String get redesignNotifTelegram => 'Telegram';
 
   @override
@@ -16142,6 +16278,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignNotifTelegramDisconnect => 'Disconnect';
+
+  @override
+  String get redesignNotifTelegramHint => 'Optional, via the Telegram bot';
+
+  @override
+  String get redesignNotifUpdatesHint => 'When a new app version is available';
 
   @override
   String redesignOwnAnswerDays(num count) {
