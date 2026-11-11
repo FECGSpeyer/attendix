@@ -234,7 +234,9 @@ class PlanUtils {
   static List<PlanField> cloneBlock(List<PlanField> fields) {
     final head = fields.where(isGroupHead).firstOrNull;
     if (head == null) return [...fields];
-    final copy = newGroupHead(head.name, conductor: head.conductor, info: head.info);
+    // A Registerprobe keeps its groups and conductors.
+    final copy = newGroupHead(head.name, conductor: head.conductor, info: head.info)
+        .copyWith(registerPlan: head.registerPlan);
     return [
       copy,
       ...fields.where((f) => f.groupId == head.id).map((f) => f.copyWith(

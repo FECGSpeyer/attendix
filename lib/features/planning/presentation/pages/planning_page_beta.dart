@@ -1289,11 +1289,10 @@ extension _PlanningBeta on _PlanningPageState {
   /// the rounds' clock times.
   Future<void> _rdShareRegister(String headId) async {
     final l10n = context.l10n;
-    final index = _fields.indexWhere((f) => f.id == headId);
-    if (index < 0) return;
-    final head = _fields[index];
-    final settings = head.registerPlan;
-    if (settings == null) return;
+    final loadGen = _loadGen;
+    var index = _fields.indexWhere((f) => f.id == headId);
+    if (index < 0 || _fields[index].registerPlan == null) return;
+    var head = _fields[index];
     final chatId = planTelegramChatId(ref);
     var how = 'pdf';
     if (chatId != null) {
@@ -1311,17 +1310,29 @@ extension _PlanningBeta on _PlanningPageState {
               ),
             ],
       );
-      if (picked == null || !mounted) return;
+      // Another plan was loaded or the block is gone: nothing to share.
+      if (picked == null || !mounted || loadGen != _loadGen) return;
+      index = _fields.indexWhere((f) => f.id == headId);
+      if (index < 0 || _fields[index].registerPlan == null) return;
+      head = _fields[index];
       how = picked;
     }
+    // The rounds as they are now (moved, deleted, edited), with clock
+    // times, or minutes from the block's start without a start time.
     final start = PlanUtils.parseTimeToMinutes(_time);
-    final times = <String>[];
-    if (start != null) {
-      for (var i = index + 1; i < _fields.length && _fields[i].groupId == head.id; i++) {
-        times.add(PlanUtils.formatMinutes(PlanUtils.startMinutesAt(start, _fields, i)));
-      }
-    }
-    final plan = RegisterPlanService.tableOf(settings, PlanUtils.groupDuration(_fields, head.id), times);
+    final blockStart = PlanUtils.startMinutesAt(0, _fields, index);
+    final rounds = <({String start, String? info})>[
+      for (var i = index + 1; i < _fields.length; i++)
+        if (_fields[i].groupId == head.id)
+          (
+            start:
+                start == null
+                    ? '${PlanUtils.startMinutesAt(0, _fields, i) - blockStart}'
+                    : PlanUtils.formatMinutes(PlanUtils.startMinutesAt(start, _fields, i)),
+            info: _fields[i].info,
+          ),
+    ];
+    final plan = RegisterPlanService.tableOf(head.registerPlan!.groups, rounds);
     await exportRegisterPlan(
       context,
       ref,

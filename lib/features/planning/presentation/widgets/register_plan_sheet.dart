@@ -596,14 +596,16 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     ];
   }
 
+  bool _choosing = false;
+
   Future<void> _choose() async {
-    final groups = _groupValues;
-    await _saveGroups(groups);
+    // Once: a second tap while the groups are stored would close the page below.
+    if (_choosing) return;
+    _choosing = true;
+    final choice = RegisterPlanChoice(groups: _groupValues, conductors: _conductorValues, minutes: _minutes);
+    await _saveGroups(choice.groups);
     if (!mounted) return;
-    Navigator.pop(
-      context,
-      RegisterPlanChoice(groups: groups, conductors: _conductorValues, minutes: _minutes),
-    );
+    Navigator.pop(context, choice);
   }
 
   void _remove(List<_Entry> list, int index) {

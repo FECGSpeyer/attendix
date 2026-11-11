@@ -75,6 +75,17 @@ void main() {
       expect(RegisterPlanService.parseStoredGroups(null, ['D']), ['D']);
     });
 
+    test('Beta table follows the rounds as they are (deleted, moved)', () {
+      final t = RegisterPlanService.tableOf(
+        ['S', 'A'],
+        [(start: '16:20', info: 'S: Ben K. · A: –'), (start: '16:40', info: 'Freie Notiz')],
+      );
+      expect(t.rows, [
+        ['16:20', 'Ben K.', ''],
+        ['16:40', '', ''],
+      ]);
+    });
+
     test('isPlanExportDisabled', () {
       bool disabled(List<String> c, List<String> g, String t) =>
           RegisterPlanService.isExportDisabled(conductors: c, groups: g, time: t);

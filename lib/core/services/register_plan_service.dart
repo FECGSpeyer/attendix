@@ -154,16 +154,27 @@ class RegisterPlanService {
     ];
   }
 
-  /// The table of a Registerprobe block (same rotation as when it was
-  /// inserted) with the rounds' clock times [startTimes] in the first
-  /// column where there is one.
-  static RegisterPlan tableOf(RegisterPlanSettings settings, num totalMinutes, List<String> startTimes) {
-    final plan = generate(conductors: settings.conductors, groups: settings.groups, totalMinutes: totalMinutes);
+  /// The table of a Registerprobe block as it is now: one row per
+  /// Unterpunkt in its order ([rounds]: its start, clock time or minutes,
+  /// and its info), the conductors read from the "Gruppe: Dirigent" info
+  /// (empty when a group is not named there or has none).
+  static RegisterPlan tableOf(List<String> groups, List<({String start, String? info})> rounds) {
+    Map<String, String> parse(String? info) {
+      final out = <String, String>{};
+      for (final part in (info ?? '').split(' · ')) {
+        final at = part.indexOf(': ');
+        if (at <= 0) continue;
+        final who = part.substring(at + 2).trim();
+        out[part.substring(0, at).trim()] = who == '–' ? '' : who;
+      }
+      return out;
+    }
+
     return RegisterPlan(
-      groups: plan.groups,
+      groups: [...groups],
       rows: [
-        for (var i = 0; i < plan.rows.length; i++)
-          [if (i < startTimes.length) startTimes[i] else plan.rows[i].first, ...plan.rows[i].skip(1)],
+        for (final r in rounds)
+          [r.start, for (final g in groups) parse(r.info)[g] ?? ''],
       ],
     );
   }
