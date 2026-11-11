@@ -23,21 +23,21 @@ DateTime _addMonths(DateTime d, int months) {
 }
 
 DateTime _shift(DateTime d, PeriodUnit unit, int n) => switch (unit) {
-      PeriodUnit.day => DateTime(d.year, d.month, d.day + n),
-      PeriodUnit.week => DateTime(d.year, d.month, d.day + 7 * n),
-      PeriodUnit.month => _addMonths(d, n),
-      PeriodUnit.year => _addMonths(d, 12 * n),
-    };
+  PeriodUnit.day => DateTime(d.year, d.month, d.day + n),
+  PeriodUnit.week => DateTime(d.year, d.month, d.day + 7 * n),
+  PeriodUnit.month => _addMonths(d, n),
+  PeriodUnit.year => _addMonths(d, 12 * n),
+};
 
 DayRange _unitAround(DateTime day, PeriodUnit unit) => switch (unit) {
-      PeriodUnit.day => (from: day, to: day),
-      PeriodUnit.week => (
-          from: DateTime(day.year, day.month, day.day - (day.weekday - 1)),
-          to: DateTime(day.year, day.month, day.day + (7 - day.weekday)),
-        ),
-      PeriodUnit.month => (from: DateTime(day.year, day.month, 1), to: DateTime(day.year, day.month + 1, 0)),
-      PeriodUnit.year => (from: DateTime(day.year, 1, 1), to: DateTime(day.year, 12, 31)),
-    };
+  PeriodUnit.day => (from: day, to: day),
+  PeriodUnit.week => (
+    from: DateTime(day.year, day.month, day.day - (day.weekday - 1)),
+    to: DateTime(day.year, day.month, day.day + (7 - day.weekday)),
+  ),
+  PeriodUnit.month => (from: DateTime(day.year, day.month, 1), to: DateTime(day.year, day.month + 1, 0)),
+  PeriodUnit.year => (from: DateTime(day.year, 1, 1), to: DateTime(day.year, 12, 31)),
+};
 
 /// The days of [period], seen from [today]. "Letzte 3 Monate" on 11.11. is
 /// 11.8. to 11.11.; "diesen Monat" the whole month.
@@ -63,10 +63,12 @@ DateTime? resolveEventDay(EventRef ref, DateTime today) {
     TodayEventRef() => t,
     TomorrowEventRef() => DateTime(t.year, t.month, t.day + 1),
     YesterdayEventRef() => DateTime(t.year, t.month, t.day - 1),
-    WeekdayEventRef(:final day) =>
-      DateTime(t.year, t.month, t.day + ((day.index + 1 - t.weekday) % 7)),
-    PastWeekdayEventRef(:final day) =>
-      DateTime(t.year, t.month, t.day - (((t.weekday - (day.index + 1)) % 7) == 0 ? 7 : (t.weekday - (day.index + 1)) % 7)),
+    WeekdayEventRef(:final day) => DateTime(t.year, t.month, t.day + ((day.index + 1 - t.weekday) % 7)),
+    PastWeekdayEventRef(:final day) => DateTime(
+      t.year,
+      t.month,
+      t.day - (((t.weekday - (day.index + 1)) % 7) == 0 ? 7 : (t.weekday - (day.index + 1)) % 7),
+    ),
     DateEventRef(:final date) => dayOf(date),
   };
 }
@@ -122,14 +124,8 @@ Iterable<String> personNames(String firstName, String lastName) sync* {
 }
 
 /// One person_attendances row as the rate needs it.
-typedef RateRow = ({
-  int personId,
-  DateTime date,
-  String? typeId,
-  AttendanceStatus status,
-  String? notes,
-  String? dutyState,
-});
+typedef RateRow =
+    ({int personId, DateTime date, String? typeId, AttendanceStatus status, String? notes, String? dutyState});
 
 typedef RateResult = ({int attended, int total, int? percent});
 
@@ -173,19 +169,22 @@ List<({int personId, RateResult rate})> ratesPerPerson(
   for (final r in rows) {
     byPerson.putIfAbsent(r.personId, () => []).add(r);
   }
-  final result = [
-    for (final e in byPerson.entries)
-      (
-        personId: e.key,
-        rate: computeRate(e.value,
-            range: range,
-            today: today,
-            countedTypeIds: countedTypeIds,
-            dutyTypeIds: dutyTypeIds,
-            shiftExcusedAsPresent: shiftExcusedAsPresent),
-      ),
-  ].where((e) => e.rate.total > 0).toList()
-    ..sort((a, b) => a.rate.percent!.compareTo(b.rate.percent!));
+  final result =
+      [
+          for (final e in byPerson.entries)
+            (
+              personId: e.key,
+              rate: computeRate(
+                e.value,
+                range: range,
+                today: today,
+                countedTypeIds: countedTypeIds,
+                dutyTypeIds: dutyTypeIds,
+                shiftExcusedAsPresent: shiftExcusedAsPresent,
+              ),
+            ),
+        ].where((e) => e.rate.total > 0).toList()
+        ..sort((a, b) => a.rate.percent!.compareTo(b.rate.percent!));
   return result;
 }
 
@@ -221,6 +220,8 @@ class AssistantAccess {
     this.canManageAbsences = false,
     this.canSelfReportAbsence = false,
     this.canCreateEvents = false,
+    this.teamOrgEnabled = false,
+    this.isTeamLeader = false,
   });
 
   final Role role;
@@ -236,6 +237,16 @@ class AssistantAccess {
   /// New Termine: the freshly loaded create permission
   /// (`canCreateAttendanceConfirmedProvider`, like both create pages).
   final bool canCreateEvents;
+
+  /// Teamorganisation is switched on for the tenant (tasks).
+  final bool teamOrgEnabled;
+
+  /// Admin / Verantwortlicher (`isTeamLeaderProvider`): creates tasks.
+  final bool isTeamLeader;
+
+  /// "Person anlegen" and Mitteilungen: Admin and Verantwortliche, like the
+  /// people list and `/settings/messages`.
+  bool get managesPeople => role.isAdmin || role.isResponsible;
 
   /// Move a Termin and set its Werke: the roles that edit Termine on the
   /// Termin page (not Viewer, not members).
@@ -267,6 +278,12 @@ class AssistantAccess {
       CreateEventsCommand() => canCreateEvents,
       MoveEventCommand() => editsEvents,
       SetSongsCommand() => editsEvents,
+      MyTasksCommand() => teamOrgEnabled && hasOwnPerson,
+      EventSongsCommand() => true,
+      CreateTaskCommand() => teamOrgEnabled && isTeamLeader,
+      TakeDutyCommand() => hasOwnPerson,
+      NewPersonCommand() => managesPeople,
+      DraftMessageCommand() => managesPeople,
       UnsupportedCommand() => true,
     };
   }
@@ -288,29 +305,30 @@ const int assistantPastDays = 14;
 const int assistantFutureDays = 183;
 
 /// One person_attendances row a status change may touch.
-typedef StatusRow = ({
-  String id,
-  int personId,
-  int attendanceId,
-  DateTime date,
-  String? typeId,
-  String? typeInfo,
-  String? startTime,
-  AttendanceStatus status,
-  String? notes,
-});
+typedef StatusRow =
+    ({
+      String id,
+      int personId,
+      int attendanceId,
+      DateTime date,
+      String? typeId,
+      String? typeInfo,
+      String? startTime,
+      AttendanceStatus status,
+      String? notes,
+    });
 
 /// The status that is written. Members only sign in, sign out or report
 /// being late (like "Meine Termine"): "zu spät" becomes Verspätung gemeldet
 /// and the leader statuses are refused (null).
 AttendanceStatus? targetStatus(AssistantStatus s, {required bool self}) => switch (s) {
-      AssistantStatus.present => AttendanceStatus.present,
-      AssistantStatus.excused => AttendanceStatus.excused,
-      AssistantStatus.lateExcused => AttendanceStatus.lateExcused,
-      AssistantStatus.late => self ? AttendanceStatus.lateExcused : AttendanceStatus.late,
-      AssistantStatus.absent => self ? null : AttendanceStatus.absent,
-      AssistantStatus.neutral => self ? null : AttendanceStatus.neutral,
-    };
+  AssistantStatus.present => AttendanceStatus.present,
+  AssistantStatus.excused => AttendanceStatus.excused,
+  AssistantStatus.lateExcused => AttendanceStatus.lateExcused,
+  AssistantStatus.late => self ? AttendanceStatus.lateExcused : AttendanceStatus.late,
+  AssistantStatus.absent => self ? null : AttendanceStatus.absent,
+  AssistantStatus.neutral => self ? null : AttendanceStatus.neutral,
+};
 
 /// Whether a Termin on [date] may be changed by the chat today.
 bool inChangeWindow(DateTime date, DateTime now) {
@@ -349,7 +367,8 @@ StatusSkip? selfStatusSkip({
     return signinOpen && !hasRegistrationFields ? null : StatusSkip.locked;
   }
   // Absagen / Verspätung: blocked once signed out or marked absent.
-  final blocked = current == AttendanceStatus.excused ||
+  final blocked =
+      current == AttendanceStatus.excused ||
       current == AttendanceStatus.lateExcused ||
       current == AttendanceStatus.absent;
   return blocked || !typeAllowsTarget ? StatusSkip.locked : null;
@@ -396,3 +415,55 @@ String? shiftedEndTime(String? oldStart, String? oldEnd, String newStart) {
 /// app (Matthias, 11.11.2026). Without one the chat asks for it.
 bool statusNeedsReason(SetStatusCommand c) =>
     (c.status == AssistantStatus.excused || c.status == AssistantStatus.lateExcused) && c.reason == null;
+
+// ---------------------------------------------------------------------------
+// Package 4.
+
+/// Due date of a task: from today up to [assistantFutureDays] ahead.
+bool taskDueInWindow(DateTime due, DateTime now) => inFutureWindow(due, now);
+
+/// Open tasks first by due date (without date last), then by title.
+int compareTasksByDue(({String? dueDate, String title}) a, ({String? dueDate, String title}) b) {
+  final da = a.dueDate;
+  final db = b.dueDate;
+  if (da != db) {
+    if (da == null) return 1;
+    if (db == null) return -1;
+    return da.compareTo(db);
+  }
+  return a.title.toLowerCase().compareTo(b.title.toLowerCase());
+}
+
+/// Why the person cannot take over a duty (null: they can).
+enum DutySkip {
+  /// The type does not allow signing up yourself.
+  notSelf,
+
+  /// The person is not on this Termin.
+  notMember,
+
+  /// Already assigned / signed up.
+  already,
+
+  /// All places are taken.
+  full,
+}
+
+DutySkip? dutySkip({
+  required bool selfSignup,
+  required bool isMember,
+  required String? ownDutyState,
+  required AttendanceStatus ownStatus,
+  required int required,
+  required int occupied,
+}) {
+  if (!selfSignup) return DutySkip.notSelf;
+  if (!isMember) return DutySkip.notMember;
+  final signedOut =
+      ownStatus == AttendanceStatus.excused ||
+      ownStatus == AttendanceStatus.lateExcused ||
+      ownStatus == AttendanceStatus.absent;
+  if (ownDutyState != null && ownDutyState.isNotEmpty && !signedOut) return DutySkip.already;
+  if (occupied >= required) return DutySkip.full;
+  return null;
+}

@@ -85,21 +85,30 @@ void main() {
     });
 
     testWidgets('answers are cards filled by the app', (tester) async {
-      final chat = AssistantChatState(messages: [
-        const AssistantMessage.user('Wie war Jonas in den letzten 3 Monaten?'),
-        AssistantMessage.assistant(RateReply(
-          subjectName: 'Jonas Müller',
-          isMe: false,
-          range: (from: DateTime(2026, 8, 11), to: DateTime(2026, 11, 11)),
-          rate: (attended: 9, total: 12, percent: 75),
-          personId: 4,
-        )),
-        const AssistantMessage.assistant(ChoiceReply(query: 'Jonas', options: [
-          (label: 'Jonas Müller · Tenor', command: NextEventCommand()),
-          (label: 'Jonas Klein · Bass', command: NextEventCommand()),
-        ])),
-        const AssistantMessage.assistant(NoticeReply(AssistantNotice.changeLater)),
-      ]);
+      final chat = AssistantChatState(
+        messages: [
+          const AssistantMessage.user('Wie war Jonas in den letzten 3 Monaten?'),
+          AssistantMessage.assistant(
+            RateReply(
+              subjectName: 'Jonas Müller',
+              isMe: false,
+              range: (from: DateTime(2026, 8, 11), to: DateTime(2026, 11, 11)),
+              rate: (attended: 9, total: 12, percent: 75),
+              personId: 4,
+            ),
+          ),
+          const AssistantMessage.assistant(
+            ChoiceReply(
+              query: 'Jonas',
+              options: [
+                (label: 'Jonas Müller · Tenor', command: NextEventCommand()),
+                (label: 'Jonas Klein · Bass', command: NextEventCommand()),
+              ],
+            ),
+          ),
+          const AssistantMessage.assistant(NoticeReply(AssistantNotice.changeLater)),
+        ],
+      );
       _tall(tester);
       await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
       expect(find.text('Anwesenheit von Jonas Müller'), findsOneWidget);
@@ -113,24 +122,24 @@ void main() {
 
   group('changes (package 2)', () {
     StatusPlan plan(int n, {bool self = true}) => StatusPlan(
-          self: self,
-          status: AttendanceStatus.excused,
-          reason: 'Krank',
-          changes: [
-            for (var i = 0; i < n; i++)
-              StatusChange(
-                personAttendanceId: 'pa$i',
-                attendanceId: i,
-                personName: 'Jonas Müller',
-                title: 'Probe $i',
-                date: DateTime(2026, 11, 15 + i),
-                oldStatus: AttendanceStatus.neutral,
-                oldNotes: null,
-                newStatus: AttendanceStatus.excused,
-              ),
-          ],
-          skippedLocked: 1,
-        );
+      self: self,
+      status: AttendanceStatus.excused,
+      reason: 'Krank',
+      changes: [
+        for (var i = 0; i < n; i++)
+          StatusChange(
+            personAttendanceId: 'pa$i',
+            attendanceId: i,
+            personName: 'Jonas Müller',
+            title: 'Probe $i',
+            date: DateTime(2026, 11, 15 + i),
+            oldStatus: AttendanceStatus.neutral,
+            oldNotes: null,
+            newStatus: AttendanceStatus.excused,
+          ),
+      ],
+      skippedLocked: 1,
+    );
 
     testWidgets('a preview shows what changes and saves nothing by itself', (tester) async {
       final chat = AssistantChatState(messages: [AssistantMessage.assistant(StatusPreviewReply(plan(2)))]);
@@ -145,7 +154,9 @@ void main() {
     });
 
     testWidgets('many rows: list is cut, leaders see names', (tester) async {
-      final chat = AssistantChatState(messages: [AssistantMessage.assistant(StatusPreviewReply(plan(12, self: false)))]);
+      final chat = AssistantChatState(
+        messages: [AssistantMessage.assistant(StatusPreviewReply(plan(12, self: false)))],
+      );
       await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
       expect(find.text('Status ändern'), findsOneWidget);
       expect(find.text('Jonas Müller · Probe 0'), findsOneWidget);
@@ -153,11 +164,13 @@ void main() {
     });
 
     testWidgets('saved change offers undo once', (tester) async {
-      final chat = AssistantChatState(messages: [
-        AssistantMessage.assistant(StatusPreviewReply(plan(1), state: ActionState.done)),
-        AssistantMessage.assistant(ActionDoneReply(statusPlan: plan(1), count: 1)),
-        AssistantMessage.assistant(ActionDoneReply(statusPlan: plan(1), count: 1, undo: UndoState.undone)),
-      ]);
+      final chat = AssistantChatState(
+        messages: [
+          AssistantMessage.assistant(StatusPreviewReply(plan(1), state: ActionState.done)),
+          AssistantMessage.assistant(ActionDoneReply(statusPlan: plan(1), count: 1)),
+          AssistantMessage.assistant(ActionDoneReply(statusPlan: plan(1), count: 1, undo: UndoState.undone)),
+        ],
+      );
       _tall(tester);
       await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat, role: Role.player));
       expect(find.text('Speichern'), findsNothing);
@@ -167,12 +180,20 @@ void main() {
     });
 
     test('cancel and the second confirmation never save', () async {
-      final container = ProviderContainer(overrides: [
-        assistantChatNotifierProvider.overrideWith(() => _Seeded(AssistantChatState(messages: [
-              AssistantMessage.assistant(StatusPreviewReply(plan(12, self: false))),
-              AssistantMessage.assistant(StatusPreviewReply(plan(1))),
-            ]))),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          assistantChatNotifierProvider.overrideWith(
+            () => _Seeded(
+              AssistantChatState(
+                messages: [
+                  AssistantMessage.assistant(StatusPreviewReply(plan(12, self: false))),
+                  AssistantMessage.assistant(StatusPreviewReply(plan(1))),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
       addTearDown(container.dispose);
       final notifier = container.read(assistantChatNotifierProvider.notifier);
       // 12 rows: the first tap only asks again.
@@ -195,15 +216,21 @@ void main() {
     const probe = AttendanceType(id: 'p', name: 'Probe', startTime: '19:00', endTime: '21:00');
 
     testWidgets('new Termine: list of days, skipped days, save', (tester) async {
-      final chat = AssistantChatState(messages: [
-        AssistantMessage.assistant(CreatePreviewReply(CreatePlan(
-          type: probe,
-          days: [DateTime(2026, 12, 2), DateTime(2026, 12, 9)],
-          title: 'Extraprobe',
-          place: 'Gemeindehaus',
-          skippedExisting: [DateTime(2026, 12, 16)],
-        ))),
-      ]);
+      final chat = AssistantChatState(
+        messages: [
+          AssistantMessage.assistant(
+            CreatePreviewReply(
+              CreatePlan(
+                type: probe,
+                days: [DateTime(2026, 12, 2), DateTime(2026, 12, 9)],
+                title: 'Extraprobe',
+                place: 'Gemeindehaus',
+                skippedExisting: [DateTime(2026, 12, 16)],
+              ),
+            ),
+          ),
+        ],
+      );
       _tall(tester);
       await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
       expect(find.text('2 Termine anlegen?'), findsOneWidget);
@@ -215,27 +242,37 @@ void main() {
     });
 
     testWidgets('move and Werke previews', (tester) async {
-      final chat = AssistantChatState(messages: [
-        AssistantMessage.assistant(MovePreviewReply(MovePlan(
-          before: const Attendance(id: 7, date: '2026-11-18T11:00:00.000Z', typeId: 'p'),
-          title: 'Probe',
-          oldDay: DateTime(2026, 11, 18),
-          newDay: DateTime(2026, 11, 19),
-          oldStart: '19:00',
-          newStart: '19:00',
-        ))),
-        AssistantMessage.assistant(SongsPreviewReply(SongsPlan(
-          attendanceId: 7,
-          title: 'Probe',
-          date: DateTime(2026, 11, 18),
-          historyDate: '2026-11-18T11:00:00.000Z',
-          before: const [],
-          after: const [SongHistoryEntry(songId: 1, songName: 'Großer Gott')],
-          added: const ['Großer Gott'],
-          removed: const [],
-          notFound: const ['Nr. 999'],
-        ))),
-      ]);
+      final chat = AssistantChatState(
+        messages: [
+          AssistantMessage.assistant(
+            MovePreviewReply(
+              MovePlan(
+                before: const Attendance(id: 7, date: '2026-11-18T11:00:00.000Z', typeId: 'p'),
+                title: 'Probe',
+                oldDay: DateTime(2026, 11, 18),
+                newDay: DateTime(2026, 11, 19),
+                oldStart: '19:00',
+                newStart: '19:00',
+              ),
+            ),
+          ),
+          AssistantMessage.assistant(
+            SongsPreviewReply(
+              SongsPlan(
+                attendanceId: 7,
+                title: 'Probe',
+                date: DateTime(2026, 11, 18),
+                historyDate: '2026-11-18T11:00:00.000Z',
+                before: const [],
+                after: const [SongHistoryEntry(songId: 1, songName: 'Großer Gott')],
+                added: const ['Großer Gott'],
+                removed: const [],
+                notFound: const ['Nr. 999'],
+              ),
+            ),
+          ),
+        ],
+      );
       _tall(tester);
       await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
       expect(find.text('Termin verschieben'), findsOneWidget);
@@ -249,13 +286,17 @@ void main() {
     });
 
     testWidgets('created Termine can be undone', (tester) async {
-      final chat = AssistantChatState(messages: [
-        AssistantMessage.assistant(ActionDoneReply(
-          createPlan: CreatePlan(type: probe, days: [DateTime(2026, 12, 2)]),
-          createdIds: const [41],
-          count: 1,
-        )),
-      ]);
+      final chat = AssistantChatState(
+        messages: [
+          AssistantMessage.assistant(
+            ActionDoneReply(
+              createPlan: CreatePlan(type: probe, days: [DateTime(2026, 12, 2)]),
+              createdIds: const [41],
+              count: 1,
+            ),
+          ),
+        ],
+      );
       await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
       expect(find.text('1 Termin angelegt.'), findsOneWidget);
       expect(find.textContaining('löscht genau diese neuen Termine'), findsOneWidget);
@@ -263,17 +304,145 @@ void main() {
     });
 
     testWidgets('a type question offers the types', (tester) async {
-      final chat = AssistantChatState(messages: [
-        AssistantMessage.assistant(ChoiceReply(kind: ChoiceKind.type, query: '', options: [
-          (label: 'Probe', command: CreateEventsCommand(dates: [DateTime(2026, 12, 2)], typeId: 'p')),
-          (label: 'Gottesdienst', command: CreateEventsCommand(dates: [DateTime(2026, 12, 2)], typeId: 'g')),
-        ])),
-        const AssistantMessage.assistant(NoticeReply(AssistantNotice.excuseNeedsReason)),
-      ]);
+      final chat = AssistantChatState(
+        messages: [
+          AssistantMessage.assistant(
+            ChoiceReply(
+              kind: ChoiceKind.type,
+              query: '',
+              options: [
+                (label: 'Probe', command: CreateEventsCommand(dates: [DateTime(2026, 12, 2)], typeId: 'p')),
+                (label: 'Gottesdienst', command: CreateEventsCommand(dates: [DateTime(2026, 12, 2)], typeId: 'g')),
+              ],
+            ),
+          ),
+          const AssistantMessage.assistant(NoticeReply(AssistantNotice.excuseNeedsReason)),
+        ],
+      );
       await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
       expect(find.text('Welcher Termintyp?'), findsOneWidget);
       expect(find.text('Gottesdienst'), findsOneWidget);
       expect(find.textContaining('geht nur mit Grund'), findsOneWidget);
+    });
+
+    testWidgets('package 4: tasks, Werke, task and duty previews', (tester) async {
+      final chat = AssistantChatState(
+        messages: [
+          const AssistantMessage.assistant(
+            TasksReply([
+              (id: 't1', title: 'Raum klären', dueDate: '2026-11-13', priority: 'high', inProgress: false),
+              (id: 't2', title: 'Noten kopieren', dueDate: null, priority: 'medium', inProgress: true),
+            ]),
+          ),
+          AssistantMessage.assistant(
+            EventSongsReply(
+              attendanceId: 7,
+              title: 'Gottesdienst',
+              date: DateTime(2026, 11, 15),
+              songs: const ['12. Großer Gott', 'Lobe den Herren'],
+            ),
+          ),
+          const AssistantMessage.assistant(
+            TaskPreviewReply(
+              TaskPlan(
+                title: 'Raum klären',
+                priority: 'high',
+                personId: 3,
+                personName: 'Thomas Weber',
+                dueDate: '2026-11-13',
+              ),
+            ),
+          ),
+          AssistantMessage.assistant(
+            DutyPreviewReply(
+              DutyPlan(
+                attendanceId: 9,
+                personAttendanceId: 'pa',
+                title: 'Aufbau',
+                date: DateTime(2026, 11, 15),
+                startTime: '09:00:00',
+                required: 3,
+                occupied: 1,
+                oldStatus: AttendanceStatus.neutral,
+              ),
+            ),
+          ),
+        ],
+      );
+      _tall(tester);
+      await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
+      expect(find.text('Deine offenen Aufgaben'), findsOneWidget);
+      expect(find.text('Raum klären'), findsNWidgets(2));
+      expect(find.text('fällig 13.11.2026'), findsOneWidget);
+      expect(find.text('in Arbeit'), findsOneWidget);
+      expect(find.text('12. Großer Gott'), findsOneWidget);
+      expect(find.text('Neue Aufgabe anlegen?'), findsOneWidget);
+      expect(find.text('Zuständig: Thomas Weber'), findsOneWidget);
+      expect(find.text('Priorität: hoch'), findsOneWidget);
+      expect(find.textContaining('erst eine Nachricht, wenn du nach dem Speichern'), findsOneWidget);
+      expect(find.text('Dienst übernehmen?'), findsOneWidget);
+      expect(find.text('1 von 3 Plätzen besetzt'), findsOneWidget);
+      expect(find.text('Speichern'), findsNWidgets(2));
+    });
+
+    testWidgets('package 4: person and message only as drafts', (tester) async {
+      final chat = AssistantChatState(
+        messages: [
+          AssistantMessage.assistant(
+            PersonDraftReply(
+              firstName: 'Anna',
+              lastName: 'Müller',
+              groupId: 2,
+              groupName: 'Sopran',
+              birthday: DateTime(2008, 4, 3),
+            ),
+          ),
+          AssistantMessage.assistant(
+            MessageDraftReply(
+              playerIds: const [1, 2, 3],
+              groupName: 'Tenor',
+              attendanceId: 7,
+              eventTitle: 'Gottesdienst',
+              eventDate: DateTime(2026, 11, 15),
+              eventTime: '10:00',
+              note: 'Bitte schwarze Kleidung.',
+            ),
+          ),
+        ],
+      );
+      _tall(tester);
+      await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
+      expect(find.text('Neue Person (Entwurf)'), findsOneWidget);
+      expect(find.text('Gruppe: Sopran'), findsOneWidget);
+      expect(find.text('Geburtstag: 03.04.2008'), findsOneWidget);
+      expect(find.text('Im Formular öffnen'), findsOneWidget);
+      expect(find.text('Mitteilung (Entwurf)'), findsOneWidget);
+      expect(find.text('An: Tenor · 3 Personen'), findsOneWidget);
+      expect(find.text('Erinnerung: Gottesdienst'), findsOneWidget);
+      expect(find.textContaining('Bitte schwarze Kleidung.'), findsOneWidget);
+      expect(find.textContaining('Ich sende nichts'), findsOneWidget);
+      expect(find.text('Entwurf öffnen'), findsOneWidget);
+      // Drafts never offer "Speichern".
+      expect(find.text('Speichern'), findsNothing);
+    });
+
+    testWidgets('a new task offers notify and undo', (tester) async {
+      final chat = AssistantChatState(
+        messages: [
+          const AssistantMessage.assistant(
+            ActionDoneReply(
+              taskPlan: TaskPlan(title: 'Raum klären', priority: 'medium', personId: 3, personName: 'Thomas'),
+              taskId: 'abc',
+              notify: NotifyState.available,
+              count: 1,
+            ),
+          ),
+        ],
+      );
+      await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
+      expect(find.text('Aufgabe angelegt.'), findsOneWidget);
+      expect(find.text('Thomas benachrichtigen'), findsOneWidget);
+      expect(find.text('Rückgängig'), findsOneWidget);
     });
   });
 }

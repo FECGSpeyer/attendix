@@ -1064,6 +1064,30 @@ abstract class AppLocalizations {
   /// **'Rückgängig löscht genau diese neuen Termine wieder.'**
   String get assistantCreateUndoHint;
 
+  /// assistant.duty.done
+  ///
+  /// In de, this message translates to:
+  /// **'Dienst übernommen.'**
+  String get assistantDutyDone;
+
+  /// assistant.duty.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Du wirst für den Dienst eingetragen und auf Anwesend gesetzt.'**
+  String get assistantDutyHint;
+
+  /// assistant.duty.places
+  ///
+  /// In de, this message translates to:
+  /// **'{occupied} von {required} Plätzen besetzt'**
+  String assistantDutyPlaces(Object occupied, Object required);
+
+  /// assistant.duty.title
+  ///
+  /// In de, this message translates to:
+  /// **'Dienst übernehmen?'**
+  String get assistantDutyTitle;
+
   /// assistant.entryEnableHint
   ///
   /// In de, this message translates to:
@@ -1124,6 +1148,12 @@ abstract class AppLocalizations {
   /// **'Kommen'**
   String get assistantEventPresent;
 
+  /// assistant.eventSongs.title
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get assistantEventSongsTitle;
+
   /// assistant.event.time
   ///
   /// In de, this message translates to:
@@ -1147,6 +1177,70 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Hallo! Ich beantworte Fragen zu deiner Gruppe und kann dich an- oder abmelden. Bevor ich etwas ändere, zeige ich dir genau, was passiert.'**
   String get assistantIntro;
+
+  /// assistant.message.genericTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Mitteilung'**
+  String get assistantMessageGenericTitle;
+
+  /// assistant.message.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Ich sende nichts. Prüfe den Text und sende ihn selbst.'**
+  String get assistantMessageHint;
+
+  /// assistant.message.onlyOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Nur wer sich noch nicht gemeldet hat.'**
+  String get assistantMessageOnlyOpen;
+
+  /// assistant.message.open
+  ///
+  /// In de, this message translates to:
+  /// **'Entwurf öffnen'**
+  String get assistantMessageOpen;
+
+  /// assistant.message.reminderBody
+  ///
+  /// In de, this message translates to:
+  /// **'Erinnerung an {title} am {date}.'**
+  String assistantMessageReminderBody(Object title, Object date);
+
+  /// assistant.message.reminderBodyTime
+  ///
+  /// In de, this message translates to:
+  /// **'Erinnerung an {title} am {date} um {time} Uhr.'**
+  String assistantMessageReminderBodyTime(
+    Object title,
+    Object date,
+    Object time,
+  );
+
+  /// assistant.message.reminderTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Erinnerung: {title}'**
+  String assistantMessageReminderTitle(Object title);
+
+  /// assistant.message.title
+  ///
+  /// In de, this message translates to:
+  /// **'Mitteilung (Entwurf)'**
+  String get assistantMessageTitle;
+
+  /// assistant.message.to
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {An: {to} · 1 Person} other {An: {to} · {count} Personen}}'**
+  String assistantMessageTo(num count, Object to);
+
+  /// assistant.message.toAll
+  ///
+  /// In de, this message translates to:
+  /// **'alle'**
+  String get assistantMessageToAll;
 
   /// assistant.move.done
   ///
@@ -1193,7 +1287,7 @@ abstract class AppLocalizations {
   /// assistant.notice.changeLater
   ///
   /// In de, this message translates to:
-  /// **'Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, Werke) gehen schon, Personen kommen bald.'**
+  /// **'Das kann ich noch nicht ändern. Status, Abwesenheiten, Termine, Werke, Aufgaben und Dienste gehen schon. Löschen geht im Chat nie.'**
   String get assistantNoticeChangeLater;
 
   /// assistant.notice.dateOutOfRange
@@ -1207,6 +1301,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.'**
   String get assistantNoticeDisabled;
+
+  /// assistant.notice.dutyAlready
+  ///
+  /// In de, this message translates to:
+  /// **'Diesen Dienst hast du schon.'**
+  String get assistantNoticeDutyAlready;
+
+  /// assistant.notice.dutyFull
+  ///
+  /// In de, this message translates to:
+  /// **'Dieser Dienst ist schon voll besetzt.'**
+  String get assistantNoticeDutyFull;
+
+  /// assistant.notice.dutyNotMember
+  ///
+  /// In de, this message translates to:
+  /// **'Du stehst bei diesem Dienst nicht auf der Liste und kannst ihn deshalb nicht übernehmen.'**
+  String get assistantNoticeDutyNotMember;
+
+  /// assistant.notice.dutyNotSelf
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Dienst kann man sich nicht selbst eintragen. Die Leitung teilt ihn zu.'**
+  String get assistantNoticeDutyNotSelf;
 
   /// assistant.notice.eventLocked
   ///
@@ -1262,6 +1380,12 @@ abstract class AppLocalizations {
   /// **'In diesem Zeitraum gibt es keine Termine, die zählen.'**
   String get assistantNoticeNoData;
 
+  /// assistant.notice.noDuty
+  ///
+  /// In de, this message translates to:
+  /// **'Ich habe keinen passenden Dienst gefunden.'**
+  String get assistantNoticeNoDuty;
+
   /// assistant.notice.noEvent
   ///
   /// In de, this message translates to:
@@ -1280,6 +1404,12 @@ abstract class AppLocalizations {
   /// **'Du bist in dieser Gruppe nicht als Person eingetragen, deshalb gibt es keine eigene Anwesenheit.'**
   String get assistantNoticeNoOwnPerson;
 
+  /// assistant.notice.noRecipients
+  ///
+  /// In de, this message translates to:
+  /// **'Für diese Auswahl gibt es niemanden, den ich anschreiben könnte.'**
+  String get assistantNoticeNoRecipients;
+
   /// assistant.notice.noRights
   ///
   /// In de, this message translates to:
@@ -1292,6 +1422,18 @@ abstract class AppLocalizations {
   /// **'Bei diesem Termintyp werden keine Werke geführt.'**
   String get assistantNoticeNoSongsForType;
 
+  /// assistant.notice.noSongsYet
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Termin sind noch keine Werke eingetragen.'**
+  String get assistantNoticeNoSongsYet;
+
+  /// assistant.notice.noTasks
+  ///
+  /// In de, this message translates to:
+  /// **'Bei dir sind gerade keine Aufgaben offen.'**
+  String get assistantNoticeNoTasks;
+
   /// assistant.notice.noType
   ///
   /// In de, this message translates to:
@@ -1301,7 +1443,7 @@ abstract class AppLocalizations {
   /// assistant.notice.notUnderstood
   ///
   /// In de, this message translates to:
-  /// **'Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.'**
+  /// **'Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken, Aufgaben und zur App.'**
   String get assistantNoticeNotUnderstood;
 
   /// assistant.notice.nothingToChange
@@ -1334,6 +1476,12 @@ abstract class AppLocalizations {
   /// **'Ich finde keine Werke zu „{name}“.'**
   String assistantNoticeSongsNotFound(Object name);
 
+  /// assistant.notice.taskDueOutOfRange
+  ///
+  /// In de, this message translates to:
+  /// **'Das Fälligkeitsdatum muss zwischen heute und in 6 Monaten liegen.'**
+  String get assistantNoticeTaskDueOutOfRange;
+
   /// assistant.notice.tooLong
   ///
   /// In de, this message translates to:
@@ -1345,6 +1493,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Das wären {count} Änderungen. Über den Chat gehen höchstens {max} auf einmal. Grenz es bitte ein, zum Beispiel auf einen Termin oder eine Gruppe.'**
   String assistantNoticeTooManyChanges(Object count, Object max);
+
+  /// assistant.person.birthday
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtstag: {date}'**
+  String assistantPersonBirthday(Object date);
+
+  /// assistant.person.group
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe: {name}'**
+  String assistantPersonGroup(Object name);
+
+  /// assistant.person.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Ich speichere nichts. Prüfe die Angaben im Formular und speichere dort.'**
+  String get assistantPersonHint;
+
+  /// assistant.person.missingGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Die Gruppe „{name}“ gibt es nicht. Bitte wähle sie im Formular.'**
+  String assistantPersonMissingGroup(Object name);
+
+  /// assistant.person.open
+  ///
+  /// In de, this message translates to:
+  /// **'Im Formular öffnen'**
+  String get assistantPersonOpen;
+
+  /// assistant.person.title
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Person (Entwurf)'**
+  String get assistantPersonTitle;
 
   /// assistant.privacy
   ///
@@ -1532,11 +1716,125 @@ abstract class AppLocalizations {
   /// **'Melde mich für den nächsten Termin ab, ich bin krank'**
   String get assistantSuggestSignOut;
 
+  /// assistant.suggest.songs
+  ///
+  /// In de, this message translates to:
+  /// **'Welche Werke singen wir am Sonntag?'**
+  String get assistantSuggestSongs;
+
   /// assistant.suggest.whoComes
   ///
   /// In de, this message translates to:
   /// **'Wer kommt zum nächsten Termin?'**
   String get assistantSuggestWhoComes;
+
+  /// assistant.task.done
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgabe angelegt.'**
+  String get assistantTaskDone;
+
+  /// assistant.task.due
+  ///
+  /// In de, this message translates to:
+  /// **'Fällig am {date}'**
+  String assistantTaskDue(Object date);
+
+  /// assistant.task.for
+  ///
+  /// In de, this message translates to:
+  /// **'Zuständig: {name}'**
+  String assistantTaskFor(Object name);
+
+  /// assistant.task.forMe
+  ///
+  /// In de, this message translates to:
+  /// **'Zuständig: du'**
+  String get assistantTaskForMe;
+
+  /// assistant.task.nobody
+  ///
+  /// In de, this message translates to:
+  /// **'Noch niemand zuständig'**
+  String get assistantTaskNobody;
+
+  /// assistant.task.notified
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde benachrichtigt.'**
+  String assistantTaskNotified(Object name);
+
+  /// assistant.task.notify
+  ///
+  /// In de, this message translates to:
+  /// **'{name} benachrichtigen'**
+  String assistantTaskNotify(Object name);
+
+  /// assistant.task.notifyFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Benachrichtigen hat nicht geklappt.'**
+  String get assistantTaskNotifyFailed;
+
+  /// assistant.task.notifyHint
+  ///
+  /// In de, this message translates to:
+  /// **'{name} bekommt erst eine Nachricht, wenn du nach dem Speichern auf „Benachrichtigen“ tippst.'**
+  String assistantTaskNotifyHint(Object name);
+
+  /// assistant.task.open
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgabe öffnen'**
+  String get assistantTaskOpen;
+
+  /// assistant.task.priority
+  ///
+  /// In de, this message translates to:
+  /// **'Priorität: {priority}'**
+  String assistantTaskPriority(Object priority);
+
+  /// assistant.task.priorityHigh
+  ///
+  /// In de, this message translates to:
+  /// **'hoch'**
+  String get assistantTaskPriorityHigh;
+
+  /// assistant.task.priorityLow
+  ///
+  /// In de, this message translates to:
+  /// **'niedrig'**
+  String get assistantTaskPriorityLow;
+
+  /// assistant.task.priorityMedium
+  ///
+  /// In de, this message translates to:
+  /// **'mittel'**
+  String get assistantTaskPriorityMedium;
+
+  /// assistant.task.title
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Aufgabe anlegen?'**
+  String get assistantTaskTitle;
+
+  /// assistant.tasks.due
+  ///
+  /// In de, this message translates to:
+  /// **'fällig {date}'**
+  String assistantTasksDue(Object date);
+
+  /// assistant.tasks.inProgress
+  ///
+  /// In de, this message translates to:
+  /// **'in Arbeit'**
+  String get assistantTasksInProgress;
+
+  /// assistant.tasks.title
+  ///
+  /// In de, this message translates to:
+  /// **'Deine offenen Aufgaben'**
+  String get assistantTasksTitle;
 
   /// assistant.thinking
   ///

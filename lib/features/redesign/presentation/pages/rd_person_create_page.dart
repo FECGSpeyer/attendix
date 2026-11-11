@@ -32,6 +32,7 @@ import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/members/rd_person_form.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../people/person_create_prefill.dart';
 
 /// REDESIGN: "Neue Person" (canvas "Einheitliche Beta-UX", board A):
 /// Passbild and name in one card, the group as chips, contact (e-mail gives
@@ -39,7 +40,10 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 /// the same code as the person page of the normal app
 /// ([createPersonWithChecks]).
 class RdPersonCreatePage extends ConsumerStatefulWidget {
-  const RdPersonCreatePage({super.key});
+  const RdPersonCreatePage({super.key, this.prefill});
+
+  /// Start values from the chat assistant (saving stays here).
+  final PersonCreatePrefill? prefill;
 
   @override
   ConsumerState<RdPersonCreatePage> createState() => _RdPersonCreatePageState();
@@ -82,11 +86,26 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
     super.initState();
     _leaveGuards = ref.read(routeLeaveGuardRegistryProvider);
     _leaveGuards.add(_onLeave);
+    final prefill = widget.prefill;
+    if (prefill != null) {
+      _first.text = prefill.firstName;
+      _last.text = prefill.lastName ?? '';
+      _touched = true;
+      if (prefill.groupId != null) {
+        _draft = _draft.copyWith(instrument: prefill.groupId);
+        _groupPicked = true;
+      }
+      if (prefill.birthday != null) {
+        _draft = _draft.copyWith(birthday: personUtcMidnightIso(prefill.birthday!), correctBirthday: true);
+      }
+    }
     _first.addListener(_onNameInput);
     _last.addListener(_onNameInput);
     _emailFocus.addListener(() {
       if (!_emailFocus.hasFocus) _onEmailBlur();
     });
+    // The cross-instance lookup also runs for prefilled names.
+    if (prefill != null) _onNameInput();
   }
 
   @override

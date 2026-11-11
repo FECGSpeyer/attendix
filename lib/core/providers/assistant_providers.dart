@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/repositories/assistant_repository.dart';
+import '../../data/repositories/duty_repository.dart' show DutyTakeResult;
 import '../../features/assistant/data/assistant_command.dart';
 import '../../features/assistant/data/assistant_executor.dart';
 import '../../features/assistant/data/assistant_reply.dart';
@@ -69,18 +70,22 @@ class AssistantChatNotifier extends Notifier<AssistantChatState> {
     final executor = AssistantExecutor(ref);
     try {
       final command = await repo.ask(
-            text: clean,
-            today: DateTime.now(),
-            language: ref.read(localeProvider).languageCode,
-          );
+        text: clean,
+        today: DateTime.now(),
+        language: ref.read(localeProvider).languageCode,
+      );
       _add(AssistantMessage.assistant(await _answer(executor, command)));
     } on AssistantException catch (e) {
-      _add(AssistantMessage.assistant(NoticeReply(switch (e.failure) {
-        AssistantFailure.disabled => AssistantNotice.disabled,
-        AssistantFailure.limit => AssistantNotice.limit,
-        AssistantFailure.tooLong => AssistantNotice.tooLong,
-        AssistantFailure.failed => AssistantNotice.failed,
-      })));
+      _add(
+        AssistantMessage.assistant(
+          NoticeReply(switch (e.failure) {
+            AssistantFailure.disabled => AssistantNotice.disabled,
+            AssistantFailure.limit => AssistantNotice.limit,
+            AssistantFailure.tooLong => AssistantNotice.tooLong,
+            AssistantFailure.failed => AssistantNotice.failed,
+          }),
+        ),
+      );
     } catch (_) {
       _add(const AssistantMessage.assistant(NoticeReply(AssistantNotice.failed)));
     } finally {
@@ -149,6 +154,26 @@ class AssistantChatNotifier extends Notifier<AssistantChatState> {
         case SongsPreviewReply(:final plan):
           await executor.applySongs(plan);
           done = ActionDoneReply(songsPlan: plan, count: plan.added.length + plan.removed.length);
+        case TaskPreviewReply(:final plan):
+          final id = await executor.applyTask(plan);
+          done = ActionDoneReply(
+            taskPlan: plan,
+            taskId: id,
+            // Push only when tapped, and never to oneself.
+            notify: plan.personId != null && !plan.isMe ? NotifyState.available : NotifyState.none,
+            count: 1,
+          );
+        case DutyPreviewReply(:final plan):
+          final result = await executor.applyDuty(plan);
+          done =
+              result == DutyTakeResult.ok
+                  ? ActionDoneReply(dutyPlan: plan, count: 1)
+                  : NoticeReply(switch (result) {
+                    DutyTakeResult.full => AssistantNotice.dutyFull,
+                    DutyTakeResult.notMember => AssistantNotice.dutyNotMember,
+                    DutyTakeResult.past => AssistantNotice.eventLocked,
+                    _ => AssistantNotice.dutyNotSelf,
+                  });
       }
       _replace(index, reply.withState(ActionState.done));
       _add(AssistantMessage.assistant(done));
@@ -186,12 +211,36 @@ class AssistantChatNotifier extends Notifier<AssistantChatState> {
         await executor.revertMove(reply.movePlan!, reply.moveRestore);
       } else if (reply.songsPlan != null) {
         await executor.revertSongs(reply.songsPlan!);
+      } else if (reply.taskId != null) {
+        await executor.revertTask(reply.taskId!);
+      } else if (reply.dutyPlan != null) {
+        await executor.revertDuty(reply.dutyPlan!);
       }
       _replace(index, reply.withUndo(UndoState.undone));
     } catch (_) {
       _replace(index, reply.withUndo(UndoState.failed));
     } finally {
       state = state.copyWith(busy: false);
+    }
+  }
+
+  /// "Benachrichtigen" on a new task (once, not after undo).
+  Future<void> notifyTask(int index) async {
+    final reply = _replyAt(index);
+    if (reply is! ActionDoneReply ||
+        reply.taskId == null ||
+        reply.notify != NotifyState.available ||
+        reply.undo != UndoState.available ||
+        state.busy) {
+      return;
+    }
+    _replace(index, reply.withNotify(NotifyState.working));
+    final executor = AssistantExecutor(ref);
+    try {
+      await executor.notifyTask(reply.taskId!);
+      _replace(index, (_replyAt(index) as ActionDoneReply).withNotify(NotifyState.sent));
+    } catch (_) {
+      _replace(index, (_replyAt(index) as ActionDoneReply).withNotify(NotifyState.failed));
     }
   }
 
@@ -204,5 +253,6 @@ class AssistantChatNotifier extends Notifier<AssistantChatState> {
   }
 }
 
-final assistantChatNotifierProvider =
-    NotifierProvider<AssistantChatNotifier, AssistantChatState>(AssistantChatNotifier.new);
+final assistantChatNotifierProvider = NotifierProvider<AssistantChatNotifier, AssistantChatState>(
+  AssistantChatNotifier.new,
+);

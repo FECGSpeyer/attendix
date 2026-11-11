@@ -1,6 +1,7 @@
 // U1: Person bearbeiten, Verlauf and Neue Person in the new design (Beta).
 // Without the Beta the old pages keep their Ionic look (FAB, accordions).
 import 'package:attendix/core/theme/app_icons.dart';
+import 'package:attendix/features/people/person_create_prefill.dart';
 import 'dart:io';
 
 import 'package:attendix/core/config/supabase_config.dart';
@@ -107,6 +108,12 @@ void main() {
       expect(find.byType(FloatingActionButton), findsNothing);
       expect(find.byType(IonFabButton), findsNothing);
       expect(find.widgetWithText(TextButton, 'Speichern'), findsOneWidget);
+    });
+
+    testWidgets('a prefill from the chat assistant fills the old form', (tester) async {
+      await _pump(tester, _ionic(), const PersonCreatePage(prefill: PersonCreatePrefill(firstName: 'Anna', lastName: 'Müller')));
+      expect(find.text('Anna'), findsWidgets);
+      expect(find.text('Müller'), findsWidgets);
     });
 
     testWidgets('without the Beta the FAB stays', (tester) async {

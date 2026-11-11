@@ -657,6 +657,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'Undo deletes exactly these new events again.';
 
   @override
+  String get assistantDutyDone => 'Duty taken over.';
+
+  @override
+  String get assistantDutyHint =>
+      'You\'ll be signed up for the duty and set to present.';
+
+  @override
+  String assistantDutyPlaces(Object occupied, Object required) {
+    return '$occupied of $required places taken';
+  }
+
+  @override
+  String get assistantDutyTitle => 'Take over this duty?';
+
+  @override
   String get assistantEntryEnableHint =>
       'Still off for this group. Tap to switch it on.';
 
@@ -689,6 +704,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assistantEventPresent => 'Coming';
 
   @override
+  String get assistantEventSongsTitle => 'Pieces';
+
+  @override
   String assistantEventTime(Object time) {
     return '$time';
   }
@@ -702,6 +720,56 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get assistantIntro =>
       'Hi! I answer questions about your group and can sign you in or out. Before I change anything, I show you exactly what will happen.';
+
+  @override
+  String get assistantMessageGenericTitle => 'Message';
+
+  @override
+  String get assistantMessageHint =>
+      'I don\'t send anything. Check the text and send it yourself.';
+
+  @override
+  String get assistantMessageOnlyOpen =>
+      'Only those who haven\'t answered yet.';
+
+  @override
+  String get assistantMessageOpen => 'Open draft';
+
+  @override
+  String assistantMessageReminderBody(Object title, Object date) {
+    return 'Reminder of $title on $date.';
+  }
+
+  @override
+  String assistantMessageReminderBodyTime(
+    Object title,
+    Object date,
+    Object time,
+  ) {
+    return 'Reminder of $title on $date at $time.';
+  }
+
+  @override
+  String assistantMessageReminderTitle(Object title) {
+    return 'Reminder: $title';
+  }
+
+  @override
+  String get assistantMessageTitle => 'Message (draft)';
+
+  @override
+  String assistantMessageTo(num count, Object to) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'To: $to · $count people',
+      one: 'To: $to · 1 person',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get assistantMessageToAll => 'everyone';
 
   @override
   String get assistantMoveDone => 'Event moved.';
@@ -732,7 +800,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantNoticeChangeLater =>
-      'I cannot change that yet. Status, absences and events (create, move, pieces) already work, people come soon.';
+      'I can\'t change that yet. Status, absences, events, pieces, tasks and duties already work. Deleting is never possible in the chat.';
 
   @override
   String get assistantNoticeDateOutOfRange =>
@@ -741,6 +809,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get assistantNoticeDisabled =>
       'The assistant is switched off for this group. An admin can switch it on in the settings.';
+
+  @override
+  String get assistantNoticeDutyAlready => 'You already have this duty.';
+
+  @override
+  String get assistantNoticeDutyFull => 'This duty is already fully staffed.';
+
+  @override
+  String get assistantNoticeDutyNotMember =>
+      'You\'re not on the list for this duty, so you can\'t take it over.';
+
+  @override
+  String get assistantNoticeDutyNotSelf =>
+      'You can\'t sign up for this duty yourself. The leaders assign it.';
 
   @override
   String get assistantNoticeEventLocked =>
@@ -780,6 +862,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'There are no events that count in this period.';
 
   @override
+  String get assistantNoticeNoDuty => 'I couldn\'t find a matching duty.';
+
+  @override
   String get assistantNoticeNoEvent => 'I can\'t find an event for that.';
 
   @override
@@ -791,6 +876,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'You are not listed as a person in this group, so there is no attendance of your own.';
 
   @override
+  String get assistantNoticeNoRecipients =>
+      'There\'s nobody I could write to for this selection.';
+
+  @override
   String get assistantNoticeNoRights =>
       'I can\'t answer this question with your role.';
 
@@ -798,12 +887,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assistantNoticeNoSongsForType => 'This event type has no pieces.';
 
   @override
+  String get assistantNoticeNoSongsYet =>
+      'No pieces have been added to this event yet.';
+
+  @override
+  String get assistantNoticeNoTasks => 'You have no open tasks right now.';
+
+  @override
   String get assistantNoticeNoType =>
       'This group has no event type I can create events with.';
 
   @override
   String get assistantNoticeNotUnderstood =>
-      'I didn\'t understand that. I answer questions about attendance, events, birthdays, works and the app.';
+      'I didn\'t understand that. I answer questions about attendance, events, birthdays, pieces, tasks and the app.';
 
   @override
   String get assistantNoticeNothingToChange =>
@@ -829,6 +925,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get assistantNoticeTaskDueOutOfRange =>
+      'The due date must be between today and 6 months from now.';
+
+  @override
   String assistantNoticeTooLong(Object max) {
     return 'The message is too long. Please use at most $max characters.';
   }
@@ -837,6 +937,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String assistantNoticeTooManyChanges(Object count, Object max) {
     return 'That would be $count changes. The chat does at most $max at once. Please narrow it down, for example to one event or one group.';
   }
+
+  @override
+  String assistantPersonBirthday(Object date) {
+    return 'Birthday: $date';
+  }
+
+  @override
+  String assistantPersonGroup(Object name) {
+    return 'Group: $name';
+  }
+
+  @override
+  String get assistantPersonHint =>
+      'I don\'t save anything. Check the details in the form and save there.';
+
+  @override
+  String assistantPersonMissingGroup(Object name) {
+    return 'There is no group \"$name\". Please pick one in the form.';
+  }
+
+  @override
+  String get assistantPersonOpen => 'Open in form';
+
+  @override
+  String get assistantPersonTitle => 'New person (draft)';
 
   @override
   String get assistantPrivacy =>
@@ -952,7 +1077,78 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sign me out for the next event, I am ill';
 
   @override
+  String get assistantSuggestSongs => 'Which pieces are we singing on Sunday?';
+
+  @override
   String get assistantSuggestWhoComes => 'Who is coming to the next event?';
+
+  @override
+  String get assistantTaskDone => 'Task created.';
+
+  @override
+  String assistantTaskDue(Object date) {
+    return 'Due on $date';
+  }
+
+  @override
+  String assistantTaskFor(Object name) {
+    return 'Responsible: $name';
+  }
+
+  @override
+  String get assistantTaskForMe => 'Responsible: you';
+
+  @override
+  String get assistantTaskNobody => 'Nobody responsible yet';
+
+  @override
+  String assistantTaskNotified(Object name) {
+    return '$name has been notified.';
+  }
+
+  @override
+  String assistantTaskNotify(Object name) {
+    return 'Notify $name';
+  }
+
+  @override
+  String get assistantTaskNotifyFailed => 'Notifying didn\'t work.';
+
+  @override
+  String assistantTaskNotifyHint(Object name) {
+    return '$name only gets a message when you tap \"Notify\" after saving.';
+  }
+
+  @override
+  String get assistantTaskOpen => 'Open task';
+
+  @override
+  String assistantTaskPriority(Object priority) {
+    return 'Priority: $priority';
+  }
+
+  @override
+  String get assistantTaskPriorityHigh => 'high';
+
+  @override
+  String get assistantTaskPriorityLow => 'low';
+
+  @override
+  String get assistantTaskPriorityMedium => 'medium';
+
+  @override
+  String get assistantTaskTitle => 'Create a new task?';
+
+  @override
+  String assistantTasksDue(Object date) {
+    return 'due $date';
+  }
+
+  @override
+  String get assistantTasksInProgress => 'in progress';
+
+  @override
+  String get assistantTasksTitle => 'Your open tasks';
 
   @override
   String get assistantThinking => 'One moment …';

@@ -808,6 +808,26 @@
   "@assistantCreateUndoHint": {
     "description": "assistant.create.undoHint"
   },
+  "assistantDutyDone": "Dienst übernommen.",
+  "@assistantDutyDone": {
+    "description": "assistant.duty.done"
+  },
+  "assistantDutyHint": "Du wirst für den Dienst eingetragen und auf Anwesend gesetzt.",
+  "@assistantDutyHint": {
+    "description": "assistant.duty.hint"
+  },
+  "assistantDutyPlaces": "{occupied} von {required} Plätzen besetzt",
+  "@assistantDutyPlaces": {
+    "description": "assistant.duty.places",
+    "placeholders": {
+      "occupied": {},
+      "required": {}
+    }
+  },
+  "assistantDutyTitle": "Dienst übernehmen?",
+  "@assistantDutyTitle": {
+    "description": "assistant.duty.title"
+  },
   "assistantEntryEnableHint": "Für diese Gruppe noch aus. Tippen, um ihn einzuschalten.",
   "@assistantEntryEnableHint": {
     "description": "assistant.entryEnableHint"
@@ -848,6 +868,10 @@
   "@assistantEventPresent": {
     "description": "assistant.event.present"
   },
+  "assistantEventSongsTitle": "Werke",
+  "@assistantEventSongsTitle": {
+    "description": "assistant.eventSongs.title"
+  },
   "assistantEventTime": "{time} Uhr",
   "@assistantEventTime": {
     "description": "assistant.event.time",
@@ -866,6 +890,64 @@
   "assistantIntro": "Hallo! Ich beantworte Fragen zu deiner Gruppe und kann dich an- oder abmelden. Bevor ich etwas ändere, zeige ich dir genau, was passiert.",
   "@assistantIntro": {
     "description": "assistant.intro"
+  },
+  "assistantMessageGenericTitle": "Mitteilung",
+  "@assistantMessageGenericTitle": {
+    "description": "assistant.message.genericTitle"
+  },
+  "assistantMessageHint": "Ich sende nichts. Prüfe den Text und sende ihn selbst.",
+  "@assistantMessageHint": {
+    "description": "assistant.message.hint"
+  },
+  "assistantMessageOnlyOpen": "Nur wer sich noch nicht gemeldet hat.",
+  "@assistantMessageOnlyOpen": {
+    "description": "assistant.message.onlyOpen"
+  },
+  "assistantMessageOpen": "Entwurf öffnen",
+  "@assistantMessageOpen": {
+    "description": "assistant.message.open"
+  },
+  "assistantMessageReminderBody": "Erinnerung an {title} am {date}.",
+  "@assistantMessageReminderBody": {
+    "description": "assistant.message.reminderBody",
+    "placeholders": {
+      "title": {},
+      "date": {}
+    }
+  },
+  "assistantMessageReminderBodyTime": "Erinnerung an {title} am {date} um {time} Uhr.",
+  "@assistantMessageReminderBodyTime": {
+    "description": "assistant.message.reminderBodyTime",
+    "placeholders": {
+      "title": {},
+      "date": {},
+      "time": {}
+    }
+  },
+  "assistantMessageReminderTitle": "Erinnerung: {title}",
+  "@assistantMessageReminderTitle": {
+    "description": "assistant.message.reminderTitle",
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "assistantMessageTitle": "Mitteilung (Entwurf)",
+  "@assistantMessageTitle": {
+    "description": "assistant.message.title"
+  },
+  "assistantMessageTo": "{count, plural, one {An: {to} · 1 Person} other {An: {to} · {count} Personen}}",
+  "@assistantMessageTo": {
+    "description": "assistant.message.to",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "to": {}
+    }
+  },
+  "assistantMessageToAll": "alle",
+  "@assistantMessageToAll": {
+    "description": "assistant.message.toAll"
   },
   "assistantMoveDone": "Termin verschoben.",
   "@assistantMoveDone": {
@@ -901,7 +983,7 @@
   "@assistantNoticeAbsenceOutOfRange": {
     "description": "assistant.notice.absenceOutOfRange"
   },
-  "assistantNoticeChangeLater": "Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, Werke) gehen schon, Personen kommen bald.",
+  "assistantNoticeChangeLater": "Das kann ich noch nicht ändern. Status, Abwesenheiten, Termine, Werke, Aufgaben und Dienste gehen schon. Löschen geht im Chat nie.",
   "@assistantNoticeChangeLater": {
     "description": "assistant.notice.changeLater"
   },
@@ -912,6 +994,22 @@
   "assistantNoticeDisabled": "Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.",
   "@assistantNoticeDisabled": {
     "description": "assistant.notice.disabled"
+  },
+  "assistantNoticeDutyAlready": "Diesen Dienst hast du schon.",
+  "@assistantNoticeDutyAlready": {
+    "description": "assistant.notice.dutyAlready"
+  },
+  "assistantNoticeDutyFull": "Dieser Dienst ist schon voll besetzt.",
+  "@assistantNoticeDutyFull": {
+    "description": "assistant.notice.dutyFull"
+  },
+  "assistantNoticeDutyNotMember": "Du stehst bei diesem Dienst nicht auf der Liste und kannst ihn deshalb nicht übernehmen.",
+  "@assistantNoticeDutyNotMember": {
+    "description": "assistant.notice.dutyNotMember"
+  },
+  "assistantNoticeDutyNotSelf": "Für diesen Dienst kann man sich nicht selbst eintragen. Die Leitung teilt ihn zu.",
+  "@assistantNoticeDutyNotSelf": {
+    "description": "assistant.notice.dutyNotSelf"
   },
   "assistantNoticeEventLocked": "Diesen Termin ändere ich nicht: Er ist archiviert oder liegt außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).",
   "@assistantNoticeEventLocked": {
@@ -952,6 +1050,10 @@
   "@assistantNoticeNoData": {
     "description": "assistant.notice.noData"
   },
+  "assistantNoticeNoDuty": "Ich habe keinen passenden Dienst gefunden.",
+  "@assistantNoticeNoDuty": {
+    "description": "assistant.notice.noDuty"
+  },
   "assistantNoticeNoEvent": "Dazu finde ich keinen Termin.",
   "@assistantNoticeNoEvent": {
     "description": "assistant.notice.noEvent"
@@ -964,6 +1066,10 @@
   "@assistantNoticeNoOwnPerson": {
     "description": "assistant.notice.noOwnPerson"
   },
+  "assistantNoticeNoRecipients": "Für diese Auswahl gibt es niemanden, den ich anschreiben könnte.",
+  "@assistantNoticeNoRecipients": {
+    "description": "assistant.notice.noRecipients"
+  },
   "assistantNoticeNoRights": "Diese Frage kann ich dir mit deiner Rolle nicht beantworten.",
   "@assistantNoticeNoRights": {
     "description": "assistant.notice.noRights"
@@ -972,11 +1078,19 @@
   "@assistantNoticeNoSongsForType": {
     "description": "assistant.notice.noSongsForType"
   },
+  "assistantNoticeNoSongsYet": "Für diesen Termin sind noch keine Werke eingetragen.",
+  "@assistantNoticeNoSongsYet": {
+    "description": "assistant.notice.noSongsYet"
+  },
+  "assistantNoticeNoTasks": "Bei dir sind gerade keine Aufgaben offen.",
+  "@assistantNoticeNoTasks": {
+    "description": "assistant.notice.noTasks"
+  },
   "assistantNoticeNoType": "In dieser Gruppe gibt es keinen Termintyp, mit dem ich Termine anlegen kann.",
   "@assistantNoticeNoType": {
     "description": "assistant.notice.noType"
   },
-  "assistantNoticeNotUnderstood": "Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.",
+  "assistantNoticeNotUnderstood": "Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken, Aufgaben und zur App.",
   "@assistantNoticeNotUnderstood": {
     "description": "assistant.notice.notUnderstood"
   },
@@ -1009,6 +1123,10 @@
       "name": {}
     }
   },
+  "assistantNoticeTaskDueOutOfRange": "Das Fälligkeitsdatum muss zwischen heute und in 6 Monaten liegen.",
+  "@assistantNoticeTaskDueOutOfRange": {
+    "description": "assistant.notice.taskDueOutOfRange"
+  },
   "assistantNoticeTooLong": "Die Nachricht ist zu lang. Bitte höchstens {max} Zeichen.",
   "@assistantNoticeTooLong": {
     "description": "assistant.notice.tooLong",
@@ -1023,6 +1141,39 @@
       "count": {},
       "max": {}
     }
+  },
+  "assistantPersonBirthday": "Geburtstag: {date}",
+  "@assistantPersonBirthday": {
+    "description": "assistant.person.birthday",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "assistantPersonGroup": "Gruppe: {name}",
+  "@assistantPersonGroup": {
+    "description": "assistant.person.group",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "assistantPersonHint": "Ich speichere nichts. Prüfe die Angaben im Formular und speichere dort.",
+  "@assistantPersonHint": {
+    "description": "assistant.person.hint"
+  },
+  "assistantPersonMissingGroup": "Die Gruppe „{name}“ gibt es nicht. Bitte wähle sie im Formular.",
+  "@assistantPersonMissingGroup": {
+    "description": "assistant.person.missingGroup",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "assistantPersonOpen": "Im Formular öffnen",
+  "@assistantPersonOpen": {
+    "description": "assistant.person.open"
+  },
+  "assistantPersonTitle": "Neue Person (Entwurf)",
+  "@assistantPersonTitle": {
+    "description": "assistant.person.title"
   },
   "assistantPrivacy": "Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten.",
   "@assistantPrivacy": {
@@ -1174,9 +1325,106 @@
   "@assistantSuggestSignOut": {
     "description": "assistant.suggest.signOut"
   },
+  "assistantSuggestSongs": "Welche Werke singen wir am Sonntag?",
+  "@assistantSuggestSongs": {
+    "description": "assistant.suggest.songs"
+  },
   "assistantSuggestWhoComes": "Wer kommt zum nächsten Termin?",
   "@assistantSuggestWhoComes": {
     "description": "assistant.suggest.whoComes"
+  },
+  "assistantTaskDone": "Aufgabe angelegt.",
+  "@assistantTaskDone": {
+    "description": "assistant.task.done"
+  },
+  "assistantTaskDue": "Fällig am {date}",
+  "@assistantTaskDue": {
+    "description": "assistant.task.due",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "assistantTaskFor": "Zuständig: {name}",
+  "@assistantTaskFor": {
+    "description": "assistant.task.for",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "assistantTaskForMe": "Zuständig: du",
+  "@assistantTaskForMe": {
+    "description": "assistant.task.forMe"
+  },
+  "assistantTaskNobody": "Noch niemand zuständig",
+  "@assistantTaskNobody": {
+    "description": "assistant.task.nobody"
+  },
+  "assistantTaskNotified": "{name} wurde benachrichtigt.",
+  "@assistantTaskNotified": {
+    "description": "assistant.task.notified",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "assistantTaskNotify": "{name} benachrichtigen",
+  "@assistantTaskNotify": {
+    "description": "assistant.task.notify",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "assistantTaskNotifyFailed": "Benachrichtigen hat nicht geklappt.",
+  "@assistantTaskNotifyFailed": {
+    "description": "assistant.task.notifyFailed"
+  },
+  "assistantTaskNotifyHint": "{name} bekommt erst eine Nachricht, wenn du nach dem Speichern auf „Benachrichtigen“ tippst.",
+  "@assistantTaskNotifyHint": {
+    "description": "assistant.task.notifyHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "assistantTaskOpen": "Aufgabe öffnen",
+  "@assistantTaskOpen": {
+    "description": "assistant.task.open"
+  },
+  "assistantTaskPriority": "Priorität: {priority}",
+  "@assistantTaskPriority": {
+    "description": "assistant.task.priority",
+    "placeholders": {
+      "priority": {}
+    }
+  },
+  "assistantTaskPriorityHigh": "hoch",
+  "@assistantTaskPriorityHigh": {
+    "description": "assistant.task.priorityHigh"
+  },
+  "assistantTaskPriorityLow": "niedrig",
+  "@assistantTaskPriorityLow": {
+    "description": "assistant.task.priorityLow"
+  },
+  "assistantTaskPriorityMedium": "mittel",
+  "@assistantTaskPriorityMedium": {
+    "description": "assistant.task.priorityMedium"
+  },
+  "assistantTaskTitle": "Neue Aufgabe anlegen?",
+  "@assistantTaskTitle": {
+    "description": "assistant.task.title"
+  },
+  "assistantTasksDue": "fällig {date}",
+  "@assistantTasksDue": {
+    "description": "assistant.tasks.due",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "assistantTasksInProgress": "in Arbeit",
+  "@assistantTasksInProgress": {
+    "description": "assistant.tasks.inProgress"
+  },
+  "assistantTasksTitle": "Deine offenen Aufgaben",
+  "@assistantTasksTitle": {
+    "description": "assistant.tasks.title"
   },
   "assistantThinking": "Einen Moment …",
   "@assistantThinking": {
