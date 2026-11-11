@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.137.1",
+      "date": "11.11.2026",
+      "changes": [
+        "💄 Beta Werke: „Werke öffentlich teilen“ im ••• öffnet direkt das Teilen-Menü (ist der Link aus, wird er nach einer Rückfrage erstellt)"
+      ]
+    },
+    {
       "version": "0.137.0",
       "date": "11.11.2026",
       "changes": [
