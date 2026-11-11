@@ -87,7 +87,6 @@ export type Command =
     endTime?: string;
   }
   | { command: "set_songs"; event: EventRef; typeName?: string; titles: string[]; mode: "add" | "replace" }
-  | { command: "cancel_event"; event: EventRef; typeName?: string; reason?: string }
   | { command: "unsupported"; category: "change" | "other" };
 
 export const MAX_TEXT = 500;
@@ -403,13 +402,6 @@ export function validateCommand(raw: unknown): Command {
         ...(typeName ? { typeName } : {}),
       };
     }
-    case "cancel_event": {
-      const e = raw.event === undefined || raw.event === null ? { type: "next" as const } : eventRef(raw.event);
-      if (!e) return UNSUPPORTED;
-      const typeName = optionalName(raw.typeName);
-      const reason = cleanText(raw.reason, MAX_REASON) ?? undefined;
-      return { command: "cancel_event", event: e, ...(typeName ? { typeName } : {}), ...(reason ? { reason } : {}) };
-    }
     case "unsupported":
       return { command: "unsupported", category: raw.category === "change" ? "change" : "other" };
     default:
@@ -447,15 +439,15 @@ export const SYSTEM_PROMPT = [
   '5. {"command":"song_last_sung","title":"<song title as written>"} - when a song / piece was last sung or played.',
   '6. {"command":"help","query":"<short search words in the user language>"} - how to do something in the app.',
   '7. {"command":"set_status","who":[W,...],"status":"present|excused|late_excused|late|absent|neutral","event"?:E,"period"?:P,"typeName"?:T,"reason"?:"<short reason as written>"} - sign in / sign out / set the attendance status for one event (event) or all events in a period (period, e.g. "next week").',
+  '   reason: the reason as written ("ich bin krank" -> "krank"); leave it out when none is given (the app then asks for one, excused needs a reason).',
   '   who is always given. W is {"kind":"me"}, {"kind":"person","name":"<name exactly as written>"} or {"kind":"group","name":"<group>"} (max 10).',
   '   "abmelden", "absagen", "kann nicht", "entschuldigt" = excused; "komme später", "verspätet mich" = late_excused; "anmelden", "zusagen", "komme", "war da", "anwesend" = present; "war zu spät" = late; "fehlte unentschuldigt" = absent; "zurücksetzen", "offen" = neutral.',
   '8. {"command":"planned_absence","who":W,"from":"YYYY-MM-DD","to":"YYYY-MM-DD","reason"?:"<short reason>"} - a planned absence for a longer time ("bis Ende Januar im Ausland", "vom 3. bis 10. März im Urlaub"). W is me or a person (no group), always given. Without a start, from is today.',
   '9. {"command":"create_events","typeName"?:T,"dates":["YYYY-MM-DD",...],"startTime"?:"HH:mm","endTime"?:"HH:mm","title"?:"<title as written>","place"?:"<place as written>"} - create one or more NEW events ("leg jeden Mittwoch im Dezember eine Probe an", "Konzert am 20.12. um 17 Uhr"). Compute every date from today (max 20 dates).',
   '10. {"command":"move_event","event"?:E,"typeName"?:T,"toDate"?:"YYYY-MM-DD","startTime"?:"HH:mm","endTime"?:"HH:mm"} - move an EXISTING event to another day and/or time ("verschieb die Probe am Mittwoch auf Donnerstag", "die Probe am Sonntag beginnt um 10 Uhr"). E is the event as it is now; give at least one of toDate, startTime, endTime.',
   '11. {"command":"set_songs","event"?:E,"typeName"?:T,"titles":["<song title or number as written>",...],"mode":"add|replace"} - put songs / pieces (Werke) on an event (max 15). "replace" only when the user says these are THE songs or to replace the list, otherwise "add".',
-  '12. {"command":"cancel_event","event"?:E,"typeName"?:T,"reason"?:"<short reason as written>"} - cancel a whole event for everybody ("die Probe am Sonntag fällt aus", "sag die Probe am Mittwoch ab, Saal belegt"). Leave reason out when none is given. Signing only the user out is set_status.',
-  '13. {"command":"unsupported","category":"change"} - any OTHER change (delete events, add or delete people, roles, settings, tasks, duties, send messages, delete anything).',
-  '14. {"command":"unsupported","category":"other"} - anything else (chat, jokes, poems, general knowledge, other apps, unclear).',
+  '12. {"command":"unsupported","category":"change"} - any OTHER change (cancel or delete whole events, add or delete people, roles, settings, tasks, duties, send messages, delete anything). "Probe absagen" or "Termin fällt aus" for a whole event is this; signing a person out is set_status.',
+  '13. {"command":"unsupported","category":"other"} - anything else (chat, jokes, poems, general knowledge, other apps, unclear).',
   "Periods P (dates as YYYY-MM-DD, compute them from today in the user message only for type range):",
   '{"type":"last","unit":"day|week|month|year","count":N} e.g. "letzte 3 Monate" = last month 3;',
   '{"type":"this","unit":"week|month|year"}; {"type":"previous","unit":"week|month|year"} e.g. "im letzten Monat", "letztes Jahr";',

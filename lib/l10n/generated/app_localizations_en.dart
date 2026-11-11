@@ -505,20 +505,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assistantBirthdaysTitle => 'Birthdays';
 
   @override
-  String assistantCancelAffected(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count people are set to Excused.',
-      one: '1 person is set to Excused.',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get assistantCancelTitle => 'Cancel event';
-
-  @override
   String get assistantChangeCancel => 'Cancel';
 
   @override
@@ -745,12 +731,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'I can enter an absence starting today and up to 6 months ahead.';
 
   @override
-  String get assistantNoticeCancelNeedsReason =>
-      'I only cancel an event with a reason. Write for example: “Cancel the rehearsal on Sunday, reason: hall booked”.';
-
-  @override
   String get assistantNoticeChangeLater =>
-      'I cannot change that yet. Status, absences and events (create, move, cancel, pieces) already work, people come soon.';
+      'I cannot change that yet. Status, absences and events (create, move, pieces) already work, people come soon.';
 
   @override
   String get assistantNoticeDateOutOfRange =>
@@ -767,6 +749,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get assistantNoticeEventsExist =>
       'These days already have an event of this type.';
+
+  @override
+  String get assistantNoticeExcuseNeedsReason =>
+      'Excusing or reporting being late only works with a reason. Write for example: “Sign me out for Sunday, I am ill”.';
 
   @override
   String get assistantNoticeFailed =>
@@ -962,7 +948,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assistantSuggestNextEvent => 'When is the next event?';
 
   @override
-  String get assistantSuggestSignOut => 'Sign me out of the next event';
+  String get assistantSuggestSignOut =>
+      'Sign me out for the next event, I am ill';
 
   @override
   String get assistantSuggestWhoComes => 'Who is coming to the next event?';

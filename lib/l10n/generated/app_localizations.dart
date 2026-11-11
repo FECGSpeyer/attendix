@@ -908,18 +908,6 @@ abstract class AppLocalizations {
   /// **'Geburtstage'**
   String get assistantBirthdaysTitle;
 
-  /// assistant.cancel.affected
-  ///
-  /// In de, this message translates to:
-  /// **'{count, plural, one {1 Person wird auf Entschuldigt gesetzt.} other {{count} Personen werden auf Entschuldigt gesetzt.}}'**
-  String assistantCancelAffected(num count);
-
-  /// assistant.cancel.title
-  ///
-  /// In de, this message translates to:
-  /// **'Termin absagen'**
-  String get assistantCancelTitle;
-
   /// assistant.change.cancel
   ///
   /// In de, this message translates to:
@@ -1202,16 +1190,10 @@ abstract class AppLocalizations {
   /// **'Eine Abwesenheit trage ich ab heute und höchstens 6 Monate im Voraus ein.'**
   String get assistantNoticeAbsenceOutOfRange;
 
-  /// assistant.notice.cancelNeedsReason
-  ///
-  /// In de, this message translates to:
-  /// **'Einen Termin sage ich nur mit Grund ab. Schreib zum Beispiel: „Sag die Probe am Sonntag ab, Grund: Saal belegt“.'**
-  String get assistantNoticeCancelNeedsReason;
-
   /// assistant.notice.changeLater
   ///
   /// In de, this message translates to:
-  /// **'Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, absagen, Werke) gehen schon, Personen kommen bald.'**
+  /// **'Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, Werke) gehen schon, Personen kommen bald.'**
   String get assistantNoticeChangeLater;
 
   /// assistant.notice.dateOutOfRange
@@ -1237,6 +1219,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'An diesen Tagen gibt es schon einen Termin dieses Typs.'**
   String get assistantNoticeEventsExist;
+
+  /// assistant.notice.excuseNeedsReason
+  ///
+  /// In de, this message translates to:
+  /// **'Entschuldigen oder eine Verspätung melden geht nur mit Grund. Schreib zum Beispiel: „Melde mich Sonntag ab, ich bin krank“.'**
+  String get assistantNoticeExcuseNeedsReason;
 
   /// assistant.notice.failed
   ///
@@ -1541,7 +1529,7 @@ abstract class AppLocalizations {
   /// assistant.suggest.signOut
   ///
   /// In de, this message translates to:
-  /// **'Melde mich für den nächsten Termin ab'**
+  /// **'Melde mich für den nächsten Termin ab, ich bin krank'**
   String get assistantSuggestSignOut;
 
   /// assistant.suggest.whoComes

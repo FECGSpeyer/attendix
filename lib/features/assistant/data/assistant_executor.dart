@@ -9,9 +9,8 @@
 //
 // Package 3 (Termine) works the same way: create through the shared create
 // writer of both create pages, move like "Datum ändern", Werke through the
-// history sync of the Termin page, and "absagen" sets everybody of the
-// Termin to Entschuldigt with a reason. Undo of a creation deletes exactly
-// the Termine the chat created; nothing else is ever deleted.
+// history sync of the Termin page. Undo of a creation deletes exactly the
+// Termine the chat created; nothing else is ever deleted.
 
 import 'dart:async';
 
@@ -117,6 +116,9 @@ class AssistantExecutor {
       return NoticeReply(
           command is PlannedAbsenceCommand ? AssistantNotice.noAbsenceRights : AssistantNotice.noRights);
     }
+    if (command is SetStatusCommand && statusNeedsReason(command)) {
+      return const NoticeReply(AssistantNotice.excuseNeedsReason);
+    }
     return switch (command) {
       AttendanceRateCommand() => _rate(command),
       EventOverviewCommand() => _eventOverview(command),
@@ -129,7 +131,6 @@ class AssistantExecutor {
       CreateEventsCommand() => _createPreview(command),
       MoveEventCommand() => _movePreview(command),
       SetSongsCommand() => _songsPreview(command),
-      CancelEventCommand() => _cancelPreview(command),
       UnsupportedCommand(:final isChange) =>
         NoticeReply(isChange ? AssistantNotice.changeLater : AssistantNotice.notUnderstood),
     };
@@ -1030,41 +1031,5 @@ class AssistantExecutor {
   Future<void> revertSongs(SongsPlan plan) async {
     await syncAttendanceSongHistory(_events, plan.attendanceId, plan.historyDate, plan.before);
     _refreshSongs(plan.attendanceId);
-  }
-
-  /// "Absagen": everybody of the Termin gets Entschuldigt with the reason
-  /// (Matthias: only with a reason). Saved and undone like a status change
-  /// of others; one Termin, so the row limit does not apply.
-  Future<AssistantReply> _cancelPreview(CancelEventCommand c) async {
-    if (c.reason == null) return const NoticeReply(AssistantNotice.cancelNeedsReason);
-    final types = await _types();
-    final a = await _eventToChange(c.event, types, c.typeName);
-    if (a?.id == null) return const NoticeReply(AssistantNotice.noEvent);
-    if (_locked(a!)) return const NoticeReply(AssistantNotice.eventLocked);
-    final names = {for (final p in await ref.read(playersProvider.future)) if (p.id != null) p.id!: _name(p)};
-    final title = _title(a, types);
-    final date = _localDay(a);
-    final changes = <StatusChange>[
-      for (final r in await _events.getPersonAttendancesForAttendances([a.id!]))
-        if (r.id != null && r.status != AttendanceStatus.excused)
-          StatusChange(
-            personAttendanceId: r.id!,
-            attendanceId: a.id!,
-            personName: names[r.personId] ?? '',
-            title: title,
-            date: date,
-            oldStatus: r.status,
-            oldNotes: r.notes,
-            newStatus: AttendanceStatus.excused,
-          ),
-    ]..sort((x, y) => x.personName.compareTo(y.personName));
-    if (changes.isEmpty) return const NoticeReply(AssistantNotice.nothingToChange);
-    return StatusPreviewReply(StatusPlan(
-      self: false,
-      status: AttendanceStatus.excused,
-      reason: c.reason,
-      changes: changes,
-      cancelTitle: title,
-    ));
   }
 }

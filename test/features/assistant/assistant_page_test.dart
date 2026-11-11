@@ -214,7 +214,7 @@ void main() {
       expect(find.text('Speichern'), findsOneWidget);
     });
 
-    testWidgets('move, Werke and cancel previews', (tester) async {
+    testWidgets('move and Werke previews', (tester) async {
       final chat = AssistantChatState(messages: [
         AssistantMessage.assistant(MovePreviewReply(MovePlan(
           before: const Attendance(id: 7, date: '2026-11-18T11:00:00.000Z', typeId: 'p'),
@@ -235,25 +235,6 @@ void main() {
           removed: const [],
           notFound: const ['Nr. 999'],
         ))),
-        AssistantMessage.assistant(StatusPreviewReply(StatusPlan(
-          self: false,
-          status: AttendanceStatus.excused,
-          reason: 'Saal belegt',
-          cancelTitle: 'Probe',
-          changes: [
-            for (var i = 0; i < 3; i++)
-              StatusChange(
-                personAttendanceId: 'pa$i',
-                attendanceId: 7,
-                personName: 'P$i',
-                title: 'Probe',
-                date: DateTime(2026, 11, 18),
-                oldStatus: AttendanceStatus.neutral,
-                oldNotes: null,
-                newStatus: AttendanceStatus.excused,
-              ),
-          ],
-        ))),
       ]);
       _tall(tester);
       await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
@@ -264,10 +245,7 @@ void main() {
       expect(find.text('Werke für den Termin'), findsOneWidget);
       expect(find.text('Neu: Großer Gott'), findsOneWidget);
       expect(find.text('Nicht gefunden: Nr. 999'), findsOneWidget);
-      expect(find.text('Termin absagen'), findsOneWidget);
-      expect(find.text('Grund: Saal belegt'), findsOneWidget);
-      expect(find.text('3 Personen werden auf Entschuldigt gesetzt.'), findsOneWidget);
-      expect(find.text('Speichern'), findsNWidgets(3));
+      expect(find.text('Speichern'), findsNWidgets(2));
     });
 
     testWidgets('created Termine can be undone', (tester) async {
@@ -290,12 +268,12 @@ void main() {
           (label: 'Probe', command: CreateEventsCommand(dates: [DateTime(2026, 12, 2)], typeId: 'p')),
           (label: 'Gottesdienst', command: CreateEventsCommand(dates: [DateTime(2026, 12, 2)], typeId: 'g')),
         ])),
-        const AssistantMessage.assistant(NoticeReply(AssistantNotice.cancelNeedsReason)),
+        const AssistantMessage.assistant(NoticeReply(AssistantNotice.excuseNeedsReason)),
       ]);
       await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
       expect(find.text('Welcher Termintyp?'), findsOneWidget);
       expect(find.text('Gottesdienst'), findsOneWidget);
-      expect(find.textContaining('nur mit Grund'), findsOneWidget);
+      expect(find.textContaining('geht nur mit Grund'), findsOneWidget);
     });
   });
 }

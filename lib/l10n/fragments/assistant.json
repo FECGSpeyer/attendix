@@ -17,11 +17,11 @@
         "whoComes": "Wer kommt zum nächsten Termin?",
         "birthdays": "Wer hat diesen Monat Geburtstag?",
         "help": "Wie melde ich mich ab?",
-        "signOut": "Melde mich für den nächsten Termin ab"
+        "signOut": "Melde mich für den nächsten Termin ab, ich bin krank"
       },
       "notice": {
         "notUnderstood": "Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.",
-        "changeLater": "Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, absagen, Werke) gehen schon, Personen kommen bald.",
+        "changeLater": "Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, Werke) gehen schon, Personen kommen bald.",
         "noRights": "Diese Frage kann ich dir mit deiner Rolle nicht beantworten.",
         "noOwnPerson": "Du bist in dieser Gruppe nicht als Person eingetragen, deshalb gibt es keine eigene Anwesenheit.",
         "disabled": "Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.",
@@ -46,7 +46,7 @@
         "eventsExist": "An diesen Tagen gibt es schon einen Termin dieses Typs.",
         "noSongsForType": "Bei diesem Termintyp werden keine Werke geführt.",
         "songsNotFound": "Ich finde keine Werke zu „{name}“.",
-        "cancelNeedsReason": "Einen Termin sage ich nur mit Grund ab. Schreib zum Beispiel: „Sag die Probe am Sonntag ab, Grund: Saal belegt“."
+        "excuseNeedsReason": "Entschuldigen oder eine Verspätung melden geht nur mit Grund. Schreib zum Beispiel: „Melde mich Sonntag ab, ich bin krank“."
       },
       "choice": {
         "which": "Wen meinst du mit „{name}“?",
@@ -148,10 +148,6 @@
         "removed": "Fällt weg: {names}",
         "notFound": "Nicht gefunden: {names}",
         "done": "Werke gespeichert."
-      },
-      "cancel": {
-        "title": "Termin absagen",
-        "affected": "{count, plural, one {1 Person wird auf Entschuldigt gesetzt.} other {{count} Personen werden auf Entschuldigt gesetzt.}}"
       }
     }
   },
@@ -173,11 +169,11 @@
         "whoComes": "Who is coming to the next event?",
         "birthdays": "Who has a birthday this month?",
         "help": "How do I sign out?",
-        "signOut": "Sign me out of the next event"
+        "signOut": "Sign me out for the next event, I am ill"
       },
       "notice": {
         "notUnderstood": "I didn't understand that. I answer questions about attendance, events, birthdays, works and the app.",
-        "changeLater": "I cannot change that yet. Status, absences and events (create, move, cancel, pieces) already work, people come soon.",
+        "changeLater": "I cannot change that yet. Status, absences and events (create, move, pieces) already work, people come soon.",
         "noRights": "I can't answer this question with your role.",
         "noOwnPerson": "You are not listed as a person in this group, so there is no attendance of your own.",
         "disabled": "The assistant is switched off for this group. An admin can switch it on in the settings.",
@@ -202,7 +198,7 @@
         "eventsExist": "These days already have an event of this type.",
         "noSongsForType": "This event type has no pieces.",
         "songsNotFound": "I cannot find pieces for “{name}”.",
-        "cancelNeedsReason": "I only cancel an event with a reason. Write for example: “Cancel the rehearsal on Sunday, reason: hall booked”."
+        "excuseNeedsReason": "Excusing or reporting being late only works with a reason. Write for example: “Sign me out for Sunday, I am ill”."
       },
       "choice": {
         "which": "Who do you mean by “{name}”?",
@@ -304,10 +300,6 @@
         "removed": "Removed: {names}",
         "notFound": "Not found: {names}",
         "done": "Pieces saved."
-      },
-      "cancel": {
-        "title": "Cancel event",
-        "affected": "{count, plural, one {1 person is set to Excused.} other {{count} people are set to Excused.}}"
       }
     }
   },
@@ -329,11 +321,11 @@
         "whoComes": "Кто придёт на следующее мероприятие?",
         "birthdays": "У кого день рождения в этом месяце?",
         "help": "Как мне отписаться?",
-        "signOut": "Отпиши меня от следующего события"
+        "signOut": "Отметь меня на следующем мероприятии, я болею"
       },
       "notice": {
         "notUnderstood": "Я не понял. Я отвечаю на вопросы о посещаемости, мероприятиях, днях рождения, произведениях и о приложении.",
-        "changeLater": "Это я пока не умею менять. Статусы, отсутствия и мероприятия (создать, перенести, отменить, произведения) уже работают, люди скоро.",
+        "changeLater": "Это я пока не умею менять. Статусы, отсутствия и мероприятия (создать, перенести, произведения) уже работают, люди скоро.",
         "noRights": "С твоей ролью я не могу ответить на этот вопрос.",
         "noOwnPerson": "Ты не внесён в эту группу как участник, поэтому собственной посещаемости нет.",
         "disabled": "Ассистент выключен для этой группы. Администратор может включить его в настройках.",
@@ -358,7 +350,7 @@
         "eventsExist": "В эти дни уже есть мероприятие этого типа.",
         "noSongsForType": "Для этого типа мероприятия произведения не ведутся.",
         "songsNotFound": "Не нахожу произведений для «{name}».",
-        "cancelNeedsReason": "Мероприятие я отменяю только с причиной. Напиши, например: «Отмени репетицию в воскресенье, причина: зал занят»."
+        "excuseNeedsReason": "Отметить уважительное отсутствие или опоздание можно только с причиной. Напиши, например: «Отметь меня в воскресенье, я болею»."
       },
       "choice": {
         "which": "Кого ты имеешь в виду под «{name}»?",
@@ -460,10 +452,6 @@
         "removed": "Убраны: {names}",
         "notFound": "Не найдены: {names}",
         "done": "Произведения сохранены."
-      },
-      "cancel": {
-        "title": "Отменить мероприятие",
-        "affected": "{count, plural, one {{count} человек получит статус «Уважительно».} few {{count} человека получат статус «Уважительно».} many {{count} человек получат статус «Уважительно».} other {{count} человека получат статус «Уважительно».}}"
       }
     }
   },
@@ -485,11 +473,11 @@
         "whoComes": "¿Quién viene al próximo evento?",
         "birthdays": "¿Quién cumple años este mes?",
         "help": "¿Cómo me doy de baja?",
-        "signOut": "Dame de baja del próximo evento"
+        "signOut": "Dame de baja del próximo evento, estoy enfermo"
       },
       "notice": {
         "notUnderstood": "No lo he entendido. Respondo preguntas sobre asistencia, eventos, cumpleaños, obras y la app.",
-        "changeLater": "Eso todavía no lo puedo cambiar. Estados, ausencias y eventos (crear, mover, cancelar, obras) ya funcionan, las personas llegan pronto.",
+        "changeLater": "Eso todavía no lo puedo cambiar. Estados, ausencias y eventos (crear, mover, obras) ya funcionan, las personas llegan pronto.",
         "noRights": "Con tu rol no puedo responder esta pregunta.",
         "noOwnPerson": "No figuras como persona en este grupo, así que no hay asistencia propia.",
         "disabled": "El asistente está desactivado para este grupo. Un administrador puede activarlo en los ajustes.",
@@ -514,7 +502,7 @@
         "eventsExist": "Estos días ya tienen un evento de este tipo.",
         "noSongsForType": "Este tipo de evento no tiene obras.",
         "songsNotFound": "No encuentro obras para «{name}».",
-        "cancelNeedsReason": "Solo cancelo un evento con un motivo. Escribe por ejemplo: «Cancela el ensayo del domingo, motivo: sala ocupada»."
+        "excuseNeedsReason": "Justificar o avisar un retraso solo funciona con un motivo. Escribe por ejemplo: «Dame de baja el domingo, estoy enfermo»."
       },
       "choice": {
         "which": "¿A quién te refieres con «{name}»?",
@@ -616,10 +604,6 @@
         "removed": "Se quitan: {names}",
         "notFound": "No encontradas: {names}",
         "done": "Obras guardadas."
-      },
-      "cancel": {
-        "title": "Cancelar evento",
-        "affected": "{count, plural, one {1 persona pasa a Justificado.} other {{count} personas pasan a Justificado.}}"
       }
     }
   }

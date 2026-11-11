@@ -89,8 +89,8 @@ enum AssistantNotice {
   /// [AssistantReply.subject]: none of the titles is a Werk.
   songsNotFound,
 
-  /// A Termin is only cancelled with a reason.
-  cancelNeedsReason,
+  /// Entschuldigt / Verspätung only with a reason (like the sign-out sheet).
+  excuseNeedsReason,
 }
 
 sealed class AssistantReply {
@@ -272,12 +272,7 @@ class StatusPlan {
     required this.changes,
     this.skippedLocked = 0,
     this.skippedWindow = 0,
-    this.cancelTitle,
   });
-
-  /// Set when the whole Termin is cancelled ("absagen"): every row of it
-  /// goes to Entschuldigt with the reason.
-  final String? cancelTitle;
 
   /// Own rows through the "Meine Termine" path (notifies the leaders);
   /// otherwise rows of others through the Termin page path.
