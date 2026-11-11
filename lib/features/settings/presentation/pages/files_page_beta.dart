@@ -44,7 +44,7 @@ extension _FilesPageBeta on _FilesPageState {
             child: RdBackLink(
               label:
                   segments.isEmpty
-                      ? l10n.redesignTabMe
+                      ? (_betaFromWorks ? l10n.redesignTabWorks : l10n.redesignTabMe)
                       : segments.length == 1
                       ? l10n.filesTitle
                       : segments[segments.length - 2],
@@ -132,8 +132,13 @@ extension _FilesPageBeta on _FilesPageState {
       _navigateTo(segments.sublist(0, segments.length - 1).join('/'));
       return;
     }
-    rdBack(context, RedesignRoutes.me);
+    rdBack(context, _betaFromWorks ? RedesignRoutes.works : RedesignRoutes.me);
   }
+
+  /// The Dateiablage opens from the Werke tab's "•••"; in groups without a
+  /// Werke tab from Ich › Dateien.
+  bool get _betaFromWorks =>
+      canOpenSongsTab(ref.read(effectiveRoleProvider)) && ref.read(currentTenantProvider)?.type != 'general';
 
   Widget _betaStorage(BuildContext context) {
     final p = context.rd;

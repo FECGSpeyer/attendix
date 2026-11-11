@@ -9,6 +9,7 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/role_permission_providers.dart' show canAccessFilesProvider;
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/song_filter_providers.dart';
 import '../../../../core/providers/song_providers.dart';
@@ -111,10 +112,12 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
             label: l10n.collectionsManage,
           ),
         // From the old Verwaltung (canvas "Werke-Tab: •••"): Werkhistorie
-        // for leads and helpers. The categories are managed next to their
-        // chips, the Dateiablage sits under Ich (it is not about Werke).
+        // for leads and helpers, the Dateiablage for everyone with access
+        // (the categories are managed next to their chips).
         if (isAdmin || role.isHelperRole)
           AppActionSheetAction(value: 'history', icon: Icons.history, label: l10n.rdAdminWorkHistory),
+        if (ref.read(canAccessFilesProvider))
+          AppActionSheetAction(value: 'files', icon: Icons.folder_outlined, label: l10n.settingsFileStorage),
         // Leads switch sharing here (from the old "Allgemein"), the sheet
         // also copies the link.
         if (isAdmin)
@@ -133,6 +136,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         await context.push(RedesignRoutes.collections);
       case 'history':
         await showHistoryModal(context);
+      case 'files':
+        await context.push('/settings/files');
       case 'sharing':
         await showRdSharingSheet(context);
       case 'share':

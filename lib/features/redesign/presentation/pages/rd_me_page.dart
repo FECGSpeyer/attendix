@@ -21,6 +21,7 @@ import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/shorebird_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/router/route_access.dart' show canOpenSongsTab;
 import '../../../../core/services/app_update_service.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
@@ -71,9 +72,12 @@ class RdMePage extends ConsumerWidget {
     final access = ref.watch(rdManageAccessProvider);
     final showManage = rdShowsManage(access);
     // What other roles had in the Verwaltung sits here now (canvas
-    // "Nachher · Ich"): Meine Stimme, Team and Dateien.
+    // "Nachher · Ich"): Meine Stimme, Team and, without a Werke tab, Dateien.
     final showVoice = role.canSeeVoiceLeaderSettings && tenant?.type != 'general';
-    final showFiles = rdMeShowsFiles(canAccessFiles: ref.watch(canAccessFilesProvider));
+    final showFiles = rdMeShowsFiles(
+      canAccessFiles: ref.watch(canAccessFilesProvider),
+      hasWorksTab: canOpenSongsTab(role) && tenant?.type != 'general',
+    );
     final canReportAbsence = player != null && ref.watch(canSelfReportAbsenceProvider);
     final canPause = player != null && ref.watch(canSelfPauseProvider);
     final language = ref.watch(localeProvider).languageCode;

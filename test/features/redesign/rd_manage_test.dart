@@ -172,13 +172,13 @@ void main() {
       expect(rdManageVisible(RdManageEntry.orgPlans, a), isFalse);
     });
 
-    test('the Dateiablage lives under Ich, also with a Werke tab', () {
-      expect(rdManageHome(RdManageEntry.fileStorage, _admin), RdManageHome.me);
+    test('the Dateiablage lives in the Werke tab, without one under Ich', () {
+      expect(rdManageHome(RdManageEntry.fileStorage, _admin), RdManageHome.works);
       const general = RdManageAccess(isAdmin: true, isGeneral: true, canAccessFiles: true);
       expect(rdManageHome(RdManageEntry.fileStorage, general), RdManageHome.me);
       expect(rdManageVisible(RdManageEntry.workHistory, general), isFalse);
-      expect(rdMeShowsFiles(canAccessFiles: true), isTrue);
-      expect(rdMeShowsFiles(canAccessFiles: false), isFalse);
+      expect(rdMeShowsFiles(canAccessFiles: true, hasWorksTab: false), isTrue);
+      expect(rdMeShowsFiles(canAccessFiles: true, hasWorksTab: true), isFalse);
     });
   });
 
