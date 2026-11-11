@@ -70,6 +70,19 @@
           "mailHint": "E-Mail schreiben"
         },
         "importNotAssigned": "{name}: gespeichert, aber nicht zu den Terminen hinzugefügt ({error})"
+      },
+      "rate": {
+        "title": "Anwesenheit zählen",
+        "season": "Saison",
+        "thisYear": "Dieses Jahr",
+        "threeMonths": "3 Monate",
+        "twelveMonths": "12 Monate",
+        "custom": "Eigener …",
+        "type": "Terminart",
+        "allTypes": "Alle, die zählen",
+        "chip": "Quote: {label}",
+        "hint": "Die Prozente in der Liste und die Sortierung nach Anwesenheit beziehen sich auf diese Auswahl.",
+        "period": "Zeitraum"
       }
     },
     "teachers": {
@@ -240,6 +253,19 @@
           "mailHint": "Write an email"
         },
         "importNotAssigned": "{name}: saved, but not added to the events ({error})"
+      },
+      "rate": {
+        "title": "Count attendance",
+        "season": "Season",
+        "thisYear": "This year",
+        "threeMonths": "3 months",
+        "twelveMonths": "12 months",
+        "custom": "Custom …",
+        "type": "Event type",
+        "allTypes": "All that count",
+        "chip": "Rate: {label}",
+        "hint": "The percentages in the list and the sort by attendance use this selection.",
+        "period": "Period"
       }
     },
     "teachers": {

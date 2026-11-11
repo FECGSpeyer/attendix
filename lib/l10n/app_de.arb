@@ -9810,6 +9810,53 @@
   "@peopleProblemCases": {
     "description": "people.problemCases"
   },
+  "peopleRateAllTypes": "Alle, die zählen",
+  "@peopleRateAllTypes": {
+    "description": "people.rate.allTypes"
+  },
+  "peopleRateChip": "Quote: {label}",
+  "@peopleRateChip": {
+    "description": "people.rate.chip",
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "peopleRateCustom": "Eigener …",
+  "@peopleRateCustom": {
+    "description": "people.rate.custom"
+  },
+  "peopleRateHint": "Die Prozente in der Liste und die Sortierung nach Anwesenheit beziehen sich auf diese Auswahl.",
+  "@peopleRateHint": {
+    "description": "people.rate.hint"
+  },
+  "peopleRatePeriod": "Zeitraum",
+  "@peopleRatePeriod": {
+    "description": "people.rate.period"
+  },
+  "peopleRateSeason": "Saison",
+  "@peopleRateSeason": {
+    "description": "people.rate.season"
+  },
+  "peopleRateThisYear": "Dieses Jahr",
+  "@peopleRateThisYear": {
+    "description": "people.rate.thisYear"
+  },
+  "peopleRateThreeMonths": "3 Monate",
+  "@peopleRateThreeMonths": {
+    "description": "people.rate.threeMonths"
+  },
+  "peopleRateTitle": "Anwesenheit zählen",
+  "@peopleRateTitle": {
+    "description": "people.rate.title"
+  },
+  "peopleRateTwelveMonths": "12 Monate",
+  "@peopleRateTwelveMonths": {
+    "description": "people.rate.twelveMonths"
+  },
+  "peopleRateType": "Terminart",
+  "@peopleRateType": {
+    "description": "people.rate.type"
+  },
   "peopleReactivateConfirm": "Person wieder aktivieren?",
   "@peopleReactivateConfirm": {
     "description": "people.reactivateConfirm"

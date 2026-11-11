@@ -273,8 +273,20 @@ final averageAttendancePercentProvider = Provider<double?>((ref) {
 /// Watches [attendanceRefetchCounter] so realtime changes to
 /// person_attendances automatically trigger a refetch.
 /// Uses paginated fetching to avoid the Supabase default 1000-row limit.
+/// Counts the current season; the people list can narrow it with
+/// `attendanceRateFilterProvider` (see `listAttendancePercentagesProvider`).
 final playerAttendancePercentagesProvider =
-    FutureProvider<Map<int, int>>((ref) async {
+    FutureProvider<Map<int, int>>((ref) => loadAttendancePercentages(ref));
+
+/// Attendance percentage per person for the Termine from [from] (default:
+/// season start) up to [to] (default and at most: today), counting only
+/// [typeId] when given (else the types with include_in_average).
+Future<Map<int, int>> loadAttendancePercentages(
+  Ref ref, {
+  DateTime? from,
+  DateTime? to,
+  String? typeId,
+}) async {
   // SOL_FIX16: RLS-filtered rows of the signed-in account; watched before
   // the first await (attendanceTypesProvider is only reached afterwards).
   ref.watch(currentAuthUserIdProvider);
@@ -289,9 +301,14 @@ final playerAttendancePercentagesProvider =
 
   // Ionic getModifiedPlayersForList: Termine with date before now + 1 day
   // count (dates are stored at 12:00 → today always, tomorrow from noon).
-  final tomorrow = DateTime.now().add(const Duration(days: 1)).toUtc().toIso8601String();
+  final tomorrowAt = DateTime.now().add(const Duration(days: 1));
+  // A range ending earlier: everything before the day after its end.
+  final endDay = to == null ? null : DateTime(to.year, to.month, to.day + 1);
+  final until = (endDay != null && endDay.isBefore(tomorrowAt) ? endDay : tomorrowAt).toUtc().toIso8601String();
   // Ionic getCurrentAttDate(): season start, fallback 2023-01-01.
-  final seasonStart = attendanceListStartDate(tenant.seasonStart);
+  final since = from == null
+      ? attendanceListStartDate(tenant.seasonStart)
+      : DateTime(from.year, from.month, from.day).toUtc().toIso8601String();
 
   // Fetch all records using pagination to avoid the PostgREST 1000-row default limit.
   // A tenant with 50+ members and 25+ events easily exceeds 1000 person_attendances.
@@ -300,13 +317,12 @@ final playerAttendancePercentagesProvider =
   int offset = 0;
 
   while (true) {
-    // Only count attendances from the current season
     final query = supabase
         .from('person_attendances')
         .select('person_id, status, notes, duty_state, attendance:attendance_id!inner(date, tenantId, type_id, archived)')
         .eq('attendance.tenantId', tenant.id!)
-        .lt('attendance.date', tomorrow)
-        .gte('attendance.date', seasonStart);
+        .lt('attendance.date', until)
+        .gte('attendance.date', since);
 
     // SOL_FIX1: stable order, otherwise pages can overlap / skip rows.
     final batch = await query
@@ -321,11 +337,14 @@ final playerAttendancePercentagesProvider =
 
   // Only attendance types with include_in_average count (Ionic
   // Utils.getModifiedPlayersForList). Unknown types are excluded.
+  // A chosen type counts on its own, like in the Auswertung.
   final types = await ref.watch(attendanceTypesProvider.future);
-  final includedTypeIds = types
-      .where((t) => t.includeInAverage && t.id != null)
-      .map((t) => t.id!)
-      .toSet();
+  final includedTypeIds = typeId != null
+      ? {typeId}
+      : types
+          .where((t) => t.includeInAverage && t.id != null)
+          .map((t) => t.id!)
+          .toSet();
   // LOGIC_PEOPLE: duties only count for persons who were assigned
   // (Ionic: `type.duty_mode && !personAttendance.duty_state` → skip).
   final dutyTypeIds = types
@@ -344,10 +363,10 @@ final playerAttendancePercentagesProvider =
         isArchivedRow((a['attendance'] as Map?)?.cast<String, dynamic>())) {
       continue;
     }
-    final typeId = (a['attendance'] as Map?)?['type_id']?.toString();
-    if (typeId == null || !includedTypeIds.contains(typeId)) continue;
+    final rowType = (a['attendance'] as Map?)?['type_id']?.toString();
+    if (rowType == null || !includedTypeIds.contains(rowType)) continue;
     final dutyState = a['duty_state'];
-    if (dutyTypeIds.contains(typeId) &&
+    if (dutyTypeIds.contains(rowType) &&
         (dutyState == null || (dutyState is String && dutyState.isEmpty))) {
       continue;
     }
@@ -368,7 +387,7 @@ final playerAttendancePercentagesProvider =
     final pct = total > 0 ? (att / total * 100).round() : 0;
     return MapEntry(personId, pct);
   });
-});
+}
 
 /// Notifier for attendance mutations
 class AttendanceNotifier extends Notifier<AsyncValue<void>> {

@@ -2,15 +2,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../core/providers/attendance_rate_filter_providers.dart';
+import '../../../../../core/providers/attendance_type_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../data/models/attendance/attendance.dart' show AttendanceType;
 import '../../../../../data/models/church/church.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/tenant/tenant.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../people/rate_filter_labels.dart';
 import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/rd_members_list_filter.dart';
 import '../rd_widgets.dart';
+import '../stats/rd_stats_widgets.dart' show showRdStatsRangeSheet;
 
 /// Label of a sort order of the Mitglieder tab.
 String rdMembersSortLabel(AppLocalizations l10n, RdMembersSort sort) => switch (sort) {
@@ -204,6 +209,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
               label: l10n.redesignWorksFilterReset,
               onTap: () {
                 _set(const RdMembersListFilter());
+                ref.read(attendanceRateFilterProvider.notifier).state = const AttendanceRateFilter();
                 ref.read(rdMembersByCategoryProvider.notifier).set(true);
                 ref.read(rdMembersCriticalOnlyProvider.notifier).state = false;
                 for (final c in _numbers.values) {
@@ -265,6 +271,8 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
             ),
           ],
         ),
+        const SizedBox(height: 20),
+        const RdRateFilterSection(),
         const SizedBox(height: 20),
         RdGroupLabel(l10n.redesignWorksOnly),
         Wrap(
@@ -386,6 +394,94 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
               onPressed: () => Navigator.of(context).pop(),
             );
           },
+        ),
+      ],
+    );
+  }
+}
+
+/// "Anwesenheit zählen": which period and Terminart the percentages of the
+/// list (and the sort by attendance) count. Shared with the old list.
+class RdRateFilterSection extends ConsumerWidget {
+  const RdRateFilterSection({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final rate = ref.watch(attendanceRateFilterProvider);
+    final types = [
+      for (final t in ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
+        if (t.id != null && t.visible) t,
+    ];
+    void set(AttendanceRateFilter f) => ref.read(attendanceRateFilterProvider.notifier).state = f;
+
+    Future<void> pickCustom() async {
+      final today = DateUtils.dateOnly(DateTime.now());
+      final initial = rate.period == RatePeriod.custom && rate.from != null && rate.to != null
+          ? DateTimeRange(start: rate.from!, end: rate.to!)
+          : DateTimeRange(start: DateTime(today.year, 1, 1), end: today);
+      final picked = await showRdStatsRangeSheet(context, initial);
+      if (picked == null) return;
+      set(ref.read(attendanceRateFilterProvider).withPeriod(RatePeriod.custom, from: picked.start, to: picked.end));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdGroupLabel(l10n.peopleRateTitle),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final period in RatePeriod.values)
+              RdChoiceChip(
+                key: Key('rd-members-rate-${period.name}'),
+                label: ratePeriodLabel(l10n, period, filter: rate),
+                selected: rate.period == period,
+                onTap: () => period == RatePeriod.custom
+                    ? pickCustom()
+                    : set(ref.read(attendanceRateFilterProvider).withPeriod(period)),
+              ),
+          ],
+        ),
+        if (types.length > 1) ...[
+          const SizedBox(height: 12),
+          RdGroupedList(
+            children: [
+              RdListRow(
+                key: const Key('rd-members-rate-type'),
+                title: l10n.peopleRateType,
+                value: rateTypeLabel(l10n, rate.typeId, types),
+                onTap: () async {
+                  final choice = await showAppActionSheet<String>(
+                    context,
+                    title: l10n.peopleRateType,
+                    actions: [
+                      AppActionSheetAction(
+                        value: '',
+                        icon: rate.typeId == null ? Icons.check : null,
+                        label: l10n.peopleRateAllTypes,
+                      ),
+                      for (final t in types)
+                        AppActionSheetAction(
+                          value: t.id!,
+                          icon: rate.typeId == t.id ? Icons.check : null,
+                          label: t.name,
+                        ),
+                    ],
+                  );
+                  if (choice == null) return;
+                  set(ref.read(attendanceRateFilterProvider).withType(choice.isEmpty ? null : choice));
+                },
+              ),
+            ],
+          ),
+        ],
+        const SizedBox(height: 6),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text(l10n.peopleRateHint, style: RdType.meta(p, size: 13)),
         ),
       ],
     );

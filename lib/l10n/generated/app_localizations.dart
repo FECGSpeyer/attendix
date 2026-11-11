@@ -12875,6 +12875,72 @@ abstract class AppLocalizations {
   /// **'Problemfälle'**
   String get peopleProblemCases;
 
+  /// people.rate.allTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Alle, die zählen'**
+  String get peopleRateAllTypes;
+
+  /// people.rate.chip
+  ///
+  /// In de, this message translates to:
+  /// **'Quote: {label}'**
+  String peopleRateChip(Object label);
+
+  /// people.rate.custom
+  ///
+  /// In de, this message translates to:
+  /// **'Eigener …'**
+  String get peopleRateCustom;
+
+  /// people.rate.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Prozente in der Liste und die Sortierung nach Anwesenheit beziehen sich auf diese Auswahl.'**
+  String get peopleRateHint;
+
+  /// people.rate.period
+  ///
+  /// In de, this message translates to:
+  /// **'Zeitraum'**
+  String get peopleRatePeriod;
+
+  /// people.rate.season
+  ///
+  /// In de, this message translates to:
+  /// **'Saison'**
+  String get peopleRateSeason;
+
+  /// people.rate.thisYear
+  ///
+  /// In de, this message translates to:
+  /// **'Dieses Jahr'**
+  String get peopleRateThisYear;
+
+  /// people.rate.threeMonths
+  ///
+  /// In de, this message translates to:
+  /// **'3 Monate'**
+  String get peopleRateThreeMonths;
+
+  /// people.rate.title
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit zählen'**
+  String get peopleRateTitle;
+
+  /// people.rate.twelveMonths
+  ///
+  /// In de, this message translates to:
+  /// **'12 Monate'**
+  String get peopleRateTwelveMonths;
+
+  /// people.rate.type
+  ///
+  /// In de, this message translates to:
+  /// **'Terminart'**
+  String get peopleRateType;
+
   /// people.reactivateConfirm
   ///
   /// In de, this message translates to:
