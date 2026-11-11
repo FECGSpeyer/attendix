@@ -21728,9 +21728,30 @@
   "@redesignWorkYourPart": {
     "description": "redesign.work.yourPart"
   },
-  "redesignWorkZip": "Alle Dateien als ZIP",
+  "redesignWorkZip": "Alle Dateien herunterladen",
   "@redesignWorkZip": {
     "description": "redesign.work.zip"
+  },
+  "redesignWorkZipHint": "{count, plural, one {1 Datei} other {{count} Dateien}} als ZIP",
+  "@redesignWorkZipHint": {
+    "description": "redesign.work.zipHint",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignWorkZipLoading": "Dateien werden geladen … {done} von {total}",
+  "@redesignWorkZipLoading": {
+    "description": "redesign.work.zipLoading",
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
+  "redesignWorkZipPacking": "ZIP wird erstellt …",
+  "@redesignWorkZipPacking": {
+    "description": "redesign.work.zipPacking"
   },
   "redesignWorksAdd": "Werk hinzufügen",
   "@redesignWorksAdd": {

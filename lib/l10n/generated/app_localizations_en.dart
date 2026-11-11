@@ -17508,7 +17508,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorkYourPart => 'Your part';
 
   @override
-  String get redesignWorkZip => 'All files as ZIP';
+  String get redesignWorkZip => 'Download all files';
+
+  @override
+  String redesignWorkZipHint(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files',
+      one: '1 file',
+    );
+    return '$_temp0 as ZIP';
+  }
+
+  @override
+  String redesignWorkZipLoading(Object done, Object total) {
+    return 'Loading files … $done of $total';
+  }
+
+  @override
+  String get redesignWorkZipPacking => 'Creating ZIP …';
 
   @override
   String get redesignWorksAdd => 'Add work';

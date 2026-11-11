@@ -1064,7 +1064,7 @@ void main() {
       expect(find.text('FÜR DIE LEITUNG'), findsOneWidget);
     });
 
-    testWidgets('••• of the Werk: Link zum Werk teilen opens the share sheet', (tester) async {
+    testWidgets('share button at the top: Link zum Werk teilen opens the share sheet', (tester) async {
       _phone(tester);
       final calls = _mockShare(tester);
       await tester.pumpWidget(_workApp(Role.player, song: _ouverture));
@@ -1072,10 +1072,14 @@ void main() {
 
       await tester.tap(find.bySemanticsLabel('Mehr zum Werk'));
       await _settle(tester);
-      // Players get no Gruppen-PDFs.
+      // Players get no Gruppen-PDFs; the link is no longer in the "•••".
       expect(find.text('Gruppen-PDFs drucken'), findsNothing);
-      expect(find.text('Alle Dateien als ZIP'), findsOneWidget);
-      await tester.tap(find.text('Link zum Werk teilen'));
+      expect(find.text('Link zum Werk teilen'), findsNothing);
+      expect(find.text('Alle Dateien herunterladen'), findsOneWidget);
+      await tester.tap(find.text('Abbrechen'));
+      await _settle(tester);
+
+      await tester.tap(find.bySemanticsLabel('Link zum Werk teilen'));
       await _settle(tester);
       expect(calls.single.method, 'share');
       final args = Map<String, dynamic>.from(calls.single.arguments as Map);
@@ -1098,9 +1102,7 @@ void main() {
       await tester.pumpWidget(_workApp(Role.player, song: _ouverture));
       await _settle(tester);
 
-      await tester.tap(find.bySemanticsLabel('Mehr zum Werk'));
-      await _settle(tester);
-      await tester.tap(find.text('Link zum Werk teilen'));
+      await tester.tap(find.bySemanticsLabel('Link zum Werk teilen'));
       await _settle(tester);
       expect(copied, SongUtils.shareLink('abc', 5));
     });

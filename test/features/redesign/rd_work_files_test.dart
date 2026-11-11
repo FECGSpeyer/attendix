@@ -784,6 +784,33 @@ void main() {
       expect(ZipService.uniqueArchiveName('README', used), 'README');
       expect(ZipService.uniqueArchiveName('README', used), 'README (2)');
     });
+
+    test('ZIP: files load a few at a time, keep their order and count up', () async {
+      final files = [
+        for (var i = 0; i < 6; i++) SongFile(fileName: 'f$i.pdf', fileType: 'application/pdf', url: 'u$i'),
+      ];
+      var running = 0;
+      var most = 0;
+      final progress = <int>[];
+      final bodies = await ZipService.downloadAll(
+        files,
+        parallel: 3,
+        onProgress: (done, _) => progress.add(done),
+        load: (url) async {
+          if (++running > most) most = running;
+          await Future<void>.delayed(Duration(milliseconds: url == 'u0' ? 20 : 1));
+          running--;
+          if (url == 'u4') throw Exception('offline');
+          return Uint8List.fromList(url.codeUnits);
+        },
+      );
+      expect(most, 3);
+      expect(progress, [0, 1, 2, 3, 4, 5, 6]);
+      expect(
+        [for (final b in bodies) b == null ? null : String.fromCharCodes(b)],
+        ['u0', 'u1', 'u2', 'u3', null, 'u5'],
+      );
+    });
   });
 
   group('security (source)', () {

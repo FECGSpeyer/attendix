@@ -262,15 +262,25 @@ Future<void> rdReplaceWorkFile(BuildContext context, WidgetRef ref, int songId, 
   }
 }
 
-enum _WorkAction { shareLink, zip, copy, groupPdfs }
+enum _WorkAction { zip, copy, groupPdfs }
+
+/// Whether the Werk has a public page whose link the share button at the
+/// top passes on ([rdShareWorkLink]).
+bool rdCanShareWorkLink(SongDetailData data) => (data.songSharingId ?? '').isNotEmpty && data.song.id != null;
+
+/// Share button at the top of the Werk: the link to its public page (no
+/// sign-in needed).
+Future<void> rdShareWorkLink(BuildContext button, SongDetailData data) => rdShareLink(
+  button,
+  SongUtils.shareLink(data.songSharingId!, data.song.id!),
+  subject: data.song.name,
+  copiedMessage: button.l10n.songsLinkCopied,
+);
 
 /// Whether the "•••" of the Werk has anything to offer (see
 /// [rdShowWorkMenu]).
 bool rdWorkMenuHasActions(SongDetailData data, List<SongFile> files, List<Tenant> copyTargets) =>
-    (data.songSharingId ?? '').isNotEmpty ||
-    files.length > 1 ||
-    copyTargets.isNotEmpty ||
-    (!data.readOnly && !data.isPublic && hasGroupPdfs(files));
+    files.length > 1 || copyTargets.isNotEmpty || (!data.readOnly && !data.isPublic && hasGroupPdfs(files));
 
 /// Groups of the organisation the Werk can be copied to: every other
 /// instance where the person is admin or responsible (Ionic: any logged-in
@@ -293,24 +303,16 @@ Future<void> rdShowWorkMenu(
 }) async {
   final l10n = button.l10n;
   final song = data.song;
-  final sharingId = data.songSharingId ?? '';
   final action = await showAppActionSheet<_WorkAction>(
     button,
     title: song.name,
     actions: [
-      if (sharingId.isNotEmpty && song.id != null)
-        AppActionSheetAction(
-          value: _WorkAction.shareLink,
-          icon: Icons.link,
-          label: l10n.redesignWorkShareLink,
-          subtitle: l10n.redesignWorkShareLinkHint,
-        ),
       if (files.length > 1)
         AppActionSheetAction(
           value: _WorkAction.zip,
-          icon: Icons.folder_zip_outlined,
+          icon: Icons.download_outlined,
           label: l10n.redesignWorkZip,
-          subtitle: l10n.redesignWorkFileCount(files.length),
+          subtitle: l10n.redesignWorkZipHint(files.length),
         ),
       if (copyTargets.isNotEmpty)
         AppActionSheetAction(
@@ -325,21 +327,8 @@ Future<void> rdShowWorkMenu(
   );
   if (action == null || !button.mounted) return;
   switch (action) {
-    case _WorkAction.shareLink:
-      await rdShareLink(
-        button,
-        SongUtils.shareLink(sharingId, song.id!),
-        subject: song.name,
-        copiedMessage: l10n.songsLinkCopied,
-      );
     case _WorkAction.zip:
-      try {
-        await ref
-            .read(zipServiceProvider)
-            .downloadSongFilesAsZip(files: files, songName: song.name.isEmpty ? 'songs' : song.name);
-      } catch (e) {
-        if (button.mounted) ToastHelper.showError(button, friendlyErrorMessage(e));
-      }
+      await _downloadAll(button, ref, song, files);
     case _WorkAction.copy:
       await showModalBottomSheet<void>(
         context: button,
@@ -356,5 +345,53 @@ Future<void> rdShowWorkMenu(
       );
     case _WorkAction.groupPdfs:
       await printGroupPdfs(context: button, ref: ref, song: song, files: files, groups: groups);
+  }
+}
+
+/// "Alle Dateien herunterladen": a small window with "3 von 19" appears
+/// right away while the files load, then the share sheet (web: download).
+Future<void> _downloadAll(BuildContext context, WidgetRef ref, Song song, List<SongFile> files) async {
+  final l10n = context.l10n;
+  final progress = ValueNotifier<String>(l10n.redesignWorkZipLoading(0, files.length));
+  // Close exactly the overlay's route (see printGroupPdfs).
+  Route<dynamic>? overlayRoute;
+  var overlay = true;
+  void closeOverlay() {
+    if (!overlay) return;
+    overlay = false;
+    final route = overlayRoute;
+    if (route != null && route.isActive) route.navigator?.removeRoute(route);
+  }
+
+  showAppDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (ctx) {
+      overlayRoute ??= ModalRoute.of(ctx);
+      if (!overlay) WidgetsBinding.instance.addPostFrameCallback((_) => closeOverlay());
+      return ValueListenableBuilder<String>(
+        valueListenable: progress,
+        builder: (_, message, _) => PrintLoadingOverlay(message: message),
+      );
+    },
+  );
+  try {
+    await ref
+        .read(zipServiceProvider)
+        .downloadSongFilesAsZip(
+          files: files,
+          songName: song.name.isEmpty ? 'songs' : song.name,
+          onProgress:
+              (done, total) =>
+                  progress.value =
+                      done < total ? l10n.redesignWorkZipLoading(done, total) : l10n.redesignWorkZipPacking,
+          onPacked: closeOverlay,
+        );
+  } catch (e) {
+    closeOverlay();
+    if (context.mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
+  } finally {
+    closeOverlay();
+    progress.dispose();
   }
 }
