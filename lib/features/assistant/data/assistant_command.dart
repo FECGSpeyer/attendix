@@ -4,9 +4,10 @@
 // The answer is checked here a second time: whatever arrives that is not
 // exactly one of these commands becomes [UnsupportedCommand]. Package 1
 // reads; package 2 adds [SetStatusCommand] and [PlannedAbsenceCommand],
-// which the app only shows as a preview until the person confirms. Other
-// changes are recognised (`category: change`) and answered with "kann ich
-// noch nicht".
+// which the app only shows as a preview until the person confirms; package
+// 3 adds [CreateEventsCommand], [MoveEventCommand] and [SetSongsCommand] the
+// same way. Other changes are recognised (`category: change`) and answered
+// with "kann ich noch nicht".
 
 const int assistantMaxTextLength = 500;
 const int _maxName = 80;
@@ -15,6 +16,12 @@ const int _maxCount = 36;
 /// At most this many names / groups in one status command.
 const int assistantMaxWho = 10;
 const int _maxReason = 120;
+
+/// At most this many new Termine in one command.
+const int assistantMaxNewEvents = 20;
+
+/// At most this many Werke in one command.
+const int assistantMaxSongs = 15;
 
 /// The status a [SetStatusCommand] sets.
 enum AssistantStatus { present, excused, lateExcused, late, absent, neutral }
@@ -188,6 +195,54 @@ sealed class AssistantCommand {
         final to = parseAssistantDate(m['to']);
         if (who == null || from == null || to == null || from.isAfter(to)) return const UnsupportedCommand();
         return PlannedAbsenceCommand(who: who, from: from, to: to, reason: cleanAssistantText(m['reason'], _maxReason));
+      case 'create_events':
+        final dates = _dateList(m['dates']);
+        final start = _optTime(m['startTime']);
+        final end = _optTime(m['endTime']);
+        if (dates == null || start == _badTime || end == _badTime) return const UnsupportedCommand();
+        return CreateEventsCommand(
+          typeName: _optName(m['typeName']),
+          dates: dates,
+          startTime: start,
+          endTime: end,
+          title: _optName(m['title']),
+          place: cleanAssistantText(m['place'], _maxReason),
+        );
+      case 'move_event':
+        final event = m['event'] == null ? const NextEventRef() : _eventRef(m['event']);
+        final hasDate = m['toDate'] != null && m['toDate'] != '';
+        final toDate = hasDate ? parseAssistantDate(m['toDate']) : null;
+        final start = _optTime(m['startTime']);
+        final end = _optTime(m['endTime']);
+        if (event == null || (hasDate && toDate == null) || start == _badTime || end == _badTime) {
+          return const UnsupportedCommand();
+        }
+        if (toDate == null && start == null && end == null) return const UnsupportedCommand();
+        return MoveEventCommand(
+          event: event,
+          typeName: _optName(m['typeName']),
+          toDate: toDate,
+          startTime: start,
+          endTime: end,
+        );
+      case 'set_songs':
+        final event = m['event'] == null ? const NextEventRef() : _eventRef(m['event']);
+        final titles = _titleList(m['titles']);
+        if (event == null || titles == null) return const UnsupportedCommand();
+        return SetSongsCommand(
+          event: event,
+          typeName: _optName(m['typeName']),
+          titles: titles,
+          replace: m['mode'] == 'replace',
+        );
+      case 'cancel_event':
+        final event = m['event'] == null ? const NextEventRef() : _eventRef(m['event']);
+        if (event == null) return const UnsupportedCommand();
+        return CancelEventCommand(
+          event: event,
+          typeName: _optName(m['typeName']),
+          reason: cleanAssistantText(m['reason'], _maxReason),
+        );
       case 'unsupported':
         return UnsupportedCommand(isChange: m['category'] == 'change');
       default:
@@ -241,6 +296,75 @@ class PlannedAbsenceCommand extends AssistantCommand {
 
   PlannedAbsenceCommand withWho(RateSubject who) =>
       PlannedAbsenceCommand(who: who, from: from, to: to, reason: reason);
+}
+
+/// "Leg jeden Mittwoch im Dezember eine Probe an" (1..[assistantMaxNewEvents]
+/// days, sorted). [typeId]: the type the person picked after "Welcher
+/// Termintyp?" (never from a model answer).
+class CreateEventsCommand extends AssistantCommand {
+  const CreateEventsCommand({
+    this.typeName,
+    this.typeId,
+    required this.dates,
+    this.startTime,
+    this.endTime,
+    this.title,
+    this.place,
+  });
+
+  final String? typeName;
+  final String? typeId;
+  final List<DateTime> dates;
+
+  /// 'HH:mm'; null = the type's time.
+  final String? startTime;
+  final String? endTime;
+  final String? title;
+  final String? place;
+
+  CreateEventsCommand withType(String typeId) => CreateEventsCommand(
+        typeName: typeName,
+        typeId: typeId,
+        dates: dates,
+        startTime: startTime,
+        endTime: endTime,
+        title: title,
+        place: place,
+      );
+}
+
+/// "Verschieb die Probe am Mittwoch auf Donnerstag" / "… beginnt um 10 Uhr".
+/// At least one of [toDate], [startTime], [endTime] is set.
+class MoveEventCommand extends AssistantCommand {
+  const MoveEventCommand({required this.event, this.typeName, this.toDate, this.startTime, this.endTime});
+
+  final EventRef event;
+  final String? typeName;
+  final DateTime? toDate;
+  final String? startTime;
+  final String? endTime;
+}
+
+/// "Setz 'Großer Gott' und Nr. 12 auf die Probe am Sonntag".
+/// [replace]: the titles are the whole list (otherwise they are added).
+class SetSongsCommand extends AssistantCommand {
+  const SetSongsCommand({required this.event, this.typeName, required this.titles, this.replace = false});
+
+  final EventRef event;
+  final String? typeName;
+  final List<String> titles;
+  final bool replace;
+}
+
+/// "Die Probe am Sonntag fällt aus, Saal belegt": everybody of the Termin
+/// gets Entschuldigt with the reason. Without [reason] the app asks for one
+/// (Matthias: cancelling only with a reason).
+class CancelEventCommand extends AssistantCommand {
+  const CancelEventCommand({required this.event, this.typeName, this.reason});
+
+  final EventRef event;
+  final String? typeName;
+  final String? reason;
 }
 
 /// "Wie war die Anwesenheit von Jonas in den letzten 3 Monaten?"
@@ -313,6 +437,48 @@ DateTime? parseAssistantDate(Object? value) {
   if (d.year != parts[0] || d.month != parts[1] || d.day != parts[2]) return null;
   if (d.year < 2000 || d.year > 2100) return null;
   return d;
+}
+
+/// Marks an invalid time (the command fails); null means "not given".
+const String _badTime = '!';
+
+/// 'HH:mm' from "9:30" / "19:30:00", or null when it is not a time.
+String? parseAssistantTime(Object? value) {
+  if (value is! String) return null;
+  final m = RegExp(r'^(\d{1,2}):(\d{2})(?::\d{2})?$').firstMatch(value.trim());
+  if (m == null) return null;
+  final h = int.parse(m.group(1)!);
+  final min = int.parse(m.group(2)!);
+  if (h > 23 || min > 59) return null;
+  return '${h.toString().padLeft(2, '0')}:${m.group(2)}';
+}
+
+String? _optTime(Object? v) => v == null || v == '' ? null : (parseAssistantTime(v) ?? _badTime);
+
+/// 1..[assistantMaxNewEvents] days, sorted, without duplicates.
+List<DateTime>? _dateList(Object? raw) {
+  if (raw is! List || raw.isEmpty || raw.length > assistantMaxNewEvents) return null;
+  final out = <DateTime>{};
+  for (final v in raw) {
+    final d = parseAssistantDate(v);
+    if (d == null) return null;
+    out.add(d);
+  }
+  return out.toList()..sort();
+}
+
+/// 1..[assistantMaxSongs] titles (a number is a Werk number), no duplicates.
+List<String>? _titleList(Object? raw) {
+  final list = raw is List ? raw : (raw == null ? const [] : [raw]);
+  if (list.isEmpty || list.length > assistantMaxSongs) return null;
+  final out = <String>[];
+  final seen = <String>{};
+  for (final v in list) {
+    final t = cleanAssistantText(v is num ? '$v' : v, _maxName);
+    if (t == null) return null;
+    if (seen.add(t.toLowerCase())) out.add(t);
+  }
+  return out;
 }
 
 PeriodUnit? _unit(Object? v) => switch (v) {

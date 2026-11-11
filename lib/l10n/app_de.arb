@@ -651,6 +651,19 @@
   "@assistantBirthdaysTitle": {
     "description": "assistant.birthdays.title"
   },
+  "assistantCancelAffected": "{count, plural, one {1 Person wird auf Entschuldigt gesetzt.} other {{count} Personen werden auf Entschuldigt gesetzt.}}",
+  "@assistantCancelAffected": {
+    "description": "assistant.cancel.affected",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "assistantCancelTitle": "Termin absagen",
+  "@assistantCancelTitle": {
+    "description": "assistant.cancel.title"
+  },
   "assistantChangeCancel": "Abbrechen",
   "@assistantChangeCancel": {
     "description": "assistant.change.cancel"
@@ -753,9 +766,60 @@
       "name": {}
     }
   },
+  "assistantChoiceWhichType": "Welcher Termintyp?",
+  "@assistantChoiceWhichType": {
+    "description": "assistant.choice.whichType"
+  },
   "assistantClear": "Neuer Chat",
   "@assistantClear": {
     "description": "assistant.clear"
+  },
+  "assistantCreateDone": "{count, plural, one {1 Termin angelegt.} other {{count} Termine angelegt.}}",
+  "@assistantCreateDone": {
+    "description": "assistant.create.done",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "assistantCreatePlace": "Ort: {place}",
+  "@assistantCreatePlace": {
+    "description": "assistant.create.place",
+    "placeholders": {
+      "place": {}
+    }
+  },
+  "assistantCreateSkippedExisting": "{count, plural, one {1 Tag hat schon einen Termin dieses Typs und bleibt weg.} other {{count} Tage haben schon einen Termin dieses Typs und bleiben weg.}}",
+  "@assistantCreateSkippedExisting": {
+    "description": "assistant.create.skippedExisting",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "assistantCreateSkippedWindow": "{count, plural, one {1 Tag liegt in der Vergangenheit oder mehr als 6 Monate voraus.} other {{count} Tage liegen in der Vergangenheit oder mehr als 6 Monate voraus.}}",
+  "@assistantCreateSkippedWindow": {
+    "description": "assistant.create.skippedWindow",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "assistantCreateTitle": "{count, plural, one {1 Termin anlegen?} other {{count} Termine anlegen?}}",
+  "@assistantCreateTitle": {
+    "description": "assistant.create.title",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "assistantCreateUndoHint": "Rückgängig löscht genau diese neuen Termine wieder.",
+  "@assistantCreateUndoHint": {
+    "description": "assistant.create.undoHint"
   },
   "assistantEntryEnableHint": "Für diese Gruppe noch aus. Tippen, um ihn einzuschalten.",
   "@assistantEntryEnableHint": {
@@ -816,6 +880,32 @@
   "@assistantIntro": {
     "description": "assistant.intro"
   },
+  "assistantMoveDone": "Termin verschoben.",
+  "@assistantMoveDone": {
+    "description": "assistant.move.done"
+  },
+  "assistantMoveFrom": "Bisher: {when}",
+  "@assistantMoveFrom": {
+    "description": "assistant.move.from",
+    "placeholders": {
+      "when": {}
+    }
+  },
+  "assistantMoveHint": "Die Status bleiben. Wer am neuen Tag eine Abwesenheit eingetragen hat, wird entschuldigt.",
+  "@assistantMoveHint": {
+    "description": "assistant.move.hint"
+  },
+  "assistantMoveTitle": "Termin verschieben",
+  "@assistantMoveTitle": {
+    "description": "assistant.move.title"
+  },
+  "assistantMoveTo": "Neu: {when}",
+  "@assistantMoveTo": {
+    "description": "assistant.move.to",
+    "placeholders": {
+      "when": {}
+    }
+  },
   "assistantNextTitle": "Nächster Termin",
   "@assistantNextTitle": {
     "description": "assistant.next.title"
@@ -824,13 +914,29 @@
   "@assistantNoticeAbsenceOutOfRange": {
     "description": "assistant.notice.absenceOutOfRange"
   },
-  "assistantNoticeChangeLater": "Das kann ich noch nicht ändern. An- und Abmelden, Status und Abwesenheiten gehen schon, Termine und Personen kommen bald.",
+  "assistantNoticeCancelNeedsReason": "Einen Termin sage ich nur mit Grund ab. Schreib zum Beispiel: „Sag die Probe am Sonntag ab, Grund: Saal belegt“.",
+  "@assistantNoticeCancelNeedsReason": {
+    "description": "assistant.notice.cancelNeedsReason"
+  },
+  "assistantNoticeChangeLater": "Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, absagen, Werke) gehen schon, Personen kommen bald.",
   "@assistantNoticeChangeLater": {
     "description": "assistant.notice.changeLater"
+  },
+  "assistantNoticeDateOutOfRange": "Termine lege ich ab heute und höchstens 6 Monate im Voraus an oder verschiebe sie dorthin.",
+  "@assistantNoticeDateOutOfRange": {
+    "description": "assistant.notice.dateOutOfRange"
   },
   "assistantNoticeDisabled": "Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.",
   "@assistantNoticeDisabled": {
     "description": "assistant.notice.disabled"
+  },
+  "assistantNoticeEventLocked": "Diesen Termin ändere ich nicht: Er ist archiviert oder liegt außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).",
+  "@assistantNoticeEventLocked": {
+    "description": "assistant.notice.eventLocked"
+  },
+  "assistantNoticeEventsExist": "An diesen Tagen gibt es schon einen Termin dieses Typs.",
+  "@assistantNoticeEventsExist": {
+    "description": "assistant.notice.eventsExist"
   },
   "assistantNoticeFailed": "Das hat gerade nicht geklappt. Bitte versuch es noch einmal.",
   "@assistantNoticeFailed": {
@@ -875,6 +981,14 @@
   "@assistantNoticeNoRights": {
     "description": "assistant.notice.noRights"
   },
+  "assistantNoticeNoSongsForType": "Bei diesem Termintyp werden keine Werke geführt.",
+  "@assistantNoticeNoSongsForType": {
+    "description": "assistant.notice.noSongsForType"
+  },
+  "assistantNoticeNoType": "In dieser Gruppe gibt es keinen Termintyp, mit dem ich Termine anlegen kann.",
+  "@assistantNoticeNoType": {
+    "description": "assistant.notice.noType"
+  },
   "assistantNoticeNotUnderstood": "Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.",
   "@assistantNoticeNotUnderstood": {
     "description": "assistant.notice.notUnderstood"
@@ -897,6 +1011,13 @@
   "assistantNoticeSongNotFound": "Ich finde kein Werk „{name}“.",
   "@assistantNoticeSongNotFound": {
     "description": "assistant.notice.songNotFound",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "assistantNoticeSongsNotFound": "Ich finde keine Werke zu „{name}“.",
+  "@assistantNoticeSongsNotFound": {
+    "description": "assistant.notice.songsNotFound",
     "placeholders": {
       "name": {}
     }
@@ -992,6 +1113,35 @@
   "assistantSongOpen": "Werk öffnen",
   "@assistantSongOpen": {
     "description": "assistant.song.open"
+  },
+  "assistantSongsAdded": "Neu: {names}",
+  "@assistantSongsAdded": {
+    "description": "assistant.songs.added",
+    "placeholders": {
+      "names": {}
+    }
+  },
+  "assistantSongsDone": "Werke gespeichert.",
+  "@assistantSongsDone": {
+    "description": "assistant.songs.done"
+  },
+  "assistantSongsNotFound": "Nicht gefunden: {names}",
+  "@assistantSongsNotFound": {
+    "description": "assistant.songs.notFound",
+    "placeholders": {
+      "names": {}
+    }
+  },
+  "assistantSongsRemoved": "Fällt weg: {names}",
+  "@assistantSongsRemoved": {
+    "description": "assistant.songs.removed",
+    "placeholders": {
+      "names": {}
+    }
+  },
+  "assistantSongsTitle": "Werke für den Termin",
+  "@assistantSongsTitle": {
+    "description": "assistant.songs.title"
   },
   "assistantStatusAbsent": "Abwesend",
   "@assistantStatusAbsent": {

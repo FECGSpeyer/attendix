@@ -21,7 +21,7 @@
       },
       "notice": {
         "notUnderstood": "Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.",
-        "changeLater": "Das kann ich noch nicht ändern. An- und Abmelden, Status und Abwesenheiten gehen schon, Termine und Personen kommen bald.",
+        "changeLater": "Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, absagen, Werke) gehen schon, Personen kommen bald.",
         "noRights": "Diese Frage kann ich dir mit deiner Rolle nicht beantworten.",
         "noOwnPerson": "Du bist in dieser Gruppe nicht als Person eingetragen, deshalb gibt es keine eigene Anwesenheit.",
         "disabled": "Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.",
@@ -39,10 +39,18 @@
         "nothingToChange": "Da gibt es nichts zu ändern: Der Status ist schon so gesetzt, oder der Termin lässt es nicht zu (zum Beispiel Anmeldefrist vorbei).",
         "tooManyChanges": "Das wären {count} Änderungen. Über den Chat gehen höchstens {max} auf einmal. Grenz es bitte ein, zum Beispiel auf einen Termin oder eine Gruppe.",
         "absenceOutOfRange": "Eine Abwesenheit trage ich ab heute und höchstens 6 Monate im Voraus ein.",
-        "noAbsenceRights": "Geplante Abwesenheiten kannst du mit deiner Rolle hier nicht eintragen."
+        "noAbsenceRights": "Geplante Abwesenheiten kannst du mit deiner Rolle hier nicht eintragen.",
+        "noType": "In dieser Gruppe gibt es keinen Termintyp, mit dem ich Termine anlegen kann.",
+        "dateOutOfRange": "Termine lege ich ab heute und höchstens 6 Monate im Voraus an oder verschiebe sie dorthin.",
+        "eventLocked": "Diesen Termin ändere ich nicht: Er ist archiviert oder liegt außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).",
+        "eventsExist": "An diesen Tagen gibt es schon einen Termin dieses Typs.",
+        "noSongsForType": "Bei diesem Termintyp werden keine Werke geführt.",
+        "songsNotFound": "Ich finde keine Werke zu „{name}“.",
+        "cancelNeedsReason": "Einen Termin sage ich nur mit Grund ab. Schreib zum Beispiel: „Sag die Probe am Sonntag ab, Grund: Saal belegt“."
       },
       "choice": {
-        "which": "Wen meinst du mit „{name}“?"
+        "which": "Wen meinst du mit „{name}“?",
+        "whichType": "Welcher Termintyp?"
       },
       "rate": {
         "me": "Deine Anwesenheit",
@@ -118,6 +126,32 @@
         "affected": "{count, plural, =0 {Kein kommender Termin ist betroffen.} one {1 Termin wird auf Entschuldigt gesetzt.} other {{count} Termine werden auf Entschuldigt gesetzt.}}",
         "done": "Abwesenheit eingetragen.",
         "defaultReason": "Abwesend"
+      },
+      "create": {
+        "title": "{count, plural, one {1 Termin anlegen?} other {{count} Termine anlegen?}}",
+        "place": "Ort: {place}",
+        "skippedExisting": "{count, plural, one {1 Tag hat schon einen Termin dieses Typs und bleibt weg.} other {{count} Tage haben schon einen Termin dieses Typs und bleiben weg.}}",
+        "skippedWindow": "{count, plural, one {1 Tag liegt in der Vergangenheit oder mehr als 6 Monate voraus.} other {{count} Tage liegen in der Vergangenheit oder mehr als 6 Monate voraus.}}",
+        "done": "{count, plural, one {1 Termin angelegt.} other {{count} Termine angelegt.}}",
+        "undoHint": "Rückgängig löscht genau diese neuen Termine wieder."
+      },
+      "move": {
+        "title": "Termin verschieben",
+        "from": "Bisher: {when}",
+        "to": "Neu: {when}",
+        "hint": "Die Status bleiben. Wer am neuen Tag eine Abwesenheit eingetragen hat, wird entschuldigt.",
+        "done": "Termin verschoben."
+      },
+      "songs": {
+        "title": "Werke für den Termin",
+        "added": "Neu: {names}",
+        "removed": "Fällt weg: {names}",
+        "notFound": "Nicht gefunden: {names}",
+        "done": "Werke gespeichert."
+      },
+      "cancel": {
+        "title": "Termin absagen",
+        "affected": "{count, plural, one {1 Person wird auf Entschuldigt gesetzt.} other {{count} Personen werden auf Entschuldigt gesetzt.}}"
       }
     }
   },
@@ -143,7 +177,7 @@
       },
       "notice": {
         "notUnderstood": "I didn't understand that. I answer questions about attendance, events, birthdays, works and the app.",
-        "changeLater": "I can't change that yet. Signing in and out, statuses and absences already work, events and people come soon.",
+        "changeLater": "I cannot change that yet. Status, absences and events (create, move, cancel, pieces) already work, people come soon.",
         "noRights": "I can't answer this question with your role.",
         "noOwnPerson": "You are not listed as a person in this group, so there is no attendance of your own.",
         "disabled": "The assistant is switched off for this group. An admin can switch it on in the settings.",
@@ -161,10 +195,18 @@
         "nothingToChange": "There is nothing to change: the status is already set, or the event does not allow it (for example the deadline has passed).",
         "tooManyChanges": "That would be {count} changes. The chat does at most {max} at once. Please narrow it down, for example to one event or one group.",
         "absenceOutOfRange": "I can enter an absence starting today and up to 6 months ahead.",
-        "noAbsenceRights": "Your role can't enter planned absences here."
+        "noAbsenceRights": "Your role can't enter planned absences here.",
+        "noType": "This group has no event type I can create events with.",
+        "dateOutOfRange": "I only create or move events from today up to 6 months ahead.",
+        "eventLocked": "I do not change this event: it is archived or outside the limit (14 days back to 6 months ahead).",
+        "eventsExist": "These days already have an event of this type.",
+        "noSongsForType": "This event type has no pieces.",
+        "songsNotFound": "I cannot find pieces for “{name}”.",
+        "cancelNeedsReason": "I only cancel an event with a reason. Write for example: “Cancel the rehearsal on Sunday, reason: hall booked”."
       },
       "choice": {
-        "which": "Who do you mean by “{name}”?"
+        "which": "Who do you mean by “{name}”?",
+        "whichType": "Which event type?"
       },
       "rate": {
         "me": "Your attendance",
@@ -240,6 +282,32 @@
         "affected": "{count, plural, =0 {No upcoming event is affected.} one {1 event will be set to excused.} other {{count} events will be set to excused.}}",
         "done": "Absence entered.",
         "defaultReason": "Absent"
+      },
+      "create": {
+        "title": "{count, plural, one {Create 1 event?} other {Create {count} events?}}",
+        "place": "Place: {place}",
+        "skippedExisting": "{count, plural, one {1 day already has an event of this type and is left out.} other {{count} days already have an event of this type and are left out.}}",
+        "skippedWindow": "{count, plural, one {1 day is in the past or more than 6 months ahead.} other {{count} days are in the past or more than 6 months ahead.}}",
+        "done": "{count, plural, one {1 event created.} other {{count} events created.}}",
+        "undoHint": "Undo deletes exactly these new events again."
+      },
+      "move": {
+        "title": "Move event",
+        "from": "Before: {when}",
+        "to": "New: {when}",
+        "hint": "Statuses stay. Anyone with an absence on the new day is excused.",
+        "done": "Event moved."
+      },
+      "songs": {
+        "title": "Pieces for the event",
+        "added": "New: {names}",
+        "removed": "Removed: {names}",
+        "notFound": "Not found: {names}",
+        "done": "Pieces saved."
+      },
+      "cancel": {
+        "title": "Cancel event",
+        "affected": "{count, plural, one {1 person is set to Excused.} other {{count} people are set to Excused.}}"
       }
     }
   },
@@ -265,7 +333,7 @@
       },
       "notice": {
         "notUnderstood": "Я не понял. Я отвечаю на вопросы о посещаемости, мероприятиях, днях рождения, произведениях и о приложении.",
-        "changeLater": "Это я пока изменить не могу. Запись, отписка, статусы и отсутствия уже работают, события и люди появятся скоро.",
+        "changeLater": "Это я пока не умею менять. Статусы, отсутствия и мероприятия (создать, перенести, отменить, произведения) уже работают, люди скоро.",
         "noRights": "С твоей ролью я не могу ответить на этот вопрос.",
         "noOwnPerson": "Ты не внесён в эту группу как участник, поэтому собственной посещаемости нет.",
         "disabled": "Ассистент выключен для этой группы. Администратор может включить его в настройках.",
@@ -283,10 +351,18 @@
         "nothingToChange": "Менять нечего: статус уже стоит, или событие этого не позволяет (например, срок прошёл).",
         "tooManyChanges": "Это было бы {count} изменений. Через чат можно не больше {max} за раз. Пожалуйста, сузь запрос, например до одного события или группы.",
         "absenceOutOfRange": "Отсутствие я вношу начиная с сегодняшнего дня и не дальше чем на 6 месяцев вперёд.",
-        "noAbsenceRights": "С твоей ролью здесь нельзя вносить запланированные отсутствия."
+        "noAbsenceRights": "С твоей ролью здесь нельзя вносить запланированные отсутствия.",
+        "noType": "В этой группе нет типа мероприятия, с которым я могу создавать мероприятия.",
+        "dateOutOfRange": "Я создаю и переношу мероприятия только начиная с сегодняшнего дня и не более чем на 6 месяцев вперёд.",
+        "eventLocked": "Это мероприятие я не меняю: оно в архиве или вне границ (14 дней назад — 6 месяцев вперёд).",
+        "eventsExist": "В эти дни уже есть мероприятие этого типа.",
+        "noSongsForType": "Для этого типа мероприятия произведения не ведутся.",
+        "songsNotFound": "Не нахожу произведений для «{name}».",
+        "cancelNeedsReason": "Мероприятие я отменяю только с причиной. Напиши, например: «Отмени репетицию в воскресенье, причина: зал занят»."
       },
       "choice": {
-        "which": "Кого ты имеешь в виду под «{name}»?"
+        "which": "Кого ты имеешь в виду под «{name}»?",
+        "whichType": "Какой тип мероприятия?"
       },
       "rate": {
         "me": "Твоя посещаемость",
@@ -362,6 +438,32 @@
         "affected": "{count, plural, =0 {Ни одно предстоящее событие не затронуто.} one {{count} событие получит статус «уважительная причина».} few {{count} события получат статус «уважительная причина».} many {{count} событий получат статус «уважительная причина».} other {{count} события получат статус «уважительная причина».}}",
         "done": "Отсутствие внесено.",
         "defaultReason": "Отсутствует"
+      },
+      "create": {
+        "title": "{count, plural, one {Создать {count} мероприятие?} few {Создать {count} мероприятия?} many {Создать {count} мероприятий?} other {Создать {count} мероприятия?}}",
+        "place": "Место: {place}",
+        "skippedExisting": "{count, plural, one {{count} день уже имеет мероприятие этого типа и пропускается.} few {{count} дня уже имеют мероприятие этого типа и пропускаются.} many {{count} дней уже имеют мероприятие этого типа и пропускаются.} other {{count} дня уже имеют мероприятие этого типа и пропускаются.}}",
+        "skippedWindow": "{count, plural, one {{count} день в прошлом или более чем через 6 месяцев.} few {{count} дня в прошлом или более чем через 6 месяцев.} many {{count} дней в прошлом или более чем через 6 месяцев.} other {{count} дня в прошлом или более чем через 6 месяцев.}}",
+        "done": "{count, plural, one {Создано {count} мероприятие.} few {Создано {count} мероприятия.} many {Создано {count} мероприятий.} other {Создано {count} мероприятия.}}",
+        "undoHint": "«Отменить» снова удалит именно эти новые мероприятия."
+      },
+      "move": {
+        "title": "Перенести мероприятие",
+        "from": "Было: {when}",
+        "to": "Стало: {when}",
+        "hint": "Статусы сохраняются. У кого в новый день отмечено отсутствие, тот будет отмечен как уважительно отсутствующий.",
+        "done": "Мероприятие перенесено."
+      },
+      "songs": {
+        "title": "Произведения для мероприятия",
+        "added": "Новые: {names}",
+        "removed": "Убраны: {names}",
+        "notFound": "Не найдены: {names}",
+        "done": "Произведения сохранены."
+      },
+      "cancel": {
+        "title": "Отменить мероприятие",
+        "affected": "{count, plural, one {{count} человек получит статус «Уважительно».} few {{count} человека получат статус «Уважительно».} many {{count} человек получат статус «Уважительно».} other {{count} человека получат статус «Уважительно».}}"
       }
     }
   },
@@ -387,7 +489,7 @@
       },
       "notice": {
         "notUnderstood": "No lo he entendido. Respondo preguntas sobre asistencia, eventos, cumpleaños, obras y la app.",
-        "changeLater": "Eso aún no lo puedo cambiar. Apuntarse, darse de baja, estados y ausencias ya funcionan, eventos y personas llegan pronto.",
+        "changeLater": "Eso todavía no lo puedo cambiar. Estados, ausencias y eventos (crear, mover, cancelar, obras) ya funcionan, las personas llegan pronto.",
         "noRights": "Con tu rol no puedo responder esta pregunta.",
         "noOwnPerson": "No figuras como persona en este grupo, así que no hay asistencia propia.",
         "disabled": "El asistente está desactivado para este grupo. Un administrador puede activarlo en los ajustes.",
@@ -405,10 +507,18 @@
         "nothingToChange": "No hay nada que cambiar: el estado ya está puesto o el evento no lo permite (por ejemplo, el plazo ha pasado).",
         "tooManyChanges": "Serían {count} cambios. Por el chat van como máximo {max} a la vez. Acótalo, por ejemplo a un evento o a un grupo.",
         "absenceOutOfRange": "Registro una ausencia a partir de hoy y como máximo 6 meses por adelantado.",
-        "noAbsenceRights": "Con tu rol no puedes registrar ausencias planificadas aquí."
+        "noAbsenceRights": "Con tu rol no puedes registrar ausencias planificadas aquí.",
+        "noType": "Este grupo no tiene ningún tipo de evento con el que pueda crear eventos.",
+        "dateOutOfRange": "Solo creo o muevo eventos desde hoy hasta 6 meses en adelante.",
+        "eventLocked": "No cambio este evento: está archivado o fuera del límite (14 días atrás a 6 meses adelante).",
+        "eventsExist": "Estos días ya tienen un evento de este tipo.",
+        "noSongsForType": "Este tipo de evento no tiene obras.",
+        "songsNotFound": "No encuentro obras para «{name}».",
+        "cancelNeedsReason": "Solo cancelo un evento con un motivo. Escribe por ejemplo: «Cancela el ensayo del domingo, motivo: sala ocupada»."
       },
       "choice": {
-        "which": "¿A quién te refieres con «{name}»?"
+        "which": "¿A quién te refieres con «{name}»?",
+        "whichType": "¿Qué tipo de evento?"
       },
       "rate": {
         "me": "Tu asistencia",
@@ -484,6 +594,32 @@
         "affected": "{count, plural, =0 {Ningún evento próximo se ve afectado.} one {1 evento pasará a justificado.} other {{count} eventos pasarán a justificado.}}",
         "done": "Ausencia registrada.",
         "defaultReason": "Ausente"
+      },
+      "create": {
+        "title": "{count, plural, one {¿Crear 1 evento?} other {¿Crear {count} eventos?}}",
+        "place": "Lugar: {place}",
+        "skippedExisting": "{count, plural, one {1 día ya tiene un evento de este tipo y se omite.} other {{count} días ya tienen un evento de este tipo y se omiten.}}",
+        "skippedWindow": "{count, plural, one {1 día está en el pasado o a más de 6 meses.} other {{count} días están en el pasado o a más de 6 meses.}}",
+        "done": "{count, plural, one {1 evento creado.} other {{count} eventos creados.}}",
+        "undoHint": "Deshacer borra exactamente estos eventos nuevos."
+      },
+      "move": {
+        "title": "Mover evento",
+        "from": "Antes: {when}",
+        "to": "Nuevo: {when}",
+        "hint": "Los estados se mantienen. Quien tenga una ausencia el nuevo día queda justificado.",
+        "done": "Evento movido."
+      },
+      "songs": {
+        "title": "Obras del evento",
+        "added": "Nuevas: {names}",
+        "removed": "Se quitan: {names}",
+        "notFound": "No encontradas: {names}",
+        "done": "Obras guardadas."
+      },
+      "cancel": {
+        "title": "Cancelar evento",
+        "affected": "{count, plural, one {1 persona pasa a Justificado.} other {{count} personas pasan a Justificado.}}"
       }
     }
   }

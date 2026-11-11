@@ -140,6 +140,15 @@ class AssistantChatNotifier extends Notifier<AssistantChatState> {
         case AbsencePreviewReply(:final plan):
           final saved = await executor.applyAbsence(plan);
           done = ActionDoneReply(absencePlan: plan, absence: saved.absence, count: saved.count);
+        case CreatePreviewReply(:final plan):
+          final ids = await executor.applyCreate(plan);
+          done = ActionDoneReply(createPlan: plan, createdIds: ids, count: ids.length);
+        case MovePreviewReply(:final plan):
+          final restore = await executor.applyMove(plan);
+          done = ActionDoneReply(movePlan: plan, moveRestore: restore, count: 1);
+        case SongsPreviewReply(:final plan):
+          await executor.applySongs(plan);
+          done = ActionDoneReply(songsPlan: plan, count: plan.added.length + plan.removed.length);
       }
       _replace(index, reply.withState(ActionState.done));
       _add(AssistantMessage.assistant(done));
@@ -171,6 +180,12 @@ class AssistantChatNotifier extends Notifier<AssistantChatState> {
         await executor.revertStatus(reply.statusPlan!);
       } else if (reply.absence != null && reply.absencePlan != null) {
         await executor.revertAbsence(reply.absence!, reply.absencePlan!);
+      } else if (reply.createPlan != null) {
+        await executor.revertCreate(reply.createdIds);
+      } else if (reply.movePlan != null) {
+        await executor.revertMove(reply.movePlan!, reply.moveRestore);
+      } else if (reply.songsPlan != null) {
+        await executor.revertSongs(reply.songsPlan!);
       }
       _replace(index, reply.withUndo(UndoState.undone));
     } catch (_) {

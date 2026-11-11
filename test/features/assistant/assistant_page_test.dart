@@ -2,10 +2,12 @@ import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/assistant_providers.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
+import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/features/assistant/data/assistant_command.dart';
 import 'package:attendix/features/assistant/data/assistant_reply.dart';
 import 'package:attendix/features/assistant/presentation/pages/assistant_page.dart';
 import 'package:attendix/features/assistant/presentation/widgets/assistant_entry_card.dart';
+import 'package:attendix/features/attendance/presentation/widgets/songs_selection_sheet.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -186,6 +188,114 @@ void main() {
       // A cancelled preview cannot be saved any more.
       await notifier.confirm(1);
       expect(container.read(assistantChatNotifierProvider).messages.length, 2);
+    });
+  });
+
+  group('Termine (package 3)', () {
+    const probe = AttendanceType(id: 'p', name: 'Probe', startTime: '19:00', endTime: '21:00');
+
+    testWidgets('new Termine: list of days, skipped days, save', (tester) async {
+      final chat = AssistantChatState(messages: [
+        AssistantMessage.assistant(CreatePreviewReply(CreatePlan(
+          type: probe,
+          days: [DateTime(2026, 12, 2), DateTime(2026, 12, 9)],
+          title: 'Extraprobe',
+          place: 'Gemeindehaus',
+          skippedExisting: [DateTime(2026, 12, 16)],
+        ))),
+      ]);
+      _tall(tester);
+      await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
+      expect(find.text('2 Termine anlegen?'), findsOneWidget);
+      expect(find.text('Probe · Extraprobe'), findsOneWidget);
+      expect(find.text('19:00 – 21:00 Uhr'), findsOneWidget);
+      expect(find.text('Ort: Gemeindehaus'), findsOneWidget);
+      expect(find.textContaining('schon einen Termin dieses Typs'), findsOneWidget);
+      expect(find.text('Speichern'), findsOneWidget);
+    });
+
+    testWidgets('move, Werke and cancel previews', (tester) async {
+      final chat = AssistantChatState(messages: [
+        AssistantMessage.assistant(MovePreviewReply(MovePlan(
+          before: const Attendance(id: 7, date: '2026-11-18T11:00:00.000Z', typeId: 'p'),
+          title: 'Probe',
+          oldDay: DateTime(2026, 11, 18),
+          newDay: DateTime(2026, 11, 19),
+          oldStart: '19:00',
+          newStart: '19:00',
+        ))),
+        AssistantMessage.assistant(SongsPreviewReply(SongsPlan(
+          attendanceId: 7,
+          title: 'Probe',
+          date: DateTime(2026, 11, 18),
+          historyDate: '2026-11-18T11:00:00.000Z',
+          before: const [],
+          after: const [SongHistoryEntry(songId: 1, songName: 'Großer Gott')],
+          added: const ['Großer Gott'],
+          removed: const [],
+          notFound: const ['Nr. 999'],
+        ))),
+        AssistantMessage.assistant(StatusPreviewReply(StatusPlan(
+          self: false,
+          status: AttendanceStatus.excused,
+          reason: 'Saal belegt',
+          cancelTitle: 'Probe',
+          changes: [
+            for (var i = 0; i < 3; i++)
+              StatusChange(
+                personAttendanceId: 'pa$i',
+                attendanceId: 7,
+                personName: 'P$i',
+                title: 'Probe',
+                date: DateTime(2026, 11, 18),
+                oldStatus: AttendanceStatus.neutral,
+                oldNotes: null,
+                newStatus: AttendanceStatus.excused,
+              ),
+          ],
+        ))),
+      ]);
+      _tall(tester);
+      await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
+      expect(find.text('Termin verschieben'), findsOneWidget);
+      expect(find.textContaining('Bisher:'), findsOneWidget);
+      expect(find.textContaining('Neu: Donnerstag'), findsOneWidget);
+      expect(find.textContaining('Die Status bleiben'), findsOneWidget);
+      expect(find.text('Werke für den Termin'), findsOneWidget);
+      expect(find.text('Neu: Großer Gott'), findsOneWidget);
+      expect(find.text('Nicht gefunden: Nr. 999'), findsOneWidget);
+      expect(find.text('Termin absagen'), findsOneWidget);
+      expect(find.text('Grund: Saal belegt'), findsOneWidget);
+      expect(find.text('3 Personen werden auf Entschuldigt gesetzt.'), findsOneWidget);
+      expect(find.text('Speichern'), findsNWidgets(3));
+    });
+
+    testWidgets('created Termine can be undone', (tester) async {
+      final chat = AssistantChatState(messages: [
+        AssistantMessage.assistant(ActionDoneReply(
+          createPlan: CreatePlan(type: probe, days: [DateTime(2026, 12, 2)]),
+          createdIds: const [41],
+          count: 1,
+        )),
+      ]);
+      await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
+      expect(find.text('1 Termin angelegt.'), findsOneWidget);
+      expect(find.textContaining('löscht genau diese neuen Termine'), findsOneWidget);
+      expect(find.text('Rückgängig'), findsOneWidget);
+    });
+
+    testWidgets('a type question offers the types', (tester) async {
+      final chat = AssistantChatState(messages: [
+        AssistantMessage.assistant(ChoiceReply(kind: ChoiceKind.type, query: '', options: [
+          (label: 'Probe', command: CreateEventsCommand(dates: [DateTime(2026, 12, 2)], typeId: 'p')),
+          (label: 'Gottesdienst', command: CreateEventsCommand(dates: [DateTime(2026, 12, 2)], typeId: 'g')),
+        ])),
+        const AssistantMessage.assistant(NoticeReply(AssistantNotice.cancelNeedsReason)),
+      ]);
+      await tester.pumpWidget(_app(const AssistantPage(), enabled: true, chat: chat));
+      expect(find.text('Welcher Termintyp?'), findsOneWidget);
+      expect(find.text('Gottesdienst'), findsOneWidget);
+      expect(find.textContaining('nur mit Grund'), findsOneWidget);
     });
   });
 }

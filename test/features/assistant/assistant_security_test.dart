@@ -64,10 +64,24 @@ void main() {
     for (final write in ['signIn(', 'signOut(', 'updatePersonAttendance(', 'addAbsence(', 'excuseUpcomingAttendances(', 'deleteAbsence(', 'restoreOwnStatuses(']) {
       expect(runPart, isNot(contains('.$write')), reason: write);
     }
+    // Package 3 previews write nothing either.
+    for (final preview in ['_createPreview(', '_movePreview(', '_songsPreview(', '_cancelPreview(']) {
+      final body = _method(executor, 'Future<AssistantReply> $preview');
+      for (final write in [
+        ...['signIn(', 'signOut(', 'updatePersonAttendance(', 'addAbsence(', 'deleteAbsence('],
+        ...['updateAttendance(', 'deleteAttendance(', 'create(', 'syncAttendanceSongHistory(', 'updateHistory'],
+      ]) {
+        expect(body, isNot(contains('.$write')), reason: '$preview $write');
+        expect(body, isNot(contains(' $write')), reason: '$preview $write');
+      }
+    }
     // apply* is only called from confirm(), revert* only from undo().
-    expect(RegExp(r'executor\.apply').allMatches(notifier).length, 2);
-    expect(notifier.indexOf('executor.apply'), greaterThan(notifier.indexOf('Future<void> confirm(')));
-    expect(notifier.indexOf('executor.revert'), greaterThan(notifier.indexOf('Future<void> undo(')));
+    final confirm = _method(notifier, 'Future<void> confirm(');
+    final undo = _method(notifier, 'Future<void> undo(');
+    expect(RegExp(r'executor\.apply').allMatches(notifier).length, 5);
+    expect(RegExp(r'executor\.apply').allMatches(confirm).length, 5);
+    expect(RegExp(r'executor\.revert').allMatches(notifier).length, 5);
+    expect(RegExp(r'executor\.revert').allMatches(undo).length, 5);
   });
 
   test('changes: limits and rights are in the app, no delete of Termine or people', () {
@@ -78,9 +92,45 @@ void main() {
     expect(logic, contains('SetStatusCommand() => changesOthers'));
     expect(logic, contains('PlannedAbsenceCommand() => canManageAbsences'));
     final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
-    for (final forbidden in ['deleteAttendance', 'deletePlayer', 'archivePlayer', ".from('tenants')", ".from('tenantUsers')"]) {
+    for (final forbidden in ['deletePlayer', 'archivePlayer', 'deleteHistoryEntry', ".from(", "'archived':"]) {
       expect(executor, isNot(contains(forbidden)), reason: forbidden);
     }
+    // The only delete of a Termin is the undo of a creation, and only of the
+    // ids the chat created.
+    expect(RegExp(r'deleteAttendance\(').allMatches(executor).length, 1);
+    final revert = _method(executor, 'Future<void> revertCreate(');
+    expect(revert, contains('for (final id in createdIds)'));
+    expect(revert, contains('await _events.deleteAttendance(id);'));
+  });
+
+  test('package 3: limits, rights and the write paths of the screens', () {
+    final logic = File('lib/features/assistant/data/assistant_logic.dart').readAsStringSync();
+    final command = File('lib/features/assistant/data/assistant_command.dart').readAsStringSync();
+    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
+    expect(command, contains('assistantMaxNewEvents = 20'));
+    expect(command, contains('assistantMaxSongs = 15'));
+    expect(logic, contains('CreateEventsCommand() => canCreateEvents'));
+    expect(logic, contains('MoveEventCommand() => editsEvents'));
+    expect(logic, contains('SetSongsCommand() => editsEvents'));
+    expect(logic, contains('CancelEventCommand() => changesOthers'));
+    // Creating: the shared writer of both create pages, permission again in
+    // the write path, writer bound to the tenant of the chat.
+    final create = _method(executor, 'Future<List<int>> applyCreate(');
+    expect(create, contains('AttendanceCreateWriter.withRead(ref.read)'));
+    expect(create, contains('if (!await _mayCreate())'));
+    expect(create, contains('writer.tenant!.id != _tenantId'));
+    expect(create.indexOf('_mayCreate()'), lessThan(create.indexOf('writer.create(')));
+    // Moving: absences loaded before the first write (SOL_FIX38), statuses kept.
+    final move = _method(executor, 'Future<List<RestoreRow>> applyMove(');
+    expect(move.indexOf('getAbsencesForTenant()'), lessThan(move.indexOf('updateAttendance(')));
+    expect(move, contains('resetStatuses: false'));
+    // Archived and out-of-window Termine are never changed.
+    for (final preview in ['_movePreview(', '_songsPreview(', '_cancelPreview(']) {
+      expect(_method(executor, 'Future<AssistantReply> $preview'), contains('if (_locked(a!))'), reason: preview);
+    }
+    // Cancelling only with a reason.
+    expect(_method(executor, 'Future<AssistantReply> _cancelPreview('),
+        startsWith('Future<AssistantReply> _cancelPreview(CancelEventCommand c) async {\n    if (c.reason == null)'));
   });
 
   test('undo of own rows checks the tenant and the own account', () {
@@ -98,4 +148,12 @@ void main() {
     expect(RegExp(r'ownAcrossTenants: true').allMatches(apply).length, 2);
     expect(apply, contains('acrossTenants: true'));
   });
+}
+
+/// Body of the method starting with [signature] (up to the next member).
+String _method(String src, String signature) {
+  final start = src.indexOf(signature);
+  expect(start, greaterThanOrEqualTo(0), reason: signature);
+  final next = RegExp(r'\n  (?:Future<|void |static |bool |AssistantReply |String\? |DateTime )').firstMatch(src.substring(start + 1));
+  return next == null ? src.substring(start) : src.substring(start, start + 1 + next.start);
 }
