@@ -69,9 +69,14 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
     final upcoming = upcomingAsync.valueOrNull ?? const <ProtocolAttendance>[];
     // A protocol started ahead of its meeting stays under "Geplant" only.
     final upcomingIds = upcoming.map((a) => a.id).toSet();
-    final past = (protocolsAsync.valueOrNull ?? const <Protocol>[])
-        .where((x) => x.attendanceId != null && !upcomingIds.contains(x.attendanceId))
-        .toList();
+    final protocols = protocolsAsync.valueOrNull ?? const <Protocol>[];
+    final past = protocols.where((x) => x.attendanceId != null && !upcomingIds.contains(x.attendanceId)).toList();
+    // Today's meeting stays under "Geplant" until tomorrow: once its
+    // protocol is published the row opens the protocol.
+    final publishedIds = {
+      for (final x in protocols)
+        if (x.status == 'published' && x.attendanceId != null) x.attendanceId!,
+    };
     // Only who may open a Termin gets there (others are sent back to the list).
     final canOpenEvent = ref.watch(effectiveRoleProvider).canAddAttendance;
     final failed = upcomingAsync.hasError || protocolsAsync.hasError;
@@ -87,7 +92,9 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
     String plannedSubtitle(ProtocolAttendance att) {
       final tops = planTops(att.fields);
       final parts = [formatShortWeekdayDate(att.date)];
-      if (tops.tops.isEmpty) {
+      if (publishedIds.contains(att.id)) {
+        parts.add(isLeader ? l10n.rdTeamProtocolPublished : l10n.rdTeamProtocolRead);
+      } else if (tops.tops.isEmpty) {
         parts.add(l10n.rdTeamNoTopicsYet);
       } else {
         parts.add(l10n.rdTeamTopicsCount(tops.tops.length));
@@ -141,8 +148,10 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
                   leading: _dateTile(att.date, highlight: att == upcoming.first),
                   title: attendanceTitle(att.typeInfo, _type(att.typeId, types)),
                   subtitle: plannedSubtitle(att),
-                  showChevron: canOpenEvent,
-                  onTap: canOpenEvent ? () => context.push(RedesignRoutes.betaTarget('/attendance/${att.id}')) : null,
+                  showChevron: canOpenEvent || publishedIds.contains(att.id),
+                  onTap: publishedIds.contains(att.id)
+                      ? () => context.push('/settings/protocol/${att.id}')
+                      : (canOpenEvent ? () => context.push(RedesignRoutes.betaTarget('/attendance/${att.id}')) : null),
                 ),
             ],
           ),
