@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.121.4",
+      "date": "11.11.2026",
+      "changes": [
+        "💄 Beta: „Meine Stammdaten“ aufgeräumt – Namenskarte mit Passbild wie bei „Neue Person“, Handynummer unter Kontakt, Blatt nur so hoch wie nötig"
+      ]
+    },
+    {
       "version": "0.121.3",
       "date": "11.11.2026",
       "changes": [
