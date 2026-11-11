@@ -73,6 +73,10 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
           const SizedBox(height: 4),
           Text(l10n.rdTypeUsage(_usageCount), style: RdType.meta(p, size: 13)),
         ],
+        if (_rdDeletedButUsed) ...[
+          const SizedBox(height: 12),
+          RdInfoCard(icon: Icons.visibility_off_outlined, text: l10n.rdTypeDeleted),
+        ],
         if (_rdInvalid) ...[
           const SizedBox(height: 12),
           RdInfoCard(icon: Icons.error_outline, text: l10n.redesignTypeInvalid),
@@ -184,14 +188,26 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
         const SizedBox(height: 24),
         RdGroupedList(
           children: [
-            toggle(l10n.rdTypeOffer, l10n.rdTypeOfferHint, _visible, (v) => _visible = v, key: const Key('rd-type-offer')),
-            RdListRow(
-              leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
-              title: l10n.redesignTypeDelete,
-              titleColor: p.absent,
-              showChevron: false,
-              onTap: _deleteType,
-            ),
+            // No "Für neue Termine anbieten" switch: deleting a type that
+            // existing Termine use hides it instead (they keep it).
+            if (_rdDeletedButUsed)
+              RdListRow(
+                key: const Key('rd-type-restore'),
+                leading: const RdRowIcon(Icons.restore),
+                title: l10n.rdTypeRestore,
+                subtitle: l10n.rdTypeRestoreHint,
+                showChevron: false,
+                onTap: _rdRestoreType,
+              )
+            else
+              RdListRow(
+                key: const Key('rd-type-delete'),
+                leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
+                title: l10n.redesignTypeDelete,
+                titleColor: p.absent,
+                showChevron: false,
+                onTap: _rdDeleteType,
+              ),
           ],
         ),
       ],
@@ -395,6 +411,60 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
     );
     if (picked == null || !mounted) return;
     _rdSet(() => _defaultStatus = picked);
+  }
+
+  /// Deleted while existing Termine still use it: only those keep it.
+  bool get _rdDeletedButUsed => !_visible && _usageCount > 0;
+
+  /// "Terminart löschen": unused → really deleted; used by existing
+  /// Termine → hidden for new ones (the classic delete would remove those
+  /// Termine with it).
+  Future<void> _rdDeleteType() async {
+    if (_usageCount == 0) return _deleteType();
+    final l10n = context.l10n;
+    final confirmed = await DialogHelper.showConfirmation(
+      context,
+      title: l10n.typeSettingsDeleteType,
+      message: l10n.rdTypeDeleteUsedMessage(_nameController.text.trim(), _usageCount),
+      confirmText: l10n.commonDelete,
+      cancelText: l10n.commonCancel,
+      isDestructive: true,
+    );
+    if (!confirmed || !mounted) return;
+    final ok = await _rdSetVisible(false);
+    if (!mounted || !ok) return;
+    ToastHelper.showSuccess(context, l10n.typeSettingsDeleted);
+    context.pop();
+  }
+
+  Future<void> _rdRestoreType() async {
+    final ok = await _rdSetVisible(true);
+    if (ok && mounted) ToastHelper.showSuccess(context, context.l10n.rdTypeRestored);
+  }
+
+  /// Stores `visible` right away (after any queued save).
+  Future<bool> _rdSetVisible(bool visible) async {
+    final notifier = ref.read(attendanceTypeNotifierProvider.notifier);
+    final id = widget.typeId!;
+    final previous = _visible;
+    _update(() => _visible = visible);
+    try {
+      final save = _rdChain.then((_) => notifier.updateType(id, {'visible': visible}));
+      _rdChain = save.then((_) {}, onError: (_) {});
+      final updated = await save;
+      if (updated == null) throw StateError('update failed');
+      _rdInvalidateCaches();
+      return true;
+    } on DemoModeException {
+      if (mounted) _update(() => _visible = previous);
+      return false;
+    } catch (_) {
+      if (mounted) {
+        _update(() => _visible = previous);
+        ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
+      }
+      return false;
+    }
   }
 
   /// Saves shortly after the last change (typing in the name).

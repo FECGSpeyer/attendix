@@ -11488,6 +11488,24 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdTypeDefaultStatus => 'Vorbelegt mit';
 
   @override
+  String rdTypeDeleteUsedMessage(Object name, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bestehenden Terminen',
+      one: 'einem bestehenden Termin',
+    );
+    return '„$name“ hängt an $_temp0. Diese behalten die Art, für neue Termine steht sie nicht mehr zur Wahl.';
+  }
+
+  @override
+  String get rdTypeDeleted =>
+      'Gelöscht: steht für neue Termine nicht mehr zur Wahl. Bestehende Termine behalten sie.';
+
+  @override
+  String get rdTypeDeletedSection => 'Gelöscht, nur an bestehenden Terminen';
+
+  @override
   String get rdTypeDuty => 'Dienste einteilen';
 
   @override
@@ -11563,13 +11581,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdTypeNewTitle => 'Neue Terminart';
 
   @override
-  String get rdTypeOffer => 'Für neue Termine anbieten';
-
-  @override
-  String get rdTypeOfferHint =>
-      'Aus: steht beim Anlegen nicht mehr zur Wahl, bestehende Termine bleiben';
-
-  @override
   String get rdTypeOn => 'an';
 
   @override
@@ -11612,6 +11623,15 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get rdTypeRestore => 'Wiederherstellen';
+
+  @override
+  String get rdTypeRestoreHint => 'Wieder für neue Termine anbieten';
+
+  @override
+  String get rdTypeRestored => 'Terminart wiederhergestellt';
 
   @override
   String get rdTypeSignup => 'Anmeldefragen';

@@ -14265,6 +14265,24 @@
   "@rdTypeDefaultStatus": {
     "description": "rdType.defaultStatus"
   },
+  "rdTypeDeleteUsedMessage": "„{name}“ hängt an {count, plural, one {einem bestehenden Termin} other {{count} bestehenden Terminen}}. Diese behalten die Art, für neue Termine steht sie nicht mehr zur Wahl.",
+  "@rdTypeDeleteUsedMessage": {
+    "description": "rdType.deleteUsedMessage",
+    "placeholders": {
+      "name": {},
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTypeDeleted": "Gelöscht: steht für neue Termine nicht mehr zur Wahl. Bestehende Termine behalten sie.",
+  "@rdTypeDeleted": {
+    "description": "rdType.deleted"
+  },
+  "rdTypeDeletedSection": "Gelöscht, nur an bestehenden Terminen",
+  "@rdTypeDeletedSection": {
+    "description": "rdType.deletedSection"
+  },
   "rdTypeDuty": "Dienste einteilen",
   "@rdTypeDuty": {
     "description": "rdType.duty"
@@ -14354,14 +14372,6 @@
   "@rdTypeNewTitle": {
     "description": "rdType.newTitle"
   },
-  "rdTypeOffer": "Für neue Termine anbieten",
-  "@rdTypeOffer": {
-    "description": "rdType.offer"
-  },
-  "rdTypeOfferHint": "Aus: steht beim Anlegen nicht mehr zur Wahl, bestehende Termine bleiben",
-  "@rdTypeOfferHint": {
-    "description": "rdType.offerHint"
-  },
   "rdTypeOn": "an",
   "@rdTypeOn": {
     "description": "rdType.on"
@@ -14407,6 +14417,18 @@
         "type": "num"
       }
     }
+  },
+  "rdTypeRestore": "Wiederherstellen",
+  "@rdTypeRestore": {
+    "description": "rdType.restore"
+  },
+  "rdTypeRestoreHint": "Wieder für neue Termine anbieten",
+  "@rdTypeRestoreHint": {
+    "description": "rdType.restoreHint"
+  },
+  "rdTypeRestored": "Terminart wiederhergestellt",
+  "@rdTypeRestored": {
+    "description": "rdType.restored"
   },
   "rdTypeSignup": "Anmeldefragen",
   "@rdTypeSignup": {

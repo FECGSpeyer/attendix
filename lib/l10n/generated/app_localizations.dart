@@ -18700,6 +18700,24 @@ abstract class AppLocalizations {
   /// **'Vorbelegt mit'**
   String get rdTypeDefaultStatus;
 
+  /// rdType.deleteUsedMessage
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ hängt an {count, plural, one {einem bestehenden Termin} other {{count} bestehenden Terminen}}. Diese behalten die Art, für neue Termine steht sie nicht mehr zur Wahl.'**
+  String rdTypeDeleteUsedMessage(Object name, num count);
+
+  /// rdType.deleted
+  ///
+  /// In de, this message translates to:
+  /// **'Gelöscht: steht für neue Termine nicht mehr zur Wahl. Bestehende Termine behalten sie.'**
+  String get rdTypeDeleted;
+
+  /// rdType.deletedSection
+  ///
+  /// In de, this message translates to:
+  /// **'Gelöscht, nur an bestehenden Terminen'**
+  String get rdTypeDeletedSection;
+
   /// rdType.duty
   ///
   /// In de, this message translates to:
@@ -18826,18 +18844,6 @@ abstract class AppLocalizations {
   /// **'Neue Terminart'**
   String get rdTypeNewTitle;
 
-  /// rdType.offer
-  ///
-  /// In de, this message translates to:
-  /// **'Für neue Termine anbieten'**
-  String get rdTypeOffer;
-
-  /// rdType.offerHint
-  ///
-  /// In de, this message translates to:
-  /// **'Aus: steht beim Anlegen nicht mehr zur Wahl, bestehende Termine bleiben'**
-  String get rdTypeOfferHint;
-
   /// rdType.on
   ///
   /// In de, this message translates to:
@@ -18891,6 +18897,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, =0 {an} one {1 Erinnerung} other {{count} Erinnerungen}}'**
   String rdTypeRemindersValue(num count);
+
+  /// rdType.restore
+  ///
+  /// In de, this message translates to:
+  /// **'Wiederherstellen'**
+  String get rdTypeRestore;
+
+  /// rdType.restoreHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wieder für neue Termine anbieten'**
+  String get rdTypeRestoreHint;
+
+  /// rdType.restored
+  ///
+  /// In de, this message translates to:
+  /// **'Terminart wiederhergestellt'**
+  String get rdTypeRestored;
 
   /// rdType.signup
   ///
