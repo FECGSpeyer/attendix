@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
@@ -152,7 +153,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
     if (_saving) return;
     setState(() => _saving = true);
     final description = _description.text.trim();
-    final shouldNotify = _notify && _showNotifyToggle;
+    final shouldNotify = (_notify || ref.read(redesignEnabledProvider)) && _showNotifyToggle;
     final notifier = ref.read(teamTaskNotifierProvider.notifier);
     try {
       TeamTask saved;
@@ -323,7 +324,8 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                             .toList(),
                         onChanged: (v) => setState(() => _priority = v ?? 'medium'),
                       ),
-                      if (_showNotifyToggle)
+                      // Beta: the assignee always gets the notice, no switch.
+                      if (_showNotifyToggle && !ref.watch(redesignEnabledProvider))
                         SwitchListTile.adaptive(
                           value: _notify,
                           onChanged: (v) => setState(() => _notify = v),

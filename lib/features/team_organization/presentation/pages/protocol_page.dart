@@ -15,7 +15,6 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
-import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
@@ -1232,12 +1231,8 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                       children: [
                         Expanded(
                           child: RdBackLink(
-                            label: _isLeader ? l10n.teamOrgTitle : l10n.commonBack,
-                            onTap: () => context.canPop()
-                                ? context.pop()
-                                : context.go(_isLeader
-                                    ? '/settings/team-organization?tab=protocols'
-                                    : RedesignRoutes.events),
+                            label: l10n.rdTeamTitle,
+                            onTap: () => context.canPop() ? context.pop() : context.go('/settings/team-organization'),
                           ),
                         ),
                         if (ready)
@@ -1322,7 +1317,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: RdPrimaryButton(
-                      label: _isPublished ? l10n.protocolRepublish : l10n.protocolPublishShort,
+                      label: _isPublished ? l10n.protocolRepublish : l10n.rdTeamFinishMeeting,
                       onPressed: _openPublish,
                     ),
                   ),

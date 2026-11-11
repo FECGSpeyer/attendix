@@ -11511,6 +11511,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdTeamEmptyTitle => 'Noch keine Besprechung';
 
   @override
+  String get rdTeamFinishMeeting => 'Abschließen';
+
+  @override
   String get rdTeamHideDone => 'Besprochene Themen ausblenden';
 
   @override
@@ -11591,6 +11594,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdTeamPlannedGroup => 'Eingeplant';
 
   @override
+  String get rdTeamPrepareProtocol => 'Protokoll vorbereiten';
+
+  @override
+  String get rdTeamPrepareProtocolHint =>
+      'Notizen, Ergebnisse und Aufgaben je Thema';
+
+  @override
   String get rdTeamProtocolPublished => 'Protokoll freigegeben';
 
   @override
@@ -11600,6 +11610,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String rdTeamShowDone(Object count) {
     return 'Besprochene Themen anzeigen ($count)';
   }
+
+  @override
+  String get rdTeamStartMeeting => 'Besprechung starten';
 
   @override
   String get rdTeamSuggestHint => 'Deine Vorschläge und was daraus wurde';

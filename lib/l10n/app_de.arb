@@ -14296,6 +14296,10 @@
   "@rdTeamEmptyTitle": {
     "description": "rdTeam.emptyTitle"
   },
+  "rdTeamFinishMeeting": "Abschließen",
+  "@rdTeamFinishMeeting": {
+    "description": "rdTeam.finishMeeting"
+  },
   "rdTeamHideDone": "Besprochene Themen ausblenden",
   "@rdTeamHideDone": {
     "description": "rdTeam.hideDone"
@@ -14390,6 +14394,14 @@
   "@rdTeamPlannedGroup": {
     "description": "rdTeam.plannedGroup"
   },
+  "rdTeamPrepareProtocol": "Protokoll vorbereiten",
+  "@rdTeamPrepareProtocol": {
+    "description": "rdTeam.prepareProtocol"
+  },
+  "rdTeamPrepareProtocolHint": "Notizen, Ergebnisse und Aufgaben je Thema",
+  "@rdTeamPrepareProtocolHint": {
+    "description": "rdTeam.prepareProtocolHint"
+  },
   "rdTeamProtocolPublished": "Protokoll freigegeben",
   "@rdTeamProtocolPublished": {
     "description": "rdTeam.protocolPublished"
@@ -14404,6 +14416,10 @@
     "placeholders": {
       "count": {}
     }
+  },
+  "rdTeamStartMeeting": "Besprechung starten",
+  "@rdTeamStartMeeting": {
+    "description": "rdTeam.startMeeting"
   },
   "rdTeamSuggestHint": "Deine Vorschläge und was daraus wurde",
   "@rdTeamSuggestHint": {
