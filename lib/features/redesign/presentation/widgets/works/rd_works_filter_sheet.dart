@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/providers/song_filter_providers.dart';
 import '../../../../../core/providers/song_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../data/models/song/song.dart';
 import '../../../../../data/models/song/song_filter.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../../data/providers/rd_works_filter.dart';
 import '../../../data/rd_works_logic.dart';
 import '../rd_widgets.dart';
@@ -45,7 +47,9 @@ List<SongSortOption> rdWorksSortOptions(SongSortOption current) => [
 
 /// "Sortieren & Filtern" (canvas "Werke neu gedacht", board "Filter"):
 /// changes apply at once, the button shows how many Werke are left. Leads
-/// filter on missing Noten, members on their own part.
+/// filter on missing Noten, members on their own part. With Sammlungen the
+/// [categories] are chosen here (the chips on the page are the Sammlungen),
+/// and leads ([manageCategories]) find "Kategorien verwalten" next to them.
 Future<void> showRdWorksFilterSheet(
   BuildContext context, {
   required SongsListData data,
@@ -53,6 +57,8 @@ Future<void> showRdWorksFilterSheet(
   required int? groupId,
   required Map<int, int>? playerCounts,
   required String query,
+  List<SongCategory> categories = const [],
+  bool manageCategories = false,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -74,6 +80,8 @@ Future<void> showRdWorksFilterSheet(
                 groupId: groupId,
                 playerCounts: playerCounts,
                 query: query,
+                categories: categories,
+                manageCategories: manageCategories,
               ),
         ),
   );
@@ -87,6 +95,8 @@ class _FilterSheet extends ConsumerWidget {
     required this.groupId,
     required this.playerCounts,
     required this.query,
+    required this.categories,
+    required this.manageCategories,
   });
 
   final ScrollController controller;
@@ -95,6 +105,8 @@ class _FilterSheet extends ConsumerWidget {
   final int? groupId;
   final Map<int, int>? playerCounts;
   final String query;
+  final List<SongCategory> categories;
+  final bool manageCategories;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -150,6 +162,8 @@ class _FilterSheet extends ConsumerWidget {
                 notifier
                   ..reset()
                   ..setSortOption(SongSortOption.numberAsc);
+                // Here the category is one of the filters.
+                if (categories.isNotEmpty) notifier.setCategory(null);
                 ref.read(rdWorksOnlyProvider.notifier).state = const {};
               },
             ),
@@ -169,6 +183,36 @@ class _FilterSheet extends ConsumerWidget {
               ),
           ],
         ),
+        if (categories.isNotEmpty || manageCategories) ...[
+          const SizedBox(height: 20),
+          RdGroupLabel(l10n.collectionsCategory),
+          if (categories.isNotEmpty)
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final c in categories)
+                  RdChoiceChip(
+                    key: Key('rd-works-filter-category-${c.id}'),
+                    label: c.name,
+                    selected: filter.category == c.id,
+                    onTap: () => notifier.setCategory(filter.category == c.id ? null : c.id),
+                  ),
+              ],
+            ),
+          if (manageCategories)
+            Padding(
+              padding: EdgeInsets.only(top: categories.isEmpty ? 0 : 8),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: RdTextLink(
+                  key: const Key('rd-works-categories-manage'),
+                  label: l10n.rdWmManageCategories,
+                  onTap: () => showSongCategoriesSheet(context),
+                ),
+              ),
+            ),
+        ],
         const SizedBox(height: 20),
         RdGroupLabel(l10n.redesignWorksOnly),
         Wrap(

@@ -120,11 +120,9 @@ Future<void> showRdSharingSheet(BuildContext context) => showRdSettingsSheet<voi
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            RdSheetHead(
-              title: ctx.l10n.rdAdminSharing,
-              cancel: false,
-              onDone: () => Navigator.of(ctx).pop(),
-            ),
+            // One switch that saves at once (and, when on, the link to
+            // copy): no head repeating its title and no "Fertig", the
+            // sheet closes by swiping down or tapping outside.
             const RdTenantSettingsBlock(sections: [RdTenantSettings.sharing]),
           ],
         ),
