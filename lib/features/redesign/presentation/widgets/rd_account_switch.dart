@@ -148,6 +148,7 @@ Future<void> showRdAccountSwitchSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true,
+    useSafeArea: true,
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
@@ -349,6 +350,7 @@ Future<bool?> showRdAccountLoginSheet(BuildContext context, {String? email}) {
   return showModalBottomSheet<bool>(
     context: context,
     useRootNavigator: true,
+    useSafeArea: true,
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,

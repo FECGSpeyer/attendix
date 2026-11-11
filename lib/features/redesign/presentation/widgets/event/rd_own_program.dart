@@ -169,6 +169,7 @@ class RdOwnProgramSection extends ConsumerWidget {
     final action = await showModalBottomSheet<Object>(
       context: context,
       useRootNavigator: true,
+      useSafeArea: true,
       isScrollControlled: true,
       showDragHandle: true,
       backgroundColor: context.rd.bg,

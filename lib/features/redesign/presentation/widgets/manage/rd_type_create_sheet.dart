@@ -16,18 +16,37 @@ import '../rd_widgets.dart';
 /// Beta "Neue Terminart": a name and "Startet wie" (one of the group's
 /// types, copied with everything switched on, or "Leer"). Returns the id
 /// of the created type; the caller opens its page.
+/// The "Anlegen" button stays pinned above the keyboard; the sheet has a
+/// close button and stays below the status bar.
 Future<String?> showRdTypeCreateSheet(BuildContext context) {
   final l10n = context.l10n;
+  final formKey = GlobalKey<_RdTypeCreateFormState>();
+  // Not disposed: the pinned button may still listen during the closing
+  // animation; it holds no resources and is collected with the sheet.
+  final busy = ValueNotifier<bool>(false);
   return showRdPlanSheet<String>(
     context,
     title: l10n.rdTypeNewTitle,
-    builder: (ctx, pop) => [_RdTypeCreateForm(onCreated: pop)],
+    builder: (ctx, pop) => [_RdTypeCreateForm(key: formKey, busy: busy, onCreated: pop)],
+    footer:
+        (ctx, pop) => ValueListenableBuilder<bool>(
+          valueListenable: busy,
+          builder:
+              (_, isBusy, __) => RdPrimaryButton(
+                key: const Key('rd-type-new-create'),
+                label: l10n.rdTypeNewCreate,
+                loading: isBusy,
+                onPressed: isBusy ? null : () => formKey.currentState?._create(),
+              ),
+        ),
   );
 }
 
 class _RdTypeCreateForm extends ConsumerStatefulWidget {
-  const _RdTypeCreateForm({required this.onCreated});
+  const _RdTypeCreateForm({super.key, required this.busy, required this.onCreated});
 
+  /// Shared with the pinned "Anlegen" button of the sheet.
+  final ValueNotifier<bool> busy;
   final void Function(String id) onCreated;
 
   @override
@@ -40,7 +59,11 @@ class _RdTypeCreateFormState extends ConsumerState<_RdTypeCreateForm> {
   /// Id of the type to copy; null = "Leer". Starts with the first type.
   String? _template;
   bool _templateSet = false;
-  bool _busy = false;
+  bool get _busy => widget.busy.value;
+  set _busyValue(bool v) {
+    widget.busy.value = v;
+    setState(() {});
+  }
 
   @override
   void dispose() {
@@ -57,15 +80,14 @@ class _RdTypeCreateFormState extends ConsumerState<_RdTypeCreateForm> {
       return;
     }
     final notifier = ref.read(attendanceTypeNotifierProvider.notifier);
-    setState(() => _busy = true);
+    _busyValue = true;
     try {
       final template = _template;
       final AttendanceType created;
       if (template != null) {
         created = await notifier.copyType(template, name);
       } else {
-        final data = AttendanceTypeRepository.buildInsertData(buildNewAttendanceType(name), 0)
-          ..remove('tenant_id');
+        final data = AttendanceTypeRepository.buildInsertData(buildNewAttendanceType(name), 0)..remove('tenant_id');
         created = await notifier.createTypeFromData({...data, 'manage_songs': true, 'place_enabled': true});
       }
       if (!mounted) return;
@@ -76,7 +98,7 @@ class _RdTypeCreateFormState extends ConsumerState<_RdTypeCreateForm> {
     } catch (_) {
       if (mounted) ToastHelper.showError(context, l10n.typeSettingsCreateFailed);
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) _busyValue = false;
     }
   }
 
@@ -97,9 +119,7 @@ class _RdTypeCreateFormState extends ConsumerState<_RdTypeCreateForm> {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
-    final types = (ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
-        .where((t) => t.id != null)
-        .toList();
+    final types = (ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[]).where((t) => t.id != null).toList();
     if (!_templateSet && types.isNotEmpty) {
       _templateSet = true;
       _template = types.first.id;
@@ -142,21 +162,9 @@ class _RdTypeCreateFormState extends ConsumerState<_RdTypeCreateForm> {
         const SizedBox(height: 16),
         RdGroupLabel(l10n.rdTypeNewStartsLike),
         RdGroupedList(
-          children: [
-            for (final t in types) option(t.id, t.name, _summary(t)),
-            option(null, l10n.rdTypeNewEmpty, l10n.rdTypeNewEmptyHint),
-          ],
+          children: [for (final t in types) option(t.id, t.name, _summary(t)), option(null, l10n.rdTypeNewEmpty, l10n.rdTypeNewEmptyHint)],
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(4, 8, 4, 16),
-          child: Text(l10n.rdTypeNewStartsLikeHint, style: RdType.meta(p, size: 13)),
-        ),
-        RdPrimaryButton(
-          key: const Key('rd-type-new-create'),
-          label: l10n.rdTypeNewCreate,
-          loading: _busy,
-          onPressed: _busy ? null : _create,
-        ),
+        Padding(padding: const EdgeInsets.fromLTRB(4, 8, 4, 0), child: Text(l10n.rdTypeNewStartsLikeHint, style: RdType.meta(p, size: 13))),
       ],
     );
   }
