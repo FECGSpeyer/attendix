@@ -134,7 +134,7 @@ class RdLeaderToday extends ConsumerWidget {
     );
   }
 
-  /// "Geburtstag: Lea (Sa)" or "Geburtstage: Lea (Sa), Jonas (Mo)" for
+  /// "Geburtstag: Lea (morgen)" or "Geburtstage: Lea (morgen), Jonas (Sa 14.11.)" for
   /// the coming 7 days.
   String? _birthdayLine(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
@@ -142,9 +142,15 @@ class RdLeaderToday extends ConsumerWidget {
     final soon = birthdays.where((b) => b.daysOffset >= 0 && b.daysOffset <= 7).toList()
       ..sort((a, b) => a.daysOffset.compareTo(b.daysOffset));
     if (soon.isEmpty) return null;
-    String day(BirthdayEntry b) => b.daysOffset == 0
-        ? l10n.redesignTodayDayToday
-        : DateFormat.E(currentIntlLocale()).format(b.date).replaceAll('.', '');
+    // Always upcoming (0–7 days): "heute", "morgen" or "Do 12.11." so it
+    // never reads like last week's Thursday.
+    final locale = currentIntlLocale();
+    String day(BirthdayEntry b) => switch (b.daysOffset) {
+          0 => l10n.redesignPersonToday,
+          1 => l10n.redesignPersonTomorrow,
+          _ => '${DateFormat.E(locale).format(b.date).replaceAll('.', '')} '
+              '${DateFormat.Md(locale).format(b.date)}',
+        };
     if (soon.length == 1) return l10n.redesignTodayBirthday(soon.first.person.firstName, day(soon.first));
     return l10n.redesignTodayBirthdays(
       soon.map((b) => '${b.person.firstName} (${day(b)})').join(', '),

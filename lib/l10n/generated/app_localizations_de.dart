@@ -16497,12 +16497,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String redesignTodayBirthday(Object name, Object day) {
-    return 'Geburtstag: $name ($day)';
+    return 'Anstehender Geburtstag: $name ($day)';
   }
 
   @override
   String redesignTodayBirthdays(Object list) {
-    return 'Geburtstage: $list';
+    return 'Anstehende Geburtstage: $list';
   }
 
   @override
