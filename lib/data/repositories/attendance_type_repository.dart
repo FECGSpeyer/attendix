@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/utils/type_circle.dart';
 import '../models/attendance/attendance.dart';
 import 'base_repository.dart';
 
@@ -7,7 +8,41 @@ import 'base_repository.dart';
 class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository {
   AttendanceTypeRepository(super.ref);
 
-  /// Get all attendance types for current tenant, ordered by index
+  /// Single persons of each type's circle (`relevant_persons`, next to the
+  /// groups in `relevant_groups`), by type id; types without any are left out.
+  Future<Map<String, List<int>>> getCirclePersons() async {
+    try {
+      final response = await supabase
+          .from('attendance_types')
+          .select('id, relevant_persons')
+          .eq('tenant_id', currentTenantId);
+      return {
+        for (final row in response as List)
+          if (typeCirclePersonsFromJson(row['relevant_persons']).isNotEmpty)
+            row['id'].toString(): typeCirclePersonsFromJson(row['relevant_persons']),
+      };
+    } catch (e, stack) {
+      handleError(e, stack, 'getCirclePersons');
+      rethrow;
+    }
+  }
+
+  /// Sets who belongs to a type's circle: groups and single persons (both
+  /// empty = everyone).
+  Future<void> updateCircle(String id, {required List<int> groups, required List<int> persons}) async {
+    ensureNotDemo('updateCircle'); // DEMO_GUARD
+    try {
+      await supabase
+          .from('attendance_types')
+          .update({'relevant_groups': groups, 'relevant_persons': persons})
+          .eq('id', id)
+          .eq('tenant_id', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'updateCircle');
+      rethrow;
+    }
+  }
+
   /// Raw attendance_types rows of the tenant (person history labels).
   Future<List<Map<String, dynamic>>> getTypeRows() async {
     try {

@@ -17,6 +17,7 @@ import '../../../../core/utils/duty_utils.dart';
 import '../../../../core/utils/helper_member.dart';
 import '../../../../core/utils/shift_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../core/utils/type_circle.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
@@ -41,14 +42,17 @@ List<AttendanceType> protocolAttendanceTypes(List<AttendanceType> types, List<Pr
 List<Map<String, dynamic>> personsForAttendanceType(
   List<Map<String, dynamic>> persons,
   AttendanceType type,
-  List<ExtraField> extraFields,
-) {
-  var result = persons.where((p) {
-    final groups = type.relevantGroups;
-    if (groups == null || groups.isEmpty) return true;
-    final instrument = (p['instrument'] as num?)?.toInt();
-    return instrument != null && groups.contains(instrument);
-  }).toList();
+  List<ExtraField> extraFields, {
+  List<int> circlePersons = const [],
+}) {
+  var result = persons
+      .where((p) => typeCircleCovers(
+            type.relevantGroups,
+            circlePersons,
+            groupId: (p['instrument'] as num?)?.toInt(),
+            personId: (p['id'] as num?)?.toInt(),
+          ))
+      .toList();
   final filter = type.additionalFieldsFilter;
   final key = filter?['key']?.toString();
   final field = key == null ? null : extraFields.where((f) => f.id == key).firstOrNull;
@@ -169,11 +173,6 @@ List<Map<String, dynamic>> newPersonAttendanceRows(
 /// types have "Protokoll & Tagesordnung") and the day, then creates the
 /// Termin with its persons. Returns the new Termin id, or null.
 Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref) async {
-  // UI_TENANT_HOIST: bind tenant + repositories before the first await.
-  final repo = ref.read(protocolRepositoryWithTenantProvider);
-  final tenant = ref.read(currentTenantProvider);
-  final absenceRepo = ref.read(playerAbsenceRepositoryWithTenantProvider);
-  final dutyRepo = ref.read(dutyRepositoryWithTenantProvider);
   List<AttendanceType> types;
   try {
     final all = await ref.read(attendanceTypesProvider.future);
@@ -239,66 +238,7 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
   }
 
   try {
-    // Ionic: is_org_plan = type.is_default_org_plan
-    var isOrgPlan = false;
-    try {
-      final planTypes = await ref.read(planAttendanceTypesProvider.future);
-      isOrgPlan = planTypes.any((t) => t.id == type.id && t.isDefaultOrgPlan);
-    } catch (e, st) {
-      ErrorReporter.report(e, st, where: 'quick_create_attendance');
-    }
-    final results = await Future.wait([
-      // Organisation field values are shared across the organisation's
-      // groups; merge them so the type's field filter sees them.
-      repo.getPersonsForNewAttendance(
-          withSharedFields: type.additionalFieldsFilter != null),
-      absenceRepo
-          .getAbsencesForTenant()
-          .catchError((_) => <PlayerAbsence>[]),
-      dutyRepo.getUnavailabilityForTenant(),
-      ref.read(shiftsProvider.future).catchError((_) => <ShiftPlan>[]),
-    ]);
-    // Ionic getPersonExtraFields: organisation fields count too, so a type
-    // filtering on one does not invite everybody. Only needed for a field
-    // filter; a failed load then fails the creation (no unfiltered Termin).
-    final tenantFields = tenant?.additionalFields ?? const <ExtraField>[];
-    final orgFields = type.additionalFieldsFilter == null
-        ? const <ProfileExtraField>[]
-        : await ref.read(personExtraFieldsProvider.future);
-    final persons = personsForAttendanceType(
-      [
-        // Aushilfen only until their last day ("dabei bis").
-        for (final p in results[0] as List<Map<String, dynamic>>)
-          if (helperCoversDate(p['additional_fields'] as Map<String, dynamic>?, helperDay(day))) p,
-      ],
-      type,
-      [
-        ...tenantFields,
-        for (final f in orgFields)
-          if (!tenantFields.any((t) => t.id == f.id))
-            ExtraField(
-                id: f.id, name: f.name, type: f.type, defaultValue: f.defaultValue),
-      ],
-    );
-    final id = await repo.createAttendance(newAttendanceRow(
-      type,
-      day,
-      isOrgPlan: isOrgPlan,
-    ));
-    await repo.createPersonAttendances(
-      id,
-      newPersonAttendanceRows(
-        persons,
-        type,
-        day,
-        absences: results[1] as List<PlayerAbsence>,
-        unavailability: results[2] as List<PersonUnavailability>,
-        shifts: results[3] as List<ShiftPlan>,
-      ),
-    );
-    ref.invalidate(attendancesProvider);
-    ref.invalidate(upcomingAttendancesProvider);
-    ref.invalidate(upcomingProtocolAttendancesProvider);
+    final id = await createProtocolAttendance(ProviderScope.containerOf(context, listen: false), type, day);
     if (context.mounted) {
       ToastHelper.showSuccess(
         context,
@@ -310,4 +250,81 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
     if (context.mounted) ToastHelper.showError(context, context.l10n.dateDialogCreateFailed);
     return null;
   }
+}
+
+/// Creates the Termin of [type] on [day] with its persons (Ionic
+/// `createAttendanceForType`) and returns its id. Throws when a write or a
+/// read the invitation depends on fails.
+Future<int> createProtocolAttendance(ProviderContainer ref, AttendanceType type, DateTime day) async {
+  // UI_TENANT_HOIST: bind tenant + repositories before the first await.
+  final repo = ref.read(protocolRepositoryWithTenantProvider);
+  final tenant = ref.read(currentTenantProvider);
+  final absenceRepo = ref.read(playerAbsenceRepositoryWithTenantProvider);
+  final dutyRepo = ref.read(dutyRepositoryWithTenantProvider);
+  final typeRepo = ref.read(attendanceTypeRepositoryWithTenantProvider);
+  // Ionic: is_org_plan = type.is_default_org_plan
+  var isOrgPlan = false;
+  try {
+    final planTypes = await ref.read(planAttendanceTypesProvider.future);
+    isOrgPlan = planTypes.any((t) => t.id == type.id && t.isDefaultOrgPlan);
+  } catch (e, st) {
+    ErrorReporter.report(e, st, where: 'quick_create_attendance');
+  }
+  final results = await Future.wait([
+    // Organisation field values are shared across the organisation's
+    // groups; merge them so the type's field filter sees them.
+    repo.getPersonsForNewAttendance(
+        withSharedFields: type.additionalFieldsFilter != null),
+    absenceRepo
+        .getAbsencesForTenant()
+        .catchError((_) => <PlayerAbsence>[]),
+    dutyRepo.getUnavailabilityForTenant(),
+    ref.read(shiftsProvider.future).catchError((_) => <ShiftPlan>[]),
+    // Single persons of the circle: a failed read fails the creation
+    // instead of inviting everybody.
+    typeRepo.getCirclePersons(),
+  ]);
+  // Ionic getPersonExtraFields: organisation fields count too, so a type
+  // filtering on one does not invite everybody. Only needed for a field
+  // filter; a failed load then fails the creation (no unfiltered Termin).
+  final tenantFields = tenant?.additionalFields ?? const <ExtraField>[];
+  final orgFields = type.additionalFieldsFilter == null
+      ? const <ProfileExtraField>[]
+      : await ref.read(personExtraFieldsProvider.future);
+  final persons = personsForAttendanceType(
+    [
+      // Aushilfen only until their last day ("dabei bis").
+      for (final p in results[0] as List<Map<String, dynamic>>)
+        if (helperCoversDate(p['additional_fields'] as Map<String, dynamic>?, helperDay(day))) p,
+    ],
+    type,
+    [
+      ...tenantFields,
+      for (final f in orgFields)
+        if (!tenantFields.any((t) => t.id == f.id))
+          ExtraField(
+              id: f.id, name: f.name, type: f.type, defaultValue: f.defaultValue),
+    ],
+    circlePersons: (results[4] as Map<String, List<int>>)[type.id] ?? const [],
+  );
+  final id = await repo.createAttendance(newAttendanceRow(
+    type,
+    day,
+    isOrgPlan: isOrgPlan,
+  ));
+  await repo.createPersonAttendances(
+    id,
+    newPersonAttendanceRows(
+      persons,
+      type,
+      day,
+      absences: results[1] as List<PlayerAbsence>,
+      unavailability: results[2] as List<PersonUnavailability>,
+      shifts: results[3] as List<ShiftPlan>,
+    ),
+  );
+  ref.invalidate(attendancesProvider);
+  ref.invalidate(upcomingAttendancesProvider);
+  ref.invalidate(upcomingProtocolAttendancesProvider);
+  return id;
 }

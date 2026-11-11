@@ -5,7 +5,9 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/config/supabase_config.dart';
 import '../../../core/constants/enums.dart';
+import '../../../core/utils/type_circle.dart';
 import '../../../core/providers/attendance_providers.dart';
+import '../../../core/providers/attendance_type_providers.dart';
 import '../../../core/providers/duty_providers.dart';
 import '../../../core/providers/plan_providers.dart';
 import '../../../core/providers/player_absence_providers.dart';
@@ -23,6 +25,7 @@ import '../../../data/models/duty/person_unavailability.dart';
 import '../../../data/models/player_absence/player_absence.dart';
 import '../../../data/models/shift/shift_plan.dart';
 import '../../../data/models/tenant/tenant.dart';
+import '../../../data/repositories/attendance_type_repository.dart';
 import '../../../data/repositories/duty_repository.dart';
 import '../../../data/repositories/player_absence_repository.dart';
 import '../../../data/repositories/profile_repository.dart' show ProfileExtraField;
@@ -95,7 +98,8 @@ class AttendanceCreateWriter {
         _saveTenant = ref.read(currentTenantProvider),
         _saveClient = ref.read(supabaseClientProvider),
         _dutyRepo = ref.read(dutyRepositoryWithTenantProvider),
-        _playerAbsenceRepo = ref.read(playerAbsenceRepositoryWithTenantProvider);
+        _playerAbsenceRepo = ref.read(playerAbsenceRepositoryWithTenantProvider),
+        _typeRepo = ref.read(attendanceTypeRepositoryWithTenantProvider);
 
   final WidgetRef _ref;
   final Tenant? _saveTenant;
@@ -105,6 +109,7 @@ class AttendanceCreateWriter {
   final SupabaseClient _saveClient;
   final DutyRepository _dutyRepo;
   final PlayerAbsenceRepository _playerAbsenceRepo;
+  final AttendanceTypeRepository _typeRepo;
 
   Set<Object?> _orgPlanTypeIds = const {};
   List<PersonUnavailability> _unavailability = const [];
@@ -113,6 +118,9 @@ class AttendanceCreateWriter {
   List<ShiftPlan> _shifts = const [];
   List<ProfileExtraField> _extraFields = const [];
   List<Map<String, dynamic>> _players = const [];
+
+  /// Single persons of the type's circle (next to its groups).
+  List<int> _circlePersons = const [];
 
   /// Creates one Termin per day of [input] and returns their ids in the
   /// same order. Throws on the first failed write.
@@ -158,6 +166,9 @@ class AttendanceCreateWriter {
     // Participants are loaded before the first Termin is written, so a failed
     // read cannot leave a Termin without persons behind.
     _players = await _loadActivePlayers(input.type);
+    // Same for the type's single persons: a failed read fails the creation
+    // instead of inviting everybody.
+    _circlePersons = (await _typeRepo.getCirclePersons())[input.type.id] ?? const [];
 
     final ids = <int>[];
     // Ionic 4.19.2 `uniqueDates`: one Termin per calendar day.
@@ -334,11 +345,13 @@ class AttendanceCreateWriter {
       if (!helperCoversDate(player['additional_fields'] as Map<String, dynamic>?, day)) return false;
 
       // Filter by relevant_groups if set
-      if (relevantGroups != null && relevantGroups.isNotEmpty) {
-        final playerInstrument = player['instrument'] as int?;
-        if (playerInstrument == null || !relevantGroups.contains(playerInstrument)) {
-          return false;
-        }
+      if (!typeCircleCovers(
+        relevantGroups,
+        _circlePersons,
+        groupId: (player['instrument'] as num?)?.toInt(),
+        personId: (player['id'] as num?)?.toInt(),
+      )) {
+        return false;
       }
 
       // Filter by additional_fields_filter if set

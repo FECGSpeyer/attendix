@@ -50,6 +50,14 @@ final attendanceTypesProvider = FutureProvider<List<AttendanceType>>((ref) async
   return repo.getTypes();
 });
 
+/// Single persons of each type's circle, by type id (see
+/// [AttendanceTypeRepository.getCirclePersons]).
+final typeCirclePersonsProvider = FutureProvider<Map<String, List<int>>>((ref) async {
+  final repo = ref.watch(attendanceTypeRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return const {};
+  return repo.getCirclePersons();
+});
+
 /// Provider for visible attendance types only (for creating new attendances)
 final visibleAttendanceTypesProvider = FutureProvider<List<AttendanceType>>((ref) async {
   final allTypes = await ref.watch(attendanceTypesProvider.future);

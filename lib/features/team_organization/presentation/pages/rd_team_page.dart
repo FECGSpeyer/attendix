@@ -51,7 +51,7 @@ class _RdTeamPageState extends ConsumerState<RdTeamPage> with SingleTickerProvid
 
   void _reload({bool firstLoad = false}) {
     if (!mounted) return;
-    final meetings = ref.read(inTeamCircleProvider) && _controller.index == 0;
+    final meetings = ref.read(rdTeamMeetingsVisibleProvider) && _controller.index == 0;
     reloadTeamOrgTab(ref, meetings ? 'topics' : 'tasks', firstLoad: firstLoad);
   }
 
@@ -62,7 +62,7 @@ class _RdTeamPageState extends ConsumerState<RdTeamPage> with SingleTickerProvid
     ref.watch(teamPersonProvider);
     final p = context.rd;
     final l10n = context.l10n;
-    final inCircle = ref.watch(inTeamCircleProvider);
+    final inCircle = ref.watch(rdTeamMeetingsVisibleProvider);
     final labels = [l10n.rdTeamTabMeetings, l10n.teamOrgTabTasks];
     return Scaffold(
       backgroundColor: p.bg,

@@ -117,6 +117,8 @@ const Map<String, Set<String>> kDbColumns = {
     'planning_title',
     'registration_fields',
     'relevant_groups',
+    // Flutter only (Besprechungen): single persons of a type's circle.
+    'relevant_persons',
     'reminders',
     'start_time',
     'suggest_postponed',

@@ -6,6 +6,7 @@ library;
 import 'package:intl/intl.dart';
 
 import '../../core/constants/enums.dart';
+import '../../core/utils/type_circle.dart';
 import '../../data/models/team_org/team_org.dart';
 import '../../l10n/l10n.dart';
 
@@ -57,17 +58,30 @@ bool isTeamOrgEnabled(List<ProtocolType>? types) =>
 bool isTeamLeaderRole(Role? role) => role == Role.admin || role == Role.responsible;
 
 /// Mirrors SQL in_protocol_circle: leadership always, parents and applicants
-/// never, everyone else if in one of the type's groups or the type has none.
-bool isInTypeCircle(ProtocolType type, Role? role, int? groupId) {
+/// never, everyone else if in one of the type's groups, named as a person,
+/// or the type has neither.
+bool isInTypeCircle(
+  ProtocolType type,
+  Role? role,
+  int? groupId, {
+  int? personId,
+  List<int> circlePersons = const [],
+}) {
   if (!type.enableProtocol || role == null) return false;
   if (isTeamLeaderRole(role)) return true;
   if (role == Role.parent || role == Role.applicant) return false;
-  final groups = type.relevantGroups ?? const [];
-  return groups.isEmpty || (groupId != null && groups.contains(groupId));
+  return typeCircleCovers(type.relevantGroups, circlePersons, groupId: groupId, personId: personId);
 }
 
-bool isInAnyCircle(List<ProtocolType>? types, Role? role, int? groupId) =>
-    (types ?? const []).any((t) => isInTypeCircle(t, role, groupId));
+bool isInAnyCircle(
+  List<ProtocolType>? types,
+  Role? role,
+  int? groupId, {
+  int? personId,
+  Map<String, List<int>> circlePersons = const {},
+}) =>
+    (types ?? const []).any((t) =>
+        isInTypeCircle(t, role, groupId, personId: personId, circlePersons: circlePersons[t.id] ?? const []));
 
 // ── Plan fields / TOPs ─────────────────────────────────────
 

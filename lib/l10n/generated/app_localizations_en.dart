@@ -11351,6 +11351,39 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rdTeamCircleAppliesToType =>
+      'This applies to all meetings of this kind.';
+
+  @override
+  String get rdTeamCircleChoose => 'Choose';
+
+  @override
+  String get rdTeamCircleEveryone => 'All members';
+
+  @override
+  String get rdTeamCircleGroups => 'Groups';
+
+  @override
+  String get rdTeamCircleLeadersHint => 'The leadership always takes part.';
+
+  @override
+  String get rdTeamCirclePersons => 'Single persons';
+
+  @override
+  String rdTeamCirclePersonsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count persons',
+      one: '1 person',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTeamCircleSearch => 'Search person';
+
+  @override
   String get rdTeamEmptyLeader =>
       'Create the first one with +. Collect topics beforehand, record results and tasks in the minutes.';
 
@@ -11374,10 +11407,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTeamLoadFailed => 'Meetings could not be loaded';
 
   @override
+  String get rdTeamMeetingDay => 'Day';
+
+  @override
   String get rdTeamMeetingGone => 'This meeting is no longer planned.';
 
   @override
+  String get rdTeamMeetingKind => 'Kind';
+
+  @override
   String get rdTeamMeetingPlanned => 'Meeting · planned';
+
+  @override
+  String get rdTeamMeetingTypeName => 'Meeting';
 
   @override
   String get rdTeamNewMeeting => 'New meeting';
@@ -11422,6 +11464,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdTeamPast => 'Past';
+
+  @override
+  String get rdTeamPlanMeeting => 'Plan a meeting';
+
+  @override
+  String get rdTeamPlanMeetingHint => 'With agenda and minutes';
 
   @override
   String get rdTeamPlanned => 'Planned';
@@ -11476,6 +11524,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdTeamUnplannedGroup => 'Not yet in a meeting';
+
+  @override
+  String get rdTeamWhoIsIn => 'Who takes part?';
+
+  @override
+  String get rdTeamWhoIsInHint =>
+      'Everyone taking part is invited and sees the agenda, the minutes and the tasks.';
 
   @override
   String get rdTypeAdd => 'Add';

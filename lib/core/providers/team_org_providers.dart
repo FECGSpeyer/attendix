@@ -9,6 +9,7 @@ import '../../data/repositories/agenda_item_repository.dart';
 import '../../data/repositories/protocol_repository.dart';
 import '../../data/repositories/task_repository.dart';
 import '../../features/team_organization/team_org_utils.dart';
+import 'attendance_type_providers.dart' show typeCirclePersonsProvider;
 import 'debug_providers.dart';
 import 'self_service_providers.dart';
 import 'tenant_providers.dart';
@@ -142,7 +143,20 @@ final inTeamCircleProvider = Provider<bool>((ref) {
   final person = ref.watch(teamPersonProvider).valueOrNull;
   if (person == null || (person.left != null && person.left!.isNotEmpty)) return false;
   final types = ref.watch(protocolTypesProvider).valueOrNull;
-  return isInAnyCircle(types, ref.watch(effectiveRoleProvider), person.instrument);
+  return isInAnyCircle(
+    types,
+    ref.watch(effectiveRoleProvider),
+    person.instrument,
+    personId: person.id,
+    circlePersons: ref.watch(typeCirclePersonsProvider).valueOrNull ?? const {},
+  );
+});
+
+/// Beta "Team": Besprechungen are shown to the circle and always to the
+/// leadership, who plans the first one from there (the Terminart is created
+/// along with it).
+final rdTeamMeetingsVisibleProvider = Provider<bool>((ref) {
+  return ref.watch(isTeamLeaderProvider) || ref.watch(inTeamCircleProvider);
 });
 
 // ── Tasks ───────────────────────────────────────────────────

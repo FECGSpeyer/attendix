@@ -18676,6 +18676,54 @@ abstract class AppLocalizations {
   /// **'Team · {count}'**
   String rdTeamChipTeam(Object count);
 
+  /// rdTeam.circleAppliesToType
+  ///
+  /// In de, this message translates to:
+  /// **'Das gilt für alle Besprechungen dieser Art.'**
+  String get rdTeamCircleAppliesToType;
+
+  /// rdTeam.circleChoose
+  ///
+  /// In de, this message translates to:
+  /// **'Auswählen'**
+  String get rdTeamCircleChoose;
+
+  /// rdTeam.circleEveryone
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Mitglieder'**
+  String get rdTeamCircleEveryone;
+
+  /// rdTeam.circleGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get rdTeamCircleGroups;
+
+  /// rdTeam.circleLeadersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Leitung ist immer dabei.'**
+  String get rdTeamCircleLeadersHint;
+
+  /// rdTeam.circlePersons
+  ///
+  /// In de, this message translates to:
+  /// **'Einzelne Personen'**
+  String get rdTeamCirclePersons;
+
+  /// rdTeam.circlePersonsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Person} other {{count} Personen}}'**
+  String rdTeamCirclePersonsCount(num count);
+
+  /// rdTeam.circleSearch
+  ///
+  /// In de, this message translates to:
+  /// **'Person suchen'**
+  String get rdTeamCircleSearch;
+
   /// rdTeam.emptyLeader
   ///
   /// In de, this message translates to:
@@ -18718,17 +18766,35 @@ abstract class AppLocalizations {
   /// **'Besprechungen konnten nicht geladen werden'**
   String get rdTeamLoadFailed;
 
+  /// rdTeam.meetingDay
+  ///
+  /// In de, this message translates to:
+  /// **'Tag'**
+  String get rdTeamMeetingDay;
+
   /// rdTeam.meetingGone
   ///
   /// In de, this message translates to:
   /// **'Diese Besprechung ist nicht mehr geplant.'**
   String get rdTeamMeetingGone;
 
+  /// rdTeam.meetingKind
+  ///
+  /// In de, this message translates to:
+  /// **'Art'**
+  String get rdTeamMeetingKind;
+
   /// rdTeam.meetingPlanned
   ///
   /// In de, this message translates to:
   /// **'Besprechung · geplant'**
   String get rdTeamMeetingPlanned;
+
+  /// rdTeam.meetingTypeName
+  ///
+  /// In de, this message translates to:
+  /// **'Besprechung'**
+  String get rdTeamMeetingTypeName;
 
   /// rdTeam.newMeeting
   ///
@@ -18783,6 +18849,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Vergangen'**
   String get rdTeamPast;
+
+  /// rdTeam.planMeeting
+  ///
+  /// In de, this message translates to:
+  /// **'Besprechung planen'**
+  String get rdTeamPlanMeeting;
+
+  /// rdTeam.planMeetingHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Tagesordnung und Protokoll'**
+  String get rdTeamPlanMeetingHint;
 
   /// rdTeam.planned
   ///
@@ -18867,6 +18945,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Noch ohne Besprechung'**
   String get rdTeamUnplannedGroup;
+
+  /// rdTeam.whoIsIn
+  ///
+  /// In de, this message translates to:
+  /// **'Wer ist dabei?'**
+  String get rdTeamWhoIsIn;
+
+  /// rdTeam.whoIsInHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wer dabei ist, wird eingeladen und sieht Tagesordnung, Protokoll und Aufgaben.'**
+  String get rdTeamWhoIsInHint;
 
   /// rdType.add
   ///

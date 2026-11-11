@@ -1,4 +1,5 @@
 import '../../../core/services/holiday_service.dart';
+import '../../../core/utils/type_circle.dart';
 import '../../../data/models/attendance/attendance.dart';
 import '../../../data/models/person/person.dart';
 import '../../../data/repositories/profile_repository.dart' show ProfileExtraField;
@@ -79,12 +80,14 @@ DateTime? rdDeadlineFor(RdDeadline option, DateTime day, String? startTime, {Dat
 
 /// Persons a new Termin of [type] is created for, like the create write
 /// path: active (not left, not pending, not paused), in the type's groups
-/// and matching its extra-field filter.
+/// (or named in [circlePersons], the type's single persons) and matching
+/// its extra-field filter.
 List<Person> rdInvitedPersons(
   List<Person> players,
   AttendanceType type,
-  List<ProfileExtraField> extraFields,
-) {
+  List<ProfileExtraField> extraFields, {
+  List<int> circlePersons = const [],
+}) {
   final groups = type.relevantGroups;
   final filter = type.additionalFieldsFilter;
   final key = filter?['key'] as String?;
@@ -92,9 +95,7 @@ List<Person> rdInvitedPersons(
   final field = key == null ? null : extraFields.where((f) => f.id == key).firstOrNull;
   return players.where((p) {
     if (p.paused || p.pending || (p.left != null && p.left!.isNotEmpty)) return false;
-    if (groups != null && groups.isNotEmpty) {
-      if (p.instrument == null || !groups.contains(p.instrument)) return false;
-    }
+    if (!typeCircleCovers(groups, circlePersons, groupId: p.instrument, personId: p.id)) return false;
     if (key != null && option != null && field != null) {
       final value = p.additionalFields?[key] ?? field.defaultValue;
       if (value != option) return false;
