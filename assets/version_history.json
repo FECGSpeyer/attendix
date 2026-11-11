@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.135.1",
+      "date": "11.11.2026",
+      "changes": [
+        "🐛 Chat-Assistent: Termin absagen wieder entfernt (kommt evtl. später); Entschuldigt und Verspätung nur mit Grund, sonst fragt der Chat nach"
+      ]
+    },
+    {
       "version": "0.135.0",
       "date": "11.11.2026",
       "changes": [
