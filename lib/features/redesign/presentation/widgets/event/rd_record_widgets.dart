@@ -446,26 +446,15 @@ class _StatusSheetState extends State<_StatusSheet> {
                   ),
                 ]),
               ],
-              if (widget.canOpenPerson || widget.canRemove) ...[
+              if (widget.canOpenPerson) ...[
                 const SizedBox(height: 16),
                 RdGroupedList(children: [
-                  if (widget.canOpenPerson)
-                    RdListRow(
-                      key: const Key('rd-person-open'),
-                      leading: const RdRowIcon(Icons.person_outline),
-                      title: l10n.redesignEventToPerson,
-                      onTap: () => _close(RdPersonSheetAction.openPerson),
-                    ),
-                  if (widget.canRemove)
-                    RdListRow(
-                      key: const Key('rd-person-remove'),
-                      leading: RdRowIcon(Icons.close_rounded, color: p.absent, background: p.absentSoft),
-                      title: l10n.redesignEventRemoveFromEvent,
-                      titleColor: p.absent,
-                      subtitle: l10n.redesignEventRemoveHint(widget.member.person.firstName),
-                      showChevron: false,
-                      onTap: () => _close(RdPersonSheetAction.remove),
-                    ),
+                  RdListRow(
+                    key: const Key('rd-person-open'),
+                    leading: const RdRowIcon(Icons.person_outline),
+                    title: l10n.redesignEventToPerson,
+                    onTap: () => _close(RdPersonSheetAction.openPerson),
+                  ),
                 ]),
               ],
               if ((widget.changedInfo ?? '').isNotEmpty)
@@ -475,6 +464,36 @@ class _StatusSheetState extends State<_StatusSheet> {
                 ),
               const SizedBox(height: 20),
               RdPrimaryButton(label: l10n.redesignCommonDone, onPressed: () => _close(null)),
+              // Rarely needed (wrongly assigned person, Aushilfe) and
+              // destructive: a quiet link under "Fertig", not a row that
+              // competes with it. Asks before removing.
+              if (widget.canRemove)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Center(
+                    child: Semantics(
+                      button: true,
+                      child: InkWell(
+                        key: const Key('rd-person-remove'),
+                        onTap: () => _close(RdPersonSheetAction.remove),
+                        borderRadius: BorderRadius.circular(10),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 44),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Center(
+                              widthFactor: 1,
+                              child: Text(
+                                l10n.redesignEventRemoveFromEvent,
+                                style: TextStyle(fontSize: 15, color: p.absent),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
