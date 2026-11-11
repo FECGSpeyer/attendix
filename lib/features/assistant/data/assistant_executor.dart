@@ -60,6 +60,8 @@ import '../../attendance/presentation/widgets/attendance_date_change.dart'
     show calendarDayDifference, shiftByCalendarDays, shiftDeadline;
 import '../../attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntry;
 import '../../help/data/help_content_service.dart';
+import '../../parents/data/providers/parents_providers.dart'
+    show ChildPersonAttendance, childrenAttendancesProvider, parentChildrenProvider;
 import '../../self_service/data/providers/upcoming_songs_provider.dart' show signoutAttendanceSongsProvider;
 import '../../team_organization/team_org_utils.dart' show isTeamOrgEnabled;
 import 'assistant_command.dart';
@@ -108,9 +110,19 @@ class AssistantExecutor {
       canManageAbsences: ref.read(canManagePlannedAbsencesProvider),
       canSelfReportAbsence: ref.read(canSelfReportAbsenceProvider),
       canCreateEvents: create && await _mayCreate(),
+      childCount: role.isParent ? await _childCount() : 0,
       teamOrgEnabled: team && await _teamOrgOn(),
       isTeamLeader: ref.read(isTeamLeaderProvider),
     );
+  }
+
+  /// Children of a parent account (Elternportal); any error counts as none.
+  Future<int> _childCount() async {
+    try {
+      return (await ref.read(parentChildrenProvider.future)).where((p) => p.id != null).length;
+    } catch (_) {
+      return 0;
+    }
   }
 
   /// Freshly loaded protocol types; any error counts as off.
@@ -158,7 +170,11 @@ class AssistantExecutor {
       BirthdaysCommand() => _birthdays(command),
       SongLastSungCommand() => _song(command),
       HelpCommand() => _help(command),
-      SetStatusCommand() => command.onlyMe ? _ownStatus(command) : _othersStatus(command),
+      SetStatusCommand() => command.onlyMe
+          ? _ownStatus(command)
+          : rights.forChildren(command)
+              ? _childrenStatus(command)
+              : _othersStatus(command),
       PlannedAbsenceCommand() => _absencePreview(command, rights),
       CreateEventsCommand() => _createPreview(command),
       MoveEventCommand() => _movePreview(command),
@@ -221,6 +237,8 @@ class AssistantExecutor {
     int? personId;
     final subject = c.subject;
     switch (subject) {
+      case ChildrenSubject():
+        return const NoticeReply(AssistantNotice.notUnderstood);
       case MeSubject():
         final own = await ref.read(currentSelfServicePlayerProvider.future);
         if (own?.id == null) return const NoticeReply(AssistantNotice.noOwnPerson);
@@ -381,6 +399,27 @@ class AssistantExecutor {
   Future<AssistantReply> _nextEvent(NextEventCommand c) async {
     // Members: the next own Termin in any group (like the Übersicht).
     final role = ref.read(currentRoleProvider);
+    if (role.isParent) {
+      // Parents: the next Termin of their children (Elternportal).
+      final types = await _types();
+      final type = _type(types, c.typeName);
+      final next = (await ref.read(childrenAttendancesProvider.future))
+          .where((a) => a.attendanceId != null && a.isUpcoming && EventListUtils.parse(a.date) != null)
+          .where((a) => type == null || a.typeId == type.id)
+          .toList()
+        ..sort((a, b) => EventListUtils.parse(a.date)!.compareTo(EventListUtils.parse(b.date)!));
+      if (next.isNotEmpty) {
+        final a = next.first;
+        return NextEventReply(
+          attendanceId: a.attendanceId!,
+          title: a.displayTitle,
+          date: EventListUtils.parse(a.date)!,
+          startTime: a.startTime,
+          endTime: a.endTime,
+          place: a.place,
+        );
+      }
+    }
     if (!(role.isConductor || role.isHelperRole)) {
       final own = await _ownUpcomingAcrossTenants(c.typeName);
       if (own.isEmpty) return const NoticeReply(AssistantNotice.noEvent);
@@ -547,6 +586,104 @@ class AssistantExecutor {
     );
   }
 
+  /// Parents: their children's rows, with the rules and the path of the
+  /// Elternportal (leaders are told like there, `isParents`).
+  Future<AssistantReply> _childrenStatus(SetStatusCommand c) async {
+    final target = targetStatus(c.status, self: true);
+    if (target == null) return const NoticeReply(AssistantNotice.selfStatusNotAllowed);
+    final children = (await ref.read(parentChildrenProvider.future)).where((p) => p.id != null).toList();
+    if (children.isEmpty) return const NoticeReply(AssistantNotice.noRights);
+    final ids = <int>{};
+    for (var i = 0; i < c.who.length; i++) {
+      final w = c.who[i];
+      switch (w) {
+        case ChildrenSubject():
+          ids.addAll(children.map((p) => p.id!));
+        case PersonIdSubject(:final personId):
+          if (!children.any((p) => p.id == personId)) return const NoticeReply(AssistantNotice.personNotFound);
+          ids.add(personId);
+        case PersonSubject(:final name):
+          final matches = bestMatches(name, children, (p) => personNames(p.firstName, p.lastName));
+          if (matches.isEmpty) return NoticeReply(AssistantNotice.personNotFound, subject: name);
+          if (matches.length > 1) {
+            return _whoChoice(name, matches, (p) => c.withWho([...c.who]..[i] = PersonIdSubject(p.id!)));
+          }
+          ids.add(matches.first.id!);
+        default:
+          return const NoticeReply(AssistantNotice.noRights);
+      }
+    }
+    final now = _clock();
+    final types = await _types();
+    final type = _type(types, c.typeName);
+    if (c.typeName != null && type == null) return const NoticeReply(AssistantNotice.noEvent);
+    DateTime? when(ChildPersonAttendance a) => EventListUtils.parse(a.date);
+    var rows = (await ref.read(childrenAttendancesProvider.future))
+        .where((a) =>
+            a.id != null &&
+            a.attendanceId != null &&
+            ids.contains(a.childId) &&
+            a.isUpcoming &&
+            when(a) != null &&
+            (type == null || a.typeId == type.id))
+        .toList()
+      ..sort((a, b) => when(a)!.compareTo(when(b)!));
+    if (c.period != null) {
+      final range = resolvePeriod(c.period!, now, _seasonStart);
+      rows = rows.where((a) => !dayOf(when(a)!).isBefore(range.from) && !dayOf(when(a)!).isAfter(range.to)).toList();
+    } else {
+      final day = resolveEventDay(c.event!, now);
+      // "Der nächste Termin": the next Termin with all its children's rows.
+      final firstId = rows.firstOrNull?.attendanceId;
+      rows = day == null ? rows.where((a) => a.attendanceId == firstId).toList() : rows.where((a) => _inDay(when(a)!, day)).toList();
+    }
+    if (rows.isEmpty) return const NoticeReply(AssistantNotice.noEvent);
+    final names = {for (final p in children) p.id!: _name(p)};
+    final changes = <StatusChange>[];
+    var locked = 0;
+    var window = 0;
+    for (final a in rows) {
+      if (!inChangeWindow(when(a)!, now)) {
+        window++;
+        continue;
+      }
+      final offered = types.where((t) => t.id == a.typeId).firstOrNull?.availableStatuses;
+      final askFor = target == AttendanceStatus.lateExcused ? AttendanceStatus.late : AttendanceStatus.excused;
+      final skip = selfStatusSkip(
+        current: a.status,
+        target: target,
+        signinOpen: EventListUtils.isSigninOpen(a.deadline),
+        hasRegistrationFields: false,
+        typeAllowsTarget: offered == null || offered.contains(askFor),
+      );
+      if (skip == StatusSkip.locked) locked++;
+      if (skip != null) continue;
+      changes.add(
+        StatusChange(
+          personAttendanceId: a.id!,
+          attendanceId: a.attendanceId!,
+          personName: names[a.childId] ?? a.childName,
+          title: a.displayTitle,
+          date: when(a)!,
+          oldStatus: a.status,
+          oldNotes: a.notes,
+          newStatus: target,
+        ),
+      );
+    }
+    return _statusPreview(
+      StatusPlan(
+        self: false,
+        parents: true,
+        status: target,
+        reason: c.reason,
+        changes: changes,
+        skippedLocked: locked,
+        skippedWindow: window,
+      ),
+    );
+  }
+
   AssistantReply _statusPreview(StatusPlan plan) {
     if (plan.changes.length > assistantMaxChanges) {
       return NoticeReply(AssistantNotice.tooManyChanges, count: plan.changes.length);
@@ -600,6 +737,7 @@ class AssistantExecutor {
           if (group == null) return NoticeReply(AssistantNotice.groupNotFound, subject: name);
           ids.addAll(players.where((p) => p.instrument == group.id && !p.paused).map((p) => p.id!));
         case AllSubject():
+        case ChildrenSubject():
           return const NoticeReply(AssistantNotice.notUnderstood);
       }
     }
@@ -680,6 +818,26 @@ class AssistantExecutor {
   Future<int> applyStatus(StatusPlan plan) async {
     final status = plan.status;
     var count = 0;
+    if (plan.parents) {
+      // Like the Elternportal: sign in one by one, sign out with isParents.
+      if (status == AttendanceStatus.present) {
+        for (final c in plan.changes) {
+          await _signs.signIn(c.personAttendanceId, SignInType.fromStatus(c.oldStatus), notes: plan.reason ?? '');
+          count++;
+        }
+      } else {
+        await _signs.signOut(
+          [for (final c in plan.changes) c.personAttendanceId],
+          plan.reason ?? '',
+          isLateComing: status == AttendanceStatus.lateExcused,
+          isParents: true,
+        );
+        count = plan.changes.length;
+      }
+      ref.invalidate(childrenAttendancesProvider);
+      _refreshStatuses(self: false);
+      return count;
+    }
     if (plan.self) {
       // Own rows may lie in other groups (Übersicht): ownership is checked
       // per row by the account (ownAcrossTenants), like the Übersicht does.
@@ -736,6 +894,17 @@ class AssistantExecutor {
 
   /// "Rückgängig": every row back to its status and note before the change.
   Future<void> revertStatus(StatusPlan plan) async {
+    if (plan.parents) {
+      for (final c in plan.changes) {
+        await _events.updatePersonAttendance(c.personAttendanceId, {
+          'status': c.oldStatus.value,
+          'notes': c.oldNotes ?? '',
+        });
+      }
+      ref.invalidate(childrenAttendancesProvider);
+      _refreshStatuses(self: false);
+      return;
+    }
     if (plan.self) {
       await _signs.restoreOwnStatuses([
         for (final c in plan.changes) (id: c.personAttendanceId, status: c.oldStatus, notes: c.oldNotes ?? ''),

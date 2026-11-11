@@ -391,5 +391,17 @@ void main() {
         expect(AssistantCommand.fromJson(raw), isA<UnsupportedCommand>(), reason: '$raw');
       }
     });
+  
+    test('children only in a status command', () {
+      final c = AssistantCommand.fromJson({
+        'command': 'set_status',
+        'who': [{'kind': 'children'}, {'kind': 'children'}],
+        'status': 'excused',
+        'reason': 'krank',
+      }) as SetStatusCommand;
+      expect(c.who.single, isA<ChildrenSubject>());
+      expect(AssistantCommand.fromJson({'command': 'planned_absence', 'who': {'kind': 'children'}, 'from': '2026-12-01', 'to': '2026-12-02'}),
+          isA<UnsupportedCommand>());
+    });
   });
 }

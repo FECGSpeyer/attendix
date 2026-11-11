@@ -150,6 +150,11 @@ class AllSubject extends RateSubject {
   const AllSubject();
 }
 
+/// "Meine Kinder" (parents, status only).
+class ChildrenSubject extends RateSubject {
+  const ChildrenSubject();
+}
+
 sealed class AssistantCommand {
   const AssistantCommand();
 
@@ -636,6 +641,8 @@ RateSubject? _who(Object? raw, {required bool allowGroup}) {
   switch (raw['kind']) {
     case 'me':
       return const MeSubject();
+    case 'children':
+      return allowGroup ? const ChildrenSubject() : null;
     case 'person':
       final name = _optName(raw['name']);
       return name == null ? null : PersonSubject(name);
@@ -662,6 +669,7 @@ List<RateSubject>? _whoList(Object? raw) {
     final key = switch (w) {
       PersonSubject(:final name) => 'p:${name.toLowerCase()}',
       GroupSubject(:final name) => 'g:${name.toLowerCase()}',
+      ChildrenSubject() => 'children',
       _ => 'me',
     };
     if (seen.add(key)) out.add(w);

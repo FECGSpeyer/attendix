@@ -5,6 +5,7 @@ import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/features/assistant/data/assistant_command.dart';
 import 'package:attendix/features/assistant/data/assistant_reply.dart';
+import 'package:attendix/features/assistant/presentation/assistant_voice.dart';
 import 'package:attendix/features/assistant/presentation/pages/assistant_page.dart';
 import 'package:attendix/features/assistant/presentation/widgets/assistant_entry_card.dart';
 import 'package:attendix/features/attendance/presentation/widgets/songs_selection_sheet.dart';
@@ -12,6 +13,24 @@ import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+class _FakeVoice implements AssistantVoice {
+  VoidCallback? end;
+  bool stopped = false;
+
+  @override
+  Future<bool> start({required String language, required void Function(String text) onText, required VoidCallback onEnd}) async {
+    end = onEnd;
+    onText('Wann ist die nächste Probe');
+    return true;
+  }
+
+  @override
+  Future<void> stop() async {
+    stopped = true;
+    end?.call();
+  }
+}
 
 class _FakeChat extends AssistantChatNotifier {
   _FakeChat(this.initial);
@@ -25,9 +44,11 @@ class _FakeChat extends AssistantChatNotifier {
   Future<void> send(String text) async => sent.add(text);
 }
 
-Widget _app(Widget home, {required bool enabled, Role role = Role.admin, AssistantChatState? chat, _FakeChat? fake}) =>
+Widget _app(Widget home,
+        {required bool enabled, Role role = Role.admin, AssistantChatState? chat, _FakeChat? fake, AssistantVoice? voice}) =>
     ProviderScope(
       overrides: [
+        if (voice != null) assistantVoiceProvider.overrideWithValue(voice),
         assistantEnabledProvider.overrideWithValue(enabled),
         currentRoleProvider.overrideWithValue(role),
         redesignEnabledProvider.overrideWithValue(false),
@@ -443,6 +464,53 @@ void main() {
       expect(find.text('Aufgabe angelegt.'), findsOneWidget);
       expect(find.text('Thomas benachrichtigen'), findsOneWidget);
       expect(find.text('Rückgängig'), findsOneWidget);
+    });
+
+    testWidgets('voice input writes into the field and sends nothing', (tester) async {
+      final voice = _FakeVoice();
+      final fake = _FakeChat(const AssistantChatState());
+      await tester.pumpWidget(_app(const AssistantPage(), enabled: true, fake: fake, voice: voice));
+      await tester.tap(find.byIcon(Icons.mic_none));
+      await tester.pump();
+      expect(find.text('Wann ist die nächste Probe'), findsOneWidget);
+      expect(find.byIcon(Icons.stop), findsOneWidget);
+      expect(fake.sent, isEmpty);
+      await tester.tap(find.byIcon(Icons.stop));
+      await tester.pump();
+      expect(voice.stopped, isTrue);
+      expect(find.byIcon(Icons.mic_none), findsOneWidget);
+      expect(fake.sent, isEmpty);
+    });
+
+    testWidgets('parents: own suggestion and title for their children', (tester) async {
+      final chat = AssistantChatState(messages: [
+        AssistantMessage.assistant(StatusPreviewReply(StatusPlan(
+          self: false,
+          parents: true,
+          status: AttendanceStatus.excused,
+          reason: 'krank',
+          changes: [
+            StatusChange(
+              personAttendanceId: 'a',
+              attendanceId: 1,
+              personName: 'Lena Müller',
+              title: 'Kinderchor',
+              date: DateTime(2026, 11, 15),
+              oldStatus: AttendanceStatus.neutral,
+              oldNotes: null,
+              newStatus: AttendanceStatus.excused,
+            ),
+          ],
+        ))),
+      ]);
+      _tall(tester);
+      await tester.pumpWidget(_app(const AssistantPage(), enabled: true, role: Role.parent, chat: chat));
+      expect(find.text('Deine Kinder an- oder abmelden?'), findsOneWidget);
+      expect(find.text('Lena Müller · Kinderchor'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(_app(const AssistantPage(), enabled: true, role: Role.parent));
+      expect(find.text('Melde meine Kinder für den nächsten Termin ab, sie sind krank'), findsOneWidget);
+      expect(find.text('Wie war meine Anwesenheit in den letzten 3 Monaten?'), findsNothing);
     });
   });
 }

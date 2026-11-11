@@ -11,7 +11,9 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Attendix fragt nicht nach deinem Standort. Die Angabe ist nur nötig, weil die eingebundene Dateiauswahl die Standortfunktion enthält.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Attendix nimmt keinen Ton auf. Die Angabe ist für die eingebundene Audiowiedergabe nötig.</string>
+	<string>Attendix nutzt das Mikrofon nur für die Spracheingabe im Chat-Assistenten, solange du das Mikrofon antippst. Es wird nichts aufgenommen oder gespeichert.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Die Spracheingabe im Chat-Assistenten wandelt deine Worte in Text um, möglichst direkt auf dem Gerät. Nur der Text geht weiter.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Attendix speichert Fotos nur, wenn du das selbst auslöst.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

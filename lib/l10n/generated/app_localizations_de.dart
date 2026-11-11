@@ -582,6 +582,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get assistantChangeTitleChildren => 'Deine Kinder an- oder abmelden?';
+
+  @override
   String get assistantChangeTitleOthers => 'Status ändern';
 
   @override
@@ -974,7 +977,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get assistantPrivacy =>
-      'Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten.';
+      'Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten. Bei der Spracheingabe erkennt dein Gerät oder Browser die Worte; gesendet wird nur der Text, wenn du auf Senden tippst.';
 
   @override
   String get assistantRateAll => 'Anwesenheit aller';
@@ -1072,6 +1075,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get assistantSuggestBirthdays => 'Wer hat diesen Monat Geburtstag?';
 
   @override
+  String get assistantSuggestChildren =>
+      'Melde meine Kinder für den nächsten Termin ab, sie sind krank';
+
+  @override
   String get assistantSuggestHelp => 'Wie melde ich mich ab?';
 
   @override
@@ -1164,6 +1171,19 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get assistantTitle => 'Assistent';
+
+  @override
+  String get assistantVoiceListening => 'Ich höre zu …';
+
+  @override
+  String get assistantVoiceStart => 'Spracheingabe';
+
+  @override
+  String get assistantVoiceStop => 'Spracheingabe beenden';
+
+  @override
+  String get assistantVoiceUnavailable =>
+      'Die Spracheingabe ist hier nicht verfügbar. Bitte erlaube das Mikrofon oder tippe deine Frage.';
 
   @override
   String get attListAddEvent => 'Termin hinzufügen';

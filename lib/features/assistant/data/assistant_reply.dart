@@ -294,6 +294,7 @@ class StatusChange {
 class StatusPlan {
   const StatusPlan({
     required this.self,
+    this.parents = false,
     required this.status,
     required this.reason,
     required this.changes,
@@ -304,6 +305,9 @@ class StatusPlan {
   /// Own rows through the "Meine Termine" path (notifies the leaders);
   /// otherwise rows of others through the Termin page path.
   final bool self;
+
+  /// Rows of the own children (Elternportal path, parent account).
+  final bool parents;
   final AttendanceStatus status;
 
   /// Note written with the status (null: notes stay as they are).

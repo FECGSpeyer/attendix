@@ -980,6 +980,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, one {1 Termin liegt außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).} other {{count} Termine liegen außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).}}'**
   String assistantChangeSkippedWindow(num count);
 
+  /// assistant.change.titleChildren
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Kinder an- oder abmelden?'**
+  String get assistantChangeTitleChildren;
+
   /// assistant.change.titleOthers
   ///
   /// In de, this message translates to:
@@ -1533,7 +1539,7 @@ abstract class AppLocalizations {
   /// assistant.privacy
   ///
   /// In de, this message translates to:
-  /// **'Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten.'**
+  /// **'Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten. Bei der Spracheingabe erkennt dein Gerät oder Browser die Worte; gesendet wird nur der Text, wenn du auf Senden tippst.'**
   String get assistantPrivacy;
 
   /// assistant.rate.all
@@ -1692,6 +1698,12 @@ abstract class AppLocalizations {
   /// **'Wer hat diesen Monat Geburtstag?'**
   String get assistantSuggestBirthdays;
 
+  /// assistant.suggest.children
+  ///
+  /// In de, this message translates to:
+  /// **'Melde meine Kinder für den nächsten Termin ab, sie sind krank'**
+  String get assistantSuggestChildren;
+
   /// assistant.suggest.help
   ///
   /// In de, this message translates to:
@@ -1847,6 +1859,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Assistent'**
   String get assistantTitle;
+
+  /// assistant.voice.listening
+  ///
+  /// In de, this message translates to:
+  /// **'Ich höre zu …'**
+  String get assistantVoiceListening;
+
+  /// assistant.voice.start
+  ///
+  /// In de, this message translates to:
+  /// **'Spracheingabe'**
+  String get assistantVoiceStart;
+
+  /// assistant.voice.stop
+  ///
+  /// In de, this message translates to:
+  /// **'Spracheingabe beenden'**
+  String get assistantVoiceStop;
+
+  /// assistant.voice.unavailable
+  ///
+  /// In de, this message translates to:
+  /// **'Die Spracheingabe ist hier nicht verfügbar. Bitte erlaube das Mikrofon oder tippe deine Frage.'**
+  String get assistantVoiceUnavailable;
 
   /// attList.addEvent
   ///

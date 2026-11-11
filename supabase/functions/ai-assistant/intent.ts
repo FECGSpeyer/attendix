@@ -49,11 +49,13 @@ export type Subject =
   | { kind: "group"; name: string }
   | { kind: "all" };
 
-/// Whose status / absence: the user, a person, or (status only, leaders) a group.
+/// Whose status / absence: the user, a person, or (status only) a group
+/// (leaders) or "my children" (parents).
 export type Who =
   | { kind: "me" }
   | { kind: "person"; name: string }
-  | { kind: "group"; name: string };
+  | { kind: "group"; name: string }
+  | { kind: "children" };
 
 export type Priority = "low" | "medium" | "high";
 
@@ -225,6 +227,8 @@ function who(value: unknown, allowGroup: boolean): Who | null {
   switch (value.kind) {
     case "me":
       return { kind: "me" };
+    case "children":
+      return allowGroup ? { kind: "children" } : null;
     case "person":
     case "group": {
       if (value.kind === "group" && !allowGroup) return null;
@@ -247,7 +251,7 @@ function whoList(value: unknown): Who[] | null {
   for (const v of list) {
     const w = who(v, true);
     if (!w) return null;
-    const key = w.kind === "me" ? "me" : `${w.kind}:${w.name.toLowerCase()}`;
+    const key = w.kind === "me" || w.kind === "children" ? w.kind : `${w.kind}:${w.name.toLowerCase()}`;
     if (!seen.has(key)) {
       seen.add(key);
       out.push(w);
@@ -529,7 +533,7 @@ export const SYSTEM_PROMPT = [
   '6. {"command":"help","query":"<short search words in the user language>"} - how to do something in the app.',
   '7. {"command":"set_status","who":[W,...],"status":"present|excused|late_excused|late|absent|neutral","event"?:E,"period"?:P,"typeName"?:T,"reason"?:"<short reason as written>"} - sign in / sign out / set the attendance status for one event (event) or all events in a period (period, e.g. "next week").',
   '   reason: the reason as written ("ich bin krank" -> "krank"); leave it out when none is given (the app then asks for one, excused needs a reason).',
-  '   who is always given. W is {"kind":"me"}, {"kind":"person","name":"<name exactly as written>"} or {"kind":"group","name":"<group>"} (max 10).',
+  '   who is always given. W is {"kind":"me"}, {"kind":"person","name":"<name exactly as written>"}, {"kind":"group","name":"<group>"} or {"kind":"children"} for "meine Kinder", "beide Kinder", "my kids" (max 10). A child named by name is a person.',
   '   "abmelden", "absagen", "kann nicht", "entschuldigt" = excused; "komme später", "verspätet mich" = late_excused; "anmelden", "zusagen", "komme", "war da", "anwesend" = present; "war zu spät" = late; "fehlte unentschuldigt" = absent; "zurücksetzen", "offen" = neutral.',
   '8. {"command":"planned_absence","who":W,"from":"YYYY-MM-DD","to":"YYYY-MM-DD","reason"?:"<short reason>"} - a planned absence for a longer time ("bis Ende Januar im Ausland", "vom 3. bis 10. März im Urlaub"). W is me or a person (no group), always given. Without a start, from is today.',
   '9. {"command":"create_events","typeName"?:T,"dates":["YYYY-MM-DD",...],"startTime"?:"HH:mm","endTime"?:"HH:mm","title"?:"<title as written>","place"?:"<place as written>"} - create one or more NEW events ("leg jeden Mittwoch im Dezember eine Probe an", "Konzert am 20.12. um 17 Uhr"). Compute every date from today (max 20 dates).',

@@ -9,7 +9,7 @@
       "send": "Senden",
       "clear": "Neuer Chat",
       "intro": "Hallo! Ich beantworte Fragen zu deiner Gruppe und kann dich an- oder abmelden. Bevor ich etwas ändere, zeige ich dir genau, was passiert.",
-      "privacy": "Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten.",
+      "privacy": "Nur deine Nachricht geht an den KI-Dienst, keine Daten aus Attendix. Die Antworten berechnet die App selbst, mit deinen Rechten. Bei der Spracheingabe erkennt dein Gerät oder Browser die Worte; gesendet wird nur der Text, wenn du auf Senden tippst.",
       "thinking": "Einen Moment …",
       "suggest": {
         "myRate": "Wie war meine Anwesenheit in den letzten 3 Monaten?",
@@ -18,7 +18,8 @@
         "birthdays": "Wer hat diesen Monat Geburtstag?",
         "help": "Wie melde ich mich ab?",
         "signOut": "Melde mich für den nächsten Termin ab, ich bin krank",
-        "songs": "Welche Werke singen wir am Sonntag?"
+        "songs": "Welche Werke singen wir am Sonntag?",
+        "children": "Melde meine Kinder für den nächsten Termin ab, sie sind krank"
       },
       "notice": {
         "notUnderstood": "Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken, Aufgaben und zur App.",
@@ -127,7 +128,8 @@
         "done": "{count, plural, =0 {Nichts geändert.} one {1 Änderung gespeichert.} other {{count} Änderungen gespeichert.}}",
         "undo": "Rückgängig",
         "undone": "Rückgängig gemacht.",
-        "undoFailed": "Rückgängig hat nicht geklappt. Bitte prüf es im Termin."
+        "undoFailed": "Rückgängig hat nicht geklappt. Bitte prüf es im Termin.",
+        "titleChildren": "Deine Kinder an- oder abmelden?"
       },
       "absence": {
         "title": "Geplante Abwesenheit",
@@ -209,6 +211,12 @@
         "reminderTitle": "Erinnerung: {title}",
         "reminderBody": "Erinnerung an {title} am {date}.",
         "reminderBodyTime": "Erinnerung an {title} am {date} um {time} Uhr."
+      },
+      "voice": {
+        "start": "Spracheingabe",
+        "stop": "Spracheingabe beenden",
+        "listening": "Ich höre zu …",
+        "unavailable": "Die Spracheingabe ist hier nicht verfügbar. Bitte erlaube das Mikrofon oder tippe deine Frage."
       }
     }
   },
@@ -222,7 +230,7 @@
       "send": "Send",
       "clear": "New chat",
       "intro": "Hi! I answer questions about your group and can sign you in or out. Before I change anything, I show you exactly what will happen.",
-      "privacy": "Only your message goes to the AI service, no data from Attendix. The app works out the answers itself, with your rights.",
+      "privacy": "Only your message goes to the AI service, no data from Attendix. The app works out the answers itself, with your rights. With voice input your device or browser recognises the words; only the text is sent, when you tap Send.",
       "thinking": "One moment …",
       "suggest": {
         "myRate": "How was my attendance in the last 3 months?",
@@ -231,7 +239,8 @@
         "birthdays": "Who has a birthday this month?",
         "help": "How do I sign out?",
         "signOut": "Sign me out for the next event, I am ill",
-        "songs": "Which pieces are we singing on Sunday?"
+        "songs": "Which pieces are we singing on Sunday?",
+        "children": "Sign my children out for the next event, they are ill"
       },
       "notice": {
         "notUnderstood": "I didn't understand that. I answer questions about attendance, events, birthdays, pieces, tasks and the app.",
@@ -340,7 +349,8 @@
         "done": "{count, plural, =0 {Nothing changed.} one {1 change saved.} other {{count} changes saved.}}",
         "undo": "Undo",
         "undone": "Undone.",
-        "undoFailed": "Undo did not work. Please check the event."
+        "undoFailed": "Undo did not work. Please check the event.",
+        "titleChildren": "Sign your children in or out?"
       },
       "absence": {
         "title": "Planned absence",
@@ -422,6 +432,12 @@
         "reminderTitle": "Reminder: {title}",
         "reminderBody": "Reminder of {title} on {date}.",
         "reminderBodyTime": "Reminder of {title} on {date} at {time}."
+      },
+      "voice": {
+        "start": "Voice input",
+        "stop": "Stop voice input",
+        "listening": "Listening …",
+        "unavailable": "Voice input is not available here. Please allow the microphone or type your question."
       }
     }
   },
@@ -435,7 +451,7 @@
       "send": "Отправить",
       "clear": "Новый чат",
       "intro": "Привет! Я отвечаю на вопросы о твоей группе и могу записать или отписать тебя. Перед любым изменением я покажу, что именно произойдёт.",
-      "privacy": "В сервис ИИ уходит только твоё сообщение, никаких данных из Attendix. Ответы приложение считает само, с твоими правами.",
+      "privacy": "В ИИ-сервис уходит только твоё сообщение, никаких данных из Attendix. Ответы приложение вычисляет само, с твоими правами. При голосовом вводе слова распознаёт твоё устройство или браузер; отправляется только текст, когда ты нажимаешь «Отправить».",
       "thinking": "Минутку …",
       "suggest": {
         "myRate": "Какой была моя посещаемость за последние 3 месяца?",
@@ -444,7 +460,8 @@
         "birthdays": "У кого день рождения в этом месяце?",
         "help": "Как мне отписаться?",
         "signOut": "Отметь меня на следующем мероприятии, я болею",
-        "songs": "Какие произведения мы поём в воскресенье?"
+        "songs": "Какие произведения мы поём в воскресенье?",
+        "children": "Отметь моих детей отсутствующими на следующем мероприятии, они болеют"
       },
       "notice": {
         "notUnderstood": "Я не понял. Я отвечаю на вопросы о посещаемости, мероприятиях, днях рождения, произведениях, задачах и приложении.",
@@ -553,7 +570,8 @@
         "done": "{count, plural, =0 {Ничего не изменено.} one {Сохранено {count} изменение.} few {Сохранено {count} изменения.} many {Сохранено {count} изменений.} other {Сохранено {count} изменения.}}",
         "undo": "Отменить",
         "undone": "Отменено.",
-        "undoFailed": "Отменить не получилось. Пожалуйста, проверь событие."
+        "undoFailed": "Отменить не получилось. Пожалуйста, проверь событие.",
+        "titleChildren": "Отметить твоих детей?"
       },
       "absence": {
         "title": "Запланированное отсутствие",
@@ -635,6 +653,12 @@
         "reminderTitle": "Напоминание: {title}",
         "reminderBody": "Напоминание: {title}, {date}.",
         "reminderBodyTime": "Напоминание: {title}, {date} в {time}."
+      },
+      "voice": {
+        "start": "Голосовой ввод",
+        "stop": "Остановить голосовой ввод",
+        "listening": "Слушаю …",
+        "unavailable": "Голосовой ввод здесь недоступен. Разреши доступ к микрофону или напиши вопрос."
       }
     }
   },
@@ -648,7 +672,7 @@
       "send": "Enviar",
       "clear": "Nuevo chat",
       "intro": "¡Hola! Respondo preguntas sobre tu grupo y puedo apuntarte o darte de baja. Antes de cambiar algo, te muestro exactamente qué pasará.",
-      "privacy": "Solo tu mensaje va al servicio de IA, ningún dato de Attendix. La app calcula las respuestas ella misma, con tus permisos.",
+      "privacy": "Solo tu mensaje va al servicio de IA, ningún dato de Attendix. La app calcula las respuestas ella misma, con tus permisos. Con la entrada por voz, tu dispositivo o navegador reconoce las palabras; solo se envía el texto cuando pulsas Enviar.",
       "thinking": "Un momento …",
       "suggest": {
         "myRate": "¿Cómo fue mi asistencia en los últimos 3 meses?",
@@ -657,7 +681,8 @@
         "birthdays": "¿Quién cumple años este mes?",
         "help": "¿Cómo me doy de baja?",
         "signOut": "Dame de baja del próximo evento, estoy enfermo",
-        "songs": "¿Qué obras cantamos el domingo?"
+        "songs": "¿Qué obras cantamos el domingo?",
+        "children": "Da de baja a mis hijos del próximo evento, están enfermos"
       },
       "notice": {
         "notUnderstood": "No lo he entendido. Respondo preguntas sobre asistencia, eventos, cumpleaños, obras, tareas y la app.",
@@ -766,7 +791,8 @@
         "done": "{count, plural, =0 {Nada cambiado.} one {1 cambio guardado.} other {{count} cambios guardados.}}",
         "undo": "Deshacer",
         "undone": "Deshecho.",
-        "undoFailed": "No se pudo deshacer. Revisa el evento, por favor."
+        "undoFailed": "No se pudo deshacer. Revisa el evento, por favor.",
+        "titleChildren": "¿Apuntar o dar de baja a tus hijos?"
       },
       "absence": {
         "title": "Ausencia planificada",
@@ -848,6 +874,12 @@
         "reminderTitle": "Recordatorio: {title}",
         "reminderBody": "Recordatorio de {title} el {date}.",
         "reminderBodyTime": "Recordatorio de {title} el {date} a las {time}."
+      },
+      "voice": {
+        "start": "Entrada por voz",
+        "stop": "Detener entrada por voz",
+        "listening": "Te escucho …",
+        "unavailable": "La entrada por voz no está disponible aquí. Permite el micrófono o escribe tu pregunta."
       }
     }
   }

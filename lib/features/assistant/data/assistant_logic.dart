@@ -222,6 +222,7 @@ class AssistantAccess {
     this.canCreateEvents = false,
     this.teamOrgEnabled = false,
     this.isTeamLeader = false,
+    this.childCount = 0,
   });
 
   final Role role;
@@ -243,6 +244,16 @@ class AssistantAccess {
 
   /// Admin / Verantwortlicher (`isTeamLeaderProvider`): creates tasks.
   final bool isTeamLeader;
+
+  /// Children linked to a parent account (Elternportal).
+  final int childCount;
+
+  /// A status command a parent gives for their children: only names
+  /// (matched against the own children) and "meine Kinder".
+  bool forChildren(SetStatusCommand c) =>
+      role.isParent &&
+      childCount > 0 &&
+      c.who.every((w) => w is PersonSubject || w is PersonIdSubject || w is ChildrenSubject);
 
   /// "Person anlegen" and Mitteilungen: Admin and Verantwortliche, like the
   /// people list and `/settings/messages`.
@@ -272,6 +283,7 @@ class AssistantAccess {
       // Own rows of all groups of the account (like the Übersicht); the rows
       // themselves are checked against the account when saving.
       SetStatusCommand(onlyMe: true) => true,
+      SetStatusCommand() when forChildren(command) => true,
       SetStatusCommand() => changesOthers,
       PlannedAbsenceCommand(who: MeSubject()) => hasOwnPerson && (canSelfReportAbsence || canManageAbsences),
       PlannedAbsenceCommand() => canManageAbsences,

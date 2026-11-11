@@ -2,6 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools">
     <!-- SHOREBIRD: code push patches are downloaded at app start -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Spracheingabe im Chat-Assistenten (nur solange das Mikrofon an ist) -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <!-- NATIVE_MISC: audio_service lock-screen controls (Ionic capacitor-media-session) -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
@@ -105,6 +107,10 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- speech_to_text: the system speech recognition service -->
+        <intent>
+            <action android:name="android.speech.RecognitionService"/>
         </intent>
     </queries>
 </manifest>
