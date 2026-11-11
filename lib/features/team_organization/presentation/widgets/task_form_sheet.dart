@@ -292,6 +292,35 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                         ),
                         onTap: () => _pickPerson(persons),
                       ),
+                      if (ref.watch(redesignEnabledProvider))
+                        // Beta: a plain select row like the others.
+                        ListTile(
+                          key: const ValueKey('rd-task-due'),
+                          title: Text(l10n.tasksDueOn),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _dueDate != null ? formatLongDate(_dueDate) : l10n.tasksFlutterNoDate,
+                                style: TextStyle(
+                                    color: _dueDate != null ? theme.colorScheme.onSurface : AppColors.medium),
+                              ),
+                              if (_dueDate != null)
+                                IconButton(
+                                  tooltip: l10n.commonDelete,
+                                  visualDensity: VisualDensity.compact,
+                                  icon: Icon(AppIcons.cancel, size: 18, color: AppColors.medium),
+                                  onPressed: () => setState(() => _dueDate = null),
+                                )
+                              else ...[
+                                const SizedBox(width: 4),
+                                const IonDetailIcon(),
+                              ],
+                            ],
+                          ),
+                          onTap: _pickDate,
+                        )
+                      else
                       ListTile(
                         title: Text(l10n.tasksDueOn),
                         trailing: Row(

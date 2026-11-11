@@ -20036,6 +20036,18 @@ abstract class AppLocalizations {
   /// **'Besprechungen'**
   String get rdTeamTabMeetings;
 
+  /// rdTeam.taskDelete
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgabe löschen'**
+  String get rdTeamTaskDelete;
+
+  /// rdTeam.taskYou
+  ///
+  /// In de, this message translates to:
+  /// **'Du'**
+  String get rdTeamTaskYou;
+
   /// rdTeam.title
   ///
   /// In de, this message translates to:
