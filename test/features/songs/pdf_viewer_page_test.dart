@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:io';
 
 import 'package:attendix/features/songs/presentation/widgets/pdf_viewer_page.dart';
@@ -66,7 +67,7 @@ void main() {
 
     expect(find.text('PDF konnte nicht geladen werden'), findsOneWidget);
     expect(find.byTooltip('Extern öffnen'), findsOneWidget);
-    expect(find.byIcon(Icons.refresh), findsOneWidget);
+    expect(find.byIcon(AppIcons.refresh), findsOneWidget);
     // No page switch without a document.
     expect(find.byTooltip('Seitenweise blättern'), findsNothing);
   });
@@ -88,7 +89,7 @@ void main() {
     final source = File('lib/features/songs/presentation/widgets/pdf_viewer_page.dart').readAsStringSync();
     expect(source, contains('Share.shareXFiles('));
     expect(source, contains("mimeType: 'application/pdf'"));
-    expect(source, contains('Icons.adaptive.share'));
+    expect(source, contains('AppIcons.adaptiveShare'));
     // Mac: print directly (its share menu has no print).
     expect(source, contains('Printing.layoutPdf('));
   });

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -88,7 +89,7 @@ class _AppRedirectPageState extends State<AppRedirectPage> {
                         width: 96,
                         height: 96,
                         errorBuilder: (_, __, ___) =>
-                            const Icon(Icons.event_available, size: 96),
+                            Icon(AppIcons.eventAvailable, size: 96),
                       ),
                     ),
                   ),
@@ -108,14 +109,14 @@ class _AppRedirectPageState extends State<AppRedirectPage> {
                   ElevatedButton.icon(
                     style: buttonStyle,
                     onPressed: () => _open(appStoreUrl),
-                    icon: const Icon(Icons.apple),
+                    icon: Icon(AppIcons.apple),
                     label: const IonButtonLabel('App Store'),
                   ),
                   const SizedBox(height: 8),
                   ElevatedButton.icon(
                     style: buttonStyle,
                     onPressed: () => _open(playStoreUrl),
-                    icon: const Icon(Icons.shop),
+                    icon: Icon(AppIcons.shop),
                     label: const IonButtonLabel('Google Play'),
                   ),
                 ],

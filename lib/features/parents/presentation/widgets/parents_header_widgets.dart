@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/services/native/native_file_service.dart';
@@ -80,7 +81,7 @@ class ParentsTenantTitle extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 4),
-            const Icon(Icons.keyboard_arrow_down, color: AppColors.primary, size: 20),
+            Icon(AppIcons.keyboardArrowDown, color: AppColors.primary, size: 20),
           ],
         ),
       ),
@@ -281,7 +282,7 @@ Future<void> showCurrentSongsSheet(
             start: [
               IconButton(
                 tooltip: sheetContext.l10n.commonClose,
-                icon: const Icon(Icons.close),
+                icon: Icon(AppIcons.close),
                 onPressed: () => Navigator.of(sheetContext).pop(),
               ),
             ],
@@ -304,7 +305,7 @@ Future<void> showCurrentSongsSheet(
                                   ? Text(sheetContext.l10n.signoutConductor(his.conductorName!))
                                   : null,
                               trailing: (his.song!.link ?? '').isNotEmpty
-                                  ? const Icon(Icons.download_outlined)
+                                  ? Icon(AppIcons.downloadOutlined)
                                   : null,
                               // Ionic `ion-item button` → iOS detail chevron
                               detail: true,

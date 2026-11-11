@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/providers/group_providers.dart';
@@ -234,7 +235,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     const primaryStyle = TextStyle(color: AppColors.primary);
     final addTopicsRow = ListTile(
       dense: true,
-      leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+      leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
       title: Text(context.l10n.attendanceAddTopics, style: primaryStyle),
       onTap: () => openAgendaPickerForAttendance(context, ref,
           attendanceId: widget.attendance.id!, type: protocolType),
@@ -280,7 +281,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
             ),
             ListTile(
               dense: true,
-              leading: const Icon(Icons.ios_share, color: AppColors.primary),
+              leading: Icon(AppIcons.iosShare, color: AppColors.primary),
               title: Text(context.l10n.attendanceShare, style: primaryStyle),
               onTap: () => _export(att, plans, _planIndex),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/attendance_songs.dart';
@@ -78,7 +79,7 @@ class UpcomingSongsSheet extends ConsumerWidget {
                 start: [
                   IconButton(
                     tooltip: context.l10n.commonClose,
-                    icon: const Icon(Icons.close),
+                    icon: Icon(AppIcons.close),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -86,7 +87,7 @@ class UpcomingSongsSheet extends ConsumerWidget {
                   // MISC2: Ionic signout printAllCurrentFiles
                   IconButton(
                     tooltip: context.l10n.signoutFlutterPrintAllScores,
-                    icon: const Icon(Icons.print_outlined),
+                    icon: Icon(AppIcons.printOutlined),
                     onPressed: () => _printAllCurrentFiles(context, ref),
                   ),
                 ],
@@ -98,7 +99,7 @@ class UpcomingSongsSheet extends ConsumerWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
+                        Icon(AppIcons.errorOutline, size: 48, color: AppColors.danger),
                         const SizedBox(height: AppDimensions.paddingM),
                         Text(context.l10n.signoutFlutterError(friendlyErrorMessage(error))),
                         TextButton(
@@ -251,12 +252,12 @@ class _SongListItem extends StatelessWidget {
               children: [
                 if (hasLink)
                   IconButton(
-                    icon: Icon(Icons.download_outlined, color: fg ?? AppColors.primary),
+                    icon: Icon(AppIcons.downloadOutlined, color: fg ?? AppColors.primary),
                     tooltip: context.l10n.signoutOpenScoreLink,
                     onPressed: () => openSongLink(context, song.link!),
                   ),
                 if (ios && (!linkOnly || hasLink))
-                  Icon(Icons.chevron_right,
+                  Icon(AppIcons.chevronRight,
                       color: (fg ?? AppColors.medium).withValues(alpha: 0.6)),
               ],
             )
@@ -383,7 +384,7 @@ class AttendanceSongsSheet extends ConsumerWidget {
               start: [
                 IconButton(
                   tooltip: context.l10n.commonClose,
-                  icon: const Icon(Icons.close),
+                  icon: Icon(AppIcons.close),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -391,7 +392,7 @@ class AttendanceSongsSheet extends ConsumerWidget {
                 if (!linkOnly && entries.isNotEmpty)
                   IconButton(
                     tooltip: context.l10n.attendanceSongsPrintAll,
-                    icon: const Icon(Icons.print_outlined),
+                    icon: Icon(AppIcons.printOutlined),
                     onPressed: () => _print(context, ref, isChoir),
                   ),
               ],
@@ -420,12 +421,12 @@ class AttendanceSongsSheet extends ConsumerWidget {
                     IonInsetList(
                       children: [
                         ListTile(
-                          leading: const Icon(Icons.description_outlined, color: AppColors.primary),
+                          leading: Icon(AppIcons.descriptionOutlined, color: AppColors.primary),
                           title: Text(
                             context.l10n.attendanceSongsOpenRunSheet,
                             style: const TextStyle(color: AppColors.primary),
                           ),
-                          trailing: const Icon(Icons.chevron_right),
+                          trailing: Icon(AppIcons.chevronRight),
                           onTap: () {
                             Navigator.of(context).pop();
                             onOpenPlan!();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -160,7 +161,7 @@ class AllgemeinAccordion extends ConsumerWidget {
           if (person.birthday != null || canEdit)
             _buildDateField(
               context,
-              icon: Icons.cake,
+              icon: AppIcons.cake,
               label: context.l10n.peopleBirthday,
               value: person.birthday,
               fieldKey: 'birthday',
@@ -175,7 +176,7 @@ class AllgemeinAccordion extends ConsumerWidget {
               !isMainGroup)
             _buildDateField(
               context,
-              icon: Icons.music_note,
+              icon: AppIcons.musicNote,
               label: context.l10n.personPlaysSince,
               value: person.playsSince,
               fieldKey: 'playsSince',
@@ -185,7 +186,7 @@ class AllgemeinAccordion extends ConsumerWidget {
           if (person.joined != null || canEdit)
             _buildDateField(
               context,
-              icon: Icons.login,
+              icon: AppIcons.login,
               label: context.l10n.personJoinedOn,
               value: person.joined,
               fieldKey: 'joined',
@@ -234,7 +235,7 @@ class AllgemeinAccordion extends ConsumerWidget {
       children: [
         Expanded(
           child: IonFieldRow(
-            icon: Icons.person,
+            icon: AppIcons.person,
             label: context.l10n.peopleFirstName,
             value: person.firstName,
             editable: canEdit,
@@ -250,7 +251,7 @@ class AllgemeinAccordion extends ConsumerWidget {
         ),
         Expanded(
           child: IonFieldRow(
-            icon: Icons.person_outline,
+            icon: AppIcons.personOutline,
             label: context.l10n.peopleLastName,
             value: person.lastName,
             editable: canEdit,
@@ -273,7 +274,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     if (notes == null && !canEdit) return const SizedBox.shrink();
 
     return IonFieldRow(
-      icon: Icons.notes,
+      icon: AppIcons.notes,
       label: context.l10n.peopleNotes,
       value: notes ?? context.l10n.personFlutterNoNotes,
       editable: canEdit,
@@ -302,7 +303,7 @@ class AllgemeinAccordion extends ConsumerWidget {
             : context.l10n.personFlutterNotAssigned;
 
         return IonFieldRow(
-          icon: Icons.group,
+          icon: AppIcons.group,
           label: groupLabel(tenantType),
           value: groupName,
           editable: canEdit,
@@ -317,7 +318,7 @@ class AllgemeinAccordion extends ConsumerWidget {
               items: items,
               selectedValue: currentGroupId,
               // Ionic person.page: the group select has no "none" entry.
-              icon: Icons.group,
+              icon: AppIcons.group,
             );
 
             if (result != null && !result.isNone) {
@@ -334,7 +335,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     if (phone == null && !canEdit) return const SizedBox.shrink();
 
     return IonFieldRow(
-      icon: Icons.phone,
+      icon: AppIcons.phone,
       label: context.l10n.peoplePhone,
       value: phone ?? context.l10n.personFlutterNotSpecified,
       editable: canEdit,
@@ -343,7 +344,7 @@ class AllgemeinAccordion extends ConsumerWidget {
       trailing: canEdit && phone != null
           ? IconButton(
               tooltip: context.l10n.peopleFlutterContactCall,
-              icon: const Icon(Icons.call_outlined),
+              icon: Icon(AppIcons.callOutlined),
               onPressed: () => _launchPhone(phone),
             )
           : null,
@@ -353,7 +354,7 @@ class AllgemeinAccordion extends ConsumerWidget {
         initialValue: phone ?? '',
         fieldKey: 'phone',
         keyboardType: TextInputType.phone,
-        icon: Icons.phone,
+        icon: AppIcons.phone,
       ),
     );
   }
@@ -406,7 +407,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     final value = isLeader ?? person.isLeader;
 
     return IonToggleRow(
-      icon: Icons.star,
+      icon: AppIcons.star,
       label: context.l10n.peopleVoiceLeader,
       value: value,
       editable: canEdit,
@@ -421,7 +422,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     return Column(
       children: [
         IonToggleRow(
-          icon: Icons.school,
+          icon: AppIcons.school,
           label: context.l10n.personPlaysWithTeacher,
           value: hasTeacherValue,
           editable: canEdit,
@@ -457,7 +458,7 @@ class AllgemeinAccordion extends ConsumerWidget {
         return Padding(
           padding: EdgeInsets.zero,
           child: IonFieldRow(
-            icon: Icons.person,
+            icon: AppIcons.person,
             label: context.l10n.peopleTeacher,
             value: teacherName,
             editable: canEdit,
@@ -471,7 +472,7 @@ class AllgemeinAccordion extends ConsumerWidget {
                 title: context.l10n.personFlutterChooseLabel(context.l10n.peopleTeacher),
                 items: items,
                 selectedValue: teacherId,
-                icon: Icons.school,
+                icon: AppIcons.school,
               );
 
               if (result != null && !result.isNone) {
@@ -500,7 +501,7 @@ class AllgemeinAccordion extends ConsumerWidget {
         return Column(
           children: [
             IonFieldRow(
-              icon: Icons.schedule,
+              icon: AppIcons.schedule,
               label: context.l10n.personShiftPlan,
               value: shiftName,
               editable: canEdit,
@@ -515,7 +516,7 @@ class AllgemeinAccordion extends ConsumerWidget {
                   items: items,
                   selectedValue: currentShiftId,
                   noneLabel: context.l10n.personNoShift,
-                  icon: Icons.schedule,
+                  icon: AppIcons.schedule,
                 );
 
                 if (result != null) {
@@ -559,7 +560,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(left: AppDimensions.paddingL),
       child: IonFieldRow(
-        icon: Icons.access_time,
+        icon: AppIcons.accessTime,
         label: context.l10n.personShift,
         value: currentShiftName ?? context.l10n.personFlutterNotSelected,
         editable: canEdit,
@@ -574,7 +575,7 @@ class AllgemeinAccordion extends ConsumerWidget {
             items: items,
             selectedValue: currentShiftName,
             // Ionic: the sub-shift select has no empty option.
-            icon: Icons.access_time,
+            icon: AppIcons.accessTime,
           );
 
           if (result != null && !result.isNone) {
@@ -596,7 +597,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(left: AppDimensions.paddingL),
       child: IonFieldRow(
-        icon: Icons.calendar_today,
+        icon: AppIcons.calendarToday,
         label: context.l10n.personStartDate,
         value: displayValue,
         editable: canEdit,
@@ -628,7 +629,7 @@ class AllgemeinAccordion extends ConsumerWidget {
         final parentName = parent?.fullName ?? context.l10n.personFlutterNotAssigned;
 
         return IonFieldRow(
-          icon: Icons.family_restroom,
+          icon: AppIcons.familyRestroom,
           label: context.l10n.personParents,
           value: parentName,
           editable: canEdit,
@@ -643,7 +644,7 @@ class AllgemeinAccordion extends ConsumerWidget {
               items: items,
               selectedValue: currentParentId,
               noneLabel: context.l10n.personNotSet,
-              icon: Icons.family_restroom,
+              icon: AppIcons.familyRestroom,
             );
 
             if (result != null) {
@@ -662,7 +663,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     final otherExercise = person.otherExercise;
 
     return IonFieldRow(
-      icon: Icons.work,
+      icon: AppIcons.work,
       label: context.l10n.peopleOtherDuties,
       value: otherExercise ?? context.l10n.personFlutterNotSpecified,
       editable: canEdit,
@@ -679,7 +680,7 @@ class AllgemeinAccordion extends ConsumerWidget {
   Widget _buildOtherOrchestrasField(BuildContext context) {
     final selected = otherOrchestras ?? person.otherOrchestras ?? const [];
     return IonFieldRow(
-      icon: Icons.groups_2_outlined,
+      icon: AppIcons.groups2Outlined,
       label: context.l10n.personOtherOrchestras,
       value: selected.isEmpty ? context.l10n.generalSettingsNone : selected.join(', '),
       editable: canEdit,
@@ -742,7 +743,7 @@ class AllgemeinAccordion extends ConsumerWidget {
         builder: (context, ref, _) {
           final churches = ref.watch(churchesProvider).valueOrNull ?? const [];
           return IonFieldRow(
-            icon: Icons.church_outlined,
+            icon: AppIcons.churchOutlined,
             label: field.name,
             value: churchLabel(value, churches),
             editable: canEdit,
@@ -861,7 +862,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     if (rangeValue == null && !canEdit) return const SizedBox.shrink();
 
     return IonFieldRow(
-      icon: Icons.music_note_outlined,
+      icon: AppIcons.musicNoteOutlined,
       label: context.l10n.personVocalRange,
       value: rangeValue ?? context.l10n.personFlutterNotSpecified,
       editable: canEdit,
@@ -880,7 +881,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     if (instrumentsValue == null && !canEdit) return const SizedBox.shrink();
 
     return IonFieldRow(
-      icon: Icons.piano_outlined,
+      icon: AppIcons.pianoOutlined,
       label: context.l10n.peopleInstruments,
       value: instrumentsValue ?? context.l10n.personFlutterNotSpecified,
       editable: canEdit,
@@ -896,7 +897,7 @@ class AllgemeinAccordion extends ConsumerWidget {
 
   Widget _buildExamineeField(BuildContext context) {
     return IonToggleRow(
-      icon: Icons.school_outlined,
+      icon: AppIcons.schoolOutlined,
       label: context.l10n.peopleCandidate,
       value: person.examinee,
       editable: canEdit,
@@ -909,7 +910,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     if (testResultValue == null && !canEdit) return const SizedBox.shrink();
 
     return IonFieldRow(
-      icon: Icons.assignment_outlined,
+      icon: AppIcons.assignmentOutlined,
       label: context.l10n.peopleTestResult,
       value: testResultValue ?? context.l10n.personFlutterNotSpecified,
       editable: canEdit,
@@ -982,19 +983,19 @@ class AllgemeinAccordion extends ConsumerWidget {
   IconData _getExtraFieldIcon(String type) {
     switch (type) {
       case 'text':
-        return Icons.text_fields;
+        return AppIcons.textFields;
       case 'textarea':
-        return Icons.notes;
+        return AppIcons.notes;
       case 'number':
-        return Icons.numbers;
+        return AppIcons.numbers;
       case 'date':
-        return Icons.calendar_today;
+        return AppIcons.calendarToday;
       case 'boolean':
-        return Icons.toggle_on;
+        return AppIcons.toggleOn;
       case 'select':
-        return Icons.list;
+        return AppIcons.list;
       default:
-        return Icons.text_fields;
+        return AppIcons.textFields;
     }
   }
 }

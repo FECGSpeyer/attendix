@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/person_matcher.dart';
@@ -32,7 +33,7 @@ class PersonMatchSuggestions extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 8, 4, 0),
             child: Row(
               children: [
-                const Icon(Icons.people_alt_outlined,
+                Icon(AppIcons.peopleAltOutlined,
                     size: 18, color: AppColors.primary),
                 const SizedBox(width: 8),
                 Expanded(
@@ -42,7 +43,7 @@ class PersonMatchSuggestions extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(AppIcons.close),
                   tooltip: context.l10n.personCloseSuggestions,
                   onPressed: onDismiss,
                 ),
@@ -54,10 +55,10 @@ class PersonMatchSuggestions extends StatelessWidget {
               dense: true,
               leading: Icon(
                 m.candidate.person.appId != null
-                    ? Icons.account_circle
+                    ? AppIcons.accountCircle
                     : (m.candidate.person.email?.isNotEmpty ?? false)
-                        ? Icons.mail
-                        : Icons.help_outline,
+                        ? AppIcons.mail
+                        : AppIcons.helpOutline,
                 color: m.candidate.person.appId != null
                     ? AppColors.success
                     : (m.candidate.person.email?.isNotEmpty ?? false)

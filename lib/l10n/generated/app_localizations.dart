@@ -1382,6 +1382,18 @@ abstract class AppLocalizations {
   /// **'Verbindung wiederhergestellt'**
   String get attendanceConnectionRestored;
 
+  /// attendance.createNewPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Person anlegen'**
+  String get attendanceCreateNewPerson;
+
+  /// attendance.createNewPersonHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wird angelegt und gleich zu diesem Termin hinzugefügt.'**
+  String get attendanceCreateNewPersonHint;
+
   /// attendance.createRunSheet
   ///
   /// In de, this message translates to:
@@ -2119,6 +2131,72 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Benötigt: {count, plural, one {{count} Person} other {{count} Personen}}'**
   String attendanceNeeded(num count);
+
+  /// attendance.newPerson.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde angelegt, konnte aber nicht zum Termin hinzugefügt werden.'**
+  String attendanceNewPersonAddFailed(Object name);
+
+  /// attendance.newPerson.added
+  ///
+  /// In de, this message translates to:
+  /// **'{name} angelegt und hinzugefügt'**
+  String attendanceNewPersonAdded(Object name);
+
+  /// attendance.newPerson.create
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get attendanceNewPersonCreate;
+
+  /// attendance.newPerson.failed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Person konnte nicht angelegt werden.'**
+  String get attendanceNewPersonFailed;
+
+  /// attendance.newPerson.firstName
+  ///
+  /// In de, this message translates to:
+  /// **'Vorname'**
+  String get attendanceNewPersonFirstName;
+
+  /// attendance.newPerson.group
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get attendanceNewPersonGroup;
+
+  /// attendance.newPerson.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Person wird Mitglied der Gruppe und gleich zu diesem Termin hinzugefügt. Weitere Angaben ergänzt du später bei der Person.'**
+  String get attendanceNewPersonHint;
+
+  /// attendance.newPerson.lastName
+  ///
+  /// In de, this message translates to:
+  /// **'Nachname'**
+  String get attendanceNewPersonLastName;
+
+  /// attendance.newPerson.nameMissing
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib Vor- und Nachnamen ein.'**
+  String get attendanceNewPersonNameMissing;
+
+  /// attendance.newPerson.othersMissing
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde angelegt und hinzugefügt, fehlt aber noch in anderen kommenden Terminen.'**
+  String attendanceNewPersonOthersMissing(Object name);
+
+  /// attendance.newPerson.title
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Person'**
+  String get attendanceNewPersonTitle;
 
   /// attendance.noConnection
   ///
@@ -11345,6 +11423,150 @@ abstract class AppLocalizations {
   /// **'Bitte gib einen gültigen Namen ein.'**
   String get orgValidName;
 
+  /// parentRegister.addChild
+  ///
+  /// In de, this message translates to:
+  /// **'Weiteres Kind hinzufügen'**
+  String get parentRegisterAddChild;
+
+  /// parentRegister.change
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get parentRegisterChange;
+
+  /// parentRegister.child
+  ///
+  /// In de, this message translates to:
+  /// **'Mein Kind'**
+  String get parentRegisterChild;
+
+  /// parentRegister.childBirthDateRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib für jedes Kind das Geburtsdatum an.'**
+  String get parentRegisterChildBirthDateRequired;
+
+  /// parentRegister.childHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ich bin Elternteil, auch für mehrere Kinder'**
+  String get parentRegisterChildHint;
+
+  /// parentRegister.childNameRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib für jedes Kind Vor- und Nachnamen an.'**
+  String get parentRegisterChildNameRequired;
+
+  /// parentRegister.childOf
+  ///
+  /// In de, this message translates to:
+  /// **'Kind von {name}'**
+  String parentRegisterChildOf(Object name);
+
+  /// parentRegister.childTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Kind {number}'**
+  String parentRegisterChildTitle(Object number);
+
+  /// parentRegister.finish
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Kind anmelden} other {{count} Kinder anmelden}}'**
+  String parentRegisterFinish(num count);
+
+  /// parentRegister.forChild
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung für: Mein Kind'**
+  String get parentRegisterForChild;
+
+  /// parentRegister.forSelf
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung für: Mich selbst'**
+  String get parentRegisterForSelf;
+
+  /// parentRegister.inviteByEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Per E-Mail einladen'**
+  String get parentRegisterInviteByEmail;
+
+  /// parentRegister.parentData
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Angaben (Elternteil)'**
+  String get parentRegisterParentData;
+
+  /// parentRegister.removeChild
+  ///
+  /// In de, this message translates to:
+  /// **'Kind entfernen'**
+  String get parentRegisterRemoveChild;
+
+  /// parentRegister.reviewParent
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil'**
+  String get parentRegisterReviewParent;
+
+  /// parentRegister.reviewParentHint
+  ///
+  /// In de, this message translates to:
+  /// **'Beim Aufnehmen bekommt {name} Zugang als Elternteil und sieht die Termine des Kindes.'**
+  String parentRegisterReviewParentHint(Object name);
+
+  /// parentRegister.self
+  ///
+  /// In de, this message translates to:
+  /// **'Mich selbst'**
+  String get parentRegisterSelf;
+
+  /// parentRegister.selfHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ich spiele oder singe selbst mit'**
+  String get parentRegisterSelfHint;
+
+  /// parentRegister.shareButton
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldelink teilen'**
+  String get parentRegisterShareButton;
+
+  /// parentRegister.shareHint
+  ///
+  /// In de, this message translates to:
+  /// **'Schick den Eltern den Anmeldelink. Sie wählen dort „Mein Kind“ und du schaltest frei.'**
+  String get parentRegisterShareHint;
+
+  /// parentRegister.shareTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Kind neu dabei?'**
+  String get parentRegisterShareTitle;
+
+  /// parentRegister.successNewPending
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Konto wurde erstellt und die Anmeldung wartet auf die Freigabe durch die Leitung. Bitte bestätige deine E-Mail. Sobald du freigeschaltet bist, siehst du in der App die Termine deiner Kinder und kannst sie an- und abmelden.'**
+  String get parentRegisterSuccessNewPending;
+
+  /// parentRegister.successPending
+  ///
+  /// In de, this message translates to:
+  /// **'Die Anmeldung wartet auf die Freigabe durch die Leitung. Sobald du freigeschaltet bist, siehst du in der App die Termine deiner Kinder und kannst sie an- und abmelden.'**
+  String get parentRegisterSuccessPending;
+
+  /// parentRegister.whoTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Wen möchtest du anmelden?'**
+  String get parentRegisterWhoTitle;
+
   /// people.activate
   ///
   /// In de, this message translates to:
@@ -16763,6 +16985,42 @@ abstract class AppLocalizations {
   /// **'Was'**
   String get rdDataWhat;
 
+  /// rdHelper.formHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aushilfen kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert.'**
+  String get rdHelperFormHint;
+
+  /// rdHelper.lastDay
+  ///
+  /// In de, this message translates to:
+  /// **'Dabei bis'**
+  String get rdHelperLastDay;
+
+  /// rdHelper.personHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kommt nur in Termine bis zu diesem Tag und wird danach automatisch archiviert.'**
+  String get rdHelperPersonHint;
+
+  /// rdHelper.switchHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur für eine bestimmte Zeit dabei, z. B. für ein Konzert'**
+  String get rdHelperSwitchHint;
+
+  /// rdHelper.title
+  ///
+  /// In de, this message translates to:
+  /// **'Aushilfe'**
+  String get rdHelperTitle;
+
+  /// rdHelper.until
+  ///
+  /// In de, this message translates to:
+  /// **'Aushilfe bis {date}'**
+  String rdHelperUntil(Object date);
+
   /// rdOrg.archiveNote
   ///
   /// In de, this message translates to:
@@ -20344,6 +20602,12 @@ abstract class AppLocalizations {
   /// **'Bearbeiten'**
   String get redesignEventPlanEditShort;
 
+  /// redesign.event.planFree
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Min frei bis Terminende'**
+  String redesignEventPlanFree(Object count);
+
   /// redesign.event.planHint
   ///
   /// In de, this message translates to:
@@ -20397,6 +20661,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Vorbereitung · {done} von {total} erledigt'**
   String redesignEventPrep(Object done, Object total);
+
+  /// redesign.event.prepEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Was vor dem Termin erledigt sein muss, z. B. Raum aufschließen oder Noten kopieren. Abhaken kannst du direkt hier, sehen kann es nur die Leitung.'**
+  String get redesignEventPrepEmpty;
+
+  /// redesign.event.prepTakeOver
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Aufgabe der Terminart übernehmen} other {{count} Aufgaben der Terminart übernehmen}}'**
+  String redesignEventPrepTakeOver(num count);
+
+  /// redesign.event.prepTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Vorbereitung'**
+  String get redesignEventPrepTitle;
 
   /// redesign.event.presentOf
   ///
@@ -26283,6 +26565,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Prüfen und freischalten'**
   String get redesignTodayPendingHint;
+
+  /// redesign.today.prepDue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Aufgabe zur Vorbereitung fällig} other {{count} Aufgaben zur Vorbereitung fällig}}'**
+  String redesignTodayPrepDue(num count);
 
   /// redesign.today.question
   ///

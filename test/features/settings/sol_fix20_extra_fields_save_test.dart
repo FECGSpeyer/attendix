@@ -1,6 +1,7 @@
 // SOL_FIX20: Sol review of 8270c82 – the Zusatzfelder page stayed editable
 // while its multi-step save ran, and the value cleanup used the lists as
 // changed meanwhile instead of the definitions actually stored.
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:async';
 
 import 'package:attendix/core/providers/church_providers.dart';
@@ -102,7 +103,7 @@ void main() {
     expect(find.text('A'), findsOneWidget);
     expect(find.text('B'), findsOneWidget);
 
-    await tester.tap(find.byIcon(Icons.check));
+    await tester.tap(find.byIcon(AppIcons.check));
     await tester.pump();
 
     // Ionic loading overlay "Felder werden gespeichert..."
@@ -111,7 +112,7 @@ void main() {
     expect(repo.savedPersonIds, ['a', 'b']);
 
     // Try to delete field A while the save is running: blocked, no dialog.
-    await tester.tap(find.byIcon(Icons.delete_outline).first, warnIfMissed: false);
+    await tester.tap(find.byIcon(AppIcons.deleteOutline).first, warnIfMissed: false);
     // The spinner keeps animating – no pumpAndSettle while saving.
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.text('Löschen'), findsNothing);
@@ -160,17 +161,17 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byIcon(Icons.edit_outlined));
+    await tester.tap(find.byIcon(AppIcons.editOutlined));
     await tester.pumpAndSettle();
     expect(find.text('false'), findsNothing);
     expect(find.text('Übernehmen'), findsNothing);
 
     await tester.enterText(find.widgetWithText(TextField, 'C'), 'C2');
-    await tester.tap(find.byIcon(Icons.close));
+    await tester.tap(find.byIcon(AppIcons.close));
     await tester.pumpAndSettle();
     expect(find.text('C2'), findsOneWidget);
 
-    await tester.tap(find.byIcon(Icons.check));
+    await tester.tap(find.byIcon(AppIcons.check));
     await tester.pump();
     repo.gate.complete();
     await tester.pumpAndSettle();
@@ -206,7 +207,7 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byIcon(Icons.check));
+    await tester.tap(find.byIcon(AppIcons.check));
     await tester.pumpAndSettle();
 
     expect(repo.log, isEmpty);

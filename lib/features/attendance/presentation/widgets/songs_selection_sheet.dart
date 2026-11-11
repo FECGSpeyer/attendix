@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -214,7 +215,7 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(AppIcons.close),
                   tooltip: context.l10n.commonClose,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -239,7 +240,7 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                                 ? context.l10n.attListNoSongsSelected
                                 : context.l10n.attListSongsSelected(_selectedSongIds.length),
                           ),
-                          trailing: const Icon(Icons.chevron_right),
+                          trailing: Icon(AppIcons.chevronRight),
                           onTap: _openSongPicker,
                         ),
                         const Divider(height: 1, indent: 16),
@@ -394,7 +395,7 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
         title: Text(context.l10n.attListChooseSongs),
         actions: [
           IconButton(
-            icon: const Icon(Icons.check),
+            icon: Icon(AppIcons.check),
             tooltip: context.l10n.commonApply,
             onPressed: () => Navigator.of(context).pop(_selected),
           ),
@@ -405,7 +406,7 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
             padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
             child: SearchBar(
               hintText: context.l10n.attListSearchSong,
-              leading: const Icon(Icons.search),
+              leading: Icon(AppIcons.search),
               elevation: const WidgetStatePropertyAll(0),
               onChanged: (v) => setState(() => _search = v.trim().toLowerCase()),
             ),
@@ -493,7 +494,7 @@ class SelectedSongsList extends StatelessWidget {
                   readOnly
                       ? null
                       : IconButton(
-                        icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                        icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                         onPressed: () {
                           final newEntries = List<SongHistoryEntry>.from(entries);
                           newEntries.removeAt(index);

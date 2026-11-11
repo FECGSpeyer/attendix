@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -124,14 +125,14 @@ class _TasksTabState extends ConsumerState<TasksTab> {
                   ),
                 if (groups.isEmpty)
                   IonEmptyState(
-                    icon: Icons.done_all,
+                    icon: AppIcons.doneAll,
                     iconSize: 48,
                     padding: const EdgeInsets.fromLTRB(32, 48, 32, 16),
                     text: emptyText(),
                     action: isLeader && tasks.isEmpty
                         ? TextButton.icon(
                             onPressed: _addTask,
-                            icon: const Icon(Icons.add),
+                            icon: Icon(AppIcons.add),
                             label: IonButtonLabel(l10n.teamOrgCreateTask),
                           )
                         : null,
@@ -180,7 +181,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
               heroTag: 'team-org-add-task',
               tooltip: l10n.teamOrgCreateTask,
               onPressed: _addTask,
-              child: const Icon(Icons.add),
+              child: Icon(AppIcons.add),
             )
           : null),
       // Ionic reload(): after a failed load the previous list stays (none →
@@ -242,7 +243,7 @@ class TaskListTile extends StatelessWidget {
         tooltip: done ? l10n.tasksFlutterReopen : l10n.tasksMarkDone,
         iconSize: 26,
         icon: Icon(
-          done ? Icons.check_circle : Icons.radio_button_unchecked,
+          done ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
           color: done ? (rd?.primary ?? AppColors.success) : (rd?.text2 ?? AppColors.medium),
         ),
         onPressed: onToggle,

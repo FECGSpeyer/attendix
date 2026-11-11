@@ -8,6 +8,8 @@
 	<string>Attendix greift nur auf deine Mediathek zu, wenn du selbst eine Audiodatei auswählst.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Attendix nutzt die Kamera, um Fotos für Anwesenheiten aufzunehmen und QR-Codes von Einladungen zu scannen.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Attendix fragt nicht nach deinem Standort. Die Angabe ist nur nötig, weil die eingebundene Dateiauswahl die Standortfunktion enthält.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Attendix nimmt keinen Ton auf. Die Angabe ist für die eingebundene Audiowiedergabe nötig.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

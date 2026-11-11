@@ -6,6 +6,7 @@ import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart';
@@ -83,7 +84,7 @@ class HomeDashboardPage extends ConsumerWidget {
             if (!ios)
               IconButton(
                 tooltip: context.l10n.homeDashboardConfigure,
-                icon: const Icon(Icons.settings_outlined),
+                icon: Icon(AppIcons.settingsOutlined),
                 onPressed: () => context.push('/settings/dashboard'),
               ),
             const NotificationBell(),
@@ -98,7 +99,7 @@ class HomeDashboardPage extends ConsumerWidget {
                 heroTag: 'homeDashboardSettingsFab',
                 tooltip: context.l10n.homeDashboardConfigure,
                 onPressed: () => context.push('/settings/dashboard'),
-                child: const Icon(Icons.settings_outlined),
+                child: Icon(AppIcons.settingsOutlined),
               ),
             )
           : null,
@@ -113,7 +114,7 @@ class HomeDashboardPage extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 60),
                     child: Column(
                       children: [
-                        const Icon(Icons.grid_view, size: 48, color: AppColors.medium),
+                        Icon(AppIcons.gridView, size: 48, color: AppColors.medium),
                         const SizedBox(height: 16),
                         Text(
                           context.l10n.homeDashboardAllHidden,

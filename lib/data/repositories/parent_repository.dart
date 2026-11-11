@@ -51,6 +51,24 @@ class ParentRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// The Elternteil of the current tenant with the account [appId]
+  /// (parent registration: siblings share one Elternteil). Null when none.
+  Future<ParentModel?> getParentByAppId(String appId) async {
+    try {
+      final response = await supabase
+          .from('parents')
+          .select('*')
+          .eq('appId', appId)
+          .eq('tenantId', currentTenantId)
+          .limit(1)
+          .maybeSingle();
+      return response == null ? null : ParentModel.fromJson(response);
+    } catch (e, stack) {
+      handleError(e, stack, 'getParentByAppId');
+      rethrow;
+    }
+  }
+
   /// Create a new parent
   Future<ParentModel> createParent(ParentModel parent) async {
     ensureNotDemo('createParent'); // DEMO_GUARD

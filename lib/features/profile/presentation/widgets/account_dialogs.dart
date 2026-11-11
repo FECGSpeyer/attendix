@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -337,7 +338,7 @@ class _ChangeEmailDialogState extends ConsumerState<ChangeEmailDialog> {
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               hintText: context.l10n.settingsFlutterNewEmailPh,
-              prefixIcon: const Icon(Icons.email_outlined),
+              prefixIcon: Icon(AppIcons.emailOutlined),
             ),
             onSubmitted: (_) => _submit(),
           ),

@@ -792,6 +792,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendanceConnectionRestored => 'Connection restored';
 
   @override
+  String get attendanceCreateNewPerson => 'Create new person';
+
+  @override
+  String get attendanceCreateNewPersonHint =>
+      'Is created and added to this event right away.';
+
+  @override
   String get attendanceCreateRunSheet => 'Create run sheet';
 
   @override
@@ -1232,6 +1239,47 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return 'Needed: $_temp0';
   }
+
+  @override
+  String attendanceNewPersonAddFailed(Object name) {
+    return '$name was created but could not be added to the event.';
+  }
+
+  @override
+  String attendanceNewPersonAdded(Object name) {
+    return '$name created and added';
+  }
+
+  @override
+  String get attendanceNewPersonCreate => 'Create';
+
+  @override
+  String get attendanceNewPersonFailed => 'The person could not be created.';
+
+  @override
+  String get attendanceNewPersonFirstName => 'First name';
+
+  @override
+  String get attendanceNewPersonGroup => 'Section';
+
+  @override
+  String get attendanceNewPersonHint =>
+      'The person becomes a member of the group and is added to this event right away. Add more details later on the person.';
+
+  @override
+  String get attendanceNewPersonLastName => 'Last name';
+
+  @override
+  String get attendanceNewPersonNameMissing =>
+      'Please enter first and last name.';
+
+  @override
+  String attendanceNewPersonOthersMissing(Object name) {
+    return '$name was created and added, but is still missing in other upcoming events.';
+  }
+
+  @override
+  String get attendanceNewPersonTitle => 'New person';
 
   @override
   String get attendanceNoConnection => 'No internet connection';
@@ -6897,6 +6945,98 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orgValidName => 'Please enter a valid name.';
 
   @override
+  String get parentRegisterAddChild => 'Add another child';
+
+  @override
+  String get parentRegisterChange => 'Change';
+
+  @override
+  String get parentRegisterChild => 'My child';
+
+  @override
+  String get parentRegisterChildBirthDateRequired =>
+      'Please enter the date of birth for each child.';
+
+  @override
+  String get parentRegisterChildHint =>
+      'I am a parent, also for several children';
+
+  @override
+  String get parentRegisterChildNameRequired =>
+      'Please enter first and last name for each child.';
+
+  @override
+  String parentRegisterChildOf(Object name) {
+    return 'Child of $name';
+  }
+
+  @override
+  String parentRegisterChildTitle(Object number) {
+    return 'Child $number';
+  }
+
+  @override
+  String parentRegisterFinish(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Register $count children',
+      one: 'Register child',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get parentRegisterForChild => 'Registering: my child';
+
+  @override
+  String get parentRegisterForSelf => 'Registering: myself';
+
+  @override
+  String get parentRegisterInviteByEmail => 'Invite by email';
+
+  @override
+  String get parentRegisterParentData => 'Your details (parent)';
+
+  @override
+  String get parentRegisterRemoveChild => 'Remove child';
+
+  @override
+  String get parentRegisterReviewParent => 'Parent';
+
+  @override
+  String parentRegisterReviewParentHint(Object name) {
+    return 'When you accept, $name gets access as a parent and sees the child\'s events.';
+  }
+
+  @override
+  String get parentRegisterSelf => 'Myself';
+
+  @override
+  String get parentRegisterSelfHint => 'I play or sing myself';
+
+  @override
+  String get parentRegisterShareButton => 'Share sign-up link';
+
+  @override
+  String get parentRegisterShareHint =>
+      'Send the parents the sign-up link. They choose \"My child\" there and you approve.';
+
+  @override
+  String get parentRegisterShareTitle => 'New child joining?';
+
+  @override
+  String get parentRegisterSuccessNewPending =>
+      'Your account has been created and the registration is waiting for approval by the leaders. Please confirm your email. Once you are approved, you will see your children\'s events in the app and can sign them in and out.';
+
+  @override
+  String get parentRegisterSuccessPending =>
+      'The registration is waiting for approval by the leaders. Once you are approved, you will see your children\'s events in the app and can sign them in and out.';
+
+  @override
+  String get parentRegisterWhoTitle => 'Who would you like to register?';
+
+  @override
   String get peopleActivate => 'Activate';
 
   @override
@@ -10186,6 +10326,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdDataWhat => 'What';
 
   @override
+  String get rdHelperFormHint =>
+      'Helpers are only added to events up to this day, never count as a problem case and are archived automatically afterwards.';
+
+  @override
+  String get rdHelperLastDay => 'Last day';
+
+  @override
+  String get rdHelperPersonHint =>
+      'Only added to events up to this day and archived automatically afterwards.';
+
+  @override
+  String get rdHelperSwitchHint =>
+      'Only joins for a while, e.g. for one concert';
+
+  @override
+  String get rdHelperTitle => 'Helper';
+
+  @override
+  String rdHelperUntil(Object date) {
+    return 'Helper until $date';
+  }
+
+  @override
   String get rdOrgArchiveNote =>
       'The people are archived here. People with an account get a message.';
 
@@ -12510,6 +12673,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventPlanEditShort => 'Edit';
 
   @override
+  String redesignEventPlanFree(Object count) {
+    return '$count min free until the event ends';
+  }
+
+  @override
   String get redesignEventPlanHint => 'Run sheet, live on the day';
 
   @override
@@ -12540,6 +12708,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String redesignEventPrep(Object done, Object total) {
     return 'Preparation · $done of $total done';
   }
+
+  @override
+  String get redesignEventPrepEmpty =>
+      'What has to be done before the event, e.g. unlock the room or copy the sheet music. Tick it off right here; only leaders can see it.';
+
+  @override
+  String redesignEventPrepTakeOver(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count tasks of the event type',
+      one: 'Add 1 task of the event type',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventPrepTitle => 'Preparation';
 
   @override
   String redesignEventPresentOf(Object present, Object total, Object percent) {
@@ -16343,6 +16529,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignTodayPendingHint => 'Review and approve';
+
+  @override
+  String redesignTodayPrepDue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count preparation tasks due',
+      one: '1 preparation task due',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignTodayQuestion => 'Are you coming?';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -30,12 +31,12 @@ Future<void> addAttendancePhoto(BuildContext context, WidgetRef ref, int attenda
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            leading: const Icon(Icons.camera_alt),
+            leading: Icon(AppIcons.cameraAlt),
             title: Text(context.l10n.attendanceFlutterCamera),
             onTap: () => Navigator.of(ctx).pop(ImageSource.camera),
           ),
           ListTile(
-            leading: const Icon(Icons.photo_library),
+            leading: Icon(AppIcons.photoLibrary),
             title: Text(context.l10n.attendanceFlutterGallery),
             onTap: () => Navigator.of(ctx).pop(ImageSource.gallery),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -33,14 +34,14 @@ class ImportFileStep extends StatelessWidget {
           child: Column(
             children: [
               ListTile(
-                leading: const Icon(Icons.cloud_upload_outlined, color: AppColors.primary),
+                leading: Icon(AppIcons.cloudUploadOutlined, color: AppColors.primary),
                 title: Text(context.l10n.peopleChooseFile,
                     style: const TextStyle(color: AppColors.primary)),
                 onTap: onPickFile,
               ),
               const Divider(height: 1),
               ListTile(
-                leading: const Icon(Icons.download_outlined),
+                leading: Icon(AppIcons.downloadOutlined),
                 title: Text(context.l10n.peopleDownloadTemplate),
                 onTap: onDownloadTemplate,
               ),
@@ -160,10 +161,10 @@ class ImportRowStatusIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (status) {
-      'ok' => const Icon(Icons.check_circle, color: AppColors.success, size: 20),
-      'error' => const Icon(Icons.cancel, color: AppColors.danger, size: 20),
-      'duplicate' => const Icon(Icons.copy, color: AppColors.medium, size: 20),
-      _ => const Icon(Icons.warning_amber, color: AppColors.warning, size: 20),
+      'ok' => Icon(AppIcons.checkCircle, color: AppColors.success, size: 20),
+      'error' => Icon(AppIcons.cancel, color: AppColors.danger, size: 20),
+      'duplicate' => Icon(AppIcons.copy, color: AppColors.medium, size: 20),
+      _ => Icon(AppIcons.warningAmber, color: AppColors.warning, size: 20),
     };
   }
 }

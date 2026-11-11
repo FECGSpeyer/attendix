@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -455,13 +455,13 @@ class IonDetailChevron extends StatelessWidget {
     if (!ionIsIos(context)) {
       // MD_SWEEP: md `.item-detail-icon` – chevron-forward 1.25em (20px)
       // in the text colour at `--detail-icon-opacity: .25`.
-      return Icon(Icons.chevron_right,
+      return Icon(AppIcons.chevronRight,
           size: 20,
           color: (color ?? IonMd.text(Theme.of(context).brightness))
               .withValues(alpha: 0.25));
     }
     return Icon(
-      CupertinoIcons.chevron_forward,
+      AppIcons.cupertinoChevronForward,
       size: 20,
       color: (color ?? IonIos.text(context)).withValues(alpha: 0.25),
     );

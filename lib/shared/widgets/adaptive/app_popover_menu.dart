@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
@@ -1181,7 +1182,7 @@ class _PopoverRow extends StatelessWidget {
                   const IonDetailChevron()
                 else
                   Icon(
-                    Icons.chevron_right,
+                    AppIcons.chevronRight,
                     size: 20,
                     // Ionic md detail icon: text colour at .25.
                     color: onSurface.withValues(alpha: 0.25),

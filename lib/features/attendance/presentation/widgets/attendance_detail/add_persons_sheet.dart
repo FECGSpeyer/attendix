@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/attendance/attendance.dart';
@@ -70,13 +71,31 @@ AddPersonCandidates computeAddPersonCandidates({
   return AddPersonCandidates(matching: matching, others: others);
 }
 
-/// Shows the multi-select sheet; returns the selected person ids or null.
-Future<List<int>?> showAddPersonsSheet(
+/// What was chosen in [showAddPersonsSheet].
+class AddPersonsPick {
+  const AddPersonsPick.persons(this.personIds) : createNew = false;
+  const AddPersonsPick.createNew()
+      : personIds = const [],
+        createNew = true;
+
+  /// The existing persons to add.
+  final List<int> personIds;
+
+  /// "Neue Person anlegen" was tapped (only offered with `offerCreate`).
+  final bool createNew;
+}
+
+/// Shows the multi-select sheet; returns the choice or null. With
+/// [offerCreate] (Beta, Leitung that may create persons) the sheet also
+/// offers "Neue Person anlegen": in the empty state as its action, else as
+/// the last row of the list.
+Future<AddPersonsPick?> showAddPersonsSheet(
   BuildContext context, {
   required AddPersonCandidates candidates,
   required String Function(Person) groupNameOf,
+  bool offerCreate = false,
 }) {
-  return showModalBottomSheet<List<int>>(
+  return showModalBottomSheet<AddPersonsPick>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
@@ -90,6 +109,7 @@ Future<List<int>?> showAddPersonsSheet(
         candidates: candidates,
         groupNameOf: groupNameOf,
         scrollController: controller,
+        offerCreate: offerCreate,
       ),
     ),
   );
@@ -100,11 +120,13 @@ class _AddPersonsView extends StatefulWidget {
     required this.candidates,
     required this.groupNameOf,
     required this.scrollController,
+    this.offerCreate = false,
   });
 
   final AddPersonCandidates candidates;
   final String Function(Person) groupNameOf;
   final ScrollController scrollController;
+  final bool offerCreate;
 
   @override
   State<_AddPersonsView> createState() => _AddPersonsViewState();
@@ -142,9 +164,11 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
           ),
         ],
       ),
-      trailing: expanded == null ? null : Icon(expanded ? Icons.expand_less : Icons.expand_more),
+      trailing: expanded == null ? null : Icon(expanded ? AppIcons.expandLess : AppIcons.expandMore),
     );
   }
+
+  void _createNew() => Navigator.of(context).pop(const AddPersonsPick.createNew());
 
   @override
   Widget build(BuildContext context) {
@@ -164,10 +188,30 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
               ? Center(
                   child: Padding(
                     padding: const EdgeInsets.all(24),
-                    child: Text(
-                      context.l10n.attendanceAllAlreadyIncluded,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.medium),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          context.l10n.attendanceAllAlreadyIncluded,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: AppColors.medium),
+                        ),
+                        if (widget.offerCreate) ...[
+                          const SizedBox(height: 16),
+                          FilledButton.icon(
+                            key: const Key('add-persons-create-new'),
+                            onPressed: _createNew,
+                            icon: const Icon(Icons.person_add_alt_1),
+                            label: IonButtonLabel(context.l10n.attendanceCreateNewPerson),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            context.l10n.attendanceCreateNewPersonHint,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: AppColors.medium, fontSize: 13),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 )
@@ -189,6 +233,19 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
                       if (_othersExpanded || c.matching.isEmpty)
                         for (final p in c.others) _personTile(p),
                     ],
+                    if (widget.offerCreate) ...[
+                      const Divider(height: 1),
+                      ListTile(
+                        key: const Key('add-persons-create-new'),
+                        leading: const Icon(Icons.person_add_alt_1_outlined, color: AppColors.primary),
+                        title: Text(
+                          context.l10n.attendanceCreateNewPerson,
+                          style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600),
+                        ),
+                        subtitle: Text(context.l10n.attendanceCreateNewPersonHint),
+                        onTap: _createNew,
+                      ),
+                    ],
                   ],
                 ),
         ),
@@ -200,8 +257,8 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
               child: SizedBox(
                 width: double.infinity,
                 child: FilledButton.icon(
-                  onPressed: count == 0 ? null : () => Navigator.of(context).pop(_selected.toList()),
-                  icon: const Icon(Icons.person_add_alt_1),
+                  onPressed: count == 0 ? null : () => Navigator.of(context).pop(AddPersonsPick.persons(_selected.toList())),
+                  icon: Icon(AppIcons.personAddAlt1),
                   label: IonButtonLabel(count == 0
                       ? context.l10n.attendanceChoosePeople
                       : context.l10n.attendanceAddPersonsCount(count)),

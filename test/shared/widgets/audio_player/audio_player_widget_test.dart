@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:attendix/core/services/audio_player/audio_player_service.dart';
 import 'package:attendix/core/services/audio_player/audio_player_state.dart';
 import 'package:attendix/shared/widgets/audio_player/audio_player_widget.dart';
@@ -35,7 +36,7 @@ void main() {
     testWidgets('renders nothing when no file is loaded', (tester) async {
       await tester.pumpWidget(_harness(initial: const AudioPlayerState()));
       expect(find.byType(Slider), findsNothing);
-      expect(find.byIcon(Icons.play_circle_fill), findsNothing);
+      expect(find.byIcon(AppIcons.playCircleFill), findsNothing);
     });
 
     testWidgets('shows song title and current/total time when a file is loaded',
@@ -54,7 +55,7 @@ void main() {
       expect(find.text('Konzert in D'), findsOneWidget);
       expect(find.text('0:12'), findsOneWidget);
       expect(find.text('3:30'), findsOneWidget);
-      expect(find.byIcon(Icons.pause_circle_filled), findsOneWidget);
+      expect(find.byIcon(AppIcons.pauseCircleFilled), findsOneWidget);
       expect(find.byType(Slider), findsOneWidget);
     });
 

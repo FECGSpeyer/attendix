@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -259,7 +260,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
           ),
         AppActionSheetAction(
           value: 'new',
-          icon: Icons.add_circle_outline,
+          icon: AppIcons.addCircleOutline,
           label: context.l10n.agendaNewEvent,
         ),
       ],
@@ -318,7 +319,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
           if (!_isNew && item != null && isLeader)
             IconButton(
               tooltip: l10n.agendaDeleteTopic,
-              icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+              icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
               onPressed: _delete,
             ),
         ],
@@ -327,7 +328,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
           ? FloatingActionButton(
               tooltip: l10n.commonSave,
               onPressed: _saving ? null : _save,
-              child: const Icon(Icons.save_outlined),
+              child: Icon(AppIcons.saveOutlined),
             )
           : null),
       // P10_SONGS_ORG: keep the form while the item reloads after a save.
@@ -358,7 +359,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
                     if (item != null && item.proposer.fullName.isNotEmpty)
                       IonInsetList(children: [
                         ListTile(
-                          leading: const Icon(Icons.lightbulb_outline, color: AppColors.medium),
+                          leading: Icon(AppIcons.lightbulbOutline, color: AppColors.medium),
                           title: Text(l10n.agendaProposedBy(item.proposer.fullName),
                               style: const TextStyle(fontSize: 15)),
                           subtitle: item.decisionNote?.isNotEmpty == true
@@ -372,7 +373,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                         child: FilledButton.icon(
                           onPressed: () => _planInto(item),
-                          icon: const Icon(Icons.calendar_today_outlined),
+                          icon: Icon(AppIcons.calendarTodayOutlined),
                           label: IonButtonLabel(l10n.agendaPlanIn),
                         ),
                       ),
@@ -570,7 +571,7 @@ class _TasksSection extends ConsumerWidget {
         for (final t in tasks)
           ListTile(
             leading: Icon(
-              t.status == 'completed' ? Icons.check_circle : Icons.radio_button_unchecked,
+              t.status == 'completed' ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
               color: t.status == 'completed' ? AppColors.success : AppColors.medium,
             ),
             title: Text(
@@ -586,7 +587,7 @@ class _TasksSection extends ConsumerWidget {
         if (tasks.isEmpty) ListTile(title: Text(l10n.agendaNoTasks, style: const TextStyle(color: AppColors.medium))),
         if (isLeader)
           ListTile(
-            leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+            leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
             title: Text(l10n.agendaAddTask, style: const TextStyle(color: AppColors.primary)),
             onTap: () => showTaskFormSheet(
               context,

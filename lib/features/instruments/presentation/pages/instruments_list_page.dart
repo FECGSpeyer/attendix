@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../data/repositories/base_repository.dart' show RepositoryException;
 import 'package:go_router/go_router.dart';
@@ -114,7 +115,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
       actions: [
         if (isAdmin) ...[
           IconButton(
-            icon: Icon(_isReordering ? Icons.check : Icons.swap_vert),
+            icon: Icon(_isReordering ? AppIcons.check : AppIcons.swapVert),
             tooltip: _isReordering
                 ? context.l10n.peopleFlutterSaveOrder
                 : context.l10n.peopleReorder,
@@ -124,7 +125,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
                 : null,
           ),
           IconButton(
-            icon: const Icon(Icons.sell_outlined),
+            icon: Icon(AppIcons.sellOutlined),
             onPressed: () => showInstrumentCategoriesSheet(context),
             tooltip: context.l10n.instrumentsCategories,
           ),
@@ -143,7 +144,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
             SliverFillRemaining(
               hasScrollBody: false,
               child: IonNoData(
-                icon: Icons.error_outline,
+                icon: AppIcons.errorOutline,
                 label: context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(error)),
                 actions: [
                   (context.l10n.messagesRetry, () => ref.invalidate(groupsProvider)),
@@ -214,7 +215,7 @@ class _GroupedInstrumentsList extends StatelessWidget {
           IonItem(
             lines: false,
             background: AppColors.primary,
-            start: const Icon(Icons.info, color: Colors.white),
+            start: Icon(AppIcons.info, color: Colors.white),
             child: Text(
               context.l10n.instrumentsDragGroups,
               style: IonText.p(context).copyWith(color: Colors.white),
@@ -313,7 +314,7 @@ class _GroupListItem extends StatelessWidget {
                 if (dragIndex != null) ...[
                   ReorderableDragStartListener(
                     index: dragIndex!,
-                    child: const Icon(Icons.reorder, color: AppColors.medium),
+                    child: Icon(AppIcons.reorder, color: AppColors.medium),
                   ),
                   if (group.sortOrder != null) const SizedBox(width: 16),
                 ],
@@ -580,7 +581,7 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(AppIcons.close),
             tooltip: context.l10n.commonClose,
             onPressed: () => Navigator.of(context).pop(),
           ),
@@ -685,7 +686,7 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
                         )
                       : IconButton(
                           tooltip: context.l10n.instrumentsFlutterGenerateSynonyms,
-                          icon: const Icon(Icons.auto_awesome_outlined),
+                          icon: Icon(AppIcons.autoAwesomeOutlined),
                           onPressed: _generateSynonyms,
                         ),
                 ),

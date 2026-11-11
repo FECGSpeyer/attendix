@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -198,7 +199,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
         body: _isPublic
             ? const SizedBox.shrink()
             : ErrorStateView(
-                icon: Icons.link_off,
+                icon: AppIcons.linkOff,
                 message: context.l10n.songsInvalidShareLink,
               ),
       );
@@ -274,7 +275,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
         actions: [
           ToolbarButtonGroup(children: [
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert),
+            icon: Icon(AppIcons.moreVert),
             tooltip: context.l10n.songsFlutterMenu,
             onSelected: (value) {
               switch (value) {
@@ -303,7 +304,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 PopupMenuItem(
                   value: 'categories',
                   child: ListTile(
-                    leading: const Icon(Icons.local_library_outlined),
+                    leading: Icon(AppIcons.localLibraryOutlined),
                     title: Text(context.l10n.songsSongCategories),
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -312,7 +313,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 PopupMenuItem(
                   value: 'share',
                   child: ListTile(
-                    leading: const Icon(Icons.link),
+                    leading: Icon(AppIcons.link),
                     title: Text(context.l10n.songsCopyLink),
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -324,8 +325,8 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                   value: 'tab',
                   child: ListTile(
                     leading: Icon(ref.watch(optionalTabsNotifierProvider).songs
-                        ? Icons.bookmark
-                        : Icons.bookmark_outline),
+                        ? AppIcons.bookmark
+                        : AppIcons.bookmarkOutline),
                     title: Text(ref.watch(optionalTabsNotifierProvider).songs
                         ? context.l10n.songsFlutterHideTab
                         : context.l10n.songsFlutterShowAsTab),
@@ -337,7 +338,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 PopupMenuItem(
                   value: 'import',
                   child: ListTile(
-                    leading: const Icon(Icons.cloud_upload_outlined),
+                    leading: Icon(AppIcons.cloudUploadOutlined),
                     title: Text(context.l10n.songsImportSongs),
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -349,7 +350,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 PopupMenuItem(
                   value: 'orgSearch',
                   child: ListTile(
-                    leading: const Icon(Icons.search),
+                    leading: Icon(AppIcons.search),
                     title: Text(context.l10n.orgSongsMenuEntry),
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -357,7 +358,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
               PopupMenuItem(
                 value: 'pdf',
                 child: ListTile(
-                  leading: const Icon(Icons.description_outlined),
+                  leading: Icon(AppIcons.descriptionOutlined),
                   title: Text(context.l10n.songsCatalogPdf),
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -376,7 +377,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                   final id = await showAddSongSheet(context, data);
                   if (id != null && mounted) _openSong(id);
                 },
-                child: const Icon(Icons.add),
+                child: Icon(AppIcons.add),
               ),
             )
           : null,
@@ -436,7 +437,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                                   child: Badge(
                                     isLabelVisible: filter.hasActiveFilters,
                                     smallSize: 8,
-                                    child: const IosCircleIcon(icon: Icons.tune, size: 44),
+                                    child: IosCircleIcon(icon: AppIcons.tune, size: 44),
                                   ),
                                 ),
                               ),
@@ -452,7 +453,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                               icon: Badge(
                                 isLabelVisible: filter.hasActiveFilters,
                                 smallSize: 8,
-                                child: const Icon(Icons.tune),
+                                child: Icon(AppIcons.tune),
                               ),
                               onPressed: toggleMenu,
                             ),
@@ -505,7 +506,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                   padding: const EdgeInsets.all(AppDimensions.paddingXL),
                   child: Column(
                     children: [
-                      const Icon(Icons.music_off_outlined, size: 56, color: AppColors.medium),
+                      Icon(AppIcons.musicOffOutlined, size: 56, color: AppColors.medium),
                       const SizedBox(height: AppDimensions.paddingS),
                       Text(
                         data.songs.isEmpty
@@ -516,7 +517,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                       if (filter.hasActiveFilters)
                         TextButton.icon(
                           onPressed: filterNotifier.reset,
-                          icon: const Icon(Icons.filter_list_off),
+                          icon: Icon(AppIcons.filterListOff),
                           label: IonButtonLabel(context.l10n.peopleResetFilter),
                         ),
                     ],
@@ -725,7 +726,7 @@ class _SongListItem extends StatelessWidget {
       ));
     }
     if ((song.link?.isNotEmpty ?? false) && view.showLink) {
-      badges.add(const SongBadge(color: AppColors.primary, icon: Icons.link));
+      badges.add(SongBadge(color: AppColors.primary, icon: AppIcons.link));
     }
     if (view.showDifficulty) {
       badges.add(SongBadge(

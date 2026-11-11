@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/config/supabase_config.dart';
@@ -90,7 +91,7 @@ class UserManagementPage extends ConsumerWidget {
         ),
         floatingActionButton: TabBarFab.wrap(FloatingActionButton(
           onPressed: () => _showAddUserDialog(context, ref),
-          child: const Icon(Icons.person_add),
+          child: Icon(AppIcons.personAdd),
         )),
       ),
     );
@@ -299,7 +300,7 @@ class _AdminsTab extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.admin_panel_settings, size: 64, color: AppColors.medium),
+                Icon(AppIcons.adminPanelSettings, size: 64, color: AppColors.medium),
                 SizedBox(height: 16),
                 Text(context.l10n.settingsFlutterUserMgmtNoAdmins),
                 SizedBox(height: 8),
@@ -346,7 +347,7 @@ class _ViewersTab extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.visibility, size: 64, color: AppColors.medium),
+                Icon(AppIcons.visibility, size: 64, color: AppColors.medium),
                 SizedBox(height: 16),
                 Text(context.l10n.settingsFlutterUserMgmtNoViewers),
                 SizedBox(height: 8),
@@ -394,7 +395,7 @@ class _ParentsTab extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.family_restroom, size: 64, color: AppColors.medium),
+                Icon(AppIcons.familyRestroom, size: 64, color: AppColors.medium),
                 SizedBox(height: 16),
                 Text(context.l10n.settingsFlutterUserMgmtNoParents),
                 SizedBox(height: 8),
@@ -442,7 +443,7 @@ class _AllUsersTab extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.people_outline, size: 64, color: AppColors.medium),
+                Icon(AppIcons.peopleOutline, size: 64, color: AppColors.medium),
                 SizedBox(height: 16),
                 Text(context.l10n.settingsFlutterUserMgmtNoUsers),
               ],
@@ -469,19 +470,19 @@ class _AllUsersTab extends ConsumerWidget {
             padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
             children: [
               if (admins.isNotEmpty) ...[
-                _buildRoleSection(context, ref, context.l10n.settingsAdmins, admins, Icons.admin_panel_settings),
+                _buildRoleSection(context, ref, context.l10n.settingsAdmins, admins, AppIcons.adminPanelSettings),
               ],
               if (responsibles.isNotEmpty) ...[
-                _buildRoleSection(context, ref, context.l10n.settingsFlutterUserMgmtResponsibles, responsibles, Icons.supervisor_account),
+                _buildRoleSection(context, ref, context.l10n.settingsFlutterUserMgmtResponsibles, responsibles, AppIcons.supervisorAccount),
               ],
               if (players.isNotEmpty) ...[
-                _buildRoleSection(context, ref, context.l10n.settingsFlutterUserMgmtPlayers, players, Icons.person),
+                _buildRoleSection(context, ref, context.l10n.settingsFlutterUserMgmtPlayers, players, AppIcons.person),
               ],
               if (viewers.isNotEmpty) ...[
-                _buildRoleSection(context, ref, context.l10n.settingsViewers, viewers, Icons.visibility),
+                _buildRoleSection(context, ref, context.l10n.settingsViewers, viewers, AppIcons.visibility),
               ],
               if (others.isNotEmpty) ...[
-                _buildRoleSection(context, ref, context.l10n.commonOtherPlural, others, Icons.person_outline),
+                _buildRoleSection(context, ref, context.l10n.commonOtherPlural, others, AppIcons.personOutline),
               ],
             ],
           ),
@@ -586,7 +587,7 @@ class _UserTile extends ConsumerWidget {
               ),
               const SizedBox(width: 4),
               Icon(
-                Icons.arrow_drop_down,
+                AppIcons.arrowDropDown,
                 color: _getRoleColor(user.roleEnum),
                 size: 18,
               ),
@@ -688,13 +689,13 @@ class _UserTile extends ConsumerWidget {
 
   IconData _getRoleIcon(Role role) {
     return switch (role) {
-      Role.admin => Icons.admin_panel_settings,
-      Role.responsible => Icons.supervisor_account,
-      Role.player => Icons.person,
-      Role.viewer => Icons.visibility,
-      Role.helper => Icons.handshake,
-      Role.parent => Icons.family_restroom,
-      _ => Icons.person_outline,
+      Role.admin => AppIcons.adminPanelSettings,
+      Role.responsible => AppIcons.supervisorAccount,
+      Role.player => AppIcons.person,
+      Role.viewer => AppIcons.visibility,
+      Role.helper => AppIcons.handshake,
+      Role.parent => AppIcons.familyRestroom,
+      _ => AppIcons.personOutline,
     };
   }
 

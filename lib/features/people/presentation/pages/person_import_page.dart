@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -290,7 +291,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+            icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
             onPressed: _busy ? null : () => Navigator.of(context).pop(),
           ),
         ],

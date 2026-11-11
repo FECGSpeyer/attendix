@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -72,6 +73,10 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   bool _privacyAccepted = false;
   bool _noGroupsAvailable = false;
 
+  /// "Wen möchtest du anmelden?": null until chosen, true for "Mein Kind"
+  /// (an Elternteil registers one or more children).
+  bool? _forChildren;
+
   /// iOS large title (`collapse="condense"`): the toolbar title appears once
   /// the large title has scrolled away.
   final _scrollController = ScrollController();
@@ -139,7 +144,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.home_outlined),
+            icon: Icon(AppIcons.homeOutlined),
             tooltip: context.l10n.coreFlutterRouterGoHome,
             onPressed: _goHome,
           ),
@@ -208,6 +213,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       });
     }
 
+    if (_forChildren == null) return _buildChoice(tenant);
+
     final groupsAsync = ref.watch(registrationGroupsProvider(tenant.id!));
     final registrationFields = tenant.registrationFields ?? [];
     final additionalFields = tenant.additionalFields ?? [];
@@ -262,7 +269,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             ),
             child: Column(
               children: [
-                const Icon(Icons.business_outlined,
+                Icon(AppIcons.businessOutlined,
                     size: 64, color: Color(0xFF666666)),
                 const SizedBox(height: 12),
                 Text(
@@ -284,17 +291,21 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             ),
           ),
 
+          _buildChosenRow(),
+
           // Account
           header(context.l10n.tenantRegisterAccount),
           _buildAccountGroup(),
 
-          // Persönliche Daten
-          header(context.l10n.tenantRegisterPersonalData),
+          // Persönliche Daten (for "Mein Kind": the parent's own)
+          header(_forChildren == true
+              ? context.l10n.parentRegisterParentData
+              : context.l10n.tenantRegisterPersonalData),
           IonInsetGroup(
             margin: _betaGroupMargin,
             color: _betaGroupColor,
             children: [
-              if (registrationFields.contains('picture'))
+              if (registrationFields.contains('picture') && _forChildren != true)
                 IonItem(
                   onTap: _changeImage,
                   start: CircleAvatar(
@@ -304,7 +315,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                         ? MemoryImage(_profileImageBytes!)
                         : null,
                     child: _profileImageBytes == null
-                        ? const Icon(Icons.person, color: AppColors.medium)
+                        ? Icon(AppIcons.person, color: AppColors.medium)
                         : null,
                   ),
                   label: _profileImageBytes != null
@@ -334,7 +345,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                   onSaved: (value) => _formData.lastName = value?.trim() ?? '',
                 ),
               ),
-              if (registrationFields.contains('birthDate'))
+              if (registrationFields.contains('birthDate') && _forChildren != true)
                 IonItem(
                   label: context.l10n.tenantRegisterBirthDate,
                   end: IonDateButton(
@@ -359,13 +370,16 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             ],
           ),
 
+          if (_forChildren == true)
+            ..._buildChildren(tenant, groupsAsync, header),
+
           // Weitere Informationen
           header(context.l10n.tenantRegisterMoreInfo),
           IonInsetGroup(
             margin: _betaGroupMargin,
             color: _betaGroupColor,
             children: [
-              groupsAsync.when(
+              if (_forChildren != true) groupsAsync.when(
                 loading: () => const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: AppSpinner()),
@@ -381,7 +395,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                     return ColoredBox(
                       color: AppColors.warning,
                       child: IonItem(
-                        start: const Icon(Icons.warning_amber_outlined,
+                        start: Icon(AppIcons.warningAmberOutlined,
                             color: Colors.black),
                         title: Text(
                           context.l10n.tenantRegisterNoGroups,
@@ -442,7 +456,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               child: RdPrimaryButton(
                 key: const ValueKey('tenant-register-finish'),
                 icon: Icons.check_circle_outline,
-                label: context.l10n.tenantRegisterFinish,
+                label: _finishLabel,
                 loading: _isLoading,
                 onPressed: _isLoading ||
                         _noGroupsAvailable ||
@@ -457,8 +471,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               IonButtonItem(
                 key: const ValueKey('tenant-register-finish'),
                 filled: true,
-                icon: Icons.check_circle_outline,
-                label: context.l10n.tenantRegisterFinish,
+                icon: AppIcons.checkCircleOutline,
+                label: _finishLabel,
                 onTap: _isLoading ||
                         _noGroupsAvailable ||
                         (!_isLoggedIn && _mode == AuthMode.otp)
@@ -487,6 +501,209 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         children: children,
       ),
     );
+  }
+
+  String get _finishLabel => _forChildren == true
+      ? context.l10n.parentRegisterFinish(_formData.children.length)
+      : context.l10n.tenantRegisterFinish;
+
+  void _choose(bool forChildren) {
+    setState(() {
+      _forChildren = forChildren;
+      _formData.forChildren = forChildren;
+    });
+  }
+
+  /// "Wen möchtest du anmelden?": "Mich selbst" (the old form) or "Mein
+  /// Kind" (an Elternteil registers children). Nothing is preselected, so
+  /// parents never register themselves as members by mistake.
+  Widget _buildChoice(Tenant tenant) {
+    final beta = ref.watch(redesignEnabledProvider);
+    final l10n = context.l10n;
+    Widget tile(Key key, IconData icon, String title, String hint, bool forChildren) => IonItem(
+          key: key,
+          start: Icon(icon, color: AppColors.primary),
+          title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+          subtitle: Text(hint),
+          detail: true,
+          minHeight: 64,
+          onTap: () => _choose(forChildren),
+        );
+    final children = <Widget>[
+      if (!beta) ...[
+        const IonContentTopInset(),
+        // The Beta card shows the group above; the old page names it here.
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Text(
+            tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+          ),
+        ),
+      ],
+      beta ? RdGroupLabel(l10n.parentRegisterWhoTitle) : IonListHeader(l10n.parentRegisterWhoTitle),
+      IonInsetGroup(
+        margin: _betaGroupMargin,
+        color: _betaGroupColor,
+        children: [
+          tile(const ValueKey('tenant-register-self'), AppIcons.personOutline, l10n.parentRegisterSelf,
+              l10n.parentRegisterSelfHint, false),
+          tile(const ValueKey('tenant-register-child'), AppIcons.familyRestroom, l10n.parentRegisterChild,
+              l10n.parentRegisterChildHint, true),
+        ],
+      ),
+    ];
+    if (beta) {
+      return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children);
+    }
+    return ListView(
+      controller: _scrollController,
+      padding: const EdgeInsets.only(bottom: 32),
+      children: children,
+    );
+  }
+
+  /// "Anmeldung für: …" with "Ändern" back to the choice.
+  Widget _buildChosenRow() {
+    final l10n = context.l10n;
+    return IonInsetGroup(
+      margin: _betaGroupMargin,
+      color: _betaGroupColor,
+      children: [
+        IonItem(
+          key: const ValueKey('tenant-register-chosen'),
+          label: _forChildren == true ? l10n.parentRegisterForChild : l10n.parentRegisterForSelf,
+          end: TextButton(
+            onPressed: _isLoading ? null : () => setState(() => _forChildren = null),
+            child: Text(l10n.parentRegisterChange),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// "Mein Kind": one group per child (name, group, birth date when the
+  /// group asks for it), "Weiteres Kind hinzufügen" below.
+  List<Widget> _buildChildren(
+    Tenant tenant,
+    AsyncValue<List<Map<String, dynamic>>> groupsAsync,
+    Widget Function(String) header,
+  ) {
+    final l10n = context.l10n;
+    final inputStyle = ionItemInputStyle(context);
+    final dateFormat = DateFormat(dateFmt());
+    final hasBirthDate = (tenant.registrationFields ?? const []).contains('birthDate');
+    final groups = groupsAsync.valueOrNull ?? const <Map<String, dynamic>>[];
+    // Like the self registration: no groups → warning and no sending.
+    if (groupsAsync.hasValue) _noGroupsAvailable = groups.isEmpty;
+    final label = _groupLabel(tenant);
+    final kids = _formData.children;
+    return [
+      for (var i = 0; i < kids.length; i++) ...[
+        header(l10n.parentRegisterChildTitle(i + 1)),
+        IonInsetGroup(
+          key: ObjectKey(kids[i]),
+          margin: _betaGroupMargin,
+          color: _betaGroupColor,
+          children: [
+            IonInputItem(
+              child: TextFormField(
+                initialValue: kids[i].firstName,
+                style: inputStyle,
+                textCapitalization: TextCapitalization.words,
+                decoration: ionItemInputDecoration(context, l10n.tenantRegisterFirstName),
+                onChanged: (v) => kids[i].firstName = v.trim(),
+              ),
+            ),
+            IonInputItem(
+              child: TextFormField(
+                initialValue: kids[i].lastName.isEmpty ? _lastNameController.text.trim() : kids[i].lastName,
+                style: inputStyle,
+                textCapitalization: TextCapitalization.words,
+                decoration: ionItemInputDecoration(context, l10n.tenantRegisterLastName),
+                onChanged: (v) => kids[i].lastName = v.trim(),
+                onSaved: (v) => kids[i].lastName = v?.trim() ?? '',
+              ),
+            ),
+            if (groupsAsync.isLoading && !groupsAsync.hasValue)
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(child: AppSpinner()),
+              )
+            else if (groupsAsync.hasError && !groupsAsync.hasValue)
+              IonItem(
+                label: l10n.tenantRegisterFlutterLoadGroupsFailed,
+                labelColor: AppColors.danger,
+              )
+            else if (groups.isEmpty)
+              IonItem(
+                start: Icon(AppIcons.warningAmberOutlined, color: AppColors.warning),
+                label: l10n.tenantRegisterNoGroups,
+              )
+            else
+              Builder(builder: (_) {
+                kids[i].groupId ??= groups.first['id'] as int;
+                final selected = groups.where((g) => g['id'] == kids[i].groupId).firstOrNull;
+                return IonItem(
+                  label: label,
+                  onTap: () async {
+                    final value = await showIonSelectOptions<int>(
+                      context,
+                      title: label,
+                      options: [for (final g in groups) (g['id'] as int, g['name'] as String)],
+                      selected: kids[i].groupId,
+                    );
+                    if (value != null && mounted) setState(() => kids[i].groupId = value);
+                  },
+                  end: IonSelectValue(text: selected?['name'] as String? ?? ''),
+                );
+              }),
+            if (hasBirthDate)
+              IonItem(
+                label: l10n.tenantRegisterBirthDate,
+                end: IonDateButton(
+                  onTap: () => _pickChildBirthday(kids[i]),
+                  text: kids[i].birthDate != null
+                      ? dateFormat.format(kids[i].birthDate!)
+                      : l10n.tenantRegisterPleaseChoose,
+                ),
+              ),
+            if (kids.length > 1)
+              IonItem(
+                label: l10n.parentRegisterRemoveChild,
+                labelColor: AppColors.danger,
+                onTap: _isLoading ? null : () => setState(() => kids.removeAt(i)),
+              ),
+          ],
+        ),
+      ],
+      IonInsetGroup(
+        margin: _betaGroupMargin,
+        color: _betaGroupColor,
+        children: [
+          IonItem(
+            key: const ValueKey('tenant-register-add-child'),
+            start: Icon(AppIcons.add, color: AppColors.primary),
+            label: l10n.parentRegisterAddChild,
+            labelColor: AppColors.primary,
+            onTap: _isLoading
+                ? null
+                : () => setState(() => kids.add(ChildRegistrationData(lastName: _lastNameController.text.trim()))),
+          ),
+        ],
+      ),
+    ];
+  }
+
+  Future<void> _pickChildBirthday(ChildRegistrationData child) async {
+    final now = DateTime.now();
+    final date = await showAppDatePicker(
+      context: context,
+      initialDate: child.birthDate ?? DateTime(now.year - 10, now.month, now.day),
+      firstDate: DateTime(1900),
+      lastDate: now,
+    );
+    if (date != null && mounted) setState(() => child.birthDate = date);
   }
 
   // REDESIGN (E5): the form groups sit flush inside the Beta card.
@@ -580,7 +797,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             right: 0,
             child: SafeArea(
               child: IconButton(
-                icon: const Icon(Icons.home_outlined, color: Colors.white),
+                icon: Icon(AppIcons.homeOutlined, color: Colors.white),
                 tooltip: l10n.coreFlutterRouterGoHome,
                 onPressed: _goHome,
               ),
@@ -787,12 +1004,12 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             AppActionSheetAction(
               label: context.l10n.attendanceFlutterCamera,
               value: ImageSource.camera,
-              icon: Icons.photo_camera_outlined,
+              icon: AppIcons.photoCameraOutlined,
             ),
             AppActionSheetAction(
               label: context.l10n.attendanceFlutterGallery,
               value: ImageSource.gallery,
-              icon: Icons.photo_library_outlined,
+              icon: AppIcons.photoLibraryOutlined,
             ),
           ],
         );
@@ -902,11 +1119,17 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
       final existing = await supabase
           .from('tenantUsers')
-          .select('id')
+          .select('id, role')
           .eq('tenantId', tenant.id!)
           .eq('userId', userId)
           .maybeSingle();
 
+      // An Elternteil may register another child via the link.
+      if (existing != null && existing['role'] == Role.parent.value && mounted) {
+        _choose(true);
+        await _prefillFromParent(userId, tenant.id!);
+        return;
+      }
       if (existing != null && mounted) {
         ToastHelper.showWarning(
             context, context.l10n.tenantRegisterAlreadyRegistered);
@@ -940,7 +1163,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                     controller: emailController,
                     decoration: InputDecoration(
                       labelText: context.l10n.loginEmail,
-                      prefixIcon: const Icon(Icons.email_outlined),
+                      prefixIcon: Icon(AppIcons.emailOutlined),
                     ),
                     keyboardType: TextInputType.emailAddress,
                   ),
@@ -949,7 +1172,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                     controller: passwordController,
                     decoration: InputDecoration(
                       labelText: context.l10n.loginPassword,
-                      prefixIcon: const Icon(Icons.lock_outlined),
+                      prefixIcon: Icon(AppIcons.lockOutlined),
                     ),
                     obscureText: true,
                   ),
@@ -1225,6 +1448,27 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     });
   }
 
+  /// "Mein Kind" for an Elternteil of this group: the parent's own name.
+  Future<void> _prefillFromParent(String userId, int tenantId) async {
+    try {
+      final row = await ref
+          .read(supabaseClientProvider)
+          .from('parents')
+          .select('firstName, lastName')
+          .eq('appId', userId)
+          .eq('tenantId', tenantId)
+          .limit(1)
+          .maybeSingle();
+      if (row == null || !mounted) return;
+      setState(() {
+        _firstNameController.text = row['firstName'] as String? ?? '';
+        _lastNameController.text = row['lastName'] as String? ?? '';
+      });
+    } catch (e) {
+      debugPrint('Prefill from parent failed: $e');
+    }
+  }
+
   /// Ionic prefillFromProfile(): names/phone (and birth date) from the
   /// user's first existing person profile.
   ///
@@ -1283,11 +1527,25 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       return context.l10n.tenantRegisterNameRequired;
     }
     final registrationFields = tenant.registrationFields ?? const [];
-    if (registrationFields.contains('picture') && _profileImageBytes == null) {
-      return context.l10n.tenantRegisterPictureRequired;
-    }
-    if (registrationFields.contains('birthDate') && _formData.birthDate == null) {
-      return context.l10n.tenantRegisterBirthDateRequired;
+    if (_forChildren == true) {
+      // "Mein Kind": names (and the birth date when asked) of every child;
+      // no picture of the parent.
+      for (final child in _formData.children) {
+        if (child.firstName.trim().isEmpty || child.lastName.trim().isEmpty) {
+          return context.l10n.parentRegisterChildNameRequired;
+        }
+        if (child.groupId == null) return context.l10n.tenantRegisterNoGroupsToast;
+        if (registrationFields.contains('birthDate') && child.birthDate == null) {
+          return context.l10n.parentRegisterChildBirthDateRequired;
+        }
+      }
+    } else {
+      if (registrationFields.contains('picture') && _profileImageBytes == null) {
+        return context.l10n.tenantRegisterPictureRequired;
+      }
+      if (registrationFields.contains('birthDate') && _formData.birthDate == null) {
+        return context.l10n.tenantRegisterBirthDateRequired;
+      }
     }
     if (registrationFields.contains('phone') &&
         !isValidPhoneNumber(
@@ -1365,11 +1623,18 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     _formData.profileImageBytes = _profileImageBytes;
     _formData.profileImageMimeType = _profileImageMimeType;
 
-    final result = await ref.read(registrationServiceProvider).register(
-          tenant: tenant,
-          formData: _formData,
-          otpMode: _mode == AuthMode.otp,
-        );
+    final service = ref.read(registrationServiceProvider);
+    final result = _forChildren == true
+        ? await service.registerChildren(
+            tenant: tenant,
+            formData: _formData,
+            otpMode: _mode == AuthMode.otp,
+          )
+        : await service.register(
+            tenant: tenant,
+            formData: _formData,
+            otpMode: _mode == AuthMode.otp,
+          );
 
     if (!mounted) return;
     setState(() => _isLoading = false);

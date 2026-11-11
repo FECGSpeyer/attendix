@@ -16,6 +16,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/utils/parent_registration.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
@@ -41,6 +42,7 @@ import '../widgets/manage/rd_manage_entries.dart'
     show rdManageIcon, rdManageTitle, rdMissingAccountsProvider, rdOpenManageEntry;
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../../../settings/presentation/pages/settings_page.dart' show createMissingAccounts;
+import '../../../../core/utils/helper_member.dart';
 
 /// REDESIGN: tab "Mitglieder" (canvas "Menschen"). Dirigent and Beobachter:
 /// Aktiv / Pausiert / Wartet (also by swiping the list), search, registers
@@ -104,6 +106,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
     if (!repo.hasTenantId) return;
     try {
       await repo.checkAndUnpausePlayers();
+      await repo.archiveExpiredHelpers();
     } catch (_) {
       return;
     }
@@ -964,7 +967,15 @@ class _MemberRow extends StatelessWidget {
         hints.add(l10n.redesignMembersAbsentFrom(short.format(from)));
       }
     }
-    if (!readOnly && person.pending && (person.email ?? '').isNotEmpty) hints.add(person.email!);
+    final parentReg = person.pending ? parentRegistrationOf(person) : null;
+    if (!readOnly && parentReg != null) {
+      // Registered by an Elternteil via the link ("Mein Kind").
+      hints.add(l10n.parentRegisterChildOf(parentReg.fullName));
+    } else if (!readOnly && person.pending && (person.email ?? '').isNotEmpty) {
+      hints.add(person.email!);
+    }
+    final helperLastDay = readOnly ? null : helperUntil(person);
+    if (helperLastDay != null) hints.add(l10n.rdHelperUntil(short.format(DateTime.parse(helperLastDay))));
 
     final pct = percent;
     final low = pct != null && pct < 50;

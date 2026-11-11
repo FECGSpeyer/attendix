@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/utils/contact_links.dart';
 import '../../../l10n/l10n.dart';
@@ -29,16 +30,16 @@ class ContactActionBar extends StatelessWidget {
 
     final actions = [
       if (call != null)
-        _ContactAction(Icons.call_outlined, l10n.peopleFlutterContactCall,
+        _ContactAction(AppIcons.callOutlined, l10n.peopleFlutterContactCall,
             l10n.peopleFlutterContactCall, call),
       if (whatsApp != null)
-        _ContactAction(Icons.chat_outlined, 'WhatsApp',
+        _ContactAction(AppIcons.chatOutlined, 'WhatsApp',
             l10n.peopleFlutterContactWhatsAppHint, whatsApp),
       if (telegram != null)
-        _ContactAction(Icons.send_outlined, 'Telegram',
+        _ContactAction(AppIcons.sendOutlined, 'Telegram',
             l10n.peopleFlutterContactTelegramHint, telegram),
       if (mail != null)
-        _ContactAction(Icons.mail_outline, l10n.peopleFlutterContactMail,
+        _ContactAction(AppIcons.mailOutline, l10n.peopleFlutterContactMail,
             l10n.peopleFlutterContactMailHint, mail),
     ];
     if (actions.isEmpty) return const SizedBox.shrink();

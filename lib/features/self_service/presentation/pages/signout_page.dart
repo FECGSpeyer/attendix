@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -182,13 +183,13 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       // UX_SELF: pause / unpause sit in the header like in Ionic
       if (canSelfPause && player != null && !player.paused)
         IconButton(
-          icon: const Icon(Icons.pause_circle_outline),
+          icon: Icon(AppIcons.pauseCircleOutline),
           tooltip: context.l10n.signoutPause,
           onPressed: () => selfServicePause(context, ref, player),
         ),
       if (canSelfPause && player != null && player.paused)
         IconButton(
-          icon: const Icon(Icons.play_circle_outline),
+          icon: Icon(AppIcons.playCircleOutline),
           tooltip: context.l10n.signoutEndPause,
           onPressed: () => selfServiceUnpause(context, ref, player),
         ),
@@ -290,7 +291,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
+              Icon(AppIcons.errorOutline, size: 48, color: AppColors.danger),
               const SizedBox(height: 8),
               Text(context.l10n.signoutFlutterError(friendlyErrorMessage(e)), textAlign: TextAlign.center),
               TextButton(onPressed: _refresh, child: IonButtonLabel(context.l10n.messagesRetry)),
@@ -433,7 +434,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.pause_circle_outline, size: 16, color: AppColors.warningDark),
+                          Icon(AppIcons.pauseCircleOutline, size: 16, color: AppColors.warningDark),
                           SizedBox(width: 3),
                           Text(
                             context.l10n.signoutPaused,
@@ -477,14 +478,14 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     final tiles = <Widget>[
       if (songs.isNotEmpty)
         _GreetTile(
-          icon: Icons.music_note_outlined,
+          icon: AppIcons.musicNoteOutlined,
           title: context.l10n.signoutCurrentSongs,
           subtitle: context.l10n.attendanceSongsTileEvents(songs.length),
           onTap: () => showUpcomingSongsSheet(context),
         ),
       if (canPlannedAbsence)
         _GreetTile(
-          icon: Icons.calendar_today_outlined,
+          icon: AppIcons.calendarTodayOutlined,
           title: context.l10n.signoutAbsenceTileTitle,
           subtitle: context.l10n.signoutAbsenceTileSub,
           onTap: () => selfServiceReportAbsence(context, ref, player,
@@ -492,7 +493,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         ),
       if (inDutyCircle)
         _GreetTile(
-          icon: Icons.headset_mic_outlined,
+          icon: AppIcons.headsetMicOutlined,
           title: context.l10n.signoutOpenDuties,
           subtitle: openDutiesTileSubtitle(duty!.openDuties.length),
           onTap: () => showOpenDutiesSheet(context),
@@ -581,7 +582,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                 title: att.eventTitle,
                 // ASTRA_SIGNOUT_TOPICS: Ionic `ev-chip duty-tag` on own duties
                 titleSuffix: isDutyPaAttendance(att)
-                    ? EventChip(label: context.l10n.signoutDuty, icon: Icons.headset_mic_outlined)
+                    ? EventChip(label: context.l10n.signoutDuty, icon: AppIcons.headsetMicOutlined)
                     : null,
                 subtitle: att.eventMeta(),
                 highlight: att.highlight,
@@ -638,7 +639,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                   EventChips(chips: [
                     EventChip(
                       label: context.l10n.attendanceSongsChip(count),
-                      icon: Icons.music_note_outlined,
+                      icon: AppIcons.musicNoteOutlined,
                       onTap: () => actions.openSongs!(att),
                     ),
                   ]),
@@ -647,7 +648,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
               trailing: [
                 if (actions.hasFilesFolder(att))
                   IconButton(
-                    icon: const Icon(Icons.folder_open_outlined),
+                    icon: Icon(AppIcons.folderOpenOutlined),
                     tooltip: context.l10n.signoutOpenFiles,
                     onPressed: () => openFilesFolderRoute(context, att.filesFolder!),
                   ),

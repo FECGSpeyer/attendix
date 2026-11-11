@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 
@@ -206,37 +207,37 @@ class SelfServiceEventActions {
       if (songCount(att) case final count when count > 0)
         EventChip(
           label: context.l10n.attendanceSongsChip(count),
-          icon: Icons.music_note_outlined,
+          icon: AppIcons.musicNoteOutlined,
           onTap: () => openSongs!(att),
         ),
       if (withPlan && att.hasPlan && openPlan != null)
         EventChip(
           label: context.l10n.signoutRunSheet,
-          icon: Icons.description_outlined,
+          icon: AppIcons.descriptionOutlined,
           onTap: () => openPlan!(att),
         ),
       if (att.description != null && att.description!.isNotEmpty)
         EventChip(
           label: context.l10n.signoutInfos,
-          icon: Icons.info_outline,
+          icon: AppIcons.infoOutline,
           onTap: () => showEventDescriptionSheet(context, att.description!),
         ),
       if (att.attachmentUrl != null && att.attachmentUrl!.isNotEmpty)
         EventChip(
           label: att.attachmentName?.isNotEmpty == true ? att.attachmentName! : context.l10n.selfServiceAttachment,
-          icon: Icons.attach_file,
+          icon: AppIcons.attachFile,
           onTap: () => openEventAttachment(att.attachmentUrl!),
         ),
       if (hasFilesFolder(att))
         EventChip(
           label: context.l10n.signoutFiles,
-          icon: Icons.folder_outlined,
+          icon: AppIcons.folderOutlined,
           onTap: () => openFilesFolder(context, att),
         ),
       if (att.place != null && att.place!.isNotEmpty)
         EventChip(
           label: context.l10n.signoutRoute,
-          icon: Icons.navigation_outlined,
+          icon: AppIcons.navigationOutlined,
           onTap: () => openEventNavigation(context, att.place!),
         ),
     ];
@@ -522,23 +523,35 @@ class SelfServiceEventActions {
 
 /// Entries of the Termin action sheet.
 enum SelfServiceActionType {
-  signIn(Icons.check_circle_outline),
-  undoSignout(Icons.undo),
-  signInWithNote(Icons.edit_note),
-  signOut(Icons.cancel_outlined),
-  enterLate(Icons.schedule),
-  editRegistrationFields(Icons.assignment_outlined),
-  editNote(Icons.sticky_note_2_outlined),
-  showSongs(Icons.music_note_outlined),
-  showPlan(Icons.description_outlined),
-  showDescription(Icons.info_outline),
-  openAttachment(Icons.attach_file),
-  openNavigation(Icons.navigation_outlined),
-  openFiles(Icons.folder_open_outlined);
+  signIn,
+  undoSignout,
+  signInWithNote,
+  signOut,
+  enterLate,
+  editRegistrationFields,
+  editNote,
+  showSongs,
+  showPlan,
+  showDescription,
+  openAttachment,
+  openNavigation,
+  openFiles;
 
-  const SelfServiceActionType(this.icon);
-
-  final IconData icon;
+  IconData get icon => switch (this) {
+        signIn => AppIcons.checkCircleOutline,
+        undoSignout => AppIcons.undo,
+        signInWithNote => AppIcons.editNote,
+        signOut => AppIcons.cancelOutlined,
+        enterLate => AppIcons.schedule,
+        editRegistrationFields => AppIcons.assignmentOutlined,
+        editNote => AppIcons.stickyNote2Outlined,
+        showSongs => AppIcons.musicNoteOutlined,
+        showPlan => AppIcons.descriptionOutlined,
+        showDescription => AppIcons.infoOutline,
+        openAttachment => AppIcons.attachFile,
+        openNavigation => AppIcons.navigationOutlined,
+        openFiles => AppIcons.folderOpenOutlined,
+      };
 
   /// Ionic signout.* action sheet labels.
   String label(AppLocalizations l10n) => switch (this) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -192,7 +193,7 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
                 padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
                 child: FilledButton.icon(
                   onPressed: () => _create(),
-                  icon: const Icon(Icons.add),
+                  icon: Icon(AppIcons.add),
                   label: IonButtonLabel(l10n.autoMessagesNewRule),
                   style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
                 ),

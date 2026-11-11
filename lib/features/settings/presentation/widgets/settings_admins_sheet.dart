@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -120,7 +121,7 @@ class _AdminsSheet extends ConsumerWidget {
         child: busy
             ? const SizedBox(
                 width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
-            : const Icon(Icons.add),
+            : Icon(AppIcons.add),
       ),
       // UX_SETTINGS (WAVE 8): Ionic admins modal — hint card with the
       // shield icon, then one inset list (h3 e-mail, p created-at).
@@ -128,7 +129,7 @@ class _AdminsSheet extends ConsumerWidget {
         padding: EdgeInsets.fromLTRB(ionListMargin(context), 16, ionListMargin(context), 88),
         children: [
           SettingsHintCard(
-            icon: Icons.verified_user_outlined,
+            icon: AppIcons.verifiedUserOutlined,
             text: context.l10n.settingsAdminsHint,
           ),
           ...adminsAsync.when(

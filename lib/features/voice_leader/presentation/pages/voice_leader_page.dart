@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -57,7 +58,7 @@ class VoiceLeaderPage extends ConsumerWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             children: [
               IonNoData(
-                icon: Icons.error_outline,
+                icon: AppIcons.errorOutline,
                 label: context.l10n.voiceLeaderLoadFailed,
                 message: error.toString(),
                 actions: [
@@ -75,7 +76,7 @@ class VoiceLeaderPage extends ConsumerWidget {
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
                   IonNoData(
-                    icon: Icons.person_off_outlined,
+                    icon: AppIcons.personOffOutlined,
                     label: context.l10n.voiceLeaderNoProfile,
                   ),
                 ],
@@ -96,7 +97,7 @@ class VoiceLeaderPage extends ConsumerWidget {
                     child: Column(
                       children: [
                         Icon(
-                          Icons.people_outline,
+                          AppIcons.peopleOutline,
                           size: 48,
                           color: AppColors.medium.withValues(alpha: 0.5),
                         ),
@@ -156,7 +157,7 @@ class _GroupHeader extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          const Icon(Icons.people_outline, size: 24, color: AppColors.primary),
+          Icon(AppIcons.peopleOutline, size: 24, color: AppColors.primary),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -261,9 +262,9 @@ class _MemberTile extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 4),
-            if (hasEmail) _contactLink(Icons.mail_outline, person.email!, 'mailto:${person.email}'),
+            if (hasEmail) _contactLink(AppIcons.mailOutline, person.email!, 'mailto:${person.email}'),
             if (hasEmail && hasPhone) const SizedBox(height: 4),
-            if (hasPhone) _contactLink(Icons.call_outlined, person.phone!, 'tel:${person.phone}'),
+            if (hasPhone) _contactLink(AppIcons.callOutlined, person.phone!, 'tel:${person.phone}'),
             if (!hasEmail && !hasPhone)
               Text(
                 context.l10n.voiceLeaderNoContact,

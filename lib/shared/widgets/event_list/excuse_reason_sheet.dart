@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -97,14 +98,14 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                 title: widget.isLate ? context.l10n.excuseLate : context.l10n.excuseSignOut,
                 start: [
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: Icon(AppIcons.close),
                     tooltip: context.l10n.commonCancel,
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
                 end: [
                   IconButton(
-                    icon: const Icon(Icons.check),
+                    icon: Icon(AppIcons.check),
                     tooltip: context.l10n.commonConfirm,
                     onPressed: _confirmable ? _confirm : null,
                   ),
@@ -182,7 +183,7 @@ class _IosRadioRow extends StatelessWidget {
             SizedBox(
               width: 24,
               child: selected
-                  ? const Icon(Icons.check, color: AppColors.primary, size: 22)
+                  ? Icon(AppIcons.check, color: AppColors.primary, size: 22)
                   : null,
             ),
             const SizedBox(width: 16),
@@ -409,7 +410,7 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
                 padding: const EdgeInsets.all(16),
                 child: FilledButton.icon(
                   onPressed: _submit,
-                  icon: const Icon(Icons.check_circle_outline),
+                  icon: Icon(AppIcons.checkCircleOutline),
                   label: IonButtonLabel(widget.editMode
                       ? context.l10n.commonSave
                       : context.l10n.signoutSignIn),
@@ -449,7 +450,7 @@ Future<void> showEventDescriptionSheet(BuildContext context, String description)
             end: [
               IconButton(
                 tooltip: ctx.l10n.commonClose,
-                icon: const Icon(Icons.close),
+                icon: Icon(AppIcons.close),
                 onPressed: () => Navigator.of(ctx).pop(),
               ),
             ],
@@ -604,8 +605,8 @@ class _RegistrationFieldAlertState extends State<_RegistrationFieldAlert> {
   Widget _choice(String label, bool checked, VoidCallback onTap, {bool checkbox = false}) {
     final primary = Theme.of(context).colorScheme.primary;
     final icon = checkbox
-        ? (checked ? Icons.check_box : Icons.check_box_outline_blank)
-        : (checked ? Icons.radio_button_checked : Icons.radio_button_unchecked);
+        ? (checked ? AppIcons.checkBox : AppIcons.checkBoxOutlineBlank)
+        : (checked ? AppIcons.radioButtonChecked : AppIcons.radioButtonUnchecked);
     // Selection state is only shown via the icon: expose it to screen readers.
     return Semantics(
       container: true,

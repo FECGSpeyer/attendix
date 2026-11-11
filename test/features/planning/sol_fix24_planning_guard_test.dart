@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -155,7 +156,7 @@ void main() {
   }
 
   Future<void> tapClose(WidgetTester tester) async {
-    await tester.tap(find.byIcon(Icons.close));
+    await tester.tap(find.byIcon(AppIcons.close));
     await tester.pump();
   }
 
@@ -222,7 +223,7 @@ void main() {
       await tester.tap(minutesField().first, warnIfMissed: false);
       await tester.pump();
       expect(tester.testTextInput.hasAnyClients, isFalse);
-      await tester.tap(find.byIcon(Icons.close), warnIfMissed: false);
+      await tester.tap(find.byIcon(AppIcons.close), warnIfMissed: false);
       await tester.pump();
       await tester.state<NavigatorState>(find.byType(Navigator).first).maybePop();
       await tester.pump();

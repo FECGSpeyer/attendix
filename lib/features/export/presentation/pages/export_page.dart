@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -393,7 +393,7 @@ class _ExportPageState extends ConsumerState<ExportPage> with ExportLogic {
         actions: [
           ToolbarButtonGroup(children: [
             IconButton(
-              icon: const Icon(Icons.close),
+              icon: Icon(AppIcons.close),
               tooltip: context.l10n.commonClose,
               onPressed: () {
                 if (widget.asModal || Navigator.of(context).canPop()) {
@@ -449,7 +449,7 @@ class _ExportPageState extends ConsumerState<ExportPage> with ExportLogic {
                         onPressed: (_) => setState(() => selectedFields.removeAt(index)),
                         backgroundColor: AppColors.danger,
                         foregroundColor: Colors.white,
-                        icon: Icons.delete,
+                        icon: AppIcons.delete,
                       ),
                     ],
                   ),
@@ -465,9 +465,9 @@ class _ExportPageState extends ConsumerState<ExportPage> with ExportLogic {
                               : Text(context.l10n.exportFlutterCustomFieldEmpty),
                           trailing: ReorderableDragStartListener(
                             index: index,
-                            child: const Padding(
+                            child: Padding(
                               padding: EdgeInsets.all(8),
-                              child: Icon(Icons.reorder, color: AppColors.medium),
+                              child: Icon(AppIcons.reorder, color: AppColors.medium),
                             ),
                           ),
                         ),
@@ -639,13 +639,13 @@ class _SelectValue extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 8),
               child: Icon(
-                CupertinoIcons.chevron_up_chevron_down,
+                AppIcons.cupertinoChevronUpChevronDown,
                 size: 16,
                 color: IonIos.text(context).withValues(alpha: 0.33),
               ),
             )
           else
-            const Icon(Icons.arrow_drop_down, color: AppColors.medium),
+            Icon(AppIcons.arrowDropDown, color: AppColors.medium),
         ],
       ),
     );

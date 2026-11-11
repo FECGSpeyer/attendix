@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -112,7 +113,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ListTile(
-            leading: const Icon(Icons.headset_mic_outlined, color: AppColors.primary),
+            leading: Icon(AppIcons.headsetMicOutlined, color: AppColors.primary),
             title: Row(
               children: [
                 Text(l10n.attendanceStaffing, style: const TextStyle(fontWeight: FontWeight.w600)),
@@ -126,13 +127,13 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.remove),
+                        icon: Icon(AppIcons.remove),
                         tooltip: l10n.attendanceFewerPeopleNeeded,
                         onPressed: _required <= 1 || _busy ? null : () => _changeRequired(-1),
                       ),
                       Text('$_required'),
                       IconButton(
-                        icon: const Icon(Icons.add),
+                        icon: Icon(AppIcons.add),
                         tooltip: l10n.attendanceMorePeopleNeeded,
                         onPressed: _busy ? null : () => _changeRequired(1),
                       ),
@@ -155,7 +156,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                   ),
                   if (canManage)
                     IconButton(
-                      icon: const Icon(Icons.cancel_outlined, color: AppColors.medium),
+                      icon: Icon(AppIcons.cancelOutlined, color: AppColors.medium),
                       tooltip: l10n.attendanceUnassign,
                       onPressed: () => _unassign(pa),
                     ),
@@ -187,7 +188,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
           ],
           if (canManage)
             ListTile(
-              leading: const Icon(Icons.person_add_alt_outlined, color: AppColors.primary),
+              leading: Icon(AppIcons.personAddAltOutlined, color: AppColors.primary),
               title: Text(l10n.attendanceAssignPerson, style: const TextStyle(color: AppColors.primary)),
               onTap: _busy ? null : () => _openAssign(players, occupants.length),
             ),

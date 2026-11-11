@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/dashboard_providers.dart';
@@ -89,7 +90,7 @@ class UsageDashboardPage extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.bar_chart, size: 48, color: AppColors.medium),
+              Icon(AppIcons.barChart, size: 48, color: AppColors.medium),
               const SizedBox(height: 12),
               Text(
                 context.l10n.usageNoEvents,

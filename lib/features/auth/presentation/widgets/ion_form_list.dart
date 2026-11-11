@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -232,7 +233,7 @@ class IonItem extends StatelessWidget {
         if (end != null) ...[const SizedBox(width: 8), end!],
         if (detail && ios) ...[
           const SizedBox(width: 4),
-          Icon(Icons.chevron_right,
+          Icon(AppIcons.chevronRight,
               size: 22, color: AppColors.medium.withValues(alpha: 0.6)),
         ],
       ],
@@ -411,7 +412,7 @@ class IonSelectValue extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Icon(
-            ionIsIos(context) ? Icons.unfold_more : Icons.arrow_drop_down,
+            ionIsIos(context) ? AppIcons.unfoldMore : AppIcons.arrowDropDown,
             size: 18,
             color: AppColors.medium,
           ),
@@ -454,7 +455,7 @@ Future<T?> showIonSelectOptions<T>(
               ListTile(
                 title: Text(label),
                 trailing: value == selected
-                    ? const Icon(Icons.check, color: AppColors.primary)
+                    ? Icon(AppIcons.check, color: AppColors.primary)
                     : null,
                 onTap: () => Navigator.of(sheetContext).pop(value),
               ),

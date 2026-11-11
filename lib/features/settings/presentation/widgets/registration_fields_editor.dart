@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -139,7 +140,7 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
         const SizedBox(height: 8),
         FilledButton.icon(
           onPressed: _add,
-          icon: const Icon(Icons.add_circle_outline),
+          icon: Icon(AppIcons.addCircleOutline),
           label: IonButtonLabel(context.l10n.typeSettingsAddField),
         ),
       ],

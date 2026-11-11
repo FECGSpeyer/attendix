@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -6,18 +7,22 @@ import '../../../core/theme/app_colors.dart';
 /// One option of an Ionic-like `ion-item-sliding` (icon-only by default).
 class SwipeOption {
   const SwipeOption({
-    required this.icon,
+    required IconData icon,
     required this.onPressed,
     this.color = AppColors.primary,
     this.label,
-  });
+  }) : _icon = icon;
 
   /// Danger "trash" option, the most common Ionic swipe option.
   const SwipeOption.delete({required this.onPressed, this.label})
-      : icon = Icons.delete_outline,
+      : _icon = null,
         color = AppColors.danger;
 
-  final IconData icon;
+  final IconData? _icon;
+
+  /// The delete option resolves its trash glyph per design at build time.
+  IconData get icon => _icon ?? AppIcons.deleteOutline;
+
   final VoidCallback onPressed;
   final Color color;
   final String? label;

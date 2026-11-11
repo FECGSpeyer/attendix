@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:io';
 
 import 'package:attendix/core/theme/app_colors.dart';
@@ -128,7 +129,7 @@ void main() {
       await tester.pumpAndSettle();
       // popover: both options, a checkmark on the current one only
       expect(find.text('English'), findsOneWidget);
-      expect(find.byIcon(Icons.check), findsOneWidget);
+      expect(find.byIcon(AppIcons.check), findsOneWidget);
       final popoverRight = tester.getTopRight(find.text('English')).dx;
       expect(popoverRight, greaterThan(600));
       await tester.tap(find.text('English'));

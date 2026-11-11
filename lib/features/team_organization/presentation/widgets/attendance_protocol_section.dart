@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -118,7 +119,7 @@ class AttendanceProtocolSection extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ListTile(
-            leading: const Icon(Icons.description_outlined, color: AppColors.primary),
+            leading: Icon(AppIcons.descriptionOutlined, color: AppColors.primary),
             title: Text(context.l10n.attendanceProtocol, style: const TextStyle(fontWeight: FontWeight.w600)),
             subtitle: protocolAsync.isLoading && protocol == null
                 ? const Text('…')
@@ -139,7 +140,7 @@ class AttendanceProtocolSection extends ConsumerWidget {
           ),
           if (isLeader)
             ListTile(
-              leading: Icon(protocol != null ? Icons.edit_outlined : Icons.play_circle_outline,
+              leading: Icon(protocol != null ? AppIcons.editOutlined : AppIcons.playCircleOutline,
                   color: AppColors.primary),
               title: Text(
                 protocol != null ? context.l10n.attendanceOpenProtocol : context.l10n.attendanceStartSession,
@@ -149,7 +150,7 @@ class AttendanceProtocolSection extends ConsumerWidget {
             )
           else if (published)
             ListTile(
-              leading: const Icon(Icons.chrome_reader_mode_outlined, color: AppColors.primary),
+              leading: Icon(AppIcons.chromeReaderModeOutlined, color: AppColors.primary),
               title: Text(context.l10n.attendanceReadProtocol, style: const TextStyle(color: AppColors.primary)),
               onTap: () => _push(context, ref, '/settings/protocol/$attendanceId'),
             ),
@@ -263,7 +264,7 @@ class AttendanceProtocolSection extends ConsumerWidget {
         : who;
     return ListTile(
       leading: Icon(
-        done ? Icons.check_circle : Icons.radio_button_unchecked,
+        done ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
         color: done ? AppColors.success : AppColors.medium,
       ),
       title: Text(task.title, style: done ? const TextStyle(decoration: TextDecoration.lineThrough) : null),

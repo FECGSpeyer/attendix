@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -42,13 +43,13 @@ class ParentsPage extends ConsumerWidget {
           : AppBar(
               title: Text(context.l10n.settingsParents),
               leading: IconButton(
-                icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+                icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
                 onPressed: () => context.pop(),
               ),
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => showAddParentDialog(context, ref),
-        child: const Icon(Icons.add),
+        child: Icon(AppIcons.add),
       ),
       body: parentsAsync.when(
         loading: () => const Center(child: AppSpinner()),
@@ -56,7 +57,7 @@ class ParentsPage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
+              Icon(AppIcons.errorOutline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
               Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
               const SizedBox(height: AppDimensions.paddingM),
@@ -82,7 +83,7 @@ class ParentsPage extends ConsumerWidget {
                 ionListMargin(context), AppDimensions.paddingM, ionListMargin(context), 88),
               children: [
                 SettingsHintCard(
-                  icon: Icons.favorite_border,
+                  icon: AppIcons.favoriteBorder,
                   text: context.l10n.settingsParentsHint,
                 ),
                 SettingsListSection(
@@ -128,7 +129,7 @@ class ParentsPage extends ConsumerWidget {
                 controller: emailController,
                 decoration: InputDecoration(
                   labelText: context.l10n.settingsEmailAddress,
-                  prefixIcon: const Icon(Icons.email),
+                  prefixIcon: Icon(AppIcons.email),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
@@ -146,7 +147,7 @@ class ParentsPage extends ConsumerWidget {
                 controller: firstNameController,
                 decoration: InputDecoration(
                   labelText: context.l10n.peopleFirstName,
-                  prefixIcon: const Icon(Icons.person),
+                  prefixIcon: Icon(AppIcons.person),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -160,7 +161,7 @@ class ParentsPage extends ConsumerWidget {
                 controller: lastNameController,
                 decoration: InputDecoration(
                   labelText: context.l10n.peopleLastName,
-                  prefixIcon: const Icon(Icons.person_outline),
+                  prefixIcon: Icon(AppIcons.personOutline),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {

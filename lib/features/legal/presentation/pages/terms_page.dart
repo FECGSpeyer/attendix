@@ -1,4 +1,5 @@
 import 'package:flutter/gestures.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -163,9 +164,9 @@ class _TermsPageState extends ConsumerState<TermsPage> {
                 // UX_SETTINGS (WAVE 8): terms.page.html — centred hero
                 // (shield icon 3.5rem, h2 1.4rem bold, medium p), inset info
                 // list with primary icons, inset accept list, block button.
-                const Padding(
+                Padding(
                   padding: EdgeInsets.fromLTRB(24, 32, 24, 12),
-                  child: Icon(Icons.verified_user_outlined,
+                  child: Icon(AppIcons.verifiedUserOutlined,
                       size: 56, color: AppColors.primary),
                 ),
                 Text(
@@ -186,12 +187,12 @@ class _TermsPageState extends ConsumerState<TermsPage> {
                 ),
                 SettingsListSection(
                   children: [
-                    _infoItem(Icons.lock_outline, context.l10n.termsSafe,
+                    _infoItem(AppIcons.lockOutline, context.l10n.termsSafe,
                         context.l10n.termsSafeText),
-                    _infoItem(Icons.people_outline, context.l10n.termsUsage,
+                    _infoItem(AppIcons.peopleOutline, context.l10n.termsUsage,
                         context.l10n.termsUsageText),
                     SettingsListTile(
-                      icon: Icons.description_outlined,
+                      icon: AppIcons.descriptionOutlined,
                       iconColor: AppColors.primary,
                       title: context.l10n.termsRead,
                       titleWidget: Text(
@@ -235,7 +236,7 @@ class _TermsPageState extends ConsumerState<TermsPage> {
                           height: 18,
                           child: AppSpinner(strokeWidth: 2),
                         )
-                      : const Icon(Icons.check_circle_outline),
+                      : Icon(AppIcons.checkCircleOutline),
                   label: IonButtonLabel(context.l10n.termsAcceptContinue),
                 ),
               ],

@@ -1390,6 +1390,17 @@ extension _PlanningBeta on _PlanningPageState {
     final multi = plans.length > 1;
     final planName = multi ? PlanUtils.planLabel(att, _planIndex, plans) : '';
     final loadGen = _loadGen;
+    // Leitung: this Ablauf as the template of the Terminart (a rare one-off
+    // action, so here and not on the Termin).
+    // Waits for the Terminarten on a direct entry (not loaded yet).
+    var types = const <AttendanceType>[];
+    if (ref.read(effectiveRoleProvider).isAdmin) {
+      try {
+        types = await ref.read(attendanceTypesProvider.future);
+      } catch (_) {}
+      if (!mounted || loadGen != _loadGen) return;
+    }
+    final type = types.where((t) => t.id != null && t.id == att.typeId).firstOrNull;
     final action = await _rdSheet<String>(
       title: l10n.redesignPlanTitle,
       builder:
@@ -1431,7 +1442,19 @@ extension _PlanningBeta on _PlanningPageState {
             ],
             const SizedBox(height: 20),
             RdGroupLabel(l10n.redesignPlanOther),
-            RdGroupedList(children: [_rdSheetRow(Icons.restart_alt, l10n.planningResetPlan, null, () => pop('reset'))]),
+            RdGroupedList(
+              children: [
+                if (type != null && _fields.isNotEmpty)
+                  _rdSheetRow(
+                    Icons.content_copy_outlined,
+                    l10n.rdTypeTakeOverPlan,
+                    l10n.rdTypeTakeOverPlanHint(type.name),
+                    () => pop('takeOver'),
+                    key: const Key('rd-plan-take-over'),
+                  ),
+                _rdSheetRow(Icons.restart_alt, l10n.planningResetPlan, null, () => pop('reset')),
+              ],
+            ),
           ],
     );
     // Another plan or Termin was loaded meanwhile: the sheet was for the old one.
@@ -1445,6 +1468,8 @@ extension _PlanningBeta on _PlanningPageState {
         await showRegisterPlanSheet(context, attendanceDate: DateTime.tryParse(_att?.date ?? ''));
       case 'reset':
         await _resetPlan();
+      case 'takeOver':
+        if (type != null) await rdTakeOverPlanForType(context, ref, type, [for (final f in _fields) f.toJson()]);
     }
   }
 

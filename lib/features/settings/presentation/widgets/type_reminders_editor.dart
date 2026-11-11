@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -88,12 +89,12 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
                 Text(context.l10n.typeSettingsHowReminders,
                     style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
-                _info(Icons.schedule,
+                _info(AppIcons.schedule,
                     context.l10n.typeSettingsHowEvery5, small),
-                _info(Icons.calculate_outlined,
+                _info(AppIcons.calculateOutlined,
                     context.l10n.typeSettingsHowRemaining,
                     small),
-                _info(Icons.notifications_outlined,
+                _info(AppIcons.notificationsOutlined,
                     context.l10n.typeSettingsHowMax, small),
               ],
             ),
@@ -120,7 +121,7 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
                 child: ListTile(
                   contentPadding: EdgeInsets.zero,
                   dense: true,
-                  leading: const Icon(Icons.alarm, color: AppColors.primary),
+                  leading: Icon(AppIcons.alarm, color: AppColors.primary),
                   title: Text(TypeRemindersEditor.format(h)),
                   subtitle: Text(context.l10n.typeSettingsHoursBeforeStart(h)),
                 ),
@@ -160,7 +161,7 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
               const SizedBox(width: 8),
               IconButton.filled(
                 tooltip: context.l10n.typeSettingsAddReminder,
-                icon: const Icon(Icons.add),
+                icon: Icon(AppIcons.add),
                 onPressed: () => _add(int.tryParse(_customController.text.trim())),
               ),
             ],
@@ -172,7 +173,7 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  const Icon(Icons.warning_amber_outlined, color: AppColors.warning),
+                  Icon(AppIcons.warningAmberOutlined, color: AppColors.warning),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(context.l10n.typeSettingsMaxReached),

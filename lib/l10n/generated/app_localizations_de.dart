@@ -794,6 +794,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceConnectionRestored => 'Verbindung wiederhergestellt';
 
   @override
+  String get attendanceCreateNewPerson => 'Neue Person anlegen';
+
+  @override
+  String get attendanceCreateNewPersonHint =>
+      'Wird angelegt und gleich zu diesem Termin hinzugefügt.';
+
+  @override
   String get attendanceCreateRunSheet => 'Ablaufplan erstellen';
 
   @override
@@ -1238,6 +1245,48 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return 'Benötigt: $_temp0';
   }
+
+  @override
+  String attendanceNewPersonAddFailed(Object name) {
+    return '$name wurde angelegt, konnte aber nicht zum Termin hinzugefügt werden.';
+  }
+
+  @override
+  String attendanceNewPersonAdded(Object name) {
+    return '$name angelegt und hinzugefügt';
+  }
+
+  @override
+  String get attendanceNewPersonCreate => 'Anlegen';
+
+  @override
+  String get attendanceNewPersonFailed =>
+      'Die Person konnte nicht angelegt werden.';
+
+  @override
+  String get attendanceNewPersonFirstName => 'Vorname';
+
+  @override
+  String get attendanceNewPersonGroup => 'Register';
+
+  @override
+  String get attendanceNewPersonHint =>
+      'Die Person wird Mitglied der Gruppe und gleich zu diesem Termin hinzugefügt. Weitere Angaben ergänzt du später bei der Person.';
+
+  @override
+  String get attendanceNewPersonLastName => 'Nachname';
+
+  @override
+  String get attendanceNewPersonNameMissing =>
+      'Bitte gib Vor- und Nachnamen ein.';
+
+  @override
+  String attendanceNewPersonOthersMissing(Object name) {
+    return '$name wurde angelegt und hinzugefügt, fehlt aber noch in anderen kommenden Terminen.';
+  }
+
+  @override
+  String get attendanceNewPersonTitle => 'Neue Person';
 
   @override
   String get attendanceNoConnection => 'Keine Internetverbindung vorhanden';
@@ -6978,6 +7027,98 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgValidName => 'Bitte gib einen gültigen Namen ein.';
 
   @override
+  String get parentRegisterAddChild => 'Weiteres Kind hinzufügen';
+
+  @override
+  String get parentRegisterChange => 'Ändern';
+
+  @override
+  String get parentRegisterChild => 'Mein Kind';
+
+  @override
+  String get parentRegisterChildBirthDateRequired =>
+      'Bitte gib für jedes Kind das Geburtsdatum an.';
+
+  @override
+  String get parentRegisterChildHint =>
+      'Ich bin Elternteil, auch für mehrere Kinder';
+
+  @override
+  String get parentRegisterChildNameRequired =>
+      'Bitte gib für jedes Kind Vor- und Nachnamen an.';
+
+  @override
+  String parentRegisterChildOf(Object name) {
+    return 'Kind von $name';
+  }
+
+  @override
+  String parentRegisterChildTitle(Object number) {
+    return 'Kind $number';
+  }
+
+  @override
+  String parentRegisterFinish(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Kinder anmelden',
+      one: 'Kind anmelden',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get parentRegisterForChild => 'Anmeldung für: Mein Kind';
+
+  @override
+  String get parentRegisterForSelf => 'Anmeldung für: Mich selbst';
+
+  @override
+  String get parentRegisterInviteByEmail => 'Per E-Mail einladen';
+
+  @override
+  String get parentRegisterParentData => 'Deine Angaben (Elternteil)';
+
+  @override
+  String get parentRegisterRemoveChild => 'Kind entfernen';
+
+  @override
+  String get parentRegisterReviewParent => 'Elternteil';
+
+  @override
+  String parentRegisterReviewParentHint(Object name) {
+    return 'Beim Aufnehmen bekommt $name Zugang als Elternteil und sieht die Termine des Kindes.';
+  }
+
+  @override
+  String get parentRegisterSelf => 'Mich selbst';
+
+  @override
+  String get parentRegisterSelfHint => 'Ich spiele oder singe selbst mit';
+
+  @override
+  String get parentRegisterShareButton => 'Anmeldelink teilen';
+
+  @override
+  String get parentRegisterShareHint =>
+      'Schick den Eltern den Anmeldelink. Sie wählen dort „Mein Kind“ und du schaltest frei.';
+
+  @override
+  String get parentRegisterShareTitle => 'Kind neu dabei?';
+
+  @override
+  String get parentRegisterSuccessNewPending =>
+      'Dein Konto wurde erstellt und die Anmeldung wartet auf die Freigabe durch die Leitung. Bitte bestätige deine E-Mail. Sobald du freigeschaltet bist, siehst du in der App die Termine deiner Kinder und kannst sie an- und abmelden.';
+
+  @override
+  String get parentRegisterSuccessPending =>
+      'Die Anmeldung wartet auf die Freigabe durch die Leitung. Sobald du freigeschaltet bist, siehst du in der App die Termine deiner Kinder und kannst sie an- und abmelden.';
+
+  @override
+  String get parentRegisterWhoTitle => 'Wen möchtest du anmelden?';
+
+  @override
   String get peopleActivate => 'Aktivieren';
 
   @override
@@ -10295,6 +10436,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdDataWhat => 'Was';
 
   @override
+  String get rdHelperFormHint =>
+      'Aushilfen kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert.';
+
+  @override
+  String get rdHelperLastDay => 'Dabei bis';
+
+  @override
+  String get rdHelperPersonHint =>
+      'Kommt nur in Termine bis zu diesem Tag und wird danach automatisch archiviert.';
+
+  @override
+  String get rdHelperSwitchHint =>
+      'Nur für eine bestimmte Zeit dabei, z. B. für ein Konzert';
+
+  @override
+  String get rdHelperTitle => 'Aushilfe';
+
+  @override
+  String rdHelperUntil(Object date) {
+    return 'Aushilfe bis $date';
+  }
+
+  @override
   String get rdOrgArchiveNote =>
       'Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.';
 
@@ -12629,6 +12793,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventPlanEditShort => 'Bearbeiten';
 
   @override
+  String redesignEventPlanFree(Object count) {
+    return '$count Min frei bis Terminende';
+  }
+
+  @override
   String get redesignEventPlanHint => 'Ablaufplan, am Termin-Tag live';
 
   @override
@@ -12659,6 +12828,24 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignEventPrep(Object done, Object total) {
     return 'Vorbereitung · $done von $total erledigt';
   }
+
+  @override
+  String get redesignEventPrepEmpty =>
+      'Was vor dem Termin erledigt sein muss, z. B. Raum aufschließen oder Noten kopieren. Abhaken kannst du direkt hier, sehen kann es nur die Leitung.';
+
+  @override
+  String redesignEventPrepTakeOver(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben der Terminart übernehmen',
+      one: '1 Aufgabe der Terminart übernehmen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventPrepTitle => 'Vorbereitung';
 
   @override
   String redesignEventPresentOf(Object present, Object total, Object percent) {
@@ -16493,6 +16680,17 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignTodayPendingHint => 'Prüfen und freischalten';
+
+  @override
+  String redesignTodayPrepDue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben zur Vorbereitung fällig',
+      one: '1 Aufgabe zur Vorbereitung fällig',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignTodayQuestion => 'Bist du dabei?';

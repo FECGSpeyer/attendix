@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -113,7 +114,7 @@ class _PauseSheetState extends State<_PauseSheet> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                  icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -183,7 +184,7 @@ class _PauseSheetState extends State<_PauseSheet> {
                         ),
                       )
                   : null,
-              icon: const Icon(Icons.pause),
+              icon: Icon(AppIcons.pause),
               label: IonButtonLabel(context.l10n.peoplePause),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.warning,
@@ -390,7 +391,7 @@ class _DateHeaderItem extends StatelessWidget {
       end: [
         if (onClear != null)
           IconButton(
-            icon: Icon(Icons.highlight_off, color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
+            icon: Icon(AppIcons.highlightOff, color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
             onPressed: onClear,
           ),
       ],

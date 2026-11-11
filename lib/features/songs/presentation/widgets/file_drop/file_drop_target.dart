@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../../core/theme/app_colors.dart';
 import 'file_drop_platform.dart';
@@ -123,7 +124,7 @@ class FileDropZone extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
               child: Column(
                 children: [
-                  Icon(Icons.cloud_upload_outlined, size: 36, color: color),
+                  Icon(AppIcons.cloudUploadOutlined, size: 36, color: color),
                   const SizedBox(height: 8),
                   Text(
                     label ?? context.l10n.songsDropHere,

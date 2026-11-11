@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -46,6 +47,7 @@ import '../../../../data/models/church/church.dart';
 import '../../../../data/repositories/extra_fields_repository.dart' show extraFieldDefaultValue;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged;
+import '../../../../core/utils/parent_registration.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 
@@ -265,7 +267,7 @@ class PersonDetailPage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
+              Icon(AppIcons.errorOutline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
               Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(error))),
               const SizedBox(height: AppDimensions.paddingM),
@@ -1409,13 +1411,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       actions: [
         AppActionSheetAction(
           value: _approvePerson,
-          icon: Icons.check_circle,
+          icon: AppIcons.checkCircle,
           color: AppColors.success,
           label: context.l10n.personApprovePerson,
         ),
         AppActionSheetAction(
           value: _declinePerson,
-          icon: Icons.cancel,
+          icon: AppIcons.cancel,
           label: context.l10n.personDeclinePerson,
           destructive: true,
         ),
@@ -1828,16 +1830,16 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     // Ionic FAB: save (changes) / approve sheet (pending) / key (create
     // account when e-mail but no account) / "..." more menu.
     final (VoidCallback?, IconData, String?)? fabAction = hasLeft
-        ? (isAdmin ? (_activatePerson, Icons.undo, context.l10n.personReactivatePerson) : null)
+        ? (isAdmin ? (_activatePerson, AppIcons.undo, context.l10n.personReactivatePerson) : null)
         : canEdit && widget.person.pending
-            ? (_showPendingActions, Icons.more_horiz, null)
+            ? (_showPendingActions, AppIcons.moreHoriz, null)
             : _hasChanges
-            ? (_isSaving ? null : _saveChanges, Icons.save_outlined, context.l10n.commonSave)
+            ? (_isSaving ? null : _saveChanges, AppIcons.saveOutlined, context.l10n.commonSave)
             : !canEdit
                 ? null
                     : person.appId == null && (person.email?.isNotEmpty ?? false)
-                        ? (() => _createAccount(person, confirm: false), Icons.key_outlined, context.l10n.personFlutterCreateAccount)
-                        : (_showMoreActions, Icons.more_horiz, context.l10n.personFlutterMore);
+                        ? (() => _createAccount(person, confirm: false), AppIcons.keyOutlined, context.l10n.personFlutterCreateAccount)
+                        : (_showMoreActions, AppIcons.moreHoriz, context.l10n.personFlutterMore);
     _fabCallback = fabAction?.$1;
     final VoidCallback? onFab = fabAction?.$1 == null ? null : _onFabPressed;
 
@@ -1894,7 +1896,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             IconButton(
               tooltip: context.l10n.commonClose,
               icon: Icon(
-                Icons.close,
+                AppIcons.close,
                 color: person.isCritical ? Colors.white : null,
               ),
               onPressed: () => Navigator.of(context).maybePop(),
@@ -1921,14 +1923,16 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextButton.icon(
                   onPressed: () => setState(() => _editingName = false),
-                  icon: const Icon(Icons.check, size: 18),
+                  icon: Icon(AppIcons.check, size: 18),
                   label: IonButtonLabel(context.l10n.personDone),
                 ),
               ),
             ],
 
             // PEOPLE2: duplicate candidates + merge for pending registrations
-            if (widget.person.pending && canEdit)
+            // (never for a child registered by an Elternteil: the merge
+            // would move the parent's account onto the existing person).
+            if (widget.person.pending && canEdit && parentRegistrationOf(widget.person) == null)
               DuplicateCandidatesCard(
                 person: widget.person,
                 onMerged: () {
@@ -2025,7 +2029,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                   if (ref.watch(hasDutyTypesProvider))
                     IonItem(
                       detail: true,
-                      start: const Icon(Icons.event_busy_outlined,
+                      start: Icon(AppIcons.eventBusyOutlined,
                           color: AppColors.primary),
                       onTap: () => openUnavailabilityPage(
                         context,

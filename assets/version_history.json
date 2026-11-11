@@ -1,6 +1,52 @@
 {
   "versions": [
     {
+      "version": "0.121.1",
+      "date": "10.11.2026",
+      "changes": [
+        "🐛 iOS: Standort-Hinweis in Info.plist ergänzt (Apple-Warnung ITMS-90683, ausgelöst durch die Dateiauswahl)"
+      ]
+    },
+    {
+      "version": "0.121.0",
+      "date": "10.11.2026",
+      "changes": [
+        "✨ Eltern können ihr Kind über den Anmeldelink selbst anmelden („Mein Kind“), auch mehrere Kinder auf einmal; beim Aufnehmen werden sie automatisch Elternteil",
+        "✨ Freigaben zeigen „Kind von …“, Verwaltung › Eltern teilt den Anmeldelink (Beta)"
+      ]
+    },
+    {
+      "version": "0.120.0",
+      "date": "10.11.2026",
+      "changes": [
+        "💄 Normales Design: alle Icons wieder als Ionicons wie in der alten App (Beta bleibt bei Material)"
+      ]
+    },
+    {
+      "version": "0.119.1",
+      "date": "10.11.2026",
+      "changes": [
+        "✨ Beta Heute: Wochenvorschau entfernt (wiederholte meist nur den nächsten Termin), alle Geburtstage der nächsten 7 Tage stehen als eigene Zeile mit Namen"
+      ]
+    },
+    {
+      "version": "0.119.0",
+      "date": "10.11.2026",
+      "changes": [
+        "✨ Beta-Termin: „Vorbereitung“ steht für die Leitung immer im Überblick (mit „+ Aufgabe“ und Aufgaben der Terminart) statt „Checkliste starten“ im •••; fällige Aufgaben erscheinen auf „Heute“",
+        "✨ Beta-Termin: Zahlen der Rückmeldungen öffnen die Anwesenheit mit passendem Filter, „Status-Übersicht“ und Programm-Zusammenfassung im Überblick entfallen",
+        "✨ Beta-Programm: Ablauf-Vorschau antippbar mit „Bearbeiten ›“, ein Schalter für Mitglieder, Hinweis „X Min frei“; „Für neue Termine dieser Art übernehmen“ im ••• des Ablauf-Editors"
+      ]
+    },
+    {
+      "version": "0.118.0",
+      "date": "10.11.2026",
+      "changes": [
+        "✨ Beta: Im Termin unter „Person hinzufügen“ kann die Leitung jetzt direkt eine neue Person anlegen, die gleich zum Termin hinzugefügt wird",
+        "✨ Beta: Aushilfen mit „dabei bis“: kommen nur in Termine bis zu diesem Tag, zählen nicht als Problemfall und werden danach automatisch archiviert"
+      ]
+    },
+    {
       "version": "0.117.2",
       "date": "10.11.2026",
       "changes": [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/attendance/attendance.dart';
@@ -44,7 +45,7 @@ class CriticalRuleCard extends StatelessWidget {
         ),
       ),
       trailing: IconButton(
-        icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+        icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
         tooltip: context.l10n.commonDelete,
         onPressed: onDelete,
       ),

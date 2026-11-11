@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -208,7 +209,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
               automaticallyImplyLeading: false,
               primary: false,
               leading: IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(AppIcons.close),
                 tooltip: l10n.commonClose,
                 onPressed: () => Navigator.of(context).pop(),
               ),
@@ -224,7 +225,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                       child: Row(
                         children: [
-                          const Icon(Icons.link, size: 18, color: AppColors.primaryDark),
+                          Icon(AppIcons.link, size: 18, color: AppColors.primaryDark),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(widget.contextLabel!,
@@ -249,7 +250,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                                 ? null
                                 : IconButton(
                                     tooltip: l10n.commonDelete,
-                                    icon: const Icon(Icons.cancel, size: 18, color: AppColors.medium),
+                                    icon: Icon(AppIcons.cancel, size: 18, color: AppColors.medium),
                                     onPressed: () => setState(() => _title.clear()),
                                   ),
                           ),
@@ -308,7 +309,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                             if (_dueDate != null)
                               IconButton(
                                 tooltip: l10n.commonDelete,
-                                icon: const Icon(Icons.clear, color: AppColors.medium),
+                                icon: Icon(AppIcons.clear, color: AppColors.medium),
                                 onPressed: () => setState(() => _dueDate = null),
                               ),
                           ],
@@ -420,7 +421,7 @@ class _PersonPickerState extends State<_PersonPicker> {
                   if (i == 0) {
                     return ListTile(
                       title: Text(l10n.tasksNobody, style: const TextStyle(color: AppColors.medium)),
-                      trailing: widget.selectedId == null ? const Icon(Icons.check, color: AppColors.primary) : null,
+                      trailing: widget.selectedId == null ? Icon(AppIcons.check, color: AppColors.primary) : null,
                       onTap: () => Navigator.of(context).pop((id: null)),
                     );
                   }
@@ -433,7 +434,7 @@ class _PersonPickerState extends State<_PersonPicker> {
                 return ListTile(
                   leading: _Initials(text: p.initials),
                   title: Text(p.fullName),
-                  trailing: p.id == widget.selectedId ? const Icon(Icons.check, color: AppColors.primary) : null,
+                  trailing: p.id == widget.selectedId ? Icon(AppIcons.check, color: AppColors.primary) : null,
                   onTap: () => Navigator.of(context).pop((id: p.id)),
                 );
               },

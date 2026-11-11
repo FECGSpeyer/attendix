@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -54,7 +54,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
       extendBodyBehindAppBar: ios,
       appBar: IonTranslucentAppBar(child: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Text(context.l10n.helpTitle),
@@ -100,14 +100,14 @@ class _HelpPageState extends ConsumerState<HelpPage> {
               ListTile(title: Text(context.l10n.helpNoHits(term))),
             for (final article in results.articles)
               SettingsListTile(
-                icon: Icons.description_outlined,
+                icon: AppIcons.descriptionOutlined,
                 title: article.title,
                 subtitle: context.l10n.helpArticles,
                 onTap: () => _openArticle(article.id),
               ),
             for (final g in results.glossaryTerms)
               SettingsListTile(
-                icon: Icons.menu_book_outlined,
+                icon: AppIcons.menuBookOutlined,
                 title: g.term,
                 subtitle: context.l10n.helpGlossary,
                 onTap: _openGlossary,
@@ -130,7 +130,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
           title: context.l10n.helpLookup,
           children: [
             SettingsListTile(
-              icon: Icons.menu_book_outlined,
+              icon: AppIcons.menuBookOutlined,
               title: context.l10n.helpGlossary,
               onTap: _openGlossary,
             ),
@@ -174,7 +174,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
                       title: Text(article.title),
                       trailing: ios
                           ? const IonDetailChevron()
-                          : const Icon(Icons.chevron_right),
+                          : Icon(AppIcons.chevronRight),
                       onTap: () => _openArticle(article.id),
                     ),
                 ],
@@ -189,18 +189,18 @@ class _HelpPageState extends ConsumerState<HelpPage> {
 /// Maps the Ionicons names used in the Ionic help categories to Material icons.
 IconData helpCategoryIcon(String ionIcon) {
   return switch (ionIcon) {
-    'rocket-outline' => Icons.rocket_launch_outlined,
-    'checkmark-done-outline' => Icons.done_all,
-    'people-outline' => Icons.people_outline,
+    'rocket-outline' => AppIcons.rocketLaunchOutlined,
+    'checkmark-done-outline' => AppIcons.doneAll,
+    'people-outline' => AppIcons.peopleOutline,
     // PARITY_R7: closest glyphs to the Ionicons (bulleted list, two beamed
     // notes, people in a circle, three dots in a circle).
-    'list-outline' => Icons.format_list_bulleted,
-    'musical-notes-outline' => CupertinoIcons.music_note_2,
-    'person-circle-outline' => Icons.account_circle_outlined,
-    'settings-outline' => Icons.settings_outlined,
-    'people-circle-outline' => Icons.supervised_user_circle_outlined,
-    'headset-outline' => Icons.headset_mic_outlined,
-    'ellipsis-horizontal-circle-outline' => Icons.pending_outlined,
-    _ => Icons.help_outline,
+    'list-outline' => AppIcons.formatListBulleted,
+    'musical-notes-outline' => AppIcons.cupertinoMusicNote2,
+    'person-circle-outline' => AppIcons.accountCircleOutlined,
+    'settings-outline' => AppIcons.settingsOutlined,
+    'people-circle-outline' => AppIcons.supervisedUserCircleOutlined,
+    'headset-outline' => AppIcons.headsetMicOutlined,
+    'ellipsis-horizontal-circle-outline' => AppIcons.pendingOutlined,
+    _ => AppIcons.helpOutline,
   };
 }

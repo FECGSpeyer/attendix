@@ -15,6 +15,7 @@ import '../../../../../core/providers/teacher_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/extra_field_utils.dart' show parseExtraFieldNumber;
+import '../../../../../core/utils/helper_member.dart';
 import '../../../../../data/models/parent/parent_model.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../data/models/shift/shift_plan.dart';
@@ -280,6 +281,29 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
     });
   }
 
+  /// Aushilfe on (asks for the last day first; nothing is stored when the
+  /// picker is cancelled, so no Termin is touched) or off.
+  void _toggleHelper(bool on) {
+    if (on) {
+      _pickHelperDay();
+    } else {
+      widget.onExtra(helperUntilKey, null);
+    }
+  }
+
+  Future<void> _pickHelperDay() async {
+    final current = DateTime.tryParse(helperUntilOf(widget.additionalValues) ?? '') ?? DateTime.now();
+    final today = DateTime.now();
+    final picked = await showAppDatePicker(
+      context: context,
+      initialDate: current.isBefore(today) ? today : current,
+      firstDate: DateTime(today.year, today.month, today.day),
+      lastDate: DateTime(today.year + 5),
+    );
+    if (picked == null || !mounted) return;
+    widget.onExtra(helperUntilKey, helperDay(picked));
+  }
+
   Future<T?> _choose<T>(String title, List<(T, String)> options) => showAppActionSheet<T>(
         context,
         title: title,
@@ -392,6 +416,30 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
       ),
     ];
 
+    // Aushilfe ("dabei bis"): stored in additional_fields.
+    final helperDayValue = helperUntilOf(widget.additionalValues);
+    final helper = <Widget>[
+      RdListRow(
+        key: const Key('rd-person-helper'),
+        title: l10n.rdHelperTitle,
+        subtitle: l10n.rdHelperSwitchHint,
+        showChevron: false,
+        trailing: Switch.adaptive(
+          value: helperDayValue != null,
+          activeTrackColor: p.primary,
+          onChanged: _toggleHelper,
+        ),
+        onTap: () => _toggleHelper(helperDayValue == null),
+      ),
+      if (helperDayValue != null)
+        RdListRow(
+          key: const Key('rd-person-helper-until'),
+          title: l10n.rdHelperLastDay,
+          value: _date(helperDayValue),
+          onTap: _pickHelperDay,
+        ),
+    ];
+
     // Rolle in der Gruppe
     final teachers = (ref.watch(teachersProvider).valueOrNull ?? const [])
         .where((t) => _p.instrument == null || t.instruments.contains(_p.instrument))
@@ -494,6 +542,13 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         RdGroupedList(children: dates),
+        const SizedBox(height: 12),
+        RdGroupedList(children: helper),
+        if (helperDayValue != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+            child: Text(l10n.rdHelperFormHint, style: RdType.meta(p, size: 13)),
+          ),
         const SizedBox(height: 12),
         RdGroupedList(children: membership),
         if (isVoS && !isMain) ...[

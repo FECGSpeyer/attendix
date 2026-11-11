@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../l10n/l10n.dart';
@@ -90,42 +91,42 @@ List<NavGroup> buildNavGroups(NavContext ctx) {
   if (isAdmin) {
     main.add(NavItem(
         id: 'dashboard',
-        icon: Icons.grid_view_outlined,
+        icon: AppIcons.gridViewOutlined,
         label: (l) => l.tabsDashboard,
         route: '/home-dashboard'));
   }
   if (isParent) {
     main.add(NavItem(
         id: 'parents',
-        icon: Icons.person_outline,
+        icon: AppIcons.personOutline,
         label: (l) => l.tabsEvents,
         route: '/parents'));
   }
   if (!isConductor && !isParent) {
     main.add(NavItem(
         id: 'signout',
-        icon: Icons.person_outline,
+        icon: AppIcons.personOutline,
         label: (l) => l.tabsMyEvents,
         route: '/signout'));
   }
   if ((isPlayer || isHelper) && ctx.hasMultipleTenants) {
     main.add(NavItem(
         id: 'overview',
-        icon: Icons.calendar_today_outlined,
+        icon: AppIcons.calendarTodayOutlined,
         label: (l) => l.tabsOverview,
         route: '/overview'));
   }
   if (isHelper || isConductor) {
     main.add(NavItem(
         id: 'attendance',
-        icon: Icons.check_box_outlined,
+        icon: AppIcons.checkBoxOutlined,
         label: (l) => l.tabsEvents,
         route: '/attendance'));
   }
   if (isConductor) {
     main.add(NavItem(
         id: 'player',
-        icon: Icons.people_outline,
+        icon: AppIcons.peopleOutline,
         label: (l) => l.commonPeople,
         route: '/people',
         badge: isAdmin ? NavBadge.pendingPersons : null));
@@ -133,28 +134,28 @@ List<NavGroup> buildNavGroups(NavContext ctx) {
   if (membersListRole && ctx.showMembersList) {
     main.add(NavItem(
         id: 'members',
-        icon: Icons.people_outline,
+        icon: AppIcons.peopleOutline,
         label: (l) => l.tabsMembers,
         route: '/members'));
   }
   if (!isGeneral && !isApplicant && !isParent) {
     main.add(NavItem(
         id: 'songs',
-        icon: Icons.music_note_outlined,
+        icon: AppIcons.musicNoteOutlined,
         label: (l) => l.tabsSongs,
         route: '/songs-tab'));
   }
   if (isAdmin) {
     main.add(NavItem(
         id: 'planning',
-        icon: Icons.description_outlined,
+        icon: AppIcons.descriptionOutlined,
         label: (l) => l.settingsRunSheets,
         action: NavAction.planning));
   }
   if (isVoiceLeader && !isGeneral) {
     main.add(NavItem(
         id: 'voiceLeader',
-        icon: Icons.music_note_outlined,
+        icon: AppIcons.musicNoteOutlined,
         label: (l) => l.settingsMyVoice,
         route: '/settings/voice-leader'));
   }
@@ -162,7 +163,7 @@ List<NavGroup> buildNavGroups(NavContext ctx) {
   if (ctx.showTeam) {
     team.add(NavItem(
         id: 'team',
-        icon: Icons.layers_outlined,
+        icon: AppIcons.layersOutlined,
         label: (l) => l.teamOrgTitle,
         route: '/settings/team-organization',
         badge: NavBadge.openTasks));
@@ -170,28 +171,28 @@ List<NavGroup> buildNavGroups(NavContext ctx) {
   if (isAdmin) {
     team.add(NavItem(
         id: 'messages',
-        icon: Icons.campaign_outlined,
+        icon: AppIcons.campaignOutlined,
         label: (l) => l.settingsAnnouncements,
         route: '/settings/messages'));
   }
   if (ctx.canAccessFiles) {
     team.add(NavItem(
         id: 'files',
-        icon: Icons.folder_outlined,
+        icon: AppIcons.folderOutlined,
         label: (l) => l.settingsFileStorage,
         route: '/settings/files'));
   }
   if (isAdmin) {
     team.add(NavItem(
         id: 'stats',
-        icon: Icons.insert_chart_outlined,
+        icon: AppIcons.insertChartOutlined,
         label: (l) => l.statsTitle,
         action: NavAction.stats));
   }
   if (isAdmin && ctx.hasOrganisation) {
     team.add(NavItem(
         id: 'organisation',
-        icon: Icons.business_outlined,
+        icon: AppIcons.businessOutlined,
         label: (l) => l.settingsOrganisation,
         route: '/org-plans-tab'));
   }
@@ -199,12 +200,12 @@ List<NavGroup> buildNavGroups(NavContext ctx) {
   final account = <NavItem>[
     NavItem(
         id: 'settings',
-        icon: Icons.settings_outlined,
+        icon: AppIcons.settingsOutlined,
         label: (l) => l.settingsSettings,
         route: '/settings'),
     NavItem(
         id: 'help',
-        icon: Icons.help_outline,
+        icon: AppIcons.helpOutline,
         label: (l) => l.settingsHelp,
         route: '/settings/help'),
   ];

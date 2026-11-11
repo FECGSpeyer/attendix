@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -230,7 +231,7 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> with Ha
                       child: AppSpinner(
                           strokeWidth: 2, color: Colors.white),
                     )
-                  : const Icon(Icons.directions_walk),
+                  : Icon(AppIcons.directionsWalk),
             )),
       body: data == null || loading
           ? const Center(child: AppSpinner())

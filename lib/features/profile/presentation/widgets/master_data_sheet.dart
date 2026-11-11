@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -166,18 +167,18 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
         AppActionSheetAction(
           value: 'replace',
           label: context.l10n.settingsReplacePhoto,
-          icon: Icons.photo_library_outlined,
+          icon: AppIcons.photoLibraryOutlined,
         ),
         if (hasImg) ...[
           AppActionSheetAction(
             value: 'view',
             label: context.l10n.settingsViewPhoto,
-            icon: Icons.visibility_outlined,
+            icon: AppIcons.visibilityOutlined,
           ),
           AppActionSheetAction(
             value: 'remove',
             label: context.l10n.settingsRemovePhoto,
-            icon: Icons.delete_outline,
+            icon: AppIcons.deleteOutline,
             destructive: true,
           ),
         ],
@@ -218,12 +219,12 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
             AppActionSheetAction(
               value: ImageSource.gallery,
               label: context.l10n.attendanceFlutterGallery,
-              icon: Icons.photo_library_outlined,
+              icon: AppIcons.photoLibraryOutlined,
             ),
             AppActionSheetAction(
               value: ImageSource.camera,
               label: context.l10n.attendanceFlutterCamera,
-              icon: Icons.camera_alt_outlined,
+              icon: AppIcons.cameraAltOutlined,
             ),
           ],
         );

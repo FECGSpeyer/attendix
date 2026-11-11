@@ -16,6 +16,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/extra_field_utils.dart' show formatExtraFieldValue;
 import '../../../../core/utils/tenant_label_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../core/utils/parent_registration.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart' show ExtraField;
@@ -465,6 +466,9 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
   Widget _duplicates(BuildContext context, Person person) {
     final p = context.rd;
     final l10n = context.l10n;
+    // A child registered by an Elternteil is never merged: the merge would
+    // move the parent's account onto the existing person.
+    if (parentRegistrationOf(person) != null) return const SizedBox.shrink();
     final matches = ref.watch(duplicateCandidatesProvider(person)).valueOrNull ?? const [];
     if (matches.isEmpty) return const SizedBox.shrink();
     final groups = ref.watch(groupsMapProvider).valueOrNull ?? const <int, String>{};
@@ -564,8 +568,12 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
         ? block(title, value, key: key)
         : RdListRow(key: key, title: title, value: value, showChevron: false);
 
+    // Registered by an Elternteil ("Mein Kind"): the e-mail is the parent's,
+    // shown in its own block below.
+    final parent = parentRegistrationOf(_person ?? draft);
     final rows = <Widget>[
-      if (text(draft.email) case final v?) info(l10n.peopleEmail, v, key: const Key('rd-review-email')),
+      if (parent == null)
+        if (text(draft.email) case final v?) info(l10n.peopleEmail, v, key: const Key('rd-review-email')),
       if (text(draft.phone) case final v?) info(l10n.peoplePhone, v, key: const Key('rd-review-phone')),
       RdListRow(
         key: const Key('rd-review-group'),
@@ -592,6 +600,18 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
           ...rows,
           if (notes != null) block(l10n.redesignPersonNotes, notes, key: const Key('rd-review-notes')),
         ]),
+        if (parent != null) ...[
+          const SizedBox(height: 18),
+          RdSectionHeader(l10n.parentRegisterReviewParent),
+          RdGroupedList(children: [
+            block(parent.fullName, parent.email, key: const Key('rd-review-parent')),
+          ]),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+            child: Text(l10n.parentRegisterReviewParentHint(parent.firstName),
+                style: RdType.meta(p, size: 13)),
+          ),
+        ],
         if (!extrasReady) ...[
           const SizedBox(height: 12),
           RdInfoCard(text: l10n.redesignTodayLoading, loading: true),

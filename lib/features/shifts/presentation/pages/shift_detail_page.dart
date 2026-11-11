@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -141,7 +142,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
     return IonCondenseScaffold(
       title: context.l10n.shiftsEdit,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
+        icon: Icon(AppIcons.arrowBack),
         tooltip: context.l10n.commonBack,
         onPressed: _goBack,
       ),
@@ -154,14 +155,14 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
             if (targets.isEmpty) return const SizedBox.shrink();
 
             return IconButton(
-              icon: const Icon(Icons.copy_outlined),
+              icon: Icon(AppIcons.copyOutlined),
               tooltip: context.l10n.shiftsCopyToTenant,
               onPressed: () => _copyToTenant(context, shiftAsync.valueOrNull),
             );
           },
         ),
         IconButton(
-          icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+          icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
           tooltip: context.l10n.commonDelete,
           onPressed: () => _confirmDelete(context),
         ),
@@ -175,7 +176,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                 height: 20,
                 child: AppSpinner(strokeWidth: 2, color: Colors.white),
               )
-            : const Icon(Icons.save_outlined),
+            : Icon(AppIcons.saveOutlined),
       )),
       bodyBuilder: (context, largeTitle) => ListView(
         padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 84)), // Space for FAB
@@ -227,7 +228,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const Icon(Icons.schedule, size: 64, color: AppColors.medium),
+            Icon(AppIcons.schedule, size: 64, color: AppColors.medium),
             const SizedBox(height: 16),
             Text(
               context.l10n.shiftsEditIntro,
@@ -255,7 +256,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
         trailing: onAdd == null
             ? null
             : IconButton(
-                icon: const Icon(Icons.add),
+                icon: Icon(AppIcons.add),
                 color: AppColors.primary,
                 tooltip: addTooltip,
                 onPressed: onAdd,
@@ -340,7 +341,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
             style: const TextStyle(color: Colors.white),
           ),
           trailing: IconButton(
-            icon: const Icon(Icons.delete_outline, color: Colors.white),
+            icon: Icon(AppIcons.deleteOutline, color: Colors.white),
             tooltip: context.l10n.commonDelete,
             onPressed: () => _deleteSegment(index),
           ),
@@ -652,7 +653,7 @@ class _ShiftInstanceTileState extends State<_ShiftInstanceTile> {
               ),
             ),
             IconButton(
-              icon: Icon(Icons.delete_outline,
+              icon: Icon(AppIcons.deleteOutline,
                   color: widget.isUsed ? AppColors.medium : AppColors.danger),
               onPressed: widget.isUsed ? null : widget.onDelete,
               tooltip: context.l10n.commonDelete,

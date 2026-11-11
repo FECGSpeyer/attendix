@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -222,7 +223,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> with HandoverSelect
         backgroundColor: targetTenantId == null || selectedPersons.isEmpty
             ? AppColors.medium
             : null,
-        child: const Icon(Icons.arrow_forward),
+        child: Icon(AppIcons.arrowForward),
       )),
       body: ListView(
         padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, ionIsIos(context) ? 0 : AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: 16, fabRoom: 84)), // IOS_R6: large title on top
@@ -234,7 +235,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> with HandoverSelect
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: Column(
                 children: [
-                  const Icon(Icons.directions_walk, size: 48, color: AppColors.primary),
+                  Icon(AppIcons.directionsWalk, size: 48, color: AppColors.primary),
                   const SizedBox(height: AppDimensions.paddingS),
                   Text(
                     context.l10n.handoverIntro,
@@ -290,7 +291,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> with HandoverSelect
                       PopupMenuItem(value: 'group', child: Text(context.l10n.handoverInGroupDots)),
                   ],
                   child: ListTile(
-                    leading: const Icon(Icons.filter_list),
+                    leading: Icon(AppIcons.filterList),
                     title: Text(context.l10n.handoverAddFilter),
                   ),
                 ),
@@ -300,7 +301,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> with HandoverSelect
                     subtitle: Text(dateFormat.format(date)),
                     onTap: pickDate,
                     trailing: IconButton(
-                      icon: Icon(Icons.delete_outline, semanticLabel: context.l10n.commonDelete),
+                      icon: Icon(AppIcons.deleteOutline, semanticLabel: context.l10n.commonDelete),
                       onPressed: () => setState(() {
                         filters.remove(filters.contains('younger') ? 'younger' : 'older');
                       }),
@@ -327,7 +328,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> with HandoverSelect
                           ),
                         ),
                         IconButton(
-                          icon: Icon(Icons.delete_outline, semanticLabel: context.l10n.commonDelete),
+                          icon: Icon(AppIcons.deleteOutline, semanticLabel: context.l10n.commonDelete),
                           onPressed: () => setState(() => filters.remove('group')),
                         ),
                       ],

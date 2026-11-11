@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
@@ -98,7 +99,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
         actions: [
           ToolbarButtonGroup(children: [
             IconButton(
-              icon: const Icon(Icons.close),
+              icon: Icon(AppIcons.close),
               tooltip: context.l10n.commonClose,
               onPressed: () {
                 if (widget.asModal) {
@@ -131,8 +132,8 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.error_outline,
+                        Icon(
+                          AppIcons.errorOutline,
                           size: 64,
                           color: AppColors.danger,
                         ),
@@ -158,7 +159,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                       children: [
                         // UX_ATT: Ionic noDataContainer: plain large icon + label
                         Icon(
-                          Icons.music_note_outlined,
+                          AppIcons.musicNoteOutlined,
                           size: 80,
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -177,8 +178,8 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.search_off,
+                        Icon(
+                          AppIcons.searchOff,
                           size: 64,
                           color: AppColors.medium,
                         ),
@@ -237,7 +238,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       ),
       floatingActionButton: TabBarFab.wrap(IonFabButton(
         onPressed: () => _showAddDialog(),
-        icon: Icons.add,
+        icon: AppIcons.add,
       )),
     );
   }
@@ -358,7 +359,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         ? l10n.historyNoneSelected
                         : l10n.historySelectedCount(selectedSongIds.length),
                   ),
-                  trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
+                  trailing: Icon(AppIcons.chevronRight, color: AppColors.medium),
                   onTap: () async {
                     final picked = await _pickSongs(songs, selectedSongIds);
                     if (picked != null) {
@@ -443,7 +444,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     ),
                   ),
                   trailing: IconButton(
-                    icon: Icon(Icons.calendar_today_outlined, color: AppColors.primary, semanticLabel: context.l10n.a11ySelectDate),
+                    icon: Icon(AppIcons.calendarTodayOutlined, color: AppColors.primary, semanticLabel: context.l10n.a11ySelectDate),
                     onPressed: () async {
                       final date = await showAppDatePicker(
                         context: sheetContext,
@@ -771,7 +772,7 @@ class _HistoryEntryTile extends StatelessWidget {
             onPressed: (_) => onDelete(entry),
             backgroundColor: AppColors.danger,
             foregroundColor: Colors.white,
-            icon: Icons.delete,
+            icon: AppIcons.delete,
           ),
         ],
       ),
@@ -849,7 +850,7 @@ class _HistorySongPickerState extends State<_HistorySongPicker> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.check),
+            icon: Icon(AppIcons.check),
             tooltip: context.l10n.commonApply,
             onPressed: () => Navigator.pop(context, _selected),
           ),

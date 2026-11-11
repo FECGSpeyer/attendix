@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -330,7 +331,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             ),
           IconButton(
             tooltip: context.l10n.commonClose,
-            icon: const Icon(Icons.close),
+            icon: Icon(AppIcons.close),
             onPressed: _close,
           ),
         ],
@@ -341,7 +342,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           key: const Key('person_create_save'),
           tooltip: context.l10n.commonSave,
           onPressed: _isLoading || !_canEdit ? null : _save,
-          icon: Icons.person_add_alt_1_outlined,
+          icon: AppIcons.personAddAlt1Outlined,
         ),
       ),
       // Ionic person.page readOnly (= not admin/responsible): the create form
@@ -381,7 +382,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               decoration: InputDecoration(
                 labelText: '${context.l10n.peopleFirstName} *',
                 hintText: 'Max',
-                prefixIcon: ionIsIos(context) ? null : const Icon(Icons.person),
+                prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.person),
               ),
               textCapitalization: TextCapitalization.words,
               validator: (value) {
@@ -400,7 +401,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               decoration: InputDecoration(
                 labelText: '${context.l10n.peopleLastName} *',
                 hintText: 'Mustermann',
-                prefixIcon: ionIsIos(context) ? null : const Icon(Icons.person),
+                prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.person),
               ),
               textCapitalization: TextCapitalization.words,
               validator: (value) {
@@ -433,7 +434,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                 value: _selectedInstrument,
                 decoration: InputDecoration(
                   labelText: label,
-                  prefixIcon: ionIsIos(context) ? null : const Icon(Icons.music_note),
+                  prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.musicNote),
                 ),
                 items: [
                   ...instruments.map((i) => DropdownMenuItem<int>(
@@ -451,7 +452,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
 
             // Birthday (Ionic: warning colour until edited)
             _dateTile(
-              icon: Icons.cake,
+              icon: AppIcons.cake,
               label: context.l10n.peopleBirthday,
               value: _birthday,
               highlight: !_birthdayEdited,
@@ -471,7 +472,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               decoration: InputDecoration(
                 labelText: context.l10n.peopleFlutterOptional(context.l10n.peopleEmail),
                 hintText: 'max@example.com',
-                prefixIcon: ionIsIos(context) ? null : const Icon(Icons.email),
+                prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.email),
               ),
               // Ionic addPerson does not validate the e-mail.
               keyboardType: TextInputType.emailAddress,
@@ -484,7 +485,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               decoration: InputDecoration(
                 labelText: context.l10n.peopleFlutterOptional(context.l10n.peoplePhone),
                 hintText: '+49 123 456789',
-                prefixIcon: ionIsIos(context) ? null : const Icon(Icons.phone),
+                prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.phone),
               ),
               keyboardType: TextInputType.phone,
             ),
@@ -680,21 +681,21 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           controller: _rangeController,
           decoration: InputDecoration(
             labelText: context.l10n.personVocalRange,
-            prefixIcon: ionIsIos(context) ? null : const Icon(Icons.music_note_outlined),
+            prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.musicNoteOutlined),
           ),
         ),
         gap,
       ],
       if (!isGeneral && !isChoir && !isMain)
         _dateTile(
-          icon: Icons.music_note,
+          icon: AppIcons.musicNote,
           label: context.l10n.personPlaysSince,
           value: _playsSince,
           lastDate: DateTime.now(),
           onChanged: (d) => setState(() => _playsSince = d),
         ),
       _dateTile(
-        icon: Icons.login,
+        icon: AppIcons.login,
         label: context.l10n.personJoinedOn,
         value: _joined,
         clearable: false,
@@ -706,7 +707,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           value: _parentId,
           decoration: InputDecoration(
             labelText: context.l10n.personParents,
-            prefixIcon: ionIsIos(context) ? null : const Icon(Icons.family_restroom),
+            prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.familyRestroom),
           ),
           items: [
             DropdownMenuItem<int?>(
@@ -732,7 +733,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             value: teachers.any((t) => t.id == _teacherId) ? _teacherId : null,
             decoration: InputDecoration(
               labelText: context.l10n.peopleTeacher,
-              prefixIcon: ionIsIos(context) ? null : const Icon(Icons.school),
+              prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.school),
             ),
             items: [
               DropdownMenuItem<int?>(value: null, child: Text(context.l10n.peopleNoTeacher)),
@@ -754,7 +755,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           controller: _instrumentsController,
           decoration: InputDecoration(
             labelText: context.l10n.peopleInstruments,
-            prefixIcon: ionIsIos(context) ? null : const Icon(Icons.piano_outlined),
+            prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.pianoOutlined),
           ),
         ),
         gap,
@@ -792,7 +793,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           controller: _testResultController,
           decoration: InputDecoration(
             labelText: context.l10n.peopleTestResult,
-            prefixIcon: ionIsIos(context) ? null : const Icon(Icons.assignment_outlined),
+            prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.assignmentOutlined),
           ),
         ),
         gap,
@@ -803,7 +804,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           value: _shiftId,
           decoration: InputDecoration(
             labelText: context.l10n.personShiftPlan,
-            prefixIcon: ionIsIos(context) ? null : const Icon(Icons.schedule),
+            prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.schedule),
           ),
           items: [
             DropdownMenuItem<String?>(
@@ -833,7 +834,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             value: _shiftName,
             decoration: InputDecoration(
               labelText: context.l10n.personShift,
-              prefixIcon: ionIsIos(context) ? null : const Icon(Icons.access_time),
+              prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.accessTime),
             ),
             items: [
               for (final name in shift.shifts.map((x) => x.name).toSet())
@@ -843,7 +844,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           ),
         if (shift != null && !shift.hasNamedShifts)
           _dateTile(
-            icon: Icons.calendar_today,
+            icon: AppIcons.calendarToday,
             label: context.l10n.personStartDate,
             value: _shiftStart,
             clearable: false,
@@ -855,7 +856,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         controller: _otherExerciseController,
         decoration: InputDecoration(
           labelText: context.l10n.peopleOtherDuties,
-          prefixIcon: ionIsIos(context) ? null : const Icon(Icons.work_outline),
+          prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.workOutline),
         ),
         textCapitalization: TextCapitalization.sentences,
       ),
@@ -878,12 +879,12 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       actions: [
         AppActionSheetAction(
           value: 'replace',
-          icon: Icons.photo_camera_outlined,
+          icon: AppIcons.photoCameraOutlined,
           label: context.l10n.personReplace,
         ),
         AppActionSheetAction(
           value: 'remove',
-          icon: Icons.delete_outline,
+          icon: AppIcons.deleteOutline,
           label: context.l10n.commonRemove,
           destructive: true,
         ),
@@ -1003,7 +1004,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         // Like before: a page closed at the duplicate check still creates.
         createWhenGone: true,
       );
-      if (!created) return;
+      if (created == null) return;
 
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.personAdded);
@@ -1049,7 +1050,7 @@ class _CreateProfileHeader extends StatelessWidget {
       color: dark ? const Color(0xFF222428) : AppColors.light,
       alignment: Alignment.bottomCenter,
       child: Icon(
-        Icons.person,
+        AppIcons.person,
         size: 104,
         color: dark ? const Color(0xFF555555) : const Color(0xFFC5C5C5),
       ),
@@ -1114,7 +1115,7 @@ class _CreateProfileHeader extends StatelessWidget {
                           shape: BoxShape.circle,
                           border: Border.all(color: ringColor, width: 3),
                         ),
-                        child: const Icon(Icons.camera_alt,
+                        child: Icon(AppIcons.cameraAlt,
                             size: 16, color: Colors.white),
                       ),
                     ),

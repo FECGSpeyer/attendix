@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -368,7 +369,7 @@ class _AutoMessagePanelState extends ConsumerState<AutoMessagePanel> {
         for (final s in states)
           look.banner(
             context,
-            icon: s.run?.status == 'sent' ? Icons.send_outlined : Icons.timer_outlined,
+            icon: s.run?.status == 'sent' ? AppIcons.sendOutlined : AppIcons.timerOutlined,
             title: switch (s.run?.status) {
               null when s.sendAt.isAfter(DateTime.now()) => l10n.autoMessagesPanelWillSend(
                 s.rule.name,
@@ -509,7 +510,7 @@ class _ResponseRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
-            a.wasPresent ? Icons.back_hand_outlined : Icons.chat_bubble_outline,
+            a.wasPresent ? AppIcons.backHandOutlined : AppIcons.chatBubbleOutline,
             color: AppColors.medium,
             size: 22,
           ),

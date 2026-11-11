@@ -8,6 +8,7 @@
 // badge *.ios.css / *.md.css; 1rem = 17px on the iPhone) and
 // ionic-theme-ios27 (lines, detail icon, searchbar, fab) – IOS27_SWEEP.
 import 'package:flutter/cupertino.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -339,7 +340,7 @@ class IonItem extends StatelessWidget {
             else
               // MD_SWEEP: md detail icon – 20px, text colour at .25.
               Icon(
-                Icons.chevron_right,
+                AppIcons.chevronRight,
                 size: 20,
                 color: IonMd.text(Theme.of(context).brightness)
                     .withValues(alpha: 0.25),
@@ -463,13 +464,14 @@ class IonFabButton extends StatelessWidget {
   const IonFabButton({
     super.key,
     required this.onPressed,
-    this.icon = Icons.add,
+    this.icon,
     this.tooltip,
     this.heroTag,
   });
 
   final VoidCallback? onPressed;
-  final IconData icon;
+  /// Defaults to the add glyph of the active design.
+  final IconData? icon;
   final String? tooltip;
   final Object? heroTag;
 
@@ -481,7 +483,7 @@ class IonFabButton extends StatelessWidget {
         heroTag: heroTag,
         tooltip: tooltip,
         onPressed: onPressed,
-        child: Icon(icon),
+        child: Icon(icon ?? AppIcons.add),
       );
     }
     final dark = _isDark(context);
@@ -503,7 +505,7 @@ class IonFabButton extends StatelessWidget {
           onTap: onPressed,
           splashFactory: NoSplash.splashFactory,
           child: Icon(
-            icon,
+            icon ?? AppIcons.add,
             size: 28,
             color: dark ? Colors.white : Colors.black,
           ),
@@ -770,7 +772,7 @@ class IonAccordion extends StatelessWidget {
                     // IOS27_SWEEP: ion-item (ios) `::slotted(ion-icon)
                     // { font-size: 1.6em }` in the item colour.
                     child: Icon(
-                      ios ? CupertinoIcons.chevron_down : Icons.expand_more,
+                      ios ? AppIcons.cupertinoChevronDown : AppIcons.expandMore,
                       size: ios ? 1.6 * ios27.IonIos.rem : 24,
                       // MD_SWEEP: md item icon rgba(text, .54).
                       color: headerColor != null || ios
@@ -965,7 +967,7 @@ class IonFieldRow extends StatelessWidget {
                       ? const ios27.IonDetailChevron()
                       // MD_SWEEP: md detail icon – 20px, text at .25.
                       : Icon(
-                          Icons.chevron_right,
+                          AppIcons.chevronRight,
                           size: 20,
                           color: IonMd.text(Theme.of(context).brightness)
                               .withValues(alpha: 0.25),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
@@ -141,10 +142,10 @@ class _SharedPlanEditListState extends State<SharedPlanEditList> {
           IconButton(
             tooltip: context.l10n.commonDelete,
             color: AppColors.danger,
-            icon: const Icon(Icons.delete_outline),
+            icon: Icon(AppIcons.deleteOutline),
             onPressed: () => _remove(i),
           ),
-          ReorderableDragStartListener(index: i, child: const Icon(Icons.drag_handle)),
+          ReorderableDragStartListener(index: i, child: Icon(AppIcons.dragHandle)),
         ],
       ),
     );

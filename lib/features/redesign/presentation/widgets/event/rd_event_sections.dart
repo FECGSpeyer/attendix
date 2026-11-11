@@ -9,16 +9,13 @@ import '../../../../../core/providers/conductor_providers.dart';
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/debug_providers.dart';
 import '../../../../../core/providers/role_permission_providers.dart';
-import '../../../../../core/providers/plan_providers.dart' show planAttendanceTypesProvider;
 import '../../../../../core/providers/song_providers.dart';
-import '../../../../../core/providers/team_org_providers.dart' show protocolTypesProvider;
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/router/route_access.dart' show canOpenSongsTab;
 import '../../../../../core/services/offline_queue_service.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/attendance_logic_utils.dart' show showSongsForType;
-import '../../../../../core/utils/demo_guard.dart';
 import '../../../../../core/utils/dialog_helper.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../core/utils/event_list_utils.dart';
@@ -34,9 +31,6 @@ import '../../../../attendance/presentation/widgets/attendance_detail/attendance
     show showConductorChangeDialog;
 import '../../../../attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart';
 import '../../../../attendance/presentation/widgets/songs_selection_sheet.dart';
-import '../../../../settings/presentation/pages/attendance_type_edit_page.dart' show buildDefaultPlanUpdate;
-import '../../../../settings/presentation/widgets/type_protocol_settings.dart' show agendaPlaceholderField;
-import '../../../../../data/models/team_org/team_org.dart' show agendaItemsPlaceholderId;
 import '../../../../planning/presentation/attendance_plan_viewer.dart';
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart' show openFilesFolderRoute;
 import '../../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
@@ -420,19 +414,25 @@ bool rdShowsProgram(WidgetRef ref, AttendanceType? type) =>
 // Ablauf
 // ---------------------------------------------------------------------------
 
-/// Ablauf ansehen / bearbeiten / "Für Mitglieder sichtbar"; "Ablauf
-/// anlegen" without one. Everyone who edits Termine (Helfer too, like
-/// Ionic); Beobachter do not see it.
+/// The Ablauf as a preview (tap: Ablauf ansehen), "Bearbeiten ›" next to
+/// the heading and one switch "Für Mitglieder sichtbar"; "Ablauf anlegen"
+/// without one. Everyone who edits Termine (Helfer too, like Ionic);
+/// Beobachter do not see it. Taking the Ablauf over for the Terminart is
+/// in the ••• of the Ablauf editor.
 class RdEventPlanSection extends ConsumerStatefulWidget {
-  const RdEventPlanSection({super.key, required this.attendance, this.preview, this.range = ''});
+  const RdEventPlanSection({super.key, required this.attendance, this.preview, this.range = '', this.freeMinutes});
 
   final Attendance attendance;
 
-  /// The Ablauf itself above the rows (Reiter Programm).
+  /// The Ablauf itself (Reiter Programm).
   final Widget? preview;
 
   /// "16:00–17:35" next to the heading.
   final String range;
+
+  /// Minutes between the end of the Ablauf and the end of the Termin
+  /// ("20 Min frei"); null when it fills the Termin.
+  final int? freeMinutes;
 
   @override
   ConsumerState<RdEventPlanSection> createState() => _RdEventPlanSectionState();
@@ -469,58 +469,6 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
     }
   }
 
-  bool _takingOver = false;
-
-  /// "Für neue Termine dieser Art übernehmen": this Ablauf becomes the
-  /// template of the Art (Werke as placeholders, see [rdPlanAsTypeTemplate]).
-  Future<void> _takeOver(AttendanceType type) async {
-    final l10n = context.l10n;
-    final notifier = ref.read(attendanceTypeNotifierProvider.notifier);
-    final container = ProviderScope.containerOf(context, listen: false);
-    final id = type.id;
-    final plan = widget.attendance.plan;
-    if (_takingOver || id == null || plan == null) return;
-    final ok = await DialogHelper.showConfirmation(
-      context,
-      title: l10n.rdTypeTakeOverPlan,
-      message: l10n.rdTypeTakeOverPlanConfirm(type.name),
-      confirmText: l10n.rdTypeTakeOverPlan,
-      cancelText: l10n.commonCancel,
-    );
-    if (!ok || !mounted) return;
-    final rows = [
-      for (final f in (plan['fields'] as List? ?? const []))
-        if (f is Map) Map<String, dynamic>.from(f),
-    ];
-    final fields = rdPlanAsTypeTemplate(
-      rows,
-      songPlaceholderName: (n) => l10n.typeSettingsSongPlaceholderN(n),
-      agendaMarker: agendaPlaceholderField,
-      agendaMarkerId: agendaItemsPlaceholderId,
-    );
-    setState(() => _takingOver = true);
-    AttendanceType? updated;
-    try {
-      updated = await notifier.updateType(id, {'default_plan': buildDefaultPlanUpdate(type.defaultPlan, fields)});
-      if (updated != null) {
-        // An open Ablauf editor takes the new template too.
-        container
-          ..invalidate(planAttendanceTypesProvider)
-          ..invalidate(protocolTypesProvider);
-      }
-    } on DemoModeException {
-      return;
-    } finally {
-      if (mounted) setState(() => _takingOver = false);
-    }
-    if (!mounted) return;
-    if (updated == null) {
-      ToastHelper.showError(context, l10n.rdTypeTakeOverPlanFailed);
-    } else {
-      ToastHelper.showSuccess(context, l10n.rdTypeTakeOverPlanDone(type.name));
-    }
-  }
-
   @override
   void didUpdateWidget(RdEventPlanSection oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -530,6 +478,7 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.rd;
     final l10n = context.l10n;
     final att = widget.attendance;
     final hasPlan = attendanceHasPlan(att);
@@ -539,65 +488,74 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
     // Beobachter do not see it.
     final canEdit = role.canEdit;
     if (role == Role.viewer || (!hasPlan && !canEdit)) return const SizedBox.shrink();
-    // Only the Leitung edits Terminarten (Verwaltung).
-    final type = !role.isAdmin
-        ? null
-        : (ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
-            .where((t) => t.id != null && t.id == att.typeId)
-            .firstOrNull;
+    final heading = widget.range.isEmpty
+        ? l10n.redesignEventPlanSection
+        : l10n.redesignEventSectionCount(l10n.redesignEventPlanSection, widget.range);
+    final free = widget.freeMinutes;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SizedBox(height: 24),
-        RdGroupLabel(
-          widget.range.isEmpty
-              ? l10n.redesignEventPlanSection
-              : l10n.redesignEventSectionCount(l10n.redesignEventPlanSection, widget.range),
-        ),
-        if (hasPlan && widget.preview != null) ...[
-          widget.preview!,
-          const SizedBox(height: 12),
-        ],
-        RdGroupedList(children: [
-          if (hasPlan) ...[
+        if (!hasPlan) ...[
+          RdGroupLabel(heading),
+          RdGroupedList(children: [
             RdListRow(
-              leading: const RdRowIcon(Icons.view_timeline_outlined),
-              title: l10n.redesignEventPlan,
-              subtitle: l10n.redesignEventPlanHint,
-              onTap: () => openAttendancePlanViewer(context, att),
-            ),
-            if (canEdit) ...[
-            RdListRow(
-              leading: const RdRowIcon(Icons.edit_outlined),
-              title: l10n.redesignEventPlanEdit,
-              subtitle: l10n.redesignEventPlanEditHint,
-              onTap: _edit,
-            ),
-            RdListRow(
-              leading: const RdRowIcon(Icons.visibility_outlined),
-              title: l10n.redesignEventPlanShare,
-              subtitle: l10n.redesignEventPlanShareHint,
-              showChevron: false,
-              onTap: _sharing ? null : () => _toggleShare(!share),
-              trailing: Switch.adaptive(value: share, onChanged: _sharing ? null : _toggleShare),
-            ),
-            if (type != null)
-              RdListRow(
-                key: const Key('rd-plan-take-over'),
-                leading: const RdRowIcon(Icons.content_copy_outlined),
-                title: l10n.rdTypeTakeOverPlan,
-                subtitle: l10n.rdTypeTakeOverPlanHint(type.name),
-                showChevron: false,
-                onTap: _takingOver ? null : () => _takeOver(type),
-              ),
-            ],
-          ] else
-            RdListRow(
+              key: const Key('rd-plan-create'),
               leading: const RdRowIcon(Icons.view_timeline_outlined),
               title: l10n.redesignEventPlanCreate,
               onTap: _edit,
             ),
-        ]),
+          ]),
+        ] else ...[
+          RdSectionLabel(
+            heading,
+            actionLabel: canEdit ? l10n.redesignEventPlanEditShort : null,
+            actionSemantics: l10n.redesignEventPlanEdit,
+            actionIcon: Icons.chevron_right,
+            onAction: canEdit ? _edit : null,
+          ),
+          // The preview is the Ablauf: a tap opens it whole (live on the day).
+          Semantics(
+            button: true,
+            label: l10n.redesignEventPlan,
+            child: GestureDetector(
+              key: const Key('rd-plan-preview'),
+              behavior: HitTestBehavior.opaque,
+              onTap: () => openAttendancePlanViewer(context, att),
+              child: widget.preview ??
+                  RdGroupedList(children: [
+                    RdListRow(
+                      leading: const RdRowIcon(Icons.view_timeline_outlined),
+                      title: l10n.redesignEventPlan,
+                      onTap: () => openAttendancePlanViewer(context, att),
+                    ),
+                  ]),
+            ),
+          ),
+          if (free != null) ...[
+            const SizedBox(height: 6),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                l10n.redesignEventPlanFree(free),
+                key: const Key('rd-plan-free'),
+                style: RdType.meta(p, size: 13),
+              ),
+            ),
+          ],
+          if (canEdit) ...[
+            const SizedBox(height: 12),
+            RdGroupedList(children: [
+              RdListRow(
+                key: const Key('rd-plan-share'),
+                title: l10n.redesignEventPlanShare,
+                showChevron: false,
+                onTap: _sharing ? null : () => _toggleShare(!share),
+                trailing: Switch.adaptive(value: share, onChanged: _sharing ? null : _toggleShare),
+              ),
+            ]),
+          ],
+        ],
       ],
     );
   }
@@ -607,13 +565,21 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
 // Vorbereitung (Checkliste)
 // ---------------------------------------------------------------------------
 
-/// The Termin's checklist: tick off, "+ Aufgabe", delete. Only shown while
-/// it has items (an empty one is started from "Aktionen", like the Termin
-/// page menu).
+/// "Vorbereitung": what the Leitung has to get done before the Termin
+/// (the Termin's checklist). Tick off, "+ Aufgabe", delete. A new Termin
+/// already carries the tasks of its Terminart (Verwaltung › Terminarten);
+/// without any the section explains itself and, when the Terminart has
+/// tasks, offers to take them over.
 class RdEventChecklistSection extends ConsumerStatefulWidget {
-  const RdEventChecklistSection({super.key, required this.attendance});
+  const RdEventChecklistSection({super.key, required this.attendance, this.type, this.canEdit = true});
 
   final Attendance attendance;
+
+  /// Leitung: tick off, add, delete; others with view permission only read.
+  final bool canEdit;
+
+  /// The Termin's Terminart: its tasks can be taken over into an empty list.
+  final AttendanceType? type;
 
   @override
   ConsumerState<RdEventChecklistSection> createState() => _RdEventChecklistSectionState();
@@ -656,6 +622,12 @@ class _RdEventChecklistSectionState extends ConsumerState<RdEventChecklistSectio
     await _save([..._items, item]);
   }
 
+  Future<void> _takeOverTemplate() async {
+    final type = widget.type;
+    if (type == null) return;
+    await _save(rdDefaultChecklist(type, widget.attendance));
+  }
+
   Future<void> _delete(int index) async {
     final l10n = context.l10n;
     final confirmed = await DialogHelper.showConfirmation(
@@ -674,29 +646,65 @@ class _RdEventChecklistSectionState extends ConsumerState<RdEventChecklistSectio
     final p = context.rd;
     final l10n = context.l10n;
     final items = _items;
-    if (items.isEmpty) return const SizedBox.shrink();
+    if (items.isEmpty) {
+      final templateCount = widget.type?.checklist?.length ?? 0;
+      return Column(
+        key: const Key('rd-event-prep-empty'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          RdSectionLabel(
+            l10n.redesignEventPrepTitle,
+            actionLabel: l10n.redesignEventAddTask,
+            actionSemantics: l10n.redesignEventAddTaskLabel,
+            onAction: _add,
+          ),
+          RdCard(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.redesignEventPrepEmpty, style: RdType.meta(p, size: 14)),
+                if (templateCount > 0) ...[
+                  const SizedBox(height: 10),
+                  RdPillButton(
+                    key: const Key('rd-event-prep-template'),
+                    icon: Icons.playlist_add_check_rounded,
+                    label: l10n.redesignEventPrepTakeOver(templateCount),
+                    onPressed: _takeOverTemplate,
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (_local != null && _local != widget.attendance.checklist)
+            LinearProgressIndicator(minHeight: 2, color: p.primary, backgroundColor: p.track),
+        ],
+      );
+    }
     final done = items.where((i) => i.completed).length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         RdSectionLabel(
           l10n.redesignEventPrep('$done', '${items.length}'),
-          actionLabel: l10n.redesignEventAddTask,
+          actionLabel: widget.canEdit ? l10n.redesignEventAddTask : null,
           actionSemantics: l10n.redesignEventAddTaskLabel,
-          onAction: _add,
+          onAction: widget.canEdit ? _add : null,
         ),
         RdGroupedList(children: [
           for (var i = 0; i < items.length; i++)
             _ChecklistRow(
               key: ValueKey('rd-check-${items[i].id}'),
               item: items[i],
-              onToggle: () {
-                HapticHelper.light();
-                final next = [...items];
-                next[i] = items[i].copyWith(completed: !items[i].completed);
-                _save(next);
-              },
-              onDelete: () => _delete(i),
+              onToggle: !widget.canEdit
+                  ? null
+                  : () {
+                      HapticHelper.light();
+                      final next = [...items];
+                      next[i] = items[i].copyWith(completed: !items[i].completed);
+                      _save(next);
+                    },
+              onDelete: widget.canEdit ? () => _delete(i) : null,
             ),
         ]),
         if (_local != null && _local != widget.attendance.checklist)
@@ -710,8 +718,8 @@ class _ChecklistRow extends StatelessWidget {
   const _ChecklistRow({super.key, required this.item, required this.onToggle, required this.onDelete});
 
   final ChecklistItem item;
-  final VoidCallback onToggle;
-  final VoidCallback onDelete;
+  final VoidCallback? onToggle;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -761,11 +769,14 @@ class _ChecklistRow extends StatelessWidget {
                     },
                   ),
                 ],
-                IconButton(
-                  icon: Icon(Icons.close, size: 18, color: p.text2),
-                  tooltip: l10n.redesignEventDeleteTask,
-                  onPressed: onDelete,
-                ),
+                if (onDelete != null)
+                  IconButton(
+                    icon: Icon(Icons.close, size: 18, color: p.text2),
+                    tooltip: l10n.redesignEventDeleteTask,
+                    onPressed: onDelete,
+                  )
+                else
+                  const SizedBox(width: 10),
               ],
             ),
           ),

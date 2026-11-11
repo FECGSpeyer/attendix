@@ -1,7 +1,7 @@
 name: attendix
 description: "Attendance Management App - Flutter Version"
 publish_to: 'none'
-version: 0.117.2+257
+version: 0.121.1+263
 
 environment:
   sdk: ^3.7.0
@@ -82,6 +82,8 @@ dependencies:
 
   # Cupertino Icons
   cupertino_icons: ^1.0.8
+  # Ionicons (classic design: same icons as the Ionic app)
+  ionicons: ^0.2.3
   flutter_slidable: ^4.0.3
 
   # Web (for service worker update detection)

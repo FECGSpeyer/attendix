@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -265,14 +266,14 @@ class _SideNavState extends ConsumerState<SideNav> {
                 '${collapsed ? l10n.navExpand : l10n.navCollapse} (${l10n.navShortcut})',
             colors: colors,
             onTap: _toggleCollapsed,
-            child: Icon(Icons.view_sidebar_outlined,
+            child: Icon(AppIcons.viewSidebarOutlined,
                 size: 22, color: colors.muted, textDirection: TextDirection.rtl),
           )
         : _IconBtn(
             tooltip: l10n.navClose,
             colors: colors,
             onTap: widget.onClose,
-            child: Icon(Icons.close, size: 24, color: colors.muted),
+            child: Icon(AppIcons.close, size: 24, color: colors.muted),
           );
     final Widget bell = hasTenant
         ? IconTheme.merge(
@@ -357,7 +358,7 @@ class _SideNavState extends ConsumerState<SideNav> {
             ),
           ),
           _NavButton(
-            icon: Icons.logout,
+            icon: AppIcons.logout,
             label: l10n.settingsLogout,
             active: false,
             collapsed: collapsed,
@@ -658,7 +659,7 @@ class _TenantButton extends StatelessWidget {
                   ],
                 ),
               ),
-              if (multiple) Icon(Icons.keyboard_arrow_down, color: colors.muted),
+              if (multiple) Icon(AppIcons.keyboardArrowDown, color: colors.muted),
             ]),
           );
 

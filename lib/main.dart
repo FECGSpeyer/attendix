@@ -30,6 +30,7 @@ import 'core/services/live_activity_service.dart';
 import 'core/services/native/ionic_offline_queue_takeover.dart';
 import 'core/services/native/ionic_session_takeover.dart';
 import 'core/services/native/shorebird_patch_service.dart';
+import 'core/theme/app_icons.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/redesign/rd_theme.dart';
 import 'core/utils/toast_helper.dart';
@@ -262,6 +263,10 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
         }
       });
     }
+
+    // ICONS: the normal design shows the Ionic app's Ionicons, the Beta keeps
+    // its Material icons (also on the classic pages it reuses).
+    AppIcons.ionic = !redesign.enabled;
 
     return MaterialApp.router(
       title: 'Attendix',

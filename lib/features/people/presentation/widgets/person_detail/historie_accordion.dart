@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -72,7 +73,7 @@ class HistorieAccordion extends ConsumerWidget {
             child: Center(
               child: Column(
                 children: [
-                  const Icon(Icons.history, size: 48, color: AppColors.medium),
+                  Icon(AppIcons.history, size: 48, color: AppColors.medium),
                   const SizedBox(height: AppDimensions.paddingS),
                   Text(context.l10n.personFlutterNoHistory),
                 ],
@@ -260,7 +261,7 @@ class HistorieAccordion extends ConsumerWidget {
             onPressed: (_) => _confirmDelete(context, ref, item),
             backgroundColor: AppColors.danger,
             foregroundColor: Colors.white,
-            icon: Icons.delete,
+            icon: AppIcons.delete,
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/app_constants.dart';
@@ -297,7 +298,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
               context,
               child: Row(
                 children: [
-                  const Icon(Icons.folder_outlined, color: AppColors.primary),
+                  Icon(AppIcons.folderOutlined, color: AppColors.primary),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -328,7 +329,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
             )
           else
             ListTile(
-              leading: const Icon(Icons.folder_outlined, color: AppColors.primary),
+              leading: Icon(AppIcons.folderOutlined, color: AppColors.primary),
               title: Text(context.l10n.attendanceFilesFolder),
               subtitle: Text(context.l10n.attendanceFilesFolderHint),
               trailing: widget.attendance.filesFolder?.isNotEmpty == true
@@ -346,20 +347,20 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
                 children: [
                   Flexible(
                     child: ActionChip(
-                      avatar: const Icon(Icons.folder_open_outlined, size: 18),
+                      avatar: Icon(AppIcons.folderOpenOutlined, size: 18),
                       label: Text(widget.attendance.filesFolder!, overflow: TextOverflow.ellipsis),
                       onPressed: widget.onOpenFilesFolder,
                     ),
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.edit_outlined),
+                    icon: Icon(AppIcons.editOutlined),
                     color: AppColors.primary,
                     tooltip: context.l10n.attendanceChangeFolder,
                     onPressed: widget.onChooseFilesFolder,
                   ),
                   IconButton(
-                    icon: const Icon(Icons.highlight_off),
+                    icon: Icon(AppIcons.highlightOff),
                     color: AppColors.danger,
                     tooltip: context.l10n.attendanceRemoveFolder,
                     onPressed: widget.onRemoveFilesFolder,

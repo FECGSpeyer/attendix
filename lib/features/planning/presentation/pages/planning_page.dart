@@ -2,12 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/providers/attendance_detail_providers.dart';
+import '../../../../core/providers/attendance_type_providers.dart' show attendanceTypesProvider;
+import '../../../../data/models/attendance/attendance.dart' show AttendanceType;
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
@@ -51,6 +54,7 @@ import '../../data/planning_write_sync.dart';
 import '../../../../core/providers/redesign_providers.dart' show redesignEnabledProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/event/rd_plan_take_over.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
 
 part 'planning_page_beta.dart';
@@ -660,7 +664,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       final messenger = captured != null && captured.mounted ? captured : rootScaffoldMessengerKey.currentState;
       messenger?.showSnackBar(SnackBar(
         content: Row(children: [
-          const Icon(Icons.error, color: Colors.white),
+          Icon(AppIcons.error, color: Colors.white),
           const SizedBox(width: 12),
           Expanded(child: Text(message, style: const TextStyle(color: Colors.white))),
         ]),
@@ -1392,13 +1396,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       title: context.l10n.planningPlanHeader(PlanUtils.planLabel(att, shownIndex, plans)),
       subtitle: context.l10n.planningFlutterPlanPosition(shownIndex + 1, plans.length),
       actions: [
-        PlanSheetAction('rename', context.l10n.planningRename, icon: Icons.edit_outlined),
+        PlanSheetAction('rename', context.l10n.planningRename, icon: AppIcons.editOutlined),
         if (PlanUtils.dayOptions(att).isNotEmpty)
-          PlanSheetAction('day', context.l10n.planningAssignOtherDay, icon: Icons.event),
-        if (shownIndex > 0) PlanSheetAction('left', context.l10n.planningMoveLeft, icon: Icons.chevron_left),
+          PlanSheetAction('day', context.l10n.planningAssignOtherDay, icon: AppIcons.event),
+        if (shownIndex > 0) PlanSheetAction('left', context.l10n.planningMoveLeft, icon: AppIcons.chevronLeft),
         if (shownIndex < plans.length - 1)
-          PlanSheetAction('right', context.l10n.planningMoveRight, icon: Icons.chevron_right),
-        PlanSheetAction('delete', context.l10n.planningDeletePlan, icon: Icons.delete_outline, destructive: true),
+          PlanSheetAction('right', context.l10n.planningMoveRight, icon: AppIcons.chevronRight),
+        PlanSheetAction('delete', context.l10n.planningDeletePlan, icon: AppIcons.deleteOutline, destructive: true),
       ],
     );
     if (action == null || !mounted) return;
@@ -1457,7 +1461,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                   PlanSheetAction(
                     o.day,
                     o.label,
-                    icon: o.day == list[index].day ? Icons.check_circle : Icons.event_outlined,
+                    icon: o.day == list[index].day ? AppIcons.checkCircle : AppIcons.eventOutlined,
                   ),
               ],
             );
@@ -1779,9 +1783,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         if (!isGeneral && _songs.isNotEmpty) item('song', l10n.planningAddSong),
         if (canAddTopics)
           item('topics', l10n.attendanceAddTopics,
-              icon: const Icon(Icons.playlist_add_circle_outlined, color: AppColors.primary)),
+              icon: Icon(AppIcons.playlistAddCircleOutlined, color: AppColors.primary)),
         if (canInsertAgenda)
-          item('agenda', l10n.planningInsertAgenda, icon: const Icon(Icons.commit, color: AppColors.medium)),
+          item('agenda', l10n.planningInsertAgenda, icon: Icon(AppIcons.commit, color: AppColors.medium)),
         if (blockTemplates.isNotEmpty) ...[
           const PopupMenuDivider(),
           section(l10n.planningBlocks),
@@ -1796,7 +1800,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                         tooltip: l10n.planningDeleteTemplate,
                         visualDensity: VisualDensity.compact,
                         color: AppColors.medium,
-                        icon: const Icon(Icons.delete_outline, size: 20),
+                        icon: Icon(AppIcons.deleteOutline, size: 20),
                         onPressed: () => Navigator.pop(menuCtx, 'delblock:${tpl.id}'),
                       ),
                     )
@@ -1816,7 +1820,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         if (_att != null) ...[
           const PopupMenuDivider(),
           item('plan', l10n.planningAddAnotherPlan,
-              icon: const Icon(Icons.copy_outlined, color: AppColors.medium), color: AppColors.medium),
+              icon: Icon(AppIcons.copyOutlined, color: AppColors.medium), color: AppColors.medium),
         ],
       ],
     );
@@ -2083,11 +2087,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       withImage: false,
       afterPdfActions: [
         if (plans.length > 1)
-          PlanSheetAction('all', context.l10n.planningExportPdfAll, icon: Icons.picture_as_pdf),
+          PlanSheetAction('all', context.l10n.planningExportPdfAll, icon: AppIcons.pictureAsPdf),
       ],
       trailingActions: [
         if (showSectional)
-          PlanSheetAction('sectional', context.l10n.planningCreateSectionalPlan, icon: Icons.groups),
+          PlanSheetAction('sectional', context.l10n.planningCreateSectionalPlan, icon: AppIcons.groups),
       ],
       onExtraAction: (a) async {
         if (a == 'sectional') {
@@ -2208,10 +2212,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           // IOS_PAGES3: iOS → the end ion-buttons share one glass capsule
           actions: [
             ToolbarButtonGroup(children: [
-              IconButton(tooltip: context.l10n.planningShareLink, icon: const Icon(Icons.link), onPressed: _shareLink),
+              IconButton(tooltip: context.l10n.planningShareLink, icon: Icon(AppIcons.link), onPressed: _shareLink),
               IconButton(
                 tooltip: context.l10n.commonClose,
-                icon: const Icon(Icons.close),
+                icon: Icon(AppIcons.close),
                 onPressed: () => Navigator.of(context).maybePop(),
               ),
             ]),
@@ -2220,7 +2224,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         floatingActionButton: TabBarFab.wrap(FloatingActionButton(
           tooltip: context.l10n.personActions,
           onPressed: _showOptions,
-          child: const Icon(Icons.more_horiz),
+          child: Icon(AppIcons.moreHoriz),
         )),
         body: attendancesAsync.when(
           loading: () => const Center(child: AppSpinner()),
@@ -2249,7 +2253,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                         builder: (anchor) => IconButton(
                           color: AppColors.primary,
                           tooltip: context.l10n.planningAddField,
-                          icon: const Icon(Icons.add),
+                          icon: Icon(AppIcons.add),
                           onPressed: () => _showAddMenu(anchor),
                         ),
                       ),
@@ -2262,7 +2266,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                         trailing: IconButton(
                           tooltip: context.l10n.planningPlanOptions,
                           color: AppColors.medium,
-                          icon: const Icon(Icons.more_horiz),
+                          icon: Icon(AppIcons.moreHoriz),
                           onPressed: _showPlanOptions,
                         ),
                       ),
@@ -2319,7 +2323,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       headerTrailing: IconButton(
         color: AppColors.primary,
         tooltip: context.l10n.planningResetPlan,
-        icon: const Icon(Icons.refresh),
+        icon: Icon(AppIcons.refresh),
         onPressed: _resetPlan,
       ),
       dividerIndent: null,
@@ -2392,7 +2396,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             Expanded(
               child: TextButton.icon(
                 onPressed: () => _navigate(-1),
-                icon: const Icon(Icons.arrow_back, size: 18),
+                icon: Icon(AppIcons.arrowBack, size: 18),
                 label: IonButtonLabel(context.l10n.planningPrevious),
               ),
             ),
@@ -2400,7 +2404,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
               child: TextButton.icon(
                 onPressed: () => _navigate(1),
                 iconAlignment: IconAlignment.end,
-                icon: const Icon(Icons.arrow_forward, size: 18),
+                icon: Icon(AppIcons.arrowForward, size: 18),
                 label: IonButtonLabel(context.l10n.planningNext),
               ),
             ),
