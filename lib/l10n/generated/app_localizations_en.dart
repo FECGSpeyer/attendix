@@ -9841,6 +9841,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdAdminHomeWorks => 'In the Works tab under •••';
 
   @override
+  String get rdAdminHomeWorksCategories =>
+      'In the Works tab next to the categories';
+
+  @override
   String get rdAdminManageGroups => 'Manage sections';
 
   @override
@@ -11564,6 +11568,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get rdWmHistoryIntro =>
       'Which works were played when. Tap an entry to remove it.';
+
+  @override
+  String get rdWmListPdf => 'Works list as PDF';
+
+  @override
+  String get rdWmManageCategories => 'Manage';
 
   @override
   String rdWmWorksCount(num count) {

@@ -23,7 +23,7 @@ enum RdManageArea {
 }
 
 /// Where an entry that left the Verwaltung lives now (search hint).
-enum RdManageHome { members, works, event, stats, organisation, me }
+enum RdManageHome { members, works, worksCategories, event, stats, organisation, me }
 
 /// One entry of the Verwaltung. Entries with an [area] are rows of the page;
 /// the others moved to their [home] and only show up in the search.
@@ -57,7 +57,7 @@ enum RdManageEntry {
   approvals(null, RdManageHome.members),
   bulkMembers(null, RdManageHome.members),
   workHistory(null, RdManageHome.works),
-  workCategories(null, RdManageHome.works),
+  workCategories(null, RdManageHome.worksCategories),
   fileStorage(null, RdManageHome.works),
   sharing(null, RdManageHome.works),
   runSheets(null, RdManageHome.event),

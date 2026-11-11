@@ -145,6 +145,7 @@ IconData rdManageAreaIcon(RdManageArea area) => switch (area) {
 String rdManageHomeName(AppLocalizations l10n, RdManageHome home) => switch (home) {
       RdManageHome.members => l10n.rdAdminHomeMembers,
       RdManageHome.works => l10n.rdAdminHomeWorks,
+      RdManageHome.worksCategories => l10n.rdAdminHomeWorksCategories,
       RdManageHome.event => l10n.rdAdminHomeEvent,
       RdManageHome.stats => l10n.rdAdminHomeStats,
       RdManageHome.organisation => l10n.rdAdminHomeOrganisation,
