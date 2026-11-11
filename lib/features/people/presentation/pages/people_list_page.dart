@@ -9,7 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/utils/people_sort.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/attendance_rate_filter_providers.dart';
+import '../../../../core/providers/attendance_type_providers.dart';
+import '../../rate_filter_labels.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
@@ -421,7 +423,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         break;
       case 'attAsc':
       case 'attDesc':
-        final pct = ref.read(playerAttendancePercentagesProvider).valueOrNull ??
+        final pct = ref.read(listAttendancePercentagesProvider).valueOrNull ??
             const <int, int>{};
         sorted.sort((a, b) {
           final c = (pct[a.id] ?? 0).compareTo(pct[b.id] ?? 0);
@@ -470,7 +472,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     });
     // Use realtime provider for live updates
     final peopleAsync = ref.watch(realtimePlayersProvider);
-    final percentagesAsync = ref.watch(playerAttendancePercentagesProvider);
+    // "Anwesenheit zählen": season (default) or a chosen period / Terminart.
+    final rateFilter = ref.watch(attendanceRateFilterProvider);
+    final percentagesAsync = ref.watch(listAttendancePercentagesProvider);
     final percentages = percentagesAsync.valueOrNull ?? {};
     // Ionic showTeachers = view option and tenant.maintainTeachers; names
     // from db.getTeachers().
@@ -665,9 +669,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               onPause: isAdmin ? () => _showPauseDialog(person) : null,
               onUnpause: isAdmin ? () => _unpausePerson(person) : null,
               onRemove: isAdmin ? () => _remove(person) : null,
-              // Ionic shows the badge for everyone, 0% without counted Termine
+              // Ionic shows the badge for everyone, 0% without counted Termine;
+              // a chosen period without Termine of the person shows none.
               attendancePercentage: person.id != null && percentagesAsync.hasValue
-                  ? percentages[person.id] ?? 0
+                  ? percentages[person.id] ?? (rateFilter.isDefault ? 0 : null)
                   : null,
               showTeachers: showTeachers,
               teacherNames: teacherNames,
@@ -678,7 +683,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           // primary ion-item-divider per group.
           final children = <Widget>[
             IonListHeader(
-                text: context.l10n.peoplePeopleCount(sortedPeople.length)),
+                text: rateFilter.isDefault
+                    ? context.l10n.peoplePeopleCount(sortedPeople.length)
+                    : '${context.l10n.peoplePeopleCount(sortedPeople.length)} · '
+                        '${rateFilterChip(context.l10n, rateFilter, ref.watch(attendanceTypesProvider).valueOrNull ?? const [])}'),
           ];
           if (_sortOption == 'group') {
             final grouped = _groupByGroup(sortedPeople);
@@ -874,6 +882,30 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     _saveFilterOption();
   }
 
+  /// "Anwesenheit zählen": a preset, or "Eigener …" with a date range.
+  Future<void> _onRatePeriodSelected(RatePeriod period) async {
+    final notifier = ref.read(attendanceRateFilterProvider.notifier);
+    if (period != RatePeriod.custom) {
+      notifier.state = notifier.state.withPeriod(period);
+      return;
+    }
+    final today = DateUtils.dateOnly(DateTime.now());
+    final current = notifier.state;
+    final range = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2015),
+      lastDate: today,
+      initialDateRange: current.period == RatePeriod.custom && current.from != null && current.to != null
+          ? DateTimeRange(start: current.from!, end: current.to!)
+          : DateTimeRange(start: DateTime(today.year, 1, 1), end: today),
+      locale: Locale(currentLanguage()),
+      helpText: context.l10n.peopleRateTitle,
+      saveText: context.l10n.commonApply,
+    );
+    if (range == null || !mounted) return;
+    notifier.state = notifier.state.withPeriod(RatePeriod.custom, from: range.start, to: range.end);
+  }
+
   void _onSortSelected(String value) {
     setState(() => _sortOption = value);
     _saveSortOption();
@@ -888,6 +920,11 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final filterLabels = _filterOptionLabels(tenant);
     final sortLabels = _sortOptionLabels(tenant);
     final viewLabels = _viewOptionLabels(tenant);
+    final rate = ref.read(attendanceRateFilterProvider);
+    final rateTypes = [
+      for (final t in ref.read(attendanceTypesProvider).valueOrNull ?? const [])
+        if (t.id != null && t.visible) t,
+    ];
     final ios = ionIsIos(context);
     final menuStyle = MenuStyle(
       backgroundColor: WidgetStatePropertyAll(
@@ -963,6 +1000,27 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           options: sortLabels,
           onSelected: _onSortSelected,
         ),
+        // "Anwesenheit zählen": period of the percentages.
+        selectRow(
+          icon: AppIcons.calendarToday,
+          value: rate.period.name,
+          options: {
+            for (final period in RatePeriod.values)
+              period.name: ratePeriodLabel(context.l10n, period, filter: rate),
+          },
+          onSelected: (v) => _onRatePeriodSelected(RatePeriod.values.byName(v)),
+        ),
+        if (rateTypes.length > 1)
+          selectRow(
+            icon: AppIcons.event,
+            value: rate.typeId ?? '',
+            options: {
+              '': context.l10n.peopleRateAllTypes,
+              for (final t in rateTypes) t.id!: t.name,
+            },
+            onSelected: (v) => ref.read(attendanceRateFilterProvider.notifier).state =
+                ref.read(attendanceRateFilterProvider).withType(v.isEmpty ? null : v),
+          ),
         SubmenuButton(
           style: itemStyle,
           menuStyle: menuStyle,
@@ -1037,7 +1095,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         key: const Key('people_options_button'),
         icon: Icon(
           AppIcons.tune,
-          color: _filterOption != 'all' ? AppColors.primary : null,
+          color: _filterOption != 'all' || !rate.isDefault ? AppColors.primary : null,
         ),
         tooltip: context.l10n.typeSettingsOptions,
         onPressed: () =>

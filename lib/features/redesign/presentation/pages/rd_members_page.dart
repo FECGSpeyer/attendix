@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/attendance_rate_filter_providers.dart';
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
@@ -31,6 +33,7 @@ import '../../data/rd_members_list_filter.dart';
 import '../../data/rd_members_logic.dart';
 import '../../../members/data/providers/members_providers.dart' show membersEinteilungOptionsProvider;
 import '../../../people/people_list_utils.dart' show withExtraFieldDefaults;
+import '../../../people/rate_filter_labels.dart' show rateFilterChip;
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../widgets/members/rd_invite_sheet.dart';
 import '../widgets/members/rd_member_bulk.dart';
@@ -134,7 +137,12 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
     final rawPending = canApprove
         ? ref.watch(realtimePendingPlayersProvider).valueOrNull ?? const <Person>[]
         : const <Person>[];
-    final percentages = ref.watch(playerAttendancePercentagesProvider).valueOrNull ?? const <int, int>{};
+    // "Anwesenheit zählen": season (default) or a chosen period / Terminart.
+    final rateFilter = ref.watch(attendanceRateFilterProvider);
+    final rateChip = rateFilter.isDefault
+        ? null
+        : rateFilterChip(l10n, rateFilter, ref.watch(attendanceTypesProvider).valueOrNull ?? const []);
+    final percentages = ref.watch(listAttendancePercentagesProvider).valueOrNull ?? const <int, int>{};
     final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
     final absences = ref.watch(playerAbsencesProvider).valueOrNull ?? const <PlayerAbsence>[];
     final missing = canApprove ? ref.watch(rdMissingAccountsProvider) : const <Person>[];
@@ -352,6 +360,15 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
               clipBehavior: Clip.none,
               child: Row(
                 children: [
+                  if (rateChip != null) ...[
+                    RdRemovableChip(
+                      key: const Key('rd-members-rate-chip'),
+                      label: rateChip,
+                      semanticLabel: l10n.redesignMembersFilterRemove(rateChip),
+                      onRemove: () => ref.read(attendanceRateFilterProvider.notifier).state = const AttendanceRateFilter(),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                   for (final chip in _activeChips(
                     context,
                     listFilter: listFilter,
@@ -523,6 +540,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
       onRefresh: () async {
         ref.invalidate(realtimePlayersProvider);
         ref.invalidate(playerAttendancePercentagesProvider);
+        ref.invalidate(listAttendancePercentagesProvider);
         ref.invalidate(playerAbsencesProvider);
         if (canApprove) ref.invalidate(realtimePendingPlayersProvider);
       },

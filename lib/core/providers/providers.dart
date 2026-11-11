@@ -6,6 +6,7 @@ export 'tenant_providers.dart';
 export 'player_providers.dart';
 export 'group_providers.dart';
 export 'attendance_providers.dart';
+export 'attendance_rate_filter_providers.dart';
 export 'song_providers.dart';
 export 'song_filter_providers.dart';
 export 'holiday_providers.dart';

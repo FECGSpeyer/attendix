@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_providers.dart';
+import 'package:attendix/core/providers/attendance_rate_filter_providers.dart';
+import 'package:attendix/core/providers/attendance_type_providers.dart';
+import 'package:attendix/data/models/attendance/attendance.dart' show AttendanceType;
 import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/player_absence_providers.dart';
@@ -94,6 +97,12 @@ Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
   await tester.tap(finder);
 }
 
+/// Scrolls the open filter sheet until [finder] is built and visible.
+Future<void> _sheetScrollTo(WidgetTester tester, Finder finder) async {
+  await tester.scrollUntilVisible(finder, 150, scrollable: find.byType(Scrollable).last);
+  await tester.pump();
+}
+
 MaterialApp _material(GoRouter router) => MaterialApp.router(
       locale: const Locale('de'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -109,6 +118,10 @@ List<Override> _common(Role role, MockPlayerRepository repo) => [
       effectiveRoleProvider.overrideWithValue(role),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
       playerRepositoryWithTenantProvider.overrideWithValue(repo),
+      attendanceTypesProvider.overrideWith((ref) async => const [
+            AttendanceType(id: 't-probe', name: 'Probe'),
+            AttendanceType(id: 't-vortrag', name: 'Vortrag'),
+          ]),
     ];
 
 Widget _membersApp(Role role, MockPlayerRepository repo, {List<Person>? people, bool criticalOnly = false}) {
@@ -143,6 +156,10 @@ Widget _membersApp(Role role, MockPlayerRepository repo, {List<Person>? people, 
       realtimePlayersProvider.overrideWith((ref) => Stream.value(people ?? [_anna, _ben, _clara, _dora])),
       realtimePendingPlayersProvider.overrideWith((ref) => Stream.value([_emil])),
       playerAttendancePercentagesProvider.overrideWith((ref) async => const {1: 90, 2: 40, 3: 80, 4: 70}),
+      // "Anwesenheit zählen": another period gives other numbers.
+      listAttendancePercentagesProvider.overrideWith((ref) async => ref.watch(attendanceRateFilterProvider).isDefault
+          ? const {1: 90, 2: 40, 3: 80, 4: 70}
+          : const {1: 55, 2: 40, 3: 80}),
       groupsProvider.overrideWith((ref) async => _groups),
       playerAbsencesProvider.overrideWith((ref) async => [
             PlayerAbsence(personId: 3, fromDate: _day(-1), untilDate: _day(3), reason: 'Urlaub'),
@@ -452,14 +469,45 @@ void main() {
       expect(find.textContaining('Problemfälle'), findsNothing);
     });
 
+    testWidgets('Anwesenheit zählen: period changes the percentages, chip resets it', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.admin, _repo()));
+      await _settle(tester);
+      expect(find.text('90 %'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('rd-members-filter')));
+      await _settle(tester);
+      await _sheetScrollTo(tester, find.byKey(const Key('rd-members-rate-type')));
+      expect(find.text('ANWESENHEIT ZÄHLEN'), findsOneWidget);
+      expect(find.text('Alle, die zählen'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('rd-members-rate-thisYear')));
+      await _settle(tester);
+      await _sheetScrollTo(tester, find.byKey(const Key('rd-members-filter-show')));
+      await tester.tap(find.byKey(const Key('rd-members-filter-show')));
+      await _settle(tester);
+
+      expect(find.text('Quote: Dieses Jahr'), findsOneWidget);
+      expect(find.text('55 %'), findsOneWidget);
+      expect(find.text('90 %'), findsNothing);
+      // No Termine in the period: no number instead of 0 %.
+      expect(find.text('70 %'), findsNothing);
+      // It is not a filter of persons: the count stays.
+      expect(find.text('Filter'), findsOneWidget);
+
+      await tester.tap(find.text('Quote: Dieses Jahr'));
+      await _settle(tester);
+      expect(find.text('Quote: Dieses Jahr'), findsNothing);
+      expect(find.text('90 %'), findsOneWidget);
+    });
+
     testWidgets('Filter: by group and sorted by first name, chips remove them', (tester) async {
       await tester.pumpWidget(_membersApp(Role.admin, _repo()));
       await _settle(tester);
       await tester.tap(find.byKey(const Key('rd-members-filter')));
       await _settle(tester);
       expect(find.text('Sortieren & Filtern'), findsOneWidget);
+      await _sheetScrollTo(tester, find.widgetWithText(RdChoiceChip, 'Violine'));
       await tester.tap(find.widgetWithText(RdChoiceChip, 'Violine'));
       await _settle(tester);
+      await _sheetScrollTo(tester, find.byKey(const Key('rd-members-filter-show')));
       expect(find.text('2 Personen anzeigen'), findsOneWidget);
       await tester.tap(find.byKey(const Key('rd-members-filter-show')));
       await _settle(tester);

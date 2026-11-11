@@ -7840,6 +7840,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get peopleProblemCases => 'Problem cases';
 
   @override
+  String get peopleRateAllTypes => 'All that count';
+
+  @override
+  String peopleRateChip(Object label) {
+    return 'Rate: $label';
+  }
+
+  @override
+  String get peopleRateCustom => 'Custom …';
+
+  @override
+  String get peopleRateHint =>
+      'The percentages in the list and the sort by attendance use this selection.';
+
+  @override
+  String get peopleRatePeriod => 'Period';
+
+  @override
+  String get peopleRateSeason => 'Season';
+
+  @override
+  String get peopleRateThisYear => 'This year';
+
+  @override
+  String get peopleRateThreeMonths => '3 months';
+
+  @override
+  String get peopleRateTitle => 'Count attendance';
+
+  @override
+  String get peopleRateTwelveMonths => '12 months';
+
+  @override
+  String get peopleRateType => 'Event type';
+
+  @override
   String get peopleReactivateConfirm => 'Reactivate this person?';
 
   @override
