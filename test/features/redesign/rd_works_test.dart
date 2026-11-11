@@ -34,6 +34,7 @@ import 'package:attendix/features/songs/data/song_print_service.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/features/songs/presentation/utils/song_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -629,36 +630,45 @@ void main() {
       final day = DateTime(2026, 11, 29);
       RdNextEvent event(int id, String type) => RdNextEvent(date: day, type: type, attendanceId: id, songs: const []);
       const long = Song(id: 9, name: 'Warum musstest du so viel leiden für die Sünden dieser Welt', number: 91);
-      await tester.pumpWidget(ProviderScope(
-        child: MaterialApp(
-          locale: const Locale('de'),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
-          home: MediaQuery(
-            data: const MediaQueryData(size: Size(393, 852), textScaler: TextScaler.linear(3)),
-            child: Scaffold(
-              body: SingleChildScrollView(
-                child: RdCurrentWorksStrip(
-                  works: [
-                    RdCurrentWork(song: long, event: event(1, 'Probe')),
-                    RdCurrentWork(song: _ave, event: event(2, 'Konzert')),
-                  ],
-                  ownGroup: _groups.first,
-                  choir: false,
+      Widget app(double scale) => ProviderScope(
+            child: MaterialApp(
+              locale: const Locale('de'),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+              home: MediaQuery(
+                data: MediaQueryData(size: const Size(393, 852), textScaler: TextScaler.linear(scale)),
+                child: Scaffold(
+                  body: SingleChildScrollView(
+                    child: RdCurrentWorksStrip(
+                      works: [
+                        RdCurrentWork(song: long, event: event(1, 'Probe')),
+                        RdCurrentWork(song: _ave, event: event(2, 'Konzert')),
+                      ],
+                      ownGroup: _groups.first,
+                      choir: false,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-      ));
-      await _settle(tester);
+          );
 
+      // 300 %: number, Termin, three title lines and the hint fit the card.
+      await tester.pumpWidget(app(3));
+      await _settle(tester);
+      expect(tester.takeException(), isNull);
+      expect(find.text('Keine Stimme'), findsNWidgets(2));
+
+      // 200 % (the test font is about twice as wide as the real one): day and
+      // type stay readable, nothing cut off.
+      await tester.pumpWidget(app(2));
+      await _settle(tester);
       expect(tester.takeException(), isNull);
       expect(find.textContaining('Für '), findsNothing);
-      expect(find.textContaining('Probe'), findsOneWidget);
-      expect(find.textContaining('Konzert'), findsOneWidget);
-      expect(find.text('Keine Stimme'), findsNWidgets(2));
+      for (final type in ['Probe', 'Konzert']) {
+        expect(tester.renderObject<RenderParagraph>(find.textContaining(type)).didExceedMaxLines, isFalse, reason: type);
+      }
     });
 
     testWidgets('Alle als PDF is locked and loading while the PDF is built', (tester) async {

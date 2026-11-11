@@ -103,8 +103,12 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
     final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
     // Padding and gaps stay, the number, three title lines and the hint grow
     // with the text (128 at 100 %).
-    final height = 34 + 94 * scale.clamp(1.0, double.infinity);
-    final width = _cardWidth * scale.clamp(1.0, 1.4);
+    // With several Termine the first card of each names it on one line
+    // (two when the type is needed too).
+    final whenLines = single ? 0 : (sameDay ? 2 : 1);
+    final height = 34 + (94 + 16 * whenLines) * scale.clamp(1.0, double.infinity) + (whenLines > 0 ? 4 : 0);
+    // Wider up to 200 %: the Termin line (day · type) has to fit in two lines.
+    final width = _cardWidth * scale.clamp(1.0, 2.0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -241,31 +245,30 @@ class _CurrentCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (number.isNotEmpty || showWhen) ...[
-              Row(
-                children: [
-                  if (number.isNotEmpty) ...[
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                      decoration: BoxDecoration(color: p.soft, borderRadius: BorderRadius.circular(8)),
-                      child: Text(
-                        number,
-                        maxLines: 1,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: p.softText,
-                          fontFeatures: const [FontFeature.tabularFigures()],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                  ],
-                  if (showWhen)
-                    Expanded(
-                      child: Text(rdCurrentWorkWhen(work, short: shortWhen), maxLines: 1, overflow: TextOverflow.ellipsis, style: RdType.meta(p, size: 12)),
-                    ),
-                ],
+            // Own line: next to the number the day (and type) got cut.
+            if (showWhen) ...[
+              Text(
+                rdCurrentWorkWhen(work, short: shortWhen),
+                maxLines: shortWhen ? 1 : 2,
+                overflow: TextOverflow.ellipsis,
+                style: RdType.meta(p, size: 12),
+              ),
+              const SizedBox(height: 4),
+            ],
+            if (number.isNotEmpty) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(color: p.soft, borderRadius: BorderRadius.circular(8)),
+                child: Text(
+                  number,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: p.softText,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
               ),
               const SizedBox(height: 6),
             ],
