@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.132.0",
+      "date": "11.11.2026",
+      "changes": [
+        "✨ Mitgliederliste: Anwesenheitsquote für einen Zeitraum (Dieses Jahr, 3 oder 12 Monate, eigener Zeitraum) oder nur eine Terminart anzeigen, im alten und neuen Design"
+      ]
+    },
+    {
       "version": "0.131.1",
       "date": "11.11.2026",
       "changes": [
