@@ -29,6 +29,7 @@ Future<void> showRdInviteSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true,
+    useSafeArea: true,
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,

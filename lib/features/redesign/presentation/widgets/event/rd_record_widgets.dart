@@ -314,6 +314,7 @@ Future<RdStatusSheetResult?> showRdStatusSheet(
   return showModalBottomSheet<RdStatusSheetResult>(
     context: context,
     useRootNavigator: true,
+    useSafeArea: true,
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,

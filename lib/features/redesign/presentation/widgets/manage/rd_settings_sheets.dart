@@ -27,6 +27,7 @@ Future<T?> showRdSettingsSheet<T>(BuildContext context, WidgetBuilder builder) {
   return showModalBottomSheet<T>(
     context: context,
     useRootNavigator: true,
+    useSafeArea: true,
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,

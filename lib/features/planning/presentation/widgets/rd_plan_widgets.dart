@@ -21,48 +21,82 @@ import 'plan_field_dialogs.dart';
 /// Typical durations of a Programmpunkt (same as the inline editor).
 const rdPlanDurationPresets = [5, 10, 15, 20, 30, 40, 45, 60];
 
-/// Bottom sheet in the Beta look: title, optional subtitle, content.
-/// Follows the keyboard so text fields stay visible.
+/// Bottom sheet in the Beta look: title with a close button, optional
+/// subtitle, content. Follows the keyboard so text fields stay visible and
+/// never grows under the status bar, so the drag handle and the close
+/// button stay reachable. [footer] (usually the primary button) stays
+/// pinned below the scrolling content, right above the keyboard.
 Future<T?> showRdPlanSheet<T>(
   BuildContext context, {
   required String title,
   String? subtitle,
   Widget? action,
   required List<Widget> Function(BuildContext ctx, void Function(T value) pop) builder,
+  Widget Function(BuildContext ctx, void Function(T value) pop)? footer,
 }) {
+  // Inside the sheet the status bar padding is already consumed.
+  final statusBar = MediaQuery.paddingOf(context).top;
   return showModalBottomSheet<T>(
     context: context,
     useRootNavigator: true,
+    useSafeArea: true,
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
     builder: (ctx) {
       final p = ctx.rd;
+      final mq = MediaQuery.of(ctx);
+      void pop(T value) => Navigator.of(ctx).pop(value);
+      // Room above the keyboard (the sheet already sits below the status
+      // bar); keep a strip of the dimmed page visible so a tap outside
+      // closes it too.
+      final room = mq.size.height - mq.viewInsets.bottom - statusBar - 48 - kMinInteractiveDimension;
+      final maxHeight = room.clamp(120.0, mq.size.height * 0.88);
+      final footerWidget = footer?.call(ctx, pop);
       return Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(ctx).bottom),
+        padding: EdgeInsets.only(bottom: mq.viewInsets.bottom),
         child: SafeArea(
+          top: false,
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.88),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
+            constraints: BoxConstraints(maxHeight: maxHeight),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 8, 0),
+                  child: Row(
                     children: [
                       Expanded(child: Semantics(header: true, child: Text(title, style: RdType.cardTitle(p)))),
                       if (action != null) action,
+                      IconButton(
+                        key: const Key('rd-sheet-close'),
+                        tooltip: ctx.l10n.commonClose,
+                        icon: Icon(Icons.close, color: p.text2),
+                        onPressed: () => Navigator.of(ctx).maybePop(),
+                      ),
                     ],
                   ),
-                  if (subtitle != null && subtitle.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(subtitle, style: RdType.meta(p, size: 15)),
-                  ],
-                  const SizedBox(height: 16),
-                  ...builder(ctx, (value) => Navigator.of(ctx).pop(value)),
-                ],
-              ),
+                ),
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, footerWidget == null ? 16 : 8),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (subtitle != null && subtitle.isNotEmpty) ...[
+                          Text(subtitle, style: RdType.meta(p, size: 15)),
+                          const SizedBox(height: 12),
+                        ] else
+                          const SizedBox(height: 8),
+                        ...builder(ctx, pop),
+                      ],
+                    ),
+                  ),
+                ),
+                if (footerWidget != null) Padding(padding: const EdgeInsets.fromLTRB(20, 4, 20, 12), child: footerWidget),
+              ],
             ),
           ),
         ),
@@ -73,12 +107,7 @@ Future<T?> showRdPlanSheet<T>(
 
 /// Beta replacement of [showPlanActionSheet]: one grouped list, dangerous
 /// entries red and last.
-Future<T?> showRdPlanActionSheet<T>(
-  BuildContext context, {
-  String? title,
-  String? subtitle,
-  required List<PlanSheetAction<T>> actions,
-}) {
+Future<T?> showRdPlanActionSheet<T>(BuildContext context, {String? title, String? subtitle, required List<PlanSheetAction<T>> actions}) {
   final normal = actions.where((a) => !a.destructive).toList();
   final danger = actions.where((a) => a.destructive).toList();
   return showRdPlanSheet<T>(
@@ -135,16 +164,17 @@ Future<String?> showRdPlanTextSheet(
     context,
     title: title,
     subtitle: message,
-    builder: (ctx, pop) => [
-      _RdTextPrompt(
-        initialValue: initialValue,
-        hint: hint,
-        confirmText: confirmText ?? ctx.l10n.commonSave,
-        allowEmpty: allowEmpty,
-        emptyMessage: emptyMessage,
-        onDone: pop,
-      ),
-    ],
+    builder:
+        (ctx, pop) => [
+          _RdTextPrompt(
+            initialValue: initialValue,
+            hint: hint,
+            confirmText: confirmText ?? ctx.l10n.commonSave,
+            allowEmpty: allowEmpty,
+            emptyMessage: emptyMessage,
+            onDone: pop,
+          ),
+        ],
   );
 }
 
@@ -211,10 +241,7 @@ class _RdTextPromptState extends State<_RdTextPrompt> {
             ),
           ],
         ),
-        if (_error != null) ...[
-          const SizedBox(height: 8),
-          Text(_error!, style: TextStyle(color: p.absent, fontSize: 14)),
-        ],
+        if (_error != null) ...[const SizedBox(height: 8), Text(_error!, style: TextStyle(color: p.absent, fontSize: 14))],
         const SizedBox(height: 16),
         RdPrimaryButton(label: widget.confirmText, onPressed: _submit),
       ],
@@ -293,8 +320,7 @@ class _RdPlanFieldFormState extends State<RdPlanFieldForm> {
 
   int? get _minutesValue => int.tryParse(_minutes.text.trim());
 
-  bool get _beamerOn =>
-      _manualBeamer ?? PlanBeamer.autoNeedsBeamer(name: _name.text, songId: widget.beamer?.songId);
+  bool get _beamerOn => _manualBeamer ?? PlanBeamer.autoNeedsBeamer(name: _name.text, songId: widget.beamer?.songId);
 
   void _report() {
     final info = _info.text.trim();
@@ -364,8 +390,7 @@ class _RdPlanFieldFormState extends State<RdPlanFieldForm> {
       ),
     );
     final beamer = widget.beamer;
-    final reason =
-        beamer == null ? null : PlanBeamer.autoReason(name: _name.text, songId: beamer.songId, manual: _manualBeamer);
+    final reason = beamer == null ? null : PlanBeamer.autoReason(name: _name.text, songId: beamer.songId, manual: _manualBeamer);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -438,8 +463,7 @@ class _RdPlanFieldFormState extends State<RdPlanFieldForm> {
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    for (final v in rdPlanDurationPresets)
-                      RdChoiceChip(label: '$v', selected: v == m, onTap: () => _setMinutes(v)),
+                    for (final v in rdPlanDurationPresets) RdChoiceChip(label: '$v', selected: v == m, onTap: () => _setMinutes(v)),
                   ],
                 ),
               ],
@@ -456,9 +480,7 @@ class _RdPlanFieldFormState extends State<RdPlanFieldForm> {
                 leading: const RdRowIcon(Icons.tv_outlined),
                 title: l10n.planningBeamerNeeded,
                 subtitle:
-                    reason == null
-                        ? null
-                        : (reason.song ? l10n.planningBeamerAutoSong : l10n.planningBeamerAutoWord(reason.word ?? '')),
+                    reason == null ? null : (reason.song ? l10n.planningBeamerAutoSong : l10n.planningBeamerAutoWord(reason.word ?? '')),
                 showChevron: false,
                 onTap: () {
                   setState(() => _manualBeamer = !_beamerOn);
@@ -526,30 +548,31 @@ Future<PlanFieldInput?> showRdPlanFieldSheet(
     context,
     title: title,
     subtitle: sub.isEmpty ? null : sub,
-    builder: (ctx, pop) => [
-      _RdFieldSheetBody(
-        labels: RdPlanFieldLabels(
-          name: nameLabel,
-          nameHint: nameHint,
-          conductor: conductorLabel,
-          conductorHint: conductorHint,
-          infoHint: infoHint,
-        ),
-        confirmText: confirmText ?? ctx.l10n.attendanceAdd,
-        emptyNameMessage: emptyNameMessage,
-        initialName: initialName,
-        initialConductor: initialConductor,
-        initialInfo: initialInfo,
-        initialMinutes: initialMinutes,
-        withConductor: withConductor,
-        withInfo: withInfo,
-        withMinutes: withMinutes,
-        requireName: requireName,
-        withDelete: onDelete != null,
-        beamer: beamer,
-        onDone: pop,
-      ),
-    ],
+    builder:
+        (ctx, pop) => [
+          _RdFieldSheetBody(
+            labels: RdPlanFieldLabels(
+              name: nameLabel,
+              nameHint: nameHint,
+              conductor: conductorLabel,
+              conductorHint: conductorHint,
+              infoHint: infoHint,
+            ),
+            confirmText: confirmText ?? ctx.l10n.attendanceAdd,
+            emptyNameMessage: emptyNameMessage,
+            initialName: initialName,
+            initialConductor: initialConductor,
+            initialInfo: initialInfo,
+            initialMinutes: initialMinutes,
+            withConductor: withConductor,
+            withInfo: withInfo,
+            withMinutes: withMinutes,
+            requireName: requireName,
+            withDelete: onDelete != null,
+            beamer: beamer,
+            onDone: pop,
+          ),
+        ],
   );
   if (result == _deleteChoice) {
     onDelete?.call();
@@ -636,10 +659,7 @@ class _RdFieldSheetBodyState extends State<_RdFieldSheetBody> {
           onChanged: (v) => _value = v,
           onSubmitted: _submit,
         ),
-        if (_error != null) ...[
-          const SizedBox(height: 8),
-          Text(_error!, style: TextStyle(color: p.absent, fontSize: 14)),
-        ],
+        if (_error != null) ...[const SizedBox(height: 8), Text(_error!, style: TextStyle(color: p.absent, fontSize: 14))],
         const SizedBox(height: 16),
         RdPrimaryButton(key: const Key('rd-plan-field-confirm'), label: widget.confirmText, onPressed: _submit),
         if (widget.withDelete) ...[
@@ -675,13 +695,14 @@ Future<Song?> showRdPlanSongPicker(
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (ctx) => Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(ctx).bottom),
-      child: SizedBox(
-        height: MediaQuery.sizeOf(ctx).height * 0.85,
-        child: _RdSongPicker(songs: songs, currentIds: currentIds, inPlanIds: inPlanIds, collections: collections),
-      ),
-    ),
+    builder:
+        (ctx) => Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(ctx).bottom),
+          child: SizedBox(
+            height: MediaQuery.sizeOf(ctx).height * 0.85,
+            child: _RdSongPicker(songs: songs, currentIds: currentIds, inPlanIds: inPlanIds, collections: collections),
+          ),
+        ),
   );
 }
 
@@ -707,11 +728,12 @@ class _RdSongPickerState extends State<_RdSongPicker> {
     final p = context.rd;
     final l10n = context.l10n;
     final q = _query.trim().toLowerCase();
-    final filtered = widget.songs.where((s) {
-      if (q.isEmpty) return true;
-      final label = '${s.prefix ?? ''}${s.number ?? ''} ${s.name} ${s.composer ?? ''}'.toLowerCase();
-      return label.contains(q);
-    }).toList();
+    final filtered =
+        widget.songs.where((s) {
+          if (q.isEmpty) return true;
+          final label = '${s.prefix ?? ''}${s.number ?? ''} ${s.name} ${s.composer ?? ''}'.toLowerCase();
+          return label.contains(q);
+        }).toList();
     final current = filtered.where((s) => widget.currentIds.contains(s.id)).toList();
     final rest = filtered.where((s) => !widget.currentIds.contains(s.id)).toList();
 
@@ -723,15 +745,12 @@ class _RdSongPickerState extends State<_RdSongPicker> {
         if (composer.isNotEmpty) composer,
       ].join(' · ');
       return RdListRow(
-        leading: RdRowIcon(
-          Icons.music_note_outlined,
-        ),
+        leading: RdRowIcon(Icons.music_note_outlined),
         title: '${s.prefix ?? ''}${s.number ?? ''} ${s.name}'.trim(),
         subtitle: subtitle.isEmpty ? null : subtitle,
         showChevron: false,
-        trailing: inPlan
-            ? Text(l10n.redesignPlanSongInPlan, style: RdType.meta(p, size: 13))
-            : Icon(Icons.add_circle_outline, color: p.link),
+        trailing:
+            inPlan ? Text(l10n.redesignPlanSongInPlan, style: RdType.meta(p, size: 13)) : Icon(Icons.add_circle_outline, color: p.link),
         onTap: () => Navigator.of(context).pop(s),
       );
     }
@@ -744,9 +763,7 @@ class _RdSongPickerState extends State<_RdSongPicker> {
         TextField(
           key: const Key('rd-plan-song-search'),
           style: TextStyle(fontSize: 17, color: p.text),
-          decoration: rdInputDecoration(p, l10n.attListSearchSong).copyWith(
-            prefixIcon: Icon(Icons.search, color: p.text2),
-          ),
+          decoration: rdInputDecoration(p, l10n.attListSearchSong).copyWith(prefixIcon: Icon(Icons.search, color: p.text2)),
           onChanged: (v) => setState(() => _query = v),
         ),
         const SizedBox(height: 16),
@@ -837,8 +854,7 @@ class _RdNewPlanBodyState extends State<_RdNewPlanBody> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (final d in widget.days)
-                RdChoiceChip(label: d.label, selected: d.day == _day, onTap: () => setState(() => _day = d.day)),
+              for (final d in widget.days) RdChoiceChip(label: d.label, selected: d.day == _day, onTap: () => setState(() => _day = d.day)),
             ],
           ),
         ],
@@ -872,19 +888,12 @@ Future<PlanShareChoice?> showRdPlanShareSheet(
   return showRdPlanSheet<PlanShareChoice>(
     context,
     title: context.l10n.attendanceShareRunSheet,
-    builder: (ctx, pop) => [
-      _RdShareBody(currentLabel: currentLabel, planCount: planCount, hasChatId: hasChatId, onDone: pop),
-    ],
+    builder: (ctx, pop) => [_RdShareBody(currentLabel: currentLabel, planCount: planCount, hasChatId: hasChatId, onDone: pop)],
   );
 }
 
 class _RdShareBody extends StatefulWidget {
-  const _RdShareBody({
-    required this.currentLabel,
-    required this.planCount,
-    required this.hasChatId,
-    required this.onDone,
-  });
+  const _RdShareBody({required this.currentLabel, required this.planCount, required this.hasChatId, required this.onDone});
 
   final String currentLabel;
   final int planCount;
@@ -901,12 +910,8 @@ class _RdShareBodyState extends State<_RdShareBody> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    Widget option(IconData icon, String label, PlanExportAction action) => RdListRow(
-      leading: RdRowIcon(icon),
-      title: label,
-      showChevron: false,
-      onTap: () => widget.onDone((all: _all, action: action)),
-    );
+    Widget option(IconData icon, String label, PlanExportAction action) =>
+        RdListRow(leading: RdRowIcon(icon), title: label, showChevron: false, onTap: () => widget.onDone((all: _all, action: action)));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -964,12 +969,7 @@ class RdPlanSummaryBar extends StatelessWidget {
             ? l10n.redesignPlanHours(totalMinutes ~/ 60)
             : l10n.redesignPlanHoursMinutes(totalMinutes ~/ 60, rest);
     Widget part(String label, String value) => Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(text: '$label '),
-          TextSpan(text: value, style: const TextStyle(fontWeight: FontWeight.w700)),
-        ],
-      ),
+      TextSpan(children: [TextSpan(text: '$label '), TextSpan(text: value, style: const TextStyle(fontWeight: FontWeight.w700))]),
       style: TextStyle(fontSize: 15, color: p.text),
     );
     return RdCard(
@@ -984,10 +984,7 @@ class RdPlanSummaryBar extends StatelessWidget {
                 child: Row(
                   children: [
                     Flexible(child: part(l10n.redesignPlanStart, PlanUtils.formatTime(time))),
-                    if (onPickTime != null) ...[
-                      const SizedBox(width: 4),
-                      Icon(Icons.edit_outlined, size: 16, color: p.link),
-                    ],
+                    if (onPickTime != null) ...[const SizedBox(width: 4), Icon(Icons.edit_outlined, size: 16, color: p.link)],
                   ],
                 ),
               ),

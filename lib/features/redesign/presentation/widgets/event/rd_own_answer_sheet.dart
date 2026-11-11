@@ -20,6 +20,7 @@ Future<void> showRdOwnAnswerSheet(BuildContext context, String personAttendanceI
   return showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true,
+    useSafeArea: true,
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,

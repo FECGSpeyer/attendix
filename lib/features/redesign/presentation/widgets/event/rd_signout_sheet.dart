@@ -61,6 +61,7 @@ Future<RdSignoutChoice?> showRdReasonSheet(
   return showModalBottomSheet<RdSignoutChoice>(
     context: context,
     useRootNavigator: true,
+    useSafeArea: true,
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,

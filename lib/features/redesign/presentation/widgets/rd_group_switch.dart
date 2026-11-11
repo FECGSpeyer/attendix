@@ -70,6 +70,7 @@ Future<void> showRdGroupSwitchSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true,
+    useSafeArea: true,
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,

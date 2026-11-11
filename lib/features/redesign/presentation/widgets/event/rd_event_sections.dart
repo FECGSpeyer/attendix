@@ -207,6 +207,7 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     final action = await showModalBottomSheet<String>(
       context: context,
       useRootNavigator: true,
+      useSafeArea: true,
       isScrollControlled: true,
       showDragHandle: true,
       backgroundColor: context.rd.bg,

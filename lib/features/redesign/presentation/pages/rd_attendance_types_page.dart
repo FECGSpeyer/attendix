@@ -59,6 +59,14 @@ class _RdAttendanceTypesPageState extends ConsumerState<RdAttendanceTypesPage> {
     await context.push('/settings/types/$id');
   }
 
+  RdManageListItem _item(int i, AttendanceType t) => RdManageListItem(
+    // Types without id (never stored) are not sorted.
+    id: t.id ?? 'unsaved-$i',
+    title: t.name,
+    subtitle: rdAttendanceTypeSubtitle(context.l10n, t),
+    onTap: t.id == null ? null : () => context.push('/settings/types/${t.id}'),
+  );
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -72,18 +80,15 @@ class _RdAttendanceTypesPageState extends ConsumerState<RdAttendanceTypesPage> {
           types == null
               ? null
               : [
-                RdManageListSection(
-                  items: [
-                    for (final (i, t) in types.indexed)
-                      RdManageListItem(
-                        // Types without id (never stored) are not sorted.
-                        id: t.id ?? 'unsaved-$i',
-                        title: t.name,
-                        subtitle: rdAttendanceTypeSubtitle(l10n, t),
-                        onTap: t.id == null ? null : () => context.push('/settings/types/${t.id}'),
-                      ),
-                  ],
-                ),
+                RdManageListSection(items: [for (final (i, t) in types.indexed) if (t.visible) _item(i, t)]),
+                // Deleted types that existing Termine still use (or hidden
+                // ones from before): only here, to restore them.
+                if (types.any((t) => !t.visible))
+                  RdManageListSection(
+                    key: 'deleted',
+                    title: l10n.rdTypeDeletedSection,
+                    items: [for (final (i, t) in types.indexed) if (!t.visible) _item(i, t)],
+                  ),
               ],
       loadFailed: async.hasError && !async.isLoading,
       onRetry: () => ref.invalidate(attendanceTypesProvider),
@@ -108,6 +113,5 @@ String rdAttendanceTypeSubtitle(AppLocalizations l10n, AttendanceType type) {
   return [
     time,
     l10n.redesignTypesListDefaultStatus(type.defaultStatus.label),
-    if (!type.visible) l10n.redesignTypesListHidden,
   ].where((s) => s.isNotEmpty).join(' · ');
 }
