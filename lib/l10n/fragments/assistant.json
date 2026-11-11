@@ -17,11 +17,12 @@
         "whoComes": "Wer kommt zum nächsten Termin?",
         "birthdays": "Wer hat diesen Monat Geburtstag?",
         "help": "Wie melde ich mich ab?",
-        "signOut": "Melde mich für den nächsten Termin ab, ich bin krank"
+        "signOut": "Melde mich für den nächsten Termin ab, ich bin krank",
+        "songs": "Welche Werke singen wir am Sonntag?"
       },
       "notice": {
-        "notUnderstood": "Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.",
-        "changeLater": "Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, Werke) gehen schon, Personen kommen bald.",
+        "notUnderstood": "Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken, Aufgaben und zur App.",
+        "changeLater": "Das kann ich noch nicht ändern. Status, Abwesenheiten, Termine, Werke, Aufgaben und Dienste gehen schon. Löschen geht im Chat nie.",
         "noRights": "Diese Frage kann ich dir mit deiner Rolle nicht beantworten.",
         "noOwnPerson": "Du bist in dieser Gruppe nicht als Person eingetragen, deshalb gibt es keine eigene Anwesenheit.",
         "disabled": "Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.",
@@ -46,7 +47,16 @@
         "eventsExist": "An diesen Tagen gibt es schon einen Termin dieses Typs.",
         "noSongsForType": "Bei diesem Termintyp werden keine Werke geführt.",
         "songsNotFound": "Ich finde keine Werke zu „{name}“.",
-        "excuseNeedsReason": "Entschuldigen oder eine Verspätung melden geht nur mit Grund. Schreib zum Beispiel: „Melde mich Sonntag ab, ich bin krank“."
+        "excuseNeedsReason": "Entschuldigen oder eine Verspätung melden geht nur mit Grund. Schreib zum Beispiel: „Melde mich Sonntag ab, ich bin krank“.",
+        "noTasks": "Bei dir sind gerade keine Aufgaben offen.",
+        "noSongsYet": "Für diesen Termin sind noch keine Werke eingetragen.",
+        "taskDueOutOfRange": "Das Fälligkeitsdatum muss zwischen heute und in 6 Monaten liegen.",
+        "noDuty": "Ich habe keinen passenden Dienst gefunden.",
+        "dutyNotSelf": "Für diesen Dienst kann man sich nicht selbst eintragen. Die Leitung teilt ihn zu.",
+        "dutyNotMember": "Du stehst bei diesem Dienst nicht auf der Liste und kannst ihn deshalb nicht übernehmen.",
+        "dutyAlready": "Diesen Dienst hast du schon.",
+        "dutyFull": "Dieser Dienst ist schon voll besetzt.",
+        "noRecipients": "Für diese Auswahl gibt es niemanden, den ich anschreiben könnte."
       },
       "choice": {
         "which": "Wen meinst du mit „{name}“?",
@@ -148,6 +158,57 @@
         "removed": "Fällt weg: {names}",
         "notFound": "Nicht gefunden: {names}",
         "done": "Werke gespeichert."
+      },
+      "tasks": {
+        "title": "Deine offenen Aufgaben",
+        "due": "fällig {date}",
+        "inProgress": "in Arbeit"
+      },
+      "eventSongs": {
+        "title": "Werke"
+      },
+      "task": {
+        "title": "Neue Aufgabe anlegen?",
+        "for": "Zuständig: {name}",
+        "forMe": "Zuständig: du",
+        "nobody": "Noch niemand zuständig",
+        "due": "Fällig am {date}",
+        "priority": "Priorität: {priority}",
+        "priorityLow": "niedrig",
+        "priorityMedium": "mittel",
+        "priorityHigh": "hoch",
+        "notifyHint": "{name} bekommt erst eine Nachricht, wenn du nach dem Speichern auf „Benachrichtigen“ tippst.",
+        "done": "Aufgabe angelegt.",
+        "notify": "{name} benachrichtigen",
+        "notified": "{name} wurde benachrichtigt.",
+        "notifyFailed": "Benachrichtigen hat nicht geklappt.",
+        "open": "Aufgabe öffnen"
+      },
+      "duty": {
+        "title": "Dienst übernehmen?",
+        "places": "{occupied} von {required} Plätzen besetzt",
+        "hint": "Du wirst für den Dienst eingetragen und auf Anwesend gesetzt.",
+        "done": "Dienst übernommen."
+      },
+      "person": {
+        "title": "Neue Person (Entwurf)",
+        "group": "Gruppe: {name}",
+        "birthday": "Geburtstag: {date}",
+        "missingGroup": "Die Gruppe „{name}“ gibt es nicht. Bitte wähle sie im Formular.",
+        "hint": "Ich speichere nichts. Prüfe die Angaben im Formular und speichere dort.",
+        "open": "Im Formular öffnen"
+      },
+      "message": {
+        "title": "Mitteilung (Entwurf)",
+        "to": "{count, plural, one {An: {to} · 1 Person} other {An: {to} · {count} Personen}}",
+        "toAll": "alle",
+        "onlyOpen": "Nur wer sich noch nicht gemeldet hat.",
+        "hint": "Ich sende nichts. Prüfe den Text und sende ihn selbst.",
+        "open": "Entwurf öffnen",
+        "genericTitle": "Mitteilung",
+        "reminderTitle": "Erinnerung: {title}",
+        "reminderBody": "Erinnerung an {title} am {date}.",
+        "reminderBodyTime": "Erinnerung an {title} am {date} um {time} Uhr."
       }
     }
   },
@@ -169,11 +230,12 @@
         "whoComes": "Who is coming to the next event?",
         "birthdays": "Who has a birthday this month?",
         "help": "How do I sign out?",
-        "signOut": "Sign me out for the next event, I am ill"
+        "signOut": "Sign me out for the next event, I am ill",
+        "songs": "Which pieces are we singing on Sunday?"
       },
       "notice": {
-        "notUnderstood": "I didn't understand that. I answer questions about attendance, events, birthdays, works and the app.",
-        "changeLater": "I cannot change that yet. Status, absences and events (create, move, pieces) already work, people come soon.",
+        "notUnderstood": "I didn't understand that. I answer questions about attendance, events, birthdays, pieces, tasks and the app.",
+        "changeLater": "I can't change that yet. Status, absences, events, pieces, tasks and duties already work. Deleting is never possible in the chat.",
         "noRights": "I can't answer this question with your role.",
         "noOwnPerson": "You are not listed as a person in this group, so there is no attendance of your own.",
         "disabled": "The assistant is switched off for this group. An admin can switch it on in the settings.",
@@ -198,7 +260,16 @@
         "eventsExist": "These days already have an event of this type.",
         "noSongsForType": "This event type has no pieces.",
         "songsNotFound": "I cannot find pieces for “{name}”.",
-        "excuseNeedsReason": "Excusing or reporting being late only works with a reason. Write for example: “Sign me out for Sunday, I am ill”."
+        "excuseNeedsReason": "Excusing or reporting being late only works with a reason. Write for example: “Sign me out for Sunday, I am ill”.",
+        "noTasks": "You have no open tasks right now.",
+        "noSongsYet": "No pieces have been added to this event yet.",
+        "taskDueOutOfRange": "The due date must be between today and 6 months from now.",
+        "noDuty": "I couldn't find a matching duty.",
+        "dutyNotSelf": "You can't sign up for this duty yourself. The leaders assign it.",
+        "dutyNotMember": "You're not on the list for this duty, so you can't take it over.",
+        "dutyAlready": "You already have this duty.",
+        "dutyFull": "This duty is already fully staffed.",
+        "noRecipients": "There's nobody I could write to for this selection."
       },
       "choice": {
         "which": "Who do you mean by “{name}”?",
@@ -300,6 +371,57 @@
         "removed": "Removed: {names}",
         "notFound": "Not found: {names}",
         "done": "Pieces saved."
+      },
+      "tasks": {
+        "title": "Your open tasks",
+        "due": "due {date}",
+        "inProgress": "in progress"
+      },
+      "eventSongs": {
+        "title": "Pieces"
+      },
+      "task": {
+        "title": "Create a new task?",
+        "for": "Responsible: {name}",
+        "forMe": "Responsible: you",
+        "nobody": "Nobody responsible yet",
+        "due": "Due on {date}",
+        "priority": "Priority: {priority}",
+        "priorityLow": "low",
+        "priorityMedium": "medium",
+        "priorityHigh": "high",
+        "notifyHint": "{name} only gets a message when you tap \"Notify\" after saving.",
+        "done": "Task created.",
+        "notify": "Notify {name}",
+        "notified": "{name} has been notified.",
+        "notifyFailed": "Notifying didn't work.",
+        "open": "Open task"
+      },
+      "duty": {
+        "title": "Take over this duty?",
+        "places": "{occupied} of {required} places taken",
+        "hint": "You'll be signed up for the duty and set to present.",
+        "done": "Duty taken over."
+      },
+      "person": {
+        "title": "New person (draft)",
+        "group": "Group: {name}",
+        "birthday": "Birthday: {date}",
+        "missingGroup": "There is no group \"{name}\". Please pick one in the form.",
+        "hint": "I don't save anything. Check the details in the form and save there.",
+        "open": "Open in form"
+      },
+      "message": {
+        "title": "Message (draft)",
+        "to": "{count, plural, one {To: {to} · 1 person} other {To: {to} · {count} people}}",
+        "toAll": "everyone",
+        "onlyOpen": "Only those who haven't answered yet.",
+        "hint": "I don't send anything. Check the text and send it yourself.",
+        "open": "Open draft",
+        "genericTitle": "Message",
+        "reminderTitle": "Reminder: {title}",
+        "reminderBody": "Reminder of {title} on {date}.",
+        "reminderBodyTime": "Reminder of {title} on {date} at {time}."
       }
     }
   },
@@ -321,11 +443,12 @@
         "whoComes": "Кто придёт на следующее мероприятие?",
         "birthdays": "У кого день рождения в этом месяце?",
         "help": "Как мне отписаться?",
-        "signOut": "Отметь меня на следующем мероприятии, я болею"
+        "signOut": "Отметь меня на следующем мероприятии, я болею",
+        "songs": "Какие произведения мы поём в воскресенье?"
       },
       "notice": {
-        "notUnderstood": "Я не понял. Я отвечаю на вопросы о посещаемости, мероприятиях, днях рождения, произведениях и о приложении.",
-        "changeLater": "Это я пока не умею менять. Статусы, отсутствия и мероприятия (создать, перенести, произведения) уже работают, люди скоро.",
+        "notUnderstood": "Я не понял. Я отвечаю на вопросы о посещаемости, мероприятиях, днях рождения, произведениях, задачах и приложении.",
+        "changeLater": "Это я пока не могу изменить. Статус, отсутствия, мероприятия, произведения, задачи и дежурства уже работают. Удалять в чате нельзя никогда.",
         "noRights": "С твоей ролью я не могу ответить на этот вопрос.",
         "noOwnPerson": "Ты не внесён в эту группу как участник, поэтому собственной посещаемости нет.",
         "disabled": "Ассистент выключен для этой группы. Администратор может включить его в настройках.",
@@ -350,7 +473,16 @@
         "eventsExist": "В эти дни уже есть мероприятие этого типа.",
         "noSongsForType": "Для этого типа мероприятия произведения не ведутся.",
         "songsNotFound": "Не нахожу произведений для «{name}».",
-        "excuseNeedsReason": "Отметить уважительное отсутствие или опоздание можно только с причиной. Напиши, например: «Отметь меня в воскресенье, я болею»."
+        "excuseNeedsReason": "Отметить уважительное отсутствие или опоздание можно только с причиной. Напиши, например: «Отметь меня в воскресенье, я болею».",
+        "noTasks": "Сейчас у тебя нет открытых задач.",
+        "noSongsYet": "Для этого мероприятия ещё не указаны произведения.",
+        "taskDueOutOfRange": "Срок должен быть между сегодняшним днём и через 6 месяцев.",
+        "noDuty": "Я не нашёл подходящего дежурства.",
+        "dutyNotSelf": "На это дежурство нельзя записаться самому. Его назначают руководители.",
+        "dutyNotMember": "Тебя нет в списке этого дежурства, поэтому ты не можешь его взять.",
+        "dutyAlready": "Это дежурство уже у тебя.",
+        "dutyFull": "На это дежурство уже набраны все люди.",
+        "noRecipients": "Для этого выбора нет никого, кому я мог бы написать."
       },
       "choice": {
         "which": "Кого ты имеешь в виду под «{name}»?",
@@ -452,6 +584,57 @@
         "removed": "Убраны: {names}",
         "notFound": "Не найдены: {names}",
         "done": "Произведения сохранены."
+      },
+      "tasks": {
+        "title": "Твои открытые задачи",
+        "due": "срок {date}",
+        "inProgress": "в работе"
+      },
+      "eventSongs": {
+        "title": "Произведения"
+      },
+      "task": {
+        "title": "Создать новую задачу?",
+        "for": "Ответственный: {name}",
+        "forMe": "Ответственный: ты",
+        "nobody": "Пока никто не ответственный",
+        "due": "Срок: {date}",
+        "priority": "Приоритет: {priority}",
+        "priorityLow": "низкий",
+        "priorityMedium": "средний",
+        "priorityHigh": "высокий",
+        "notifyHint": "{name} получит сообщение, только когда ты после сохранения нажмёшь «Уведомить».",
+        "done": "Задача создана.",
+        "notify": "Уведомить: {name}",
+        "notified": "{name} получил(а) уведомление.",
+        "notifyFailed": "Не удалось отправить уведомление.",
+        "open": "Открыть задачу"
+      },
+      "duty": {
+        "title": "Взять это дежурство?",
+        "places": "Занято мест: {occupied} из {required}",
+        "hint": "Ты будешь записан(а) на дежурство и отмечен(а) как присутствующий(ая).",
+        "done": "Дежурство взято."
+      },
+      "person": {
+        "title": "Новый участник (черновик)",
+        "group": "Группа: {name}",
+        "birthday": "День рождения: {date}",
+        "missingGroup": "Группы «{name}» нет. Выбери группу в форме.",
+        "hint": "Я ничего не сохраняю. Проверь данные в форме и сохрани там.",
+        "open": "Открыть в форме"
+      },
+      "message": {
+        "title": "Сообщение (черновик)",
+        "to": "{count, plural, one {Кому: {to} · {count} человек} few {Кому: {to} · {count} человека} many {Кому: {to} · {count} человек} other {Кому: {to} · {count} человека}}",
+        "toAll": "всем",
+        "onlyOpen": "Только тем, кто ещё не ответил.",
+        "hint": "Я ничего не отправляю. Проверь текст и отправь его сам(а).",
+        "open": "Открыть черновик",
+        "genericTitle": "Сообщение",
+        "reminderTitle": "Напоминание: {title}",
+        "reminderBody": "Напоминание: {title}, {date}.",
+        "reminderBodyTime": "Напоминание: {title}, {date} в {time}."
       }
     }
   },
@@ -473,11 +656,12 @@
         "whoComes": "¿Quién viene al próximo evento?",
         "birthdays": "¿Quién cumple años este mes?",
         "help": "¿Cómo me doy de baja?",
-        "signOut": "Dame de baja del próximo evento, estoy enfermo"
+        "signOut": "Dame de baja del próximo evento, estoy enfermo",
+        "songs": "¿Qué obras cantamos el domingo?"
       },
       "notice": {
-        "notUnderstood": "No lo he entendido. Respondo preguntas sobre asistencia, eventos, cumpleaños, obras y la app.",
-        "changeLater": "Eso todavía no lo puedo cambiar. Estados, ausencias y eventos (crear, mover, obras) ya funcionan, las personas llegan pronto.",
+        "notUnderstood": "No lo he entendido. Respondo preguntas sobre asistencia, eventos, cumpleaños, obras, tareas y la app.",
+        "changeLater": "Eso todavía no lo puedo cambiar. Estado, ausencias, eventos, obras, tareas y turnos ya funcionan. En el chat nunca se puede borrar nada.",
         "noRights": "Con tu rol no puedo responder esta pregunta.",
         "noOwnPerson": "No figuras como persona en este grupo, así que no hay asistencia propia.",
         "disabled": "El asistente está desactivado para este grupo. Un administrador puede activarlo en los ajustes.",
@@ -502,7 +686,16 @@
         "eventsExist": "Estos días ya tienen un evento de este tipo.",
         "noSongsForType": "Este tipo de evento no tiene obras.",
         "songsNotFound": "No encuentro obras para «{name}».",
-        "excuseNeedsReason": "Justificar o avisar un retraso solo funciona con un motivo. Escribe por ejemplo: «Dame de baja el domingo, estoy enfermo»."
+        "excuseNeedsReason": "Justificar o avisar un retraso solo funciona con un motivo. Escribe por ejemplo: «Dame de baja el domingo, estoy enfermo».",
+        "noTasks": "Ahora mismo no tienes tareas abiertas.",
+        "noSongsYet": "Todavía no hay obras para este evento.",
+        "taskDueOutOfRange": "La fecha límite debe estar entre hoy y dentro de 6 meses.",
+        "noDuty": "No he encontrado ningún turno que encaje.",
+        "dutyNotSelf": "En este turno no puedes apuntarte tú mismo. Lo asigna la dirección.",
+        "dutyNotMember": "No estás en la lista de este turno, por eso no puedes asumirlo.",
+        "dutyAlready": "Este turno ya es tuyo.",
+        "dutyFull": "Este turno ya está completo.",
+        "noRecipients": "Para esta selección no hay nadie a quien pueda escribir."
       },
       "choice": {
         "which": "¿A quién te refieres con «{name}»?",
@@ -604,6 +797,57 @@
         "removed": "Se quitan: {names}",
         "notFound": "No encontradas: {names}",
         "done": "Obras guardadas."
+      },
+      "tasks": {
+        "title": "Tus tareas abiertas",
+        "due": "vence {date}",
+        "inProgress": "en curso"
+      },
+      "eventSongs": {
+        "title": "Obras"
+      },
+      "task": {
+        "title": "¿Crear una tarea nueva?",
+        "for": "Responsable: {name}",
+        "forMe": "Responsable: tú",
+        "nobody": "Todavía sin responsable",
+        "due": "Vence el {date}",
+        "priority": "Prioridad: {priority}",
+        "priorityLow": "baja",
+        "priorityMedium": "media",
+        "priorityHigh": "alta",
+        "notifyHint": "{name} solo recibe un mensaje cuando pulses «Avisar» después de guardar.",
+        "done": "Tarea creada.",
+        "notify": "Avisar a {name}",
+        "notified": "Se ha avisado a {name}.",
+        "notifyFailed": "No se ha podido avisar.",
+        "open": "Abrir tarea"
+      },
+      "duty": {
+        "title": "¿Asumir este turno?",
+        "places": "{occupied} de {required} plazas ocupadas",
+        "hint": "Quedarás apuntado al turno y marcado como presente.",
+        "done": "Turno asumido."
+      },
+      "person": {
+        "title": "Persona nueva (borrador)",
+        "group": "Grupo: {name}",
+        "birthday": "Cumpleaños: {date}",
+        "missingGroup": "No existe el grupo «{name}». Elígelo en el formulario.",
+        "hint": "No guardo nada. Revisa los datos en el formulario y guarda allí.",
+        "open": "Abrir en el formulario"
+      },
+      "message": {
+        "title": "Comunicado (borrador)",
+        "to": "{count, plural, one {Para: {to} · 1 persona} other {Para: {to} · {count} personas}}",
+        "toAll": "todos",
+        "onlyOpen": "Solo quienes aún no han respondido.",
+        "hint": "No envío nada. Revisa el texto y envíalo tú.",
+        "open": "Abrir borrador",
+        "genericTitle": "Comunicado",
+        "reminderTitle": "Recordatorio: {title}",
+        "reminderBody": "Recordatorio de {title} el {date}.",
+        "reminderBodyTime": "Recordatorio de {title} el {date} a las {time}."
       }
     }
   }

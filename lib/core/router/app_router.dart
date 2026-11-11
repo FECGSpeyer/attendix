@@ -38,6 +38,7 @@ import '../../features/settings/presentation/pages/left_players_page.dart';
 import '../../features/settings/presentation/pages/viewers_page.dart';
 import '../../features/settings/presentation/pages/parents_page.dart';
 import '../../features/notifications/presentation/pages/notifications_page.dart';
+import '../../features/people/person_create_prefill.dart';
 import '../../features/teachers/presentation/pages/teachers_list_page.dart';
 import '../../features/export/presentation/pages/export_page.dart';
 import '../../features/songs/presentation/pages/songs_list_page.dart';
@@ -717,7 +718,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'neu',
                 name: 'redesignPersonCreate',
-                builder: (context, state) => const RdPersonCreatePage(),
+                builder: (context, state) => RdPersonCreatePage(prefill: PersonCreatePrefill.from(state.extra)),
               ),
               GoRoute(
                 path: 'problemfaelle',
@@ -1063,7 +1064,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'new',
                 name: 'personCreate',
-                builder: (context, state) => const PersonCreatePage(),
+                builder: (context, state) => PersonCreatePage(prefill: PersonCreatePrefill.from(state.extra)),
               ),
               GoRoute(
                 path: ':id',

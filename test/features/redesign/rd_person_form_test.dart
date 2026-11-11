@@ -22,6 +22,7 @@ import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/cross_tenant_person_repository.dart';
 import 'package:attendix/data/repositories/user_registration_repository.dart';
 import 'package:attendix/features/people/presentation/pages/person_detail_page.dart';
+import 'package:attendix/features/people/person_create_prefill.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_person_create_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_person_edit_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/members/rd_person_form.dart';
@@ -145,6 +146,17 @@ void main() {
     expect(find.text(lookupAppLocalizations(const Locale('de')).peopleFlutterFirstNameRequired), findsOneWidget);
     expect(find.text(lookupAppLocalizations(const Locale('de')).peopleFlutterLastNameRequired), findsOneWidget);
     verifyNever(() => repo.findPlayersByName(any(), any()));
+    verifyNever(() => repo.addPlayer(any(), register: any(named: 'register'), role: any(named: 'role')));
+  });
+
+  testWidgets('Neue Person from the chat assistant starts with the names filled in', (tester) async {
+    final repo = await _pump(
+      tester,
+      RdPersonCreatePage(prefill: PersonCreatePrefill(firstName: 'Anna', lastName: 'Müller', birthday: DateTime(2008, 4, 3))),
+    );
+    expect(find.text('Anna'), findsWidgets);
+    expect(find.text('Müller'), findsWidgets);
+    // Nothing is saved before the person taps "Anlegen".
     verifyNever(() => repo.addPlayer(any(), register: any(named: 'register'), role: any(named: 'role')));
   });
 

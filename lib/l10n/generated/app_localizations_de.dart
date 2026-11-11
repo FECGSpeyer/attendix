@@ -664,6 +664,21 @@ class AppLocalizationsDe extends AppLocalizations {
       'Rückgängig löscht genau diese neuen Termine wieder.';
 
   @override
+  String get assistantDutyDone => 'Dienst übernommen.';
+
+  @override
+  String get assistantDutyHint =>
+      'Du wirst für den Dienst eingetragen und auf Anwesend gesetzt.';
+
+  @override
+  String assistantDutyPlaces(Object occupied, Object required) {
+    return '$occupied von $required Plätzen besetzt';
+  }
+
+  @override
+  String get assistantDutyTitle => 'Dienst übernehmen?';
+
+  @override
   String get assistantEntryEnableHint =>
       'Für diese Gruppe noch aus. Tippen, um ihn einzuschalten.';
 
@@ -696,6 +711,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get assistantEventPresent => 'Kommen';
 
   @override
+  String get assistantEventSongsTitle => 'Werke';
+
+  @override
   String assistantEventTime(Object time) {
     return '$time Uhr';
   }
@@ -709,6 +727,56 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get assistantIntro =>
       'Hallo! Ich beantworte Fragen zu deiner Gruppe und kann dich an- oder abmelden. Bevor ich etwas ändere, zeige ich dir genau, was passiert.';
+
+  @override
+  String get assistantMessageGenericTitle => 'Mitteilung';
+
+  @override
+  String get assistantMessageHint =>
+      'Ich sende nichts. Prüfe den Text und sende ihn selbst.';
+
+  @override
+  String get assistantMessageOnlyOpen =>
+      'Nur wer sich noch nicht gemeldet hat.';
+
+  @override
+  String get assistantMessageOpen => 'Entwurf öffnen';
+
+  @override
+  String assistantMessageReminderBody(Object title, Object date) {
+    return 'Erinnerung an $title am $date.';
+  }
+
+  @override
+  String assistantMessageReminderBodyTime(
+    Object title,
+    Object date,
+    Object time,
+  ) {
+    return 'Erinnerung an $title am $date um $time Uhr.';
+  }
+
+  @override
+  String assistantMessageReminderTitle(Object title) {
+    return 'Erinnerung: $title';
+  }
+
+  @override
+  String get assistantMessageTitle => 'Mitteilung (Entwurf)';
+
+  @override
+  String assistantMessageTo(num count, Object to) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'An: $to · $count Personen',
+      one: 'An: $to · 1 Person',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get assistantMessageToAll => 'alle';
 
   @override
   String get assistantMoveDone => 'Termin verschoben.';
@@ -739,7 +807,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get assistantNoticeChangeLater =>
-      'Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, Werke) gehen schon, Personen kommen bald.';
+      'Das kann ich noch nicht ändern. Status, Abwesenheiten, Termine, Werke, Aufgaben und Dienste gehen schon. Löschen geht im Chat nie.';
 
   @override
   String get assistantNoticeDateOutOfRange =>
@@ -748,6 +816,20 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get assistantNoticeDisabled =>
       'Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.';
+
+  @override
+  String get assistantNoticeDutyAlready => 'Diesen Dienst hast du schon.';
+
+  @override
+  String get assistantNoticeDutyFull => 'Dieser Dienst ist schon voll besetzt.';
+
+  @override
+  String get assistantNoticeDutyNotMember =>
+      'Du stehst bei diesem Dienst nicht auf der Liste und kannst ihn deshalb nicht übernehmen.';
+
+  @override
+  String get assistantNoticeDutyNotSelf =>
+      'Für diesen Dienst kann man sich nicht selbst eintragen. Die Leitung teilt ihn zu.';
 
   @override
   String get assistantNoticeEventLocked =>
@@ -787,6 +869,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'In diesem Zeitraum gibt es keine Termine, die zählen.';
 
   @override
+  String get assistantNoticeNoDuty =>
+      'Ich habe keinen passenden Dienst gefunden.';
+
+  @override
   String get assistantNoticeNoEvent => 'Dazu finde ich keinen Termin.';
 
   @override
@@ -797,6 +883,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Du bist in dieser Gruppe nicht als Person eingetragen, deshalb gibt es keine eigene Anwesenheit.';
 
   @override
+  String get assistantNoticeNoRecipients =>
+      'Für diese Auswahl gibt es niemanden, den ich anschreiben könnte.';
+
+  @override
   String get assistantNoticeNoRights =>
       'Diese Frage kann ich dir mit deiner Rolle nicht beantworten.';
 
@@ -805,12 +895,20 @@ class AppLocalizationsDe extends AppLocalizations {
       'Bei diesem Termintyp werden keine Werke geführt.';
 
   @override
+  String get assistantNoticeNoSongsYet =>
+      'Für diesen Termin sind noch keine Werke eingetragen.';
+
+  @override
+  String get assistantNoticeNoTasks =>
+      'Bei dir sind gerade keine Aufgaben offen.';
+
+  @override
   String get assistantNoticeNoType =>
       'In dieser Gruppe gibt es keinen Termintyp, mit dem ich Termine anlegen kann.';
 
   @override
   String get assistantNoticeNotUnderstood =>
-      'Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.';
+      'Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken, Aufgaben und zur App.';
 
   @override
   String get assistantNoticeNothingToChange =>
@@ -836,6 +934,10 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get assistantNoticeTaskDueOutOfRange =>
+      'Das Fälligkeitsdatum muss zwischen heute und in 6 Monaten liegen.';
+
+  @override
   String assistantNoticeTooLong(Object max) {
     return 'Die Nachricht ist zu lang. Bitte höchstens $max Zeichen.';
   }
@@ -844,6 +946,31 @@ class AppLocalizationsDe extends AppLocalizations {
   String assistantNoticeTooManyChanges(Object count, Object max) {
     return 'Das wären $count Änderungen. Über den Chat gehen höchstens $max auf einmal. Grenz es bitte ein, zum Beispiel auf einen Termin oder eine Gruppe.';
   }
+
+  @override
+  String assistantPersonBirthday(Object date) {
+    return 'Geburtstag: $date';
+  }
+
+  @override
+  String assistantPersonGroup(Object name) {
+    return 'Gruppe: $name';
+  }
+
+  @override
+  String get assistantPersonHint =>
+      'Ich speichere nichts. Prüfe die Angaben im Formular und speichere dort.';
+
+  @override
+  String assistantPersonMissingGroup(Object name) {
+    return 'Die Gruppe „$name“ gibt es nicht. Bitte wähle sie im Formular.';
+  }
+
+  @override
+  String get assistantPersonOpen => 'Im Formular öffnen';
+
+  @override
+  String get assistantPersonTitle => 'Neue Person (Entwurf)';
 
   @override
   String get assistantPrivacy =>
@@ -959,7 +1086,78 @@ class AppLocalizationsDe extends AppLocalizations {
       'Melde mich für den nächsten Termin ab, ich bin krank';
 
   @override
+  String get assistantSuggestSongs => 'Welche Werke singen wir am Sonntag?';
+
+  @override
   String get assistantSuggestWhoComes => 'Wer kommt zum nächsten Termin?';
+
+  @override
+  String get assistantTaskDone => 'Aufgabe angelegt.';
+
+  @override
+  String assistantTaskDue(Object date) {
+    return 'Fällig am $date';
+  }
+
+  @override
+  String assistantTaskFor(Object name) {
+    return 'Zuständig: $name';
+  }
+
+  @override
+  String get assistantTaskForMe => 'Zuständig: du';
+
+  @override
+  String get assistantTaskNobody => 'Noch niemand zuständig';
+
+  @override
+  String assistantTaskNotified(Object name) {
+    return '$name wurde benachrichtigt.';
+  }
+
+  @override
+  String assistantTaskNotify(Object name) {
+    return '$name benachrichtigen';
+  }
+
+  @override
+  String get assistantTaskNotifyFailed => 'Benachrichtigen hat nicht geklappt.';
+
+  @override
+  String assistantTaskNotifyHint(Object name) {
+    return '$name bekommt erst eine Nachricht, wenn du nach dem Speichern auf „Benachrichtigen“ tippst.';
+  }
+
+  @override
+  String get assistantTaskOpen => 'Aufgabe öffnen';
+
+  @override
+  String assistantTaskPriority(Object priority) {
+    return 'Priorität: $priority';
+  }
+
+  @override
+  String get assistantTaskPriorityHigh => 'hoch';
+
+  @override
+  String get assistantTaskPriorityLow => 'niedrig';
+
+  @override
+  String get assistantTaskPriorityMedium => 'mittel';
+
+  @override
+  String get assistantTaskTitle => 'Neue Aufgabe anlegen?';
+
+  @override
+  String assistantTasksDue(Object date) {
+    return 'fällig $date';
+  }
+
+  @override
+  String get assistantTasksInProgress => 'in Arbeit';
+
+  @override
+  String get assistantTasksTitle => 'Deine offenen Aufgaben';
 
   @override
   String get assistantThinking => 'Einen Moment …';

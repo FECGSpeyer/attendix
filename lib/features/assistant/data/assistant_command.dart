@@ -7,7 +7,10 @@
 // which the app only shows as a preview until the person confirms; package
 // 3 adds [CreateEventsCommand], [MoveEventCommand] and [SetSongsCommand] the
 // same way. Other changes are recognised (`category: change`) and answered
-// with "kann ich noch nicht".
+// with "kann ich noch nicht". Package 4 adds [MyTasksCommand],
+// [EventSongsCommand] (reads), [CreateTaskCommand], [TakeDutyCommand]
+// (preview / confirm / undo) and [NewPersonCommand], [DraftMessageCommand],
+// which never save: the app opens the normal form prefilled.
 
 const int assistantMaxTextLength = 500;
 const int _maxName = 80;
@@ -22,6 +25,14 @@ const int assistantMaxNewEvents = 20;
 
 /// At most this many Werke in one command.
 const int assistantMaxSongs = 15;
+
+/// Title of a new task.
+const int assistantMaxTaskTitle = 120;
+
+/// Own words added to a message draft.
+const int assistantMaxNote = 300;
+
+enum TaskPriority { low, medium, high }
 
 /// The status a [SetStatusCommand] sets.
 enum AssistantStatus { present, excused, lateExcused, late, absent, neutral }
@@ -156,11 +167,7 @@ sealed class AssistantCommand {
       case 'event_overview':
         final event = m['event'] == null ? const NextEventRef() : _eventRef(m['event']);
         if (event == null) return const UnsupportedCommand();
-        return EventOverviewCommand(
-          event: event,
-          typeName: _optName(m['typeName']),
-          group: _optName(m['group']),
-        );
+        return EventOverviewCommand(event: event, typeName: _optName(m['typeName']), group: _optName(m['group']));
       case 'next_event':
         return NextEventCommand(typeName: _optName(m['typeName']));
       case 'birthdays':
@@ -235,6 +242,50 @@ sealed class AssistantCommand {
           titles: titles,
           replace: m['mode'] == 'replace',
         );
+      case 'my_tasks':
+        return const MyTasksCommand();
+      case 'event_songs':
+        final event = m['event'] == null ? const NextEventRef() : _eventRef(m['event']);
+        if (event == null) return const UnsupportedCommand();
+        return EventSongsCommand(event: event, typeName: _optName(m['typeName']));
+      case 'create_task':
+        final title = cleanAssistantText(m['title'], assistantMaxTaskTitle);
+        final hasWho = m['who'] != null;
+        final who = hasWho ? _who(m['who'], allowGroup: false) : null;
+        final hasDue = m['dueDate'] != null && m['dueDate'] != '';
+        final due = hasDue ? parseAssistantDate(m['dueDate']) : null;
+        final hasPriority = m['priority'] != null && m['priority'] != '';
+        final priority = TaskPriority.values.where((p) => p.name == m['priority']).firstOrNull;
+        if (title == null || (hasWho && who == null) || (hasDue && due == null) || (hasPriority && priority == null)) {
+          return const UnsupportedCommand();
+        }
+        return CreateTaskCommand(title: title, who: who, dueDate: due, priority: priority);
+      case 'take_duty':
+        final event = m['event'] == null ? const NextEventRef() : _eventRef(m['event']);
+        if (event == null) return const UnsupportedCommand();
+        return TakeDutyCommand(event: event, typeName: _optName(m['typeName']));
+      case 'new_person':
+        final first = _optName(m['firstName']);
+        final hasBirthday = m['birthday'] != null && m['birthday'] != '';
+        final birthday = hasBirthday ? parseAssistantDate(m['birthday']) : null;
+        if (first == null || (hasBirthday && birthday == null)) return const UnsupportedCommand();
+        return NewPersonCommand(
+          firstName: first,
+          lastName: _optName(m['lastName']),
+          group: _optName(m['group']),
+          birthday: birthday,
+        );
+      case 'draft_message':
+        final hasEvent = m['event'] != null;
+        final event = hasEvent ? _eventRef(m['event']) : null;
+        if (hasEvent && event == null) return const UnsupportedCommand();
+        return DraftMessageCommand(
+          group: _optName(m['group']),
+          event: event,
+          typeName: _optName(m['typeName']),
+          note: cleanAssistantText(m['note'], assistantMaxNote),
+          onlyOpen: event != null && m['onlyOpen'] == true,
+        );
       case 'unsupported':
         return UnsupportedCommand(isChange: m['category'] == 'change');
       default:
@@ -264,14 +315,8 @@ class SetStatusCommand extends AssistantCommand {
   final String? reason;
 
   /// Same command with [who] (after "Welchen Jonas meinst du?").
-  SetStatusCommand withWho(List<RateSubject> who) => SetStatusCommand(
-        who: who,
-        status: status,
-        event: event,
-        period: period,
-        typeName: typeName,
-        reason: reason,
-      );
+  SetStatusCommand withWho(List<RateSubject> who) =>
+      SetStatusCommand(who: who, status: status, event: event, period: period, typeName: typeName, reason: reason);
 
   bool get onlyMe => who.every((w) => w is MeSubject);
 }
@@ -286,8 +331,7 @@ class PlannedAbsenceCommand extends AssistantCommand {
   final DateTime to;
   final String? reason;
 
-  PlannedAbsenceCommand withWho(RateSubject who) =>
-      PlannedAbsenceCommand(who: who, from: from, to: to, reason: reason);
+  PlannedAbsenceCommand withWho(RateSubject who) => PlannedAbsenceCommand(who: who, from: from, to: to, reason: reason);
 }
 
 /// "Leg jeden Mittwoch im Dezember eine Probe an" (1..[assistantMaxNewEvents]
@@ -315,14 +359,14 @@ class CreateEventsCommand extends AssistantCommand {
   final String? place;
 
   CreateEventsCommand withType(String typeId) => CreateEventsCommand(
-        typeName: typeName,
-        typeId: typeId,
-        dates: dates,
-        startTime: startTime,
-        endTime: endTime,
-        title: title,
-        place: place,
-      );
+    typeName: typeName,
+    typeId: typeId,
+    dates: dates,
+    startTime: startTime,
+    endTime: endTime,
+    title: title,
+    place: place,
+  );
 }
 
 /// "Verschieb die Probe am Mittwoch auf Donnerstag" / "… beginnt um 10 Uhr".
@@ -346,6 +390,61 @@ class SetSongsCommand extends AssistantCommand {
   final String? typeName;
   final List<String> titles;
   final bool replace;
+}
+
+/// "Welche Aufgaben sind bei mir offen?"
+class MyTasksCommand extends AssistantCommand {
+  const MyTasksCommand();
+}
+
+/// "Welche Werke singen wir Sonntag?"
+class EventSongsCommand extends AssistantCommand {
+  const EventSongsCommand({required this.event, this.typeName});
+  final EventRef event;
+  final String? typeName;
+}
+
+/// "Thomas klärt bis Freitag den Raum". [who]: [MeSubject], [PersonSubject],
+/// [PersonIdSubject] (after "Welchen Thomas meinst du?") or null (nobody).
+class CreateTaskCommand extends AssistantCommand {
+  const CreateTaskCommand({required this.title, this.who, this.dueDate, this.priority});
+
+  final String title;
+  final RateSubject? who;
+  final DateTime? dueDate;
+  final TaskPriority? priority;
+
+  CreateTaskCommand withWho(RateSubject who) =>
+      CreateTaskCommand(title: title, who: who, dueDate: dueDate, priority: priority);
+}
+
+/// "Ich mache Sonntag den Aufbau": the person themself takes over a duty.
+class TakeDutyCommand extends AssistantCommand {
+  const TakeDutyCommand({required this.event, this.typeName});
+  final EventRef event;
+  final String? typeName;
+}
+
+/// "Neues Mitglied Anna Müller, Sopran, Geburtstag 3.4.2008": only fills
+/// the normal "Person anlegen" form, saving stays there.
+class NewPersonCommand extends AssistantCommand {
+  const NewPersonCommand({required this.firstName, this.lastName, this.group, this.birthday});
+  final String firstName;
+  final String? lastName;
+  final String? group;
+  final DateTime? birthday;
+}
+
+/// "Erinner die Tenöre an Sonntag": only a draft in the normal compose
+/// page, sending stays a manual step there. [group] null = everyone;
+/// [onlyOpen]: only those without an answer for [event].
+class DraftMessageCommand extends AssistantCommand {
+  const DraftMessageCommand({this.group, this.event, this.typeName, this.note, this.onlyOpen = false});
+  final String? group;
+  final EventRef? event;
+  final String? typeName;
+  final String? note;
+  final bool onlyOpen;
 }
 
 /// "Wie war die Anwesenheit von Jonas in den letzten 3 Monaten?"
@@ -398,10 +497,7 @@ class UnsupportedCommand extends AssistantCommand {
 /// A short single-line text, or null.
 String? cleanAssistantText(Object? value, int max) {
   if (value is! String) return null;
-  final t = value
-      .replaceAll(RegExp(r'[\u0000-\u001f\u007f]'), ' ')
-      .replaceAll(RegExp(r'\s+'), ' ')
-      .trim();
+  final t = value.replaceAll(RegExp(r'[\u0000-\u001f\u007f]'), ' ').replaceAll(RegExp(r'\s+'), ' ').trim();
   if (t.isEmpty) return null;
   return t.length > max ? t.substring(0, max) : t;
 }
@@ -463,12 +559,12 @@ List<String>? _titleList(Object? raw) {
 }
 
 PeriodUnit? _unit(Object? v) => switch (v) {
-      'day' => PeriodUnit.day,
-      'week' => PeriodUnit.week,
-      'month' => PeriodUnit.month,
-      'year' => PeriodUnit.year,
-      _ => null,
-    };
+  'day' => PeriodUnit.day,
+  'week' => PeriodUnit.week,
+  'month' => PeriodUnit.month,
+  'year' => PeriodUnit.year,
+  _ => null,
+};
 
 int? _count(Object? v) {
   final n = v is int ? v : (v is num && v == v.roundToDouble() ? v.toInt() : int.tryParse('$v'));
@@ -526,14 +622,14 @@ EventRef? _eventRef(Object? raw) {
 }
 
 AssistantStatus? _status(Object? v) => switch (v) {
-      'present' => AssistantStatus.present,
-      'excused' => AssistantStatus.excused,
-      'late_excused' => AssistantStatus.lateExcused,
-      'late' => AssistantStatus.late,
-      'absent' => AssistantStatus.absent,
-      'neutral' => AssistantStatus.neutral,
-      _ => null,
-    };
+  'present' => AssistantStatus.present,
+  'excused' => AssistantStatus.excused,
+  'late_excused' => AssistantStatus.lateExcused,
+  'late' => AssistantStatus.late,
+  'absent' => AssistantStatus.absent,
+  'neutral' => AssistantStatus.neutral,
+  _ => null,
+};
 
 RateSubject? _who(Object? raw, {required bool allowGroup}) {
   if (raw is! Map) return null;

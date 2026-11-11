@@ -15,16 +15,31 @@ void main() {
     });
 
     test('this and previous month, week, year', () {
-      expect(resolvePeriod(const ThisPeriod(PeriodUnit.month), today, season), (from: DateTime(2026, 11, 1), to: DateTime(2026, 11, 30)));
-      expect(resolvePeriod(const PreviousPeriod(PeriodUnit.month), today, season), (from: DateTime(2026, 10, 1), to: DateTime(2026, 10, 31)));
-      expect(resolvePeriod(const ThisPeriod(PeriodUnit.week), today, season), (from: DateTime(2026, 11, 9), to: DateTime(2026, 11, 15)));
-      expect(resolvePeriod(const PreviousPeriod(PeriodUnit.year), today, season), (from: DateTime(2025, 1, 1), to: DateTime(2025, 12, 31)));
+      expect(resolvePeriod(const ThisPeriod(PeriodUnit.month), today, season), (
+        from: DateTime(2026, 11, 1),
+        to: DateTime(2026, 11, 30),
+      ));
+      expect(resolvePeriod(const PreviousPeriod(PeriodUnit.month), today, season), (
+        from: DateTime(2026, 10, 1),
+        to: DateTime(2026, 10, 31),
+      ));
+      expect(resolvePeriod(const ThisPeriod(PeriodUnit.week), today, season), (
+        from: DateTime(2026, 11, 9),
+        to: DateTime(2026, 11, 15),
+      ));
+      expect(resolvePeriod(const PreviousPeriod(PeriodUnit.year), today, season), (
+        from: DateTime(2025, 1, 1),
+        to: DateTime(2025, 12, 31),
+      ));
     });
 
     test('month ends and season', () {
       final r = resolvePeriod(const LastPeriod(PeriodUnit.month, 1), DateTime(2026, 3, 31), season);
       expect(r.from, DateTime(2026, 2, 28));
-      expect(resolvePeriod(const SeasonPeriod(), today, season), (from: DateTime(2026, 9, 1), to: DateTime(2026, 11, 11)));
+      expect(resolvePeriod(const SeasonPeriod(), today, season), (
+        from: DateTime(2026, 9, 1),
+        to: DateTime(2026, 11, 11),
+      ));
       expect(resolvePeriod(const NextPeriod(PeriodUnit.day, 30), today, season).to, DateTime(2026, 12, 11));
     });
   });
@@ -60,8 +75,14 @@ void main() {
   });
 
   group('computeRate', () {
-    RateRow row(int day, AttendanceStatus s, {String type = 'p', String? duty, int month = 11}) =>
-        (personId: 1, date: DateTime(2026, month, day, 12), typeId: type, status: s, notes: null, dutyState: duty);
+    RateRow row(int day, AttendanceStatus s, {String type = 'p', String? duty, int month = 11}) => (
+      personId: 1,
+      date: DateTime(2026, month, day, 12),
+      typeId: type,
+      status: s,
+      notes: null,
+      dutyState: duty,
+    );
 
     test('counts only past Termine of counted types in the range', () {
       final r = computeRate(
@@ -93,8 +114,16 @@ void main() {
         dutyTypeIds: {'d'},
       );
       expect(r.total, 1);
-      expect(computeRate(const [], range: (from: today, to: today), today: today, countedTypeIds: const {}, dutyTypeIds: const {}).percent,
-          isNull);
+      expect(
+        computeRate(
+          const [],
+          range: (from: today, to: today),
+          today: today,
+          countedTypeIds: const {},
+          dutyTypeIds: const {},
+        ).percent,
+        isNull,
+      );
     });
   });
 
@@ -162,15 +191,19 @@ void main() {
     });
 
     test('own rows follow the buttons of Meine Termine', () {
-      StatusSkip? skip(AttendanceStatus current, AttendanceStatus target,
-              {bool open = true, bool fields = false, bool allows = true}) =>
-          selfStatusSkip(
-            current: current,
-            target: target,
-            signinOpen: open,
-            hasRegistrationFields: fields,
-            typeAllowsTarget: allows,
-          );
+      StatusSkip? skip(
+        AttendanceStatus current,
+        AttendanceStatus target, {
+        bool open = true,
+        bool fields = false,
+        bool allows = true,
+      }) => selfStatusSkip(
+        current: current,
+        target: target,
+        signinOpen: open,
+        hasRegistrationFields: fields,
+        typeAllowsTarget: allows,
+      );
       expect(skip(AttendanceStatus.neutral, AttendanceStatus.excused), isNull);
       expect(skip(AttendanceStatus.excused, AttendanceStatus.excused), StatusSkip.same);
       expect(skip(AttendanceStatus.absent, AttendanceStatus.excused), StatusSkip.locked);
@@ -188,10 +221,26 @@ void main() {
     });
 
     test('rights per role', () {
-      final me = SetStatusCommand(who: const [MeSubject()], status: AssistantStatus.excused, event: const NextEventRef());
-      final jonas = SetStatusCommand(who: const [PersonSubject('Jonas')], status: AssistantStatus.excused, event: const NextEventRef());
-      final ownAbsence = PlannedAbsenceCommand(who: const MeSubject(), from: DateTime(2026, 12, 1), to: DateTime(2026, 12, 5));
-      final otherAbsence = PlannedAbsenceCommand(who: const PersonSubject('Lena'), from: DateTime(2026, 12, 1), to: DateTime(2026, 12, 5));
+      final me = SetStatusCommand(
+        who: const [MeSubject()],
+        status: AssistantStatus.excused,
+        event: const NextEventRef(),
+      );
+      final jonas = SetStatusCommand(
+        who: const [PersonSubject('Jonas')],
+        status: AssistantStatus.excused,
+        event: const NextEventRef(),
+      );
+      final ownAbsence = PlannedAbsenceCommand(
+        who: const MeSubject(),
+        from: DateTime(2026, 12, 1),
+        to: DateTime(2026, 12, 5),
+      );
+      final otherAbsence = PlannedAbsenceCommand(
+        who: const PersonSubject('Lena'),
+        from: DateTime(2026, 12, 1),
+        to: DateTime(2026, 12, 5),
+      );
 
       const player = AssistantAccess(role: Role.player, hasOwnPerson: true);
       expect(player.allows(me), isTrue);
@@ -224,7 +273,10 @@ void main() {
 
     test('creating needs the confirmed create permission', () {
       expect(const AssistantAccess(role: Role.admin, hasOwnPerson: true).allows(create), isFalse);
-      expect(const AssistantAccess(role: Role.helper, hasOwnPerson: true, canCreateEvents: true).allows(create), isTrue);
+      expect(
+        const AssistantAccess(role: Role.helper, hasOwnPerson: true, canCreateEvents: true).allows(create),
+        isTrue,
+      );
     });
 
     test('moving and Werke: roles that edit Termine', () {
@@ -259,5 +311,86 @@ void main() {
     expect(statusNeedsReason(cmd(AssistantStatus.excused, 'krank')), isFalse);
     expect(statusNeedsReason(cmd(AssistantStatus.present)), isFalse);
     expect(statusNeedsReason(cmd(AssistantStatus.absent)), isFalse);
+  });
+
+  group('package 4', () {
+    test('rights: tasks need the Teamorganisation, people and messages Admin/Verantwortliche', () {
+      final task = CreateTaskCommand(title: 'X');
+      const own = MyTasksCommand();
+      expect(const AssistantAccess(role: Role.admin, hasOwnPerson: true, isTeamLeader: true).allows(task), isFalse);
+      expect(
+        const AssistantAccess(
+          role: Role.admin,
+          hasOwnPerson: true,
+          isTeamLeader: true,
+          teamOrgEnabled: true,
+        ).allows(task),
+        isTrue,
+      );
+      expect(const AssistantAccess(role: Role.helper, hasOwnPerson: true, teamOrgEnabled: true).allows(task), isFalse);
+      expect(const AssistantAccess(role: Role.player, hasOwnPerson: true, teamOrgEnabled: true).allows(own), isTrue);
+      expect(const AssistantAccess(role: Role.player, hasOwnPerson: false, teamOrgEnabled: true).allows(own), isFalse);
+      const person = NewPersonCommand(firstName: 'Anna');
+      const draft = DraftMessageCommand();
+      for (final role in [Role.admin, Role.responsible]) {
+        expect(AssistantAccess(role: role, hasOwnPerson: false).allows(person), isTrue, reason: '$role');
+        expect(AssistantAccess(role: role, hasOwnPerson: false).allows(draft), isTrue, reason: '$role');
+      }
+      for (final role in [Role.helper, Role.viewer, Role.player, Role.voiceLeader, Role.parent]) {
+        expect(AssistantAccess(role: role, hasOwnPerson: true).allows(person), isFalse, reason: '$role');
+        expect(AssistantAccess(role: role, hasOwnPerson: true).allows(draft), isFalse, reason: '$role');
+      }
+      const duty = TakeDutyCommand(event: NextEventRef());
+      expect(const AssistantAccess(role: Role.player, hasOwnPerson: true).allows(duty), isTrue);
+      expect(const AssistantAccess(role: Role.admin, hasOwnPerson: false).allows(duty), isFalse);
+      expect(
+        const AssistantAccess(
+          role: Role.player,
+          hasOwnPerson: true,
+        ).allows(const EventSongsCommand(event: NextEventRef())),
+        isTrue,
+      );
+    });
+
+    test('task due date only from today up to 6 months', () {
+      expect(taskDueInWindow(DateTime(2026, 11, 11), today), isTrue);
+      expect(taskDueInWindow(DateTime(2026, 11, 10), today), isFalse);
+      expect(taskDueInWindow(DateTime(2027, 6, 1), today), isFalse);
+    });
+
+    test('tasks sorted by due date, without date last', () {
+      final list = [
+        (dueDate: null, title: 'b'),
+        (dueDate: '2026-12-01', title: 'z'),
+        (dueDate: '2026-11-20', title: 'a'),
+        (dueDate: null, title: 'a'),
+      ]..sort(compareTasksByDue);
+      expect([for (final t in list) t.title], ['a', 'z', 'a', 'b']);
+    });
+
+    test('duty: the rules of "Ich übernehme"', () {
+      DutySkip? skip({
+        bool self = true,
+        bool member = true,
+        String? state,
+        AttendanceStatus status = AttendanceStatus.neutral,
+        int required = 2,
+        int occupied = 1,
+      }) => dutySkip(
+        selfSignup: self,
+        isMember: member,
+        ownDutyState: state,
+        ownStatus: status,
+        required: required,
+        occupied: occupied,
+      );
+      expect(skip(), isNull);
+      expect(skip(self: false), DutySkip.notSelf);
+      expect(skip(member: false), DutySkip.notMember);
+      expect(skip(state: 'confirmed', status: AttendanceStatus.present), DutySkip.already);
+      // Signed out of an assigned duty: may take it again when a place is free.
+      expect(skip(state: 'confirmed', status: AttendanceStatus.excused), isNull);
+      expect(skip(occupied: 2), DutySkip.full);
+    });
   });
 }

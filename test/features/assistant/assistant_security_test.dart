@@ -18,7 +18,12 @@ void main() {
     expect(fn, contains('ai_assistant_enabled'));
     expect(fn, contains('ai_assistant_take'));
     final call = fn.indexOf('chat.completions.create');
-    for (final guard in ['auth.getUser()', '.neq("role", APPLICANT_ROLE)', 'ai_assistant_enabled', 'ai_assistant_take']) {
+    for (final guard in [
+      'auth.getUser()',
+      '.neq("role", APPLICANT_ROLE)',
+      'ai_assistant_enabled',
+      'ai_assistant_take',
+    ]) {
       expect(fn.indexOf(guard), lessThan(call), reason: guard);
     }
   });
@@ -60,8 +65,19 @@ void main() {
     final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
     final notifier = File('lib/core/providers/assistant_providers.dart').readAsStringSync();
     // Writes only inside apply*/revert*, never in run() or the previews.
-    final runPart = executor.substring(executor.indexOf('Future<AssistantReply> run('), executor.indexOf('Future<int> applyStatus('));
-    for (final write in ['signIn(', 'signOut(', 'updatePersonAttendance(', 'addAbsence(', 'excuseUpcomingAttendances(', 'deleteAbsence(', 'restoreOwnStatuses(']) {
+    final runPart = executor.substring(
+      executor.indexOf('Future<AssistantReply> run('),
+      executor.indexOf('Future<int> applyStatus('),
+    );
+    for (final write in [
+      'signIn(',
+      'signOut(',
+      'updatePersonAttendance(',
+      'addAbsence(',
+      'excuseUpcomingAttendances(',
+      'deleteAbsence(',
+      'restoreOwnStatuses(',
+    ]) {
       expect(runPart, isNot(contains('.$write')), reason: write);
     }
     // Package 3 previews write nothing either.
@@ -78,10 +94,10 @@ void main() {
     // apply* is only called from confirm(), revert* only from undo().
     final confirm = _method(notifier, 'Future<void> confirm(');
     final undo = _method(notifier, 'Future<void> undo(');
-    expect(RegExp(r'executor\.apply').allMatches(notifier).length, 5);
-    expect(RegExp(r'executor\.apply').allMatches(confirm).length, 5);
-    expect(RegExp(r'executor\.revert').allMatches(notifier).length, 5);
-    expect(RegExp(r'executor\.revert').allMatches(undo).length, 5);
+    expect(RegExp(r'executor\.apply').allMatches(notifier).length, 7);
+    expect(RegExp(r'executor\.apply').allMatches(confirm).length, 7);
+    expect(RegExp(r'executor\.revert').allMatches(notifier).length, 7);
+    expect(RegExp(r'executor\.revert').allMatches(undo).length, 7);
   });
 
   test('changes: limits and rights are in the app, no delete of Termine or people', () {
@@ -133,6 +149,65 @@ void main() {
     expect(executor, isNot(contains('cancel_event')));
   });
 
+  test('package 4: previews and drafts write and send nothing', () {
+    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
+    final notifier = File('lib/core/providers/assistant_providers.dart').readAsStringSync();
+    for (final preview in [
+      '_myTasks(',
+      '_eventSongs(',
+      '_taskPreview(',
+      '_dutyPreview(',
+      '_personDraft(',
+      '_messageDraft(',
+    ]) {
+      final body = _method(executor, 'Future<AssistantReply> $preview');
+      for (final write in [
+        ...['.createTask(', '.deleteTask(', '.updateTask(', '_duty.take(', '_duty.notify(', '.notifyTeam('],
+        ...['.updatePersonAttendance(', '.addPlayer(', '.createPlayer(', '.invoke(', '.signIn(', '.signOut('],
+      ]) {
+        expect(body, isNot(contains(write)), reason: '$preview $write');
+      }
+    }
+    // A person or a message is never saved or sent by the chat: no player
+    // write and no message function in the executor.
+    for (final forbidden in ['addPlayer', 'createPlayer', 'send-message', 'sendMessage', 'functions.invoke']) {
+      expect(executor, isNot(contains(forbidden)), reason: forbidden);
+    }
+    // The only delete of a task is the undo of the task the chat created.
+    expect(RegExp(r'deleteTask\(').allMatches(executor).length, 1);
+    expect(_method(executor, 'Future<void> revertTask('), contains('await _tasks.deleteTask(taskId);'));
+    // The push of a new task only when tapped (never inside applyTask).
+    expect(_method(executor, 'Future<String> applyTask('), isNot(contains('notify')));
+    expect(RegExp(r'notifyTeam\(').allMatches(executor).length, 1);
+    expect(RegExp(r'executor\.notifyTask\(').allMatches(notifier).length, 1);
+    expect(_method(notifier, 'Future<void> notifyTask('), contains('executor.notifyTask('));
+    // A duty only through the RPC of "Ich übernehme" (server checks again).
+    expect(RegExp(r'_duty\.take\(').allMatches(executor).length, 1);
+    expect(_method(executor, 'Future<DutyTakeResult> applyDuty('), contains('_duty.take(plan.attendanceId)'));
+  });
+
+  test('package 4: rights and limits', () {
+    final logic = File('lib/features/assistant/data/assistant_logic.dart').readAsStringSync();
+    final command = File('lib/features/assistant/data/assistant_command.dart').readAsStringSync();
+    final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
+    expect(logic, contains('MyTasksCommand() => teamOrgEnabled && hasOwnPerson'));
+    expect(logic, contains('CreateTaskCommand() => teamOrgEnabled && isTeamLeader'));
+    expect(logic, contains('TakeDutyCommand() => hasOwnPerson'));
+    expect(logic, contains('NewPersonCommand() => managesPeople'));
+    expect(logic, contains('DraftMessageCommand() => managesPeople'));
+    expect(logic, contains('bool get managesPeople => role.isAdmin || role.isResponsible;'));
+    expect(command, contains('assistantMaxTaskTitle = 120'));
+    expect(command, contains('assistantMaxNote = 300'));
+    // A task for a group is not possible (allowGroup: false).
+    expect(command, contains("_who(m['who'], allowGroup: false)"));
+    // Rights checked again in the write path, before the insert.
+    final apply = _method(executor, 'Future<String> applyTask(');
+    expect(apply.indexOf('isTeamLeaderProvider'), lessThan(apply.indexOf('createTask(')));
+    expect(apply.indexOf('_teamOrgOn()'), lessThan(apply.indexOf('createTask(')));
+    // Archived / out-of-window duty Termine are never taken over via chat.
+    expect(_method(executor, 'Future<AssistantReply> _dutyPreview('), contains('if (_locked(t.attendance))'));
+  });
+
   test('undo of own rows checks the tenant and the own account', () {
     final signs = File('lib/data/repositories/sign_in_out_repository.dart').readAsStringSync();
     final restore = signs.substring(signs.indexOf('Future<int> restoreOwnStatuses('));
@@ -144,7 +219,10 @@ void main() {
 
   test('own changes across groups always go through the account check', () {
     final executor = File('lib/features/assistant/data/assistant_executor.dart').readAsStringSync();
-    final apply = executor.substring(executor.indexOf('Future<int> applyStatus('), executor.indexOf('Future<AssistantReply> _absencePreview('));
+    final apply = executor.substring(
+      executor.indexOf('Future<int> applyStatus('),
+      executor.indexOf('Future<AssistantReply> _absencePreview('),
+    );
     expect(RegExp(r'ownAcrossTenants: true').allMatches(apply).length, 2);
     expect(apply, contains('acrossTenants: true'));
   });
@@ -154,6 +232,8 @@ void main() {
 String _method(String src, String signature) {
   final start = src.indexOf(signature);
   expect(start, greaterThanOrEqualTo(0), reason: signature);
-  final next = RegExp(r'\n  (?:Future<|void |static |bool |AssistantReply |String\? |DateTime )').firstMatch(src.substring(start + 1));
+  final next = RegExp(
+    r'\n  (?:Future<|void |static |bool |AssistantReply |String\? |DateTime )',
+  ).firstMatch(src.substring(start + 1));
   return next == null ? src.substring(start) : src.substring(start, start + 1 + next.start);
 }

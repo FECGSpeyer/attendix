@@ -248,3 +248,69 @@ test("cancelling a whole event is not a command", () => {
     category: "other",
   });
 });
+
+test("package 4: tasks, Werke of a Termin, duty, new person, message draft", () => {
+  assert.deepEqual(validateCommand({ command: "my_tasks", extra: "x" }), { command: "my_tasks" });
+  assert.deepEqual(validateCommand({ command: "event_songs", event: { type: "weekday", day: "sun" } }), {
+    command: "event_songs",
+    event: { type: "weekday", day: "sun" },
+  });
+  assert.deepEqual(validateCommand({ command: "event_songs" }), { command: "event_songs", event: { type: "next" } });
+  assert.deepEqual(
+    validateCommand({
+      command: "create_task",
+      title: "Raum klären",
+      who: { kind: "person", name: "Thomas" },
+      dueDate: "2026-11-13",
+      priority: "high",
+    }),
+    { command: "create_task", title: "Raum klären", who: { kind: "person", name: "Thomas" }, dueDate: "2026-11-13", priority: "high" },
+  );
+  assert.deepEqual(validateCommand({ command: "create_task", title: "Noten kopieren" }), {
+    command: "create_task",
+    title: "Noten kopieren",
+  });
+  assert.deepEqual(validateCommand({ command: "take_duty", event: { type: "weekday", day: "sun" }, typeName: "Aufbau" }), {
+    command: "take_duty",
+    event: { type: "weekday", day: "sun" },
+    typeName: "Aufbau",
+  });
+  assert.deepEqual(
+    validateCommand({ command: "new_person", firstName: "Anna", lastName: "Müller", group: "Sopran", birthday: "2008-04-03" }),
+    { command: "new_person", firstName: "Anna", lastName: "Müller", group: "Sopran", birthday: "2008-04-03" },
+  );
+  assert.deepEqual(
+    validateCommand({ command: "draft_message", group: "Tenor", event: { type: "weekday", day: "sun" }, onlyOpen: true }),
+    { command: "draft_message", group: "Tenor", event: { type: "weekday", day: "sun" }, onlyOpen: true },
+  );
+  // onlyOpen without a Termin means nothing.
+  assert.deepEqual(validateCommand({ command: "draft_message", note: "Probe im Saal", onlyOpen: true }), {
+    command: "draft_message",
+    note: "Probe im Saal",
+  });
+});
+
+test("package 4: broken or hostile fields become unsupported", () => {
+  const unsupported = { command: "unsupported", category: "other" };
+  // A task for a whole group, without title, with a wrong date or priority.
+  assert.deepEqual(validateCommand({ command: "create_task", title: "X", who: { kind: "group", name: "Tenor" } }), unsupported);
+  assert.deepEqual(validateCommand({ command: "create_task", title: "  " }), unsupported);
+  assert.deepEqual(validateCommand({ command: "create_task", title: "X", dueDate: "2026-02-30" }), unsupported);
+  assert.deepEqual(validateCommand({ command: "create_task", title: "X", priority: "urgent" }), unsupported);
+  // A duty never names other people: extra fields are dropped.
+  assert.deepEqual(
+    validateCommand({ command: "take_duty", who: { kind: "person", name: "Jonas" } }),
+    { command: "take_duty", event: { type: "next" } },
+  );
+  assert.deepEqual(validateCommand({ command: "take_duty", event: { type: "someday" } }), unsupported);
+  assert.deepEqual(validateCommand({ command: "new_person", lastName: "Müller" }), unsupported);
+  assert.deepEqual(validateCommand({ command: "new_person", firstName: "Anna", birthday: "3.4.2008" }), unsupported);
+  assert.deepEqual(validateCommand({ command: "draft_message", event: { type: "bad" } }), unsupported);
+  // A message is only a draft: there is no field to send it.
+  assert.deepEqual(validateCommand({ command: "draft_message", send: true, recipients: ["all"] }), { command: "draft_message" });
+  // Long titles and notes are cut.
+  const task = validateCommand({ command: "create_task", title: "a".repeat(500) });
+  assert.equal(task.command === "create_task" && task.title.length, 120);
+  const draft = validateCommand({ command: "draft_message", note: "b".repeat(900) });
+  assert.equal(draft.command === "draft_message" && draft.note!.length, 300);
+});

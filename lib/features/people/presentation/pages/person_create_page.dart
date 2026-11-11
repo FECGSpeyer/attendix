@@ -38,12 +38,16 @@ import '../../../../l10n/l10n.dart';
 import '../widgets/ion/ion_widgets.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/error_message.dart';
+import '../../person_create_prefill.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Page for creating a new person
 class PersonCreatePage extends ConsumerStatefulWidget {
-  const PersonCreatePage({super.key});
+  const PersonCreatePage({super.key, this.prefill});
+
+  /// Start values from the chat assistant (saving stays here).
+  final PersonCreatePrefill? prefill;
 
   @override
   ConsumerState<PersonCreatePage> createState() => _PersonCreatePageState();
@@ -110,11 +114,23 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   @override
   void initState() {
     super.initState();
+    final prefill = widget.prefill;
+    if (prefill != null) {
+      _firstNameController.text = prefill.firstName;
+      _lastNameController.text = prefill.lastName ?? '';
+      if (prefill.groupId != null) _selectedInstrument = prefill.groupId;
+      if (prefill.birthday != null) {
+        _birthday = prefill.birthday;
+        _birthdayEdited = true;
+      }
+    }
     _firstNameController.addListener(_onNameInput);
     _lastNameController.addListener(_onNameInput);
     _emailFocus.addListener(() {
       if (!_emailFocus.hasFocus) _onEmailBlur();
     });
+    // The cross-instance lookup also runs for prefilled names.
+    if (prefill != null) _onNameInput();
   }
 
   /// Ionic person.page `hasChanges` for a new person: something was entered.

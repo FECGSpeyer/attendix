@@ -11,6 +11,12 @@
 // writer of both create pages, move like "Datum ändern", Werke through the
 // history sync of the Termin page. Undo of a creation deletes exactly the
 // Termine the chat created; nothing else is ever deleted.
+//
+// Package 4: a new task is created like the task sheet (undo deletes
+// exactly that task; the push to the responsible person goes out only when
+// tapped), a duty is taken over through `duty_take` like "Ich übernehme"
+// (undo frees the own row again). A new person and a message are never
+// saved here: the page opens the normal form / compose page prefilled.
 
 import 'dart:async';
 
@@ -29,6 +35,7 @@ import '../../../core/providers/role_permission_providers.dart';
 import '../../../core/providers/self_service_providers.dart';
 import '../../../core/providers/signout_providers.dart';
 import '../../../core/providers/song_providers.dart';
+import '../../../core/providers/team_org_providers.dart';
 import '../../../core/providers/tenant_providers.dart';
 import '../../../core/utils/attendance_logic_utils.dart' show dateChangeStatusUpdates, showSongsForType;
 import '../../../core/utils/duty_utils.dart' show occupiesDutyRaw;
@@ -38,11 +45,14 @@ import '../../../data/models/instrument/instrument.dart';
 import '../../../data/models/person/person.dart';
 import '../../../data/models/player_absence/player_absence.dart';
 import '../../../data/models/song/song.dart';
+import '../../../data/models/team_org/team_org.dart';
 import '../../../data/repositories/assistant_repository.dart';
 import '../../../data/repositories/attendance_repository.dart' show AttendanceRepository;
-import '../../../data/repositories/duty_repository.dart' show DutyRepository, DutyNotifyType;
+import '../../../data/repositories/duty_repository.dart' show DutyRepository, DutyNotifyType, DutyTakeResult;
 import '../../../data/repositories/player_absence_repository.dart';
+import '../../../data/repositories/protocol_repository.dart';
 import '../../../data/repositories/sign_in_out_repository.dart';
+import '../../../data/repositories/task_repository.dart';
 import '../../../l10n/l10n.dart';
 import '../../attendance/presentation/attendance_create_writes.dart';
 import '../../attendance/presentation/attendance_song_history.dart';
@@ -50,6 +60,8 @@ import '../../attendance/presentation/widgets/attendance_date_change.dart'
     show calendarDayDifference, shiftByCalendarDays, shiftDeadline;
 import '../../attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntry;
 import '../../help/data/help_content_service.dart';
+import '../../self_service/data/providers/upcoming_songs_provider.dart' show signoutAttendanceSongsProvider;
+import '../../team_organization/team_org_utils.dart' show isTeamOrgEnabled;
 import 'assistant_command.dart';
 import 'assistant_logic.dart';
 import 'assistant_reply.dart';
@@ -58,13 +70,15 @@ class AssistantExecutor {
   /// The repositories are bound to the tenant here, before the first await
   /// (a tenant switch while the answer loads never reads another tenant).
   AssistantExecutor(this.ref, {DateTime Function()? clock})
-      : _clock = clock ?? DateTime.now,
-        _tenantId = ref.read(currentTenantIdProvider),
-        _reads = ref.read(assistantRepositoryForTenantProvider(ref.read(currentTenantIdProvider))),
-        _events = ref.read(attendanceRepositoryWithTenantProvider),
-        _signs = ref.read(signInOutRepositoryForTenantProvider(ref.read(currentTenantIdProvider))),
-        _absences = ref.read(playerAbsenceRepositoryForTenantProvider(ref.read(currentTenantIdProvider))),
-        _duty = ref.read(dutyRepositoryForTenantProvider(ref.read(currentTenantIdProvider)));
+    : _clock = clock ?? DateTime.now,
+      _tenantId = ref.read(currentTenantIdProvider),
+      _reads = ref.read(assistantRepositoryForTenantProvider(ref.read(currentTenantIdProvider))),
+      _events = ref.read(attendanceRepositoryWithTenantProvider),
+      _signs = ref.read(signInOutRepositoryForTenantProvider(ref.read(currentTenantIdProvider))),
+      _absences = ref.read(playerAbsenceRepositoryForTenantProvider(ref.read(currentTenantIdProvider))),
+      _duty = ref.read(dutyRepositoryForTenantProvider(ref.read(currentTenantIdProvider))),
+      _tasks = ref.read(taskRepositoryForTenantProvider(ref.read(currentTenantIdProvider))),
+      _team = ref.read(protocolRepositoryForTenantProvider(ref.read(currentTenantIdProvider)));
 
   final Ref ref;
   final DateTime Function() _clock;
@@ -75,9 +89,12 @@ class AssistantExecutor {
   final SignInOutRepository _signs;
   final PlayerAbsenceRepository _absences;
   final DutyRepository _duty;
+  final TaskRepository _tasks;
+  final ProtocolRepository _team;
 
   /// [create]: also load the create permission (a fetch for helpers).
-  Future<AssistantAccess> access({bool create = false}) async {
+  /// [team]: also load whether the Teamorganisation is on (tasks).
+  Future<AssistantAccess> access({bool create = false, bool team = false}) async {
     final role = ref.read(currentRoleProvider);
     Person? own;
     try {
@@ -91,30 +108,45 @@ class AssistantExecutor {
       canManageAbsences: ref.read(canManagePlannedAbsencesProvider),
       canSelfReportAbsence: ref.read(canSelfReportAbsenceProvider),
       canCreateEvents: create && await _mayCreate(),
+      teamOrgEnabled: team && await _teamOrgOn(),
+      isTeamLeader: ref.read(isTeamLeaderProvider),
     );
   }
 
+  /// Freshly loaded protocol types; any error counts as off.
+  Future<bool> _teamOrgOn() async {
+    try {
+      return isTeamOrgEnabled(await ref.read(protocolTypesProvider.future));
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// SOL_FIX2: the freshly loaded create permission; any error denies.
-  Future<bool> _mayCreate() =>
-      confirmCanCreateAttendance(() => ref.read(canCreateAttendanceConfirmedProvider.future));
+  Future<bool> _mayCreate() => confirmCanCreateAttendance(() => ref.read(canCreateAttendanceConfirmedProvider.future));
 
   /// A command about the person themself without an own person in the tenant.
   static bool _needsOwnPerson(AssistantCommand c) => switch (c) {
-        AttendanceRateCommand(subject: MeSubject()) => true,
-        // Only "me": own rows in any group, no own person here needed.
-        SetStatusCommand(:final who, :final onlyMe) => !onlyMe && who.any((w) => w is MeSubject),
-        PlannedAbsenceCommand(who: MeSubject()) => true,
-        _ => false,
-      };
+    AttendanceRateCommand(subject: MeSubject()) => true,
+    // Only "me": own rows in any group, no own person here needed.
+    SetStatusCommand(:final who, :final onlyMe) => !onlyMe && who.any((w) => w is MeSubject),
+    PlannedAbsenceCommand(who: MeSubject()) => true,
+    MyTasksCommand() => true,
+    TakeDutyCommand() => true,
+    CreateTaskCommand(who: MeSubject()) => true,
+    _ => false,
+  };
 
   Future<AssistantReply> run(AssistantCommand command) async {
-    final rights = await access(create: command is CreateEventsCommand);
+    final rights = await access(
+      create: command is CreateEventsCommand,
+      team: command is MyTasksCommand || command is CreateTaskCommand,
+    );
     if (_needsOwnPerson(command) && !rights.hasOwnPerson) {
       return const NoticeReply(AssistantNotice.noOwnPerson);
     }
     if (!rights.allows(command)) {
-      return NoticeReply(
-          command is PlannedAbsenceCommand ? AssistantNotice.noAbsenceRights : AssistantNotice.noRights);
+      return NoticeReply(command is PlannedAbsenceCommand ? AssistantNotice.noAbsenceRights : AssistantNotice.noRights);
     }
     if (command is SetStatusCommand && statusNeedsReason(command)) {
       return const NoticeReply(AssistantNotice.excuseNeedsReason);
@@ -131,8 +163,15 @@ class AssistantExecutor {
       CreateEventsCommand() => _createPreview(command),
       MoveEventCommand() => _movePreview(command),
       SetSongsCommand() => _songsPreview(command),
-      UnsupportedCommand(:final isChange) =>
-        NoticeReply(isChange ? AssistantNotice.changeLater : AssistantNotice.notUnderstood),
+      MyTasksCommand() => _myTasks(),
+      EventSongsCommand() => _eventSongs(command),
+      CreateTaskCommand() => _taskPreview(command),
+      TakeDutyCommand() => _dutyPreview(command),
+      NewPersonCommand() => _personDraft(command),
+      DraftMessageCommand() => _messageDraft(command),
+      UnsupportedCommand(:final isChange) => NoticeReply(
+        isChange ? AssistantNotice.changeLater : AssistantNotice.notUnderstood,
+      ),
     };
   }
 
@@ -164,10 +203,17 @@ class AssistantExecutor {
     final range = resolvePeriod(c.period, now, _seasonStart);
     final types = await _types();
     final askedType = _type(types, c.typeName);
-    final counted = askedType?.id != null
-        ? {askedType!.id!}
-        : {for (final t in types) if (t.includeInAverage && t.id != null) t.id!};
-    final duty = {for (final t in types) if (t.dutyMode && t.id != null) t.id!};
+    final counted =
+        askedType?.id != null
+            ? {askedType!.id!}
+            : {
+              for (final t in types)
+                if (t.includeInAverage && t.id != null) t.id!,
+            };
+    final duty = {
+      for (final t in types)
+        if (t.dutyMode && t.id != null) t.id!,
+    };
     final shiftExcused = ref.read(currentTenantProvider)?.shiftExcusedAsPresent ?? false;
 
     List<Person> people;
@@ -197,13 +243,20 @@ class AssistantExecutor {
             return g == null ? _name(p) : '${_name(p)} · $g';
           }
 
-          return ChoiceReply(query: name, options: [
-            for (final p in matches.take(6))
-              (
-                label: label(p),
-                command: AttendanceRateCommand(subject: PersonIdSubject(p.id!), period: c.period, typeName: c.typeName),
-              ),
-          ]);
+          return ChoiceReply(
+            query: name,
+            options: [
+              for (final p in matches.take(6))
+                (
+                  label: label(p),
+                  command: AttendanceRateCommand(
+                    subject: PersonIdSubject(p.id!),
+                    period: c.period,
+                    typeName: c.typeName,
+                  ),
+                ),
+            ],
+          );
         }
         people = matches;
         subjectName = _name(matches.first);
@@ -218,22 +271,30 @@ class AssistantExecutor {
     }
 
     final rows = await _reads.getRateRows(personIds: [for (final p in people) p.id!], range: range);
-    final rate = computeRate(rows,
-        range: range, today: now, countedTypeIds: counted, dutyTypeIds: duty, shiftExcusedAsPresent: shiftExcused);
+    final rate = computeRate(
+      rows,
+      range: range,
+      today: now,
+      countedTypeIds: counted,
+      dutyTypeIds: duty,
+      shiftExcusedAsPresent: shiftExcused,
+    );
     if (rate.total == 0) return const NoticeReply(AssistantNotice.noData);
     final names = {for (final p in people) p.id!: _name(p)};
-    final lowest = people.length > 1
-        ? [
-            for (final e in ratesPerPerson(rows,
-                    range: range,
-                    today: now,
-                    countedTypeIds: counted,
-                    dutyTypeIds: duty,
-                    shiftExcusedAsPresent: shiftExcused)
-                .take(5))
-              if (names[e.personId] != null) (name: names[e.personId]!, percent: e.rate.percent!),
-          ]
-        : const <({String name, int percent})>[];
+    final lowest =
+        people.length > 1
+            ? [
+              for (final e in ratesPerPerson(
+                rows,
+                range: range,
+                today: now,
+                countedTypeIds: counted,
+                dutyTypeIds: duty,
+                shiftExcusedAsPresent: shiftExcused,
+              ).take(5))
+                if (names[e.personId] != null) (name: names[e.personId]!, percent: e.rate.percent!),
+            ]
+            : const <({String name, int percent})>[];
     return RateReply(
       subjectName: subjectName,
       isMe: subject is MeSubject,
@@ -257,9 +318,7 @@ class AssistantExecutor {
     if (day == null) {
       final today = dayOf(_clock());
       final upcoming = await ref.read(upcomingAttendancesProvider.future);
-      return upcoming
-          .where((a) => fits(a) && !dayOf(DateTime.parse(a.date).toLocal()).isBefore(today))
-          .firstOrNull;
+      return upcoming.where((a) => fits(a) && !dayOf(DateTime.parse(a.date).toLocal()).isBefore(today)).firstOrNull;
     }
     final onDay = await _events.getAttendancesByDate(day);
     return onDay.where(fits).firstOrNull;
@@ -275,7 +334,10 @@ class AssistantExecutor {
       onlyGroup = _group(groups, c.group!);
       if (onlyGroup == null) return NoticeReply(AssistantNotice.groupNotFound, subject: c.group);
     }
-    final players = {for (final p in await ref.read(playersProvider.future)) if (p.id != null) p.id!: p};
+    final players = {
+      for (final p in await ref.read(playersProvider.future))
+        if (p.id != null) p.id!: p,
+    };
     final statuses = await _reads.getEventStatuses(event!.id!);
     final counts = <int?, ({int present, int absent, int open})>{};
     final open = <String>[];
@@ -361,10 +423,9 @@ class AssistantExecutor {
 
   /// Werke for a title or a number ("Nr. 12"), best first.
   static List<Song> _matchSongs(String title, List<Song> songs) {
-    final number = int.tryParse(RegExp(r'^(?:nr\.?|no\.?|#)?\s*(\d+)$', caseSensitive: false)
-            .firstMatch(title.trim())
-            ?.group(1) ??
-        '');
+    final number = int.tryParse(
+      RegExp(r'^(?:nr\.?|no\.?|#)?\s*(\d+)$', caseSensitive: false).firstMatch(title.trim())?.group(1) ?? '',
+    );
     final byNumber = number == null ? <Song>[] : songs.where((s) => s.number == number).toList();
     return byNumber.isNotEmpty ? byNumber : bestMatches(title, songs, (s) => [s.name]);
   }
@@ -395,17 +456,23 @@ class AssistantExecutor {
   Future<List<CrossTenantPersonAttendance>> _ownUpcomingAcrossTenants(String? typeName) async {
     final all = await ref.read(allPersonAttendancesAcrossTenantsProvider.future);
     final now = _clock();
-    var rows = all
-        .where((a) =>
-            a.isMember &&
-            a.id != null &&
-            a.attendanceId != null &&
-            !overviewHasEnded(a, now: now) &&
-            !isUnassignedDutyAttendance(a))
-        .toList()
-      ..sort((a, b) => _when(a).compareTo(_when(b)));
+    var rows =
+        all
+            .where(
+              (a) =>
+                  a.isMember &&
+                  a.id != null &&
+                  a.attendanceId != null &&
+                  !overviewHasEnded(a, now: now) &&
+                  !isUnassignedDutyAttendance(a),
+            )
+            .toList()
+          ..sort((a, b) => _when(a).compareTo(_when(b)));
     if (typeName != null) {
-      final names = {for (final a in rows) if (a.attendanceType != null) a.attendanceType!.name};
+      final names = {
+        for (final a in rows)
+          if (a.attendanceType != null) a.attendanceType!.name,
+      };
       final best = bestMatches(typeName, names, (n) => [n]).toSet();
       if (best.isEmpty) return const [];
       rows = rows.where((a) => best.contains(a.attendanceType?.name)).toList();
@@ -452,28 +519,32 @@ class AssistantExecutor {
       );
       if (skip == StatusSkip.locked) locked++;
       if (skip != null) continue;
-      changes.add(StatusChange(
-        personAttendanceId: a.id!,
-        attendanceId: a.attendanceId!,
-        personName: name,
-        title: a.eventTitle,
-        date: _when(a),
-        oldStatus: a.status,
-        oldNotes: a.notes,
-        newStatus: target,
-        occupiesDuty: target != AttendanceStatus.present && a.isDutyType && occupiesDutyRaw(a.dutyState, a.status),
-        tenantId: a.tenantId,
-        tenantName: a.tenantName,
-      ));
+      changes.add(
+        StatusChange(
+          personAttendanceId: a.id!,
+          attendanceId: a.attendanceId!,
+          personName: name,
+          title: a.eventTitle,
+          date: _when(a),
+          oldStatus: a.status,
+          oldNotes: a.notes,
+          newStatus: target,
+          occupiesDuty: target != AttendanceStatus.present && a.isDutyType && occupiesDutyRaw(a.dutyState, a.status),
+          tenantId: a.tenantId,
+          tenantName: a.tenantName,
+        ),
+      );
     }
-    return _statusPreview(StatusPlan(
-      self: true,
-      status: target,
-      reason: c.reason,
-      changes: changes,
-      skippedLocked: locked,
-      skippedWindow: window,
-    ));
+    return _statusPreview(
+      StatusPlan(
+        self: true,
+        status: target,
+        reason: c.reason,
+        changes: changes,
+        skippedLocked: locked,
+        skippedWindow: window,
+      ),
+    );
   }
 
   AssistantReply _statusPreview(StatusPlan plan) {
@@ -494,9 +565,10 @@ class AssistantExecutor {
       return g == null ? _name(p) : '${_name(p)} · $g';
     }
 
-    return ChoiceReply(query: query, options: [
-      for (final p in matches.take(6)) (label: label(p), command: command(p)),
-    ]);
+    return ChoiceReply(
+      query: query,
+      options: [for (final p in matches.take(6)) (label: label(p), command: command(p))],
+    );
   }
 
   /// Status of others (leaders): the rows of the Termin page.
@@ -538,9 +610,11 @@ class AssistantExecutor {
     List<StatusRow> rows;
     if (c.period != null) {
       final range = resolvePeriod(c.period!, now, _seasonStart);
-      rows = (await _reads.getStatusRows(personIds: ids.toList(), range: range))
-          .where((r) => type == null || r.typeId == type.id)
-          .toList();
+      rows =
+          (await _reads.getStatusRows(
+            personIds: ids.toList(),
+            range: range,
+          )).where((r) => type == null || r.typeId == type.id).toList();
     } else {
       final event = await _findEvent(c.event!, type);
       if (event?.id == null) return const NoticeReply(AssistantNotice.noEvent);
@@ -563,28 +637,26 @@ class AssistantExecutor {
       if (r.status == target) continue;
       final p = byId[r.personId];
       if (p == null) continue;
-      changes.add(StatusChange(
-        personAttendanceId: r.id,
-        attendanceId: r.attendanceId,
-        personName: _name(p),
-        title: title(r),
-        date: r.date,
-        oldStatus: r.status,
-        oldNotes: r.notes,
-        newStatus: target,
-      ));
+      changes.add(
+        StatusChange(
+          personAttendanceId: r.id,
+          attendanceId: r.attendanceId,
+          personName: _name(p),
+          title: title(r),
+          date: r.date,
+          oldStatus: r.status,
+          oldNotes: r.notes,
+          newStatus: target,
+        ),
+      );
     }
     changes.sort((a, b) {
       final d = a.date.compareTo(b.date);
       return d != 0 ? d : a.personName.compareTo(b.personName);
     });
-    return _statusPreview(StatusPlan(
-      self: false,
-      status: target,
-      reason: c.reason,
-      changes: changes,
-      skippedWindow: window,
-    ));
+    return _statusPreview(
+      StatusPlan(self: false, status: target, reason: c.reason, changes: changes, skippedWindow: window),
+    );
   }
 
   static String _day(DateTime d) =>
@@ -613,8 +685,12 @@ class AssistantExecutor {
       // per row by the account (ownAcrossTenants), like the Übersicht does.
       if (status == AttendanceStatus.present) {
         for (final c in plan.changes) {
-          await _signs.signIn(c.personAttendanceId, SignInType.fromStatus(c.oldStatus),
-              notes: plan.reason ?? '', ownAcrossTenants: true);
+          await _signs.signIn(
+            c.personAttendanceId,
+            SignInType.fromStatus(c.oldStatus),
+            notes: plan.reason ?? '',
+            ownAcrossTenants: true,
+          );
           count++;
         }
       } else {
@@ -633,10 +709,14 @@ class AssistantExecutor {
           );
           count += entry.value.length;
           // Like "Meine Termine": a cancelled own duty asks for a substitute.
-          final duty = entry.key == null || entry.key == _tenantId
-              ? _duty
-              : ref.read(dutyRepositoryForTenantProvider(entry.key));
-          for (final id in {for (final c in entry.value) if (c.occupiesDuty) c.attendanceId}) {
+          final duty =
+              entry.key == null || entry.key == _tenantId
+                  ? _duty
+                  : ref.read(dutyRepositoryForTenantProvider(entry.key));
+          for (final id in {
+            for (final c in entry.value)
+              if (c.occupiesDuty) c.attendanceId,
+          }) {
             unawaited(duty.notify(DutyNotifyType.understaffed, id));
           }
         }
@@ -700,26 +780,29 @@ class AssistantExecutor {
     if (!absenceInWindow(c.from, c.to, now)) return const NoticeReply(AssistantNotice.absenceOutOfRange);
 
     // Own absence: only the Termine "Meine Termine" lists (like the sheet).
-    final onlyIds = self
-        ? absenceCandidates(await ref.read(signoutDataProvider.future), useDutyView: false)
-            .map((a) => a.id)
-            .whereType<String>()
-            .toSet()
-        : null;
+    final onlyIds =
+        self
+            ? absenceCandidates(
+              await ref.read(signoutDataProvider.future),
+              useDutyView: false,
+            ).map((a) => a.id).whereType<String>().toSet()
+            : null;
     final rows = PlayerAbsenceRepository.limitToIds(
       await _absences.upcomingToExcuse(personId: person!.id!, fromDate: _iso(c.from), untilDate: _iso(c.to)),
       onlyIds,
     );
-    return AbsencePreviewReply(AbsencePlan(
-      personId: person.id!,
-      personName: _name(person),
-      isMe: self,
-      from: c.from,
-      to: c.to,
-      reason: c.reason ?? l10nWithoutContext.assistantAbsenceDefaultReason,
-      affected: rows.length,
-      onlyIds: onlyIds,
-    ));
+    return AbsencePreviewReply(
+      AbsencePlan(
+        personId: person.id!,
+        personName: _name(person),
+        isMe: self,
+        from: c.from,
+        to: c.to,
+        reason: c.reason ?? l10nWithoutContext.assistantAbsenceDefaultReason,
+        affected: rows.length,
+        onlyIds: onlyIds,
+      ),
+    );
   }
 
   void _refreshAbsences(int personId) {
@@ -786,9 +869,10 @@ class AssistantExecutor {
   Future<AssistantReply> _createPreview(CreateEventsCommand c) async {
     final types = (await _types()).where((t) => t.visible && t.id != null).toList();
     if (types.isEmpty) return const NoticeReply(AssistantNotice.noType);
-    final type = c.typeId != null
-        ? types.where((t) => t.id == c.typeId).firstOrNull
-        : c.typeName != null
+    final type =
+        c.typeId != null
+            ? types.where((t) => t.id == c.typeId).firstOrNull
+            : c.typeName != null
             ? _type(types, c.typeName)
             : (types.length == 1 ? types.first : null);
     if (type == null) {
@@ -816,16 +900,18 @@ class AssistantExecutor {
     };
     final free = days.where((d) => !taken.contains(d)).toList();
     if (free.isEmpty) return const NoticeReply(AssistantNotice.eventsExist);
-    return CreatePreviewReply(CreatePlan(
-      type: type,
-      days: free,
-      title: c.title,
-      place: type.placeEnabled ? c.place : null,
-      startTime: c.startTime,
-      endTime: c.endTime,
-      skippedExisting: days.where(taken.contains).toList(),
-      skippedWindow: window,
-    ));
+    return CreatePreviewReply(
+      CreatePlan(
+        type: type,
+        days: free,
+        title: c.title,
+        place: type.placeEnabled ? c.place : null,
+        startTime: c.startTime,
+        endTime: c.endTime,
+        skippedExisting: days.where(taken.contains).toList(),
+        skippedWindow: window,
+      ),
+    );
   }
 
   /// Creates the confirmed Termine through the shared create writer (same
@@ -836,14 +922,16 @@ class AssistantExecutor {
     if (writer.tenant?.id == null || writer.tenant!.id != _tenantId) throw StateError('Tenant changed');
     // SOL_FIX2: the create permission is checked again in the write path.
     if (!await _mayCreate()) throw StateError('No create permission');
-    final ids = await writer.create(AttendanceCreateInput(
-      type: plan.type,
-      dates: plan.days,
-      typeInfo: plan.title,
-      startTime: plan.startTime,
-      endTime: plan.endTime,
-      place: plan.place,
-    ));
+    final ids = await writer.create(
+      AttendanceCreateInput(
+        type: plan.type,
+        dates: plan.days,
+        typeInfo: plan.title,
+        startTime: plan.startTime,
+        endTime: plan.endTime,
+        place: plan.place,
+      ),
+    );
     _refreshEvents();
     return ids;
   }
@@ -869,21 +957,24 @@ class AssistantExecutor {
     final oldStart = _hm(a.startTime ?? type?.startTime);
     final oldEnd = _hm(a.endTime ?? type?.endTime);
     final newStart = c.startTime ?? oldStart;
-    final newEnd = c.endTime ??
+    final newEnd =
+        c.endTime ??
         (c.startTime != null && oldStart != null ? shiftedEndTime(oldStart, oldEnd, c.startTime!) ?? oldEnd : oldEnd);
     if (newDay == oldDay && newStart == oldStart && newEnd == oldEnd) {
       return const NoticeReply(AssistantNotice.nothingToChange);
     }
-    return MovePreviewReply(MovePlan(
-      before: a,
-      title: _title(a, types),
-      oldDay: oldDay,
-      newDay: newDay,
-      oldStart: oldStart,
-      oldEnd: oldEnd,
-      newStart: newStart,
-      newEnd: newEnd,
-    ));
+    return MovePreviewReply(
+      MovePlan(
+        before: a,
+        title: _title(a, types),
+        oldDay: oldDay,
+        newDay: newDay,
+        oldStart: oldStart,
+        oldEnd: oldEnd,
+        newStart: newStart,
+        newEnd: newEnd,
+      ),
+    );
   }
 
   /// Moves the Termin like "Datum ändern": deadline and checklist due dates
@@ -920,11 +1011,15 @@ class AssistantExecutor {
     if (type != null) {
       if (plan.movesDay) {
         final rows = await _events.getPersonAttendancesForAttendances([id]);
-        final before = {for (final r in rows) if (r.id != null) r.id!: r};
+        final before = {
+          for (final r in rows)
+            if (r.id != null) r.id!: r,
+        };
         final updates = dateChangeStatusUpdates(
           rows: [
             for (final r in rows)
-              if (r.id != null && r.personId != null) (id: r.id!, personId: r.personId!, status: r.status, notes: r.notes),
+              if (r.id != null && r.personId != null)
+                (id: r.id!, personId: r.personId!, status: r.status, notes: r.notes),
           ],
           absences: absences,
           newDay: normalized,
@@ -984,7 +1079,8 @@ class AssistantExecutor {
       }
     }
     if (picked.isEmpty) return NoticeReply(AssistantNotice.songsNotFound, subject: notFound.join(', '));
-    final before = await loadAttendanceSongEntries(
+    final before =
+        await loadAttendanceSongEntries(
           repo: _events,
           songsFuture: Future.value(songs),
           conductorsFuture: ref.read(conductorsProvider.future),
@@ -993,25 +1089,38 @@ class AssistantExecutor {
         const <SongHistoryEntry>[];
     SongHistoryEntry entry(Song s) =>
         before.where((e) => e.songId == s.id).firstOrNull ?? SongHistoryEntry(songId: s.id!, songName: s.displayName);
-    final after = c.replace
-        ? [for (final s in picked) entry(s)]
-        : [...before, for (final s in picked) if (!before.any((e) => e.songId == s.id)) entry(s)];
+    final after =
+        c.replace
+            ? [for (final s in picked) entry(s)]
+            : [
+              ...before,
+              for (final s in picked)
+                if (!before.any((e) => e.songId == s.id)) entry(s),
+            ];
     final beforeIds = {for (final e in before) e.songId};
     final afterIds = {for (final e in after) e.songId};
-    final added = [for (final e in after) if (!beforeIds.contains(e.songId)) e.songName];
-    final removed = [for (final e in before) if (!afterIds.contains(e.songId)) e.songName];
+    final added = [
+      for (final e in after)
+        if (!beforeIds.contains(e.songId)) e.songName,
+    ];
+    final removed = [
+      for (final e in before)
+        if (!afterIds.contains(e.songId)) e.songName,
+    ];
     if (added.isEmpty && removed.isEmpty) return const NoticeReply(AssistantNotice.nothingToChange);
-    return SongsPreviewReply(SongsPlan(
-      attendanceId: a.id!,
-      title: _title(a, types),
-      date: _localDay(a),
-      historyDate: a.date,
-      before: before,
-      after: after,
-      added: added,
-      removed: removed,
-      notFound: notFound,
-    ));
+    return SongsPreviewReply(
+      SongsPlan(
+        attendanceId: a.id!,
+        title: _title(a, types),
+        date: _localDay(a),
+        historyDate: a.date,
+        before: before,
+        after: after,
+        added: added,
+        removed: removed,
+        notFound: notFound,
+      ),
+    );
   }
 
   void _refreshSongs(int attendanceId) {
@@ -1031,5 +1140,296 @@ class AssistantExecutor {
   Future<void> revertSongs(SongsPlan plan) async {
     await syncAttendanceSongHistory(_events, plan.attendanceId, plan.historyDate, plan.before);
     _refreshSongs(plan.attendanceId);
+  }
+
+  // -------------------------------------------------------------------------
+  // Package 4: tasks, Werke of a Termin, duties, drafts.
+
+  static String _isoDay(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  Future<AssistantReply> _myTasks() async {
+    final tasks =
+        (await ref.read(myTasksProvider.future)).where((t) => t.id != null && t.status != 'completed').toList()..sort(
+          (a, b) => compareTasksByDue((dueDate: a.dueDate, title: a.title), (dueDate: b.dueDate, title: b.title)),
+        );
+    if (tasks.isEmpty) return const NoticeReply(AssistantNotice.noTasks);
+    return TasksReply([
+      for (final t in tasks.take(10))
+        (id: t.id!, title: t.title, dueDate: t.dueDate, priority: t.priority, inProgress: t.status == 'in_progress'),
+    ]);
+  }
+
+  Future<AssistantReply> _eventSongs(EventSongsCommand c) async {
+    final role = ref.read(currentRoleProvider);
+    if (!(role.isConductor || role.isHelperRole)) {
+      // Members: the Werke of their own Termine ("Aktuelle Werke").
+      final day = resolveEventDay(c.event, _clock());
+      final own =
+          (await _ownUpcomingAcrossTenants(
+            c.typeName,
+          )).where((a) => a.tenantId == _tenantId && (day == null || dayOf(_when(a)) == day)).toList();
+      final a = own.firstOrNull;
+      if (a == null) return const NoticeReply(AssistantNotice.noEvent);
+      final songs = (await ref.read(signoutAttendanceSongsProvider.future))[a.attendanceId] ?? const [];
+      if (songs.isEmpty) return const NoticeReply(AssistantNotice.noSongsYet);
+      return EventSongsReply(
+        attendanceId: a.attendanceId!,
+        title: a.eventTitle,
+        date: dayOf(_when(a)),
+        songs: [for (final s in songs) s.name],
+        linkToEvent: false,
+      );
+    }
+    final types = await _types();
+    final a = await _findEvent(c.event, _type(types, c.typeName));
+    if (a?.id == null) return const NoticeReply(AssistantNotice.noEvent);
+    final entries =
+        await loadAttendanceSongEntries(
+          repo: _events,
+          songsFuture: ref.read(songsProvider.future),
+          conductorsFuture: ref.read(conductorsProvider.future),
+          attendanceId: a!.id!,
+        ) ??
+        const <SongHistoryEntry>[];
+    if (entries.isEmpty) return const NoticeReply(AssistantNotice.noSongsYet);
+    return EventSongsReply(
+      attendanceId: a.id!,
+      title: _title(a, types),
+      date: _localDay(a),
+      songs: [for (final e in entries) e.songName],
+    );
+  }
+
+  Future<AssistantReply> _taskPreview(CreateTaskCommand c) async {
+    if (c.dueDate != null && !taskDueInWindow(c.dueDate!, _clock())) {
+      return const NoticeReply(AssistantNotice.taskDueOutOfRange);
+    }
+    TaskPlan plan({int? id, String? name, bool isMe = false}) => TaskPlan(
+      title: c.title,
+      priority: (c.priority ?? TaskPriority.medium).name,
+      personId: id,
+      personName: name,
+      isMe: isMe,
+      dueDate: c.dueDate == null ? null : _isoDay(c.dueDate!),
+    );
+    final who = c.who;
+    switch (who) {
+      case null:
+        return TaskPreviewReply(plan());
+      case MeSubject():
+        final own = await ref.read(currentSelfServicePlayerProvider.future);
+        if (own?.id == null) return const NoticeReply(AssistantNotice.noOwnPerson);
+        return TaskPreviewReply(plan(id: own!.id, name: _name(own), isMe: true));
+      case PersonIdSubject(:final personId):
+        final p = (await _activePlayers()).where((p) => p.id == personId).firstOrNull;
+        if (p == null) return const NoticeReply(AssistantNotice.personNotFound);
+        return TaskPreviewReply(plan(id: p.id, name: _name(p)));
+      case PersonSubject(:final name):
+        final matches = bestMatches(name, await _activePlayers(), (p) => personNames(p.firstName, p.lastName));
+        if (matches.isEmpty) return NoticeReply(AssistantNotice.personNotFound, subject: name);
+        if (matches.length > 1) {
+          final groups = await ref.read(groupsProvider.future);
+          String label(Person p) {
+            final g = groups.where((g) => g.id == p.instrument).map((g) => g.name).firstOrNull;
+            return g == null ? _name(p) : '${_name(p)} · $g';
+          }
+
+          return ChoiceReply(
+            query: name,
+            options: [for (final p in matches.take(6)) (label: label(p), command: c.withWho(PersonIdSubject(p.id!)))],
+          );
+        }
+        return TaskPreviewReply(plan(id: matches.first.id, name: _name(matches.first)));
+      default:
+        return const NoticeReply(AssistantNotice.noRights);
+    }
+  }
+
+  void _refreshTasks() {
+    ref.invalidate(teamTasksProvider);
+    ref.invalidate(myTasksProvider);
+    ref.invalidate(rdTeamTasksProvider);
+  }
+
+  /// Creates the task like the task sheet, WITHOUT the push (it goes out
+  /// only via [notifyTask]). Returns the id of the new task.
+  Future<String> applyTask(TaskPlan plan) async {
+    // Rights checked again in the write path (role and Teamorganisation).
+    if (!ref.read(isTeamLeaderProvider) || !await _teamOrgOn()) throw StateError('No task rights');
+    final created = await _tasks.createTask(
+      TeamTask(
+        title: plan.title,
+        responsiblePersonId: plan.personId,
+        dueDate: plan.dueDate,
+        priority: plan.priority,
+        status: 'open',
+      ),
+    );
+    _refreshTasks();
+    if (created.id == null) throw StateError('Task without id');
+    return created.id!;
+  }
+
+  /// "Rückgängig": deletes exactly the task this chat created.
+  Future<void> revertTask(String taskId) async {
+    await _tasks.deleteTask(taskId);
+    _refreshTasks();
+  }
+
+  /// "Benachrichtigen": the push of the task sheet to the responsible person.
+  Future<void> notifyTask(String taskId) => _team.notifyTeam({'type': 'task_assigned', 'taskId': taskId});
+
+  Future<AssistantReply> _dutyPreview(TakeDutyCommand c) async {
+    final own = await ref.read(currentSelfServicePlayerProvider.future);
+    if (own?.id == null) return const NoticeReply(AssistantNotice.noOwnPerson);
+    final dutyTypes = (await _types()).where((t) => t.dutyMode && t.id != null).toList();
+    if (dutyTypes.isEmpty) return const NoticeReply(AssistantNotice.noDuty);
+    final asked = _type(dutyTypes, c.typeName);
+    final now = _clock();
+    final day = resolveEventDay(c.event, now);
+    final from = day ?? dayOf(now);
+    final until =
+        day == null
+            ? from.add(const Duration(days: assistantFutureDays))
+            : DateTime(day.year, day.month, day.day, 23, 59, 59);
+    var termine = await _duty.getUpcomingDutyTermine(asked == null ? dutyTypes : [asked], from: from, until: until);
+    if (asked == null && c.typeName != null) {
+      // "Aufbau" may be the title of a Termin, not the name of its type.
+      final byTitle = bestMatches(c.typeName!, termine, (t) => [t.title]);
+      if (byTitle.isNotEmpty) termine = byTitle;
+    }
+    termine = termine.where((t) => t.attendance.id != null && (day == null || _localDay(t.attendance) == day)).toList();
+    bool mine(DutyTermin t) => t.persons.any((p) => p.personId == own!.id);
+    // The next one: prefer an own Termin with a free place.
+    final t =
+        termine.where((t) => mine(t) && t.open > 0).firstOrNull ??
+        termine.where(mine).firstOrNull ??
+        termine.firstOrNull;
+    if (t == null) return const NoticeReply(AssistantNotice.noDuty);
+    if (_locked(t.attendance)) return const NoticeReply(AssistantNotice.eventLocked);
+    final row = t.persons.where((p) => p.personId == own!.id && p.id != null).firstOrNull;
+    final skip = dutySkip(
+      selfSignup: t.type.dutySelfSignup,
+      isMember: row != null,
+      ownDutyState: row?.dutyState,
+      ownStatus: row?.status ?? AttendanceStatus.neutral,
+      required: t.required,
+      occupied: t.occupied,
+    );
+    switch (skip) {
+      case DutySkip.notSelf:
+        return const NoticeReply(AssistantNotice.dutyNotSelf);
+      case DutySkip.notMember:
+        return const NoticeReply(AssistantNotice.dutyNotMember);
+      case DutySkip.already:
+        return const NoticeReply(AssistantNotice.dutyAlready);
+      case DutySkip.full:
+        return const NoticeReply(AssistantNotice.dutyFull);
+      case null:
+        break;
+    }
+    return DutyPreviewReply(
+      DutyPlan(
+        attendanceId: t.attendance.id!,
+        personAttendanceId: row!.id!,
+        title: t.title,
+        date: _localDay(t.attendance),
+        startTime: t.attendance.startTime ?? t.type.startTime,
+        required: t.required,
+        occupied: t.occupied,
+        oldStatus: row.status,
+        oldNotes: row.notes,
+      ),
+    );
+  }
+
+  void _refreshDuty(int attendanceId) {
+    ref.invalidate(upcomingDutyTermineProvider);
+    ref.invalidate(dutyTermineByIdProvider);
+    ref.invalidate(myDutyOverviewProvider);
+    ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
+    ref.invalidate(signoutDataProvider);
+    _refreshEvents(attendanceId);
+  }
+
+  /// "Ich übernehme": the RPC `duty_take` checks membership, places and
+  /// the self sign-up again on the server (first one wins).
+  Future<DutyTakeResult> applyDuty(DutyPlan plan) async {
+    final result = await _duty.take(plan.attendanceId);
+    _refreshDuty(plan.attendanceId);
+    return result;
+  }
+
+  /// "Rückgängig": the own row is free again with its status before; when
+  /// the sign-up had filled the last place, the stand-ins are told again.
+  Future<void> revertDuty(DutyPlan plan) async {
+    await _events.updatePersonAttendance(plan.personAttendanceId, {
+      'duty_state': null,
+      'duty_assigned_by': null,
+      'duty_assigned_at': null,
+      'status': plan.oldStatus.value,
+      'notes': plan.oldNotes ?? '',
+    });
+    if (plan.fillsLast) await _duty.notify(DutyNotifyType.understaffed, plan.attendanceId);
+    _refreshDuty(plan.attendanceId);
+  }
+
+  /// Nothing is saved: the page opens "Person anlegen" with these values.
+  Future<AssistantReply> _personDraft(NewPersonCommand c) async {
+    Group? group;
+    if (c.group != null) group = _group(await ref.read(groupsProvider.future), c.group!);
+    final b = c.birthday;
+    final validBirthday = b != null && b.year >= 1900 && !dayOf(b).isAfter(dayOf(_clock()));
+    return PersonDraftReply(
+      firstName: c.firstName,
+      lastName: c.lastName,
+      groupId: group?.id,
+      groupName: group?.name,
+      missingGroup: c.group != null && group == null ? c.group : null,
+      birthday: validBirthday ? dayOf(b) : null,
+    );
+  }
+
+  /// Nothing is sent: the page opens the compose page with these
+  /// recipients; sending stays a manual step there.
+  Future<AssistantReply> _messageDraft(DraftMessageCommand c) async {
+    Group? group;
+    if (c.group != null) {
+      group = _group(await ref.read(groupsProvider.future), c.group!);
+      if (group == null) return NoticeReply(AssistantNotice.groupNotFound, subject: c.group);
+    }
+    var people =
+        (await _activePlayers())
+            .where((p) => !p.paused && !p.pending && (group == null || p.instrument == group.id))
+            .toList();
+    Attendance? event;
+    String? eventTitle;
+    String? eventTime;
+    if (c.event != null) {
+      final types = await _types();
+      event = await _findEvent(c.event!, _type(types, c.typeName));
+      if (event?.id == null) return const NoticeReply(AssistantNotice.noEvent);
+      eventTitle = _title(event!, types);
+      eventTime = event.startTime ?? types.where((t) => t.id == event!.typeId).firstOrNull?.startTime;
+      // Only those on the Termin; with [onlyOpen] only those without answer.
+      final statuses = await _reads.getEventStatuses(event.id!);
+      final onEvent = {
+        for (final s in statuses)
+          if (!c.onlyOpen || s.status == AttendanceStatus.neutral) s.personId,
+      };
+      people = people.where((p) => onEvent.contains(p.id)).toList();
+    }
+    if (people.isEmpty) return const NoticeReply(AssistantNotice.noRecipients);
+    return MessageDraftReply(
+      playerIds: [for (final p in people) p.id!],
+      groupName: group?.name,
+      onlyOpen: c.onlyOpen,
+      attendanceId: event?.id,
+      eventTitle: eventTitle,
+      eventDate: event == null ? null : _localDay(event),
+      eventTime: eventTime == null ? null : _hm(eventTime),
+      note: c.note,
+    );
   }
 }

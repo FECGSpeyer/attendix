@@ -91,6 +91,33 @@ enum AssistantNotice {
 
   /// Entschuldigt / Verspätung only with a reason (like the sign-out sheet).
   excuseNeedsReason,
+
+  /// No open task of the person.
+  noTasks,
+
+  /// The Termin has no Werke yet.
+  noSongsYet,
+
+  /// Due date in the past or more than 6 months ahead.
+  taskDueOutOfRange,
+
+  /// No duty Termin found for the question.
+  noDuty,
+
+  /// The duty type does not allow signing up yourself.
+  dutyNotSelf,
+
+  /// The person is not on the duty Termin.
+  dutyNotMember,
+
+  /// The person already has this duty.
+  dutyAlready,
+
+  /// All places of the duty are taken.
+  dutyFull,
+
+  /// Nobody to write to (group empty, everyone answered).
+  noRecipients,
 }
 
 sealed class AssistantReply {
@@ -411,6 +438,137 @@ class SongsPlan {
   final List<String> notFound;
 }
 
+// ---------------------------------------------------------------------------
+// Package 4.
+
+/// "Welche Aufgaben sind bei mir offen?"
+class TasksReply extends AssistantReply {
+  const TasksReply(this.tasks);
+  final List<({String id, String title, String? dueDate, String priority, bool inProgress})> tasks;
+}
+
+/// "Welche Werke singen wir Sonntag?"
+class EventSongsReply extends AssistantReply {
+  const EventSongsReply({
+    required this.attendanceId,
+    required this.title,
+    required this.date,
+    required this.songs,
+    this.linkToEvent = true,
+  });
+
+  final int attendanceId;
+  final String title;
+  final DateTime date;
+  final List<String> songs;
+
+  /// The page of the Termin can be opened (not for members' own rows).
+  final bool linkToEvent;
+}
+
+/// A new task.
+class TaskPlan {
+  const TaskPlan({
+    required this.title,
+    required this.priority,
+    this.personId,
+    this.personName,
+    this.isMe = false,
+    this.dueDate,
+  });
+
+  final String title;
+
+  /// 'low' | 'medium' | 'high'
+  final String priority;
+  final int? personId;
+  final String? personName;
+  final bool isMe;
+
+  /// YYYY-MM-DD
+  final String? dueDate;
+}
+
+/// The person takes over a duty.
+class DutyPlan {
+  const DutyPlan({
+    required this.attendanceId,
+    required this.personAttendanceId,
+    required this.title,
+    required this.date,
+    this.startTime,
+    required this.required,
+    required this.occupied,
+    required this.oldStatus,
+    this.oldNotes,
+  });
+
+  final int attendanceId;
+  final String personAttendanceId;
+  final String title;
+  final DateTime date;
+  final String? startTime;
+  final int required;
+  final int occupied;
+
+  /// Own row before (for undo).
+  final AttendanceStatus oldStatus;
+  final String? oldNotes;
+
+  /// This sign-up fills the last place (undo tells the stand-ins again).
+  bool get fillsLast => occupied + 1 >= required;
+}
+
+/// "Neues Mitglied Anna Müller": opens the normal form prefilled, nothing
+/// is saved in the chat.
+class PersonDraftReply extends AssistantReply {
+  const PersonDraftReply({
+    required this.firstName,
+    this.lastName,
+    this.groupId,
+    this.groupName,
+    this.missingGroup,
+    this.birthday,
+  });
+
+  final String firstName;
+  final String? lastName;
+  final int? groupId;
+  final String? groupName;
+
+  /// Group named in the chat that does not exist (the form keeps its default).
+  final String? missingGroup;
+  final DateTime? birthday;
+}
+
+/// "Erinner die Tenöre an Sonntag": a draft for the normal compose page,
+/// sending stays a manual step there.
+class MessageDraftReply extends AssistantReply {
+  const MessageDraftReply({
+    required this.playerIds,
+    this.groupName,
+    this.onlyOpen = false,
+    this.attendanceId,
+    this.eventTitle,
+    this.eventDate,
+    this.eventTime,
+    this.note,
+  });
+
+  final List<int> playerIds;
+
+  /// Null: everyone.
+  final String? groupName;
+  final bool onlyOpen;
+  final int? attendanceId;
+  final String? eventTitle;
+  final DateTime? eventDate;
+  final String? eventTime;
+
+  /// The person's own words.
+  final String? note;
+}
+
 /// Preview of a change with "Speichern" / "Abbrechen".
 sealed class ActionPreviewReply extends AssistantReply {
   const ActionPreviewReply(this.state);
@@ -474,7 +632,32 @@ class SongsPreviewReply extends ActionPreviewReply {
   bool get needsSecondConfirm => false;
 }
 
+class TaskPreviewReply extends ActionPreviewReply {
+  const TaskPreviewReply(this.plan, {ActionState state = ActionState.pending}) : super(state);
+  final TaskPlan plan;
+
+  @override
+  TaskPreviewReply withState(ActionState state) => TaskPreviewReply(plan, state: state);
+
+  @override
+  bool get needsSecondConfirm => false;
+}
+
+class DutyPreviewReply extends ActionPreviewReply {
+  const DutyPreviewReply(this.plan, {ActionState state = ActionState.pending}) : super(state);
+  final DutyPlan plan;
+
+  @override
+  DutyPreviewReply withState(ActionState state) => DutyPreviewReply(plan, state: state);
+
+  @override
+  bool get needsSecondConfirm => false;
+}
+
 enum UndoState { available, working, undone, failed }
+
+/// The push to the responsible person of a new task: only when tapped.
+enum NotifyState { none, available, working, sent, failed }
 
 /// Result of a saved change with "Rückgängig".
 class ActionDoneReply extends AssistantReply {
@@ -487,6 +670,10 @@ class ActionDoneReply extends AssistantReply {
     this.movePlan,
     this.moveRestore = const [],
     this.songsPlan,
+    this.taskPlan,
+    this.taskId,
+    this.notify = NotifyState.none,
+    this.dutyPlan,
     required this.count,
     this.undo = UndoState.available,
   });
@@ -506,21 +693,35 @@ class ActionDoneReply extends AssistantReply {
   /// Rows the move changed, with their status before.
   final List<RestoreRow> moveRestore;
   final SongsPlan? songsPlan;
+  final TaskPlan? taskPlan;
+
+  /// Id of the new task (undo deletes exactly this one).
+  final String? taskId;
+  final NotifyState notify;
+  final DutyPlan? dutyPlan;
 
   /// Rows changed / Termine created.
   final int count;
   final UndoState undo;
 
-  ActionDoneReply withUndo(UndoState undo) => ActionDoneReply(
-        statusPlan: statusPlan,
-        absencePlan: absencePlan,
-        absence: absence,
-        createPlan: createPlan,
-        createdIds: createdIds,
-        movePlan: movePlan,
-        moveRestore: moveRestore,
-        songsPlan: songsPlan,
-        count: count,
-        undo: undo,
-      );
+  ActionDoneReply withUndo(UndoState undo) => _copy(undo: undo);
+
+  ActionDoneReply withNotify(NotifyState notify) => _copy(notify: notify);
+
+  ActionDoneReply _copy({UndoState? undo, NotifyState? notify}) => ActionDoneReply(
+    statusPlan: statusPlan,
+    absencePlan: absencePlan,
+    absence: absence,
+    createPlan: createPlan,
+    createdIds: createdIds,
+    movePlan: movePlan,
+    moveRestore: moveRestore,
+    songsPlan: songsPlan,
+    taskPlan: taskPlan,
+    taskId: taskId,
+    notify: notify ?? this.notify,
+    dutyPlan: dutyPlan,
+    count: count,
+    undo: undo ?? this.undo,
+  );
 }

@@ -16,6 +16,11 @@
 // same preview / confirm / undo flow. Other changes (`category: "change"`,
 // e.g. cancelling or deleting a Termin) are answered with "kann ich noch
 // nicht".
+// Package 4 reads the own open tasks (`my_tasks`) and the Werke of a Termin
+// (`event_songs`), creates a task (`create_task`) and takes over an own duty
+// (`take_duty`), both with preview / confirm / undo. `new_person` and
+// `draft_message` never save anything: the app opens the normal form or the
+// compose page prefilled, saving or sending stays a manual step there.
 
 export type Unit = "day" | "week" | "month" | "year";
 
@@ -49,6 +54,8 @@ export type Who =
   | { kind: "me" }
   | { kind: "person"; name: string }
   | { kind: "group"; name: string };
+
+export type Priority = "low" | "medium" | "high";
 
 export type Status = "present" | "excused" | "late_excused" | "late" | "absent" | "neutral";
 
@@ -87,6 +94,19 @@ export type Command =
     endTime?: string;
   }
   | { command: "set_songs"; event: EventRef; typeName?: string; titles: string[]; mode: "add" | "replace" }
+  | { command: "my_tasks" }
+  | { command: "event_songs"; event: EventRef; typeName?: string }
+  | { command: "create_task"; title: string; who?: Who; dueDate?: string; priority?: Priority }
+  | { command: "take_duty"; event: EventRef; typeName?: string }
+  | { command: "new_person"; firstName: string; lastName?: string; group?: string; birthday?: string }
+  | {
+    command: "draft_message";
+    group?: string;
+    event?: EventRef;
+    typeName?: string;
+    note?: string;
+    onlyOpen?: boolean;
+  }
   | { command: "unsupported"; category: "change" | "other" };
 
 export const MAX_TEXT = 500;
@@ -99,6 +119,11 @@ export const MAX_REASON = 120;
 export const MAX_DATES = 20;
 /// At most this many Werke in one command.
 export const MAX_SONGS = 15;
+/// Title of a new task.
+export const MAX_TASK_TITLE = 120;
+/// Own words added to a message draft.
+export const MAX_NOTE = 300;
+const PRIORITIES = new Set<Priority>(["low", "medium", "high"]);
 const STATUSES = new Set<Status>(["present", "excused", "late_excused", "late", "absent", "neutral"]);
 
 const UNITS = new Set<Unit>(["day", "week", "month", "year"]);
@@ -402,6 +427,70 @@ export function validateCommand(raw: unknown): Command {
         ...(typeName ? { typeName } : {}),
       };
     }
+    case "my_tasks":
+      return { command: "my_tasks" };
+    case "event_songs": {
+      const e = raw.event === undefined || raw.event === null ? { type: "next" as const } : eventRef(raw.event);
+      if (!e) return UNSUPPORTED;
+      const typeName = optionalName(raw.typeName);
+      return { command: "event_songs", event: e, ...(typeName ? { typeName } : {}) };
+    }
+    case "create_task": {
+      const title = cleanText(raw.title, MAX_TASK_TITLE);
+      const hasWho = raw.who !== undefined && raw.who !== null;
+      const w = hasWho ? who(raw.who, false) : null;
+      const hasDue = raw.dueDate !== undefined && raw.dueDate !== null && raw.dueDate !== "";
+      const dueDate = hasDue ? isoDate(raw.dueDate) : null;
+      const hasPriority = raw.priority !== undefined && raw.priority !== null && raw.priority !== "";
+      const priority = raw.priority as Priority;
+      if (!title || (hasWho && !w) || (hasDue && !dueDate) || (hasPriority && !PRIORITIES.has(priority))) {
+        return UNSUPPORTED;
+      }
+      return {
+        command: "create_task",
+        title,
+        ...(w ? { who: w } : {}),
+        ...(dueDate ? { dueDate } : {}),
+        ...(hasPriority ? { priority } : {}),
+      };
+    }
+    case "take_duty": {
+      const e = raw.event === undefined || raw.event === null ? { type: "next" as const } : eventRef(raw.event);
+      if (!e) return UNSUPPORTED;
+      const typeName = optionalName(raw.typeName);
+      return { command: "take_duty", event: e, ...(typeName ? { typeName } : {}) };
+    }
+    case "new_person": {
+      const firstName = optionalName(raw.firstName);
+      const hasBirthday = raw.birthday !== undefined && raw.birthday !== null && raw.birthday !== "";
+      const birthday = hasBirthday ? isoDate(raw.birthday) : null;
+      if (!firstName || (hasBirthday && !birthday)) return UNSUPPORTED;
+      const lastName = optionalName(raw.lastName);
+      const group = optionalName(raw.group);
+      return {
+        command: "new_person",
+        firstName,
+        ...(lastName ? { lastName } : {}),
+        ...(group ? { group } : {}),
+        ...(birthday ? { birthday } : {}),
+      };
+    }
+    case "draft_message": {
+      const hasEvent = raw.event !== undefined && raw.event !== null;
+      const e = hasEvent ? eventRef(raw.event) : null;
+      if (hasEvent && !e) return UNSUPPORTED;
+      const group = optionalName(raw.group);
+      const typeName = optionalName(raw.typeName);
+      const note = cleanText(raw.note, MAX_NOTE) ?? undefined;
+      return {
+        command: "draft_message",
+        ...(group ? { group } : {}),
+        ...(e ? { event: e } : {}),
+        ...(typeName ? { typeName } : {}),
+        ...(note ? { note } : {}),
+        ...(e && raw.onlyOpen === true ? { onlyOpen: true } : {}),
+      };
+    }
     case "unsupported":
       return { command: "unsupported", category: raw.category === "change" ? "change" : "other" };
     default:
@@ -446,8 +535,14 @@ export const SYSTEM_PROMPT = [
   '9. {"command":"create_events","typeName"?:T,"dates":["YYYY-MM-DD",...],"startTime"?:"HH:mm","endTime"?:"HH:mm","title"?:"<title as written>","place"?:"<place as written>"} - create one or more NEW events ("leg jeden Mittwoch im Dezember eine Probe an", "Konzert am 20.12. um 17 Uhr"). Compute every date from today (max 20 dates).',
   '10. {"command":"move_event","event"?:E,"typeName"?:T,"toDate"?:"YYYY-MM-DD","startTime"?:"HH:mm","endTime"?:"HH:mm"} - move an EXISTING event to another day and/or time ("verschieb die Probe am Mittwoch auf Donnerstag", "die Probe am Sonntag beginnt um 10 Uhr"). E is the event as it is now; give at least one of toDate, startTime, endTime.',
   '11. {"command":"set_songs","event"?:E,"typeName"?:T,"titles":["<song title or number as written>",...],"mode":"add|replace"} - put songs / pieces (Werke) on an event (max 15). "replace" only when the user says these are THE songs or to replace the list, otherwise "add".',
-  '12. {"command":"unsupported","category":"change"} - any OTHER change (cancel or delete whole events, add or delete people, roles, settings, tasks, duties, send messages, delete anything). "Probe absagen" or "Termin fällt aus" for a whole event is this; signing a person out is set_status.',
-  '13. {"command":"unsupported","category":"other"} - anything else (chat, jokes, poems, general knowledge, other apps, unclear).',
+  '12. {"command":"my_tasks"} - which tasks (Aufgaben) are open for the user.',
+  '13. {"command":"event_songs","event"?:E,"typeName"?:T} - which songs / pieces (Werke) are on an event ("welche Werke singen wir Sonntag").',
+  '14. {"command":"create_task","title":"<the task as written, short>","who"?:W,"dueDate"?:"YYYY-MM-DD","priority"?:"low|medium|high"} - create a task ("Thomas klärt bis Freitag den Raum": title "Raum klären", who Thomas). W is me or a person (no group); leave who out when nobody is named.',
+  '15. {"command":"take_duty","event"?:E,"typeName"?:T} - the USER takes over / signs up for a duty or shift ("ich mache Sonntag den Aufbau", "ich übernehme den Dienst am Mittwoch"). Only the user, never other people.',
+  '16. {"command":"new_person","firstName":"<as written>","lastName"?:"<as written>","group"?:"<group>","birthday"?:"YYYY-MM-DD"} - add a new member ("neues Mitglied Anna Müller, Sopran, Geburtstag 3.4.2008").',
+  '17. {"command":"draft_message","group"?:"<group>","event"?:E,"typeName"?:T,"note"?:"<only the user\'s own extra words, short>","onlyOpen"?:true} - remind or write to a group / everyone ("erinner die Tenöre an Sonntag", "schreib allen, dass die Probe im Saal ist"). Leave group out for everyone; onlyOpen only for "who has not answered yet" with an event. Never invent text.',
+  '18. {"command":"unsupported","category":"change"} - any OTHER change (cancel or delete whole events, delete or archive people, roles, settings, edit or delete tasks, assign duties to others, send messages directly, delete anything). "Probe absagen" or "Termin fällt aus" for a whole event is this; signing a person out is set_status.',
+  '19. {"command":"unsupported","category":"other"} - anything else (chat, jokes, poems, general knowledge, other apps, unclear).',
   "Periods P (dates as YYYY-MM-DD, compute them from today in the user message only for type range):",
   '{"type":"last","unit":"day|week|month|year","count":N} e.g. "letzte 3 Monate" = last month 3;',
   '{"type":"this","unit":"week|month|year"}; {"type":"previous","unit":"week|month|year"} e.g. "im letzten Monat", "letztes Jahr";',
