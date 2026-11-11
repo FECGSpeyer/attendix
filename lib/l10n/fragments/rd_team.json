@@ -1,0 +1,46 @@
+{
+  "de": {
+    "rdTeam": {
+      "title": "Team",
+        "tabMeetings": "Besprechungen",
+      "planned": "Geplant",
+      "past": "Vergangen",
+      "topicsCount": "{count, plural, one {1 Thema} other {{count} Themen}}",
+      "noTopicsYet": "noch keine Themen",
+      "topics": "Themen",
+      "topicsHint": "Sammeln, was besprochen werden soll",
+      "newSuggestions": "{count, plural, one {1 neuer Vorschlag} other {{count} neue Vorschläge}}",
+      "suggestHint": "Deine Vorschläge und was daraus wurde",
+      "emptyTitle": "Noch keine Besprechung",
+      "emptyLeader": "Lege mit + die erste an. Themen sammelt ihr vorher, Ergebnisse und Aufgaben haltet ihr im Protokoll fest.",
+      "emptyMember": "Sobald die Leitung eine Besprechung plant, steht sie hier.",
+      "newMeeting": "Neue Besprechung",
+      "protocolPublished": "Protokoll freigegeben",
+      "protocolRead": "Protokoll lesen",
+      "chipTeam": "Team · {count}",
+      "emptyTeamTasks": "Im Team ist gerade nichts offen."
+    }
+  },
+  "en": {
+    "rdTeam": {
+      "title": "Team",
+        "tabMeetings": "Meetings",
+      "planned": "Planned",
+      "past": "Past",
+      "topicsCount": "{count, plural, one {1 topic} other {{count} topics}}",
+      "noTopicsYet": "no topics yet",
+      "topics": "Topics",
+      "topicsHint": "Collect what should be discussed",
+      "newSuggestions": "{count, plural, one {1 new suggestion} other {{count} new suggestions}}",
+      "suggestHint": "Your suggestions and what became of them",
+      "emptyTitle": "No meeting yet",
+      "emptyLeader": "Create the first one with +. Collect topics beforehand, record results and tasks in the minutes.",
+      "emptyMember": "As soon as the leaders plan a meeting, it shows up here.",
+      "newMeeting": "New meeting",
+      "protocolPublished": "Minutes published",
+      "protocolRead": "Read minutes",
+      "chipTeam": "Team · {count}",
+      "emptyTeamTasks": "Nothing is open in the team right now."
+    }
+  }
+}

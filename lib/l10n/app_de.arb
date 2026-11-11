@@ -12520,7 +12520,7 @@
   "@rdAdminTeam": {
     "description": "rdAdmin.team"
   },
-  "rdAdminTeamHint": "Aufgaben, Themen, Protokolle",
+  "rdAdminTeamHint": "Besprechungen und Aufgaben",
   "@rdAdminTeamHint": {
     "description": "rdAdmin.teamHint"
   },
@@ -14207,6 +14207,91 @@
   "rdTeacherNewTitle": "Neuer Lehrer",
   "@rdTeacherNewTitle": {
     "description": "rdTeacherNew.title"
+  },
+  "rdTeamChipTeam": "Team · {count}",
+  "@rdTeamChipTeam": {
+    "description": "rdTeam.chipTeam",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdTeamEmptyLeader": "Lege mit + die erste an. Themen sammelt ihr vorher, Ergebnisse und Aufgaben haltet ihr im Protokoll fest.",
+  "@rdTeamEmptyLeader": {
+    "description": "rdTeam.emptyLeader"
+  },
+  "rdTeamEmptyMember": "Sobald die Leitung eine Besprechung plant, steht sie hier.",
+  "@rdTeamEmptyMember": {
+    "description": "rdTeam.emptyMember"
+  },
+  "rdTeamEmptyTeamTasks": "Im Team ist gerade nichts offen.",
+  "@rdTeamEmptyTeamTasks": {
+    "description": "rdTeam.emptyTeamTasks"
+  },
+  "rdTeamEmptyTitle": "Noch keine Besprechung",
+  "@rdTeamEmptyTitle": {
+    "description": "rdTeam.emptyTitle"
+  },
+  "rdTeamNewMeeting": "Neue Besprechung",
+  "@rdTeamNewMeeting": {
+    "description": "rdTeam.newMeeting"
+  },
+  "rdTeamNewSuggestions": "{count, plural, one {1 neuer Vorschlag} other {{count} neue Vorschläge}}",
+  "@rdTeamNewSuggestions": {
+    "description": "rdTeam.newSuggestions",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTeamNoTopicsYet": "noch keine Themen",
+  "@rdTeamNoTopicsYet": {
+    "description": "rdTeam.noTopicsYet"
+  },
+  "rdTeamPast": "Vergangen",
+  "@rdTeamPast": {
+    "description": "rdTeam.past"
+  },
+  "rdTeamPlanned": "Geplant",
+  "@rdTeamPlanned": {
+    "description": "rdTeam.planned"
+  },
+  "rdTeamProtocolPublished": "Protokoll freigegeben",
+  "@rdTeamProtocolPublished": {
+    "description": "rdTeam.protocolPublished"
+  },
+  "rdTeamProtocolRead": "Protokoll lesen",
+  "@rdTeamProtocolRead": {
+    "description": "rdTeam.protocolRead"
+  },
+  "rdTeamSuggestHint": "Deine Vorschläge und was daraus wurde",
+  "@rdTeamSuggestHint": {
+    "description": "rdTeam.suggestHint"
+  },
+  "rdTeamTabMeetings": "Besprechungen",
+  "@rdTeamTabMeetings": {
+    "description": "rdTeam.tabMeetings"
+  },
+  "rdTeamTitle": "Team",
+  "@rdTeamTitle": {
+    "description": "rdTeam.title"
+  },
+  "rdTeamTopics": "Themen",
+  "@rdTeamTopics": {
+    "description": "rdTeam.topics"
+  },
+  "rdTeamTopicsCount": "{count, plural, one {1 Thema} other {{count} Themen}}",
+  "@rdTeamTopicsCount": {
+    "description": "rdTeam.topicsCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTeamTopicsHint": "Sammeln, was besprochen werden soll",
+  "@rdTeamTopicsHint": {
+    "description": "rdTeam.topicsHint"
   },
   "rdTypeAdd": "Hinzufügen",
   "@rdTypeAdd": {

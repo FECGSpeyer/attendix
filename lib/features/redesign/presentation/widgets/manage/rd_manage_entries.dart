@@ -422,5 +422,5 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry,
 }
 
 /// Ich › Team (the old entries Teamorganisation, Meine Aufgaben, Themen
-/// and Protokolle open the same page with its three tabs).
-const rdTeamRoute = '/settings/team-organization?tab=tasks';
+/// and Protokolle open the same page: Besprechungen and Aufgaben).
+const rdTeamRoute = '/settings/team-organization';

@@ -16454,7 +16454,7 @@ abstract class AppLocalizations {
   /// rdAdmin.teamHint
   ///
   /// In de, this message translates to:
-  /// **'Aufgaben, Themen, Protokolle'**
+  /// **'Besprechungen und Aufgaben'**
   String get rdAdminTeamHint;
 
   /// rdAdmin.types
@@ -18627,6 +18627,114 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Neuer Lehrer'**
   String get rdTeacherNewTitle;
+
+  /// rdTeam.chipTeam
+  ///
+  /// In de, this message translates to:
+  /// **'Team · {count}'**
+  String rdTeamChipTeam(Object count);
+
+  /// rdTeam.emptyLeader
+  ///
+  /// In de, this message translates to:
+  /// **'Lege mit + die erste an. Themen sammelt ihr vorher, Ergebnisse und Aufgaben haltet ihr im Protokoll fest.'**
+  String get rdTeamEmptyLeader;
+
+  /// rdTeam.emptyMember
+  ///
+  /// In de, this message translates to:
+  /// **'Sobald die Leitung eine Besprechung plant, steht sie hier.'**
+  String get rdTeamEmptyMember;
+
+  /// rdTeam.emptyTeamTasks
+  ///
+  /// In de, this message translates to:
+  /// **'Im Team ist gerade nichts offen.'**
+  String get rdTeamEmptyTeamTasks;
+
+  /// rdTeam.emptyTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Besprechung'**
+  String get rdTeamEmptyTitle;
+
+  /// rdTeam.newMeeting
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Besprechung'**
+  String get rdTeamNewMeeting;
+
+  /// rdTeam.newSuggestions
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 neuer Vorschlag} other {{count} neue Vorschläge}}'**
+  String rdTeamNewSuggestions(num count);
+
+  /// rdTeam.noTopicsYet
+  ///
+  /// In de, this message translates to:
+  /// **'noch keine Themen'**
+  String get rdTeamNoTopicsYet;
+
+  /// rdTeam.past
+  ///
+  /// In de, this message translates to:
+  /// **'Vergangen'**
+  String get rdTeamPast;
+
+  /// rdTeam.planned
+  ///
+  /// In de, this message translates to:
+  /// **'Geplant'**
+  String get rdTeamPlanned;
+
+  /// rdTeam.protocolPublished
+  ///
+  /// In de, this message translates to:
+  /// **'Protokoll freigegeben'**
+  String get rdTeamProtocolPublished;
+
+  /// rdTeam.protocolRead
+  ///
+  /// In de, this message translates to:
+  /// **'Protokoll lesen'**
+  String get rdTeamProtocolRead;
+
+  /// rdTeam.suggestHint
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Vorschläge und was daraus wurde'**
+  String get rdTeamSuggestHint;
+
+  /// rdTeam.tabMeetings
+  ///
+  /// In de, this message translates to:
+  /// **'Besprechungen'**
+  String get rdTeamTabMeetings;
+
+  /// rdTeam.title
+  ///
+  /// In de, this message translates to:
+  /// **'Team'**
+  String get rdTeamTitle;
+
+  /// rdTeam.topics
+  ///
+  /// In de, this message translates to:
+  /// **'Themen'**
+  String get rdTeamTopics;
+
+  /// rdTeam.topicsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Thema} other {{count} Themen}}'**
+  String rdTeamTopicsCount(num count);
+
+  /// rdTeam.topicsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Sammeln, was besprochen werden soll'**
+  String get rdTeamTopicsHint;
 
   /// rdType.add
   ///
