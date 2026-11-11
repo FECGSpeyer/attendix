@@ -400,15 +400,23 @@ class _ReplyView extends ConsumerWidget {
               l10n.assistantNoticeTooManyChanges(count ?? 0, assistantMaxChanges),
             AssistantNotice.absenceOutOfRange => l10n.assistantNoticeAbsenceOutOfRange,
             AssistantNotice.noAbsenceRights => l10n.assistantNoticeNoAbsenceRights,
+            AssistantNotice.noType => l10n.assistantNoticeNoType,
+            AssistantNotice.dateOutOfRange => l10n.assistantNoticeDateOutOfRange,
+            AssistantNotice.eventLocked => l10n.assistantNoticeEventLocked,
+            AssistantNotice.eventsExist => l10n.assistantNoticeEventsExist,
+            AssistantNotice.noSongsForType => l10n.assistantNoticeNoSongsForType,
+            AssistantNotice.songsNotFound => l10n.assistantNoticeSongsNotFound(s),
+            AssistantNotice.cancelNeedsReason => l10n.assistantNoticeCancelNeedsReason,
           },
           style: text,
         );
 
-      case ChoiceReply(:final query, :final options):
+      case ChoiceReply(:final query, :final options, :final kind):
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.assistantChoiceWhich(query), style: text),
+            Text(kind == ChoiceKind.type ? l10n.assistantChoiceWhichType : l10n.assistantChoiceWhich(query),
+                style: text),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
@@ -610,6 +618,23 @@ class _ReplyView extends ConsumerWidget {
           ],
         );
 
+      case StatusPreviewReply(:final plan, state: final st) when plan.cancelTitle != null:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.assistantCancelTitle, style: title),
+            Text(plan.cancelTitle!, style: text.copyWith(fontWeight: FontWeight.w600)),
+            Text(_weekdayDate(plan.changes.first.date), style: muted),
+            const SizedBox(height: 6),
+            _StatusChip(status: plan.status, style: style),
+            const SizedBox(height: 4),
+            Text(l10n.assistantChangeReason(plan.reason ?? ''), style: muted),
+            Text(l10n.assistantCancelAffected(plan.changes.length), style: muted),
+            const SizedBox(height: 10),
+            _ActionButtons(index: index, state: st, busy: busy, count: plan.changes.length, style: style),
+          ],
+        );
+
       case StatusPreviewReply(:final plan, state: final st):
         const shown = 8;
         return Column(
@@ -682,6 +707,85 @@ class _ReplyView extends ConsumerWidget {
           ],
         );
 
+      case CreatePreviewReply(:final plan, state: final st):
+        const shown = 8;
+        final times = [
+          if ((plan.startTime ?? plan.type.startTime) != null) _time(plan.startTime ?? plan.type.startTime!),
+          if ((plan.endTime ?? plan.type.endTime) != null) _time(plan.endTime ?? plan.type.endTime!),
+        ].join(' – ');
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.assistantCreateTitle(plan.days.length), style: title),
+            Text(plan.title == null ? plan.type.name : '${plan.type.name} · ${plan.title}',
+                style: text.copyWith(fontWeight: FontWeight.w600)),
+            if (times.isNotEmpty) Text(l10n.assistantEventTime(times), style: muted),
+            if (plan.place != null) Text(l10n.assistantCreatePlace(plan.place!), style: muted),
+            const SizedBox(height: 6),
+            for (final d in plan.days.take(shown))
+              Padding(
+                padding: const EdgeInsets.only(top: 3),
+                child: Text(_weekdayDate(d), style: text),
+              ),
+            if (plan.days.length > shown)
+              Padding(
+                padding: const EdgeInsets.only(top: 3),
+                child: Text(l10n.assistantChangeMore(plan.days.length - shown), style: muted),
+              ),
+            if (plan.skippedExisting.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(l10n.assistantCreateSkippedExisting(plan.skippedExisting.length), style: muted),
+            ],
+            if (plan.skippedWindow > 0) ...[
+              const SizedBox(height: 6),
+              Text(l10n.assistantCreateSkippedWindow(plan.skippedWindow), style: muted),
+            ],
+            const SizedBox(height: 10),
+            _ActionButtons(index: index, state: st, busy: busy, count: plan.days.length, style: style),
+          ],
+        );
+
+      case MovePreviewReply(:final plan, state: final st):
+        String when(DateTime day, String? start, String? end) {
+          final t = [if (start != null) start, if (end != null) end].join(' – ');
+          return t.isEmpty ? _weekdayDate(day) : '${_weekdayDate(day)} · ${l10n.assistantEventTime(t)}';
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.assistantMoveTitle, style: title),
+            Text(plan.title, style: text.copyWith(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 6),
+            Text(l10n.assistantMoveFrom(when(plan.oldDay, plan.oldStart, plan.oldEnd)), style: muted),
+            Text(l10n.assistantMoveTo(when(plan.newDay, plan.newStart, plan.newEnd)),
+                style: text.copyWith(fontWeight: FontWeight.w600)),
+            if (plan.movesDay) ...[
+              const SizedBox(height: 6),
+              Text(l10n.assistantMoveHint, style: muted),
+            ],
+            const SizedBox(height: 10),
+            _ActionButtons(index: index, state: st, busy: busy, count: 1, style: style),
+          ],
+        );
+
+      case SongsPreviewReply(:final plan, state: final st):
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.assistantSongsTitle, style: title),
+            Text('${plan.title} · ${_day(plan.date)}', style: muted),
+            const SizedBox(height: 6),
+            if (plan.added.isNotEmpty) Text(l10n.assistantSongsAdded(plan.added.join(', ')), style: text),
+            if (plan.removed.isNotEmpty) Text(l10n.assistantSongsRemoved(plan.removed.join(', ')), style: text),
+            if (plan.notFound.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(l10n.assistantSongsNotFound(plan.notFound.join(', ')), style: muted),
+            ],
+            const SizedBox(height: 10),
+            _ActionButtons(index: index, state: st, busy: busy, count: 1, style: style),
+          ],
+        );
+
       case ActionDoneReply d:
         final notifier = ref.read(assistantChatNotifierProvider.notifier);
         return Column(
@@ -699,12 +803,22 @@ class _ReplyView extends ConsumerWidget {
                   child: Text(
                     d.absencePlan != null
                         ? '${l10n.assistantAbsenceDone} ${l10n.assistantChangeDone(d.count)}'
-                        : l10n.assistantChangeDone(d.count),
+                        : d.createPlan != null
+                            ? l10n.assistantCreateDone(d.count)
+                            : d.movePlan != null
+                                ? l10n.assistantMoveDone
+                                : d.songsPlan != null
+                                    ? l10n.assistantSongsDone
+                                    : l10n.assistantChangeDone(d.count),
                     style: text.copyWith(fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
             ),
+            if (d.createPlan != null && d.undo == UndoState.available) ...[
+              const SizedBox(height: 4),
+              Text(l10n.assistantCreateUndoHint, style: muted),
+            ],
             const SizedBox(height: 6),
             switch (d.undo) {
               UndoState.available => Align(
@@ -722,6 +836,13 @@ class _ReplyView extends ConsumerWidget {
             },
             if (d.statusPlan != null && d.statusPlan!.changes.isNotEmpty && !d.statusPlan!.self && seesOthers)
               link(l10n.assistantEventOpenEvent, eventLocation(d.statusPlan!.changes.first.attendanceId)),
+            if (d.undo != UndoState.undone && seesOthers)
+              if (d.movePlan != null)
+                link(l10n.assistantEventOpenEvent, eventLocation(d.movePlan!.attendanceId))
+              else if (d.songsPlan != null)
+                link(l10n.assistantEventOpenEvent, eventLocation(d.songsPlan!.attendanceId))
+              else if (d.createdIds.length == 1)
+                link(l10n.assistantEventOpenEvent, eventLocation(d.createdIds.first)),
           ],
         );
 

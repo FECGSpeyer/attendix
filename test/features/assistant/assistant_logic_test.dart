@@ -216,4 +216,41 @@ void main() {
       expect(applicant.allows(ownAbsence), isFalse);
     });
   });
+
+  group('package 3 limits and rights', () {
+    const create = CreateEventsCommand(dates: []);
+    const move = MoveEventCommand(event: NextEventRef(), startTime: '10:00');
+    const songs = SetSongsCommand(event: NextEventRef(), titles: ['A']);
+    const cancel = CancelEventCommand(event: NextEventRef(), reason: 'Saal');
+
+    test('creating needs the confirmed create permission', () {
+      expect(const AssistantAccess(role: Role.admin, hasOwnPerson: true).allows(create), isFalse);
+      expect(const AssistantAccess(role: Role.helper, hasOwnPerson: true, canCreateEvents: true).allows(create), isTrue);
+    });
+
+    test('moving and Werke: roles that edit Termine; cancel: roles that record attendance', () {
+      for (final role in [Role.admin, Role.responsible, Role.helper, Role.voiceLeaderHelper]) {
+        final a = AssistantAccess(role: role, hasOwnPerson: false);
+        expect(a.allows(move), isTrue, reason: '$role');
+        expect(a.allows(songs), isTrue, reason: '$role');
+      }
+      for (final role in [Role.viewer, Role.player, Role.voiceLeader, Role.parent]) {
+        final a = AssistantAccess(role: role, hasOwnPerson: true);
+        expect(a.allows(move), isFalse, reason: '$role');
+        expect(a.allows(songs), isFalse, reason: '$role');
+        expect(a.allows(cancel), isFalse, reason: '$role');
+      }
+      expect(const AssistantAccess(role: Role.admin, hasOwnPerson: false).allows(cancel), isTrue);
+    });
+
+    test('future window and moved end time', () {
+      expect(inFutureWindow(DateTime(2026, 11, 11), today), isTrue);
+      expect(inFutureWindow(DateTime(2026, 11, 10), today), isFalse);
+      expect(inFutureWindow(DateTime(2027, 5, 13), today), isTrue);
+      expect(inFutureWindow(DateTime(2027, 5, 14), today), isFalse);
+      expect(shiftedEndTime('19:00', '21:00', '20:00'), '22:00');
+      expect(shiftedEndTime('22:00', '23:30', '23:00'), '00:30');
+      expect(shiftedEndTime('19:00', null, '20:00'), isNull);
+    });
+  });
 }

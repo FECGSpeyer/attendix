@@ -92,16 +92,23 @@ class AttendanceCreateInput {
 /// repositories are bound on construction, so construct it before the
 /// first await (UI_TENANT_HOIST). The caller checks the create permission
 /// (confirmCanCreateAttendance) before [create].
-class AttendanceCreateWriter {
-  AttendanceCreateWriter(WidgetRef ref)
-      : _ref = ref,
-        _saveTenant = ref.read(currentTenantProvider),
-        _saveClient = ref.read(supabaseClientProvider),
-        _dutyRepo = ref.read(dutyRepositoryWithTenantProvider),
-        _playerAbsenceRepo = ref.read(playerAbsenceRepositoryWithTenantProvider),
-        _typeRepo = ref.read(attendanceTypeRepositoryWithTenantProvider);
+/// `ref.read` of a widget or of a provider (the chat assistant creates
+/// Termine from a Notifier).
+typedef ProviderRead = T Function<T>(ProviderListenable<T> provider);
 
-  final WidgetRef _ref;
+class AttendanceCreateWriter {
+  AttendanceCreateWriter(WidgetRef ref) : this.withRead(ref.read);
+
+  /// Same writer for callers without a WidgetRef (chat assistant).
+  AttendanceCreateWriter.withRead(ProviderRead read)
+      : _read = read,
+        _saveTenant = read(currentTenantProvider),
+        _saveClient = read(supabaseClientProvider),
+        _dutyRepo = read(dutyRepositoryWithTenantProvider),
+        _playerAbsenceRepo = read(playerAbsenceRepositoryWithTenantProvider),
+        _typeRepo = read(attendanceTypeRepositoryWithTenantProvider);
+
+  final ProviderRead _read;
   final Tenant? _saveTenant;
 
   /// The tenant the Termine are created in (bound on construction).
@@ -130,7 +137,7 @@ class AttendanceCreateWriter {
   Future<List<int>> create(AttendanceCreateInput input, {void Function()? onAbsencesLoadFailed}) async {
     if (_saveTenant == null) throw StateError('No tenant selected');
     try {
-      final planTypes = await _ref.read(planAttendanceTypesProvider.future);
+      final planTypes = await _read(planAttendanceTypesProvider.future);
       _orgPlanTypeIds = {
         for (final t in planTypes)
           if (t.isDefaultOrgPlan) t.id,
@@ -153,7 +160,7 @@ class AttendanceCreateWriter {
     }
     // LOGIC_ATT: shift plans (Ionic db.shifts()) for the shift excuse
     try {
-      _shifts = await _ref.read(shiftsProvider.future);
+      _shifts = await _read(shiftsProvider.future);
     } catch (_) {
       _shifts = const [];
     }
@@ -162,7 +169,7 @@ class AttendanceCreateWriter {
     // instead of inviting everybody.
     _extraFields = input.type.additionalFieldsFilter == null
         ? const []
-        : await _ref.read(personExtraFieldsProvider.future);
+        : await _read(personExtraFieldsProvider.future);
     // Participants are loaded before the first Termin is written, so a failed
     // read cannot leave a Termin without persons behind.
     _players = await _loadActivePlayers(input.type);

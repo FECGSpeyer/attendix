@@ -12,7 +12,9 @@
 // Package 1 reads. Package 2 adds two changes, `set_status` and
 // `planned_absence`: the app only shows them as a preview, checks the
 // rights and limits itself and saves nothing before the person confirms.
-// Other changes (`category: "change"`) are answered with "kann ich noch
+// Package 3 adds `create_events`, `move_event` and `set_songs` with the
+// same preview / confirm / undo flow. Other changes (`category: "change"`,
+// e.g. cancelling or deleting a Termin) are answered with "kann ich noch
 // nicht".
 
 export type Unit = "day" | "week" | "month" | "year";
@@ -67,6 +69,25 @@ export type Command =
     reason?: string;
   }
   | { command: "planned_absence"; who: Who; from: string; to: string; reason?: string }
+  | {
+    command: "create_events";
+    typeName?: string;
+    dates: string[];
+    startTime?: string;
+    endTime?: string;
+    title?: string;
+    place?: string;
+  }
+  | {
+    command: "move_event";
+    event: EventRef;
+    typeName?: string;
+    toDate?: string;
+    startTime?: string;
+    endTime?: string;
+  }
+  | { command: "set_songs"; event: EventRef; typeName?: string; titles: string[]; mode: "add" | "replace" }
+  | { command: "cancel_event"; event: EventRef; typeName?: string; reason?: string }
   | { command: "unsupported"; category: "change" | "other" };
 
 export const MAX_TEXT = 500;
@@ -75,6 +96,10 @@ const MAX_COUNT = 36;
 /// At most this many names / groups in one status command.
 export const MAX_WHO = 10;
 export const MAX_REASON = 120;
+/// At most this many new Termine in one command.
+export const MAX_DATES = 20;
+/// At most this many Werke in one command.
+export const MAX_SONGS = 15;
 const STATUSES = new Set<Status>(["present", "excused", "late_excused", "late", "absent", "neutral"]);
 
 const UNITS = new Set<Unit>(["day", "week", "month", "year"]);
@@ -207,6 +232,53 @@ function whoList(value: unknown): Who[] | null {
   return out;
 }
 
+/// "HH:mm" (24 h), or null. Accepts "9:30" and "19:30:00".
+export function clockTime(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const m = /^(\d{1,2}):(\d{2})(?::\d{2})?$/.exec(value.trim());
+  if (!m) return null;
+  const h = Number(m[1]);
+  const min = Number(m[2]);
+  if (h > 23 || min > 59) return null;
+  return `${String(h).padStart(2, "0")}:${m[2]}`;
+}
+
+/// Optional time: absent → undefined, invalid → null (the command fails).
+function optionalTime(value: unknown): string | undefined | null {
+  if (value === undefined || value === null || value === "") return undefined;
+  return clockTime(value);
+}
+
+/// 1..MAX_DATES real dates, sorted, without duplicates; anything invalid → null.
+function dateList(value: unknown): string[] | null {
+  if (!Array.isArray(value) || value.length === 0 || value.length > MAX_DATES) return null;
+  const out = new Set<string>();
+  for (const v of value) {
+    const d = isoDate(v);
+    if (!d) return null;
+    out.add(d);
+  }
+  return [...out].sort();
+}
+
+/// 1..MAX_SONGS titles (a number is a Werk number), duplicates removed;
+/// anything invalid → null.
+function titleList(value: unknown): string[] | null {
+  const list = Array.isArray(value) ? value : value === undefined || value === null ? [] : [value];
+  if (list.length === 0 || list.length > MAX_SONGS) return null;
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const v of list) {
+    const t = cleanText(typeof v === "number" ? String(v) : v, MAX_NAME);
+    if (!t) return null;
+    if (!seen.has(t.toLowerCase())) {
+      seen.add(t.toLowerCase());
+      out.push(t);
+    }
+  }
+  return out;
+}
+
 /// Optional name: absent or empty → undefined, otherwise a clean text.
 function optionalName(value: unknown): string | undefined {
   return cleanText(value, MAX_NAME) ?? undefined;
@@ -282,6 +354,62 @@ export function validateCommand(raw: unknown): Command {
       const reason = cleanText(raw.reason, MAX_REASON) ?? undefined;
       return { command: "planned_absence", who: w, from, to, ...(reason ? { reason } : {}) };
     }
+    case "create_events": {
+      const dates = dateList(raw.dates);
+      const startTime = optionalTime(raw.startTime);
+      const endTime = optionalTime(raw.endTime);
+      if (!dates || startTime === null || endTime === null) return UNSUPPORTED;
+      const typeName = optionalName(raw.typeName);
+      const title = optionalName(raw.title);
+      const place = cleanText(raw.place, MAX_REASON) ?? undefined;
+      return {
+        command: "create_events",
+        dates,
+        ...(typeName ? { typeName } : {}),
+        ...(startTime ? { startTime } : {}),
+        ...(endTime ? { endTime } : {}),
+        ...(title ? { title } : {}),
+        ...(place ? { place } : {}),
+      };
+    }
+    case "move_event": {
+      const e = raw.event === undefined || raw.event === null ? { type: "next" as const } : eventRef(raw.event);
+      const hasDate = raw.toDate !== undefined && raw.toDate !== null && raw.toDate !== "";
+      const toDate = hasDate ? isoDate(raw.toDate) : undefined;
+      const startTime = optionalTime(raw.startTime);
+      const endTime = optionalTime(raw.endTime);
+      if (!e || toDate === null || startTime === null || endTime === null) return UNSUPPORTED;
+      if (!toDate && !startTime && !endTime) return UNSUPPORTED;
+      const typeName = optionalName(raw.typeName);
+      return {
+        command: "move_event",
+        event: e,
+        ...(typeName ? { typeName } : {}),
+        ...(toDate ? { toDate } : {}),
+        ...(startTime ? { startTime } : {}),
+        ...(endTime ? { endTime } : {}),
+      };
+    }
+    case "set_songs": {
+      const e = raw.event === undefined || raw.event === null ? { type: "next" as const } : eventRef(raw.event);
+      const titles = titleList(raw.titles);
+      if (!e || !titles) return UNSUPPORTED;
+      const typeName = optionalName(raw.typeName);
+      return {
+        command: "set_songs",
+        event: e,
+        titles,
+        mode: raw.mode === "replace" ? "replace" : "add",
+        ...(typeName ? { typeName } : {}),
+      };
+    }
+    case "cancel_event": {
+      const e = raw.event === undefined || raw.event === null ? { type: "next" as const } : eventRef(raw.event);
+      if (!e) return UNSUPPORTED;
+      const typeName = optionalName(raw.typeName);
+      const reason = cleanText(raw.reason, MAX_REASON) ?? undefined;
+      return { command: "cancel_event", event: e, ...(typeName ? { typeName } : {}), ...(reason ? { reason } : {}) };
+    }
     case "unsupported":
       return { command: "unsupported", category: raw.category === "change" ? "change" : "other" };
     default:
@@ -322,8 +450,12 @@ export const SYSTEM_PROMPT = [
   '   who is always given. W is {"kind":"me"}, {"kind":"person","name":"<name exactly as written>"} or {"kind":"group","name":"<group>"} (max 10).',
   '   "abmelden", "absagen", "kann nicht", "entschuldigt" = excused; "komme später", "verspätet mich" = late_excused; "anmelden", "zusagen", "komme", "war da", "anwesend" = present; "war zu spät" = late; "fehlte unentschuldigt" = absent; "zurücksetzen", "offen" = neutral.',
   '8. {"command":"planned_absence","who":W,"from":"YYYY-MM-DD","to":"YYYY-MM-DD","reason"?:"<short reason>"} - a planned absence for a longer time ("bis Ende Januar im Ausland", "vom 3. bis 10. März im Urlaub"). W is me or a person (no group), always given. Without a start, from is today.',
-  '9. {"command":"unsupported","category":"change"} - any OTHER change (create, move or cancel events, add or delete people, roles, settings, send messages, delete anything).',
-  '10. {"command":"unsupported","category":"other"} - anything else (chat, jokes, poems, general knowledge, other apps, unclear).',
+  '9. {"command":"create_events","typeName"?:T,"dates":["YYYY-MM-DD",...],"startTime"?:"HH:mm","endTime"?:"HH:mm","title"?:"<title as written>","place"?:"<place as written>"} - create one or more NEW events ("leg jeden Mittwoch im Dezember eine Probe an", "Konzert am 20.12. um 17 Uhr"). Compute every date from today (max 20 dates).',
+  '10. {"command":"move_event","event"?:E,"typeName"?:T,"toDate"?:"YYYY-MM-DD","startTime"?:"HH:mm","endTime"?:"HH:mm"} - move an EXISTING event to another day and/or time ("verschieb die Probe am Mittwoch auf Donnerstag", "die Probe am Sonntag beginnt um 10 Uhr"). E is the event as it is now; give at least one of toDate, startTime, endTime.',
+  '11. {"command":"set_songs","event"?:E,"typeName"?:T,"titles":["<song title or number as written>",...],"mode":"add|replace"} - put songs / pieces (Werke) on an event (max 15). "replace" only when the user says these are THE songs or to replace the list, otherwise "add".',
+  '12. {"command":"cancel_event","event"?:E,"typeName"?:T,"reason"?:"<short reason as written>"} - cancel a whole event for everybody ("die Probe am Sonntag fällt aus", "sag die Probe am Mittwoch ab, Saal belegt"). Leave reason out when none is given. Signing only the user out is set_status.',
+  '13. {"command":"unsupported","category":"change"} - any OTHER change (delete events, add or delete people, roles, settings, tasks, duties, send messages, delete anything).',
+  '14. {"command":"unsupported","category":"other"} - anything else (chat, jokes, poems, general knowledge, other apps, unclear).',
   "Periods P (dates as YYYY-MM-DD, compute them from today in the user message only for type range):",
   '{"type":"last","unit":"day|week|month|year","count":N} e.g. "letzte 3 Monate" = last month 3;',
   '{"type":"this","unit":"week|month|year"}; {"type":"previous","unit":"week|month|year"} e.g. "im letzten Monat", "letztes Jahr";',

@@ -908,6 +908,18 @@ abstract class AppLocalizations {
   /// **'Geburtstage'**
   String get assistantBirthdaysTitle;
 
+  /// assistant.cancel.affected
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Person wird auf Entschuldigt gesetzt.} other {{count} Personen werden auf Entschuldigt gesetzt.}}'**
+  String assistantCancelAffected(num count);
+
+  /// assistant.cancel.title
+  ///
+  /// In de, this message translates to:
+  /// **'Termin absagen'**
+  String get assistantCancelTitle;
+
   /// assistant.change.cancel
   ///
   /// In de, this message translates to:
@@ -1016,11 +1028,53 @@ abstract class AppLocalizations {
   /// **'Wen meinst du mit „{name}“?'**
   String assistantChoiceWhich(Object name);
 
+  /// assistant.choice.whichType
+  ///
+  /// In de, this message translates to:
+  /// **'Welcher Termintyp?'**
+  String get assistantChoiceWhichType;
+
   /// assistant.clear
   ///
   /// In de, this message translates to:
   /// **'Neuer Chat'**
   String get assistantClear;
+
+  /// assistant.create.done
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin angelegt.} other {{count} Termine angelegt.}}'**
+  String assistantCreateDone(num count);
+
+  /// assistant.create.place
+  ///
+  /// In de, this message translates to:
+  /// **'Ort: {place}'**
+  String assistantCreatePlace(Object place);
+
+  /// assistant.create.skippedExisting
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Tag hat schon einen Termin dieses Typs und bleibt weg.} other {{count} Tage haben schon einen Termin dieses Typs und bleiben weg.}}'**
+  String assistantCreateSkippedExisting(num count);
+
+  /// assistant.create.skippedWindow
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Tag liegt in der Vergangenheit oder mehr als 6 Monate voraus.} other {{count} Tage liegen in der Vergangenheit oder mehr als 6 Monate voraus.}}'**
+  String assistantCreateSkippedWindow(num count);
+
+  /// assistant.create.title
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin anlegen?} other {{count} Termine anlegen?}}'**
+  String assistantCreateTitle(num count);
+
+  /// assistant.create.undoHint
+  ///
+  /// In de, this message translates to:
+  /// **'Rückgängig löscht genau diese neuen Termine wieder.'**
+  String get assistantCreateUndoHint;
 
   /// assistant.entryEnableHint
   ///
@@ -1106,6 +1160,36 @@ abstract class AppLocalizations {
   /// **'Hallo! Ich beantworte Fragen zu deiner Gruppe und kann dich an- oder abmelden. Bevor ich etwas ändere, zeige ich dir genau, was passiert.'**
   String get assistantIntro;
 
+  /// assistant.move.done
+  ///
+  /// In de, this message translates to:
+  /// **'Termin verschoben.'**
+  String get assistantMoveDone;
+
+  /// assistant.move.from
+  ///
+  /// In de, this message translates to:
+  /// **'Bisher: {when}'**
+  String assistantMoveFrom(Object when);
+
+  /// assistant.move.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Status bleiben. Wer am neuen Tag eine Abwesenheit eingetragen hat, wird entschuldigt.'**
+  String get assistantMoveHint;
+
+  /// assistant.move.title
+  ///
+  /// In de, this message translates to:
+  /// **'Termin verschieben'**
+  String get assistantMoveTitle;
+
+  /// assistant.move.to
+  ///
+  /// In de, this message translates to:
+  /// **'Neu: {when}'**
+  String assistantMoveTo(Object when);
+
   /// assistant.next.title
   ///
   /// In de, this message translates to:
@@ -1118,17 +1202,41 @@ abstract class AppLocalizations {
   /// **'Eine Abwesenheit trage ich ab heute und höchstens 6 Monate im Voraus ein.'**
   String get assistantNoticeAbsenceOutOfRange;
 
+  /// assistant.notice.cancelNeedsReason
+  ///
+  /// In de, this message translates to:
+  /// **'Einen Termin sage ich nur mit Grund ab. Schreib zum Beispiel: „Sag die Probe am Sonntag ab, Grund: Saal belegt“.'**
+  String get assistantNoticeCancelNeedsReason;
+
   /// assistant.notice.changeLater
   ///
   /// In de, this message translates to:
-  /// **'Das kann ich noch nicht ändern. An- und Abmelden, Status und Abwesenheiten gehen schon, Termine und Personen kommen bald.'**
+  /// **'Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, absagen, Werke) gehen schon, Personen kommen bald.'**
   String get assistantNoticeChangeLater;
+
+  /// assistant.notice.dateOutOfRange
+  ///
+  /// In de, this message translates to:
+  /// **'Termine lege ich ab heute und höchstens 6 Monate im Voraus an oder verschiebe sie dorthin.'**
+  String get assistantNoticeDateOutOfRange;
 
   /// assistant.notice.disabled
   ///
   /// In de, this message translates to:
   /// **'Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.'**
   String get assistantNoticeDisabled;
+
+  /// assistant.notice.eventLocked
+  ///
+  /// In de, this message translates to:
+  /// **'Diesen Termin ändere ich nicht: Er ist archiviert oder liegt außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).'**
+  String get assistantNoticeEventLocked;
+
+  /// assistant.notice.eventsExist
+  ///
+  /// In de, this message translates to:
+  /// **'An diesen Tagen gibt es schon einen Termin dieses Typs.'**
+  String get assistantNoticeEventsExist;
 
   /// assistant.notice.failed
   ///
@@ -1190,6 +1298,18 @@ abstract class AppLocalizations {
   /// **'Diese Frage kann ich dir mit deiner Rolle nicht beantworten.'**
   String get assistantNoticeNoRights;
 
+  /// assistant.notice.noSongsForType
+  ///
+  /// In de, this message translates to:
+  /// **'Bei diesem Termintyp werden keine Werke geführt.'**
+  String get assistantNoticeNoSongsForType;
+
+  /// assistant.notice.noType
+  ///
+  /// In de, this message translates to:
+  /// **'In dieser Gruppe gibt es keinen Termintyp, mit dem ich Termine anlegen kann.'**
+  String get assistantNoticeNoType;
+
   /// assistant.notice.notUnderstood
   ///
   /// In de, this message translates to:
@@ -1219,6 +1339,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ich finde kein Werk „{name}“.'**
   String assistantNoticeSongNotFound(Object name);
+
+  /// assistant.notice.songsNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Ich finde keine Werke zu „{name}“.'**
+  String assistantNoticeSongsNotFound(Object name);
 
   /// assistant.notice.tooLong
   ///
@@ -1321,6 +1447,36 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werk öffnen'**
   String get assistantSongOpen;
+
+  /// assistant.songs.added
+  ///
+  /// In de, this message translates to:
+  /// **'Neu: {names}'**
+  String assistantSongsAdded(Object names);
+
+  /// assistant.songs.done
+  ///
+  /// In de, this message translates to:
+  /// **'Werke gespeichert.'**
+  String get assistantSongsDone;
+
+  /// assistant.songs.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht gefunden: {names}'**
+  String assistantSongsNotFound(Object names);
+
+  /// assistant.songs.removed
+  ///
+  /// In de, this message translates to:
+  /// **'Fällt weg: {names}'**
+  String assistantSongsRemoved(Object names);
+
+  /// assistant.songs.title
+  ///
+  /// In de, this message translates to:
+  /// **'Werke für den Termin'**
+  String get assistantSongsTitle;
 
   /// assistant.status.absent
   ///

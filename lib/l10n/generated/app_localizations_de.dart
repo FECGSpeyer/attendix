@@ -508,6 +508,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get assistantBirthdaysTitle => 'Geburtstage';
 
   @override
+  String assistantCancelAffected(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen werden auf Entschuldigt gesetzt.',
+      one: '1 Person wird auf Entschuldigt gesetzt.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get assistantCancelTitle => 'Termin absagen';
+
+  @override
   String get assistantChangeCancel => 'Abbrechen';
 
   @override
@@ -603,7 +617,65 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get assistantChoiceWhichType => 'Welcher Termintyp?';
+
+  @override
   String get assistantClear => 'Neuer Chat';
+
+  @override
+  String assistantCreateDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine angelegt.',
+      one: '1 Termin angelegt.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String assistantCreatePlace(Object place) {
+    return 'Ort: $place';
+  }
+
+  @override
+  String assistantCreateSkippedExisting(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count Tage haben schon einen Termin dieses Typs und bleiben weg.',
+      one: '1 Tag hat schon einen Termin dieses Typs und bleibt weg.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String assistantCreateSkippedWindow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count Tage liegen in der Vergangenheit oder mehr als 6 Monate voraus.',
+      one: '1 Tag liegt in der Vergangenheit oder mehr als 6 Monate voraus.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String assistantCreateTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine anlegen?',
+      one: '1 Termin anlegen?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get assistantCreateUndoHint =>
+      'Rückgängig löscht genau diese neuen Termine wieder.';
 
   @override
   String get assistantEntryEnableHint =>
@@ -653,6 +725,26 @@ class AppLocalizationsDe extends AppLocalizations {
       'Hallo! Ich beantworte Fragen zu deiner Gruppe und kann dich an- oder abmelden. Bevor ich etwas ändere, zeige ich dir genau, was passiert.';
 
   @override
+  String get assistantMoveDone => 'Termin verschoben.';
+
+  @override
+  String assistantMoveFrom(Object when) {
+    return 'Bisher: $when';
+  }
+
+  @override
+  String get assistantMoveHint =>
+      'Die Status bleiben. Wer am neuen Tag eine Abwesenheit eingetragen hat, wird entschuldigt.';
+
+  @override
+  String get assistantMoveTitle => 'Termin verschieben';
+
+  @override
+  String assistantMoveTo(Object when) {
+    return 'Neu: $when';
+  }
+
+  @override
   String get assistantNextTitle => 'Nächster Termin';
 
   @override
@@ -660,12 +752,28 @@ class AppLocalizationsDe extends AppLocalizations {
       'Eine Abwesenheit trage ich ab heute und höchstens 6 Monate im Voraus ein.';
 
   @override
+  String get assistantNoticeCancelNeedsReason =>
+      'Einen Termin sage ich nur mit Grund ab. Schreib zum Beispiel: „Sag die Probe am Sonntag ab, Grund: Saal belegt“.';
+
+  @override
   String get assistantNoticeChangeLater =>
-      'Das kann ich noch nicht ändern. An- und Abmelden, Status und Abwesenheiten gehen schon, Termine und Personen kommen bald.';
+      'Das kann ich noch nicht ändern. Status, Abwesenheiten und Termine (anlegen, verschieben, absagen, Werke) gehen schon, Personen kommen bald.';
+
+  @override
+  String get assistantNoticeDateOutOfRange =>
+      'Termine lege ich ab heute und höchstens 6 Monate im Voraus an oder verschiebe sie dorthin.';
 
   @override
   String get assistantNoticeDisabled =>
       'Der Assistent ist für diese Gruppe ausgeschaltet. Ein Admin kann ihn in den Einstellungen einschalten.';
+
+  @override
+  String get assistantNoticeEventLocked =>
+      'Diesen Termin ändere ich nicht: Er ist archiviert oder liegt außerhalb der Grenze (14 Tage zurück bis 6 Monate voraus).';
+
+  @override
+  String get assistantNoticeEventsExist =>
+      'An diesen Tagen gibt es schon einen Termin dieses Typs.';
 
   @override
   String get assistantNoticeFailed =>
@@ -707,6 +815,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Diese Frage kann ich dir mit deiner Rolle nicht beantworten.';
 
   @override
+  String get assistantNoticeNoSongsForType =>
+      'Bei diesem Termintyp werden keine Werke geführt.';
+
+  @override
+  String get assistantNoticeNoType =>
+      'In dieser Gruppe gibt es keinen Termintyp, mit dem ich Termine anlegen kann.';
+
+  @override
   String get assistantNoticeNotUnderstood =>
       'Das habe ich nicht verstanden. Ich beantworte Fragen zur Anwesenheit, zu Terminen, Geburtstagen, Werken und zur App.';
 
@@ -726,6 +842,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String assistantNoticeSongNotFound(Object name) {
     return 'Ich finde kein Werk „$name“.';
+  }
+
+  @override
+  String assistantNoticeSongsNotFound(Object name) {
+    return 'Ich finde keine Werke zu „$name“.';
   }
 
   @override
@@ -794,6 +915,27 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get assistantSongOpen => 'Werk öffnen';
+
+  @override
+  String assistantSongsAdded(Object names) {
+    return 'Neu: $names';
+  }
+
+  @override
+  String get assistantSongsDone => 'Werke gespeichert.';
+
+  @override
+  String assistantSongsNotFound(Object names) {
+    return 'Nicht gefunden: $names';
+  }
+
+  @override
+  String assistantSongsRemoved(Object names) {
+    return 'Fällt weg: $names';
+  }
+
+  @override
+  String get assistantSongsTitle => 'Werke für den Termin';
 
   @override
   String get assistantStatusAbsent => 'Abwesend';

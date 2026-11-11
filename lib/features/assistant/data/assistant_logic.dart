@@ -220,6 +220,7 @@ class AssistantAccess {
     required this.hasOwnPerson,
     this.canManageAbsences = false,
     this.canSelfReportAbsence = false,
+    this.canCreateEvents = false,
   });
 
   final Role role;
@@ -231,6 +232,14 @@ class AssistantAccess {
 
   /// Own planned absence (permission of the own role).
   final bool canSelfReportAbsence;
+
+  /// New Termine: the freshly loaded create permission
+  /// (`canCreateAttendanceConfirmedProvider`, like both create pages).
+  final bool canCreateEvents;
+
+  /// Move a Termin and set its Werke: the roles that edit Termine on the
+  /// Termin page (not Viewer, not members).
+  bool get editsEvents => role.canEdit;
 
   bool get seesOthers => role.isConductor || role.isHelperRole;
 
@@ -255,6 +264,10 @@ class AssistantAccess {
       SetStatusCommand() => changesOthers,
       PlannedAbsenceCommand(who: MeSubject()) => hasOwnPerson && (canSelfReportAbsence || canManageAbsences),
       PlannedAbsenceCommand() => canManageAbsences,
+      CreateEventsCommand() => canCreateEvents,
+      MoveEventCommand() => editsEvents,
+      SetSongsCommand() => editsEvents,
+      CancelEventCommand() => changesOthers,
       UnsupportedCommand() => true,
     };
   }
@@ -350,4 +363,32 @@ bool absenceInWindow(DateTime from, DateTime to, DateTime now) {
   return !dayOf(from).isBefore(today) &&
       !dayOf(to).isBefore(dayOf(from)) &&
       !dayOf(to).isAfter(today.add(const Duration(days: assistantFutureDays)));
+}
+
+/// New Termine and the new day of a moved Termin: from today up to
+/// [assistantFutureDays] ahead.
+bool inFutureWindow(DateTime day, DateTime now) {
+  final d = dayOf(day);
+  final today = dayOf(now);
+  return !d.isBefore(today) && !d.isAfter(today.add(const Duration(days: assistantFutureDays)));
+}
+
+/// End time of a Termin whose start moves from [oldStart] to [newStart]:
+/// keeps the length ("19:00–21:00" to 20:00 → 22:00). Null when there was
+/// no end or a time does not parse.
+String? shiftedEndTime(String? oldStart, String? oldEnd, String newStart) {
+  int? minutes(String? t) {
+    if (t == null || t.length < 5) return null;
+    final h = int.tryParse(t.substring(0, 2));
+    final m = int.tryParse(t.substring(3, 5));
+    return h == null || m == null ? null : h * 60 + m;
+  }
+
+  final a = minutes(oldStart);
+  final b = minutes(oldEnd);
+  final c = minutes(newStart);
+  if (a == null || b == null || c == null) return null;
+  final end = (c + (b - a)) % (24 * 60);
+  final e = end < 0 ? end + 24 * 60 : end;
+  return '${(e ~/ 60).toString().padLeft(2, '0')}:${(e % 60).toString().padLeft(2, '0')}';
 }

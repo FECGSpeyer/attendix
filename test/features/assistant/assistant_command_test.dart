@@ -154,4 +154,64 @@ void main() {
       }
     });
   });
+
+  group('package 3 commands', () {
+    test('create_events: days sorted, times checked', () {
+      final c = AssistantCommand.fromJson({
+        'command': 'create_events',
+        'typeName': 'Probe',
+        'dates': ['2026-12-09', '2026-12-02', '2026-12-02'],
+        'startTime': '9:30',
+        'place': 'Gemeindehaus',
+      }) as CreateEventsCommand;
+      expect(c.dates, [DateTime(2026, 12, 2), DateTime(2026, 12, 9)]);
+      expect(c.startTime, '09:30');
+      expect(c.endTime, isNull);
+      expect(c.withType('t1').typeId, 't1');
+      for (final raw in [
+        {'command': 'create_events', 'dates': []},
+        {'command': 'create_events', 'dates': '2026-12-02'},
+        {'command': 'create_events', 'dates': ['2026-12-02'], 'startTime': '24:00'},
+        {'command': 'create_events', 'dates': [for (var i = 1; i <= 21; i++) '2027-01-${'$i'.padLeft(2, '0')}']},
+      ]) {
+        expect(AssistantCommand.fromJson(raw), isA<UnsupportedCommand>(), reason: '$raw');
+      }
+    });
+
+    test('move_event needs a new day or time', () {
+      final c = AssistantCommand.fromJson({
+        'command': 'move_event',
+        'event': {'type': 'weekday', 'day': 'wed'},
+        'toDate': '2026-11-19',
+      }) as MoveEventCommand;
+      expect(c.toDate, DateTime(2026, 11, 19));
+      expect(c.event, isA<WeekdayEventRef>());
+      expect((AssistantCommand.fromJson({'command': 'move_event', 'startTime': '10:00'}) as MoveEventCommand).event,
+          isA<NextEventRef>());
+      for (final raw in [
+        {'command': 'move_event'},
+        {'command': 'move_event', 'toDate': 'morgen'},
+        {'command': 'move_event', 'startTime': '10 Uhr'},
+      ]) {
+        expect(AssistantCommand.fromJson(raw), isA<UnsupportedCommand>(), reason: '$raw');
+      }
+    });
+
+    test('set_songs and cancel_event', () {
+      final s = AssistantCommand.fromJson({
+        'command': 'set_songs',
+        'titles': ['Großer Gott', 12, 'großer gott'],
+      }) as SetSongsCommand;
+      expect(s.titles, ['Großer Gott', '12']);
+      expect(s.replace, isFalse);
+      expect(AssistantCommand.fromJson({'command': 'set_songs', 'titles': []}), isA<UnsupportedCommand>());
+      final c = AssistantCommand.fromJson({
+        'command': 'cancel_event',
+        'event': {'type': 'weekday', 'day': 'sun'},
+        'reason': 'Saal belegt',
+      }) as CancelEventCommand;
+      expect(c.reason, 'Saal belegt');
+      expect((AssistantCommand.fromJson({'command': 'cancel_event'}) as CancelEventCommand).reason, isNull);
+    });
+  });
 }

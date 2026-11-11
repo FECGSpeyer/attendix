@@ -505,6 +505,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assistantBirthdaysTitle => 'Birthdays';
 
   @override
+  String assistantCancelAffected(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people are set to Excused.',
+      one: '1 person is set to Excused.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get assistantCancelTitle => 'Cancel event';
+
+  @override
   String get assistantChangeCancel => 'Cancel';
 
   @override
@@ -598,7 +612,63 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get assistantChoiceWhichType => 'Which event type?';
+
+  @override
   String get assistantClear => 'New chat';
+
+  @override
+  String assistantCreateDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events created.',
+      one: '1 event created.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String assistantCreatePlace(Object place) {
+    return 'Place: $place';
+  }
+
+  @override
+  String assistantCreateSkippedExisting(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days already have an event of this type and are left out.',
+      one: '1 day already has an event of this type and is left out.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String assistantCreateSkippedWindow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days are in the past or more than 6 months ahead.',
+      one: '1 day is in the past or more than 6 months ahead.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String assistantCreateTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Create $count events?',
+      one: 'Create 1 event?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get assistantCreateUndoHint =>
+      'Undo deletes exactly these new events again.';
 
   @override
   String get assistantEntryEnableHint =>
@@ -648,6 +718,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Hi! I answer questions about your group and can sign you in or out. Before I change anything, I show you exactly what will happen.';
 
   @override
+  String get assistantMoveDone => 'Event moved.';
+
+  @override
+  String assistantMoveFrom(Object when) {
+    return 'Before: $when';
+  }
+
+  @override
+  String get assistantMoveHint =>
+      'Statuses stay. Anyone with an absence on the new day is excused.';
+
+  @override
+  String get assistantMoveTitle => 'Move event';
+
+  @override
+  String assistantMoveTo(Object when) {
+    return 'New: $when';
+  }
+
+  @override
   String get assistantNextTitle => 'Next event';
 
   @override
@@ -655,12 +745,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'I can enter an absence starting today and up to 6 months ahead.';
 
   @override
+  String get assistantNoticeCancelNeedsReason =>
+      'I only cancel an event with a reason. Write for example: “Cancel the rehearsal on Sunday, reason: hall booked”.';
+
+  @override
   String get assistantNoticeChangeLater =>
-      'I can\'t change that yet. Signing in and out, statuses and absences already work, events and people come soon.';
+      'I cannot change that yet. Status, absences and events (create, move, cancel, pieces) already work, people come soon.';
+
+  @override
+  String get assistantNoticeDateOutOfRange =>
+      'I only create or move events from today up to 6 months ahead.';
 
   @override
   String get assistantNoticeDisabled =>
       'The assistant is switched off for this group. An admin can switch it on in the settings.';
+
+  @override
+  String get assistantNoticeEventLocked =>
+      'I do not change this event: it is archived or outside the limit (14 days back to 6 months ahead).';
+
+  @override
+  String get assistantNoticeEventsExist =>
+      'These days already have an event of this type.';
 
   @override
   String get assistantNoticeFailed =>
@@ -703,6 +809,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'I can\'t answer this question with your role.';
 
   @override
+  String get assistantNoticeNoSongsForType => 'This event type has no pieces.';
+
+  @override
+  String get assistantNoticeNoType =>
+      'This group has no event type I can create events with.';
+
+  @override
   String get assistantNoticeNotUnderstood =>
       'I didn\'t understand that. I answer questions about attendance, events, birthdays, works and the app.';
 
@@ -722,6 +835,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String assistantNoticeSongNotFound(Object name) {
     return 'I can\'t find a work “$name”.';
+  }
+
+  @override
+  String assistantNoticeSongsNotFound(Object name) {
+    return 'I cannot find pieces for “$name”.';
   }
 
   @override
@@ -790,6 +908,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantSongOpen => 'Open work';
+
+  @override
+  String assistantSongsAdded(Object names) {
+    return 'New: $names';
+  }
+
+  @override
+  String get assistantSongsDone => 'Pieces saved.';
+
+  @override
+  String assistantSongsNotFound(Object names) {
+    return 'Not found: $names';
+  }
+
+  @override
+  String assistantSongsRemoved(Object names) {
+    return 'Removed: $names';
+  }
+
+  @override
+  String get assistantSongsTitle => 'Pieces for the event';
 
   @override
   String get assistantStatusAbsent => 'Absent';

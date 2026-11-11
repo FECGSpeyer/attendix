@@ -168,3 +168,88 @@ test("past events", () => {
     event: { type: "yesterday" },
   });
 });
+
+test("create events: dates checked, sorted, limited", () => {
+  assert.deepEqual(
+    validateCommand({
+      command: "create_events",
+      typeName: "Probe",
+      dates: ["2026-12-09", "2026-12-02", "2026-12-02"],
+      startTime: "9:30",
+      endTime: "21:00:00",
+      title: "Extraprobe",
+      place: "Gemeindehaus",
+    }),
+    {
+      command: "create_events",
+      dates: ["2026-12-02", "2026-12-09"],
+      typeName: "Probe",
+      startTime: "09:30",
+      endTime: "21:00",
+      title: "Extraprobe",
+      place: "Gemeindehaus",
+    },
+  );
+  const tooMany = Array.from({ length: 21 }, (_, i) => `2027-01-${String(i + 1).padStart(2, "0")}`);
+  for (const raw of [
+    { command: "create_events", dates: [] },
+    { command: "create_events", dates: "2026-12-02" },
+    { command: "create_events", dates: ["2026-02-30"] },
+    { command: "create_events", dates: tooMany },
+    { command: "create_events", dates: ["2026-12-02"], startTime: "25:00" },
+    { command: "create_events", dates: ["2026-12-02"], endTime: "abends" },
+  ]) {
+    assert.deepEqual(validateCommand(raw), { command: "unsupported", category: "other" }, JSON.stringify(raw));
+  }
+});
+
+test("move event needs a new day or time", () => {
+  assert.deepEqual(
+    validateCommand({ command: "move_event", event: { type: "weekday", day: "wed" }, toDate: "2026-11-19" }),
+    { command: "move_event", event: { type: "weekday", day: "wed" }, toDate: "2026-11-19" },
+  );
+  assert.deepEqual(validateCommand({ command: "move_event", startTime: "10:00" }), {
+    command: "move_event",
+    event: { type: "next" },
+    startTime: "10:00",
+  });
+  for (const raw of [
+    { command: "move_event", event: { type: "next" } },
+    { command: "move_event", toDate: "morgen" },
+    { command: "move_event", startTime: "10 Uhr" },
+  ]) {
+    assert.deepEqual(validateCommand(raw), { command: "unsupported", category: "other" }, JSON.stringify(raw));
+  }
+});
+
+test("set songs: titles and numbers, add by default", () => {
+  assert.deepEqual(validateCommand({ command: "set_songs", titles: ["Großer Gott", 12, "großer gott"] }), {
+    command: "set_songs",
+    event: { type: "next" },
+    titles: ["Großer Gott", "12"],
+    mode: "add",
+  });
+  assert.deepEqual(
+    validateCommand({ command: "set_songs", event: { type: "weekday", day: "sun" }, titles: ["A"], mode: "replace" }),
+    { command: "set_songs", event: { type: "weekday", day: "sun" }, titles: ["A"], mode: "replace" },
+  );
+  for (const raw of [
+    { command: "set_songs", titles: [] },
+    { command: "set_songs", titles: Array.from({ length: 16 }, (_, i) => `W${i}`) },
+    { command: "set_songs", titles: [{ name: "x" }] },
+  ]) {
+    assert.deepEqual(validateCommand(raw), { command: "unsupported", category: "other" }, JSON.stringify(raw));
+  }
+});
+
+test("cancel event: reason optional in the command, the app asks for it", () => {
+  assert.deepEqual(
+    validateCommand({ command: "cancel_event", event: { type: "weekday", day: "sun" }, reason: "Saal belegt" }),
+    { command: "cancel_event", event: { type: "weekday", day: "sun" }, reason: "Saal belegt" },
+  );
+  assert.deepEqual(validateCommand({ command: "cancel_event" }), { command: "cancel_event", event: { type: "next" } });
+  assert.deepEqual(validateCommand({ command: "cancel_event", event: { type: "someday" } }), {
+    command: "unsupported",
+    category: "other",
+  });
+});
