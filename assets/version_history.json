@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.122.0",
+      "date": "11.11.2026",
+      "changes": [
+        "✨ Beta Werke: Kategorien als zweite Chip-Zeile in der Sammlung (nur die dort vergebenen), Leitung verwaltet sie direkt daneben",
+        "🧹 Beta Werke •••: ohne „Kategorien verwalten“, „Werkliste als PDF“ statt „Werkverzeichnis als PDF“"
+      ]
+    },
+    {
       "version": "0.121.4",
       "date": "11.11.2026",
       "changes": [
