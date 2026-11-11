@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.134.0",
+      "date": "11.11.2026",
+      "changes": [
+        "✨ Chat-Assistent: eigene An- und Abmeldungen und „nächster Termin“ über alle Instanzen, wie in der Übersicht"
+      ]
+    },
+    {
       "version": "0.133.0",
       "date": "11.11.2026",
       "changes": [
