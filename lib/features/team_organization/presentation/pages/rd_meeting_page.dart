@@ -44,15 +44,18 @@ class _RdMeetingPageState extends ConsumerState<RdMeetingPage> with RouteReturnR
   @override
   void onRouteReturn() => reloadTeamOrgTab(ref, 'topics');
 
-  void _refreshPlans() {
-    ref.invalidate(upcomingProtocolAttendancesProvider);
-    ref.invalidate(planAttendancesProvider);
-    ref.invalidate(orgPlansProvider);
+  void _refreshPlans([ProviderContainer? container]) {
+    final c = container ?? ProviderScope.containerOf(context, listen: false);
+    c.invalidate(upcomingProtocolAttendancesProvider);
+    c.invalidate(planAttendancesProvider);
+    c.invalidate(orgPlansProvider);
   }
 
+  /// One decision at a time: two writes to the same plan would overwrite
+  /// each other.
   Future<void> _run(AgendaItem item, Future<void> Function() action) async {
     final id = item.id;
-    if (id == null || _busy.contains(id)) return;
+    if (id == null || _busy.isNotEmpty) return;
     setState(() => _busy.add(id));
     try {
       await action();
@@ -63,16 +66,21 @@ class _RdMeetingPageState extends ConsumerState<RdMeetingPage> with RouteReturnR
 
   /// "Aufnehmen": accepts the suggestion and puts it on this agenda.
   Future<void> _take(AgendaItem item, ProtocolAttendance att, ProtocolType? type) => _run(item, () async {
+        // The page may close while this runs: bind everything first.
+        final container = ProviderScope.containerOf(context, listen: false);
         final repo = ref.read(protocolRepositoryWithTenantProvider);
         final l10n = context.l10n;
-        final ok = await acceptProposal(context, ref, item, doneText: l10n.rdTeamAcceptedToMeeting);
+        final ok = await acceptProposal(context, ref, item, toast: false);
         if (!ok) return;
         try {
           await addTopicsToAttendance(repo, att, type, [(item: item, duration: defaultTopicDuration(item, type))]);
+          if (mounted) ToastHelper.showSuccess(context, l10n.rdTeamAcceptedToMeeting);
         } catch (_) {
-          if (mounted) ToastHelper.showError(context, l10n.agendaPlanSaveFailed);
+          // Accepted, so it now waits under "Thema hinzufügen".
+          if (mounted) ToastHelper.showWarning(context, l10n.rdTeamAcceptedNotPlanned);
+        } finally {
+          _refreshPlans(container);
         }
-        _refreshPlans();
       });
 
   @override
@@ -117,6 +125,20 @@ class _RdMeetingPageState extends ConsumerState<RdMeetingPage> with RouteReturnR
           header(l10n.rdTeamTabMeetings, ''),
           if (upcomingAsync.isLoading && !upcomingAsync.hasValue)
             const TeamOrgListSkeleton()
+          else if (upcomingAsync.hasError && !upcomingAsync.hasValue)
+            RdCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.rdTeamLoadFailed, style: RdType.meta(p)),
+                  const SizedBox(height: 10),
+                  RdOutlineButton(
+                    label: l10n.redesignCommonRetry,
+                    onPressed: () => ref.invalidate(upcomingProtocolAttendancesProvider),
+                  ),
+                ],
+              ),
+            )
           else
             RdCard(child: Text(l10n.rdTeamMeetingGone, style: RdType.meta(p))),
         ],
@@ -152,7 +174,7 @@ class _RdMeetingPageState extends ConsumerState<RdMeetingPage> with RouteReturnR
             RdProposalCard(
               key: ValueKey('rd-proposal-${item.id}'),
               item: item,
-              busy: _busy.contains(item.id),
+              busy: _busy.isNotEmpty,
               primaryLabel: l10n.rdTeamAccept,
               onPrimary: () => _take(item, meeting, type),
               secondaryLabel: l10n.rdTeamLater,

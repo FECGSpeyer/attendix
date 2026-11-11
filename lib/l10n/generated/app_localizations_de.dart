@@ -11443,6 +11443,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdTeamAcceptedLater => 'Für später vorgemerkt';
 
   @override
+  String get rdTeamAcceptedNotPlanned =>
+      'Angenommen, aber noch nicht auf der Tagesordnung. Nimm es über „Thema hinzufügen“ auf.';
+
+  @override
   String get rdTeamAcceptedToMeeting => 'Auf die Tagesordnung genommen';
 
   @override

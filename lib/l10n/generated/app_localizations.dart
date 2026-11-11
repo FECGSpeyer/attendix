@@ -18640,6 +18640,12 @@ abstract class AppLocalizations {
   /// **'Für später vorgemerkt'**
   String get rdTeamAcceptedLater;
 
+  /// rdTeam.acceptedNotPlanned
+  ///
+  /// In de, this message translates to:
+  /// **'Angenommen, aber noch nicht auf der Tagesordnung. Nimm es über „Thema hinzufügen“ auf.'**
+  String get rdTeamAcceptedNotPlanned;
+
   /// rdTeam.acceptedToMeeting
   ///
   /// In de, this message translates to:

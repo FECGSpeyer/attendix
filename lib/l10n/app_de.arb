@@ -14216,6 +14216,10 @@
   "@rdTeamAcceptedLater": {
     "description": "rdTeam.acceptedLater"
   },
+  "rdTeamAcceptedNotPlanned": "Angenommen, aber noch nicht auf der Tagesordnung. Nimm es über „Thema hinzufügen“ auf.",
+  "@rdTeamAcceptedNotPlanned": {
+    "description": "rdTeam.acceptedNotPlanned"
+  },
   "rdTeamAcceptedToMeeting": "Auf die Tagesordnung genommen",
   "@rdTeamAcceptedToMeeting": {
     "description": "rdTeam.acceptedToMeeting"

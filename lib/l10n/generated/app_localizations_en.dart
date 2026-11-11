@@ -11330,6 +11330,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTeamAcceptedLater => 'Noted for later';
 
   @override
+  String get rdTeamAcceptedNotPlanned =>
+      'Accepted, but not on the agenda yet. Add it with “Add topic”.';
+
+  @override
   String get rdTeamAcceptedToMeeting => 'Added to the agenda';
 
   @override

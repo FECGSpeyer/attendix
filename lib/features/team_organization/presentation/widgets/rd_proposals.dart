@@ -11,9 +11,10 @@ import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../team_org_utils.dart';
 
 /// Accepts a member's suggestion (it becomes an open topic).
-Future<bool> acceptProposal(BuildContext context, WidgetRef ref, AgendaItem item, {String? doneText}) =>
+/// [toast] false leaves the success message to the caller.
+Future<bool> acceptProposal(BuildContext context, WidgetRef ref, AgendaItem item, {bool toast = true}) =>
     _decide(context, ref, item, {'proposal_status': 'accepted', 'decision_note': null},
-        doneText ?? context.l10n.rdTeamAcceptedLater);
+        toast ? context.l10n.rdTeamAcceptedLater : null);
 
 /// Asks for an optional reason and rejects a member's suggestion.
 Future<bool> rejectProposal(BuildContext context, WidgetRef ref, AgendaItem item) async {
@@ -49,12 +50,12 @@ Future<bool> rejectProposal(BuildContext context, WidgetRef ref, AgendaItem item
 }
 
 Future<bool> _decide(
-    BuildContext context, WidgetRef ref, AgendaItem item, Map<String, dynamic> changes, String doneText) async {
+    BuildContext context, WidgetRef ref, AgendaItem item, Map<String, dynamic> changes, String? doneText) async {
   final id = item.id;
   if (id == null) return false;
   try {
     await ref.read(agendaItemNotifierProvider.notifier).decide(id, changes);
-    if (context.mounted) ToastHelper.showSuccess(context, doneText);
+    if (context.mounted && doneText != null) ToastHelper.showSuccess(context, doneText);
     return true;
   } catch (_) {
     if (context.mounted) ToastHelper.showError(context, context.l10n.teamOrgDecisionFailed);

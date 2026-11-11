@@ -3084,6 +3084,7 @@
   "rdTeacherNewTitle": "New teacher",
   "rdTeamAccept": "Accept",
   "rdTeamAcceptedLater": "Noted for later",
+  "rdTeamAcceptedNotPlanned": "Accepted, but not on the agenda yet. Add it with “Add topic”.",
   "rdTeamAcceptedToMeeting": "Added to the agenda",
   "rdTeamAddTopic": "Add topic",
   "rdTeamAddTopicHint": "New or from the open topics",
