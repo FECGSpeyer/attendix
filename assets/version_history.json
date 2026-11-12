@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.138.2",
+      "date": "12.11.2026",
+      "changes": [
+        "💄 Beta: Aufgaben-Seite im Team-Stil (Bearbeiten oben, Löschen unten, Beschreibung als eigene Karte), „Fällig am“ als Auswahl-Zeile"
+      ]
+    },
+    {
       "version": "0.138.1",
       "date": "12.11.2026",
       "changes": [
