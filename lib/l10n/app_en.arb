@@ -3316,6 +3316,8 @@
   "rdTeamSuggestedBy": "{name} · {when}",
   "rdTeamSuggestions": "Suggestions",
   "rdTeamTabMeetings": "Meetings",
+  "rdTeamTaskDelete": "Delete task",
+  "rdTeamTaskYou": "You",
   "rdTeamTitle": "Team",
   "rdTeamTopics": "Topics",
   "rdTeamTopicsCount": "{count, plural, one {1 topic} other {{count} topics}}",

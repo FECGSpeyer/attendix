@@ -15342,6 +15342,14 @@
   "@rdTeamTabMeetings": {
     "description": "rdTeam.tabMeetings"
   },
+  "rdTeamTaskDelete": "Aufgabe löschen",
+  "@rdTeamTaskDelete": {
+    "description": "rdTeam.taskDelete"
+  },
+  "rdTeamTaskYou": "Du",
+  "@rdTeamTaskYou": {
+    "description": "rdTeam.taskYou"
+  },
   "rdTeamTitle": "Team",
   "@rdTeamTitle": {
     "description": "rdTeam.title"

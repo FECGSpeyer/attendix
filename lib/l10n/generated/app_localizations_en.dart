@@ -12262,6 +12262,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTeamTabMeetings => 'Meetings';
 
   @override
+  String get rdTeamTaskDelete => 'Delete task';
+
+  @override
+  String get rdTeamTaskYou => 'You';
+
+  @override
   String get rdTeamTitle => 'Team';
 
   @override

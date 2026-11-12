@@ -3,7 +3,10 @@ import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -95,6 +98,10 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
     // read-only for members.
     final canChange = task != null && (isLeader || (me?.id != null && task.responsiblePersonId == me!.id));
 
+    if (ref.watch(redesignEnabledProvider)) {
+      return _buildBeta(context, taskAsync, isLeader, canChange, me?.id, types, today);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.tasksTask),
@@ -168,6 +175,158 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                   onRefresh: _reload,
                   child: _buildBody(context, task, isLeader, me?.id, types, today),
                 ),
+    );
+  }
+
+  /// Beta: same frame as the Besprechung page. "Bearbeiten" as text at the
+  /// top, deleting as the last row, the description in its own card.
+  Widget _buildBeta(BuildContext context, AsyncValue<TeamTask?> taskAsync, bool isLeader, bool canChange,
+      int? myId, List<ProtocolType> types, String today) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final task = taskAsync.valueOrNull;
+
+    final back = RdBackLink(label: l10n.rdTeamTitle, onTap: () => rdBack(context, '/settings/team-organization'));
+    if (task == null) {
+      return RdPage(
+        onRefresh: _reload,
+        children: [
+          back,
+          const SizedBox(height: 10),
+          if (taskAsync.isLoading)
+            const Padding(padding: EdgeInsets.only(top: 48), child: Center(child: AppSpinner()))
+          else
+            RdCard(child: Text(l10n.tasksNotAvailable, style: RdType.meta(p))),
+        ],
+      );
+    }
+
+    final overdue = isTaskOverdue(task, today);
+    final name = task.responsiblePerson.fullName;
+    final isMine = myId != null && task.responsiblePersonId == myId;
+    final description = task.description?.trim() ?? '';
+
+    String? attendanceLabel;
+    final att = task.attendance;
+    if (att != null) {
+      String? typeName = att.typeInfo?.isNotEmpty == true ? att.typeInfo : null;
+      if (typeName == null) {
+        for (final t in types) {
+          if (t.id == att.typeId) typeName = t.name;
+        }
+      }
+      attendanceLabel = l10n.tasksEventFrom(typeName ?? l10n.attendanceEventFallback, formatLongDate(att.date));
+    }
+    final topicTitle = task.agendaItem?.title;
+    final showTopic = task.agendaItemId != null && (isLeader || topicTitle != null);
+
+    return RdPage(
+      onRefresh: _reload,
+      children: [
+        Row(
+          children: [
+            Expanded(child: back),
+            if (isLeader)
+              TextButton(
+                key: const ValueKey('rd-task-edit'),
+                onPressed: () => showTaskFormSheet(context, task: task),
+                child: Text(l10n.commonEdit,
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.link)),
+              ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        RdEyebrow(l10n.tasksTask),
+        const SizedBox(height: 4),
+        Text(task.title, style: RdType.title(p)),
+        const SizedBox(height: 16),
+        RdSegmented<String>(
+          key: const ValueKey('rd-task-status'),
+          values: const ['open', 'in_progress', 'completed'],
+          selected: task.status,
+          labelOf: (s) => taskStatusLabels[s] ?? s,
+          enabled: canChange && !_savingStatus,
+          onChanged: (s) => _setStatus(task, s),
+        ),
+        const SizedBox(height: 18),
+        RdGroupedList(
+          children: [
+            RdListRow(
+              title: l10n.tasksResponsible,
+              value: isMine ? l10n.rdTeamTaskYou : (name.isNotEmpty ? name : l10n.tasksNobody),
+              showChevron: false,
+            ),
+            RdListRow(
+              title: l10n.tasksDueOn,
+              showChevron: false,
+              trailing: Text(
+                task.dueDate != null
+                    ? '${formatLongDate(task.dueDate)}${overdue ? ' ${l10n.tasksOverdueSuffix}' : ''}'
+                    : l10n.tasksNoDue,
+                style: TextStyle(fontSize: 16, color: overdue ? p.absent : p.text2),
+              ),
+            ),
+            RdListRow(
+              title: l10n.tasksPriority,
+              showChevron: false,
+              trailing: RdPill(
+                priorityLabels[task.priority] ?? task.priority,
+                tone: task.priority == 'high' ? RdTone.absent : null,
+              ),
+            ),
+          ],
+        ),
+        if (description.isNotEmpty) ...[
+          const SizedBox(height: 18),
+          RdGroupLabel(l10n.tasksDescription),
+          RdCard(child: SelectableText(description, style: RdType.body(p))),
+        ],
+        if (task.attendanceId != null || showTopic) ...[
+          const SizedBox(height: 18),
+          RdGroupLabel(l10n.tasksOrigin),
+          RdGroupedList(
+            children: [
+              if (task.attendanceId != null)
+                RdListRow(
+                  leading: const RdRowIcon(Icons.description_outlined),
+                  title: l10n.tasksProtocol,
+                  subtitle: attendanceLabel,
+                  onTap: () => context.push('/settings/protocol/${task.attendanceId}'),
+                ),
+              if (showTopic)
+                RdListRow(
+                  leading: const RdRowIcon(Icons.list),
+                  title: l10n.tasksTopic,
+                  subtitle: topicTitle ?? l10n.teamOrgOpenTopic,
+                  showChevron: isLeader,
+                  onTap: isLeader ? () => context.push('/settings/agenda-items/${task.agendaItemId}') : null,
+                ),
+            ],
+          ),
+        ],
+        if (canChange && task.status != 'completed') ...[
+          const SizedBox(height: 18),
+          RdPrimaryButton(
+            key: const ValueKey('rd-task-done'),
+            label: l10n.tasksMarkDone,
+            onPressed: _savingStatus ? null : () => _setStatus(task, 'completed'),
+          ),
+        ],
+        if (isLeader) ...[
+          const SizedBox(height: 18),
+          RdGroupedList(
+            children: [
+              RdListRow(
+                key: const ValueKey('rd-task-delete'),
+                title: l10n.rdTeamTaskDelete,
+                titleColor: p.absent,
+                showChevron: false,
+                onTap: () => _delete(task),
+              ),
+            ],
+          ),
+        ],
+      ],
     );
   }
 

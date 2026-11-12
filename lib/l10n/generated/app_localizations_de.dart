@@ -12383,6 +12383,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdTeamTabMeetings => 'Besprechungen';
 
   @override
+  String get rdTeamTaskDelete => 'Aufgabe löschen';
+
+  @override
+  String get rdTeamTaskYou => 'Du';
+
+  @override
   String get rdTeamTitle => 'Team';
 
   @override
