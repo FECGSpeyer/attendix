@@ -26576,18 +26576,6 @@ abstract class AppLocalizations {
   /// **'Fasst mehrere Punkte zusammen'**
   String get redesignPlanAddBlockHint;
 
-  /// redesign.plan.addCurrent
-  ///
-  /// In de, this message translates to:
-  /// **'Aktuelle Werke'**
-  String get redesignPlanAddCurrent;
-
-  /// redesign.plan.addCurrentHint
-  ///
-  /// In de, this message translates to:
-  /// **'Die Werke, die gerade dran sind'**
-  String get redesignPlanAddCurrentHint;
-
   /// redesign.plan.addDefaultField
   ///
   /// In de, this message translates to:
@@ -26636,23 +26624,35 @@ abstract class AppLocalizations {
   /// **'Plan'**
   String get redesignPlanAddPlan;
 
-  /// redesign.plan.addSong
-  ///
-  /// In de, this message translates to:
-  /// **'Werk aus der Liste'**
-  String get redesignPlanAddSong;
-
   /// redesign.plan.addTitle
   ///
   /// In de, this message translates to:
   /// **'Hinzufügen'**
   String get redesignPlanAddTitle;
 
+  /// redesign.plan.addWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get redesignPlanAddWorks;
+
+  /// redesign.plan.addWorksHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aktuelle Werke oder aus der Liste'**
+  String get redesignPlanAddWorksHint;
+
   /// redesign.plan.afterBlock
   ///
   /// In de, this message translates to:
   /// **'Punkt nach dem Block einfügen'**
   String get redesignPlanAfterBlock;
+
+  /// redesign.plan.allCurrent
+  ///
+  /// In de, this message translates to:
+  /// **'Alle aktuellen Werke'**
+  String get redesignPlanAllCurrent;
 
   /// redesign.plan.back
   ///
@@ -26881,12 +26881,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'In den Block darüber'**
   String get redesignPlanJoinBlock;
-
-  /// redesign.plan.kindSong
-  ///
-  /// In de, this message translates to:
-  /// **'Werk'**
-  String get redesignPlanKindSong;
 
   /// redesign.plan.leaveBlock
   ///

@@ -1184,7 +1184,13 @@ extension _PlanningBeta on _PlanningPageState {
       await _rdInsertRegister(after: after == null ? null : before[after]);
       return;
     }
-    await _runAddAction(action);
+    if (action == 'works') {
+      final rows = await _rdPickWorksFields();
+      if (rows.isEmpty || !_samePlan(loadGen)) return;
+      _rdApply([..._fields, ...rows]);
+    } else {
+      await _runAddAction(action);
+    }
     if (!mounted || after == null || loadGen != _loadGen) return;
     final now = _fields;
     if (now.length <= before.length) return;
@@ -1211,6 +1217,24 @@ extension _PlanningBeta on _PlanningPageState {
       _rdCollapsed.remove(join);
     }
     _rdApply([...now.sublist(0, pos), ...tail, ...now.sublist(pos, before.length)]);
+  }
+
+  /// "Werke": one picker for a Werk from the list or "Alle aktuellen
+  /// Werke" (the rows to add; empty: nothing).
+  Future<List<PlanField>> _rdPickWorksFields() async {
+    final loadGen = _loadGen;
+    final pick = await showPlanWorksPicker(
+      context,
+      _songs,
+      currentIds: _history.map((h) => h.songId).whereType<int>().toSet(),
+      inPlanIds: _fields.map((f) => f.songId).whereType<int>().toSet(),
+      offerAllCurrent: true,
+    );
+    if (pick == null || !_samePlan(loadGen)) return const [];
+    if (pick.allCurrent) return _currentSongFieldsOrAsk();
+    final song = pick.song;
+    if (song == null) return const [];
+    return [PlanSongHelper.songField(song, history: _history, prefix: _songPrefix(_typeOf(_att)))];
   }
 
   // ---------------------------------------------------------------------------
@@ -1344,8 +1368,8 @@ extension _PlanningBeta on _PlanningPageState {
     );
   }
 
-  /// Adds several entries in a row: Punkt or Notiz (form), Werk (picker),
-  /// Aktuelle Werke. [group]: into that block (at its end, or behind
+  /// Adds several entries in a row: Punkt or Notiz (form), Werke (one
+  /// picker: a Werk or all current ones). [group]: into that block (at its end, or behind
   /// [after] when it is inside); [kind] `group`: a new block, its name at
   /// the top and its Unterpunkte right below. Every entry is stored at
   /// once (autosave), the sheet stays open until "Fertig".
@@ -1433,8 +1457,7 @@ extension _PlanningBeta on _PlanningPageState {
               newBlock: newBlock,
               initialKind: kind == 'note' ? 'note' : 'field',
               initialMinutes: join != null || newBlock ? 5 : 20,
-              withSongs: !isGeneral && _songs.isNotEmpty,
-              withCurrent: !isGeneral,
+              withWorks: !isGeneral && _songs.isNotEmpty,
               onBlockName: (v) {
                 blockName = v;
                 final id = headId;
@@ -1462,16 +1485,9 @@ extension _PlanningBeta on _PlanningPageState {
                 insert([row]);
                 return [row.name];
               },
-              onSong: () async {
+              onWorks: () async {
                 if (!alive()) return null;
-                final row = await _pickSongField();
-                if (row == null || !alive() || !ensureBlock()) return null;
-                insert([row]);
-                return [row.name];
-              },
-              onCurrent: () async {
-                if (!alive()) return null;
-                final rows = await _currentSongFieldsOrAsk();
+                final rows = await _rdPickWorksFields();
                 if (rows.isEmpty || !alive() || !ensureBlock()) return null;
                 insert(rows);
                 return [for (final r in rows) r.name];
@@ -1571,15 +1587,14 @@ extension _PlanningBeta on _PlanningPageState {
                   l10n.redesignPlanAddNoteHint,
                   () => pop('note'),
                 ),
-                if (!isGeneral)
+                if (!isGeneral && _songs.isNotEmpty)
                   _rdSheetRow(
                     Icons.library_music_outlined,
-                    l10n.redesignPlanAddCurrent,
-                    l10n.redesignPlanAddCurrentHint,
-                    () => pop('current'),
+                    l10n.redesignPlanAddWorks,
+                    l10n.redesignPlanAddWorksHint,
+                    () => pop('works'),
+                    key: const Key('rd-plan-add-works'),
                   ),
-                if (!isGeneral && _songs.isNotEmpty)
-                  _rdSheetRow(Icons.music_note_outlined, l10n.redesignPlanAddSong, null, () => pop('song')),
                 if (canRegister)
                   _rdSheetRow(
                     Icons.groups_outlined,
@@ -2560,31 +2575,27 @@ class _RdBlockFramePainter extends CustomPainter {
 
 /// Content of the "Hinzufügen" sheet that stays open (see `_rdQuickAdd`):
 /// optional block name, what was added so far, the kind (Punkt, Notiz,
-/// Werk, Aktuelle Werke), the form and one "Hinzufügen".
+/// Werke), the form and one "Hinzufügen".
 class _RdQuickAddBody extends StatefulWidget {
   const _RdQuickAddBody({
     required this.newBlock,
     required this.initialKind,
     required this.initialMinutes,
-    required this.withSongs,
-    required this.withCurrent,
+    required this.withWorks,
     required this.onBlockName,
     required this.onAdd,
-    required this.onSong,
-    required this.onCurrent,
+    required this.onWorks,
   });
 
   final bool newBlock;
   final String initialKind;
   final int initialMinutes;
-  final bool withSongs;
-  final bool withCurrent;
+  final bool withWorks;
   final ValueChanged<String> onBlockName;
 
   /// The names of what was added; null when nothing was.
   final Future<List<String>?> Function(String kind, PlanFieldInput input) onAdd;
-  final Future<List<String>?> Function() onSong;
-  final Future<List<String>?> Function() onCurrent;
+  final Future<List<String>?> Function() onWorks;
 
   @override
   State<_RdQuickAddBody> createState() => _RdQuickAddBodyState();
@@ -2713,21 +2724,13 @@ class _RdQuickAddBodyState extends State<_RdQuickAddBody> {
                 _error = null;
               }),
             ),
-            if (widget.withSongs)
+            if (widget.withWorks)
               RdChoiceChip(
-                key: const Key('rd-plan-quick-song'),
-                label: l10n.redesignPlanKindSong,
+                key: const Key('rd-plan-quick-works'),
+                label: l10n.redesignPlanAddWorks,
                 icon: Icons.add,
                 selected: false,
-                onTap: () => _run(widget.onSong),
-              ),
-            if (widget.withCurrent)
-              RdChoiceChip(
-                key: const Key('rd-plan-quick-current'),
-                label: l10n.redesignPlanAddCurrent,
-                icon: Icons.add,
-                selected: false,
-                onTap: () => _run(widget.onCurrent),
+                onTap: () => _run(widget.onWorks),
               ),
           ],
         ),
