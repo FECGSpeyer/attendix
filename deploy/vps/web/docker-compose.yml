@@ -1,0 +1,40 @@
+# Attendix web on the own VPS (replaces Cloudflare Pages).
+# build/web is rsynced to ./www by the "Deploy VPS" step in
+# .github/workflows/deploy-cloudflare.yml.
+#
+# Adjust TRAEFIK_NETWORK, the entrypoint and the certresolver name to the
+# existing Traefik setup. Host: WEB_HOST (default attendix.de; test.attendix.de
+# until the switch).
+services:
+  attendix-web:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    volumes:
+      - ./www:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - attendix-link-preview
+    networks:
+      - default
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${TRAEFIK_NETWORK:-traefik}
+      - traefik.http.routers.attendix-web.rule=Host(`${WEB_HOST:-attendix.de}`) || Host(`www.${WEB_HOST:-attendix.de}`)
+      - traefik.http.routers.attendix-web.entrypoints=websecure
+      - traefik.http.routers.attendix-web.tls.certresolver=letsencrypt
+      - traefik.http.services.attendix-web.loadbalancer.server.port=80
+
+  attendix-link-preview:
+    image: node:22-alpine
+    restart: unless-stopped
+    working_dir: /app
+    command: ["node", "server.mjs"]
+    volumes:
+      - ./link-preview:/app:ro
+      - ./www:/web:ro
+
+networks:
+  traefik:
+    external: true
+    name: ${TRAEFIK_NETWORK:-traefik}
