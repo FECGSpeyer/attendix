@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
@@ -36,6 +37,48 @@ final accountSwitchServiceProvider = Provider<AccountSwitchService>((ref) {
   return service;
 });
 
+/// Device-local developer mode (Leon, 13.11.2026): "Konto wechseln" and
+/// the saved accounts on the login page are a developer feature. Tapping
+/// the version at the bottom of the Ich page 7× turns it on or off on this
+/// device. Without it, logins are not remembered either.
+const developerModeStorageKey = 'attendix_developer_mode';
+
+/// Reads the stored developer mode (false when storage is unavailable).
+Future<bool> loadDeveloperMode() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(developerModeStorageKey) ?? false;
+  } catch (_) {
+    return false;
+  }
+}
+
+class DeveloperModeNotifier extends Notifier<bool> {
+  bool _touched = false;
+
+  @override
+  bool build() {
+    unawaited(loadDeveloperMode().then((on) {
+      if (!_touched) state = on;
+    }));
+    return false;
+  }
+
+  Future<void> setEnabled(bool enabled) async {
+    _touched = true;
+    state = enabled;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(developerModeStorageKey, enabled);
+    } catch (_) {
+      // Storage unavailable (private browsing): on for this session only.
+    }
+  }
+}
+
+/// See [developerModeStorageKey].
+final developerModeProvider = NotifierProvider<DeveloperModeNotifier, bool>(DeveloperModeNotifier.new);
+
 /// Remembered accounts of this device (incl. the signed-in one).
 final savedAccountsProvider = StreamProvider<List<SavedAccount>>((ref) async* {
   final service = ref.watch(accountSwitchServiceProvider);
@@ -46,7 +89,8 @@ final savedAccountsProvider = StreamProvider<List<SavedAccount>>((ref) async* {
 /// Keeps the remembered accounts in step with the auth client (read once
 /// from AttendixApp):
 /// - every new session or token refresh stores the account's newest
-///   refresh token; new accounts are only added while the new design is on,
+///   refresh token; new accounts are only added while the new design is on
+///   and developer mode is on,
 /// - a sign-out removes the account that was signed in (its session is
 ///   revoked by the sign-out anyway),
 /// - another browser tab that changed the account (switch or sign-in, it
@@ -58,12 +102,27 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
   final auth = ref.watch(supabaseAuthProvider);
   String? activeUserId = auth.currentUser?.id;
 
+  // Every store change of this listener runs in event order: reading the
+  // developer mode is async, so without the chain a sign-out's forget()
+  // could run before the remember() of an earlier event and the signed-out
+  // account would be stored again.
+  Future<void> chain = Future.value();
+  void enqueue(Future<void> Function() op) {
+    chain = chain.then((_) => op()).catchError((_) {});
+  }
+
+  // New accounts are only added in developer mode (see
+  // [developerModeStorageKey]).
+  void rememberSession(Session session, {required bool add}) {
+    enqueue(() async => service.remember(session, add: add && await loadDeveloperMode()));
+  }
+
   void handle(AuthState state) {
     final session = state.session;
     if (state.event == AuthChangeEvent.signedOut) {
       final userId = activeUserId;
       activeUserId = null;
-      if (userId != null) unawaited(service.forget(userId).catchError((_) {}));
+      if (userId != null) enqueue(() => service.forget(userId));
       return;
     }
     if (session == null) return;
@@ -83,24 +142,30 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
     // A recovery session only updates a saved account, it never adds one.
     final add = state.event != AuthChangeEvent.passwordRecovery &&
         ref.read(redesignEnabledProvider);
-    unawaited(service.remember(session, add: add).catchError((_) {}));
+    rememberSession(session, add: add);
   }
 
   final current = auth.currentSession;
   if (current != null) {
-    unawaited(service
-        .remember(current, add: ref.read(redesignEnabledProvider))
-        .catchError((_) {}));
+    rememberSession(current, add: ref.read(redesignEnabledProvider));
   }
   final sub = auth.onAuthStateChange.listen(handle, onError: (_) {});
   ref.onDispose(sub.cancel);
 
-  // Turning the new design on remembers the signed-in account right away.
-  ref.listen<bool>(redesignEnabledProvider, (_, enabled) {
+  // Turning the new design or developer mode on remembers the signed-in
+  // account right away.
+  void rememberCurrent() {
     final session = auth.currentSession;
-    if (enabled && session != null) {
-      unawaited(service.remember(session).catchError((_) {}));
+    if (session != null && ref.read(redesignEnabledProvider) && ref.read(developerModeProvider)) {
+      enqueue(() => service.remember(session));
     }
+  }
+
+  ref.listen<bool>(redesignEnabledProvider, (_, enabled) {
+    if (enabled) rememberCurrent();
+  });
+  ref.listen<bool>(developerModeProvider, (_, enabled) {
+    if (enabled) rememberCurrent();
   });
 });
 

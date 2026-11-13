@@ -20,6 +20,7 @@ import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/shorebird_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/router/route_access.dart' show canOpenSongsTab;
 import '../../../../core/services/app_update_service.dart';
@@ -259,13 +260,15 @@ class RdMePage extends ConsumerWidget {
         RdGroupLabel(l10n.redesignMeAccount),
         RdGroupedList(
           children: [
-            // ACCOUNT_SWITCH: saved accounts of this device.
-            RdListRow(
-              leading: const RdRowIcon(Icons.switch_account_outlined),
-              title: l10n.redesignAccountsTitle,
-              value: accountCount > 1 ? l10n.redesignAccountsCount(accountCount) : null,
-              onTap: () => showRdAccountSwitchSheet(context),
-            ),
+            // ACCOUNT_SWITCH: saved accounts of this device (developer
+            // mode only, see developerModeStorageKey).
+            if (ref.watch(developerModeProvider))
+              RdListRow(
+                leading: const RdRowIcon(Icons.switch_account_outlined),
+                title: l10n.redesignAccountsTitle,
+                value: accountCount > 1 ? l10n.redesignAccountsCount(accountCount) : null,
+                onTap: () => showRdAccountSwitchSheet(context),
+              ),
             RdListRow(
               leading: const RdRowIcon(Icons.key_outlined),
               title: l10n.settingsChangePassword,
@@ -294,14 +297,7 @@ class RdMePage extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 20),
-        const Center(child: RdLogo(size: 44)),
-        const SizedBox(height: 8),
-        Center(
-          child: Text(
-            'Attendix ${AppConstants.displayVersion}',
-            style: RdType.meta(p, size: 13),
-          ),
-        ),
+        const _VersionFooter(),
       ],
     );
   }
@@ -336,6 +332,57 @@ class RdMePage extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Logo and version at the bottom. Tapping it 7× turns developer mode on
+/// or off on this device (hidden on purpose, like Android's build number).
+class _VersionFooter extends ConsumerStatefulWidget {
+  const _VersionFooter();
+
+  @override
+  ConsumerState<_VersionFooter> createState() => _VersionFooterState();
+}
+
+class _VersionFooterState extends ConsumerState<_VersionFooter> {
+  static const _tapsNeeded = 7;
+  int _taps = 0;
+  DateTime? _lastTap;
+
+  void _onTap() {
+    final now = DateTime.now();
+    final last = _lastTap;
+    _taps = last != null && now.difference(last) < const Duration(seconds: 2) ? _taps + 1 : 1;
+    _lastTap = now;
+    if (_taps < _tapsNeeded) return;
+    _taps = 0;
+    final enabled = !ref.read(developerModeProvider);
+    unawaited(ref.read(developerModeProvider.notifier).setEnabled(enabled));
+    ToastHelper.showInfo(
+      context,
+      enabled ? context.l10n.redesignDeveloperModeOn : context.l10n.redesignDeveloperModeOff,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: _onTap,
+      child: Column(
+        children: [
+          const Center(child: RdLogo(size: 44)),
+          const SizedBox(height: 8),
+          Center(
+            child: Text(
+              'Attendix ${AppConstants.displayVersion}',
+              style: RdType.meta(p, size: 13),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -13498,6 +13498,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignCreateType => 'Art';
 
   @override
+  String get redesignDeveloperModeOff => 'Entwicklermodus aus';
+
+  @override
+  String get redesignDeveloperModeOn => 'Entwicklermodus an';
+
+  @override
   String get redesignDutyCannot => 'Kann nicht';
 
   @override

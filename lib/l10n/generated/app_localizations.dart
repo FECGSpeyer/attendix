@@ -21656,6 +21656,18 @@ abstract class AppLocalizations {
   /// **'Art'**
   String get redesignCreateType;
 
+  /// redesign.developerMode.off
+  ///
+  /// In de, this message translates to:
+  /// **'Entwicklermodus aus'**
+  String get redesignDeveloperModeOff;
+
+  /// redesign.developerMode.on
+  ///
+  /// In de, this message translates to:
+  /// **'Entwicklermodus an'**
+  String get redesignDeveloperModeOn;
+
   /// redesign.duty.cannot
   ///
   /// In de, this message translates to:

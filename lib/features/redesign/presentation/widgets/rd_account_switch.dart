@@ -539,7 +539,8 @@ class _RdSavedAccountsOnLoginState extends ConsumerState<RdSavedAccountsOnLogin>
   @override
   Widget build(BuildContext context) {
     final accounts = ref.watch(savedAccountsProvider).valueOrNull ?? const <SavedAccount>[];
-    if (accounts.isEmpty) return const SizedBox.shrink();
+    // Developer feature: only in developer mode (see developerModeStorageKey).
+    if (accounts.isEmpty || !ref.watch(developerModeProvider)) return const SizedBox.shrink();
     final p = context.rd;
     final l10n = context.l10n;
     // Same rows as the "Konto wechseln" sheet (one look for accounts).

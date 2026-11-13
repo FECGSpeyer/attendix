@@ -13373,6 +13373,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignCreateType => 'Type';
 
   @override
+  String get redesignDeveloperModeOff => 'Developer mode off';
+
+  @override
+  String get redesignDeveloperModeOn => 'Developer mode on';
+
+  @override
   String get redesignDutyCannot => 'Can\'t';
 
   @override
