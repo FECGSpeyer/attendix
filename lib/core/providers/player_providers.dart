@@ -441,3 +441,12 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
 final playerNotifierProvider = NotifierProvider<PlayerNotifier, AsyncValue<void>>(() {
   return PlayerNotifier();
 });
+
+/// Role of the account behind a "Mein Kind" registration in the current
+/// group (sign-up and Freigaben hint, Q3/U9); null while unknown.
+final parentRegistrationRoleProvider =
+    FutureProvider.autoDispose.family<Role?, String>((ref, appId) async {
+  final repo = ref.watch(userRegistrationRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return null;
+  return repo.getTenantUserRole(appId);
+});

@@ -30,6 +30,7 @@ import '../widgets/person_transfer_sheet.dart';
 import '../widgets/pause_person_sheet.dart';
 import '../widgets/archive_person_modal.dart';
 import '../widgets/duplicate_candidates_card.dart';
+import '../widgets/parent_review_hint.dart';
 import '../widgets/person_detail/person_detail.dart';
 import '../widgets/ion/ion_widgets.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
@@ -1928,6 +1929,20 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 ),
               ),
             ],
+
+            // "Mein Kind" registration: who registered the child and what
+            // the approval does with that account (U9, also classic).
+            if (widget.person.pending && canEdit)
+              if (parentRegistrationOf(widget.person) case final parent?)
+                Padding(
+                  key: const Key('person-parent-review-hint'),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Text(
+                    '${context.l10n.parentRegisterChildOf(parent.fullName)}. '
+                    '${parentReviewHint(ref, context.l10n, parent)}',
+                    style: IonText.note(context),
+                  ),
+                ),
 
             // PEOPLE2: duplicate candidates + merge for pending registrations
             // (never for a child registered by an Elternteil: the merge

@@ -7725,6 +7725,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get parentRegisterInviteByEmail => 'Invite by email';
 
   @override
+  String parentRegisterMemberBlocked(Object role) {
+    return 'You are already in this group with this account ($role). You can\'t register a child with it. Please tell the leaders or register the child with another account.';
+  }
+
+  @override
+  String get parentRegisterMemberBlockedTitle =>
+      'Not possible with this account';
+
+  @override
   String get parentRegisterParentData => 'Your details (parent)';
 
   @override
@@ -7736,6 +7745,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String parentRegisterReviewParentHint(Object name) {
     return 'When you accept, $name gets access as a parent and sees the child\'s events.';
+  }
+
+  @override
+  String parentRegisterReviewParentMemberHint(Object name, Object role) {
+    return '$name is already in this group ($role). One account is not member and parent at once: the child is accepted but not linked to this account.';
   }
 
   @override

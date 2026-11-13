@@ -1,3 +1,4 @@
+import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/utils/parent_registration.dart';
 import 'package:attendix/features/registration/data/providers/registration_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -47,6 +48,15 @@ void main() {
       expect(update.containsKey('appId') && update['appId'] == null, isTrue);
       expect(update['email'], isNull);
       expect(update['additional_fields'], {'church': 'x'});
+    });
+
+    test('Q3: an account with its own role registers no child, applicant/parent may', () {
+      for (final r in [Role.player, Role.helper, Role.admin, Role.responsible, Role.viewer, Role.voiceLeader]) {
+        expect(hasOwnMemberRole(r), isTrue, reason: r.name);
+      }
+      for (final r in [null, Role.none, Role.applicant, Role.parent]) {
+        expect(hasOwnMemberRole(r), isFalse, reason: '$r');
+      }
     });
   });
 }

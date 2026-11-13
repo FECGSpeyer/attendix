@@ -1639,6 +1639,23 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     if (!mounted) return;
     setState(() => _isLoading = false);
 
+    if (!result.success && result.memberBlocked) {
+      // Q3: say plainly why, nothing was saved.
+      await showAppDialog(
+        context: context,
+        builder: (context) => AppAlertDialog(
+          title: Text(context.l10n.parentRegisterMemberBlockedTitle),
+          content: Text(result.errorMessage ?? ''),
+          actions: [
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(context.l10n.commonOk),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     if (!result.success) {
       final message = result.errorMessage ?? context.l10n.commonUnknown;
       ToastHelper.showError(

@@ -12537,6 +12537,18 @@ abstract class AppLocalizations {
   /// **'Per E-Mail einladen'**
   String get parentRegisterInviteByEmail;
 
+  /// parentRegister.memberBlocked
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist mit diesem Konto schon in dieser Gruppe ({role}). Ein Kind lässt sich damit nicht anmelden. Bitte gib der Leitung Bescheid oder melde das Kind mit einem anderen Konto an.'**
+  String parentRegisterMemberBlocked(Object role);
+
+  /// parentRegister.memberBlockedTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Mit diesem Konto nicht möglich'**
+  String get parentRegisterMemberBlockedTitle;
+
   /// parentRegister.parentData
   ///
   /// In de, this message translates to:
@@ -12560,6 +12572,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Beim Aufnehmen bekommt {name} Zugang als Elternteil und sieht die Termine des Kindes.'**
   String parentRegisterReviewParentHint(Object name);
+
+  /// parentRegister.reviewParentMemberHint
+  ///
+  /// In de, this message translates to:
+  /// **'{name} ist schon in dieser Gruppe ({role}). Ein Konto ist nicht zugleich Mitglied und Elternteil: Das Kind wird aufgenommen, aber nicht mit diesem Konto verknüpft.'**
+  String parentRegisterReviewParentMemberHint(Object name, Object role);
 
   /// parentRegister.self
   ///

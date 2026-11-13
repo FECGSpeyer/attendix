@@ -9609,6 +9609,17 @@
   "@parentRegisterInviteByEmail": {
     "description": "parentRegister.inviteByEmail"
   },
+  "parentRegisterMemberBlocked": "Du bist mit diesem Konto schon in dieser Gruppe ({role}). Ein Kind lässt sich damit nicht anmelden. Bitte gib der Leitung Bescheid oder melde das Kind mit einem anderen Konto an.",
+  "@parentRegisterMemberBlocked": {
+    "description": "parentRegister.memberBlocked",
+    "placeholders": {
+      "role": {}
+    }
+  },
+  "parentRegisterMemberBlockedTitle": "Mit diesem Konto nicht möglich",
+  "@parentRegisterMemberBlockedTitle": {
+    "description": "parentRegister.memberBlockedTitle"
+  },
   "parentRegisterParentData": "Deine Angaben (Elternteil)",
   "@parentRegisterParentData": {
     "description": "parentRegister.parentData"
@@ -9626,6 +9637,14 @@
     "description": "parentRegister.reviewParentHint",
     "placeholders": {
       "name": {}
+    }
+  },
+  "parentRegisterReviewParentMemberHint": "{name} ist schon in dieser Gruppe ({role}). Ein Konto ist nicht zugleich Mitglied und Elternteil: Das Kind wird aufgenommen, aber nicht mit diesem Konto verknüpft.",
+  "@parentRegisterReviewParentMemberHint": {
+    "description": "parentRegister.reviewParentMemberHint",
+    "placeholders": {
+      "name": {},
+      "role": {}
     }
   },
   "parentRegisterSelf": "Mich selbst",

@@ -7814,6 +7814,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get parentRegisterInviteByEmail => 'Per E-Mail einladen';
 
   @override
+  String parentRegisterMemberBlocked(Object role) {
+    return 'Du bist mit diesem Konto schon in dieser Gruppe ($role). Ein Kind lässt sich damit nicht anmelden. Bitte gib der Leitung Bescheid oder melde das Kind mit einem anderen Konto an.';
+  }
+
+  @override
+  String get parentRegisterMemberBlockedTitle =>
+      'Mit diesem Konto nicht möglich';
+
+  @override
   String get parentRegisterParentData => 'Deine Angaben (Elternteil)';
 
   @override
@@ -7825,6 +7834,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String parentRegisterReviewParentHint(Object name) {
     return 'Beim Aufnehmen bekommt $name Zugang als Elternteil und sieht die Termine des Kindes.';
+  }
+
+  @override
+  String parentRegisterReviewParentMemberHint(Object name, Object role) {
+    return '$name ist schon in dieser Gruppe ($role). Ein Konto ist nicht zugleich Mitglied und Elternteil: Das Kind wird aufgenommen, aber nicht mit diesem Konto verknüpft.';
   }
 
   @override
