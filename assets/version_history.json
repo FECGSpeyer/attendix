@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.142.0",
+      "date": "14.11.2026",
+      "changes": [
+        "✨ Personen übergeben: Wer in der Ziel-Gruppe nicht Leitung ist, schickt eine Anfrage. Sie liegt dort unter Freigaben, die Leitung nimmt auf oder lehnt ab",
+        "✨ Beta: Die Übergabe fragt „Was passiert hier mit den Personen?“ (Bleiben auch hier / Wechseln ganz) statt eines Schalters",
+        "💬 Hinweis beim Übertragen sagt, was wirklich passiert (Konto und angelegte Termine bleiben)"
+      ]
+    },
+    {
       "version": "0.141.2",
       "date": "14.11.2026",
       "changes": [
