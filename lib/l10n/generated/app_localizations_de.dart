@@ -7796,6 +7796,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get parentRegisterInviteByEmail => 'Per E-Mail einladen';
 
   @override
+  String get parentRegisterMyChildren => 'Meine Kinder';
+
+  @override
+  String get parentRegisterMyChildrenNoUpcoming =>
+      'Für deine Kinder stehen keine Termine an.';
+
+  @override
+  String parentRegisterMyChildrenShowAll(Object count) {
+    return 'Alle anzeigen ($count)';
+  }
+
+  @override
+  String get parentRegisterMyChildrenShowLess => 'Weniger anzeigen';
+
+  @override
   String get parentRegisterParentData => 'Deine Angaben (Elternteil)';
 
   @override
@@ -7807,6 +7822,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String parentRegisterReviewParentHint(Object name) {
     return 'Beim Aufnehmen bekommt $name Zugang als Elternteil und sieht die Termine des Kindes.';
+  }
+
+  @override
+  String parentRegisterReviewParentMemberHint(Object name, Object role) {
+    return '$name ist schon in dieser Gruppe ($role). Beim Aufnehmen wird das Kind mit diesem Konto verknüpft, die Rolle bleibt. Im neuen Design sieht $name das Kind dann unter „Meine Kinder“.';
   }
 
   @override

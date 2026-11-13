@@ -26,6 +26,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppConfirm;
 import '../../../people/person_write.dart';
 import '../../../people/presentation/pages/person_detail_page.dart' show personProvider;
 import '../../../people/presentation/widgets/duplicate_candidates_card.dart' show duplicateCandidatesProvider;
+import '../../../people/presentation/widgets/parent_review_hint.dart';
 import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/members/rd_person_form.dart' show applyPersonColumns;
@@ -608,8 +609,7 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
           ]),
           Padding(
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
-            child: Text(l10n.parentRegisterReviewParentHint(parent.firstName),
-                style: RdType.meta(p, size: 13)),
+            child: Text(parentReviewHint(ref, l10n, parent), style: RdType.meta(p, size: 13)),
           ),
         ],
         if (!extrasReady) ...[

@@ -9593,6 +9593,25 @@
   "@parentRegisterInviteByEmail": {
     "description": "parentRegister.inviteByEmail"
   },
+  "parentRegisterMyChildren": "Meine Kinder",
+  "@parentRegisterMyChildren": {
+    "description": "parentRegister.myChildren"
+  },
+  "parentRegisterMyChildrenNoUpcoming": "Für deine Kinder stehen keine Termine an.",
+  "@parentRegisterMyChildrenNoUpcoming": {
+    "description": "parentRegister.myChildrenNoUpcoming"
+  },
+  "parentRegisterMyChildrenShowAll": "Alle anzeigen ({count})",
+  "@parentRegisterMyChildrenShowAll": {
+    "description": "parentRegister.myChildrenShowAll",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "parentRegisterMyChildrenShowLess": "Weniger anzeigen",
+  "@parentRegisterMyChildrenShowLess": {
+    "description": "parentRegister.myChildrenShowLess"
+  },
   "parentRegisterParentData": "Deine Angaben (Elternteil)",
   "@parentRegisterParentData": {
     "description": "parentRegister.parentData"
@@ -9610,6 +9629,14 @@
     "description": "parentRegister.reviewParentHint",
     "placeholders": {
       "name": {}
+    }
+  },
+  "parentRegisterReviewParentMemberHint": "{name} ist schon in dieser Gruppe ({role}). Beim Aufnehmen wird das Kind mit diesem Konto verknüpft, die Rolle bleibt. Im neuen Design sieht {name} das Kind dann unter „Meine Kinder“.",
+  "@parentRegisterReviewParentMemberHint": {
+    "description": "parentRegister.reviewParentMemberHint",
+    "placeholders": {
+      "name": {},
+      "role": {}
     }
   },
   "parentRegisterSelf": "Mich selbst",

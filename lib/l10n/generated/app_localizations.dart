@@ -12525,6 +12525,30 @@ abstract class AppLocalizations {
   /// **'Per E-Mail einladen'**
   String get parentRegisterInviteByEmail;
 
+  /// parentRegister.myChildren
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Kinder'**
+  String get parentRegisterMyChildren;
+
+  /// parentRegister.myChildrenNoUpcoming
+  ///
+  /// In de, this message translates to:
+  /// **'Für deine Kinder stehen keine Termine an.'**
+  String get parentRegisterMyChildrenNoUpcoming;
+
+  /// parentRegister.myChildrenShowAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle anzeigen ({count})'**
+  String parentRegisterMyChildrenShowAll(Object count);
+
+  /// parentRegister.myChildrenShowLess
+  ///
+  /// In de, this message translates to:
+  /// **'Weniger anzeigen'**
+  String get parentRegisterMyChildrenShowLess;
+
   /// parentRegister.parentData
   ///
   /// In de, this message translates to:
@@ -12548,6 +12572,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Beim Aufnehmen bekommt {name} Zugang als Elternteil und sieht die Termine des Kindes.'**
   String parentRegisterReviewParentHint(Object name);
+
+  /// parentRegister.reviewParentMemberHint
+  ///
+  /// In de, this message translates to:
+  /// **'{name} ist schon in dieser Gruppe ({role}). Beim Aufnehmen wird das Kind mit diesem Konto verknüpft, die Rolle bleibt. Im neuen Design sieht {name} das Kind dann unter „Meine Kinder“.'**
+  String parentRegisterReviewParentMemberHint(Object name, Object role);
 
   /// parentRegister.self
   ///

@@ -338,21 +338,28 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     if (role == Role.applicant) {
       await registration.updateTenantUserRole(appId, Role.parent);
     }
-    if (role == Role.applicant || role == Role.parent) {
+    // U9b: an account that is already in the group with another role
+    // (Mitglied, Helfer, Leitung) keeps it and is linked as Elternteil too;
+    // the new design shows its children under "Meine Kinder".
+    if (role != null && role != Role.none) {
       await registration.linkParentToTenantUser(appId, parentRow.id!);
     }
     final firstChild = (await players.getChildrenForParent(parentRow.id!)).isEmpty;
     await players.approvePlayer(child,
         extra: childApprovalFields(parentRow.id!, child.additionalFields));
-    if (firstChild) await _notifyParentApproval(registration, parent);
+    if (firstChild) {
+      await _notifyParentApproval(registration, parent,
+          keepsOwnRole(role) ? role! : Role.parent);
+    }
   }
 
-  /// Approval mail of a new Elternteil (non-blocking like [_notifyApproval]).
-  Future<void> _notifyParentApproval(
-      UserRegistrationRepository registration, ParentRegistration parent) async {
+  /// Approval mail of a new Elternteil (non-blocking like [_notifyApproval]);
+  /// an account with its own role is told that role, not "Elternteil".
+  Future<void> _notifyParentApproval(UserRegistrationRepository registration,
+      ParentRegistration parent, Role role) async {
     try {
       await registration.informUserAboutApproval(
-          parent.email, parent.firstName, Role.parent);
+          parent.email, parent.firstName, role);
     } catch (e) {
       debugPrint('approveChild: notify failed (non-blocking): $e');
     }
@@ -440,4 +447,19 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
 
 final playerNotifierProvider = NotifierProvider<PlayerNotifier, AsyncValue<void>>(() {
   return PlayerNotifier();
+});
+
+/// U9b: the account of a "Mein Kind" registration is already in the group
+/// with its own role (Mitglied, Helfer, Leitung, …). The approval links the
+/// child to it and the role stays.
+bool keepsOwnRole(Role? role) =>
+    role != null && role != Role.none && role != Role.applicant && role != Role.parent;
+
+/// Role of the account behind a "Mein Kind" registration in the current
+/// group (Freigaben hint, U9); null while unknown.
+final parentRegistrationRoleProvider =
+    FutureProvider.autoDispose.family<Role?, String>((ref, appId) async {
+  final repo = ref.watch(userRegistrationRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return null;
+  return repo.getTenantUserRole(appId);
 });

@@ -7708,6 +7708,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get parentRegisterInviteByEmail => 'Invite by email';
 
   @override
+  String get parentRegisterMyChildren => 'My children';
+
+  @override
+  String get parentRegisterMyChildrenNoUpcoming =>
+      'There are no upcoming events for your children.';
+
+  @override
+  String parentRegisterMyChildrenShowAll(Object count) {
+    return 'Show all ($count)';
+  }
+
+  @override
+  String get parentRegisterMyChildrenShowLess => 'Show less';
+
+  @override
   String get parentRegisterParentData => 'Your details (parent)';
 
   @override
@@ -7719,6 +7734,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String parentRegisterReviewParentHint(Object name) {
     return 'When you accept, $name gets access as a parent and sees the child\'s events.';
+  }
+
+  @override
+  String parentRegisterReviewParentMemberHint(Object name, Object role) {
+    return '$name is already in this group ($role). When you accept, the child is linked to this account and the role stays. In the new design $name then sees the child under \"My children\".';
   }
 
   @override

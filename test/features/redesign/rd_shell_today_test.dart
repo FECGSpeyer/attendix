@@ -264,6 +264,41 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Mitglied who is Elternteil too sees "Meine Kinder" below the own Zusage (U9b)', (tester) async {
+    _size(tester, const Size(393, 1400));
+    final group = ParentAttendanceGroup(
+      attendanceId: 42,
+      date: _day(2),
+      typeInfo: 'Kinderchor',
+      startTime: '16:30',
+      endTime: '17:30',
+      childAttendances: [
+        ChildPersonAttendance(id: 'm', childId: 1, childName: 'Mia Wolf', childFirstName: 'Mia'),
+      ],
+    );
+    await tester.pumpWidget(_app(Role.player, extra: [
+      parentChildrenProvider.overrideWith((ref) async => [TestFactories.createPerson(id: 1)]),
+      childrenAttendancesProvider.overrideWith((ref) async => const []),
+      upcomingParentAttendancesProvider.overrideWithValue([group]),
+    ]));
+    await _settle(tester);
+
+    expect(find.text('Meine Kinder'), findsOneWidget);
+    expect(find.text('Kinderchor'), findsOneWidget);
+    expect(find.text('Ist dabei'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Mitglied without linked children: no "Meine Kinder" (U9b)', (tester) async {
+    _size(tester, const Size(393, 1400));
+    await tester.pumpWidget(_app(Role.player, extra: [
+      parentChildrenProvider.overrideWith((ref) async => const []),
+    ]));
+    await _settle(tester);
+    expect(find.text('Meine Kinder'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Eltern: after "kommt später" both Zusage and Absage stay open (UX E1)', (tester) async {
     _size(tester, const Size(393, 852));
     final group = ParentAttendanceGroup(

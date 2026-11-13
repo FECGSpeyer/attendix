@@ -22,6 +22,7 @@ import '../widgets/rd_desktop.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_applicant_today.dart';
 import '../widgets/today/rd_leader_today.dart';
+import '../widgets/today/rd_my_children.dart';
 import '../widgets/today/rd_parent_today.dart';
 import '../widgets/today/rd_player_today.dart';
 
@@ -55,6 +56,7 @@ class RdTodayPage extends ConsumerWidget {
       ref.invalidate(childrenAttendancesProvider);
       return;
     }
+    if (ref.read(hasChildrenBesideRoleProvider)) ref.invalidate(childrenAttendancesProvider);
     if (!role.isConductor) {
       ref.invalidate(currentSelfServicePlayerProvider);
       ref.invalidate(signoutDataProvider);
@@ -111,6 +113,8 @@ class RdTodayPage extends ConsumerWidget {
           RdLeaderToday(role: role)
         else
           RdPlayerToday(role: role),
+        // U9b: an account with its own role that is Elternteil too.
+        if (!role.isParent) const RdMyChildrenToday(),
       ],
     );
   }
