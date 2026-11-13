@@ -25,6 +25,7 @@ class RdParentToday extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
     final l10n = context.l10n;
     final async = ref.watch(childrenAttendancesProvider);
     final children = ref.watch(parentChildrenProvider);
@@ -55,7 +56,56 @@ class RdParentToday extends ConsumerWidget {
         if (next == null)
           RdInfoCard(text: l10n.redesignTodayNoUpcoming, icon: Icons.event_available_outlined)
         else
-          RdChildrenNextCard(group: next, onMore: () => context.go('/parents')),
+          RdCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Builder(
+                  builder: (context) {
+                    final start = rdStartOf(next.date, next.startTime);
+                    final countdown = rdCountdown(l10n, start, hasTime: next.startTime?.isNotEmpty ?? false);
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: RdEyebrow(
+                            '${l10n.redesignTodayNextEvent}'
+                            '${start == null ? '' : ' · ${rdRelativeDay(l10n, start)}'}',
+                          ),
+                        ),
+                        if (countdown != null) RdPill(countdown, tone: RdTone.primary),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 8),
+                Semantics(header: true, child: Text(next.displayTitle, style: RdType.cardTitle(p))),
+                Builder(
+                  builder: (context) {
+                    final meta = [
+                      EventListUtils.timeRange(next.startTime, next.endTime),
+                      next.place ?? '',
+                    ].where((s) => s.isNotEmpty).join(' · ');
+                    if (meta.isEmpty) return const SizedBox.shrink();
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(meta, style: RdType.meta(p, size: 15)),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                for (final child in next.childAttendances) RdChildAnswerRow(group: next, child: child),
+                if (next.childAttendances.length > 1) ...[
+                  Divider(height: 12, color: p.line),
+                  RdAllChildrenAnswer(group: next),
+                ],
+                const SizedBox(height: 4),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: RdLinkButton(label: l10n.redesignTodayMore, onPressed: () => context.go('/parents')),
+                ),
+              ],
+            ),
+          ),
         if (upcoming.length > 1) ...[
           const SizedBox(height: 24),
           RdSectionHeader(
@@ -349,72 +399,6 @@ class RdAllChildrenAnswer extends ConsumerWidget {
                 ),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// The next Termin of the children with one answer row per child (Eltern
-/// Heute, and "Meine Kinder" of an account with its own role, U9b).
-/// [onMore] opens the details.
-class RdChildrenNextCard extends StatelessWidget {
-  const RdChildrenNextCard({super.key, required this.group, required this.onMore});
-
-  final ParentAttendanceGroup group;
-  final VoidCallback onMore;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    final l10n = context.l10n;
-    return RdCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Builder(
-            builder: (context) {
-              final start = rdStartOf(group.date, group.startTime);
-              final countdown = rdCountdown(l10n, start, hasTime: group.startTime?.isNotEmpty ?? false);
-              return Row(
-                children: [
-                  Expanded(
-                    child: RdEyebrow(
-                      '${l10n.redesignTodayNextEvent}'
-                      '${start == null ? '' : ' · ${rdRelativeDay(l10n, start)}'}',
-                    ),
-                  ),
-                  if (countdown != null) RdPill(countdown, tone: RdTone.primary),
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 8),
-          Semantics(header: true, child: Text(group.displayTitle, style: RdType.cardTitle(p))),
-          Builder(
-            builder: (context) {
-              final meta = [
-                EventListUtils.timeRange(group.startTime, group.endTime),
-                group.place ?? '',
-              ].where((s) => s.isNotEmpty).join(' · ');
-              if (meta.isEmpty) return const SizedBox.shrink();
-              return Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(meta, style: RdType.meta(p, size: 15)),
-              );
-            },
-          ),
-          const SizedBox(height: 12),
-          for (final child in group.childAttendances) RdChildAnswerRow(group: group, child: child),
-          if (group.childAttendances.length > 1) ...[
-            Divider(height: 12, color: p.line),
-            RdAllChildrenAnswer(group: group),
-          ],
-          const SizedBox(height: 4),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: RdLinkButton(label: l10n.redesignTodayMore, onPressed: onMore),
           ),
         ],
       ),

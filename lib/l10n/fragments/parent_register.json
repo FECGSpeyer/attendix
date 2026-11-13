@@ -25,11 +25,9 @@
       "shareHint": "Schick den Eltern den Anmeldelink. Sie wählen dort „Mein Kind“ und du schaltest frei.",
       "shareButton": "Anmeldelink teilen",
       "inviteByEmail": "Per E-Mail einladen",
-      "reviewParentMemberHint": "{name} ist schon in dieser Gruppe ({role}). Beim Aufnehmen wird das Kind mit diesem Konto verknüpft, die Rolle bleibt. Im neuen Design sieht {name} das Kind dann unter „Meine Kinder“.",
-      "myChildren": "Meine Kinder",
-      "myChildrenNoUpcoming": "Für deine Kinder stehen keine Termine an.",
-      "myChildrenShowAll": "Alle anzeigen ({count})",
-      "myChildrenShowLess": "Weniger anzeigen"
+      "reviewParentMemberHint": "{name} ist schon in dieser Gruppe ({role}). Ein Konto ist nicht zugleich Mitglied und Elternteil: Das Kind wird aufgenommen, aber nicht mit diesem Konto verknüpft.",
+      "memberBlockedTitle": "Mit diesem Konto nicht möglich",
+      "memberBlocked": "Du bist mit diesem Konto schon in dieser Gruppe ({role}). Ein Kind lässt sich damit nicht anmelden. Bitte gib der Leitung Bescheid oder melde das Kind mit einem anderen Konto an."
     }
   },
   "en": {
@@ -58,11 +56,9 @@
       "shareHint": "Send the parents the sign-up link. They choose \"My child\" there and you approve.",
       "shareButton": "Share sign-up link",
       "inviteByEmail": "Invite by email",
-      "reviewParentMemberHint": "{name} is already in this group ({role}). When you accept, the child is linked to this account and the role stays. In the new design {name} then sees the child under \"My children\".",
-      "myChildren": "My children",
-      "myChildrenNoUpcoming": "There are no upcoming events for your children.",
-      "myChildrenShowAll": "Show all ({count})",
-      "myChildrenShowLess": "Show less"
+      "reviewParentMemberHint": "{name} is already in this group ({role}). One account is not member and parent at once: the child is accepted but not linked to this account.",
+      "memberBlockedTitle": "Not possible with this account",
+      "memberBlocked": "You are already in this group with this account ({role}). You can't register a child with it. Please tell the leaders or register the child with another account."
     }
   }
 }

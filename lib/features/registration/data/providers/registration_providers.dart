@@ -16,6 +16,7 @@ import '../../../../data/repositories/player_repository.dart';
 import '../../../../data/repositories/profile_repository.dart' show syncOwnPlayerImage;
 import '../../../../data/repositories/user_registration_repository.dart';
 import '../../../auth/data/auth_flow_service.dart';
+import '../../../profile/presentation/widgets/profile_helpers.dart' show profileRoleName;
 import '../../../../l10n/l10n.dart';
 
 /// Provider for loading a tenant by its register ID
@@ -212,6 +213,8 @@ class RegistrationService {
         role: Role.applicant,
         children: formData.children.length,
       );
+    } on MemberParentRegistrationException catch (e) {
+      return RegistrationResult.error(e.message, memberBlocked: true);
     } on AccountFlowException catch (e) {
       return RegistrationResult.error(e.message);
     } catch (e) {
@@ -471,6 +474,12 @@ extension _ParentAccount on RegistrationService {
     final role = created
         ? null
         : await registration.getTenantUserRole(userId, tenantId: tenantId);
+    // Q3: one account is not Elternteil and member at once (Leon 13.11.):
+    // an account that already has its own role here registers no child.
+    if (hasOwnMemberRole(role)) {
+      throw MemberParentRegistrationException(
+          l10nWithoutContext.parentRegisterMemberBlocked(profileRoleName(role!)));
+    }
     if (role == null) {
       await registration.addUserToTenant(userId, Role.applicant, email,
           tenantId: tenantId);
@@ -580,6 +589,12 @@ Map<String, dynamic> buildRegistrationPlayerData({
 }
 
 /// Result of registration attempt
+/// Q3: a "Mein Kind" registration with an account that already has its own
+/// role in the group (thrown before any child row is written).
+class MemberParentRegistrationException extends AccountFlowException {
+  const MemberParentRegistrationException(super.message);
+}
+
 class RegistrationResult {
   final bool success;
   final String? errorMessage;
@@ -590,9 +605,14 @@ class RegistrationResult {
   /// Number of children of a parent registration (0: self registration).
   final int children;
 
+  /// Q3: "Mein Kind" with an account that is already a member of the group;
+  /// [errorMessage] explains it and nothing was saved.
+  final bool memberBlocked;
+
   const RegistrationResult._({
     required this.success,
     this.errorMessage,
+    this.memberBlocked = false,
     this.isNewAccount = false,
     this.autoApproved = false,
     this.role = Role.applicant,
@@ -636,10 +656,11 @@ class RegistrationResult {
         : l10nWithoutContext.tenantRegisterSuccessPending;
   }
 
-  factory RegistrationResult.error(String message) {
+  factory RegistrationResult.error(String message, {bool memberBlocked = false}) {
     return RegistrationResult._(
       success: false,
       errorMessage: message,
+      memberBlocked: memberBlocked,
     );
   }
 }

@@ -10,7 +10,7 @@ import '../../../profile/presentation/widgets/profile_helpers.dart' show profile
 /// group with its own role keeps it and gets the child linked (U9b).
 String parentReviewHint(WidgetRef ref, AppLocalizations l10n, ParentRegistration parent) {
   final role = ref.watch(parentRegistrationRoleProvider(parent.appId)).valueOrNull;
-  if (keepsOwnRole(role)) {
+  if (hasOwnMemberRole(role)) {
     return l10n.parentRegisterReviewParentMemberHint(parent.firstName, profileRoleName(role!));
   }
   return l10n.parentRegisterReviewParentHint(parent.firstName);

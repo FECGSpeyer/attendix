@@ -12525,29 +12525,17 @@ abstract class AppLocalizations {
   /// **'Per E-Mail einladen'**
   String get parentRegisterInviteByEmail;
 
-  /// parentRegister.myChildren
+  /// parentRegister.memberBlocked
   ///
   /// In de, this message translates to:
-  /// **'Meine Kinder'**
-  String get parentRegisterMyChildren;
+  /// **'Du bist mit diesem Konto schon in dieser Gruppe ({role}). Ein Kind lässt sich damit nicht anmelden. Bitte gib der Leitung Bescheid oder melde das Kind mit einem anderen Konto an.'**
+  String parentRegisterMemberBlocked(Object role);
 
-  /// parentRegister.myChildrenNoUpcoming
+  /// parentRegister.memberBlockedTitle
   ///
   /// In de, this message translates to:
-  /// **'Für deine Kinder stehen keine Termine an.'**
-  String get parentRegisterMyChildrenNoUpcoming;
-
-  /// parentRegister.myChildrenShowAll
-  ///
-  /// In de, this message translates to:
-  /// **'Alle anzeigen ({count})'**
-  String parentRegisterMyChildrenShowAll(Object count);
-
-  /// parentRegister.myChildrenShowLess
-  ///
-  /// In de, this message translates to:
-  /// **'Weniger anzeigen'**
-  String get parentRegisterMyChildrenShowLess;
+  /// **'Mit diesem Konto nicht möglich'**
+  String get parentRegisterMemberBlockedTitle;
 
   /// parentRegister.parentData
   ///
@@ -12576,7 +12564,7 @@ abstract class AppLocalizations {
   /// parentRegister.reviewParentMemberHint
   ///
   /// In de, this message translates to:
-  /// **'{name} ist schon in dieser Gruppe ({role}). Beim Aufnehmen wird das Kind mit diesem Konto verknüpft, die Rolle bleibt. Im neuen Design sieht {name} das Kind dann unter „Meine Kinder“.'**
+  /// **'{name} ist schon in dieser Gruppe ({role}). Ein Konto ist nicht zugleich Mitglied und Elternteil: Das Kind wird aufgenommen, aber nicht mit diesem Konto verknüpft.'**
   String parentRegisterReviewParentMemberHint(Object name, Object role);
 
   /// parentRegister.self

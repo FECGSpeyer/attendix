@@ -1,4 +1,5 @@
 import '../../data/models/person/person.dart';
+import '../constants/enums.dart';
 
 /// Key in `player.additional_fields` that marks a child that an Elternteil
 /// registered via the register link ("Mein Kind").
@@ -71,3 +72,10 @@ Map<String, dynamic> childApprovalFields(int parentId, Map<String, dynamic>? fie
       'email': null,
       'additional_fields': withoutParentRegistration(fields),
     };
+
+/// Q3: the account behind a "Mein Kind" registration is already in the group
+/// with its own role (Mitglied, Helfer, Leitung, …). One account is not
+/// Elternteil and member at once (Leon 13.11.), so such a registration is
+/// refused up front and the child is never linked to that account.
+bool hasOwnMemberRole(Role? role) =>
+    role != null && role != Role.none && role != Role.applicant && role != Role.parent;

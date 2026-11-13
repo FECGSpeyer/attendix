@@ -38,7 +38,6 @@ import '../widgets/today/rd_today_common.dart';
 import '../../data/rd_dates.dart';
 import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
 import '../widgets/today/rd_duty_section.dart';
-import '../widgets/today/rd_my_children.dart';
 
 /// REDESIGN: tab "Termine" (canvas D2 for Dirigent/Helfer/Beobachter, S2
 /// for Spieler). Kommend / Vergangen, filters, and for Spieler the answer
@@ -108,11 +107,9 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
           ref.invalidate(childrenAttendancesProvider);
           await ref.read(childrenAttendancesProvider.future).catchError((_) => const <ChildPersonAttendance>[]);
         } else if (leader) {
-          if (ref.read(hasChildrenBesideRoleProvider)) ref.invalidate(childrenAttendancesProvider);
           ref.read(attendanceRefetchCounter.notifier).state++;
           if (ownInLeaderList) ref.invalidate(signoutDataProvider);
         } else {
-          if (ref.read(hasChildrenBesideRoleProvider)) ref.invalidate(childrenAttendancesProvider);
           ref.invalidate(signoutDataProvider);
           await ref.read(rdSignoutDataProvider.future).catchError((_) => const SignoutData());
         }
@@ -286,8 +283,6 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
               ),
             ],
             const SizedBox(height: 8),
-            // U9b: an account with its own role that is Elternteil too.
-            if (!_past && _query.isEmpty) const RdMyChildrenEvents(),
             if (sections.isEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
@@ -471,8 +466,6 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
               ),
             ],
             const SizedBox(height: 8),
-            // U9b: an account with its own role that is Elternteil too.
-            if (!_past && _query.isEmpty) const RdMyChildrenEvents(),
             if (sections.isEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 12),

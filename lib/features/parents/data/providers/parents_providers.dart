@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_providers.dart';
-import '../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/utils/attendance_songs.dart';
@@ -224,16 +223,6 @@ final parentChildrenProvider = FutureProvider<List<Person>>((ref) async {
   if (!repo.hasTenantId) return [];
 
   return repo.getChildrenForParent(tenantUser!.parentId!);
-});
-
-/// U9b: the account has its own role in the group (Mitglied, Helfer,
-/// Leitung, …) and is linked as Elternteil too (`tenantUsers.parent_id`).
-/// The new design then shows "Meine Kinder" on Heute and Termine. False for
-/// pure Eltern (they get the whole parent view) and applicants.
-final hasChildrenBesideRoleProvider = Provider<bool>((ref) {
-  final role = ref.watch(effectiveRoleProvider);
-  if (role.isParent || role.isApplicant || role == Role.none) return false;
-  return (ref.watch(parentChildrenProvider).valueOrNull ?? const <Person>[]).isNotEmpty;
 });
 
 /// Provider for all attendances of children

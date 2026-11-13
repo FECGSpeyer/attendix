@@ -7708,19 +7708,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get parentRegisterInviteByEmail => 'Invite by email';
 
   @override
-  String get parentRegisterMyChildren => 'My children';
-
-  @override
-  String get parentRegisterMyChildrenNoUpcoming =>
-      'There are no upcoming events for your children.';
-
-  @override
-  String parentRegisterMyChildrenShowAll(Object count) {
-    return 'Show all ($count)';
+  String parentRegisterMemberBlocked(Object role) {
+    return 'You are already in this group with this account ($role). You can\'t register a child with it. Please tell the leaders or register the child with another account.';
   }
 
   @override
-  String get parentRegisterMyChildrenShowLess => 'Show less';
+  String get parentRegisterMemberBlockedTitle =>
+      'Not possible with this account';
 
   @override
   String get parentRegisterParentData => 'Your details (parent)';
@@ -7738,7 +7732,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String parentRegisterReviewParentMemberHint(Object name, Object role) {
-    return '$name is already in this group ($role). When you accept, the child is linked to this account and the role stays. In the new design $name then sees the child under \"My children\".';
+    return '$name is already in this group ($role). One account is not member and parent at once: the child is accepted but not linked to this account.';
   }
 
   @override

@@ -9593,24 +9593,16 @@
   "@parentRegisterInviteByEmail": {
     "description": "parentRegister.inviteByEmail"
   },
-  "parentRegisterMyChildren": "Meine Kinder",
-  "@parentRegisterMyChildren": {
-    "description": "parentRegister.myChildren"
-  },
-  "parentRegisterMyChildrenNoUpcoming": "Für deine Kinder stehen keine Termine an.",
-  "@parentRegisterMyChildrenNoUpcoming": {
-    "description": "parentRegister.myChildrenNoUpcoming"
-  },
-  "parentRegisterMyChildrenShowAll": "Alle anzeigen ({count})",
-  "@parentRegisterMyChildrenShowAll": {
-    "description": "parentRegister.myChildrenShowAll",
+  "parentRegisterMemberBlocked": "Du bist mit diesem Konto schon in dieser Gruppe ({role}). Ein Kind lässt sich damit nicht anmelden. Bitte gib der Leitung Bescheid oder melde das Kind mit einem anderen Konto an.",
+  "@parentRegisterMemberBlocked": {
+    "description": "parentRegister.memberBlocked",
     "placeholders": {
-      "count": {}
+      "role": {}
     }
   },
-  "parentRegisterMyChildrenShowLess": "Weniger anzeigen",
-  "@parentRegisterMyChildrenShowLess": {
-    "description": "parentRegister.myChildrenShowLess"
+  "parentRegisterMemberBlockedTitle": "Mit diesem Konto nicht möglich",
+  "@parentRegisterMemberBlockedTitle": {
+    "description": "parentRegister.memberBlockedTitle"
   },
   "parentRegisterParentData": "Deine Angaben (Elternteil)",
   "@parentRegisterParentData": {
@@ -9631,7 +9623,7 @@
       "name": {}
     }
   },
-  "parentRegisterReviewParentMemberHint": "{name} ist schon in dieser Gruppe ({role}). Beim Aufnehmen wird das Kind mit diesem Konto verknüpft, die Rolle bleibt. Im neuen Design sieht {name} das Kind dann unter „Meine Kinder“.",
+  "parentRegisterReviewParentMemberHint": "{name} ist schon in dieser Gruppe ({role}). Ein Konto ist nicht zugleich Mitglied und Elternteil: Das Kind wird aufgenommen, aber nicht mit diesem Konto verknüpft.",
   "@parentRegisterReviewParentMemberHint": {
     "description": "parentRegister.reviewParentMemberHint",
     "placeholders": {
