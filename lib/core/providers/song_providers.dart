@@ -445,6 +445,7 @@ class SongDetailData {
     required this.song,
     required this.tenantType,
     required this.instruments,
+    List<Group>? partGroups,
     required this.categories,
     required this.additionalFields,
     required this.history,
@@ -452,13 +453,20 @@ class SongDetailData {
     this.publicTenant,
     this.songSharingId,
     this.mainGroupId,
-  });
+  }) : partGroups = partGroups ?? instruments;
 
   final Song song;
   final String tenantType;
 
   /// Groups without the main group (only loaded for orchestras)
   final List<Group> instruments;
+
+  /// Groups a file can belong to on the Beta Werk page: the groups without
+  /// the main group for every kind of tenant (a choir's voices too), as the
+  /// Noten-Import knows them. With [instruments] empty outside orchestras
+  /// the upload took an existing "Tenor" for a new group. Defaults to
+  /// [instruments].
+  final List<Group> partGroups;
   final List<SongCategory> categories;
   final List<SongAdditionalField> additionalFields;
 
@@ -531,12 +539,12 @@ final songDetailDataProvider = FutureProvider.autoDispose
   }
 
   final isOrchestra = tenant!.type == 'orchestra';
+  final partGroups = groups.where((g) => g.maingroup != true).toList();
   return SongDetailData(
     song: song,
     tenantType: tenant.type,
-    instruments: isOrchestra
-        ? groups.where((g) => g.maingroup != true).toList()
-        : const [],
+    instruments: isOrchestra ? partGroups : const [],
+    partGroups: partGroups,
     categories: categories,
     additionalFields: settings.additionalFields,
     history: history,

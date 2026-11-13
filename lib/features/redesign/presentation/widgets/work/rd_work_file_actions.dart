@@ -175,7 +175,7 @@ Future<void> rdShowWorkFileActions(
       final result = await showRdFileCategorySheet(
         button,
         title: file.fileName,
-        instruments: data.instruments,
+        instruments: data.partGroups,
         isChoir: data.isChoir,
         initialInstrumentId:
             data.isChoir && file.instrumentId == null && ((file.note ?? '').isEmpty || isChoirAllFile(note: file.note))
