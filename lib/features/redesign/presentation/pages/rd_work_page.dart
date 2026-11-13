@@ -23,6 +23,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../songs/presentation/widgets/file_drop/file_drop_target.dart' show isFileDropSupported;
+import '../../data/providers/rd_shared_library.dart';
 import '../../data/rd_collections_logic.dart';
 import '../../data/rd_work_files_controller.dart';
 import '../../data/rd_work_files_logic.dart';
@@ -95,7 +96,7 @@ class RdWorkPage extends ConsumerWidget {
       );
     }
 
-    final canEdit = !data.readOnly && !data.isPublic;
+    final canEdit = _canEdit(ref, data);
     final filesState = canEdit ? ref.watch(rdWorkFilesProvider(songId)) : null;
     final groups = ref.watch(groupsProvider).valueOrNull ?? data.partGroups;
 
@@ -442,10 +443,15 @@ class RdWorkPage extends ConsumerWidget {
     ];
   }
 
+  /// Leads edit the Werk; Werke of another group only as lead there (the
+  /// Werke tab says whose they are).
+  bool _canEdit(WidgetRef ref, SongDetailData data) =>
+      !data.readOnly && !data.isPublic && ref.watch(rdLibraryEditableProvider);
+
   /// The files of the Werk in list order; files deleted a moment ago are
   /// gone at once (until "Rückgängig").
   List<SongFile> _visibleFiles(WidgetRef ref, SongDetailData data, List<Group> groups) {
-    final canEdit = !data.readOnly && !data.isPublic;
+    final canEdit = _canEdit(ref, data);
     final hidden = canEdit ? ref.watch(rdWorkFilesProvider(songId)).hidden : const <String>{};
     return SongUtils.sortedFiles([
       for (final f in data.song.files ?? const <SongFile>[])
@@ -650,7 +656,7 @@ class RdWorkPage extends ConsumerWidget {
                       data == null
                           ? const <SongFile>[]
                           : _visibleFiles(sheetRef, data, groups).where(rdIsGroupPart).toList();
-                  final canEdit = data != null && !data.readOnly && !data.isPublic;
+                  final canEdit = data != null && _canEdit(sheetRef, data);
                   return ListView(
                     controller: controller,
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),

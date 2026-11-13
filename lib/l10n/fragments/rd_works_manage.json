@@ -7,7 +7,11 @@
       "listPdf": "Werkliste als PDF",
       "manageCategories": "Kategorien verwalten",
       "categoryRemove": "Kategorie „{name}“ entfernen",
-      "shareEnable": "Link erstellen"
+      "shareEnable": "Link erstellen",
+      "sharedFrom": "Diese Gruppe nutzt die Werke von „{name}“.",
+      "sharedFromOther": "Diese Gruppe nutzt die Werke einer anderen Gruppe.",
+      "sharedLocked": "Ändern kann sie nur die Leitung dort.",
+      "sharedEditable": "Änderungen gelten auch dort."
     }
   },
   "en": {
@@ -18,7 +22,11 @@
       "listPdf": "Works list as PDF",
       "manageCategories": "Manage categories",
       "categoryRemove": "Remove category “{name}”",
-      "shareEnable": "Create link"
+      "shareEnable": "Create link",
+      "sharedFrom": "This group uses the works of “{name}”.",
+      "sharedFromOther": "This group uses the works of another group.",
+      "sharedLocked": "Only the leaders there can change them.",
+      "sharedEditable": "Changes apply there too."
     }
   }
 }

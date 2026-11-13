@@ -29,6 +29,7 @@ import '../../../songs/presentation/pages/song_import_page.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../data/import/rd_import_controller.dart' show rdImportOwnLibraryProvider;
+import '../../data/providers/rd_shared_library.dart';
 import '../../data/providers/rd_works_filter.dart';
 import '../../data/rd_collections_logic.dart';
 import '../../data/rd_works_logic.dart';
@@ -94,6 +95,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   Future<void> _more(SongsListData data, List<Song> shown, bool isAdmin) async {
     final l10n = context.l10n;
     final role = ref.read(effectiveRoleProvider);
+    // Werke of another group: managed by the leads there.
+    final canManage = isAdmin && ref.read(rdLibraryEditableProvider);
     final sharingId = data.songSharingId;
     // Sammlungen once the database has them (null before the migration).
     final collections = ref.read(songCollectionsProvider).valueOrNull != null;
@@ -107,13 +110,13 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           icon: Icons.queue_music_outlined,
           label: l10n.redesignWorksFoldersMenu,
         ),
-        if (isAdmin && collections)
+        if (canManage && collections)
           AppActionSheetAction(
             value: 'collections',
             icon: Icons.folder_copy_outlined,
             label: l10n.collectionsManage,
           ),
-        if (isAdmin)
+        if (canManage)
           AppActionSheetAction(value: 'categories', icon: Icons.sell_outlined, label: l10n.rdWmManageCategories),
         // From the old Verwaltung (canvas "Werke-Tab: •••"): Werkhistorie
         // for leads and helpers, the Dateiablage for everyone with access.
@@ -264,6 +267,11 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final role = ref.watch(effectiveRoleProvider);
     final isAdmin = role.isAdmin || role.isResponsible;
     final lead = role.isConductor;
+    // The Werke of another group (Werk-Synchronisierung): a note says so,
+    // and "+" and the manage entries need a lead role there.
+    final shared = ref.watch(rdSharedLibrarySourceProvider) != null;
+    final sharedName = ref.watch(rdSharedLibraryNameProvider);
+    final canManage = isAdmin && ref.watch(rdLibraryEditableProvider);
     final async = ref.watch(songsListDataProvider(null));
     final data = async.valueOrNull;
     // Sammlungen: null before the database has them (then as before).
@@ -283,7 +291,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
               onPressed: () => _more(data, _shown(data), isAdmin),
             ),
             // Desktop (list next to the Werk): the one "+" sits here.
-            if (isAdmin && inSplit) ...[
+            if (canManage && inSplit) ...[
               const SizedBox(width: 8),
               Builder(
                 builder: (button) => RdCircleButton(
@@ -419,7 +427,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     return RdPage(
       onRefresh: _refresh,
       floatingActionButton:
-          isAdmin && !inSplit
+          canManage && !inSplit
               ? FloatingActionButton(
                 tooltip: l10n.redesignWorksAdd,
                 backgroundColor: p.primary,
@@ -431,6 +439,21 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
               : null,
       children: [
         ...header,
+        // Not before the name is known (no text that changes a moment later).
+        if (shared && !sharedName.isLoading)
+          Padding(
+            key: const Key('rd-works-shared-note'),
+            padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
+            child: Text(
+              [
+                sharedName.valueOrNull == null ? l10n.rdWmSharedFromOther : l10n.rdWmSharedFrom(sharedName.valueOrNull!),
+                // The second sentence once the roles in that group are known.
+                if (isAdmin && ref.watch(userTenantsProvider).hasValue)
+                  canManage ? l10n.rdWmSharedEditable : l10n.rdWmSharedLocked,
+              ].join(' '),
+              style: RdType.meta(p, size: 13),
+            ),
+          ),
         if (current.isNotEmpty) ...[
           RdCurrentWorksStrip(works: current, ownGroup: ownGroup, choir: data.isChoir),
           const SizedBox(height: 18),
@@ -519,7 +542,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
                     categories: sheetCategories,
                     // Leads find "Kategorien verwalten" here too, even
                     // before the first category is given to a Werk.
-                    manageCategories: withCollections && isAdmin,
+                    manageCategories: withCollections && canManage,
                   ),
             ),
           ],

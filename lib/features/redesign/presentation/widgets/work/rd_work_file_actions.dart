@@ -27,6 +27,7 @@ import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../../songs/presentation/widgets/copy_to_tenant_sheet.dart';
 import '../../../../songs/presentation/widgets/group_pdf_print.dart';
 import '../../../../songs/presentation/widgets/song_file_opener.dart';
+import '../../../data/providers/rd_shared_library.dart';
 import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
 import 'rd_sibelius_actions.dart';
@@ -76,7 +77,8 @@ Future<void> rdShowWorkFileActions(
   final songId = song.id;
   final label = SongUtils.fileLabel(file, groups);
   final audio = rdIsAudioFile(file);
-  final canEdit = !data.readOnly && !data.isPublic && songId != null;
+  // Werke of another group: only its leads change the files.
+  final canEdit = !data.readOnly && !data.isPublic && songId != null && ref.read(rdLibraryEditableProvider);
   // Ionic: the iOS app saves PDFs from the viewer, only recordings download.
   final ios = !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
   final chatId = data.isPublic ? null : ref.read(currentTenantUserProvider).valueOrNull?.telegramChatId;
