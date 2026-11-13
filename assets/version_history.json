@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.139.0",
+      "date": "13.11.2026",
+      "changes": [
+        "✨ Beta: Registerprobe einrichten mit Auswahl-Chips für Gruppen und Leitung, eigene Gruppen bleiben gespeichert, Runden mit Uhrzeit in der Vorschau",
+        "🐛 Beta: Die Dirigenten-Gruppe wird bei der Registerprobe nicht mehr als probende Gruppe vorgeschlagen"
+      ]
+    },
+    {
       "version": "0.138.4",
       "date": "13.11.2026",
       "changes": [
