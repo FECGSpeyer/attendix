@@ -27110,17 +27110,83 @@ abstract class AppLocalizations {
   /// **'Die Runden werden neu gebaut'**
   String get redesignPlanRegisterChangeHint;
 
+  /// redesign.plan.registerDuration
+  ///
+  /// In de, this message translates to:
+  /// **'Dauer'**
+  String get redesignPlanRegisterDuration;
+
   /// redesign.plan.registerHint
   ///
   /// In de, this message translates to:
   /// **'Gruppen proben parallel, Dirigenten wechseln'**
   String get redesignPlanRegisterHint;
 
+  /// redesign.plan.registerIncomplete
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle mindestens zwei Gruppen und eine Leitung.'**
+  String get redesignPlanRegisterIncomplete;
+
   /// redesign.plan.registerInsert
   ///
   /// In de, this message translates to:
   /// **'In den Ablauf einfügen'**
   String get redesignPlanRegisterInsert;
+
+  /// redesign.plan.registerMoreGroups
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Mehr Gruppen als Leitungen: in jeder Runde probt eine Gruppe selbstständig.} other {Mehr Gruppen als Leitungen: in jeder Runde proben {count} Gruppen selbstständig.}}'**
+  String redesignPlanRegisterMoreGroups(num count);
+
+  /// redesign.plan.registerMoreLeads
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Mehr Leitungen als Gruppen: in jeder Runde hat eine Leitung Pause.} other {Mehr Leitungen als Gruppen: in jeder Runde haben {count} Leitungen Pause.}}'**
+  String redesignPlanRegisterMoreLeads(num count);
+
+  /// redesign.plan.registerOwnGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Gruppe'**
+  String get redesignPlanRegisterOwnGroup;
+
+  /// redesign.plan.registerOwnGroupHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Tiefe Stimmen'**
+  String get redesignPlanRegisterOwnGroupHint;
+
+  /// redesign.plan.registerOwnGroupTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe hinzufügen'**
+  String get redesignPlanRegisterOwnGroupTitle;
+
+  /// redesign.plan.registerPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Person'**
+  String get redesignPlanRegisterPerson;
+
+  /// redesign.plan.registerPersonSearch
+  ///
+  /// In de, this message translates to:
+  /// **'Name suchen'**
+  String get redesignPlanRegisterPersonSearch;
+
+  /// redesign.plan.registerPersonTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Wer leitet noch?'**
+  String get redesignPlanRegisterPersonTitle;
+
+  /// redesign.plan.registerPersonUse
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ übernehmen'**
+  String redesignPlanRegisterPersonUse(Object name);
 
   /// redesign.plan.registerPreview
   ///
@@ -27133,6 +27199,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Runde {n}'**
   String redesignPlanRegisterRound(Object n);
+
+  /// redesign.plan.registerSelf
+  ///
+  /// In de, this message translates to:
+  /// **'selbstständig'**
+  String get redesignPlanRegisterSelf;
 
   /// redesign.plan.registerShare
   ///
@@ -27163,6 +27235,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Uhrzeit'**
   String get redesignPlanRegisterTime;
+
+  /// redesign.plan.registerWhichGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Welche Gruppen proben?'**
+  String get redesignPlanRegisterWhichGroups;
+
+  /// redesign.plan.registerWhoLeads
+  ///
+  /// In de, this message translates to:
+  /// **'Wer leitet?'**
+  String get redesignPlanRegisterWhoLeads;
 
   /// redesign.plan.removed
   ///

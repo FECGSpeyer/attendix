@@ -21,10 +21,10 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/plan/plan.dart' show RegisterPlanSettings;
-import '../../../../core/utils/plan_utils.dart';
 import '../../../../l10n/l10n.dart';
 import 'ion_items.dart';
 import 'plan_export_actions.dart';
+import 'rd_register_setup_sheet.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/services/native/native_file_service.dart';
@@ -61,9 +61,10 @@ class RegisterPlanChoice {
   final num minutes;
 }
 
-/// Beta Ablauf: the same generator with a preview (clock times from
-/// [startMinutes]) and "In den Ablauf einfügen" ([initial]: change an
-/// existing Registerprobe, "Übernehmen"). Null when closed without.
+/// Beta Ablauf: the Registerprobe setup ([RdRegisterSetupSheet]) with a
+/// preview (clock times from [startMinutes]) and "In den Ablauf einfügen"
+/// ([initial]: change an existing Registerprobe, "Übernehmen"). Null when
+/// closed without.
 Future<RegisterPlanChoice?> showRegisterPlanInsertSheet(
   BuildContext context, {
   RegisterPlanSettings? initial,
@@ -80,8 +81,7 @@ Future<RegisterPlanChoice?> showRegisterPlanInsertSheet(
     builder:
         (context) => FractionallySizedBox(
           heightFactor: 1,
-          child: RegisterPlanSheet(
-            insert: true,
+          child: RdRegisterSetupSheet(
             initial: initial,
             initialMinutes: initialMinutes,
             startMinutes: startMinutes,
@@ -98,22 +98,9 @@ class RegisterPlanSheet extends ConsumerStatefulWidget {
   const RegisterPlanSheet({
     super.key,
     this.attendanceDate,
-    this.insert = false,
-    this.initial,
-    this.initialMinutes,
-    this.startMinutes,
-    this.subtitle,
   });
 
   final DateTime? attendanceDate;
-
-  /// Beta Ablauf: preview and "In den Ablauf einfügen" instead of exports
-  /// (see [showRegisterPlanInsertSheet]).
-  final bool insert;
-  final RegisterPlanSettings? initial;
-  final num? initialMinutes;
-  final int? startMinutes;
-  final String? subtitle;
 
   @override
   ConsumerState<RegisterPlanSheet> createState() => _RegisterPlanSheetState();
@@ -128,9 +115,7 @@ class _Entry {
 class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
   final List<_Entry> _groups = [];
   final List<_Entry> _conductors = [];
-  late final _minutesController = TextEditingController(text: _fmtMinutes(widget.initialMinutes ?? 60));
-
-  static String _fmtMinutes(num m) => m == m.roundToDouble() ? '${m.round()}' : '$m';
+  late final _minutesController = TextEditingController(text: '60');
   int _nextId = 0;
   bool _loading = true;
   bool _busy = false;
@@ -189,12 +174,8 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
         stored = prefs.getString(RegisterPlanService.groupsStorageKey(tenant!.id!));
       } catch (_) {}
     }
-    final initial = widget.initial;
-    final groups = initial != null ? initial.groups : RegisterPlanService.parseStoredGroups(stored, defaults);
-    var names = initial != null ? initial.conductors : RegisterPlanService.conductorNames(conductors);
-    // Inserting: drawn once now, so the preview is what gets inserted
-    // ("Neu mischen" draws again). Changing keeps the inserted order.
-    if (widget.insert && initial == null) names = RegisterPlanService.shuffle(names);
+    final groups = RegisterPlanService.parseStoredGroups(stored, defaults);
+    final names = RegisterPlanService.conductorNames(conductors);
     if (!mounted) return;
     setState(() {
       _groups.addAll(groups.map(_entry));
@@ -228,7 +209,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     final l10n = context.l10n;
     // Telegram buttons only when the user linked Telegram (Ionic `telegram_chat_id`).
     ref.watch(notificationConfigProvider);
-    final chatId = widget.insert ? null : planTelegramChatId(ref);
+    final chatId = planTelegramChatId(ref);
     final theme = Theme.of(context);
     if (context.rdSkin != null) return _buildBeta(context, chatId);
 
@@ -413,7 +394,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                       child: Semantics(
                         header: true,
                         child: Text(
-                          widget.insert ? l10n.redesignPlanRegister : l10n.planningSectionalPlan,
+                          l10n.planningSectionalPlan,
                           style: RdType.title(p),
                         ),
                       ),
@@ -421,10 +402,6 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                     RdCircleButton(icon: Icons.close, label: l10n.commonClose, onPressed: () => Navigator.pop(context)),
                   ],
                 ),
-                if ((widget.subtitle ?? '').isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Text(widget.subtitle!, style: RdType.meta(p, size: 15)),
-                ],
                 const SizedBox(height: 16),
                 RdGroupLabel(l10n.planningGroups),
                 RdGroupedList(
@@ -486,17 +463,6 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                     ],
                   ),
                 ),
-                if (widget.insert) ...[
-                  const SizedBox(height: 16),
-                  ..._preview(context),
-                  const SizedBox(height: 24),
-                  RdPrimaryButton(
-                    key: const Key('rd-register-insert'),
-                    icon: widget.initial == null ? Icons.add : Icons.check,
-                    label: widget.initial == null ? l10n.redesignPlanRegisterInsert : l10n.redesignPlanRegisterApply,
-                    onPressed: _disabled ? null : _choose,
-                  ),
-                ] else ...[
                 const SizedBox(height: 24),
                 RdPrimaryButton(
                   icon: Icons.description_outlined,
@@ -518,94 +484,10 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                     onPressed: _disabled ? null : () => _createPlan(perTelegram: true, asImage: true),
                   ),
                 ],
-                ],
               ],
             ),
       ),
     );
-  }
-
-  num get _minutes => num.tryParse(_minutesController.text.trim()) ?? 0;
-
-  /// The rounds as they will be inserted, with clock times when the start
-  /// is known, and "Neu mischen".
-  List<Widget> _preview(BuildContext context) {
-    final p = context.rd;
-    final l10n = context.l10n;
-    final groups = _groupValues;
-    final ok =
-        !RegisterPlanService.isExportDisabled(
-          conductors: _conductorValues,
-          groups: groups,
-          time: _minutesController.text.trim(),
-        );
-    final plan =
-        ok
-            ? RegisterPlanService.generate(conductors: _conductorValues, groups: groups, totalMinutes: _minutes)
-            : null;
-    String time(String minute) {
-      final m = int.tryParse(minute) ?? 0;
-      final start = widget.startMinutes;
-      return start == null ? '+$m' : PlanUtils.formatMinutes(start + m);
-    }
-
-    TextStyle head = TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: p.text2);
-    TextStyle cell = TextStyle(fontSize: 14, color: p.text);
-    Widget pad(Widget w) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8), child: w);
-    return [
-      Row(
-        children: [
-          Expanded(child: RdGroupLabel(l10n.redesignPlanRegisterPreview(plan?.rows.length ?? 0))),
-          TextButton.icon(
-            key: const Key('rd-register-shuffle'),
-            onPressed:
-                _conductors.length < 2
-                    ? null
-                    : () => setState(() {
-                      final order = RegisterPlanService.shuffle(_conductors);
-                      _conductors
-                        ..clear()
-                        ..addAll(order);
-                    }),
-            icon: const Icon(Icons.shuffle, size: 18),
-            label: Text(l10n.redesignPlanRegisterShuffle),
-          ),
-        ],
-      ),
-      if (plan != null)
-        RdCard(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Table(
-              defaultColumnWidth: const IntrinsicColumnWidth(),
-              children: [
-                TableRow(children: [pad(Text('', style: head)), for (final g in plan.groups) pad(Text(g, style: head))]),
-                for (final r in plan.rows)
-                  TableRow(
-                    decoration: BoxDecoration(border: Border(top: BorderSide(color: p.line))),
-                    children: [
-                      pad(Text(time(r.first), style: cell.copyWith(fontWeight: FontWeight.w700, color: p.softText))),
-                      for (final c in r.skip(1)) pad(Text(c.trim().isEmpty ? '–' : c, style: cell)),
-                    ],
-                  ),
-              ],
-            ),
-          ),
-        ),
-    ];
-  }
-
-  bool _choosing = false;
-
-  Future<void> _choose() async {
-    // Once: a second tap while the groups are stored would close the page below.
-    if (_choosing) return;
-    _choosing = true;
-    final choice = RegisterPlanChoice(groups: _groupValues, conductors: _conductorValues, minutes: _minutes);
-    await _saveGroups(choice.groups);
-    if (!mounted) return;
-    Navigator.pop(context, choice);
   }
 
   void _remove(List<_Entry> list, int index) {

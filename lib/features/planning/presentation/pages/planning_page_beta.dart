@@ -1245,6 +1245,7 @@ extension _PlanningBeta on _PlanningPageState {
       groups: choice.groups,
       conductors: choice.conductors,
       totalMinutes: choice.minutes,
+      empty: l10n.redesignPlanRegisterSelf,
     );
     final i = pos();
     _rdApply([..._fields.sublist(0, i), ...rows, ..._fields.sublist(i)]);
@@ -1276,6 +1277,7 @@ extension _PlanningBeta on _PlanningPageState {
       groups: choice.groups,
       conductors: choice.conductors,
       totalMinutes: choice.minutes,
+      empty: l10n.redesignPlanRegisterSelf,
     );
     final newHead = head.copyWith(registerPlan: rows.first.registerPlan);
     final rounds = [for (final r in rows.skip(1)) r.copyWith(groupId: head.id)];

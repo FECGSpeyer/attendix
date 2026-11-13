@@ -16927,11 +16927,66 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanRegisterChangeHint => 'The rounds are rebuilt';
 
   @override
+  String get redesignPlanRegisterDuration => 'Duration';
+
+  @override
   String get redesignPlanRegisterHint =>
       'Groups rehearse in parallel, conductors rotate';
 
   @override
+  String get redesignPlanRegisterIncomplete =>
+      'Pick at least two groups and one lead.';
+
+  @override
   String get redesignPlanRegisterInsert => 'Insert into the schedule';
+
+  @override
+  String redesignPlanRegisterMoreGroups(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'More groups than leads: in every round $count groups rehearse on their own.',
+      one:
+          'More groups than leads: in every round one group rehearses on its own.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanRegisterMoreLeads(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'More leads than groups: in every round $count leads have a break.',
+      one: 'More leads than groups: in every round one lead has a break.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignPlanRegisterOwnGroup => 'Own group';
+
+  @override
+  String get redesignPlanRegisterOwnGroupHint => 'e.g. Low voices';
+
+  @override
+  String get redesignPlanRegisterOwnGroupTitle => 'Add group';
+
+  @override
+  String get redesignPlanRegisterPerson => 'Person';
+
+  @override
+  String get redesignPlanRegisterPersonSearch => 'Search name';
+
+  @override
+  String get redesignPlanRegisterPersonTitle => 'Who else leads?';
+
+  @override
+  String redesignPlanRegisterPersonUse(Object name) {
+    return 'Use “$name”';
+  }
 
   @override
   String redesignPlanRegisterPreview(num count) {
@@ -16950,6 +17005,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignPlanRegisterSelf => 'on their own';
+
+  @override
   String get redesignPlanRegisterShare => 'Share as table';
 
   @override
@@ -16965,6 +17023,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignPlanRegisterTime => 'Time';
+
+  @override
+  String get redesignPlanRegisterWhichGroups => 'Which groups rehearse?';
+
+  @override
+  String get redesignPlanRegisterWhoLeads => 'Who leads?';
 
   @override
   String redesignPlanRemoved(Object name) {

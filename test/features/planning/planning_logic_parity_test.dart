@@ -8,6 +8,7 @@ import 'package:attendix/core/utils/attendance_percentage_utils.dart';
 import 'package:attendix/core/services/register_plan_service.dart';
 import 'package:attendix/core/services/telegram_service.dart';
 import 'package:attendix/core/utils/plan_utils.dart';
+import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -49,6 +50,17 @@ void main() {
         const Person(firstName: 'Solo', lastName: ''),
       ]);
       expect(names, ['Anna M.', 'Solo .']);
+    });
+
+    test('Beta: the category of the main group is no Registerprobe group', () {
+      const groups = [
+        Group(id: 1, name: 'Dirigent', categoryId: 10, maingroup: true),
+        Group(id: 2, name: 'Trompete', categoryId: 20),
+        Group(id: 3, name: 'Posaune', categoryId: 20, maingroup: false),
+        Group(id: 4, name: 'Leitung', categoryId: 30, maingroup: true),
+        Group(id: 5, name: 'Pauke', categoryId: 30),
+      ];
+      expect(RegisterPlanService.conductorCategoryIds(groups), {10});
     });
 
     test('default groups: categories first, else type defaults', () {
