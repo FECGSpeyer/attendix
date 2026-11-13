@@ -259,13 +259,15 @@ class RdMePage extends ConsumerWidget {
         RdGroupLabel(l10n.redesignMeAccount),
         RdGroupedList(
           children: [
-            // ACCOUNT_SWITCH: saved accounts of this device.
-            RdListRow(
-              leading: const RdRowIcon(Icons.switch_account_outlined),
-              title: l10n.redesignAccountsTitle,
-              value: accountCount > 1 ? l10n.redesignAccountsCount(accountCount) : null,
-              onTap: () => showRdAccountSwitchSheet(context),
-            ),
+            // ACCOUNT_SWITCH: saved accounts of this device (developer
+            // feature, see isAccountSwitchUnlocked).
+            if (ref.watch(accountSwitchUnlockedProvider))
+              RdListRow(
+                leading: const RdRowIcon(Icons.switch_account_outlined),
+                title: l10n.redesignAccountsTitle,
+                value: accountCount > 1 ? l10n.redesignAccountsCount(accountCount) : null,
+                onTap: () => showRdAccountSwitchSheet(context),
+              ),
             RdListRow(
               leading: const RdRowIcon(Icons.key_outlined),
               title: l10n.settingsChangePassword,

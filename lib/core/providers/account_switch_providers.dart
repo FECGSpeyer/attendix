@@ -7,7 +7,9 @@ import '../config/supabase_config.dart';
 import '../router/app_router.dart' show routerProvider;
 import '../services/account_switch/account_switch_service.dart';
 import '../services/account_switch/auth_token_api.dart';
+import '../services/account_switch/saved_account.dart';
 import '../services/account_switch/saved_accounts_store.dart';
+import 'dashboard_providers.dart' show superDeveloperEmail;
 import 'redesign_providers.dart';
 import 'tenant_providers.dart';
 
@@ -36,6 +38,25 @@ final accountSwitchServiceProvider = Provider<AccountSwitchService>((ref) {
   return service;
 });
 
+/// ACCOUNT_SWITCH is a developer feature (Leon, 13.11.2026): unlocked on a
+/// device once the super developer is signed in there or remembered there,
+/// then also for the test accounts switched to from it. Everyone else sees
+/// neither "Konto wechseln" nor saved accounts on the login page, and their
+/// logins are not remembered.
+bool isAccountSwitchUnlocked(String? currentEmail, Iterable<SavedAccount> accounts) {
+  bool isDev(String? email) => email?.trim().toLowerCase() == superDeveloperEmail;
+  return isDev(currentEmail) || accounts.any((a) => isDev(a.email));
+}
+
+/// See [isAccountSwitchUnlocked].
+final accountSwitchUnlockedProvider = Provider<bool>((ref) {
+  // Re-evaluate on auth changes (login/logout/switch).
+  ref.watch(authStateProvider);
+  final email = ref.watch(supabaseAuthProvider).currentUser?.email;
+  final accounts = ref.watch(savedAccountsProvider).valueOrNull ?? const <SavedAccount>[];
+  return isAccountSwitchUnlocked(email, accounts);
+});
+
 /// Remembered accounts of this device (incl. the signed-in one).
 final savedAccountsProvider = StreamProvider<List<SavedAccount>>((ref) async* {
   final service = ref.watch(accountSwitchServiceProvider);
@@ -46,7 +67,8 @@ final savedAccountsProvider = StreamProvider<List<SavedAccount>>((ref) async* {
 /// Keeps the remembered accounts in step with the auth client (read once
 /// from AttendixApp):
 /// - every new session or token refresh stores the account's newest
-///   refresh token; new accounts are only added while the new design is on,
+///   refresh token; new accounts are only added while the new design is on
+///   and the switcher is unlocked on this device,
 /// - a sign-out removes the account that was signed in (its session is
 ///   revoked by the sign-out anyway),
 /// - another browser tab that changed the account (switch or sign-in, it
@@ -57,6 +79,13 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
   final service = ref.watch(accountSwitchServiceProvider);
   final auth = ref.watch(supabaseAuthProvider);
   String? activeUserId = auth.currentUser?.id;
+
+  // New accounts are only added on a device where the switcher is unlocked
+  // (developer feature, see [isAccountSwitchUnlocked]).
+  Future<void> rememberSession(Session session, {required bool add}) async {
+    final unlocked = add && isAccountSwitchUnlocked(session.user.email, await service.load());
+    await service.remember(session, add: unlocked);
+  }
 
   void handle(AuthState state) {
     final session = state.session;
@@ -83,13 +112,12 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
     // A recovery session only updates a saved account, it never adds one.
     final add = state.event != AuthChangeEvent.passwordRecovery &&
         ref.read(redesignEnabledProvider);
-    unawaited(service.remember(session, add: add).catchError((_) {}));
+    unawaited(rememberSession(session, add: add).catchError((_) {}));
   }
 
   final current = auth.currentSession;
   if (current != null) {
-    unawaited(service
-        .remember(current, add: ref.read(redesignEnabledProvider))
+    unawaited(rememberSession(current, add: ref.read(redesignEnabledProvider))
         .catchError((_) {}));
   }
   final sub = auth.onAuthStateChange.listen(handle, onError: (_) {});
@@ -99,7 +127,7 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
   ref.listen<bool>(redesignEnabledProvider, (_, enabled) {
     final session = auth.currentSession;
     if (enabled && session != null) {
-      unawaited(service.remember(session).catchError((_) {}));
+      unawaited(rememberSession(session, add: true).catchError((_) {}));
     }
   });
 });
