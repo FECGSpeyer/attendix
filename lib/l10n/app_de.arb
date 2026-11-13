@@ -20991,13 +20991,77 @@
   "@redesignPlanRegisterChangeHint": {
     "description": "redesign.plan.registerChangeHint"
   },
+  "redesignPlanRegisterDuration": "Dauer",
+  "@redesignPlanRegisterDuration": {
+    "description": "redesign.plan.registerDuration"
+  },
   "redesignPlanRegisterHint": "Gruppen proben parallel, Dirigenten wechseln",
   "@redesignPlanRegisterHint": {
     "description": "redesign.plan.registerHint"
   },
+  "redesignPlanRegisterIncomplete": "Wähle mindestens zwei Gruppen und eine Leitung.",
+  "@redesignPlanRegisterIncomplete": {
+    "description": "redesign.plan.registerIncomplete"
+  },
   "redesignPlanRegisterInsert": "In den Ablauf einfügen",
   "@redesignPlanRegisterInsert": {
     "description": "redesign.plan.registerInsert"
+  },
+  "redesignPlanRegisterMoreGroups": "{count, plural, one {Mehr Gruppen als Leitungen: in jeder Runde probt eine Gruppe selbstständig.} other {Mehr Gruppen als Leitungen: in jeder Runde proben {count} Gruppen selbstständig.}}",
+  "@redesignPlanRegisterMoreGroups": {
+    "description": "redesign.plan.registerMoreGroups",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignPlanRegisterMoreLeads": "{count, plural, one {Mehr Leitungen als Gruppen: in jeder Runde hat eine Leitung Pause.} other {Mehr Leitungen als Gruppen: in jeder Runde haben {count} Leitungen Pause.}}",
+  "@redesignPlanRegisterMoreLeads": {
+    "description": "redesign.plan.registerMoreLeads",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignPlanRegisterOwnGroup": "Eigene Gruppe",
+  "@redesignPlanRegisterOwnGroup": {
+    "description": "redesign.plan.registerOwnGroup"
+  },
+  "redesignPlanRegisterOwnGroupHint": "z. B. Tiefe Stimmen",
+  "@redesignPlanRegisterOwnGroupHint": {
+    "description": "redesign.plan.registerOwnGroupHint"
+  },
+  "redesignPlanRegisterOwnGroupRemove": "Gruppe „{name}“ entfernen",
+  "@redesignPlanRegisterOwnGroupRemove": {
+    "description": "redesign.plan.registerOwnGroupRemove",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanRegisterOwnGroupTitle": "Gruppe hinzufügen",
+  "@redesignPlanRegisterOwnGroupTitle": {
+    "description": "redesign.plan.registerOwnGroupTitle"
+  },
+  "redesignPlanRegisterPerson": "Person",
+  "@redesignPlanRegisterPerson": {
+    "description": "redesign.plan.registerPerson"
+  },
+  "redesignPlanRegisterPersonSearch": "Name suchen",
+  "@redesignPlanRegisterPersonSearch": {
+    "description": "redesign.plan.registerPersonSearch"
+  },
+  "redesignPlanRegisterPersonTitle": "Wer leitet noch?",
+  "@redesignPlanRegisterPersonTitle": {
+    "description": "redesign.plan.registerPersonTitle"
+  },
+  "redesignPlanRegisterPersonUse": "„{name}“ übernehmen",
+  "@redesignPlanRegisterPersonUse": {
+    "description": "redesign.plan.registerPersonUse",
+    "placeholders": {
+      "name": {}
+    }
   },
   "redesignPlanRegisterPreview": "{count, plural, one {Vorschau · 1 Runde} other {Vorschau · {count} Runden}}",
   "@redesignPlanRegisterPreview": {
@@ -21014,6 +21078,10 @@
     "placeholders": {
       "n": {}
     }
+  },
+  "redesignPlanRegisterSelf": "selbstständig",
+  "@redesignPlanRegisterSelf": {
+    "description": "redesign.plan.registerSelf"
   },
   "redesignPlanRegisterShare": "Als Tabelle teilen",
   "@redesignPlanRegisterShare": {
@@ -21037,6 +21105,14 @@
   "redesignPlanRegisterTime": "Uhrzeit",
   "@redesignPlanRegisterTime": {
     "description": "redesign.plan.registerTime"
+  },
+  "redesignPlanRegisterWhichGroups": "Welche Gruppen proben?",
+  "@redesignPlanRegisterWhichGroups": {
+    "description": "redesign.plan.registerWhichGroups"
+  },
+  "redesignPlanRegisterWhoLeads": "Wer leitet?",
+  "@redesignPlanRegisterWhoLeads": {
+    "description": "redesign.plan.registerWhoLeads"
   },
   "redesignPlanRemoved": "„{name}“ entfernt",
   "@redesignPlanRemoved": {

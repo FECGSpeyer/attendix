@@ -17085,11 +17085,71 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanRegisterChangeHint => 'Die Runden werden neu gebaut';
 
   @override
+  String get redesignPlanRegisterDuration => 'Dauer';
+
+  @override
   String get redesignPlanRegisterHint =>
       'Gruppen proben parallel, Dirigenten wechseln';
 
   @override
+  String get redesignPlanRegisterIncomplete =>
+      'Wähle mindestens zwei Gruppen und eine Leitung.';
+
+  @override
   String get redesignPlanRegisterInsert => 'In den Ablauf einfügen';
+
+  @override
+  String redesignPlanRegisterMoreGroups(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Mehr Gruppen als Leitungen: in jeder Runde proben $count Gruppen selbstständig.',
+      one:
+          'Mehr Gruppen als Leitungen: in jeder Runde probt eine Gruppe selbstständig.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanRegisterMoreLeads(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Mehr Leitungen als Gruppen: in jeder Runde haben $count Leitungen Pause.',
+      one: 'Mehr Leitungen als Gruppen: in jeder Runde hat eine Leitung Pause.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignPlanRegisterOwnGroup => 'Eigene Gruppe';
+
+  @override
+  String get redesignPlanRegisterOwnGroupHint => 'z. B. Tiefe Stimmen';
+
+  @override
+  String redesignPlanRegisterOwnGroupRemove(Object name) {
+    return 'Gruppe „$name“ entfernen';
+  }
+
+  @override
+  String get redesignPlanRegisterOwnGroupTitle => 'Gruppe hinzufügen';
+
+  @override
+  String get redesignPlanRegisterPerson => 'Person';
+
+  @override
+  String get redesignPlanRegisterPersonSearch => 'Name suchen';
+
+  @override
+  String get redesignPlanRegisterPersonTitle => 'Wer leitet noch?';
+
+  @override
+  String redesignPlanRegisterPersonUse(Object name) {
+    return '„$name“ übernehmen';
+  }
 
   @override
   String redesignPlanRegisterPreview(num count) {
@@ -17108,6 +17168,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignPlanRegisterSelf => 'selbstständig';
+
+  @override
   String get redesignPlanRegisterShare => 'Als Tabelle teilen';
 
   @override
@@ -17123,6 +17186,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanRegisterTime => 'Uhrzeit';
+
+  @override
+  String get redesignPlanRegisterWhichGroups => 'Welche Gruppen proben?';
+
+  @override
+  String get redesignPlanRegisterWhoLeads => 'Wer leitet?';
 
   @override
   String redesignPlanRemoved(Object name) {

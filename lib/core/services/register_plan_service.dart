@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import '../../data/models/instrument/instrument.dart';
 import '../../data/models/person/person.dart';
 import '../../data/models/plan/plan.dart';
 import '../utils/plan_utils.dart';
@@ -37,6 +38,20 @@ class RegisterPlanService {
     return [...(isChoir ? choirDefaults : otherDefaults)];
   }
 
+  /// Beta: the group categories that only hold the main group (the
+  /// conductors). They lead a Registerprobe, they are no group of it.
+  static Set<int> conductorCategoryIds(List<Group> groups) {
+    final byCategory = <int, List<Group>>{};
+    for (final g in groups) {
+      final c = g.categoryId;
+      if (c != null) byCategory.putIfAbsent(c, () => []).add(g);
+    }
+    return {
+      for (final e in byCategory.entries)
+        if (e.value.every((g) => g.maingroup == true)) e.key,
+    };
+  }
+
   /// Ionic `loadPlanGroups`: the stored list when it is a JSON array with at
   /// least two entries, otherwise [defaults].
   static List<String> parseStoredGroups(String? stored, List<String> defaults) {
@@ -49,6 +64,22 @@ class RegisterPlanService {
       } catch (_) {}
     }
     return [...defaults];
+  }
+
+  /// Beta: local storage key of the own groups ("+ Eigene Gruppe"), kept
+  /// even when not picked.
+  static String ownGroupsStorageKey(int tenantId) => 'registerplan-own-groups-$tenantId';
+
+  /// The stored own groups (a JSON array of names), empty when unreadable.
+  static List<String> parseOwnGroups(String? stored) {
+    if (stored == null || stored.isEmpty) return const [];
+    try {
+      final parsed = jsonDecode(stored);
+      if (parsed is List) {
+        return [for (final e in parsed) if (e is String && e.trim().isNotEmpty) e];
+      }
+    } catch (_) {}
+    return const [];
   }
 
   /// Ionic `savePlanGroups` payload.
@@ -136,6 +167,7 @@ class RegisterPlanService {
     required List<String> groups,
     required List<String> conductors,
     required num totalMinutes,
+    String empty = '–',
   }) {
     final plan = generate(conductors: conductors, groups: groups, totalMinutes: totalMinutes);
     final minutes = roundMinutes(plan, totalMinutes);
@@ -148,7 +180,7 @@ class RegisterPlanService {
           id: 'fld-${PlanUtils.uuid()}',
           name: roundName(i + 1),
           time: '${minutes[i]}',
-          info: roundInfo(plan, i),
+          info: roundInfo(plan, i, empty: empty),
           groupId: head.id,
         ),
     ];

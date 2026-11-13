@@ -336,7 +336,7 @@ void main() {
       // (Streicher, Holzbläser, Sonstige): 3 rounds of 20 minutes.
       expect(find.text('Beginnt um 16:30'), findsOneWidget);
       expect(find.text('VORSCHAU · 3 RUNDEN'), findsOneWidget);
-      expect(find.text('16:50'), findsOneWidget);
+      expect(find.text('16:30 – 16:50'), findsOneWidget);
       await tester.ensureVisible(find.byKey(const Key('rd-register-insert')));
       await tester.tap(find.byKey(const Key('rd-register-insert')));
       await tester.pump(const Duration(milliseconds: 500));
