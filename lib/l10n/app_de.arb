@@ -20289,10 +20289,6 @@
   "@redesignOwnRoute": {
     "description": "redesign.own.route"
   },
-  "redesignOwnSignOut": "Abmelden",
-  "@redesignOwnSignOut": {
-    "description": "redesign.own.signOut"
-  },
   "redesignOwnYouConduct": "Du dirigierst",
   "@redesignOwnYouConduct": {
     "description": "redesign.own.youConduct"
@@ -21939,18 +21935,6 @@
   "@redesignTodayAnswered": {
     "description": "redesign.today.answered"
   },
-  "redesignTodayAnsweredLater": "Du hast gemeldet, dass du später kommst.",
-  "@redesignTodayAnsweredLater": {
-    "description": "redesign.today.answeredLater"
-  },
-  "redesignTodayAnsweredNo": "Du bist abgemeldet.",
-  "@redesignTodayAnsweredNo": {
-    "description": "redesign.today.answeredNo"
-  },
-  "redesignTodayAnsweredYes": "Schön, du bist dabei.",
-  "@redesignTodayAnsweredYes": {
-    "description": "redesign.today.answeredYes"
-  },
   "redesignTodayAttention": "Braucht deine Aufmerksamkeit",
   "@redesignTodayAttention": {
     "description": "redesign.today.attention"
@@ -21973,6 +21957,10 @@
   "redesignTodayChangeAnswer": "Ändern",
   "@redesignTodayChangeAnswer": {
     "description": "redesign.today.changeAnswer"
+  },
+  "redesignTodayChangeTo": "Antwort ändern",
+  "@redesignTodayChangeTo": {
+    "description": "redesign.today.changeTo"
   },
   "redesignTodayChildFailed": "Das hat nicht geklappt. Bitte versuch es noch einmal.",
   "@redesignTodayChildFailed": {
@@ -22137,6 +22125,10 @@
   "@redesignTodayNoMember": {
     "description": "redesign.today.noMember"
   },
+  "redesignTodayNoSignOut": "Abmelden ist bei diesem Termin nicht vorgesehen.",
+  "@redesignTodayNoSignOut": {
+    "description": "redesign.today.noSignOut"
+  },
   "redesignTodayNoUpcoming": "Gerade stehen keine Termine an.",
   "@redesignTodayNoUpcoming": {
     "description": "redesign.today.noUpcoming"
@@ -22199,6 +22191,13 @@
   "@redesignTodayQuestion": {
     "description": "redesign.today.question"
   },
+  "redesignTodayReasonIs": "Grund: {reason}",
+  "@redesignTodayReasonIs": {
+    "description": "redesign.today.reasonIs",
+    "placeholders": {
+      "reason": {}
+    }
+  },
   "redesignTodayRecord": "Anwesenheit erfassen",
   "@redesignTodayRecord": {
     "description": "redesign.today.record"
@@ -22253,9 +22252,13 @@
   "@redesignTodayYesAfterAll": {
     "description": "redesign.today.yesAfterAll"
   },
-  "redesignTodayYesDone": "Zugesagt",
-  "@redesignTodayYesDone": {
-    "description": "redesign.today.yesDone"
+  "redesignTodayYouAreIn": "Du bist dabei",
+  "@redesignTodayYouAreIn": {
+    "description": "redesign.today.youAreIn"
+  },
+  "redesignTodayYouAreOut": "Du bist abgemeldet",
+  "@redesignTodayYouAreOut": {
+    "description": "redesign.today.youAreOut"
   },
   "redesignTodayYourAnswer": "Deine Zusage",
   "@redesignTodayYourAnswer": {

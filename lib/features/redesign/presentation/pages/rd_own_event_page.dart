@@ -42,7 +42,7 @@ bool rdIsPastOwnEvent(SignoutData data, CrossTenantPersonAttendance att) =>
 /// Termine" only an excused one keeps its answer actions (Ionic opens the
 /// action sheet there and nowhere else).
 /// [onCard]: what the card at the top offers instead (default: the answer
-/// card's Zusagen / Abmelden / Später).
+/// card's "Bin dabei" / "Komme später" / "Kann nicht").
 ({List<SelfServiceActionType> answer, List<SelfServiceActionType> info}) rdOwnEventActions(
   SelfServiceEventActions actions,
   CrossTenantPersonAttendance att, {
@@ -236,7 +236,6 @@ class RdOwnEventPage extends ConsumerWidget {
           attendance: att,
           showHeader: false,
           showEvent: false,
-          statusFirst: true,
           onNote: noteLink ? () => run(SelfServiceActionType.editNote) : null,
         ),
       // Läuft (S2): the Ablauf first, it is what members look at now.

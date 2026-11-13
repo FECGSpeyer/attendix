@@ -16549,9 +16549,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignOwnRoute => 'Route';
 
   @override
-  String get redesignOwnSignOut => 'Abmelden';
-
-  @override
   String get redesignOwnYouConduct => 'Du dirigierst';
 
   @override
@@ -17853,16 +17850,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayAnswered => 'Alle geantwortet';
 
   @override
-  String get redesignTodayAnsweredLater =>
-      'Du hast gemeldet, dass du später kommst.';
-
-  @override
-  String get redesignTodayAnsweredNo => 'Du bist abgemeldet.';
-
-  @override
-  String get redesignTodayAnsweredYes => 'Schön, du bist dabei.';
-
-  @override
   String get redesignTodayAttention => 'Braucht deine Aufmerksamkeit';
 
   @override
@@ -17877,6 +17864,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignTodayChangeAnswer => 'Ändern';
+
+  @override
+  String get redesignTodayChangeTo => 'Antwort ändern';
 
   @override
   String get redesignTodayChildFailed =>
@@ -18015,6 +18005,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Du bist in dieser Gruppe nicht als Mitglied eingetragen.';
 
   @override
+  String get redesignTodayNoSignOut =>
+      'Abmelden ist bei diesem Termin nicht vorgesehen.';
+
+  @override
   String get redesignTodayNoUpcoming => 'Gerade stehen keine Termine an.';
 
   @override
@@ -18075,6 +18069,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayQuestion => 'Bist du dabei?';
 
   @override
+  String redesignTodayReasonIs(Object reason) {
+    return 'Grund: $reason';
+  }
+
+  @override
   String get redesignTodayRecord => 'Anwesenheit erfassen';
 
   @override
@@ -18125,7 +18124,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayYesAfterAll => 'Doch dabei';
 
   @override
-  String get redesignTodayYesDone => 'Zugesagt';
+  String get redesignTodayYouAreIn => 'Du bist dabei';
+
+  @override
+  String get redesignTodayYouAreOut => 'Du bist abgemeldet';
 
   @override
   String get redesignTodayYourAnswer => 'Deine Zusage';

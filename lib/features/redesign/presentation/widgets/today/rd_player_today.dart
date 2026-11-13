@@ -15,7 +15,7 @@ import '../../../../self_service/presentation/pages/signout_page.dart'
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../../data/providers/rd_today_providers.dart'
     show rdDeadlineLabel, rdDeadlineUrgent, rdNotMemberInfo, rdOpenDeadline, rdSignoutDataProvider, rdStartOf, rdTodayFocus;
-import '../event/rd_own_event_cards.dart' show RdStatusBox, rdOwnStatusLook;
+import '../event/rd_own_event_cards.dart' show RdStatusBox;
 import '../event/rd_signout_sheet.dart';
 import '../rd_widgets.dart';
 import 'rd_today_common.dart';
@@ -103,17 +103,11 @@ class RdOwnAnswerSection extends ConsumerStatefulWidget {
     this.showHeader = true,
     this.attendance,
     this.showEvent = true,
-    this.statusFirst = false,
     this.onNote,
   });
 
   /// "Deine Zusage" above the card (Helfer).
   final bool showHeader;
-
-  /// Termin page (concept "Termin-Bereich neu", S1): once answered, the
-  /// status first ("Du bist eingeplant") with "Abmelden" and "Komme
-  /// später" below it, instead of the Zusage buttons.
-  final bool statusFirst;
 
   /// "Notiz an die Leitung" below the buttons.
   final VoidCallback? onNote;
@@ -224,24 +218,19 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
     // once it has passed.
     final openDeadline = qa != null && qa.canSignin && !qa.present ? rdOpenDeadline(att.deadline) : null;
 
-    String question;
+    // Answered: the own answer first, the other answers below it (the same
+    // on Heute and on the Termin's page). A requested Dienst is a question.
+    final answered = qa != null &&
+        !att.isDutyRequested &&
+        (qa.present || qa.late || qa.excused || att.status == AttendanceStatus.absent);
+
+    final String question;
     if (qa == null) {
       question = l10n.redesignTodayNotPart;
     } else if (att.isDutyRequested) {
       question = l10n.redesignTodayDutyQuestion;
-    } else if (qa.present) {
-      question = l10n.redesignTodayAnsweredYes;
-    } else if (qa.late) {
-      question = l10n.redesignTodayAnsweredLater;
-    } else if (qa.excused || att.status == AttendanceStatus.absent) {
-      question = l10n.redesignTodayAnsweredNo;
     } else {
       question = l10n.redesignTodayQuestion;
-    }
-
-    if (widget.statusFirst && qa != null && !_choosingReason && !att.isDutyRequested) {
-      final answered = qa.present || qa.late || qa.excused || att.status == AttendanceStatus.absent;
-      if (answered) return _statusCard(context, att, actions, qa, busy, countdown);
     }
 
     return RdCard(
@@ -274,18 +263,22 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
             RdPill(countdown, tone: RdTone.primary),
             const SizedBox(height: 10),
           ],
-          Text(question, style: RdType.body(p).copyWith(fontWeight: FontWeight.w600)),
-          // Ionic: hint of the instance below Termine without the person.
-          if (qa == null && !att.isMember) ...[
-            const SizedBox(height: 4),
-            Text(rdNotMemberInfo(ref.watch(currentTenantProvider)), style: RdType.meta(p)),
-          ],
-          if (att.notes != null && att.notes!.isNotEmpty && qa != null && !qa.present) ...[
-            const SizedBox(height: 4),
-            Text(att.notes!, style: RdType.meta(p)),
+          if (answered)
+            _answerBox(context, att, qa)
+          else ...[
+            Text(question, style: RdType.body(p).copyWith(fontWeight: FontWeight.w600)),
+            // Ionic: hint of the instance below Termine without the person.
+            if (qa == null && !att.isMember) ...[
+              const SizedBox(height: 4),
+              Text(rdNotMemberInfo(ref.watch(currentTenantProvider)), style: RdType.meta(p)),
+            ],
+            if (att.notes != null && att.notes!.isNotEmpty && qa != null) ...[
+              const SizedBox(height: 4),
+              Text(att.notes!, style: RdType.meta(p)),
+            ],
           ],
           if (qa != null && !qa.canSignin && !qa.present && att.deadline != null) ...[
-            const SizedBox(height: 4),
+            SizedBox(height: answered ? 8 : 4),
             Text(
               EventListUtils.deadlineText(att.deadline),
               style: RdType.meta(p, size: 13).copyWith(color: p.absent),
@@ -296,7 +289,12 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
             _DeadlineHint(deadline: openDeadline),
           ],
           const SizedBox(height: 12),
-          if (qa != null) ..._answerButtons(context, att, actions, qa, busy),
+          if (qa != null && _choosingReason)
+            ..._reasonChips(context, att, actions, busy)
+          else if (qa != null && answered)
+            ..._changeButtons(context, att, actions, qa, busy)
+          else if (qa != null)
+            ..._askButtons(context, att, actions, qa, busy),
           if (widget.onNote != null) _noteLink(context),
           if (widget.showEvent) ...[
             const SizedBox(height: 4),
@@ -324,76 +322,159 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
         ),
       );
 
-  /// "✓ Du bist eingeplant" / "Abgemeldet · „Krank“" with the ways to
-  /// change it.
-  Widget _statusCard(
-    BuildContext context,
-    CrossTenantPersonAttendance att,
-    SelfServiceEventActions actions,
-    QuickActions qa,
-    bool busy,
-    String? countdown,
-  ) {
-    final p = context.rd;
+  /// The own answer on a soft field in its colour, with the reason or time
+  /// given ("Du kommst später" / "ca. 20:00").
+  Widget _answerBox(BuildContext context, CrossTenantPersonAttendance att, QuickActions qa) {
     final l10n = context.l10n;
-    final look = rdOwnStatusLook(l10n, att.status, ended: false, note: att.notes);
-    final canSignOut = qa.allowExcuse && !qa.blocked;
-    final canLate = qa.allowLate && !qa.blocked;
-    final buttons = <Widget>[
-      if (qa.present) ...[
-        if (canSignOut)
-          RdOutlineButton(
-            key: const Key('rd-own-signout'),
-            label: l10n.redesignOwnSignOut,
-            color: p.absent,
-            onPressed: busy ? null : () => setState(() => _choosingReason = true),
-          ),
-        if (canLate)
-          RdOutlineButton(
-            key: const Key('rd-own-late'),
-            label: l10n.redesignOwnComeLater,
-            onPressed: busy
-                ? null
-                : () => _run(() => showRdSignoutSheet(context, att: att, actions: actions, late: true)),
-          ),
-      ] else if (qa.canSignin)
-        RdPrimaryButton(
-          key: const Key('rd-own-signin'),
-          label: l10n.redesignTodayYesAfterAll,
-          icon: Icons.check,
-          onPressed: busy ? null : () => _run(() => actions.handleSigninWithFields(context, att)),
-        ),
-    ];
-    return RdCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (countdown != null) ...[
-            RdPill(countdown, tone: RdTone.primary),
-            const SizedBox(height: 10),
-          ],
-          RdStatusBox(key: const Key('rd-own-status'), label: look.label, tone: look.tone, icon: look.icon),
-          if (buttons.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                for (var i = 0; i < buttons.length; i++) ...[
-                  if (i > 0) const SizedBox(width: 10),
-                  Expanded(child: buttons[i]),
-                ],
-              ],
-            ),
-          ],
-          if (widget.onNote != null) ...[
-            const SizedBox(height: 4),
-            _noteLink(context),
-          ],
-        ],
-      ),
+    final note = (att.notes ?? '').trim();
+    final ({String label, String? detail, RdTone tone, IconData icon}) look;
+    if (qa.present) {
+      look = (label: l10n.redesignTodayYouAreIn, detail: null, tone: RdTone.present, icon: Icons.check);
+    } else if (qa.late) {
+      look = (
+        label: l10n.redesignOwnComingLater,
+        detail: note.isEmpty ? null : note,
+        tone: RdTone.late,
+        icon: Icons.schedule,
+      );
+    } else if (qa.excused) {
+      look = (
+        label: l10n.redesignTodayYouAreOut,
+        detail: note.isEmpty ? null : l10n.redesignTodayReasonIs(note),
+        tone: RdTone.excused,
+        icon: Icons.event_busy_outlined,
+      );
+    } else {
+      // Recorded as absent by the leads.
+      look = (label: l10n.redesignStatusAbsent, detail: null, tone: RdTone.absent, icon: Icons.close);
+    }
+    return RdStatusBox(
+      key: const Key('rd-own-status'),
+      label: look.label,
+      detail: look.detail,
+      tone: look.tone,
+      icon: look.icon,
     );
   }
 
-  List<Widget> _answerButtons(
+  /// "Antwort ändern": the answers other than the own one, as equal calm
+  /// buttons with the words of the first answer. An answer that is not
+  /// possible has no button (deadline over: the line above says so).
+  List<Widget> _changeButtons(
+    BuildContext context,
+    CrossTenantPersonAttendance att,
+    SelfServiceEventActions actions,
+    QuickActions qa,
+    bool busy,
+  ) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    // "A": recorded as absent by the leads, only a Zusage changes that.
+    final recorded = att.text == 'A';
+    final canYes = !qa.present && qa.canSignin;
+    // Back to coming (also later) only while the deadline is open.
+    final canLate = !qa.late && qa.allowLate && !recorded && (qa.present || qa.canSignin);
+    final canNo = !qa.excused && qa.allowExcuse && !recorded;
+    final buttons = <Widget>[
+      if (canYes)
+        RdOutlineButton(
+          key: const Key('rd-own-signin'),
+          label: l10n.redesignTodayYes,
+          onPressed: busy ? null : () => _run(() => actions.handleSigninWithFields(context, att)),
+        ),
+      if (canLate)
+        RdOutlineButton(
+          key: const Key('rd-own-late'),
+          label: l10n.redesignOwnComeLater,
+          onPressed: busy ? null : () => _run(() => showRdSignoutSheet(context, att: att, actions: actions, late: true)),
+        ),
+      if (canNo)
+        RdOutlineButton(
+          key: const Key('rd-own-signout'),
+          label: l10n.redesignTodayNo,
+          onPressed: busy ? null : () => setState(() => _choosingReason = true),
+        ),
+    ];
+    return [
+      // Nothing to choose because this kind of Termin has no Abmelden.
+      if (qa.present && !qa.allowExcuse && !qa.allowLate)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text(l10n.redesignTodayNoSignOut, style: RdType.meta(p, size: 13)),
+        ),
+      if (buttons.isNotEmpty) ...[
+        Text(l10n.redesignTodayChangeTo, style: RdType.meta(p, size: 13)),
+        const SizedBox(height: 6),
+        // Small phones: one below the other, so "Komme später" is not cut.
+        LayoutBuilder(
+          builder: (context, box) => box.maxWidth < 280
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = 0; i < buttons.length; i++) ...[
+                      if (i > 0) const SizedBox(height: 8),
+                      buttons[i],
+                    ],
+                  ],
+                )
+              : Row(
+                  children: [
+                    for (var i = 0; i < buttons.length; i++) ...[
+                      if (i > 0) const SizedBox(width: 10),
+                      Expanded(child: buttons[i]),
+                    ],
+                  ],
+                ),
+        ),
+      ],
+    ];
+  }
+
+  /// "Warum kannst du nicht?": the reasons of the group as chips.
+  List<Widget> _reasonChips(
+    BuildContext context,
+    CrossTenantPersonAttendance att,
+    SelfServiceEventActions actions,
+    bool busy,
+  ) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return [
+      Text(l10n.redesignTodayWhyNot, style: RdType.meta(p)),
+      const SizedBox(height: 8),
+      Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final reason in actions.absenceReasons)
+            RdChoiceChip(
+              label: reason,
+              selected: false,
+              onTap: busy ? null : () => _run(() => _signOutWith(actions, att, reason)),
+            ),
+          RdChoiceChip(
+            label: l10n.redesignTodayOtherReason,
+            selected: false,
+            onTap: busy
+                ? null
+                : () => _run(() async {
+                      await showRdSignoutSheet(context, att: att, actions: actions);
+                      if (mounted) setState(() => _choosingReason = false);
+                    }),
+          ),
+        ],
+      ),
+      const SizedBox(height: 8),
+      RdLinkButton(
+        label: l10n.redesignCommonCancel,
+        onPressed: () => setState(() => _choosingReason = false),
+      ),
+    ];
+  }
+
+  /// Not answered yet: "Bin dabei" as the one main button, "Kann nicht"
+  /// next to it, "Ich komme später …" below.
+  List<Widget> _askButtons(
     BuildContext context,
     CrossTenantPersonAttendance att,
     SelfServiceEventActions actions,
@@ -403,67 +484,25 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
     final p = context.rd;
     final l10n = context.l10n;
     final canSignOut = qa.allowExcuse && !qa.blocked;
-
-    if (_choosingReason) {
-      return [
-        Text(l10n.redesignTodayWhyNot, style: RdType.meta(p)),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final reason in actions.absenceReasons)
-              RdChoiceChip(
-                label: reason,
-                selected: false,
-                onTap: busy ? null : () => _run(() => _signOutWith(actions, att, reason)),
-              ),
-            RdChoiceChip(
-              label: l10n.redesignTodayOtherReason,
-              selected: false,
-              onTap: busy
-                  ? null
-                  : () => _run(() async {
-                        await showRdSignoutSheet(context, att: att, actions: actions);
-                        if (mounted) setState(() => _choosingReason = false);
-                      }),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        RdLinkButton(
-          label: l10n.redesignCommonCancel,
-          onPressed: () => setState(() => _choosingReason = false),
-        ),
-      ];
-    }
-
-    final yes = qa.present
-        ? _AnsweredBox(label: l10n.redesignTodayYesDone, icon: Icons.check, tone: RdTone.present)
-        : RdPrimaryButton(
-            label: qa.excused || qa.late ? l10n.redesignTodayYesAfterAll : l10n.redesignTodayYes,
-            icon: Icons.check,
-            onPressed: qa.canSignin && !busy
-                ? () => _run(() => actions.handleSigninWithFields(context, att))
-                : null,
-          );
-    final no = qa.excused
-        ? _AnsweredBox(label: l10n.redesignTodayNoDone, icon: Icons.close, tone: RdTone.excused)
-        : qa.late
-            ? _AnsweredBox(label: l10n.redesignStatusLater, icon: Icons.schedule, tone: RdTone.late)
-            : RdOutlineButton(
-                label: qa.present ? l10n.redesignTodayNoAfterAll : l10n.redesignTodayNo,
-                icon: Icons.close,
-                color: p.absent,
-                onPressed: canSignOut && !busy ? () => setState(() => _choosingReason = true) : null,
-              );
-
     return [
       Row(
         children: [
-          Expanded(child: yes),
+          Expanded(
+            child: RdPrimaryButton(
+              label: l10n.redesignTodayYes,
+              icon: Icons.check,
+              onPressed: qa.canSignin && !busy ? () => _run(() => actions.handleSigninWithFields(context, att)) : null,
+            ),
+          ),
           const SizedBox(width: 10),
-          Expanded(child: no),
+          Expanded(
+            child: RdOutlineButton(
+              label: l10n.redesignTodayNo,
+              icon: Icons.close,
+              color: p.absent,
+              onPressed: canSignOut && !busy ? () => setState(() => _choosingReason = true) : null,
+            ),
+          ),
         ],
       ),
       if (qa.allowLate && !qa.blocked)
@@ -477,48 +516,6 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
           ),
         ),
     ];
-  }
-}
-
-/// Chosen answer shown in place of its button ("Zugesagt ✓").
-class _AnsweredBox extends StatelessWidget {
-  const _AnsweredBox({required this.label, required this.icon, required this.tone});
-
-  final String label;
-  final IconData icon;
-  final RdTone tone;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    final fg = p.toneColor(tone);
-    return Semantics(
-      label: label,
-      selected: true,
-      excludeSemantics: true,
-      child: Container(
-        height: 48,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: p.toneSoft(tone),
-          borderRadius: BorderRadius.circular(p.buttonRadius),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 20, color: fg),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text(
-                label,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: fg),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

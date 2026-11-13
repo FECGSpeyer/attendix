@@ -16398,9 +16398,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignOwnRoute => 'Directions';
 
   @override
-  String get redesignOwnSignOut => 'Sign out';
-
-  @override
   String get redesignOwnYouConduct => 'You conduct';
 
   @override
@@ -17693,15 +17690,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignTodayAnswered => 'All answered';
 
   @override
-  String get redesignTodayAnsweredLater => 'You said you will come later.';
-
-  @override
-  String get redesignTodayAnsweredNo => 'You signed out.';
-
-  @override
-  String get redesignTodayAnsweredYes => 'Great, you are coming.';
-
-  @override
   String get redesignTodayAttention => 'Needs your attention';
 
   @override
@@ -17716,6 +17704,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignTodayChangeAnswer => 'Change';
+
+  @override
+  String get redesignTodayChangeTo => 'Change answer';
 
   @override
   String get redesignTodayChildFailed => 'That didn\'t work. Please try again.';
@@ -17854,6 +17845,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'You are not listed as a member of this group.';
 
   @override
+  String get redesignTodayNoSignOut =>
+      'Signing out is not offered for this event.';
+
+  @override
   String get redesignTodayNoUpcoming => 'There are no upcoming events.';
 
   @override
@@ -17913,6 +17908,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignTodayQuestion => 'Are you coming?';
 
   @override
+  String redesignTodayReasonIs(Object reason) {
+    return 'Reason: $reason';
+  }
+
+  @override
   String get redesignTodayRecord => 'Take attendance';
 
   @override
@@ -17963,7 +17963,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignTodayYesAfterAll => 'Coming after all';
 
   @override
-  String get redesignTodayYesDone => 'Attending';
+  String get redesignTodayYouAreIn => 'You\'re coming';
+
+  @override
+  String get redesignTodayYouAreOut => 'You signed out';
 
   @override
   String get redesignTodayYourAnswer => 'Your answer';
