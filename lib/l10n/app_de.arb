@@ -15703,6 +15703,25 @@
   "@rdWmShareEnable": {
     "description": "rdWm.shareEnable"
   },
+  "rdWmSharedEditable": "Änderungen gelten auch dort.",
+  "@rdWmSharedEditable": {
+    "description": "rdWm.sharedEditable"
+  },
+  "rdWmSharedFrom": "Diese Gruppe nutzt die Werke von „{name}“.",
+  "@rdWmSharedFrom": {
+    "description": "rdWm.sharedFrom",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdWmSharedFromOther": "Diese Gruppe nutzt die Werke einer anderen Gruppe.",
+  "@rdWmSharedFromOther": {
+    "description": "rdWm.sharedFromOther"
+  },
+  "rdWmSharedLocked": "Ändern kann sie nur die Leitung dort.",
+  "@rdWmSharedLocked": {
+    "description": "rdWm.sharedLocked"
+  },
   "rdWmWorksCount": "{count, plural, one {{count} Werk} other {{count} Werke}}",
   "@rdWmWorksCount": {
     "description": "rdWm.worksCount",

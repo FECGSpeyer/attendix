@@ -12578,6 +12578,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdWmShareEnable => 'Create link';
 
   @override
+  String get rdWmSharedEditable => 'Changes apply there too.';
+
+  @override
+  String rdWmSharedFrom(Object name) {
+    return 'This group uses the works of “$name”.';
+  }
+
+  @override
+  String get rdWmSharedFromOther =>
+      'This group uses the works of another group.';
+
+  @override
+  String get rdWmSharedLocked => 'Only the leaders there can change them.';
+
+  @override
   String rdWmWorksCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

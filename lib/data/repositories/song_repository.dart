@@ -419,21 +419,40 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   /// `tenants` has no tenantId column - filtered by the song library owner.
   Future<List<String>> getSyncedTenantNames() async {
     try {
-      final sourceId = songTenantId;
-      final response = await supabase
-          .from('tenants')
-          .select('id, shortName')
-          .or('id.eq.$sourceId,song_source_tenant_id.eq.$sourceId');
-
-      return (response as List)
-          .where((t) => (t['id'] as num?)?.toInt() != currentTenantId)
-          .map((t) => t['shortName']?.toString() ?? '')
-          .where((name) => name.isNotEmpty)
+      return (await _libraryTenants())
+          .where((t) => t.id != currentTenantId && t.name.isNotEmpty)
+          .map((t) => t.name)
           .toList();
     } catch (e, stack) {
       handleError(e, stack, 'getSyncedTenantNames');
       rethrow;
     }
+  }
+
+  /// Short name of the instance whose Werke this one shows; null for the own
+  /// library or when that instance cannot be read.
+  Future<String?> getSongSourceName() async {
+    if (!isSyncedLibrary) return null;
+    try {
+      final name = (await _libraryTenants()).where((t) => t.id == songTenantId).firstOrNull?.name;
+      return name == null || name.isEmpty ? null : name;
+    } catch (e, stack) {
+      handleError(e, stack, 'getSongSourceName');
+      rethrow;
+    }
+  }
+
+  /// The owner of the song library and every instance showing it.
+  Future<List<({int? id, String name})>> _libraryTenants() async {
+    final sourceId = songTenantId;
+    final response = await supabase
+        .from('tenants')
+        .select('id, shortName')
+        .or('id.eq.$sourceId,song_source_tenant_id.eq.$sourceId');
+
+    return (response as List)
+        .map((t) => (id: (t['id'] as num?)?.toInt(), name: t['shortName']?.toString() ?? ''))
+        .toList();
   }
 
   // ==========================================================================

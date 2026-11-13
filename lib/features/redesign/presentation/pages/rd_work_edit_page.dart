@@ -16,6 +16,7 @@ import '../../../../data/repositories/song_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../songs/presentation/widgets/song_categories_sheet.dart';
+import '../../data/providers/rd_shared_library.dart';
 import '../../data/rd_works_logic.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
@@ -339,7 +340,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
               ),
         ],
       );
-    } else if (data.readOnly || data.isPublic) {
+    } else if (data.readOnly || data.isPublic || !ref.watch(rdLibraryEditableProvider)) {
       body = RdFormBody(children: [RdInfoCard(text: l10n.redesignWorkEditNotAllowed, icon: Icons.lock_outline)]);
     } else {
       _fill(data);

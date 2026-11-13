@@ -20492,6 +20492,30 @@ abstract class AppLocalizations {
   /// **'Link erstellen'**
   String get rdWmShareEnable;
 
+  /// rdWm.sharedEditable
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen gelten auch dort.'**
+  String get rdWmSharedEditable;
+
+  /// rdWm.sharedFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gruppe nutzt die Werke von „{name}“.'**
+  String rdWmSharedFrom(Object name);
+
+  /// rdWm.sharedFromOther
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gruppe nutzt die Werke einer anderen Gruppe.'**
+  String get rdWmSharedFromOther;
+
+  /// rdWm.sharedLocked
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern kann sie nur die Leitung dort.'**
+  String get rdWmSharedLocked;
+
   /// rdWm.worksCount
   ///
   /// In de, this message translates to:

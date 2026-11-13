@@ -21,6 +21,8 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/data/models/song/song_filter.dart';
+import 'package:attendix/data/repositories/song_repository.dart' show SongTenantSettings;
+import 'package:attendix/features/redesign/data/providers/rd_shared_library.dart';
 import 'package:attendix/features/redesign/data/rd_dates.dart';
 import 'package:attendix/features/redesign/data/rd_works_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_folder_page.dart';
@@ -211,6 +213,8 @@ List<Override> _common(Role role, {List<SongCollection>? collections}) => [
       ),
       effectiveRoleProvider.overrideWithValue(role),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+      // Own Werke (the group shows no other group's).
+      songTenantSettingsProvider.overrideWith((ref) async => const SongTenantSettings()),
       // Without Sammlungen in the database (null) the Werke tab as before.
       songCollectionsProvider.overrideWith((ref) async => collections),
     ];
@@ -1337,6 +1341,51 @@ void main() {
       await tester.pumpWidget(_workApp(Role.player));
       await _settle(tester);
       expect(find.text('Dieses Werk gibt es hier nicht mehr.'), findsOneWidget);
+    });
+  });
+
+  group('Werke of another group', () {
+    // Group 7 shows the Werke of group 9 (Werk-Synchronisierung).
+    List<Override> shared({int? roleThere}) => [
+      songTenantSettingsProvider.overrideWith((ref) async => const SongTenantSettings(songSourceTenantId: 9)),
+      rdSharedLibraryNameProvider.overrideWith((ref) async => 'Hauptchor'),
+      userTenantsProvider.overrideWith(
+        (ref) async => [if (roleThere != null) TestFactories.createTenant(id: 9).copyWith(role: roleThere)],
+      ),
+    ];
+
+    testWidgets('a lead without a lead role there gets the note and no "+"', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_worksApp(Role.admin, instrument: null, overrides: shared(roleThere: Role.player.value)));
+      await _settle(tester);
+
+      expect(
+        find.text('Diese Gruppe nutzt die Werke von „Hauptchor“. Ändern kann sie nur die Leitung dort.'),
+        findsOneWidget,
+      );
+      expect(find.byType(FloatingActionButton), findsNothing);
+    });
+
+    testWidgets('a lead of both groups keeps "+", members only read whose Werke they are', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_worksApp(Role.admin, instrument: null, overrides: shared(roleThere: Role.responsible.value)));
+      await _settle(tester);
+
+      expect(find.text('Diese Gruppe nutzt die Werke von „Hauptchor“. Änderungen gelten auch dort.'), findsOneWidget);
+      expect(find.byType(FloatingActionButton), findsOneWidget);
+
+      await tester.pumpWidget(_worksApp(Role.player, overrides: shared()));
+      await _settle(tester);
+      expect(find.text('Diese Gruppe nutzt die Werke von „Hauptchor“.'), findsOneWidget);
+    });
+
+    testWidgets('own Werke: no note', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_worksApp(Role.admin, instrument: null));
+      await _settle(tester);
+
+      expect(find.byKey(const Key('rd-works-shared-note')), findsNothing);
+      expect(find.byType(FloatingActionButton), findsOneWidget);
     });
   });
 

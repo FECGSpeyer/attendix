@@ -11,6 +11,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
+import '../../data/providers/rd_shared_library.dart';
 import '../../data/rd_collections_logic.dart';
 import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/works/rd_collections_ui.dart';
@@ -84,7 +85,8 @@ class _RdCollectionsPageState extends ConsumerState<RdCollectionsPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final role = ref.watch(effectiveRoleProvider);
-    final isAdmin = role.isAdmin || role.isResponsible;
+    // Sammlungen of another group's Werke: only its leads manage them.
+    final isAdmin = (role.isAdmin || role.isResponsible) && ref.watch(rdLibraryEditableProvider);
     final async = ref.watch(songCollectionsProvider);
     final collections = rdLoadedValue(async);
     final songs = ref.watch(songsProvider).valueOrNull;
