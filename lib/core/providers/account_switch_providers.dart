@@ -102,10 +102,19 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
   final auth = ref.watch(supabaseAuthProvider);
   String? activeUserId = auth.currentUser?.id;
 
+  // Every store change of this listener runs in event order: reading the
+  // developer mode is async, so without the chain a sign-out's forget()
+  // could run before the remember() of an earlier event and the signed-out
+  // account would be stored again.
+  Future<void> chain = Future.value();
+  void enqueue(Future<void> Function() op) {
+    chain = chain.then((_) => op()).catchError((_) {});
+  }
+
   // New accounts are only added in developer mode (see
   // [developerModeStorageKey]).
-  Future<void> rememberSession(Session session, {required bool add}) async {
-    await service.remember(session, add: add && await loadDeveloperMode());
+  void rememberSession(Session session, {required bool add}) {
+    enqueue(() async => service.remember(session, add: add && await loadDeveloperMode()));
   }
 
   void handle(AuthState state) {
@@ -113,7 +122,7 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
     if (state.event == AuthChangeEvent.signedOut) {
       final userId = activeUserId;
       activeUserId = null;
-      if (userId != null) unawaited(service.forget(userId).catchError((_) {}));
+      if (userId != null) enqueue(() => service.forget(userId));
       return;
     }
     if (session == null) return;
@@ -133,13 +142,12 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
     // A recovery session only updates a saved account, it never adds one.
     final add = state.event != AuthChangeEvent.passwordRecovery &&
         ref.read(redesignEnabledProvider);
-    unawaited(rememberSession(session, add: add).catchError((_) {}));
+    rememberSession(session, add: add);
   }
 
   final current = auth.currentSession;
   if (current != null) {
-    unawaited(rememberSession(current, add: ref.read(redesignEnabledProvider))
-        .catchError((_) {}));
+    rememberSession(current, add: ref.read(redesignEnabledProvider));
   }
   final sub = auth.onAuthStateChange.listen(handle, onError: (_) {});
   ref.onDispose(sub.cancel);
@@ -149,7 +157,7 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
   void rememberCurrent() {
     final session = auth.currentSession;
     if (session != null && ref.read(redesignEnabledProvider) && ref.read(developerModeProvider)) {
-      unawaited(service.remember(session).catchError((_) {}));
+      enqueue(() => service.remember(session));
     }
   }
 
