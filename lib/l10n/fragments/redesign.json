@@ -1151,6 +1151,10 @@
         "fieldEmpty": "leer",
         "allPaused": "Die Ausgewählten sind schon pausiert."
       },
+      "developerMode": {
+        "on": "Entwicklermodus an",
+        "off": "Entwicklermodus aus"
+      },
       "accounts": {
         "title": "Konto wechseln",
         "count": "{count, plural, one {1 Konto} other {{count} Konten}}",
@@ -2838,6 +2842,10 @@
         "fieldApply": "Set",
         "fieldEmpty": "empty",
         "allPaused": "The selected members are already paused."
+      },
+      "developerMode": {
+        "on": "Developer mode on",
+        "off": "Developer mode off"
       },
       "accounts": {
         "title": "Switch account",

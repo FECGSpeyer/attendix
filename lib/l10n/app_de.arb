@@ -16639,6 +16639,14 @@
   "@redesignCreateType": {
     "description": "redesign.create.type"
   },
+  "redesignDeveloperModeOff": "Entwicklermodus aus",
+  "@redesignDeveloperModeOff": {
+    "description": "redesign.developerMode.off"
+  },
+  "redesignDeveloperModeOn": "Entwicklermodus an",
+  "@redesignDeveloperModeOn": {
+    "description": "redesign.developerMode.on"
+  },
   "redesignDutyCannot": "Kann nicht",
   "@redesignDutyCannot": {
     "description": "redesign.duty.cannot"

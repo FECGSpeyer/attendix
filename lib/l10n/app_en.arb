@@ -3586,6 +3586,8 @@
   "redesignCreateTitle": "New event",
   "redesignCreateTitleLabel": "Title",
   "redesignCreateType": "Type",
+  "redesignDeveloperModeOff": "Developer mode off",
+  "redesignDeveloperModeOn": "Developer mode on",
   "redesignDutyCannot": "Can't",
   "redesignDutyConfirmed": "Confirmed",
   "redesignDutyDeclined": "Declined",

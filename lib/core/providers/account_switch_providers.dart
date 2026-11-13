@@ -1,15 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
 import '../router/app_router.dart' show routerProvider;
 import '../services/account_switch/account_switch_service.dart';
 import '../services/account_switch/auth_token_api.dart';
-import '../services/account_switch/saved_account.dart';
 import '../services/account_switch/saved_accounts_store.dart';
-import 'dashboard_providers.dart' show superDeveloperEmail;
 import 'redesign_providers.dart';
 import 'tenant_providers.dart';
 
@@ -38,24 +37,47 @@ final accountSwitchServiceProvider = Provider<AccountSwitchService>((ref) {
   return service;
 });
 
-/// ACCOUNT_SWITCH is a developer feature (Leon, 13.11.2026): unlocked on a
-/// device once the super developer is signed in there or remembered there,
-/// then also for the test accounts switched to from it. Everyone else sees
-/// neither "Konto wechseln" nor saved accounts on the login page, and their
-/// logins are not remembered.
-bool isAccountSwitchUnlocked(String? currentEmail, Iterable<SavedAccount> accounts) {
-  bool isDev(String? email) => email?.trim().toLowerCase() == superDeveloperEmail;
-  return isDev(currentEmail) || accounts.any((a) => isDev(a.email));
+/// Device-local developer mode (Leon, 13.11.2026): "Konto wechseln" and
+/// the saved accounts on the login page are a developer feature. Tapping
+/// the version at the bottom of the Ich page 7× turns it on or off on this
+/// device. Without it, logins are not remembered either.
+const developerModeStorageKey = 'attendix_developer_mode';
+
+/// Reads the stored developer mode (false when storage is unavailable).
+Future<bool> loadDeveloperMode() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(developerModeStorageKey) ?? false;
+  } catch (_) {
+    return false;
+  }
 }
 
-/// See [isAccountSwitchUnlocked].
-final accountSwitchUnlockedProvider = Provider<bool>((ref) {
-  // Re-evaluate on account changes (login/logout/switch).
-  ref.watch(currentAuthUserIdProvider);
-  final email = ref.watch(supabaseAuthProvider).currentUser?.email;
-  final accounts = ref.watch(savedAccountsProvider).valueOrNull ?? const <SavedAccount>[];
-  return isAccountSwitchUnlocked(email, accounts);
-});
+class DeveloperModeNotifier extends Notifier<bool> {
+  bool _touched = false;
+
+  @override
+  bool build() {
+    unawaited(loadDeveloperMode().then((on) {
+      if (!_touched) state = on;
+    }));
+    return false;
+  }
+
+  Future<void> setEnabled(bool enabled) async {
+    _touched = true;
+    state = enabled;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(developerModeStorageKey, enabled);
+    } catch (_) {
+      // Storage unavailable (private browsing): on for this session only.
+    }
+  }
+}
+
+/// See [developerModeStorageKey].
+final developerModeProvider = NotifierProvider<DeveloperModeNotifier, bool>(DeveloperModeNotifier.new);
 
 /// Remembered accounts of this device (incl. the signed-in one).
 final savedAccountsProvider = StreamProvider<List<SavedAccount>>((ref) async* {
@@ -68,7 +90,7 @@ final savedAccountsProvider = StreamProvider<List<SavedAccount>>((ref) async* {
 /// from AttendixApp):
 /// - every new session or token refresh stores the account's newest
 ///   refresh token; new accounts are only added while the new design is on
-///   and the switcher is unlocked on this device,
+///   and developer mode is on,
 /// - a sign-out removes the account that was signed in (its session is
 ///   revoked by the sign-out anyway),
 /// - another browser tab that changed the account (switch or sign-in, it
@@ -80,11 +102,10 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
   final auth = ref.watch(supabaseAuthProvider);
   String? activeUserId = auth.currentUser?.id;
 
-  // New accounts are only added on a device where the switcher is unlocked
-  // (developer feature, see [isAccountSwitchUnlocked]).
+  // New accounts are only added in developer mode (see
+  // [developerModeStorageKey]).
   Future<void> rememberSession(Session session, {required bool add}) async {
-    final unlocked = add && isAccountSwitchUnlocked(session.user.email, await service.load());
-    await service.remember(session, add: unlocked);
+    await service.remember(session, add: add && await loadDeveloperMode());
   }
 
   void handle(AuthState state) {
@@ -123,12 +144,20 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
   final sub = auth.onAuthStateChange.listen(handle, onError: (_) {});
   ref.onDispose(sub.cancel);
 
-  // Turning the new design on remembers the signed-in account right away.
-  ref.listen<bool>(redesignEnabledProvider, (_, enabled) {
+  // Turning the new design or developer mode on remembers the signed-in
+  // account right away.
+  void rememberCurrent() {
     final session = auth.currentSession;
-    if (enabled && session != null) {
-      unawaited(rememberSession(session, add: true).catchError((_) {}));
+    if (session != null && ref.read(redesignEnabledProvider) && ref.read(developerModeProvider)) {
+      unawaited(service.remember(session).catchError((_) {}));
     }
+  }
+
+  ref.listen<bool>(redesignEnabledProvider, (_, enabled) {
+    if (enabled) rememberCurrent();
+  });
+  ref.listen<bool>(developerModeProvider, (_, enabled) {
+    if (enabled) rememberCurrent();
   });
 });
 
