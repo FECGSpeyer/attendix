@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.141.2",
+      "date": "14.11.2026",
+      "changes": [
+        "🐛 Anmeldelink „Mein Kind“: Wer mit seinem Konto schon Mitglied der Gruppe ist, erfährt jetzt sofort, dass ein Kind damit nicht angemeldet werden kann, statt nach der Freigabe nichts zu sehen",
+        "💬 Freigaben sagen vorher, ob das Elternkonto schon Mitglied der Gruppe ist und das Kind deshalb nicht verknüpft wird"
+      ]
+    },
+    {
       "version": "0.141.1",
       "date": "14.11.2026",
       "changes": [
