@@ -17,6 +17,7 @@ import 'package:attendix/features/redesign/data/providers/rd_events_providers.da
 import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_today_page.dart';
 import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show RdOutlineButton;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,7 +58,7 @@ CrossTenantPersonAttendance _own(String id, int dayOffset, AttendanceStatus stat
       tenantColor: 'primary',
     );
 
-Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol, List<Override> extra = const []}) {
+Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol, List<Override> extra = const [], Key? key}) {
   final router = GoRouter(
     initialLocation: '/heute',
     routes: [
@@ -76,6 +77,7 @@ Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol, List<Override> ext
     ],
   );
   return ProviderScope(
+    key: key,
     overrides: [
       initialRedesignSettingsProvider.overrideWithValue(RedesignSettings(enabled: true, world: world)),
       effectiveRoleProvider.overrideWithValue(role),
@@ -177,6 +179,53 @@ void main() {
     await tester.scrollUntilVisible(find.text('Als Nächstes'), 200);
     expect(find.text('Probe 12'), findsOneWidget);
     expect(find.text('Zugesagt'), findsWidgets);
+  });
+
+  testWidgets('Spieler, answered: the answer first, the two other answers below it', (tester) async {
+    _size(tester, const Size(393, 852));
+    Future<void> show(AttendanceStatus status, {String? notes}) async {
+      await tester.pumpWidget(_app(Role.player, key: ValueKey(status), extra: [
+        signoutDataProvider.overrideWith(
+          (ref) async => SignoutData(current: _own('11', 0, status).copyWith(notes: notes)),
+        ),
+      ]));
+      await _settle(tester);
+    }
+
+    List<String> buttons() => [
+      for (final key in ['rd-own-signin', 'rd-own-late', 'rd-own-signout'])
+        if (find.byKey(Key(key)).evaluate().isNotEmpty) tester.widget<RdOutlineButton>(find.byKey(Key(key))).label,
+    ];
+
+    await show(AttendanceStatus.present);
+    expect(find.text('Du bist dabei'), findsOneWidget);
+    expect(find.text('Antwort ändern'), findsOneWidget);
+    expect(buttons(), ['Komme später', 'Kann nicht']);
+
+    await show(AttendanceStatus.lateExcused, notes: 'ca. 20:00');
+    expect(find.text('Du kommst später'), findsOneWidget);
+    expect(find.text('ca. 20:00'), findsOneWidget);
+    expect(buttons(), ['Bin dabei', 'Kann nicht']);
+    // No second way to say "später" below the buttons.
+    expect(find.text('Ich komme später …'), findsNothing);
+
+    await show(AttendanceStatus.excused, notes: 'Krank');
+    expect(find.text('Du bist abgemeldet'), findsOneWidget);
+    expect(find.text('Grund: Krank'), findsOneWidget);
+    expect(buttons(), ['Bin dabei', 'Komme später']);
+
+    // From "abgemeldet" straight to "später": the sheet opens for it.
+    await tester.tap(find.byKey(const Key('rd-own-late')));
+    await _settle(tester);
+    expect(find.byType(BottomSheet), findsOneWidget);
+    await tester.tapAt(const Offset(10, 10));
+    await _settle(tester);
+
+    // "Kann nicht" asks for the reason as before.
+    await show(AttendanceStatus.present);
+    await tester.tap(find.byKey(const Key('rd-own-signout')));
+    await _settle(tester);
+    expect(find.text('Warum kannst du nicht?'), findsOneWidget);
   });
 
   testWidgets('Dirigent with the sidebar: answers and attention, no week list', (tester) async {

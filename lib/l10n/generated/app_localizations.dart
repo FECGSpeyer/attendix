@@ -26192,12 +26192,6 @@ abstract class AppLocalizations {
   /// **'Route'**
   String get redesignOwnRoute;
 
-  /// redesign.own.signOut
-  ///
-  /// In de, this message translates to:
-  /// **'Abmelden'**
-  String get redesignOwnSignOut;
-
   /// redesign.own.youConduct
   ///
   /// In de, this message translates to:
@@ -28346,24 +28340,6 @@ abstract class AppLocalizations {
   /// **'Alle geantwortet'**
   String get redesignTodayAnswered;
 
-  /// redesign.today.answeredLater
-  ///
-  /// In de, this message translates to:
-  /// **'Du hast gemeldet, dass du später kommst.'**
-  String get redesignTodayAnsweredLater;
-
-  /// redesign.today.answeredNo
-  ///
-  /// In de, this message translates to:
-  /// **'Du bist abgemeldet.'**
-  String get redesignTodayAnsweredNo;
-
-  /// redesign.today.answeredYes
-  ///
-  /// In de, this message translates to:
-  /// **'Schön, du bist dabei.'**
-  String get redesignTodayAnsweredYes;
-
   /// redesign.today.attention
   ///
   /// In de, this message translates to:
@@ -28387,6 +28363,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ändern'**
   String get redesignTodayChangeAnswer;
+
+  /// redesign.today.changeTo
+  ///
+  /// In de, this message translates to:
+  /// **'Antwort ändern'**
+  String get redesignTodayChangeTo;
 
   /// redesign.today.childFailed
   ///
@@ -28574,6 +28556,12 @@ abstract class AppLocalizations {
   /// **'Du bist in dieser Gruppe nicht als Mitglied eingetragen.'**
   String get redesignTodayNoMember;
 
+  /// redesign.today.noSignOut
+  ///
+  /// In de, this message translates to:
+  /// **'Abmelden ist bei diesem Termin nicht vorgesehen.'**
+  String get redesignTodayNoSignOut;
+
   /// redesign.today.noUpcoming
   ///
   /// In de, this message translates to:
@@ -28639,6 +28627,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Bist du dabei?'**
   String get redesignTodayQuestion;
+
+  /// redesign.today.reasonIs
+  ///
+  /// In de, this message translates to:
+  /// **'Grund: {reason}'**
+  String redesignTodayReasonIs(Object reason);
 
   /// redesign.today.record
   ///
@@ -28706,11 +28700,17 @@ abstract class AppLocalizations {
   /// **'Doch dabei'**
   String get redesignTodayYesAfterAll;
 
-  /// redesign.today.yesDone
+  /// redesign.today.youAreIn
   ///
   /// In de, this message translates to:
-  /// **'Zugesagt'**
-  String get redesignTodayYesDone;
+  /// **'Du bist dabei'**
+  String get redesignTodayYouAreIn;
+
+  /// redesign.today.youAreOut
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist abgemeldet'**
+  String get redesignTodayYouAreOut;
 
   /// redesign.today.yourAnswer
   ///

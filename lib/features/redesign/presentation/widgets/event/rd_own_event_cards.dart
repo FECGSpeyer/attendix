@@ -59,11 +59,14 @@ import 'rd_event_now.dart';
 
 /// "✓ Du bist eingeplant" on a soft background in the status colour.
 class RdStatusBox extends StatelessWidget {
-  const RdStatusBox({super.key, required this.label, required this.tone, required this.icon});
+  const RdStatusBox({super.key, required this.label, required this.tone, required this.icon, this.detail});
 
   final String label;
   final RdTone tone;
   final IconData icon;
+
+  /// Second line (the reason or time given with the answer).
+  final String? detail;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +81,23 @@ class RdStatusBox extends StatelessWidget {
           Icon(icon, size: 18, color: fg),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: fg)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: fg)),
+                if (detail != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      detail!,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 13, color: fg),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ],
       ),

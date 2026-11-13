@@ -25,8 +25,12 @@ Future<void> showRdSignoutSheet(
 }) async {
   final qa = actions.quickActions(att);
   if (qa == null || att.id == null) return;
-  final allowExcuse = qa.allowExcuse && !qa.blocked;
-  final allowLate = qa.allowLate && !qa.blocked;
+  // Recorded as absent by the leads: nothing to announce. An own answer
+  // changes into the other one (abgemeldet to später only while the
+  // deadline is open, like a Zusage).
+  final recorded = att.text == 'A';
+  final allowExcuse = qa.allowExcuse && !recorded && !qa.excused;
+  final allowLate = qa.allowLate && !recorded && !qa.late && (!qa.excused || qa.canSignin);
   if (!allowExcuse && !allowLate) return;
 
   final choice = await showRdReasonSheet(
