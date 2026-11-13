@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.139.4",
+      "date": "13.11.2026",
+      "changes": [
+        "🐛 Eigener Server: Wasm-Modul der Web-App wird mit richtigem Dateityp ausgeliefert"
+      ]
+    },
+    {
       "version": "0.139.3",
       "date": "13.11.2026",
       "changes": [
