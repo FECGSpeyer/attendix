@@ -2,6 +2,7 @@ import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_providers.dart';
 import 'package:attendix/core/providers/attendance_type_providers.dart';
 import 'package:attendix/core/providers/realtime_providers.dart';
+import 'package:attendix/core/providers/role_permission_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
@@ -37,13 +38,18 @@ void main() {
       PersonAttendance(personId: 2, status: AttendanceStatus.neutral),
     ];
 
-    Future<List<int?>> openFor(List<Attendance> list) async {
+    Future<List<int?>> openFor(
+      List<Attendance> list, {
+      AttendanceGroupScope scope = const AttendanceGroupScope.all(),
+      List<Person>? people,
+    }) async {
       final repo = MockAttendanceRepository();
       when(() => repo.hasTenantId).thenReturn(true);
       when(() => repo.getPersonAttendancesForAttendances(any())).thenAnswer((_) async => rows);
       final container = ProviderContainer(overrides: [
         attendanceRepositoryWithTenantProvider.overrideWithValue(repo),
-        realtimePlayersProvider.overrideWith((ref) => Stream.value([tim, eva])),
+        realtimePlayersProvider.overrideWith((ref) => Stream.value(people ?? [tim, eva])),
+        attendanceGroupScopeProvider.overrideWith((ref) async => scope),
         attendanceTypesProvider.overrideWith((ref) async => [
               TestFactories.createAttendanceType(id: 'd', name: 'Dienst').copyWith(dutyMode: true),
               TestFactories.createAttendanceType(id: 'p', name: 'Probe'),
@@ -64,6 +70,13 @@ void main() {
     test('normal type and Termine without a type: everybody open', () async {
       expect(await openFor([TestFactories.createAttendance(id: 5, date: '2026-11-02', typeId: 'p')]), [2, 1]);
       expect(await openFor([TestFactories.createAttendance(id: 5, date: '2026-11-02')]), [2, 1]);
+    });
+
+    test('Helfer limited to the own group: only that group is open (and reminded)', () async {
+      final list = [TestFactories.createAttendance(id: 5, date: '2026-11-02', typeId: 'p')];
+      final people = [tim.copyWith(instrument: 7), eva.copyWith(instrument: 8)];
+      expect(await openFor(list, scope: const AttendanceGroupScope.group(7), people: people), [1]);
+      expect(await openFor(list, scope: const AttendanceGroupScope.denied(), people: people), isEmpty);
     });
 
     test('unknown Termin or type counts as duty', () async {

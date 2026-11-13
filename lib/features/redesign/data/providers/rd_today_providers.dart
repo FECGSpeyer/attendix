@@ -6,6 +6,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
@@ -122,6 +123,8 @@ List<Person> rdOpenPersons(Iterable<PersonAttendance> rows, List<Person> people,
 }
 
 /// Who has not answered [attendanceId] yet ("6 offen" on Heute, UX D2).
+/// A Helfer limited to the own group gets only that group, like the list of
+/// the Termin page: "Offene erinnern" then reminds nobody else.
 final rdOpenPersonsProvider = FutureProvider.autoDispose.family<List<Person>, int>((ref, attendanceId) async {
   ref.watch(attendanceRefetchCounter);
   final repo = ref.watch(attendanceRepositoryWithTenantProvider);
@@ -138,7 +141,15 @@ final rdOpenPersonsProvider = FutureProvider.autoDispose.family<List<Person>, in
   final duty = attendance == null ||
       (typeId != null && (types.where((t) => t.id == typeId).firstOrNull?.dutyMode ?? true));
   final rows = await repo.getPersonAttendancesForAttendances([attendanceId]);
-  return rdOpenPersons(rows, people, duty: duty);
+  final open = rdOpenPersons(rows, people, duty: duty);
+  // An unknown scope (error) counts as "nobody", as everywhere else.
+  AttendanceGroupScope scope;
+  try {
+    scope = await ref.watch(attendanceGroupScopeProvider.future);
+  } catch (_) {
+    scope = const AttendanceGroupScope.denied();
+  }
+  return scope.isAll ? open : open.where((p) => scope.allowsGroup(p.instrument)).toList();
 });
 
 /// Title, time and place of a Termin for the cards of "Heute".

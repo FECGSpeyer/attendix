@@ -3225,6 +3225,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String collectionsDeleteEmptyConfirm(Object name) {
+    return '„$name“ löschen?';
+  }
+
+  @override
   String get collectionsDeleteFailed =>
       'Die Sammlung konnte nicht gelöscht werden.';
 
@@ -3239,6 +3244,19 @@ class AppLocalizationsDe extends AppLocalizations {
       locale: localeName,
       other: 'Die $count Werke ins Repertoire verschieben',
       one: 'Das Werk ins Repertoire verschieben',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeleteKeepWorksVisible(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Die $count Werke ins Repertoire verschieben. Sie sind dann für alle sichtbar.',
+      one:
+          'Das Werk ins Repertoire verschieben. Es ist dann für alle sichtbar.',
     );
     return '$_temp0';
   }
