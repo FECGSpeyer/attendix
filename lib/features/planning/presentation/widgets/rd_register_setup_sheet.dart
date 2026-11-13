@@ -92,7 +92,10 @@ class _RdRegisterSetupSheetState extends ConsumerState<RdRegisterSetupSheet> {
     final initial = widget.initial;
     List<String> selected;
     if (initial != null) {
-      selected = [...initial.groups];
+      // Blocks inserted before the conductors were left out keep their
+      // other groups.
+      selected = [for (final g in initial.groups) if (!leadCategoryNames.contains(g.trim())) g];
+      if (selected.length < 2) selected = [...initial.groups];
     } else {
       String? stored;
       if (tenant?.id != null) {
@@ -493,6 +496,7 @@ class _RdLeadPickerState extends ConsumerState<_RdLeadPicker> {
           },
         ),
         const SizedBox(height: 12),
+        if (typed.isNotEmpty || matches.isNotEmpty)
         RdGroupedList(
           children: [
             if (typed.isNotEmpty)
