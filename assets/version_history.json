@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.138.3",
+      "date": "13.11.2026",
+      "changes": [
+        "✨ Beta Ablauf: „Aktuelle Werke“ und „Werk aus der Liste“ sind jetzt ein Eintrag „Werke“; dort oben „Alle aktuellen Werke“ oder einzelne Werke wählen"
+      ]
+    },
+    {
       "version": "0.138.2",
       "date": "12.11.2026",
       "changes": [
