@@ -172,3 +172,35 @@ jobs:
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           # Preview deployments for PRs, production for main
           command: pages deploy build/web --project-name=attendix --branch=${{ github.head_ref || github.ref_name }}
+
+      - name: Deploy to own VPS
+        # VPS_HOSTING: master builds also go to the own VPS (deploy/vps/web,
+        # nginx + link preview behind Traefik). Skipped until the secret
+        # VPS_HOST is set. Secrets: VPS_HOST, VPS_USER, VPS_SSH_KEY,
+        # VPS_WEB_DIR (e.g. /opt/attendix/web/www), optional VPS_KNOWN_HOSTS.
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_WEB_DIR: ${{ secrets.VPS_WEB_DIR }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          if [ -z "$VPS_HOST" ]; then
+            echo "VPS_HOST not set, skipping VPS deploy"
+            exit 0
+          fi
+          mkdir -p ~/.ssh
+          install -m 600 /dev/null ~/.ssh/id_vps
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_vps
+          if [ -n "$VPS_KNOWN_HOSTS" ]; then
+            printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+            hostcheck=yes
+          else
+            hostcheck=accept-new
+          fi
+          # --delay-updates: files switch over together at the end, so no
+          # visitor gets a mix of old and new build files.
+          rsync -az --delete --delay-updates \
+            -e "ssh -i ~/.ssh/id_vps -o StrictHostKeyChecking=$hostcheck" \
+            build/web/ "$VPS_USER@$VPS_HOST:$VPS_WEB_DIR/"
