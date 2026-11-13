@@ -161,24 +161,45 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
     if (_deleting) return;
     final l10n = context.l10n;
     final name = _name.text.trim().isEmpty ? c.name : _name.text.trim();
-    final count = rdWorksIn(_songs ?? const <Song>[], _id).length;
+    final songs = _songs;
+    final count = rdWorksIn(songs ?? const <Song>[], _id).length;
     var withWorks = false;
     if (count == 0) {
       final confirmed = await DialogHelper.showConfirmation(
         context,
         title: l10n.collectionsDelete,
-        message: l10n.collectionsDeleteConfirm(name),
+        // Known to be empty: nothing to say about Werke. While the Werke
+        // are not loaded the sentence about them stays.
+        message: songs == null ? l10n.collectionsDeleteConfirm(name) : l10n.collectionsDeleteEmptyConfirm(name),
         confirmText: l10n.commonDelete,
         isDestructive: true,
       );
       if (!confirmed || !mounted) return;
     } else {
+      // A change of "Sichtbar für" made just before is stored first, so the
+      // option names the visibility as it is now.
+      await _queue;
+      var visibleToAll = c.visibleTo == SongCollectionVisibility.all;
+      try {
+        final fresh = (await ref.read(songCollectionsProvider.future))?.where((x) => x.id == _id).firstOrNull;
+        if (fresh != null) visibleToAll = fresh.visibleTo == SongCollectionVisibility.all;
+      } catch (_) {
+        // The value of the last build stays.
+      }
+      if (!mounted) return;
       final choice = await showAppRadioAlert<bool>(
         context,
         title: l10n.collectionsDelete,
         subtitle: l10n.collectionsDeleteChoose(name),
         options: [
-          (false, l10n.collectionsDeleteKeepWorks(count)),
+          // Werke of a Sammlung not everybody sees become visible to all
+          // in the Repertoire: said before it happens.
+          (
+            false,
+            visibleToAll
+                ? l10n.collectionsDeleteKeepWorks(count)
+                : l10n.collectionsDeleteKeepWorksVisible(count),
+          ),
           (true, l10n.collectionsDeleteWithWorks(count)),
         ],
         initialValue: false,

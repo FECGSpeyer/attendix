@@ -3954,6 +3954,13 @@
       "name": {}
     }
   },
+  "collectionsDeleteEmptyConfirm": "„{name}“ löschen?",
+  "@collectionsDeleteEmptyConfirm": {
+    "description": "collections.deleteEmptyConfirm",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "collectionsDeleteFailed": "Die Sammlung konnte nicht gelöscht werden.",
   "@collectionsDeleteFailed": {
     "description": "collections.deleteFailed"
@@ -3965,6 +3972,15 @@
   "collectionsDeleteKeepWorks": "{count, plural, one {Das Werk ins Repertoire verschieben} other {Die {count} Werke ins Repertoire verschieben}}",
   "@collectionsDeleteKeepWorks": {
     "description": "collections.deleteKeepWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "collectionsDeleteKeepWorksVisible": "{count, plural, one {Das Werk ins Repertoire verschieben. Es ist dann für alle sichtbar.} other {Die {count} Werke ins Repertoire verschieben. Sie sind dann für alle sichtbar.}}",
+  "@collectionsDeleteKeepWorksVisible": {
+    "description": "collections.deleteKeepWorksVisible",
     "placeholders": {
       "count": {
         "type": "num"

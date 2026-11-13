@@ -3195,6 +3195,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String collectionsDeleteEmptyConfirm(Object name) {
+    return 'Delete \"$name\"?';
+  }
+
+  @override
   String get collectionsDeleteFailed => 'The collection could not be deleted.';
 
   @override
@@ -3208,6 +3213,18 @@ class AppLocalizationsEn extends AppLocalizations {
       locale: localeName,
       other: 'Move the $count pieces to the repertoire',
       one: 'Move the piece to the repertoire',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeleteKeepWorksVisible(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Move the $count pieces to the repertoire. Everyone can see them then.',
+      one: 'Move the piece to the repertoire. Everyone can see it then.',
     );
     return '$_temp0';
   }

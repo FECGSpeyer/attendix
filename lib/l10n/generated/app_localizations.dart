@@ -5163,6 +5163,12 @@ abstract class AppLocalizations {
   /// **'„{name}“ löschen? Ihre Werke kommen ins Repertoire zurück.'**
   String collectionsDeleteConfirm(Object name);
 
+  /// collections.deleteEmptyConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ löschen?'**
+  String collectionsDeleteEmptyConfirm(Object name);
+
   /// collections.deleteFailed
   ///
   /// In de, this message translates to:
@@ -5180,6 +5186,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {Das Werk ins Repertoire verschieben} other {Die {count} Werke ins Repertoire verschieben}}'**
   String collectionsDeleteKeepWorks(num count);
+
+  /// collections.deleteKeepWorksVisible
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Das Werk ins Repertoire verschieben. Es ist dann für alle sichtbar.} other {Die {count} Werke ins Repertoire verschieben. Sie sind dann für alle sichtbar.}}'**
+  String collectionsDeleteKeepWorksVisible(num count);
 
   /// collections.deleteWithWorks
   ///
