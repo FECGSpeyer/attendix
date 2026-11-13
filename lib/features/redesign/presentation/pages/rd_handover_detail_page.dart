@@ -37,7 +37,7 @@ class _RdHandoverDetailPageState extends ConsumerState<RdHandoverDetailPage> wit
   String handoverConfirmMessage(HandoverData data) => context.l10n.rdOrgHandoverConfirm(
     data.persons.length,
     data.tenant.longName,
-    data.stayInInstance ? context.l10n.rdOrgStayNote : context.l10n.rdOrgArchiveNote,
+    handoverNote(data, stay: context.l10n.rdOrgStayNote, archive: context.l10n.rdOrgArchiveNote),
   );
 
   void _back() {
@@ -72,6 +72,8 @@ class _RdHandoverDetailPageState extends ConsumerState<RdHandoverDetailPage> wit
     // any more and the selection starts over (a running transfer stops by
     // itself, see [HandoverDetailLogic.proceed]).
     final tenantId = ref.watch(currentTenantIdProvider);
+    // Request or direct handover follows the viewer's role in the target.
+    ref.watch(userTenantsProvider);
     final source = widget.data?.sourceTenantId;
     final otherGroup = source != null && tenantId != source;
     if (otherGroup && !transferring) {
@@ -90,7 +92,7 @@ class _RdHandoverDetailPageState extends ConsumerState<RdHandoverDetailPage> wit
         floatingActionButton:
             ready
                 ? RdStepButton(
-                  label: l10n.rdOrgTransfer(data.persons.length),
+                  label: asRequest ? l10n.rdOrgRequest(data.persons.length) : l10n.rdOrgTransfer(data.persons.length),
                   loading: transferring,
                   onPressed: transferring ? null : confirmProceed,
                 )
@@ -118,7 +120,7 @@ class _RdHandoverDetailPageState extends ConsumerState<RdHandoverDetailPage> wit
               ],
             ),
             const SizedBox(height: 14),
-            RdListNote(data.stayInInstance ? l10n.rdOrgStayNote : l10n.rdOrgArchiveNote),
+            RdListNote(handoverNote(data, stay: l10n.rdOrgStayNote, archive: l10n.rdOrgArchiveNote)),
           ],
         ],
       ),

@@ -12,6 +12,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/handover_request.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
@@ -794,6 +795,8 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
         targetTenantName: targetTenant.longName,
         sourceTenantName: currentTenant.longName,
         stayInInstance: _stayInInstance,
+        // Editing there without being a lead: the target's leads decide.
+        asRequest: handoverNeedsRequest(tenants: tenants, targetTenantId: _targetTenantId!),
         onProgress: (current, total, name) {
           if (mounted) {
             setState(() {
@@ -807,7 +810,18 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
       // when this sheet returns true
 
       if (mounted) {
-        if (results['error']! > 0 || results['duplicate']! > 0) {
+        final requested = results['requested'] ?? 0;
+        if (requested > 0 && (results['error']! > 0 || results['duplicate']! > 0)) {
+          ToastHelper.showWarning(
+            context,
+            context.l10n.peopleFlutterHandoverPartialRequested(requested, results['duplicate']!, results['error']!),
+          );
+        } else if (requested > 0) {
+          ToastHelper.showSuccess(
+            context,
+            context.l10n.peopleFlutterHandoverRequestSent(requested, targetTenant.longName),
+          );
+        } else if (results['error']! > 0 || results['duplicate']! > 0) {
           ToastHelper.showWarning(
             context,
             _stayInInstance

@@ -18,6 +18,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/utils/handover_request.dart';
 import '../../../../core/utils/parent_registration.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/models/instrument/instrument.dart';
@@ -986,7 +987,11 @@ class _MemberRow extends StatelessWidget {
       }
     }
     final parentReg = person.pending ? parentRegistrationOf(person) : null;
-    if (!readOnly && parentReg != null) {
+    final handover = handoverRequestOf(person);
+    if (!readOnly && handover != null) {
+      // Another group of the organisation asks to hand the person over.
+      hints.add(l10n.peopleFlutterHandoverRequestFrom(handover.fromTenantName));
+    } else if (!readOnly && parentReg != null) {
       // Registered by an Elternteil via the link ("Mein Kind").
       hints.add(l10n.parentRegisterChildOf(parentReg.fullName));
     } else if (!readOnly && person.pending && (person.email ?? '').isNotEmpty) {

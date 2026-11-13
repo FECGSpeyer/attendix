@@ -10,6 +10,7 @@ import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/handover_request.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
@@ -60,8 +61,26 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
   String handoverConfirmMessage(HandoverData data) => context.l10n.handoverConfirm(
         data.persons.length,
         data.tenant.longName,
-        data.stayInInstance ? context.l10n.handoverStayNote : context.l10n.handoverArchiveNote,
+        handoverNote(data, stay: context.l10n.handoverStayNote, archive: context.l10n.handoverArchiveNote),
       );
+
+  /// The viewer is no lead of the target group: the people only wait in
+  /// its Freigaben until a lead there takes them in (`handover_request.dart`).
+  bool get asRequest {
+    final id = handoverData?.tenant.id;
+    return id != null &&
+        handoverNeedsRequest(tenants: ref.read(userTenantsProvider).valueOrNull, targetTenantId: id);
+  }
+
+  /// What happens to the people here: [stay] / [archive] for a direct
+  /// handover, for a request the sentence that the target group decides.
+  String handoverNote(HandoverData data, {required String stay, required String archive}) {
+    if (!asRequest) return data.stayInInstance ? stay : archive;
+    final l10n = context.l10n;
+    return data.stayInInstance
+        ? l10n.peopleFlutterHandoverRequestNoteStay(data.tenant.longName)
+        : l10n.peopleFlutterHandoverRequestNoteMove(data.tenant.longName);
+  }
 
   List<Group> targetGroups = [];
   final Map<int, int?> groupMapping = {};
@@ -112,7 +131,7 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
       title: context.l10n.handoverTitle,
       message: handoverConfirmMessage(data),
       confirmText: context.l10n.handoverTransfer,
-      isDestructive: !data.stayInInstance,
+      isDestructive: !data.stayInInstance && !asRequest,
     );
     if (confirmed) await proceed();
   }
@@ -130,6 +149,7 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
     final sourceTenantId = data.sourceTenantId ?? sourceTenant?.id;
     final repo = ref.read(playerRepositoryWithTenantProvider);
     final tracking = ref.read(trackingServiceProvider);
+    final request = asRequest;
     setState(() => transferring = true);
 
     final failed = <Person>[];
@@ -148,8 +168,9 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
           targetTenantName: data.tenant.longName,
           sourceTenantName: sourceTenant?.longName ?? '',
           stayInInstance: data.stayInInstance,
+          asRequest: request,
         );
-        if (result != HandoverResult.success) failed.add(person);
+        if (result != HandoverResult.success && result != HandoverResult.requested) failed.add(person);
       }
 
       tracking.track(
@@ -157,6 +178,7 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
         properties: {
           'count': data.persons.length,
           'stayInInstance': data.stayInInstance,
+          'asRequest': request,
           'failed': failed.length,
         },
       );
@@ -172,7 +194,10 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
         );
       } else {
         ToastHelper.showSuccess(
-            context, context.l10n.handoverTransferred(data.persons.length));
+            context,
+            request
+                ? context.l10n.peopleFlutterHandoverRequestSent(data.persons.length, data.tenant.longName)
+                : context.l10n.handoverTransferred(data.persons.length));
       }
       if (mounted) context.go(handoverDoneRoute);
     } catch (e) {

@@ -125,6 +125,15 @@ void main() {
       expect(b, isNot(contains("'appId': null")));
     });
 
+    test('handover as a request: a waiting row without account, the source only gets a note', () {
+      final b = body(source, '_requestHandover') + body(source, '_insertHandoverRequest');
+      expect(b, contains("'pending': true"));
+      expect(b, contains("'appId': null"));
+      expect(b, contains('kHandoverRequestKey'));
+      expect(b, isNot(contains('registerUser')));
+      expect(b, isNot(contains("'left'")));
+    });
+
     test('playerExistsInTenant falls back to the name', () {
       final b = body(source, 'playerExistsInTenant');
       expect(b, contains(".ilike('firstName'"));

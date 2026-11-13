@@ -8177,6 +8177,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String peopleFlutterHandoverPartialRequested(
+    Object requested,
+    Object duplicate,
+    Object error,
+  ) {
+    return '$requested angefragt, $duplicate bereits vorhanden, $error fehlgeschlagen';
+  }
+
+  @override
   String peopleFlutterHandoverPartialTransferred(
     Object success,
     Object duplicate,
@@ -8198,6 +8207,47 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String peopleFlutterHandoverRequestFrom(Object tenant) {
+    return 'Übergabe aus „$tenant“';
+  }
+
+  @override
+  String peopleFlutterHandoverRequestHint(Object tenant) {
+    return '„$tenant“ möchte diese Person an euch übergeben. Mit „Aufnehmen“ bekommt sie hier Zugang.';
+  }
+
+  @override
+  String get peopleFlutterHandoverRequestKeeps =>
+      'Sie bleibt dort weiter aktiv.';
+
+  @override
+  String get peopleFlutterHandoverRequestMoves =>
+      'Sie wechselt ganz hierher und wird dort archiviert.';
+
+  @override
+  String peopleFlutterHandoverRequestNoteMove(Object tenant) {
+    return 'Die Leitung von „$tenant“ entscheidet über die Aufnahme. Erst danach wird hier archiviert.';
+  }
+
+  @override
+  String peopleFlutterHandoverRequestNoteStay(Object tenant) {
+    return 'Die Leitung von „$tenant“ entscheidet über die Aufnahme. Hier bleibt alles, wie es ist.';
+  }
+
+  @override
+  String peopleFlutterHandoverRequestSent(num count, Object tenant) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count Anfragen an „$tenant“ gesendet. Die Leitung dort entscheidet über die Aufnahme.',
+      one:
+          'Anfrage an „$tenant“ gesendet. Die Leitung dort entscheidet über die Aufnahme.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get peopleFlutterHandoverTargetNotFound =>
       'Ziel-Instanz nicht gefunden';
 
@@ -8208,7 +8258,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get peopleFlutterHandoverTransferNote =>
-      'Die ausgewählten Spieler werden in die Ziel-Instanz übertragen. Sie werden in dieser Instanz archiviert und der App-Zugang wird getrennt. Dieser Vorgang kann nicht rückgängig gemacht werden.';
+      'Die ausgewählten Spieler werden in die Ziel-Instanz übertragen und in dieser Instanz archiviert. Ihr Konto und bereits angelegte Termine bleiben hier bestehen.';
 
   @override
   String get peopleFlutterHandoverTransferQuestion => 'Spieler übertragen?';
@@ -11336,10 +11386,23 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get rdOrgKeepActive => 'Hier weiter aktiv lassen';
+  String get rdOrgKeepMove => 'Wechseln ganz';
 
   @override
-  String get rdOrgKeepActiveHint => 'Sonst werden sie hier archiviert';
+  String get rdOrgKeepMoveHint => 'Sie werden hier archiviert';
+
+  @override
+  String get rdOrgKeepMoveHintRequest =>
+      'Sie werden hier archiviert, sobald die Ziel-Gruppe sie aufgenommen hat';
+
+  @override
+  String get rdOrgKeepQuestion => 'Was passiert hier mit den Personen?';
+
+  @override
+  String get rdOrgKeepStay => 'Bleiben auch hier';
+
+  @override
+  String get rdOrgKeepStayHint => 'Sie sind danach in beiden Gruppen aktiv';
 
   @override
   String get rdOrgLinkIntro =>
@@ -11383,6 +11446,16 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdOrgPersonFields => 'Gemeinsame Zusatzfelder';
+
+  @override
+  String rdOrgRequest(Object count) {
+    return 'Anfragen ($count)';
+  }
+
+  @override
+  String rdOrgRequestNote(Object tenant) {
+    return 'Du bist in „$tenant“ nicht Leitung. Die Personen erscheinen dort unter Freigaben, und die Leitung entscheidet über die Aufnahme.';
+  }
 
   @override
   String get rdOrgSectionGroups => 'Gruppen';
