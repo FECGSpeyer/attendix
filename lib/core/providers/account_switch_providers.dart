@@ -50,8 +50,8 @@ bool isAccountSwitchUnlocked(String? currentEmail, Iterable<SavedAccount> accoun
 
 /// See [isAccountSwitchUnlocked].
 final accountSwitchUnlockedProvider = Provider<bool>((ref) {
-  // Re-evaluate on auth changes (login/logout/switch).
-  ref.watch(authStateProvider);
+  // Re-evaluate on account changes (login/logout/switch).
+  ref.watch(currentAuthUserIdProvider);
   final email = ref.watch(supabaseAuthProvider).currentUser?.email;
   final accounts = ref.watch(savedAccountsProvider).valueOrNull ?? const <SavedAccount>[];
   return isAccountSwitchUnlocked(email, accounts);
