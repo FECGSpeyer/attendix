@@ -10063,6 +10063,15 @@
       "error": {}
     }
   },
+  "peopleFlutterHandoverPartialRequested": "{requested} angefragt, {duplicate} bereits vorhanden, {error} fehlgeschlagen",
+  "@peopleFlutterHandoverPartialRequested": {
+    "description": "people.flutter.handover.partialRequested",
+    "placeholders": {
+      "requested": {},
+      "duplicate": {},
+      "error": {}
+    }
+  },
   "peopleFlutterHandoverPartialTransferred": "{success} übertragen, {duplicate} bereits vorhanden, {error} fehlgeschlagen",
   "@peopleFlutterHandoverPartialTransferred": {
     "description": "people.flutter.handover.partialTransferred",
@@ -10085,6 +10094,52 @@
       "total": {}
     }
   },
+  "peopleFlutterHandoverRequestFrom": "Übergabe aus „{tenant}“",
+  "@peopleFlutterHandoverRequestFrom": {
+    "description": "people.flutter.handover.requestFrom",
+    "placeholders": {
+      "tenant": {}
+    }
+  },
+  "peopleFlutterHandoverRequestHint": "„{tenant}“ möchte diese Person an euch übergeben. Mit „Aufnehmen“ bekommt sie hier Zugang.",
+  "@peopleFlutterHandoverRequestHint": {
+    "description": "people.flutter.handover.requestHint",
+    "placeholders": {
+      "tenant": {}
+    }
+  },
+  "peopleFlutterHandoverRequestKeeps": "Sie bleibt dort weiter aktiv.",
+  "@peopleFlutterHandoverRequestKeeps": {
+    "description": "people.flutter.handover.requestKeeps"
+  },
+  "peopleFlutterHandoverRequestMoves": "Sie wechselt ganz hierher und wird dort archiviert.",
+  "@peopleFlutterHandoverRequestMoves": {
+    "description": "people.flutter.handover.requestMoves"
+  },
+  "peopleFlutterHandoverRequestNoteMove": "Die Leitung von „{tenant}“ entscheidet über die Aufnahme. Erst danach wird hier archiviert.",
+  "@peopleFlutterHandoverRequestNoteMove": {
+    "description": "people.flutter.handover.requestNoteMove",
+    "placeholders": {
+      "tenant": {}
+    }
+  },
+  "peopleFlutterHandoverRequestNoteStay": "Die Leitung von „{tenant}“ entscheidet über die Aufnahme. Hier bleibt alles, wie es ist.",
+  "@peopleFlutterHandoverRequestNoteStay": {
+    "description": "people.flutter.handover.requestNoteStay",
+    "placeholders": {
+      "tenant": {}
+    }
+  },
+  "peopleFlutterHandoverRequestSent": "{count, plural, one {Anfrage an „{tenant}“ gesendet. Die Leitung dort entscheidet über die Aufnahme.} other {{count} Anfragen an „{tenant}“ gesendet. Die Leitung dort entscheidet über die Aufnahme.}}",
+  "@peopleFlutterHandoverRequestSent": {
+    "description": "people.flutter.handover.requestSent",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "tenant": {}
+    }
+  },
   "peopleFlutterHandoverTargetNotFound": "Ziel-Instanz nicht gefunden",
   "@peopleFlutterHandoverTargetNotFound": {
     "description": "people.flutter.handover.targetNotFound"
@@ -10097,7 +10152,7 @@
       "tenant": {}
     }
   },
-  "peopleFlutterHandoverTransferNote": "Die ausgewählten Spieler werden in die Ziel-Instanz übertragen. Sie werden in dieser Instanz archiviert und der App-Zugang wird getrennt. Dieser Vorgang kann nicht rückgängig gemacht werden.",
+  "peopleFlutterHandoverTransferNote": "Die ausgewählten Spieler werden in die Ziel-Instanz übertragen und in dieser Instanz archiviert. Ihr Konto und bereits angelegte Termine bleiben hier bestehen.",
   "@peopleFlutterHandoverTransferNote": {
     "description": "people.flutter.handover.transferNote"
   },
@@ -14046,13 +14101,29 @@
       "group": {}
     }
   },
-  "rdOrgKeepActive": "Hier weiter aktiv lassen",
-  "@rdOrgKeepActive": {
-    "description": "rdOrg.keepActive"
+  "rdOrgKeepMove": "Wechseln ganz",
+  "@rdOrgKeepMove": {
+    "description": "rdOrg.keepMove"
   },
-  "rdOrgKeepActiveHint": "Sonst werden sie hier archiviert",
-  "@rdOrgKeepActiveHint": {
-    "description": "rdOrg.keepActiveHint"
+  "rdOrgKeepMoveHint": "Sie werden hier archiviert",
+  "@rdOrgKeepMoveHint": {
+    "description": "rdOrg.keepMoveHint"
+  },
+  "rdOrgKeepMoveHintRequest": "Sie werden hier archiviert, sobald die Ziel-Gruppe sie aufgenommen hat",
+  "@rdOrgKeepMoveHintRequest": {
+    "description": "rdOrg.keepMoveHintRequest"
+  },
+  "rdOrgKeepQuestion": "Was passiert hier mit den Personen?",
+  "@rdOrgKeepQuestion": {
+    "description": "rdOrg.keepQuestion"
+  },
+  "rdOrgKeepStay": "Bleiben auch hier",
+  "@rdOrgKeepStay": {
+    "description": "rdOrg.keepStay"
+  },
+  "rdOrgKeepStayHint": "Sie sind danach in beiden Gruppen aktiv",
+  "@rdOrgKeepStayHint": {
+    "description": "rdOrg.keepStayHint"
   },
   "rdOrgLinkIntro": "Verknüpfte Personen gleichen Name, Geburtstag, E-Mail und Telefon über alle Gruppen ab.",
   "@rdOrgLinkIntro": {
@@ -14107,6 +14178,20 @@
   "rdOrgPersonFields": "Gemeinsame Zusatzfelder",
   "@rdOrgPersonFields": {
     "description": "rdOrg.personFields"
+  },
+  "rdOrgRequest": "Anfragen ({count})",
+  "@rdOrgRequest": {
+    "description": "rdOrg.request",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdOrgRequestNote": "Du bist in „{tenant}“ nicht Leitung. Die Personen erscheinen dort unter Freigaben, und die Leitung entscheidet über die Aufnahme.",
+  "@rdOrgRequestNote": {
+    "description": "rdOrg.requestNote",
+    "placeholders": {
+      "tenant": {}
+    }
   },
   "rdOrgSectionGroups": "Gruppen",
   "@rdOrgSectionGroups": {

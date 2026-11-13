@@ -14,6 +14,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/extra_field_utils.dart' show formatExtraFieldValue;
+import '../../../../core/utils/handover_request.dart';
 import '../../../../core/utils/tenant_label_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/utils/parent_registration.dart';
@@ -409,6 +410,15 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
         const SizedBox(height: 8),
         _head(context, person),
         const SizedBox(height: 16),
+        if (handoverRequestOf(person) case final handover?) ...[
+          RdInfoCard(
+            key: const Key('rd-review-handover'),
+            icon: Icons.swap_horiz,
+            text: '${l10n.peopleFlutterHandoverRequestHint(handover.fromTenantName)}\n'
+                '${handover.keep ? l10n.peopleFlutterHandoverRequestKeeps : l10n.peopleFlutterHandoverRequestMoves}',
+          ),
+          const SizedBox(height: 16),
+        ],
         _duplicates(context, person),
         RdGroupLabel(l10n.rdPeopleReviewDetails),
         _details(context, draft, extrasReady),
@@ -470,6 +480,9 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
     // A child registered by an Elternteil is never merged: the merge would
     // move the parent's account onto the existing person.
     if (parentRegistrationOf(person) != null) return const SizedBox.shrink();
+    // A handover request is taken in or declined as it is (a merge would
+    // leave the asking group without its answer).
+    if (handoverRequestOf(person) != null) return const SizedBox.shrink();
     final matches = ref.watch(duplicateCandidatesProvider(person)).valueOrNull ?? const [];
     if (matches.isEmpty) return const SizedBox.shrink();
     final groups = ref.watch(groupsMapProvider).valueOrNull ?? const <int, String>{};

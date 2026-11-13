@@ -13111,6 +13111,16 @@ abstract class AppLocalizations {
     Object error,
   );
 
+  /// people.flutter.handover.partialRequested
+  ///
+  /// In de, this message translates to:
+  /// **'{requested} angefragt, {duplicate} bereits vorhanden, {error} fehlgeschlagen'**
+  String peopleFlutterHandoverPartialRequested(
+    Object requested,
+    Object duplicate,
+    Object error,
+  );
+
   /// people.flutter.handover.partialTransferred
   ///
   /// In de, this message translates to:
@@ -13137,6 +13147,48 @@ abstract class AppLocalizations {
     Object total,
   );
 
+  /// people.flutter.handover.requestFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Übergabe aus „{tenant}“'**
+  String peopleFlutterHandoverRequestFrom(Object tenant);
+
+  /// people.flutter.handover.requestHint
+  ///
+  /// In de, this message translates to:
+  /// **'„{tenant}“ möchte diese Person an euch übergeben. Mit „Aufnehmen“ bekommt sie hier Zugang.'**
+  String peopleFlutterHandoverRequestHint(Object tenant);
+
+  /// people.flutter.handover.requestKeeps
+  ///
+  /// In de, this message translates to:
+  /// **'Sie bleibt dort weiter aktiv.'**
+  String get peopleFlutterHandoverRequestKeeps;
+
+  /// people.flutter.handover.requestMoves
+  ///
+  /// In de, this message translates to:
+  /// **'Sie wechselt ganz hierher und wird dort archiviert.'**
+  String get peopleFlutterHandoverRequestMoves;
+
+  /// people.flutter.handover.requestNoteMove
+  ///
+  /// In de, this message translates to:
+  /// **'Die Leitung von „{tenant}“ entscheidet über die Aufnahme. Erst danach wird hier archiviert.'**
+  String peopleFlutterHandoverRequestNoteMove(Object tenant);
+
+  /// people.flutter.handover.requestNoteStay
+  ///
+  /// In de, this message translates to:
+  /// **'Die Leitung von „{tenant}“ entscheidet über die Aufnahme. Hier bleibt alles, wie es ist.'**
+  String peopleFlutterHandoverRequestNoteStay(Object tenant);
+
+  /// people.flutter.handover.requestSent
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Anfrage an „{tenant}“ gesendet. Die Leitung dort entscheidet über die Aufnahme.} other {{count} Anfragen an „{tenant}“ gesendet. Die Leitung dort entscheidet über die Aufnahme.}}'**
+  String peopleFlutterHandoverRequestSent(num count, Object tenant);
+
   /// people.flutter.handover.targetNotFound
   ///
   /// In de, this message translates to:
@@ -13152,7 +13204,7 @@ abstract class AppLocalizations {
   /// people.flutter.handover.transferNote
   ///
   /// In de, this message translates to:
-  /// **'Die ausgewählten Spieler werden in die Ziel-Instanz übertragen. Sie werden in dieser Instanz archiviert und der App-Zugang wird getrennt. Dieser Vorgang kann nicht rückgängig gemacht werden.'**
+  /// **'Die ausgewählten Spieler werden in die Ziel-Instanz übertragen und in dieser Instanz archiviert. Ihr Konto und bereits angelegte Termine bleiben hier bestehen.'**
   String get peopleFlutterHandoverTransferNote;
 
   /// people.flutter.handover.transferQuestion
@@ -18297,17 +18349,41 @@ abstract class AppLocalizations {
   /// **'Hier: {group}'**
   String rdOrgHere(Object group);
 
-  /// rdOrg.keepActive
+  /// rdOrg.keepMove
   ///
   /// In de, this message translates to:
-  /// **'Hier weiter aktiv lassen'**
-  String get rdOrgKeepActive;
+  /// **'Wechseln ganz'**
+  String get rdOrgKeepMove;
 
-  /// rdOrg.keepActiveHint
+  /// rdOrg.keepMoveHint
   ///
   /// In de, this message translates to:
-  /// **'Sonst werden sie hier archiviert'**
-  String get rdOrgKeepActiveHint;
+  /// **'Sie werden hier archiviert'**
+  String get rdOrgKeepMoveHint;
+
+  /// rdOrg.keepMoveHintRequest
+  ///
+  /// In de, this message translates to:
+  /// **'Sie werden hier archiviert, sobald die Ziel-Gruppe sie aufgenommen hat'**
+  String get rdOrgKeepMoveHintRequest;
+
+  /// rdOrg.keepQuestion
+  ///
+  /// In de, this message translates to:
+  /// **'Was passiert hier mit den Personen?'**
+  String get rdOrgKeepQuestion;
+
+  /// rdOrg.keepStay
+  ///
+  /// In de, this message translates to:
+  /// **'Bleiben auch hier'**
+  String get rdOrgKeepStay;
+
+  /// rdOrg.keepStayHint
+  ///
+  /// In de, this message translates to:
+  /// **'Sie sind danach in beiden Gruppen aktiv'**
+  String get rdOrgKeepStayHint;
 
   /// rdOrg.linkIntro
   ///
@@ -18380,6 +18456,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Gemeinsame Zusatzfelder'**
   String get rdOrgPersonFields;
+
+  /// rdOrg.request
+  ///
+  /// In de, this message translates to:
+  /// **'Anfragen ({count})'**
+  String rdOrgRequest(Object count);
+
+  /// rdOrg.requestNote
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist in „{tenant}“ nicht Leitung. Die Personen erscheinen dort unter Freigaben, und die Leitung entscheidet über die Aufnahme.'**
+  String rdOrgRequestNote(Object tenant);
 
   /// rdOrg.sectionGroups
   ///

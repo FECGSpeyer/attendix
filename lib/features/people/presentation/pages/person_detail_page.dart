@@ -48,6 +48,7 @@ import '../../../../data/models/church/church.dart';
 import '../../../../data/repositories/extra_fields_repository.dart' show extraFieldDefaultValue;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged;
+import '../../../../core/utils/handover_request.dart';
 import '../../../../core/utils/parent_registration.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
@@ -1947,7 +1948,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             // PEOPLE2: duplicate candidates + merge for pending registrations
             // (never for a child registered by an Elternteil: the merge
             // would move the parent's account onto the existing person).
-            if (widget.person.pending && canEdit && parentRegistrationOf(widget.person) == null)
+            // Neither for a handover request of another group: it is taken
+            // in or declined as it is.
+            if (widget.person.pending &&
+                canEdit &&
+                parentRegistrationOf(widget.person) == null &&
+                handoverRequestOf(widget.person) == null)
               DuplicateCandidatesCard(
                 person: widget.person,
                 onMerged: () {

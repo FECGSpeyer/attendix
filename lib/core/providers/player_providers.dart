@@ -11,6 +11,7 @@ import '../services/tracking/tracking_service.dart';
 import '../services/offline_list_cache.dart';
 import 'user_registration_providers.dart';
 import 'parent_providers.dart' show parentRepositoryWithTenantProvider, parentsProvider;
+import '../utils/handover_request.dart';
 import '../utils/parent_registration.dart';
 import '../../data/models/parent/parent_model.dart';
 
@@ -238,12 +239,16 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     final repo = _repo;
     final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     final parents = ref.read(parentRepositoryWithTenantProvider);
+    final targetName = ref.read(currentTenantProvider)?.longName ?? '';
     state = const AsyncValue.loading();
     try {
       final parent = parentRegistrationOf(player);
+      final handover = handoverRequestOf(player);
       if (parent != null) {
         await _approveChild(repo, registration, parents, player, parent);
         ref.invalidate(parentsProvider);
+      } else if (handover != null) {
+        await _approveHandover(repo, registration, player, handover, targetName);
       } else {
         await repo.approvePlayer(player);
         await _notifyApproval(registration, player);
@@ -262,8 +267,24 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     final repo = _repo;
     final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     final parent = parentRegistrationOf(player);
+    final handover = handoverRequestOf(player);
+    final targetName = ref.read(currentTenantProvider)?.longName ?? '';
     state = const AsyncValue.loading();
     try {
+      // A handover request of another group: the waiting row goes (the
+      // person never applied here, so no mail and nothing in the archive),
+      // the asking group reads the reason in the person's history.
+      if (handover != null) {
+        await repo.deleteHandoverRequest(player);
+        try {
+          await repo.noteDeclinedHandoverAtSource(handover, targetTenantName: targetName, reason: reason);
+        } catch (e) {
+          debugPrint('declinePlayer: note at the source failed (non-blocking): $e');
+        }
+        state = const AsyncValue.data(null);
+        ref.invalidate(pendingPlayersProvider);
+        return;
+      }
       // Parent registration (the child has no appId): the parent's account
       // loses its access only while it is still an applicant without
       // another child waiting here. Checked BEFORE the child is archived, so
@@ -308,6 +329,56 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       }
     } catch (e) {
       debugPrint('approvePlayer: notify failed (non-blocking): $e');
+    }
+  }
+
+  /// Handover request of another group ("Übergabe als Anfrage"): only now
+  /// the account gets access here (registered by a lead of this group, who
+  /// may send the "hinzugefügt" mail; idempotent, so "Aufnehmen" can be
+  /// repeated), the person is approved without the marker, and the asking
+  /// group is updated (history; `left` when the person moves completely).
+  /// That update is non-blocking like the mails: the person is in.
+  ///
+  /// The account always joins as Spieler (like every approval in
+  /// Freigaben), also for the main group: a request of another group never
+  /// makes somebody Verantwortliche here, the leads raise the role
+  /// themselves. A person without e-mail keeps the account of the source
+  /// person, read from that person and not from the marker.
+  Future<void> _approveHandover(
+    PlayerRepository players,
+    UserRegistrationRepository registration,
+    Person person,
+    HandoverRequest request,
+    String targetName,
+  ) async {
+    final email = person.email?.trim() ?? '';
+    final appId = email.isNotEmpty
+        ? await registration.registerUser(email: email, name: person.firstName, role: Role.player)
+        : await players.handoverSourceAccount(request, targetTenantName: targetName);
+    await players.approvePlayer(
+      person,
+      extra: {
+        'appId': appId,
+        'self_register': false,
+        'additional_fields': withoutHandoverRequest(person.additionalFields),
+      },
+      onApproved: () async {
+        try {
+          await players.completeHandoverAtSource(request, targetTenantName: targetName);
+        } catch (e) {
+          debugPrint('approveHandover: updating the source failed (non-blocking): $e');
+        }
+      },
+    );
+    final id = person.id;
+    final tenantId = person.tenantId;
+    if (id != null && tenantId != null) {
+      try {
+        // Own copy of the picture (the waiting row pointed at the source's).
+        await players.copyProfileImage(person.img, id, targetTenantId: tenantId);
+      } catch (e) {
+        debugPrint('approveHandover: copying the picture failed (non-blocking): $e');
+      }
     }
   }
 

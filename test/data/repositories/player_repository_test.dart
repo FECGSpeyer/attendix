@@ -43,9 +43,12 @@ void main() {
           final query = match.group(0)!;
           // LOGIC_PEOPLE: the handover reactivates a row in the explicit
           // target tenant (cross-tenant by design, Ionic handoverPerson).
+          // A handover request answered in the target group writes the
+          // history (and `left`) of the one source row it names.
           expect(
             query.contains(".eq('tenantId', currentTenantId)") ||
-                query.contains(".eq('tenantId', targetTenantId)"),
+                query.contains(".eq('tenantId', targetTenantId)") ||
+                query.contains(".eq('tenantId', sourceTenantId)"),
             isTrue,
             reason: 'UPDATE query missing tenantId filter:\n$query',
           );
@@ -93,7 +96,9 @@ void main() {
           // Must have EITHER currentTenantId OR targetTenantId (for handover checks)
           final hasTenantFilter =
               query.contains(".eq('tenantId', currentTenantId)") ||
-              query.contains(".eq('tenantId', targetTenantId)");
+              query.contains(".eq('tenantId', targetTenantId)") ||
+              // source row of a handover request (see the UPDATE test)
+              query.contains(".eq('tenantId', sourceTenantId)");
           expect(
             hasTenantFilter,
             isTrue,

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/utils/handover_request.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -40,6 +42,16 @@ class RdHandoverPage extends ConsumerStatefulWidget {
 }
 
 class _RdHandoverPageState extends ConsumerState<RdHandoverPage> with HandoverSelectionLogic {
+  /// "Bleiben auch hier" (true) or "Wechseln ganz" (false). Nothing is
+  /// chosen at first: archiving people here is decided, never a default
+  /// somebody overlooked (the old page keeps the Ionic switch).
+  bool? _keep;
+
+  void _setKeep(bool value) => setState(() {
+        _keep = value;
+        stayInInstance = value;
+      });
+
   void _back() {
     if (context.canPop()) {
       context.pop();
@@ -136,13 +148,28 @@ class _RdHandoverPageState extends ConsumerState<RdHandoverPage> with HandoverSe
     final target = view.tenants.where((t) => t.id == targetTenantId).firstOrNull;
     final count = view.selectedPersons.length;
     const gap = SizedBox(height: 24);
+    // No lead of the target group: the people only wait in its Freigaben.
+    final request = target?.id != null &&
+        handoverNeedsRequest(tenants: ref.watch(userTenantsProvider).valueOrNull, targetTenantId: target!.id!);
+
+    Widget keepRow(bool value, String title, String hint) => RdListRow(
+          key: Key(value ? 'rd-handover-stay' : 'rd-handover-move'),
+          title: title,
+          subtitle: hint,
+          showChevron: false,
+          selected: _keep == value,
+          trailing: RdSheetCheck(_keep == value),
+          onTap: () => _setKeep(value),
+        );
 
     return RdPage(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 110),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: RdStepButton(
         label: l10n.rdOrgNext(count),
-        onPressed: target == null || count == 0 ? null : () => openHandoverDetail(view, '/settings/handover/detail'),
+        onPressed: target == null || count == 0 || _keep == null
+            ? null
+            : () => openHandoverDetail(view, '/settings/handover/detail'),
       ),
       children: [
         RdBackLink(label: l10n.rdOrgBack, onTap: _back),
@@ -158,12 +185,6 @@ class _RdHandoverPageState extends ConsumerState<RdHandoverPage> with HandoverSe
             onTap: view.tenants.isEmpty ? null : () => _pickTarget(view),
           ),
           RdSwitchRow(
-            title: l10n.rdOrgKeepActive,
-            subtitle: l10n.rdOrgKeepActiveHint,
-            value: stayInInstance,
-            onChanged: (v) => setState(() => stayInInstance = v),
-          ),
-          RdSwitchRow(
             title: l10n.rdOrgMainGroup,
             subtitle: l10n.rdOrgMainGroupHint,
             value: includeMainGroup,
@@ -171,6 +192,19 @@ class _RdHandoverPageState extends ConsumerState<RdHandoverPage> with HandoverSe
           ),
         ]),
         if (view.tenants.isEmpty && !view.loading) RdListNote(l10n.rdOrgNoOtherGroups),
+        if (request) RdListNote(l10n.rdOrgRequestNote(target.longName)),
+        const SizedBox(height: 18),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
+          child: Semantics(
+            header: true,
+            child: Text(l10n.rdOrgKeepQuestion, style: RdType.title(p).copyWith(fontSize: 18)),
+          ),
+        ),
+        RdGroupedList(children: [
+          keepRow(true, l10n.rdOrgKeepStay, l10n.rdOrgKeepStayHint),
+          keepRow(false, l10n.rdOrgKeepMove, request ? l10n.rdOrgKeepMoveHintRequest : l10n.rdOrgKeepMoveHint),
+        ]),
         const SizedBox(height: 16),
         Wrap(
           spacing: 8,

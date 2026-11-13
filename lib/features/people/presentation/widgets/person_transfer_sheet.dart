@@ -9,6 +9,7 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/handover_request.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
@@ -128,18 +129,28 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
         return;
       }
 
+      // No lead of the target group: its leads decide (handover_request.dart).
+      final request = handoverNeedsRequest(
+        tenants: ref.read(userTenantsProvider).valueOrNull,
+        targetTenantId: target!.id!,
+      );
+      final question = copy ? l10n.personCopyConfirm : l10n.personTransferConfirm;
+      final requestNote = copy
+          ? l10n.peopleFlutterHandoverRequestNoteStay(target.longName)
+          : l10n.peopleFlutterHandoverRequestNoteMove(target.longName);
+      final confirmText = request ? '$question\n\n$requestNote' : question;
       final confirmed = widget.beta
           ? await showAppConfirm(
               context,
               title: copy ? l10n.personCopyPerson : l10n.personTransferPerson,
-              message: copy ? l10n.personCopyConfirm : l10n.personTransferConfirm,
+              message: confirmText,
               confirmText: l10n.commonYes,
             )
           : await showAppDialog<bool>(
         context: context,
         builder: (ctx) => AppAlertDialog(
           title: Text(copy ? l10n.personCopyPerson : l10n.personTransferPerson),
-          content: Text(copy ? l10n.personCopyConfirm : l10n.personTransferConfirm),
+          content: Text(confirmText),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
@@ -161,7 +172,7 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
 
       final result = await repo.handoverPlayer(
         player: person,
-        targetTenantId: target!.id!,
+        targetTenantId: target.id!,
         targetGroupId: _groupId,
         targetTenantName: target.longName,
         sourceTenantName: source.longName,
@@ -169,8 +180,15 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
         // Ionic person.page handoverPerson: the new account is always a
         // Spieler (alert-97cf5262); only handover-detail grants Verantwortlich.
         responsibleForMainGroup: false,
+        asRequest: request,
       );
       if (!mounted) return;
+      if (result == HandoverResult.requested) {
+        ref.invalidate(realtimePlayersProvider);
+        ToastHelper.showSuccess(context, l10n.peopleFlutterHandoverRequestSent(1, target.longName));
+        Navigator.pop(context, true);
+        return;
+      }
       if (result != HandoverResult.success) {
         ToastHelper.showError(
           context,

@@ -8085,6 +8085,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String peopleFlutterHandoverPartialRequested(
+    Object requested,
+    Object duplicate,
+    Object error,
+  ) {
+    return '$requested requested, $duplicate already there, $error failed';
+  }
+
+  @override
   String peopleFlutterHandoverPartialTransferred(
     Object success,
     Object duplicate,
@@ -8106,6 +8115,47 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String peopleFlutterHandoverRequestFrom(Object tenant) {
+    return 'Handover from \"$tenant\"';
+  }
+
+  @override
+  String peopleFlutterHandoverRequestHint(Object tenant) {
+    return '\"$tenant\" would like to hand this person over to you. \"Accept\" gives them access here.';
+  }
+
+  @override
+  String get peopleFlutterHandoverRequestKeeps =>
+      'They stay active there as well.';
+
+  @override
+  String get peopleFlutterHandoverRequestMoves =>
+      'They move here completely and are archived there.';
+
+  @override
+  String peopleFlutterHandoverRequestNoteMove(Object tenant) {
+    return 'The leads of \"$tenant\" decide whether to take them in. Only then they are archived here.';
+  }
+
+  @override
+  String peopleFlutterHandoverRequestNoteStay(Object tenant) {
+    return 'The leads of \"$tenant\" decide whether to take them in. Nothing changes here.';
+  }
+
+  @override
+  String peopleFlutterHandoverRequestSent(num count, Object tenant) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count requests sent to \"$tenant\". Its leads decide whether to take them in.',
+      one:
+          'Request sent to \"$tenant\". Its leads decide whether to take the person in.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get peopleFlutterHandoverTargetNotFound => 'Target instance not found';
 
   @override
@@ -8115,7 +8165,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get peopleFlutterHandoverTransferNote =>
-      'The selected players are transferred to the target instance. They are archived in this instance and app access is removed. This cannot be undone.';
+      'The selected players are transferred to the target instance and archived in this instance. Their account and the events already created stay here.';
 
   @override
   String get peopleFlutterHandoverTransferQuestion => 'Transfer players?';
@@ -11219,10 +11269,23 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get rdOrgKeepActive => 'Keep them active here';
+  String get rdOrgKeepMove => 'They move completely';
 
   @override
-  String get rdOrgKeepActiveHint => 'Otherwise they are archived here';
+  String get rdOrgKeepMoveHint => 'They are archived here';
+
+  @override
+  String get rdOrgKeepMoveHintRequest =>
+      'They are archived here once the target group has taken them in';
+
+  @override
+  String get rdOrgKeepQuestion => 'What happens to the people here?';
+
+  @override
+  String get rdOrgKeepStay => 'They stay here too';
+
+  @override
+  String get rdOrgKeepStayHint => 'They are active in both groups afterwards';
 
   @override
   String get rdOrgLinkIntro =>
@@ -11266,6 +11329,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdOrgPersonFields => 'Shared extra fields';
+
+  @override
+  String rdOrgRequest(Object count) {
+    return 'Request ($count)';
+  }
+
+  @override
+  String rdOrgRequestNote(Object tenant) {
+    return 'You are not a lead of \"$tenant\". The people appear in its approvals, and its leads decide whether to take them in.';
+  }
 
   @override
   String get rdOrgSectionGroups => 'Groups';

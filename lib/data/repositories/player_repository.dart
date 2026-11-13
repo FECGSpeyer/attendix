@@ -27,6 +27,7 @@ import 'shared_person_fields.dart'
 import 'user_registration_repository.dart';
 import '../../l10n/l10n.dart';
 import '../../core/services/error_reporter.dart';
+import '../../core/utils/handover_request.dart';
 import '../../core/utils/parent_registration.dart';
 
 /// Provider for PlayerRepository
@@ -60,7 +61,9 @@ const String kDefaultPersonImage =
     'https://ionicframework.com/docs/img/demos/avatar.svg';
 
 /// Result of [PlayerRepository.handoverPlayer] for a single player.
-enum HandoverResult { success, duplicate, error }
+/// [requested]: the target group got a waiting request in its Freigaben
+/// (see `handover_request.dart`); nothing changed for the person yet.
+enum HandoverResult { success, requested, duplicate, error }
 
 /// Repository for player/person operations
 class PlayerRepository extends BaseRepository with TenantAwareRepository {
@@ -1301,7 +1304,13 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Approve a pending player. [extra]: further columns written in the
   /// same update (parent registration: `parent_id`, marker removed).
-  Future<void> approvePlayer(Person player, {Map<String, dynamic> extra = const {}}) async {
+  /// [onApproved] runs right after the person left Freigaben, before the
+  /// attendances are filled (a failure there must not skip it).
+  Future<void> approvePlayer(
+    Person player, {
+    Map<String, dynamic> extra = const {},
+    Future<void> Function()? onApproved,
+  }) async {
     ensureNotDemo('approvePlayer'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
@@ -1330,6 +1339,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           })
           .eq('id', player.id!)
           .eq('tenantId', currentTenantId);
+
+      await onApproved?.call();
 
       // LOGIC_PEOPLE: Ionic approvePlayer → addPlayerToAttendancesByDate
       // (every Termin since the join date, with group / extra-field filters).
@@ -1774,6 +1785,10 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// [stayInInstance] - If true, copies player (COPIED_FROM/TO), otherwise transfers (TRANSFERRED_FROM/TO)
   /// [responsibleForMainGroup] - false for the person page (Ionic: always
   ///   PLAYER); the handover page keeps RESPONSIBLE for the main group.
+  /// [asRequest] - the caller is no lead of the target group: the person
+  ///   only waits in the target's Freigaben (see `handover_request.dart`);
+  ///   account, mail, attendances and the source's `left` follow when a
+  ///   lead there approves ([completeHandoverAtSource]).
   ///
   /// LOGIC_PEOPLE: Ionic db.handoverPerson — the target person is created
   /// FIRST (account linked/registered in the target instance with
@@ -1793,6 +1808,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     required String sourceTenantName,
     required bool stayInInstance,
     bool responsibleForMainGroup = true,
+    bool asRequest = false,
   }) async {
     ensureNotDemo('handoverPlayer'); // DEMO_GUARD
     if (player.id == null) {
@@ -1826,6 +1842,33 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
               .value,
         },
       ];
+
+      if (asRequest) {
+        // The account already has a (maybe archived) person there: the
+        // target's leads reactivate that one instead of a second row.
+        final account = player.appId ?? '';
+        if (account.isNotEmpty) {
+          final sameAccount = await supabase
+              .from('player')
+              .select('id')
+              .eq('appId', account)
+              .eq('tenantId', targetTenantId)
+              .limit(1);
+          if ((sameAccount as List).isNotEmpty) return HandoverResult.duplicate;
+        }
+        await _requestHandover(
+          player: player,
+          targetTenantId: targetTenantId,
+          targetGroupId: targetGroupId,
+          targetTenantName: targetTenantName,
+          sourceTenantName: sourceTenantName,
+          stayInInstance: stayInInstance,
+          targetHistory: targetHistory,
+          nowIso: nowIso,
+          todayUtc: todayUtc,
+        );
+        return HandoverResult.requested;
+      }
 
       String? appId = player.appId;
       final email = player.email?.trim() ?? '';
@@ -1950,9 +1993,304 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Handover as a request: the waiting row in the target group (pending,
+  /// without account; `self_register` so the target's leads get the usual
+  /// "wartet auf Freigabe" notification) and a note in the source history.
+  /// Cross-tenant by design, scoped to the explicit [targetTenantId].
+  Future<void> _requestHandover({
+    required Person player,
+    required int targetTenantId,
+    required int? targetGroupId,
+    required String targetTenantName,
+    required String sourceTenantName,
+    required bool stayInInstance,
+    required List<Map<String, dynamic>> targetHistory,
+    required String nowIso,
+    required String todayUtc,
+  }) async {
+    final request = HandoverRequest(
+      fromTenantId: currentTenantId,
+      fromTenantName: sourceTenantName,
+      fromPersonId: player.id!,
+      keep: stayInInstance,
+      by: _actorEmail(),
+    );
+    final img = (player.img ?? '').isNotEmpty && !(player.img!.startsWith('data:'))
+        ? player.img
+        : kDefaultPersonImage;
+
+    // The note in the own person's history comes FIRST: the answer of the
+    // target group only acts on a source person that carries it.
+    final oldHistory = List<Map<String, dynamic>>.from(player.history.map((e) => e.toJson()));
+    await supabase
+        .from('player')
+        .update({
+          'history': [
+            ...oldHistory,
+            {
+              'date': nowIso,
+              'text': handoverAskedNote(targetTenantName, keep: stayInInstance),
+              'type': PlayerHistoryType.other.value,
+            },
+          ],
+        })
+        .eq('id', player.id!)
+        .eq('tenantId', currentTenantId);
+
+    try {
+      await _insertHandoverRequest(
+        request: request,
+        player: player,
+        targetTenantId: targetTenantId,
+        targetGroupId: targetGroupId,
+        img: img,
+        todayUtc: todayUtc,
+        targetHistory: targetHistory,
+      );
+    } catch (_) {
+      // Nothing waits there: the note goes again (best effort).
+      try {
+        await supabase
+            .from('player')
+            .update({'history': oldHistory})
+            .eq('id', player.id!)
+            .eq('tenantId', currentTenantId);
+      } catch (e) {
+        debugPrint('requestHandover: taking the note back failed: $e');
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> _insertHandoverRequest({
+    required HandoverRequest request,
+    required Person player,
+    required int targetTenantId,
+    required int? targetGroupId,
+    required String? img,
+    required String todayUtc,
+    required List<Map<String, dynamic>> targetHistory,
+  }) async {
+    await supabase.from('player').insert({
+      'id': generateIonicId(),
+      'tenantId': targetTenantId,
+      'firstName': player.firstName,
+      'lastName': player.lastName,
+      'instrument': targetGroupId,
+      'img': img,
+      'joined': todayUtc,
+      'email': player.email,
+      'appId': null,
+      'hasTeacher': player.hasTeacher,
+      'teacher': player.teacher,
+      'playsSince': player.playsSince,
+      'correctBirthday': player.correctBirthday,
+      'birthday': player.birthday,
+      'isLeader': false,
+      'isCritical': false,
+      'notes': player.notes,
+      'history': targetHistory,
+      'pending': true,
+      'self_register': true,
+      'additional_fields': {kHandoverRequestKey: request.toJson()},
+    });
+  }
+
+  /// A handover request was approved in the current (target) group: the
+  /// source group gets its history entry and, when the person moves
+  /// completely, `left`. Cross-tenant by design, scoped to the source
+  /// tenant and person of [request]; whether the person stays there is what
+  /// the asking group wrote into its own note, not what the marker says.
+  Future<void> completeHandoverAtSource(
+    HandoverRequest request, {
+    required String targetTenantName,
+  }) async {
+    ensureNotDemo('completeHandoverAtSource'); // DEMO_GUARD
+    try {
+      final nowIso = DateTime.now().toUtc().toIso8601String();
+      await _answerAtSource(
+        request,
+        targetTenantName,
+        (keep) => (
+          entry: {
+            'date': nowIso,
+            'text': keep
+                ? 'Person wurde zu "$targetTenantName" kopiert.'
+                : 'Person wurde zu "$targetTenantName" übertragen.',
+            'type': (keep ? PlayerHistoryType.copiedTo : PlayerHistoryType.transferredTo).value,
+          },
+          left: keep ? null : nowIso,
+        ),
+      );
+    } catch (e, stack) {
+      handleError(e, stack, 'completeHandoverAtSource');
+      rethrow;
+    }
+  }
+
+  /// A handover request was declined in the current (target) group: the
+  /// source group reads why in the person's history.
+  Future<void> noteDeclinedHandoverAtSource(
+    HandoverRequest request, {
+    required String targetTenantName,
+    required String reason,
+  }) async {
+    ensureNotDemo('noteDeclinedHandoverAtSource'); // DEMO_GUARD
+    try {
+      await _answerAtSource(
+        request,
+        targetTenantName,
+        (_) => (
+          entry: {
+            'date': DateTime.now().toUtc().toIso8601String(),
+            'text': '$_handoverPrefix$targetTenantName$_handoverDeclined$reason',
+            'type': PlayerHistoryType.other.value,
+          },
+          left: null,
+        ),
+      );
+    } catch (e, stack) {
+      handleError(e, stack, 'noteDeclinedHandoverAtSource');
+      rethrow;
+    }
+  }
+
+  /// Account of the source person of a handover [request], for a person
+  /// without e-mail (nothing to register with). Null when the source is not
+  /// a person that was asked for.
+  Future<String?> handoverSourceAccount(
+    HandoverRequest request, {
+    required String targetTenantName,
+  }) async {
+    try {
+      final row = await _openHandoverSource(request, targetTenantName);
+      final appId = row?['appId'];
+      return appId is String && appId.isNotEmpty ? appId : null;
+    } catch (e, stack) {
+      handleError(e, stack, 'handoverSourceAccount');
+      rethrow;
+    }
+  }
+
+  static const String _handoverPrefix = 'Übergabe an "';
+  static const String _handoverDeclined = '" wurde abgelehnt: ';
+  static const String _handoverKeeps = 'bleibt auch hier aktiv';
+  static const String _handoverMoves = 'wechselt ganz';
+  static final RegExp _handoverAsked =
+      RegExp('^${RegExp.escape(_handoverPrefix)}(.*)" angefragt \\(($_handoverKeeps|$_handoverMoves)\\)\\.\$');
+  static final RegExp _handoverDone = RegExp(r'^Person wurde zu "(.*)" (?:kopiert|übertragen)\.$');
+
+  /// The note the asking group writes into its own person's history. The
+  /// answer of the target group only acts on a source person whose history
+  /// still has this note open ([openHandoverKeep]).
+  static String handoverAskedNote(String targetTenantName, {required bool keep}) =>
+      '$_handoverPrefix$targetTenantName" angefragt (${keep ? _handoverKeeps : _handoverMoves}).';
+
+  /// Whether the source [row] is a person its own group asked to hand over
+  /// to [targetTenantName], and what that group chose: true "stays active
+  /// there too", false "moves completely", null when nothing is open (never
+  /// asked, or already answered).
+  ///
+  /// The marker on the waiting row is plain JSON in the target group, so it
+  /// alone never decides which person of another group is written to: only
+  /// people the asking group itself offered can be reached, and only once.
+  /// (The name is not compared: the target's leads may correct it while
+  /// they take the person in.)
+  static bool? openHandoverKeep(Map<String, dynamic> row, String targetTenantName) {
+    final history = row['history'];
+    // Requests still open, by the target group's name at that time.
+    final open = <String, bool>{};
+    for (final e in history is List ? history : const []) {
+      final text = e is Map ? e['text'] : null;
+      if (text is! String) continue;
+      final asked = _handoverAsked.firstMatch(text);
+      if (asked != null) {
+        open[asked.group(1)!] = asked.group(2) == _handoverKeeps;
+        continue;
+      }
+      final done = _handoverDone.firstMatch(text);
+      if (done != null) {
+        open.remove(done.group(1));
+      } else if (text.startsWith(_handoverPrefix)) {
+        final end = text.indexOf(_handoverDeclined, _handoverPrefix.length);
+        if (end > 0) open.remove(text.substring(_handoverPrefix.length, end));
+      }
+    }
+    // The group was renamed since: the only open request is this one.
+    return open[targetTenantName] ?? (open.length == 1 ? open.values.single : null);
+  }
+
+  /// The source person of [request] with its open note, or null. Never the
+  /// own group: a request always comes from another one.
+  Future<Map<String, dynamic>?> _openHandoverSource(HandoverRequest request, String targetTenantName) async {
+    // The one row of the asking group that the request names (the database
+    // allows it only to leads within the same organisation).
+    final sourceTenantId = request.fromTenantId;
+    if (sourceTenantId == currentTenantId) return null;
+    final row = await supabase
+        .from('player')
+        .select('appId, history, left')
+        .eq('id', request.fromPersonId)
+        .eq('tenantId', sourceTenantId)
+        .maybeSingle();
+    if (row == null || openHandoverKeep(row, targetTenantName) == null) return null;
+    return row;
+  }
+
+  Future<void> _answerAtSource(
+    HandoverRequest request,
+    String targetTenantName,
+    ({Map<String, dynamic> entry, String? left}) Function(bool keep) answer,
+  ) async {
+    final row = await _openHandoverSource(request, targetTenantName);
+    if (row == null) return;
+    final sourceTenantId = request.fromTenantId;
+    final result = answer(openHandoverKeep(row, targetTenantName)!);
+    final history = [...(row['history'] as List), result.entry];
+    await supabase
+        .from('player')
+        .update({
+          'history': history,
+          // Already archived there: the earlier date stays.
+          if (result.left != null && row['left'] == null) 'left': result.left,
+        })
+        .eq('id', request.fromPersonId)
+        .eq('tenantId', sourceTenantId);
+  }
+
+  /// Removes the waiting row of a declined handover request (nothing else
+  /// hangs on it yet: no account, no attendances).
+  Future<void> deleteHandoverRequest(Person person) async {
+    ensureNotDemo('deleteHandoverRequest'); // DEMO_GUARD
+    if (person.id == null) {
+      throw RepositoryException(message: 'Player ID is required', operation: 'deleteHandoverRequest');
+    }
+    try {
+      final deleted = await supabase
+          .from('player')
+          .delete()
+          .eq('id', person.id!)
+          .eq('tenantId', currentTenantId)
+          .eq('pending', true)
+          .select('id');
+      // Not allowed or already gone: the asking group must not read
+      // "abgelehnt" while the person still waits here.
+      if ((deleted as List).isEmpty) {
+        throw RepositoryException(
+          message: 'Die Anfrage konnte nicht entfernt werden.',
+          operation: 'deleteHandoverRequest',
+        );
+      }
+    } catch (e, stack) {
+      handleError(e, stack, 'deleteHandoverRequest');
+      rethrow;
+    }
+  }
+
   /// Handover multiple players to another tenant
   ///
-  /// Returns a map with counts: {'success': n, 'duplicate': n, 'error': n}
+  /// Returns a map with counts:
+  /// {'success': n, 'requested': n, 'duplicate': n, 'error': n}
   Future<Map<String, int>> handoverPlayers({
     required List<Person> players,
     required int targetTenantId,
@@ -1960,10 +2298,11 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     required String targetTenantName,
     required String sourceTenantName,
     required bool stayInInstance,
+    bool asRequest = false,
     void Function(int current, int total, String playerName)? onProgress,
   }) async {
     ensureNotDemo('handoverPlayers'); // DEMO_GUARD
-    final results = {'success': 0, 'duplicate': 0, 'error': 0};
+    final results = {'success': 0, 'requested': 0, 'duplicate': 0, 'error': 0};
 
     for (var i = 0; i < players.length; i++) {
       final player = players[i];
@@ -1980,11 +2319,14 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         targetTenantName: targetTenantName,
         sourceTenantName: sourceTenantName,
         stayInInstance: stayInInstance,
+        asRequest: asRequest,
       );
 
       switch (result) {
         case HandoverResult.success:
           results['success'] = results['success']! + 1;
+        case HandoverResult.requested:
+          results['requested'] = results['requested']! + 1;
         case HandoverResult.duplicate:
           results['duplicate'] = results['duplicate']! + 1;
         case HandoverResult.error:

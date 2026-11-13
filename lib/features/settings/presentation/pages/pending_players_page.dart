@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/handover_request.dart';
 import '../../../../core/utils/parent_registration.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
@@ -120,9 +121,13 @@ class _PendingPersonItem extends StatelessWidget {
     // Registered by an Elternteil via the link: "Kind von …" instead of
     // the parent's e-mail.
     final parent = parentRegistrationOf(player);
-    final email = parent != null
-        ? context.l10n.parentRegisterChildOf(parent.fullName)
-        : player.email ?? '';
+    // Asked by another group of the organisation ("Übergabe aus …").
+    final handover = handoverRequestOf(player);
+    final email = handover != null
+        ? context.l10n.peopleFlutterHandoverRequestFrom(handover.fromTenantName)
+        : parent != null
+            ? context.l10n.parentRegisterChildOf(parent.fullName)
+            : player.email ?? '';
     return ListTile(
       title: Text(player.fullName),
       subtitle: email.isEmpty
