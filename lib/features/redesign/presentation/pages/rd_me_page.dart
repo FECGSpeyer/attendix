@@ -337,7 +337,6 @@ class RdMePage extends ConsumerWidget {
   }
 }
 
-/// Avatar, name, role and group; opens the own master data.
 /// Logo and version at the bottom. Tapping it 7× turns developer mode on
 /// or off on this device (hidden on purpose, like Android's build number).
 class _VersionFooter extends ConsumerStatefulWidget {
@@ -389,6 +388,7 @@ class _VersionFooterState extends ConsumerState<_VersionFooter> {
   }
 }
 
+/// Avatar, name, role and group; opens the own master data.
 class _ProfileCard extends ConsumerWidget {
   const _ProfileCard();
 
