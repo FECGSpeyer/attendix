@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.139.1",
+      "date": "13.11.2026",
+      "changes": [
+        "🍎 Mac: fehlende Hinweistexte für Fotos, Mediathek und Standort ergänzt, damit Apple die Mac-Builds ohne Beanstandung annimmt"
+      ]
+    },
+    {
       "version": "0.139.0",
       "date": "13.11.2026",
       "changes": [
