@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.138.4",
+      "date": "13.11.2026",
+      "changes": [
+        "🔒 Beta: „Konto wechseln“ und gespeicherte Konten auf der Anmeldeseite nur noch im versteckten Entwicklermodus (7× auf die Version unten im Ich-Tab tippen)"
+      ]
+    },
+    {
       "version": "0.138.3",
       "date": "13.11.2026",
       "changes": [
