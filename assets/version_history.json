@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.141.0",
+      "date": "14.11.2026",
+      "changes": [
+        "✨ Beta: Die eigene Antwort zu einem Termin sieht jetzt immer gleich aus. Oben steht die Antwort, darunter unter „Antwort ändern“ die anderen Antworten („Bin dabei“, „Komme später“, „Kann nicht“), auf Heute und auf der Termin-Seite"
+      ]
+    },
+    {
       "version": "0.140.0",
       "date": "13.11.2026",
       "changes": [
