@@ -27158,6 +27158,12 @@ abstract class AppLocalizations {
   /// **'z. B. Tiefe Stimmen'**
   String get redesignPlanRegisterOwnGroupHint;
 
+  /// redesign.plan.registerOwnGroupRemove
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe „{name}“ entfernen'**
+  String redesignPlanRegisterOwnGroupRemove(Object name);
+
   /// redesign.plan.registerOwnGroupTitle
   ///
   /// In de, this message translates to:

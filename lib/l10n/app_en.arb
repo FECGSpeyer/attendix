@@ -4503,6 +4503,7 @@
   "redesignPlanRegisterMoreLeads": "{count, plural, one {More leads than groups: in every round one lead has a break.} other {More leads than groups: in every round {count} leads have a break.}}",
   "redesignPlanRegisterOwnGroup": "Own group",
   "redesignPlanRegisterOwnGroupHint": "e.g. Low voices",
+  "redesignPlanRegisterOwnGroupRemove": "Remove group “{name}”",
   "redesignPlanRegisterOwnGroupTitle": "Add group",
   "redesignPlanRegisterPerson": "Person",
   "redesignPlanRegisterPersonSearch": "Search name",

@@ -42,6 +42,10 @@ class RdRegisterSetupSheet extends ConsumerStatefulWidget {
 
 class _RdRegisterSetupSheetState extends ConsumerState<RdRegisterSetupSheet> {
   final List<String> _groupOptions = [];
+
+  /// Groups added by hand ("+ Eigene Gruppe"): kept on this device even
+  /// when not picked, removed only with their ✕.
+  final List<String> _ownGroups = [];
   final Set<String> _groupOn = {};
 
   /// All leads in the drawn order ("Neu mischen" draws again); the
@@ -89,6 +93,13 @@ class _RdRegisterSetupSheetState extends ConsumerState<RdRegisterSetupSheet> {
       choirDefaults: [l10n.planningSoprano, l10n.planningAlto, l10n.planningTenor, l10n.planningBass],
       otherDefaults: [l10n.planningStrings, l10n.planningWoodwinds, l10n.commonOtherPlural],
     );
+    List<String> own = const [];
+    if (tenant?.id != null) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        own = RegisterPlanService.parseOwnGroups(prefs.getString(RegisterPlanService.ownGroupsStorageKey(tenant!.id!)));
+      } catch (_) {}
+    }
     final initial = widget.initial;
     List<String> selected;
     if (initial != null) {
@@ -116,9 +127,11 @@ class _RdRegisterSetupSheetState extends ConsumerState<RdRegisterSetupSheet> {
     final leads = initial != null ? [...initial.conductors] : RegisterPlanService.shuffle(names);
     if (!mounted) return;
     setState(() {
-      for (final g in [...defaults, ...selected]) {
+      for (final g in [...defaults, ...own, ...selected]) {
         if (!_groupOptions.contains(g)) _groupOptions.add(g);
       }
+      // Everything that is no category (or type default) is an own group.
+      _ownGroups.addAll(_groupOptions.where((g) => !defaults.contains(g)));
       _groupOn.addAll(selected);
       for (final c in [...leads, ...names]) {
         if (c.trim().isNotEmpty && !_leadOrder.contains(c)) _leadOrder.add(c);
@@ -151,9 +164,34 @@ class _RdRegisterSetupSheetState extends ConsumerState<RdRegisterSetupSheet> {
     final value = name?.trim() ?? '';
     if (value.isEmpty || !mounted) return;
     setState(() {
-      if (!_groupOptions.contains(value)) _groupOptions.add(value);
+      if (!_groupOptions.contains(value)) {
+        _groupOptions.add(value);
+        _ownGroups.add(value);
+      }
       _groupOn.add(value);
     });
+    await _saveOwnGroups();
+  }
+
+  void _removeOwnGroup(String group) {
+    setState(() {
+      _groupOptions.remove(group);
+      _ownGroups.remove(group);
+      _groupOn.remove(group);
+    });
+    _saveOwnGroups();
+  }
+
+  Future<void> _saveOwnGroups() async {
+    final tenantId = ref.read(currentTenantProvider)?.id;
+    if (tenantId == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        RegisterPlanService.ownGroupsStorageKey(tenantId),
+        RegisterPlanService.encodeGroups(_ownGroups),
+      );
+    } catch (_) {}
   }
 
   Future<void> _addLead() async {
@@ -186,6 +224,7 @@ class _RdRegisterSetupSheetState extends ConsumerState<RdRegisterSetupSheet> {
         );
       } catch (_) {}
     }
+    await _saveOwnGroups();
     if (!mounted) return;
     Navigator.pop(context, choice);
   }
@@ -229,12 +268,21 @@ class _RdRegisterSetupSheetState extends ConsumerState<RdRegisterSetupSheet> {
                     RdGroupLabel(l10n.redesignPlanRegisterWhichGroups),
                     _chips([
                       for (final g in _groupOptions)
-                        RdChoiceChip(
-                          key: ValueKey('rd-register-group-$g'),
-                          label: g,
-                          selected: _groupOn.contains(g),
-                          onTap: () => setState(() => _groupOn.contains(g) ? _groupOn.remove(g) : _groupOn.add(g)),
-                        ),
+                        if (_ownGroups.contains(g))
+                          _RdOwnGroupChip(
+                            key: ValueKey('rd-register-group-$g'),
+                            label: g,
+                            selected: _groupOn.contains(g),
+                            onTap: () => setState(() => _groupOn.contains(g) ? _groupOn.remove(g) : _groupOn.add(g)),
+                            onRemove: () => _removeOwnGroup(g),
+                          )
+                        else
+                          RdChoiceChip(
+                            key: ValueKey('rd-register-group-$g'),
+                            label: g,
+                            selected: _groupOn.contains(g),
+                            onTap: () => setState(() => _groupOn.contains(g) ? _groupOn.remove(g) : _groupOn.add(g)),
+                          ),
                       RdChoiceChip(
                         key: const Key('rd-register-add-group'),
                         icon: Icons.add,
@@ -517,6 +565,64 @@ class _RdLeadPickerState extends ConsumerState<_RdLeadPicker> {
           ],
         ),
       ],
+    );
+  }
+}
+
+/// An own group: switched on and off like [RdChoiceChip], with a ✕ that
+/// removes it for good.
+class _RdOwnGroupChip extends StatelessWidget {
+  const _RdOwnGroupChip({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    required this.onRemove,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final color = selected ? p.bg : p.text;
+    return Material(
+      color: selected ? p.text : p.surface,
+      shape: StadiumBorder(side: selected ? BorderSide.none : BorderSide(color: p.offBorder)),
+      clipBehavior: Clip.antiAlias,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Semantics(
+            button: true,
+            selected: selected,
+            child: InkWell(
+              onTap: onTap,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 40),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 8, 4, 8),
+                  child: Text(label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: color)),
+                ),
+              ),
+            ),
+          ),
+          Semantics(
+            button: true,
+            label: l10n.redesignPlanRegisterOwnGroupRemove(label),
+            excludeSemantics: true,
+            child: InkWell(
+              key: ValueKey('rd-register-remove-$label'),
+              onTap: onRemove,
+              child: SizedBox(width: 36, height: 40, child: Icon(Icons.close, size: 16, color: color)),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -21029,6 +21029,13 @@
   "@redesignPlanRegisterOwnGroupHint": {
     "description": "redesign.plan.registerOwnGroupHint"
   },
+  "redesignPlanRegisterOwnGroupRemove": "Gruppe „{name}“ entfernen",
+  "@redesignPlanRegisterOwnGroupRemove": {
+    "description": "redesign.plan.registerOwnGroupRemove",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignPlanRegisterOwnGroupTitle": "Gruppe hinzufügen",
   "@redesignPlanRegisterOwnGroupTitle": {
     "description": "redesign.plan.registerOwnGroupTitle"

@@ -66,6 +66,22 @@ class RegisterPlanService {
     return [...defaults];
   }
 
+  /// Beta: local storage key of the own groups ("+ Eigene Gruppe"), kept
+  /// even when not picked.
+  static String ownGroupsStorageKey(int tenantId) => 'registerplan-own-groups-$tenantId';
+
+  /// The stored own groups (a JSON array of names), empty when unreadable.
+  static List<String> parseOwnGroups(String? stored) {
+    if (stored == null || stored.isEmpty) return const [];
+    try {
+      final parsed = jsonDecode(stored);
+      if (parsed is List) {
+        return [for (final e in parsed) if (e is String && e.trim().isNotEmpty) e];
+      }
+    } catch (_) {}
+    return const [];
+  }
+
   /// Ionic `savePlanGroups` payload.
   static String encodeGroups(List<String> groups) => jsonEncode(groups);
 

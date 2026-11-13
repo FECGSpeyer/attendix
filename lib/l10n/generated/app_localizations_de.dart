@@ -17127,6 +17127,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanRegisterOwnGroupHint => 'z. B. Tiefe Stimmen';
 
   @override
+  String redesignPlanRegisterOwnGroupRemove(Object name) {
+    return 'Gruppe „$name“ entfernen';
+  }
+
+  @override
   String get redesignPlanRegisterOwnGroupTitle => 'Gruppe hinzufügen';
 
   @override

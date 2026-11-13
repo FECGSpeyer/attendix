@@ -1568,7 +1568,8 @@
         "registerSelf": "selbstständig",
         "registerMoreGroups": "{count, plural, one {Mehr Gruppen als Leitungen: in jeder Runde probt eine Gruppe selbstständig.} other {Mehr Gruppen als Leitungen: in jeder Runde proben {count} Gruppen selbstständig.}}",
         "registerMoreLeads": "{count, plural, one {Mehr Leitungen als Gruppen: in jeder Runde hat eine Leitung Pause.} other {Mehr Leitungen als Gruppen: in jeder Runde haben {count} Leitungen Pause.}}",
-        "registerIncomplete": "Wähle mindestens zwei Gruppen und eine Leitung."
+        "registerIncomplete": "Wähle mindestens zwei Gruppen und eine Leitung.",
+        "registerOwnGroupRemove": "Gruppe „{name}“ entfernen"
       },
       "messages": {
         "intro": "Alles, was an die Gruppe ging, mit Lesestatus.",
@@ -3270,7 +3271,8 @@
         "registerSelf": "on their own",
         "registerMoreGroups": "{count, plural, one {More groups than leads: in every round one group rehearses on its own.} other {More groups than leads: in every round {count} groups rehearse on their own.}}",
         "registerMoreLeads": "{count, plural, one {More leads than groups: in every round one lead has a break.} other {More leads than groups: in every round {count} leads have a break.}}",
-        "registerIncomplete": "Pick at least two groups and one lead."
+        "registerIncomplete": "Pick at least two groups and one lead.",
+        "registerOwnGroupRemove": "Remove group “{name}”"
       },
       "messages": {
         "intro": "Everything sent to the group, with read status.",
