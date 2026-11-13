@@ -681,15 +681,20 @@ class _RdFieldSheetBodyState extends State<_RdFieldSheetBody> {
   }
 }
 
-/// Beta "Werk hinzufügen": sheet with search, current Werke first, then all.
-Future<Song?> showRdPlanSongPicker(
+/// What the Werke picker returned: one Werk, or "Alle aktuellen Werke".
+typedef PlanWorksPick = ({Song? song, bool allCurrent});
+
+/// Beta "Werke": sheet with search, current Werke first, then all.
+/// [offerAllCurrent]: "Alle aktuellen Werke" on top of the current ones.
+Future<PlanWorksPick?> showRdPlanSongPicker(
   BuildContext context,
   List<Song> songs, {
   Set<int> currentIds = const {},
   Set<int> inPlanIds = const {},
   List<SongCollection>? collections,
+  bool offerAllCurrent = false,
 }) {
-  return showModalBottomSheet<Song>(
+  return showModalBottomSheet<PlanWorksPick>(
     context: context,
     useRootNavigator: true,
     isScrollControlled: true,
@@ -700,18 +705,31 @@ Future<Song?> showRdPlanSongPicker(
           padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(ctx).bottom),
           child: SizedBox(
             height: MediaQuery.sizeOf(ctx).height * 0.85,
-            child: _RdSongPicker(songs: songs, currentIds: currentIds, inPlanIds: inPlanIds, collections: collections),
+            child: _RdSongPicker(
+              songs: songs,
+              currentIds: currentIds,
+              inPlanIds: inPlanIds,
+              collections: collections,
+              offerAllCurrent: offerAllCurrent,
+            ),
           ),
         ),
   );
 }
 
 class _RdSongPicker extends StatefulWidget {
-  const _RdSongPicker({required this.songs, required this.currentIds, required this.inPlanIds, this.collections});
+  const _RdSongPicker({
+    required this.songs,
+    required this.currentIds,
+    required this.inPlanIds,
+    this.collections,
+    this.offerAllCurrent = false,
+  });
 
   final List<Song> songs;
   final Set<int> currentIds;
   final Set<int> inPlanIds;
+  final bool offerAllCurrent;
 
   /// Sammlungen, to name the one of a Werk (none for the Repertoire).
   final List<SongCollection>? collections;
@@ -736,6 +754,8 @@ class _RdSongPickerState extends State<_RdSongPicker> {
         }).toList();
     final current = filtered.where((s) => widget.currentIds.contains(s.id)).toList();
     final rest = filtered.where((s) => !widget.currentIds.contains(s.id)).toList();
+    // All current Werke at once: only before searching, and only for more than one.
+    final allCurrent = widget.offerAllCurrent && q.isEmpty && current.length > 1;
 
     Widget row(Song s) {
       final inPlan = widget.inPlanIds.contains(s.id);
@@ -751,7 +771,7 @@ class _RdSongPickerState extends State<_RdSongPicker> {
         showChevron: false,
         trailing:
             inPlan ? Text(l10n.redesignPlanSongInPlan, style: RdType.meta(p, size: 13)) : Icon(Icons.add_circle_outline, color: p.link),
-        onTap: () => Navigator.of(context).pop(s),
+        onTap: () => Navigator.of(context).pop((song: s, allCurrent: false)),
       );
     }
 
@@ -774,7 +794,20 @@ class _RdSongPickerState extends State<_RdSongPicker> {
           ),
         if (current.isNotEmpty) ...[
           RdGroupLabel(l10n.songsCurrent),
-          RdGroupedList(children: [for (final s in current) row(s)]),
+          RdGroupedList(
+            children: [
+              if (allCurrent)
+                RdListRow(
+                  key: const Key('rd-plan-song-all-current'),
+                  leading: RdRowIcon(Icons.library_music_outlined),
+                  title: l10n.redesignPlanAllCurrent,
+                  showChevron: false,
+                  trailing: Icon(Icons.add_circle_outline, color: p.link),
+                  onTap: () => Navigator.of(context).pop((song: null, allCurrent: true)),
+                ),
+              for (final s in current) row(s),
+            ],
+          ),
           const SizedBox(height: 16),
         ],
         if (rest.isNotEmpty) ...[

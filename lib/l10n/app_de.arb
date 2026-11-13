@@ -20578,14 +20578,6 @@
   "@redesignPlanAddBlockHint": {
     "description": "redesign.plan.addBlockHint"
   },
-  "redesignPlanAddCurrent": "Aktuelle Werke",
-  "@redesignPlanAddCurrent": {
-    "description": "redesign.plan.addCurrent"
-  },
-  "redesignPlanAddCurrentHint": "Die Werke, die gerade dran sind",
-  "@redesignPlanAddCurrentHint": {
-    "description": "redesign.plan.addCurrentHint"
-  },
   "redesignPlanAddDefaultField": "Standardfeld hinzufügen",
   "@redesignPlanAddDefaultField": {
     "description": "redesign.plan.addDefaultField"
@@ -20621,17 +20613,25 @@
   "@redesignPlanAddPlan": {
     "description": "redesign.plan.addPlan"
   },
-  "redesignPlanAddSong": "Werk aus der Liste",
-  "@redesignPlanAddSong": {
-    "description": "redesign.plan.addSong"
-  },
   "redesignPlanAddTitle": "Hinzufügen",
   "@redesignPlanAddTitle": {
     "description": "redesign.plan.addTitle"
   },
+  "redesignPlanAddWorks": "Werke",
+  "@redesignPlanAddWorks": {
+    "description": "redesign.plan.addWorks"
+  },
+  "redesignPlanAddWorksHint": "Aktuelle Werke oder aus der Liste",
+  "@redesignPlanAddWorksHint": {
+    "description": "redesign.plan.addWorksHint"
+  },
   "redesignPlanAfterBlock": "Punkt nach dem Block einfügen",
   "@redesignPlanAfterBlock": {
     "description": "redesign.plan.afterBlock"
+  },
+  "redesignPlanAllCurrent": "Alle aktuellen Werke",
+  "@redesignPlanAllCurrent": {
+    "description": "redesign.plan.allCurrent"
   },
   "redesignPlanBack": "Termin",
   "@redesignPlanBack": {
@@ -20819,10 +20819,6 @@
   "redesignPlanJoinBlock": "In den Block darüber",
   "@redesignPlanJoinBlock": {
     "description": "redesign.plan.joinBlock"
-  },
-  "redesignPlanKindSong": "Werk",
-  "@redesignPlanKindSong": {
-    "description": "redesign.plan.kindSong"
   },
   "redesignPlanLeaveBlock": "Aus dem Block nehmen",
   "@redesignPlanLeaveBlock": {

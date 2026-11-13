@@ -16618,12 +16618,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanAddBlockHint => 'Groups several items';
 
   @override
-  String get redesignPlanAddCurrent => 'Current works';
-
-  @override
-  String get redesignPlanAddCurrentHint => 'The works currently in rehearsal';
-
-  @override
   String get redesignPlanAddDefaultField => 'Add default field';
 
   @override
@@ -16650,13 +16644,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanAddPlan => 'Plan';
 
   @override
-  String get redesignPlanAddSong => 'Work from the list';
-
-  @override
   String get redesignPlanAddTitle => 'Add';
 
   @override
+  String get redesignPlanAddWorks => 'Works';
+
+  @override
+  String get redesignPlanAddWorksHint => 'Current works or from the list';
+
+  @override
   String get redesignPlanAfterBlock => 'Insert item after the block';
+
+  @override
+  String get redesignPlanAllCurrent => 'All current works';
 
   @override
   String get redesignPlanBack => 'Event';
@@ -16799,9 +16799,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignPlanJoinBlock => 'Into the block above';
-
-  @override
-  String get redesignPlanKindSong => 'Work';
 
   @override
   String get redesignPlanLeaveBlock => 'Take out of the block';

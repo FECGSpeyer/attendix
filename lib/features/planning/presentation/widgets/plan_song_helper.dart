@@ -108,6 +108,16 @@ Future<Song?> showPlanSongPicker(
   List<Song> songs, {
   Set<int> currentIds = const {},
   Set<int> inPlanIds = const {},
+}) async => (await showPlanWorksPicker(context, songs, currentIds: currentIds, inPlanIds: inPlanIds))?.song;
+
+/// [showPlanSongPicker] that can also return "Alle aktuellen Werke"
+/// ([offerAllCurrent], Beta skin only).
+Future<PlanWorksPick?> showPlanWorksPicker(
+  BuildContext context,
+  List<Song> songs, {
+  Set<int> currentIds = const {},
+  Set<int> inPlanIds = const {},
+  bool offerAllCurrent = false,
 }) async {
   List<SongCollection>? collections;
   var known = true;
@@ -125,12 +135,14 @@ Future<Song?> showPlanSongPicker(
       currentIds: currentIds,
       inPlanIds: inPlanIds,
       collections: collections,
+      offerAllCurrent: offerAllCurrent,
     );
   }
-  return Navigator.of(context, rootNavigator: true).push<Song>(MaterialPageRoute(
+  final song = await Navigator.of(context, rootNavigator: true).push<Song>(MaterialPageRoute(
     fullscreenDialog: true,
     builder: (_) => _SongPicker(songs: plannable),
   ));
+  return song == null ? null : (song: song, allCurrent: false);
 }
 
 class _SongPicker extends StatefulWidget {
