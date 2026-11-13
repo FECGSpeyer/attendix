@@ -81,7 +81,7 @@ Future<bool> rdAddWorkFiles(
   final controller = ref.read(rdWorkFilesProvider(songId).notifier);
   final existing = rdVisibleFiles(data, ref.read(rdWorkFilesProvider(songId)).hidden);
   final instruments = [
-    for (final g in data.instruments)
+    for (final g in data.partGroups)
       if (g.id != null) InstrumentInfo(id: g.id!, name: g.name, synonyms: g.synonyms),
   ];
   final workName = data.song.name;
@@ -110,7 +110,7 @@ Future<bool> rdAddWorkFiles(
               for (final r in reads) (file: r.file, instrumentId: r.read.guess.instrumentId, note: r.read.guess.note),
             ],
             existing: existing,
-            groups: data.instruments,
+            groups: data.partGroups,
             workName: workName,
             isChoir: data.isChoir,
           ),
@@ -218,7 +218,7 @@ Future<bool> rdAddWorkFiles(
       builder:
           (_) => _ReviewDialog(
             items: review,
-            groups: data.instruments,
+            groups: data.partGroups,
             instruments: instruments,
             isChoir: data.isChoir,
             workName: workName,
@@ -248,7 +248,7 @@ Future<bool> rdAddWorkFiles(
   if (clashing.isNotEmpty) {
     final choice = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => _ConflictDialog(items: clashing, groups: data.instruments),
+      builder: (ctx) => _ConflictDialog(items: clashing, groups: data.partGroups),
     );
     if (choice == null) return true;
     replace = choice;
@@ -259,7 +259,7 @@ Future<bool> rdAddWorkFiles(
   final groupNotifier = ref.read(groupNotifierProvider.notifier);
   final created = <String, int>{};
   for (final name in rdUploadNewGroups(chosen.values)) {
-    final same = data.instruments.where((g) => g.id != null && g.name.trim().toLowerCase() == name.trim().toLowerCase());
+    final same = data.partGroups.where((g) => g.id != null && g.name.trim().toLowerCase() == name.trim().toLowerCase());
     final id = same.isNotEmpty ? same.first.id : (await groupNotifier.createGroup({'name': name, 'maingroup': false}))?.id;
     if (!context.mounted) return false;
     if (id == null) {
@@ -560,7 +560,7 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
       final result = await showRdFileCategorySheet(
         context,
         title: file.fileName,
-        instruments: widget.data.instruments,
+        instruments: widget.data.partGroups,
         isChoir: widget.data.isChoir,
         initialInstrumentId: null,
         initialNote: file.instrumentId == null ? (file.note ?? '') : '',
@@ -940,7 +940,7 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
                           selecting: selecting,
                           file: file,
                           groups: widget.groups,
-                          instruments: widget.data.instruments,
+                          instruments: widget.data.partGroups,
                           onlyOnMac: waiting.any((c) => c.matches(c.tenantId, _songId, file)),
                           offerPlugin: !pluginInstalled,
                           selected: selected.contains(file.url),

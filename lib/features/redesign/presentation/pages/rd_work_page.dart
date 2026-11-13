@@ -97,7 +97,7 @@ class RdWorkPage extends ConsumerWidget {
 
     final canEdit = !data.readOnly && !data.isPublic;
     final filesState = canEdit ? ref.watch(rdWorkFilesProvider(songId)) : null;
-    final groups = ref.watch(groupsProvider).valueOrNull ?? data.instruments;
+    final groups = ref.watch(groupsProvider).valueOrNull ?? data.partGroups;
 
     // Last played / planned come from the list (enriched with the history).
     final listed = ref.watch(songsProvider).valueOrNull?.where((s) => s.id == songId).firstOrNull;
