@@ -156,6 +156,22 @@ class DashLoading extends StatelessWidget {
       );
 }
 
+/// DAS-13: Ionic loading state of a card that has no header yet
+/// (`<ion-card><ion-card-content><div class="loading-center">`): only a
+/// card with the spinner.
+class DashSpinnerCard extends StatelessWidget {
+  const DashSpinnerCard({super.key});
+
+  @override
+  Widget build(BuildContext context) => Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        elevation: 3,
+        shadowColor: Colors.black26,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: const DashLoading(),
+      );
+}
+
 /// Empty / error row inside a card body (Ionic `.empty-row`).
 class DashEmptyRow extends StatelessWidget {
   const DashEmptyRow({

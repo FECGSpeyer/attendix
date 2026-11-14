@@ -23,6 +23,8 @@ import '../../../planning/presentation/pages/plan_viewer_page.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart';
 import '../../../attendance/presentation/pages/attendance_detail_page.dart';
 import 'dashboard_card.dart';
+import '../../../people/presentation/widgets/ion/ion_widgets.dart' show IonItem, IonBadge;
+import '../../../../shared/widgets/adaptive/adaptive.dart' show useIosLook;
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 
@@ -89,16 +91,26 @@ class NextEventCard extends ConsumerWidget {
                 _nextRow(context, next, () => open(next.attendance.id), canOpen),
                 if ((next.attendance.notes ?? '').isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                    // DAS-12: Ionic `.event-notes { padding: 4px 16px 10px 74px }`
+                    // – under the title, past the date tile; `.note-line`
+                    // gap 6, .85rem medium-shade.
+                    padding: context.rdSkin == null
+                        ? const EdgeInsets.fromLTRB(74, 4, 16, 10)
+                        : const EdgeInsets.fromLTRB(16, 8, 16, 4),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(AppIcons.descriptionOutlined, size: 16, color: AppColors.medium),
-                        const SizedBox(width: 8),
+                        Padding(
+                          padding: EdgeInsets.only(top: context.rdSkin == null ? 1 : 0),
+                          child: Icon(AppIcons.descriptionOutlined, size: 16, color: AppColors.medium),
+                        ),
+                        SizedBox(width: context.rdSkin == null ? 6 : 8),
                         Expanded(
                           child: Text(
                             next.attendance.notes!,
-                            style: const TextStyle(fontSize: 13.5, color: AppColors.medium),
+                            style: context.rdSkin == null
+                                ? const TextStyle(fontSize: 13.6, color: _mediumShade)
+                                : const TextStyle(fontSize: 13.5, color: AppColors.medium),
                           ),
                         ),
                       ],
@@ -144,6 +156,7 @@ class NextEventCard extends ConsumerWidget {
   }
 
   Widget _statGrid(BuildContext context, NextEventSummary s) {
+    final classic = context.rdSkin == null;
     Widget box(DashTone tone, String value, String label, {VoidCallback? onTap}) {
       return Expanded(
         child: Material(
@@ -153,13 +166,16 @@ class NextEventCard extends ConsumerWidget {
             borderRadius: BorderRadius.circular(12),
             onTap: onTap,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+              // DAS-14: Ionic `.stat-box` padding 10 8, value 1.35rem / 700
+              // (line-height 1.1), label .72rem / 600 (line-height 1.25).
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: classic ? 8 : 6),
               child: Column(
                 children: [
                   Text(
                     value,
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: classic ? 21.6 : 22,
+                      height: classic ? 1.1 : null,
                       fontWeight: FontWeight.w700,
                       color: tone.fg(context),
                     ),
@@ -168,7 +184,12 @@ class NextEventCard extends ConsumerWidget {
                   Text(
                     label,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: tone.fg(context)),
+                    style: TextStyle(
+                      fontSize: classic ? 11.5 : 12,
+                      height: classic ? 1.25 : null,
+                      fontWeight: classic ? FontWeight.w600 : null,
+                      color: tone.fg(context),
+                    ),
                   ),
                 ],
               ),
@@ -184,8 +205,10 @@ class NextEventCard extends ConsumerWidget {
         : l10n.homeDashboardSignedOut;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      // Ionic `.stat-grid { padding: 4px 16px 0 }`.
+      padding: classic ? const EdgeInsets.fromLTRB(16, 4, 16, 0) : const EdgeInsets.fromLTRB(16, 12, 16, 4),
       child: Row(
+        crossAxisAlignment: classic ? CrossAxisAlignment.stretch : CrossAxisAlignment.center,
         children: [
           box(DashTone.green, '${s.nextPresent}', l10n.commonStatusPresent),
           const SizedBox(width: 8),
@@ -203,27 +226,55 @@ class NextEventCard extends ConsumerWidget {
   }
 
   Widget _percRow(BuildContext context, NextEventSummary s) {
+    final classic = context.rdSkin == null;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 14),
+      // Ionic `.perc-row { padding: 12px 16px 14px }`, text .8rem.
+      padding: classic ? const EdgeInsets.fromLTRB(16, 12, 16, 14) : const EdgeInsets.fromLTRB(16, 8, 16, 14),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(context.l10n.homeDashboardAverage, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+              Text(context.l10n.homeDashboardAverage,
+                  style: TextStyle(fontSize: classic ? 12.8 : 13, color: AppColors.medium)),
               Text.rich(
                 TextSpan(children: [
                   TextSpan(
                     text: '${s.nextPerc}%',
-                    style: const TextStyle(fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: classic ? Theme.of(context).colorScheme.onSurface : null,
+                    ),
                   ),
                   TextSpan(text: ' · ${context.l10n.homeDashboardTotalCount(s.nextTotal)}'),
                 ]),
-                style: const TextStyle(fontSize: 13, color: AppColors.medium),
+                style: TextStyle(fontSize: classic ? 12.8 : 13, color: AppColors.medium),
               ),
             ],
           ),
           const SizedBox(height: 6),
+          if (classic)
+            // Ionic `.perc-bar` (6px, radius 3, rgba(142,142,147,.18)) with
+            // the blue gradient `.perc-fill`.
+            ClipRRect(
+              borderRadius: BorderRadius.circular(3),
+              child: Container(
+                height: 6,
+                color: const Color(0x2E8E8E93),
+                alignment: Alignment.centerLeft,
+                child: FractionallySizedBox(
+                  widthFactor: (s.nextPerc / 100).clamp(0.0, 1.0),
+                  heightFactor: 1,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(3),
+                      gradient: const LinearGradient(colors: [Color(0xFF3A6BFF), Color(0xFF1A3FC7)]),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          else
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
@@ -255,6 +306,29 @@ class NextEventCard extends ConsumerWidget {
                 controller: controller,
                 children: [
                   for (final p in s.nextExcusedPersons)
+                    if (classic)
+                      // DAS-11: Ionic `ion-item` (h3 + p) with an
+                      // `ion-badge slot="end"` (warning / primary).
+                      IonItem(
+                        end: [
+                          IonBadge(
+                            text: '${p.status == AttendanceStatus.lateExcused ? context.l10n.homeDashboardLateExcusedShort : context.l10n.commonStatusExcused}'
+                                '${isWorkExcusedNote(p.notes) ? ' · ${context.l10n.homeDashboardShift}' : ''}',
+                            color: p.status == AttendanceStatus.lateExcused ? AppColors.warning : AppColors.primary,
+                          ),
+                        ],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('${p.firstName ?? ''} ${p.lastName ?? ''}', style: const TextStyle(fontSize: 16)),
+                            if ((p.groupName ?? '').isNotEmpty)
+                              Text(p.groupName!, style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+                            if ((p.notes ?? '').isNotEmpty)
+                              Text(p.notes!, style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+                          ],
+                        ),
+                      )
+                    else
                     ListTile(
                       title: Text('${p.firstName ?? ''} ${p.lastName ?? ''}'),
                       subtitle: Column(
@@ -399,13 +473,16 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
   Widget build(BuildContext context) {
     final async = ref.watch(dashboardCurrentPlanProvider);
     return async.when(
-      loading: () => DashboardCard(
-        icon: AppIcons.listAlt,
-        title: context.l10n.homeDashboardCurrentPlan,
-        subtitle: '',
-        strip: DashStrips.plan,
-        child: DashLoading(),
-      ),
+      loading: () => context.rdSkin == null
+          // Ionic: while loading only a card with the spinner.
+          ? const DashSpinnerCard()
+          : DashboardCard(
+              icon: AppIcons.listAlt,
+              title: context.l10n.homeDashboardCurrentPlan,
+              subtitle: '',
+              strip: DashStrips.plan,
+              child: DashLoading(),
+            ),
       // Ionic renders nothing when there is no plan.
       error: (_, __) => const SizedBox.shrink(),
       data: (data) {
@@ -513,7 +590,10 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
       subtitle: typeName,
       strip: DashStrips.plan,
       onTap: () => _openPlan(context, data, typeName),
-      trailing: isLive
+      trailing: isLive && context.rdSkin == null
+          // Ionic `<ion-badge color="danger" class="live-badge">`.
+          ? IonBadge(text: context.l10n.homeDashboardLive, color: AppColors.danger)
+          : isLive
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
@@ -563,6 +643,77 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
     final isHead = DashboardUtils.isGroupHead(field);
     final isChild = field['groupId'] != null && '${field['groupId']}'.isNotEmpty;
     final conductor = field['conductor']?.toString() ?? '';
+    if (context.rdSkin == null) {
+      // DAS-13: Ionic `ion-item` rows, `lines="inset"` (none on the last),
+      // centred `ion-note` index (min-width 22, 13px / 600, margin 14 / 12;
+      // Unterpunkte 26 and .85em), past rows at .4, the active row tinted
+      // with 600 medium-shade text, group heads bold.
+      final activeStyle = active ? const TextStyle(fontWeight: FontWeight.w600, color: _mediumShade) : null;
+      final ios = useIosLook(context);
+      final row = Opacity(
+        opacity: past ? 0.4 : 1,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: ios ? 44 : 48),
+          child: Row(
+            children: [
+              SizedBox(width: isChild ? 26 : 14),
+              ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 22),
+                child: Text(
+                  number,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: isChild ? 11 : 13,
+                    fontWeight: FontWeight.w600,
+                    color: active ? _mediumShade : AppColors.medium,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Container(
+                  constraints: BoxConstraints(minHeight: ios ? 44 : 48),
+                  padding: const EdgeInsets.fromLTRB(0, 10, 16, 10),
+                  decoration: isLast
+                      ? null
+                      : BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(color: Theme.of(context).dividerColor, width: ios ? 0.55 : 1),
+                          ),
+                        ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text.rich(
+                          TextSpan(children: [
+                            TextSpan(
+                              text: field['name']?.toString() ?? '',
+                              style: TextStyle(fontWeight: isHead ? FontWeight.w700 : null),
+                            ),
+                            if (conductor.isNotEmpty)
+                              TextSpan(
+                                text: ' · $conductor',
+                                style: const TextStyle(color: AppColors.medium, fontSize: 14.4),
+                              ),
+                          ]),
+                          style: TextStyle(fontSize: 16, fontWeight: activeStyle?.fontWeight, color: activeStyle?.color),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      if (active)
+                        DashChip(label: countdown, tone: DashTone.teal, solid: true)
+                      else
+                        DashMeta(startTime),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+      return active ? ColoredBox(color: const Color(0x1400838F), child: row) : row;
+    }
     return Container(
       color: active ? DashTone.teal.bg(context) : null,
       padding: EdgeInsets.fromLTRB(isChild ? 34 : 16, 8, 12, 8),
@@ -606,3 +757,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
     );
   }
 }
+
+
+/// Ionic `--ion-color-medium-shade`.
+const Color _mediumShade = Color(0xFF808289);
