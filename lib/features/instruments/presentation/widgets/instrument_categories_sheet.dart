@@ -15,6 +15,9 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ion_form_items.dart' show withIonLoading;
+import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground;
+import '../../../people/presentation/widgets/ion/ion_widgets.dart' show IonItem, IonBadge, IonText;
 
 /// Bottom sheet for managing instrument categories (CRUD)
 class InstrumentCategoriesSheet extends ConsumerStatefulWidget {
@@ -53,12 +56,15 @@ class _InstrumentCategoriesSheetState
     if (!moved) {
       // Ionic saveCategoryOrder without a move: the existing category
       // sort_order values are written unchanged (null stays null).
-      final ok = await ref
-          .read(groupNotifierProvider.notifier)
-          .saveCategoryOrder({
-        for (final c in categories)
-          if (c.id != null) c.id!: c.sortOrder,
-      });
+      // EIB-19: Ionic `ion-loading` "Reihenfolge wird gespeichert…".
+      final ok = await withIonLoading(
+        context,
+        () => ref.read(groupNotifierProvider.notifier).saveCategoryOrder({
+          for (final c in categories)
+            if (c.id != null) c.id!: c.sortOrder,
+        }),
+        message: context.l10n.instrumentsSavingOrder,
+      );
       if (!mounted) return;
       if (ok) {
         ToastHelper.showSuccess(context, context.l10n.typeSettingsOrderSaved);
@@ -81,9 +87,13 @@ class _InstrumentCategoriesSheetState
       groupInstrumentsByCategory(groups, updatedCats),
     );
 
-    final ok = await ref
-        .read(groupNotifierProvider.notifier)
-        .saveCategoryOrder(categoryOrders, groupSortOrders: groupOrders);
+    final ok = await withIonLoading(
+      context,
+      () => ref
+          .read(groupNotifierProvider.notifier)
+          .saveCategoryOrder(categoryOrders, groupSortOrders: groupOrders),
+      message: context.l10n.instrumentsSavingOrder,
+    );
     if (!mounted) return;
     if (ok) {
       ToastHelper.showSuccess(context, context.l10n.typeSettingsOrderSaved);
@@ -95,7 +105,6 @@ class _InstrumentCategoriesSheetState
   @override
   Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(groupCategoriesProvider);
-    final notifierState = ref.watch(groupNotifierProvider);
 
     // Ionic categories modal: [breakpoints]="[0, 0.6, 1]"
     // [initialBreakpoint]="0.6"; toolbar with the ion-title and the end
@@ -105,7 +114,8 @@ class _InstrumentCategoriesSheetState
       initialBreakpoint: 0.6,
       builder: (context, scrollController) {
         return ColoredBox(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          // Ionic `ion-content` without colour.
+          color: ionPlainContentBackground(context) ?? Theme.of(context).colorScheme.surface,
           child: Column(
             children: [
               IonSheetHeader(
@@ -129,7 +139,6 @@ class _InstrumentCategoriesSheetState
                     ),
                 ],
               ),
-              if (notifierState.isLoading) const LinearProgressIndicator(),
               // Content
               Expanded(
                 child: categoriesAsync.when(
@@ -181,17 +190,24 @@ class _InstrumentCategoriesSheetState
                     if (_isReordering) {
                       final working = _working ?? categories;
                       return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          ListTile(
-                            leading: Icon(AppIcons.infoOutline,
-                                color: AppColors.primary),
-                            title: Text(context.l10n.instrumentsDragCategories),
+                          // EIB-03: Ionic `ion-item color="primary"
+                          // lines="none"` with the info icon and a `p`.
+                          IonItem(
+                            lines: false,
+                            background: AppColors.primary,
+                            start: Icon(AppIcons.info, color: Colors.white),
+                            child: Text(
+                              context.l10n.instrumentsDragCategories,
+                              style: IonText.p(context).copyWith(color: Colors.white),
+                            ),
                           ),
                           Expanded(
                             child: ReorderableListView.builder(
                               scrollController: scrollController,
-                              padding:
-                                  const EdgeInsets.all(AppDimensions.paddingM),
+                              padding: EdgeInsets.zero,
+                              buildDefaultDragHandles: false,
                               itemCount: working.length,
                               onReorder: (oldIndex, newIndex) {
                                 setState(() {
@@ -205,19 +221,10 @@ class _InstrumentCategoriesSheetState
                               },
                               itemBuilder: (context, index) {
                                 final category = working[index];
-                                return Card(
+                                return _CategoryTile(
                                   key: ValueKey(category.id ?? index),
-                                  margin: const EdgeInsets.only(
-                                      bottom: AppDimensions.paddingS),
-                                  child: ListTile(
-                                    leading: CircleAvatar(
-                                      radius: 14,
-                                      child: Text('${index + 1}',
-                                          style:
-                                              const TextStyle(fontSize: 12)),
-                                    ),
-                                    title: Text(category.name),
-                                  ),
+                                  category: category,
+                                  dragIndex: index,
                                 );
                               },
                             ),
@@ -228,7 +235,7 @@ class _InstrumentCategoriesSheetState
 
                     return ListView.builder(
                       controller: scrollController,
-                      padding: const EdgeInsets.all(AppDimensions.paddingM),
+                      padding: EdgeInsets.zero,
                       itemCount: categories.length,
                       itemBuilder: (context, index) {
                         final category = categories[index];
@@ -276,7 +283,8 @@ class _InstrumentCategoriesSheetState
             style: appAlertDestructiveStyle(context),
             child: Text(context.l10n.commonCancel),
           ),
-          FilledButton(
+          // EIB-10: a plain alert button like Ionic.
+          TextButton(
             onPressed: () {
               final name = controller.text.trim();
               if (name.isEmpty) {
@@ -326,7 +334,7 @@ class _InstrumentCategoriesSheetState
             style: appAlertDestructiveStyle(context),
             child: Text(context.l10n.commonCancel),
           ),
-          FilledButton(
+          TextButton(
             onPressed: () {
               final name = controller.text.trim();
               if (name.isEmpty) {
@@ -360,14 +368,13 @@ class _InstrumentCategoriesSheetState
         title: Text(context.l10n.commonConfirm),
         content: Text(context.l10n.instrumentsDeleteCategory),
         actions: [
+          // EIB-18: Ionic `role: 'destructive'` on "Abbrechen", "Ja" plain.
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
+            style: appAlertDestructiveStyle(context),
             child: Text(context.l10n.commonCancel),
           ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.danger,
-            ),
+          TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(context.l10n.commonYes),
           ),
@@ -386,42 +393,63 @@ class _InstrumentCategoriesSheetState
   }
 }
 
+/// EIB-03: Ionic category row – plain `ion-item` with `ion-reorder` (reorder
+/// mode) and the medium sort badge at the start, the label, and the clear
+/// `warning` pencil / `danger` trash buttons at the end.
 class _CategoryTile extends StatelessWidget {
   final GroupCategory category;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+
+  /// Set in reorder mode: drag handle at the start, no buttons.
+  final int? dragIndex;
 
   const _CategoryTile({
     super.key,
     required this.category,
-    required this.onEdit,
-    required this.onDelete,
+    this.onEdit,
+    this.onDelete,
+    this.dragIndex,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: ListTile(
-        leading: Icon(AppIcons.category, size: 20),
-        title: Text(category.name),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: Icon(AppIcons.edit, size: 20),
-              onPressed: onEdit,
-              tooltip: context.l10n.commonEdit,
-            ),
-            IconButton(
-              icon:
-                  Icon(AppIcons.delete, size: 20, color: AppColors.danger),
-              onPressed: onDelete,
-              tooltip: context.l10n.commonDelete,
-            ),
-          ],
-        ),
-      ),
+    final hasStart = dragIndex != null || category.sortOrder != null;
+    return IonItem(
+      start: hasStart
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (dragIndex != null) ...[
+                  ReorderableDragStartListener(
+                    index: dragIndex!,
+                    child: Icon(AppIcons.reorder, color: AppColors.medium),
+                  ),
+                  if (category.sortOrder != null) const SizedBox(width: 16),
+                ],
+                if (category.sortOrder != null)
+                  IonBadge(text: '${category.sortOrder}', color: AppColors.medium),
+              ],
+            )
+          : null,
+      end: [
+        if (dragIndex == null) ...[
+          IconButton(
+            icon: Icon(AppIcons.edit, color: AppColors.warning),
+            onPressed: onEdit,
+            tooltip: context.l10n.commonEdit,
+          ),
+          IconButton(
+            icon: Icon(AppIcons.delete, color: AppColors.danger),
+            onPressed: onDelete,
+            tooltip: context.l10n.commonDelete,
+          ),
+        ],
+      ],
+      child: Text(category.name, style: IonText.p(context).copyWith(
+        fontSize: useIosLook(context) ? 17 : 16,
+        color: Theme.of(context).colorScheme.onSurface,
+      )),
     );
   }
 }

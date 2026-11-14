@@ -20,6 +20,7 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../people/presentation/widgets/ion/ion_widgets.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/layout/ion_form_items.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground;
 
 /// Instruments list page — grouped by category with player counts.
@@ -67,8 +68,13 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
       _reorderSections = null;
       _moved = false;
     });
-    final ok =
-        await ref.read(groupNotifierProvider.notifier).saveGroupOrder(orders);
+    final notifier = ref.read(groupNotifierProvider.notifier);
+    // EIB-19: Ionic saveOrder shows `ion-loading` "Reihenfolge wird
+    // gespeichert…" while saving.
+    final ok = context.rdSkin == null
+        ? await withIonLoading(context, () => notifier.saveGroupOrder(orders),
+            message: context.l10n.instrumentsSavingOrder)
+        : await notifier.saveGroupOrder(orders);
     if (!mounted) return;
     if (ok) {
       ToastHelper.showSuccess(context, context.l10n.typeSettingsOrderSaved);
@@ -114,8 +120,10 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
         tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         onPressed: () => context.go('/settings'),
       ),
+      // EIB-12: Ionic – both end buttons share one `ion-buttons` group (iOS
+      // glass capsule; md / Beta a plain row).
       actions: [
-        if (isAdmin) ...[
+        if (isAdmin) ToolbarButtonGroup(children: [
           IconButton(
             icon: Icon(_isReordering ? AppIcons.check : AppIcons.swapVert),
             tooltip: _isReordering
@@ -131,7 +139,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
             onPressed: () => showInstrumentCategoriesSheet(context),
             tooltip: context.l10n.instrumentsCategories,
           ),
-        ],
+        ]),
       ],
       onRefresh: refresh,
       slivers: [
@@ -366,7 +374,6 @@ Future<void> showAddGroupSheet(
             title: ctx.l10n.instrumentsAddGroup,
             body: SingleChildScrollView(
               controller: controller,
-              padding: const EdgeInsets.only(top: AppDimensions.paddingM),
               child: _AddGroupSheet(categories: categories, showTitle: false),
             ),
           ),
@@ -422,8 +429,55 @@ class _AddGroupSheetState extends ConsumerState<_AddGroupSheet> {
     if (mounted) Navigator.pop(context, created != null);
   }
 
+  String _categoryName(BuildContext context) =>
+      widget.categories.where((c) => c.id == _categoryId).map((c) => c.name).firstOrNull ??
+      context.l10n.generalSettingsNone;
+
+  /// EIB-02 / EIB-04: classic sheet content – `ion-item`s with stacked
+  /// labels (input with placeholder, `ion-select labelPlacement="stacked"`)
+  /// and the square full-width `ion-button expand="full"`.
+  Widget _buildClassic(BuildContext context) {
+    final categories = widget.categories;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        IonStackedInputItem(
+          label: context.l10n.peopleGroup,
+          controller: _controller,
+          placeholder: context.l10n.instrumentsGroupPh,
+          autofocus: true,
+        ),
+        if (categories.isNotEmpty)
+          IonSelectItem(
+            stacked: true,
+            label: context.l10n.instrumentsCategory,
+            value: _categoryName(context),
+            onOpen: (anchor) async {
+              final picked = await showAppSelect<int?>(
+                context: anchor,
+                interface: AppSelectInterface.alert,
+                header: context.l10n.instrumentsCategory,
+                value: _categoryId,
+                options: [
+                  AppSelectOption<int?>(value: null, label: context.l10n.generalSettingsNone),
+                  for (final c in categories) AppSelectOption<int?>(value: c.id, label: c.name),
+                ],
+              );
+              if (picked != null && mounted) setState(() => _categoryId = picked.value);
+            },
+          ),
+        IonFullButton(
+          onPressed: _add,
+          child: IonButtonLabel(context.l10n.attendanceAdd),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!widget.showTitle) return _buildClassic(context);
     final categories = widget.categories;
     return Padding(
       padding: EdgeInsets.only(
@@ -482,16 +536,23 @@ Future<void> _openInstrumentPage(
   List<GroupCategory> categories, {
   String? tenantType,
 }) async {
-  final result = await Navigator.of(context, rootNavigator: true).push<bool>(
-    MaterialPageRoute(
-      fullscreenDialog: true,
-      builder: (_) => _InstrumentEditDialog(
+  Widget page(BuildContext _) => _InstrumentEditDialog(
         group: group,
         categories: categories,
         tenantType: tenantType,
-      ),
-    ),
-  );
+      );
+  // EIB-01: Ionic `modalController.create({ component: InstrumentPage,
+  // presentingElement })` – iOS card modal, md phone full screen, from
+  // 768px a centred 600px card. The Beta keeps its full-screen route.
+  final result = context.rdSkin == null
+      ? await showIonCardModal<bool>(
+          context,
+          builder: page,
+          iosBackgroundColor: ionPlainContentBackground(context),
+        )
+      : await Navigator.of(context, rootNavigator: true).push<bool>(
+          MaterialPageRoute(fullscreenDialog: true, builder: page),
+        );
   // Ionic InstrumentPage saves/deletes itself and dismisses with
   // {updated: true}; the list then reloads.
   if (result == null || !context.mounted) return;
@@ -539,13 +600,20 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
       return;
     }
     setState(() => _generatingSynonyms = true);
+    // EIB-19: Ionic shows `ion-loading` "Synonyme werden generiert…".
+    final loading = context.rdSkin == null
+        ? showIonLoading(context, message: context.l10n.instrumentsGeneratingSynonyms)
+        : null;
     try {
       final synonyms = await ref.read(aiServiceProvider).getGroupSynonyms(name);
+      loading?.dismiss();
       _synonymsController.text = synonyms;
       if (mounted) ToastHelper.showSuccess(context, context.l10n.instrumentsSynonymsGenerated);
     } catch (_) {
+      loading?.dismiss();
       if (mounted) ToastHelper.showError(context, context.l10n.instrumentsSynonymsFailed);
     } finally {
+      loading?.dismiss();
       if (mounted) setState(() => _generatingSynonyms = false);
     }
   }
@@ -593,8 +661,154 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
 
   /// Ionic InstrumentPage: Name, Kategorie, Stimmung, Tonumfang,
   /// Notenschlüssel, Synonyme, Notizen → "Aktualisieren" / "Entfernen".
+  String _categoryName(BuildContext context) =>
+      widget.categories.where((c) => c.id == _selectedCategoryId).map((c) => c.name).firstOrNull ??
+      context.l10n.generalSettingsNone;
+
+  /// EIB-01 / EIB-04 / EIB-05: Ionic instrument.page in the classic design –
+  /// modal toolbar (title, close in `slot="end"`), an `ion-grid` of
+  /// `ion-item`s with stacked labels, the tuning / clef selects with the
+  /// label at the start, two block buttons.
+  Widget _buildClassic(BuildContext context) {
+    final l10n = context.l10n;
+    final showMusicFields = !_isChoir && !_isGeneral && !_isMain;
+    // ion-grid padding 5 + ion-col padding 5.
+    Widget col(Widget child) => Padding(padding: const EdgeInsets.all(5), child: child);
+    final clefs = groupClefOptions.where(_selectedClefs.contains).toList();
+    return IonSheetScaffold(
+      title: widget.group?.name ?? l10n.instrumentsAddGroup,
+      showClose: true,
+      backgroundColor: ionPlainContentBackground(context),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: AppDimensions.paddingM)),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  col(IonStackedInputItem(
+                    label: l10n.typeSettingsName,
+                    controller: _nameController,
+                    autofocus: !isEditing,
+                    validator: (value) => value == null || value.trim().isEmpty
+                        ? l10n.instrumentsNameRequired
+                        : null,
+                  )),
+                  col(IonSelectItem(
+                    stacked: true,
+                    label: l10n.instrumentsCategory,
+                    value: _categoryName(context),
+                    onOpen: (anchor) async {
+                      final picked = await showAppSelect<int?>(
+                        context: anchor,
+                        interface: AppSelectInterface.alert,
+                        header: l10n.instrumentsCategory,
+                        value: _selectedCategoryId,
+                        options: [
+                          AppSelectOption<int?>(value: null, label: l10n.generalSettingsNone),
+                          for (final c in widget.categories)
+                            AppSelectOption<int?>(value: c.id, label: c.name),
+                        ],
+                      );
+                      if (picked != null && mounted) {
+                        setState(() => _selectedCategoryId = picked.value);
+                      }
+                    },
+                  )),
+                  if (showMusicFields) ...[
+                    // `ion-select interface="popover" [label]` (label at
+                    // the start, value at the end).
+                    col(IonSelectItem(
+                      label: l10n.instrumentsTuning,
+                      value: groupTuningOptions.contains(_selectedTuning) ? _selectedTuning : 'C',
+                      onOpen: (anchor) async {
+                        final picked = await showAppSelect<String>(
+                          context: anchor,
+                          interface: AppSelectInterface.popover,
+                          value: _selectedTuning,
+                          options: [
+                            for (final t in groupTuningOptions) AppSelectOption(value: t, label: t),
+                          ],
+                        );
+                        if (picked != null && mounted) {
+                          setState(() => _selectedTuning = picked.value);
+                        }
+                      },
+                    )),
+                    col(IonStackedInputItem(
+                      label: l10n.instrumentsRange,
+                      controller: _rangeController,
+                    )),
+                    // `ion-select multiple`: one item row, the choice in a
+                    // checkbox list. Ionic labels it "Stimmung" (copy bug);
+                    // the label stays "Notenschlüssel".
+                    col(IonSelectItem(
+                      label: l10n.instrumentsFlutterClefs,
+                      value: clefs.map((c) => '${groupClefLabel(l10n, c)} ($c)').join(', '),
+                      onOpen: (anchor) async {
+                        final picked = await showAppMultiSelect<String>(
+                          context: anchor,
+                          header: l10n.instrumentsFlutterClefs,
+                          values: clefs,
+                          options: [
+                            for (final c in groupClefOptions)
+                              AppSelectOption(value: c, label: '${groupClefLabel(l10n, c)} ($c)'),
+                          ],
+                        );
+                        // At least one clef stays selected (as before).
+                        if (picked != null && picked.isNotEmpty && mounted) {
+                          setState(() => _selectedClefs = picked.toSet());
+                        }
+                      },
+                    )),
+                  ],
+                  if (!_isGeneral && !_isMain)
+                    col(IonStackedInputItem(
+                      label: l10n.instrumentsSynonyms,
+                      controller: _synonymsController,
+                      helper: l10n.instrumentsSynonymsHelper,
+                      // `<ion-button slot="end" fill="clear">` sparkles.
+                      end: IconButton(
+                        tooltip: l10n.instrumentsFlutterGenerateSynonyms,
+                        color: AppColors.primary,
+                        icon: Icon(AppIcons.autoAwesomeOutlined),
+                        onPressed: _generatingSynonyms ? null : _generateSynonyms,
+                      ),
+                    )),
+                  col(IonStackedInputItem(
+                    label: l10n.peopleNotes,
+                    controller: _notesController,
+                    textarea: true,
+                  )),
+                ],
+              ),
+            ),
+            IonButton(
+              expand: true,
+              label: isEditing ? l10n.instrumentsUpdate : l10n.attendanceAdd,
+              onPressed: _busy ? null : _save,
+            ),
+            if (isEditing && !_isMain) ...[
+              const SizedBox(height: 8),
+              IonButton(
+                expand: true,
+                color: AppColors.danger,
+                label: l10n.commonRemove,
+                onPressed: _busy ? null : () => _confirmDelete(context),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin == null) return _buildClassic(context);
     final showMusicFields = !_isChoir && !_isGeneral && !_isMain;
     return Scaffold(
       // PARITY_R5: instrument.page.html `<ion-content>` without colour → white.
@@ -853,6 +1067,8 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
+            // EIB-18: Ionic `role: 'destructive'` on "Abbrechen".
+            style: appAlertDestructiveStyle(ctx),
             child: Text(context.l10n.commonCancel),
           ),
           TextButton(
