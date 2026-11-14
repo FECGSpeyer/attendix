@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import 'person_detail/date_input_row.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:intl/intl.dart';
 
@@ -84,7 +86,28 @@ class _ArchivePersonModalState extends State<_ArchivePersonModal> {
           note: _noteController.text,
         )),
       ),
-      body: IonFormTheme(
+      body: context.rdSkin == null
+          // PEO-25: Ionic stacked `ion-input type="date"` (typed date +
+          // calendar) and stacked textarea, as on the person page.
+          ? ListView(
+              children: [
+                DateInputRow(
+                  label: l10n.peopleLeaveDate,
+                  value: utcMidnightIso(_date),
+                  onChanged: (iso) {
+                    final d = storedCalendarDate(iso);
+                    if (d != null) setState(() => _date = d);
+                  },
+                ),
+                IonInputRow(
+                  label: l10n.peopleNote,
+                  value: _noteController.text,
+                  textarea: true,
+                  onChanged: (v) => _noteController.text = v,
+                ),
+              ],
+            )
+          : IonFormTheme(
         child: ListView(
           padding: const EdgeInsets.all(AppDimensions.paddingM),
           children: [
