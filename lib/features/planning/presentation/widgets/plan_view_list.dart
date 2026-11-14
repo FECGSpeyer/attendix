@@ -23,6 +23,8 @@ class PlanViewList extends StatefulWidget {
     this.onFieldTap,
     this.trailingBuilder,
     this.showStartEnd = true,
+    this.badges = false,
+    this.allDone = false,
   });
 
   final Plan plan;
@@ -46,6 +48,13 @@ class PlanViewList extends StatefulWidget {
   /// Extra trailing widget per row (e.g. delete button in edit mode).
   final Widget? Function(int index)? trailingBuilder;
   final bool showStartEnd;
+
+  /// ABL-20: Ionic org-plan-public – start, minutes and end as `ion-badge
+  /// slot="end"` instead of grey notes.
+  final bool badges;
+
+  /// ABL-20: every row dimmed like Ionic `.done-slot` (past plans).
+  final bool allDone;
 
   @override
   State<PlanViewList> createState() => _PlanViewListState();
@@ -105,7 +114,10 @@ class _PlanViewListState extends State<PlanViewList> {
         subtitle: startCountdown.isNotEmpty
             ? Text(startCountdown, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500))
             : null,
-        trailing: Text(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(plan.time)), style: noteStyle),
+        trailing: widget.badges
+            ? IonBadge(
+                label: context.l10n.attendanceTimeOClock(PlanUtils.formatTime(plan.time)), color: AppColors.primary)
+            : Text(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(plan.time)), style: noteStyle),
       ));
     }
 
@@ -152,6 +164,9 @@ class _PlanViewListState extends State<PlanViewList> {
                 label: PlanUtils.activeCountdown(widget.date, plan.time, fields, active, now),
                 color: AppColors.primary,
               )
+            : widget.badges
+            ? IonBadge(
+                label: context.l10n.planningMinShort(PlanUtils.displayMinutes(f, fields)), color: AppColors.primary)
             : Text(
                 context.l10n.planningMinShort(PlanUtils.displayMinutes(f, fields)),
                 style: isHead
@@ -196,7 +211,7 @@ class _PlanViewListState extends State<PlanViewList> {
       }
       children.add(Opacity(
         // Ionic `.done-slot`: opacity .4
-        opacity: isDone ? 0.4 : 1,
+        opacity: isDone || widget.allDone ? 0.4 : 1,
         child: Container(
           // Ionic `.active-slot` / `.active-group`: tinted + 3px primary border.
           decoration: BoxDecoration(
@@ -217,7 +232,9 @@ class _PlanViewListState extends State<PlanViewList> {
       if (end.isNotEmpty) {
         children.add(ListTile(
           title: Text(context.l10n.attendanceEnd),
-          trailing: Text(context.l10n.attendanceTimeOClock(end), style: noteStyle),
+          trailing: widget.badges
+              ? IonBadge(label: context.l10n.attendanceTimeOClock(end), color: AppColors.primary)
+              : Text(context.l10n.attendanceTimeOClock(end), style: noteStyle),
         ));
       }
     }
