@@ -736,7 +736,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   PlanAttendance? get _att => _attendances.where((a) => a.id == _attId).firstOrNull;
 
-  List<PlanAttendanceType> get _types => ref.read(planAttendanceTypesProvider).valueOrNull ?? const [];
+  // TERMINE-22: these getters also run from writes that finish after the
+  // editor was disposed (deep link / browser back while a write runs), where
+  // `ref` throws "Cannot use ref after the widget was disposed". The
+  // container captured in initState stays usable.
+  List<PlanAttendanceType> get _types => _container.read(planAttendanceTypesProvider).valueOrNull ?? const [];
 
   PlanAttendanceType? _typeOf(PlanAttendance? att) =>
       att?.typeId == null ? null : _types.where((t) => t.id == att!.typeId).firstOrNull;
@@ -945,9 +949,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   }
 
   List<SongHistory> get _history =>
-      (ref.read(currentSongsProvider).valueOrNull ?? const []).expand((e) => e.history).toList();
+      (_container.read(currentSongsProvider).valueOrNull ?? const []).expand((e) => e.history).toList();
 
-  List<Song> get _songs => ref.read(planSongsProvider).valueOrNull ?? const [];
+  List<Song> get _songs => _container.read(planSongsProvider).valueOrNull ?? const [];
 
   /// Ionic 4.17.10: unique row uids for the Gemeinde App (linked orgs only).
   List<PlanField> _withFieldUids(List<PlanField> fields) =>
@@ -1167,8 +1171,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   ///
   /// SOL_FIX30: [planRef] names the plan ([_refOf], matched by
   /// [_indexOfRef]); a plan without id that no longer matches is a conflict.
-  Future<int?> _writePlanOp(int attId, _PlanRef? planRef, _PlanListOp op) => _serialised(attId, () async {
-        final repo = ref.read(planRepositoryWithTenantProvider);
+  Future<int?> _writePlanOp(int attId, _PlanRef? planRef, _PlanListOp op) {
+    // TERMINE-22: read while mounted; the queued task may run after dispose.
+    final repo = ref.read(planRepositoryWithTenantProvider);
+    return _serialised(attId, () async {
         final latest =
             PlanningWriteSync.latestSince(PlanningWriteSync.keyFor(_tenantId, attId), _knownSeq[attId] ?? 0);
         final own = _att;
@@ -1194,6 +1200,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         _replaceAtt(saved);
         return result.open;
       });
+  }
 
   void _replaceAtt(PlanAttendance saved) {
     final updated = [for (final a in _attendances) a.id == saved.id ? saved : a];
