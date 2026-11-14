@@ -381,8 +381,11 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           child: context.rdSkin == null
               ? ListView(
                   // PEO-06: the create modal is the person page template.
+                  // ROLLEN-B-17: the save FAB floats over this modal even
+                  // inside the iOS shell (it is not in the tab bar here), so
+                  // always keep room for it below the last row.
                   padding: EdgeInsets.only(
-                      bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
+                      bottom: 16 + 80 + MediaQuery.paddingOf(context).bottom),
                   children: _buildClassicForm(instrumentsAsync, tenant, extraFields),
                 )
               : ListView(

@@ -228,6 +228,7 @@ const Map<String, RoleCheck> _protectedRoutes = {
 
   // Conductor routes (Admin, Responsible, Viewer)
   '/settings/teachers': _isConductor,
+  '/people/new': _isAdminOrResponsible, // ROLLEN-B-45: create = Admin/Verantwortlich (person_create_page _canEdit)
   '/people': _canSeePeopleTab,
   // SEC-017 / PARITY_R7: Statistik + Export (Ionic settings `isAdmin`:
   // ADMIN/RESPONSIBLE, not VIEWER). /planning and /history: route_access.dart.

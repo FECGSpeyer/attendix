@@ -1860,7 +1860,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           ],
         ),
         body: ListView(
-          padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 84)),
+          // PERSONEN-27/81: the FAB floats over the person modal even inside
+          // the iOS shell – keep room for it (classic; Beta has no FAB).
+          padding: EdgeInsets.only(
+              bottom: rd == null
+                  ? 16 + 84 + MediaQuery.paddingOf(context).bottom
+                  : scrollEndPadding(context, base: 16, fabRoom: 84)),
           children: [
             // Ionic .profile-header: avatar + name with pencil
             PersonHeader(
