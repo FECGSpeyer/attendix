@@ -522,7 +522,9 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                   ionListMargin(context),
                   ionIsIos(context) ? 0 : AppDimensions.paddingM,
                   ionListMargin(context),
-                  96,
+                  // ROLLEN-B-34: the last row scrolls clear of the save FAB
+                  // (and of the iOS tab bar row the FAB sits in).
+                  scrollEndPadding(context, base: 24, fabRoom: 80),
                 ),
                 children: [
                   const IonContentTopInset(),

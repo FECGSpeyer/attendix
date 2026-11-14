@@ -86,7 +86,10 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
         data: (types) {
           final displayTypes = _isReordering ? _localTypes : types;
           return ListView(
-            padding: EdgeInsets.fromLTRB(ionListMargin(context), ios ? 0 : 16, ionListMargin(context), 96),
+            // TERMINE-27: room for the FAB (and the iOS tab bar row) below
+            // the last row, so its reorder handle can scroll free.
+            padding: EdgeInsets.fromLTRB(ionListMargin(context), ios ? 0 : 16, ionListMargin(context),
+                scrollEndPadding(context, base: 24, fabRoom: 80)),
             children: [
               const IonContentTopInset(),
               IonLargeTitle(title, padding: const EdgeInsets.only(bottom: 4)),
@@ -169,6 +172,12 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
       final success = await ref.read(attendanceTypeNotifierProvider.notifier).reorderTypes(orderedIds);
 
       if (success) {
+        // TERMINE-27: keep the new order on screen until the reloaded list
+        // is there (otherwise the old cached order flashes up briefly).
+        try {
+          await ref.read(attendanceTypesProvider.future);
+        } catch (_) {}
+        if (!mounted) return;
         // BL-008: Only reset state AFTER successful save
         setState(() {
           _isReordering = false;

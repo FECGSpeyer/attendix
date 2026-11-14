@@ -445,7 +445,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         key: _formKey,
         onChanged: () => setState(() => _hasChanges = true),
         child: ListView(
-          padding: EdgeInsets.fromLTRB(_pageMargin, AppDimensions.paddingM, _pageMargin, scrollEndPadding(context, base: AppDimensions.paddingM)),
+          padding: EdgeInsets.fromLTRB(_pageMargin, AppDimensions.paddingM, _pageMargin, scrollEndPadding(context, base: AppDimensions.paddingM, fabRoom: _isNew ? 80 : 0)),
           children: [
             const IonContentTopInset(),
             // Usage warning
