@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.144.1",
+      "date": "14.11.2026",
+      "changes": [
+        "🐛 Klassisches Design: Speichern-Knopf in der Tab-Leiste kommt zuverlässig zurück, Lehrerliste zählt neue Schüler sofort, ungültige Adressen führen zurück zur Liste",
+        "🎨 Klassisches Design: Nacharbeiten aus dem Nachtest (PDF-Ansicht, Speicherbalken, Fenstertitel, Namensvorschläge, Platzhalter, Escape schließt Menüs)"
+      ]
+    },
+    {
       "version": "0.144.0",
       "date": "14.11.2026",
       "changes": [
