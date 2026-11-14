@@ -1189,8 +1189,8 @@ extension _PlanningBeta on _PlanningPageState {
       await _rdInsertRegister(after: after == null ? null : before[after]);
       return;
     }
-    if (action == 'works') {
-      final rows = await _rdPickWorksFields();
+    if (action == 'works' || action == 'eventworks') {
+      final rows = action == 'works' ? await _rdPickWorksFields() : await _rdPickEventWorksFields(subtitle);
       if (rows.isEmpty || !_samePlan(loadGen)) return;
       _rdApply([..._fields, ...rows]);
     } else {
@@ -1240,6 +1240,85 @@ extension _PlanningBeta on _PlanningPageState {
     final song = pick.song;
     if (song == null) return const [];
     return [PlanSongHelper.songField(song, history: _history, prefix: _songPrefix(_typeOf(_att)))];
+  }
+
+  // ---------------------------------------------------------------------------
+  // "Werke vom … übernehmen": the Werke planned for the next Auftritt
+  // ---------------------------------------------------------------------------
+
+  /// The Termine whose planned Werke the open Ablauf can take over: the
+  /// Termin itself, then the Auftritte after it (see
+  /// [PlanSongHelper.eventWorks]).
+  List<PlanEventWorks> _rdEventWorks() {
+    final att = _att;
+    if (att == null || _songs.isEmpty || ref.read(currentTenantProvider)?.type == 'general') return const [];
+    return PlanSongHelper.eventWorks(att, attendances: _attendances, types: _types, history: _history, songs: _songs);
+  }
+
+  /// "Adventskonzert": the Termin's own title, else its Terminart.
+  String _rdAttName(PlanAttendance a) => (a.typeInfo?.isNotEmpty ?? false) ? a.typeInfo! : (_typeOf(a)?.name ?? '');
+
+  /// The entry "Werke vom 14.12.2026" / "Adventskonzert · 6 Werke" for the
+  /// nearest of [sources] (empty state and "Hinzufügen").
+  Widget _rdEventWorksRow(List<PlanEventWorks> sources, VoidCallback onTap, {required bool chevron}) {
+    final l10n = context.l10n;
+    final first = sources.first;
+    final name = first.own ? '' : _rdAttName(first.att);
+    return RdListRow(
+      key: const Key('rd-plan-event-works'),
+      leading: const RdRowIcon(Icons.queue_music_outlined),
+      title: first.own ? l10n.redesignPlanEventWorksOwn : l10n.redesignPlanEventWorksFrom(_rdDate(first.att)),
+      subtitle: [if (name.isNotEmpty) name, l10n.redesignPlanEventWorksCount(first.works.length)].join(' · '),
+      showChevron: chevron,
+      onTap: onTap,
+    );
+  }
+
+  /// "Werke übernehmen": the Werke of the Termine as a checklist (the
+  /// nearest one ticked); the rows of the chosen ones, each with the
+  /// conductor planned there (empty: nothing chosen).
+  Future<List<PlanField>> _rdPickEventWorksFields(String? subtitle) async {
+    final l10n = context.l10n;
+    final sources = _rdEventWorks();
+    if (sources.isEmpty) return const [];
+    final loadGen = _loadGen;
+    String label(PlanEventWorks s) {
+      if (s.own) return l10n.redesignPlanEventWorksThis;
+      final d = DateTime.tryParse(s.att.date);
+      String date;
+      try {
+        date = d == null ? s.att.date : DateFormat('EEE, d. MMM', currentIntlLocale()).format(d);
+      } catch (_) {
+        date = _rdDate(s.att);
+      }
+      final name = _rdAttName(s.att);
+      return [if (name.isNotEmpty) name, date].join(' · ');
+    }
+
+    final chosen = await showRdEventWorksSheet(
+      context,
+      groups: [for (final s in sources) (label: label(s), works: s.works)],
+      inPlanIds: _fields.map((f) => f.songId).whereType<int>().toSet(),
+      subtitle: subtitle,
+    );
+    if (chosen == null || chosen.isEmpty || !_samePlan(loadGen)) return const [];
+    final prefix = _songPrefix(_typeOf(_att));
+    return [
+      for (final w in chosen)
+        PlanSongHelper.songField(
+          w.song,
+          history: [SongHistory(songId: w.song.id, conductorName: w.conductor)],
+          prefix: prefix,
+        ),
+    ];
+  }
+
+  /// Empty Ablauf: the chosen Werke are its first rows.
+  Future<void> _rdTakeEventWorks() async {
+    final loadGen = _loadGen;
+    final rows = await _rdPickEventWorksFields(null);
+    if (rows.isEmpty || !_samePlan(loadGen)) return;
+    _rdApply([..._fields, ...rows]);
   }
 
   // ---------------------------------------------------------------------------
@@ -1568,6 +1647,7 @@ extension _PlanningBeta on _PlanningPageState {
     final canInsertAgenda = hasProtocol && _planIndex == 0 && !_fields.any(PlanUtils.isAgendaPlaceholder);
     final canAddTopics = _canAddTopics;
     final canRegister = tenant?.type == 'choir' || tenant?.type == 'orchestra';
+    final eventWorks = _rdEventWorks();
     return _rdSheet<String>(
       title: l10n.redesignPlanAddTitle,
       subtitle: subtitle,
@@ -1602,6 +1682,7 @@ extension _PlanningBeta on _PlanningPageState {
                     () => pop('works'),
                     key: const Key('rd-plan-add-works'),
                   ),
+                if (eventWorks.isNotEmpty) _rdEventWorksRow(eventWorks, () => pop('eventworks'), chevron: false),
                 if (canRegister)
                   _rdSheetRow(
                     Icons.groups_outlined,
@@ -2131,7 +2212,10 @@ extension _PlanningBeta on _PlanningPageState {
     final org = ref.watch(currentOrganisationProvider).valueOrNull;
     final orgTemplates = org?.planningTemplates ?? const <Plan>[];
     final previous = _rdPreviousPlan(att);
+    final eventWorks = _rdEventWorks();
     final rows = <Widget>[
+      // The Werke of the next Auftritt: what a Probe mostly starts with.
+      if (eventWorks.isNotEmpty) _rdEventWorksRow(eventWorks, _rdTakeEventWorks, chevron: true),
       if (previous != null)
         RdListRow(
           key: const Key('rd-plan-copy-last'),

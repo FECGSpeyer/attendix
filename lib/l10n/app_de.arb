@@ -21221,6 +21221,51 @@
   "@redesignPlanEnd": {
     "description": "redesign.plan.end"
   },
+  "redesignPlanEventWorksAdd": "{count, plural, =0 {Werke hinzufügen} one {1 Werk hinzufügen} other {{count} Werke hinzufügen}}",
+  "@redesignPlanEventWorksAdd": {
+    "description": "redesign.plan.eventWorksAdd",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignPlanEventWorksAll": "Alle",
+  "@redesignPlanEventWorksAll": {
+    "description": "redesign.plan.eventWorksAll"
+  },
+  "redesignPlanEventWorksCount": "{count, plural, one {1 Werk} other {{count} Werke}}",
+  "@redesignPlanEventWorksCount": {
+    "description": "redesign.plan.eventWorksCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignPlanEventWorksFrom": "Werke vom {date}",
+  "@redesignPlanEventWorksFrom": {
+    "description": "redesign.plan.eventWorksFrom",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignPlanEventWorksNone": "Keine",
+  "@redesignPlanEventWorksNone": {
+    "description": "redesign.plan.eventWorksNone"
+  },
+  "redesignPlanEventWorksOwn": "Werke dieses Termins",
+  "@redesignPlanEventWorksOwn": {
+    "description": "redesign.plan.eventWorksOwn"
+  },
+  "redesignPlanEventWorksThis": "Dieser Termin",
+  "@redesignPlanEventWorksThis": {
+    "description": "redesign.plan.eventWorksThis"
+  },
+  "redesignPlanEventWorksTitle": "Werke übernehmen",
+  "@redesignPlanEventWorksTitle": {
+    "description": "redesign.plan.eventWorksTitle"
+  },
   "redesignPlanExpand": "Block aufklappen",
   "@redesignPlanExpand": {
     "description": "redesign.plan.expand"

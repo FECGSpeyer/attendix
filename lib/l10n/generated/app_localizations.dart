@@ -27360,6 +27360,54 @@ abstract class AppLocalizations {
   /// **'Ende'**
   String get redesignPlanEnd;
 
+  /// redesign.plan.eventWorksAdd
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Werke hinzufügen} one {1 Werk hinzufügen} other {{count} Werke hinzufügen}}'**
+  String redesignPlanEventWorksAdd(num count);
+
+  /// redesign.plan.eventWorksAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get redesignPlanEventWorksAll;
+
+  /// redesign.plan.eventWorksCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk} other {{count} Werke}}'**
+  String redesignPlanEventWorksCount(num count);
+
+  /// redesign.plan.eventWorksFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Werke vom {date}'**
+  String redesignPlanEventWorksFrom(Object date);
+
+  /// redesign.plan.eventWorksNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine'**
+  String get redesignPlanEventWorksNone;
+
+  /// redesign.plan.eventWorksOwn
+  ///
+  /// In de, this message translates to:
+  /// **'Werke dieses Termins'**
+  String get redesignPlanEventWorksOwn;
+
+  /// redesign.plan.eventWorksThis
+  ///
+  /// In de, this message translates to:
+  /// **'Dieser Termin'**
+  String get redesignPlanEventWorksThis;
+
+  /// redesign.plan.eventWorksTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Werke übernehmen'**
+  String get redesignPlanEventWorksTitle;
+
   /// redesign.plan.expand
   ///
   /// In de, this message translates to:

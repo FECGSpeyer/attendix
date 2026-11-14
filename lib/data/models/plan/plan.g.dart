@@ -264,6 +264,10 @@ _$PlanAttendanceTypeImpl _$$PlanAttendanceTypeImplFromJson(
       json['is_default_org_plan'] == null
           ? false
           : const PlanBoolConverter().fromJson(json['is_default_org_plan']),
+  highlight:
+      json['highlight'] == null
+          ? false
+          : const PlanBoolConverter().fromJson(json['highlight']),
 );
 
 Map<String, dynamic> _$$PlanAttendanceTypeImplToJson(
@@ -280,6 +284,8 @@ Map<String, dynamic> _$$PlanAttendanceTypeImplToJson(
   if (const PlanBoolConverter().toJson(instance.isDefaultOrgPlan)
       case final value?)
     'is_default_org_plan': value,
+  if (const PlanBoolConverter().toJson(instance.highlight) case final value?)
+    'highlight': value,
 };
 
 _$OrgExtraFieldImpl _$$OrgExtraFieldImplFromJson(Map<String, dynamic> json) =>

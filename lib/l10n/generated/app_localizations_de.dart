@@ -17272,6 +17272,49 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanEnd => 'Ende';
 
   @override
+  String redesignPlanEventWorksAdd(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke hinzufügen',
+      one: '1 Werk hinzufügen',
+      zero: 'Werke hinzufügen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignPlanEventWorksAll => 'Alle';
+
+  @override
+  String redesignPlanEventWorksCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke',
+      one: '1 Werk',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanEventWorksFrom(Object date) {
+    return 'Werke vom $date';
+  }
+
+  @override
+  String get redesignPlanEventWorksNone => 'Keine';
+
+  @override
+  String get redesignPlanEventWorksOwn => 'Werke dieses Termins';
+
+  @override
+  String get redesignPlanEventWorksThis => 'Dieser Termin';
+
+  @override
+  String get redesignPlanEventWorksTitle => 'Werke übernehmen';
+
+  @override
   String get redesignPlanExpand => 'Block aufklappen';
 
   @override

@@ -17130,6 +17130,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanEnd => 'End';
 
   @override
+  String redesignPlanEventWorksAdd(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count works',
+      one: 'Add 1 work',
+      zero: 'Add works',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignPlanEventWorksAll => 'All';
+
+  @override
+  String redesignPlanEventWorksCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count works',
+      one: '1 work',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanEventWorksFrom(Object date) {
+    return 'Works of $date';
+  }
+
+  @override
+  String get redesignPlanEventWorksNone => 'None';
+
+  @override
+  String get redesignPlanEventWorksOwn => 'Works of this event';
+
+  @override
+  String get redesignPlanEventWorksThis => 'This event';
+
+  @override
+  String get redesignPlanEventWorksTitle => 'Take over works';
+
+  @override
   String get redesignPlanExpand => 'Expand block';
 
   @override

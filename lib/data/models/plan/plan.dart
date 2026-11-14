@@ -276,6 +276,10 @@ class PlanAttendanceType with _$PlanAttendanceType {
     @JsonKey(name: 'planning_title') String? planningTitle,
     @JsonKey(name: 'planning_prefix_instance_name') @PlanBoolConverter() @Default(false) bool planningPrefixInstanceName,
     @JsonKey(name: 'is_default_org_plan') @PlanBoolConverter() @Default(false) bool isDefaultOrgPlan,
+
+    /// Hervorgehobene Terminart (Vortrag, Konzert): its Werke are offered
+    /// for the Ablauf of the Proben before it.
+    @PlanBoolConverter() @Default(false) bool highlight,
   }) = _PlanAttendanceType;
 
   factory PlanAttendanceType.fromJson(Map<String, dynamic> json) =>

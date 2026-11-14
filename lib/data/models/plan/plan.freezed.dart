@@ -2644,6 +2644,11 @@ mixin _$PlanAttendanceType {
   @PlanBoolConverter()
   bool get isDefaultOrgPlan => throw _privateConstructorUsedError;
 
+  /// Hervorgehobene Terminart (Vortrag, Konzert): its Werke are offered
+  /// for the Ablauf of the Proben before it.
+  @PlanBoolConverter()
+  bool get highlight => throw _privateConstructorUsedError;
+
   /// Serializes this PlanAttendanceType to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -2673,6 +2678,7 @@ abstract class $PlanAttendanceTypeCopyWith<$Res> {
     @JsonKey(name: 'is_default_org_plan')
     @PlanBoolConverter()
     bool isDefaultOrgPlan,
+    @PlanBoolConverter() bool highlight,
   });
 
   $PlanCopyWith<$Res>? get defaultPlan;
@@ -2700,6 +2706,7 @@ class _$PlanAttendanceTypeCopyWithImpl<$Res, $Val extends PlanAttendanceType>
     Object? planningTitle = freezed,
     Object? planningPrefixInstanceName = null,
     Object? isDefaultOrgPlan = null,
+    Object? highlight = null,
   }) {
     return _then(
       _value.copyWith(
@@ -2737,6 +2744,11 @@ class _$PlanAttendanceTypeCopyWithImpl<$Res, $Val extends PlanAttendanceType>
                 null == isDefaultOrgPlan
                     ? _value.isDefaultOrgPlan
                     : isDefaultOrgPlan // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            highlight:
+                null == highlight
+                    ? _value.highlight
+                    : highlight // ignore: cast_nullable_to_non_nullable
                         as bool,
           )
           as $Val,
@@ -2779,6 +2791,7 @@ abstract class _$$PlanAttendanceTypeImplCopyWith<$Res>
     @JsonKey(name: 'is_default_org_plan')
     @PlanBoolConverter()
     bool isDefaultOrgPlan,
+    @PlanBoolConverter() bool highlight,
   });
 
   @override
@@ -2806,6 +2819,7 @@ class __$$PlanAttendanceTypeImplCopyWithImpl<$Res>
     Object? planningTitle = freezed,
     Object? planningPrefixInstanceName = null,
     Object? isDefaultOrgPlan = null,
+    Object? highlight = null,
   }) {
     return _then(
       _$PlanAttendanceTypeImpl(
@@ -2844,6 +2858,11 @@ class __$$PlanAttendanceTypeImplCopyWithImpl<$Res>
                 ? _value.isDefaultOrgPlan
                 : isDefaultOrgPlan // ignore: cast_nullable_to_non_nullable
                     as bool,
+        highlight:
+            null == highlight
+                ? _value.highlight
+                : highlight // ignore: cast_nullable_to_non_nullable
+                    as bool,
       ),
     );
   }
@@ -2865,6 +2884,7 @@ class _$PlanAttendanceTypeImpl implements _PlanAttendanceType {
     @JsonKey(name: 'is_default_org_plan')
     @PlanBoolConverter()
     this.isDefaultOrgPlan = false,
+    @PlanBoolConverter() this.highlight = false,
   });
 
   factory _$PlanAttendanceTypeImpl.fromJson(Map<String, dynamic> json) =>
@@ -2893,9 +2913,16 @@ class _$PlanAttendanceTypeImpl implements _PlanAttendanceType {
   @PlanBoolConverter()
   final bool isDefaultOrgPlan;
 
+  /// Hervorgehobene Terminart (Vortrag, Konzert): its Werke are offered
+  /// for the Ablauf of the Proben before it.
+  @override
+  @JsonKey()
+  @PlanBoolConverter()
+  final bool highlight;
+
   @override
   String toString() {
-    return 'PlanAttendanceType(id: $id, name: $name, defaultPlan: $defaultPlan, startTime: $startTime, planningTitle: $planningTitle, planningPrefixInstanceName: $planningPrefixInstanceName, isDefaultOrgPlan: $isDefaultOrgPlan)';
+    return 'PlanAttendanceType(id: $id, name: $name, defaultPlan: $defaultPlan, startTime: $startTime, planningTitle: $planningTitle, planningPrefixInstanceName: $planningPrefixInstanceName, isDefaultOrgPlan: $isDefaultOrgPlan, highlight: $highlight)';
   }
 
   @override
@@ -2918,7 +2945,9 @@ class _$PlanAttendanceTypeImpl implements _PlanAttendanceType {
                 other.planningPrefixInstanceName ==
                     planningPrefixInstanceName) &&
             (identical(other.isDefaultOrgPlan, isDefaultOrgPlan) ||
-                other.isDefaultOrgPlan == isDefaultOrgPlan));
+                other.isDefaultOrgPlan == isDefaultOrgPlan) &&
+            (identical(other.highlight, highlight) ||
+                other.highlight == highlight));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2932,6 +2961,7 @@ class _$PlanAttendanceTypeImpl implements _PlanAttendanceType {
     planningTitle,
     planningPrefixInstanceName,
     isDefaultOrgPlan,
+    highlight,
   );
 
   /// Create a copy of PlanAttendanceType
@@ -2964,6 +2994,7 @@ abstract class _PlanAttendanceType implements PlanAttendanceType {
     @JsonKey(name: 'is_default_org_plan')
     @PlanBoolConverter()
     final bool isDefaultOrgPlan,
+    @PlanBoolConverter() final bool highlight,
   }) = _$PlanAttendanceTypeImpl;
 
   factory _PlanAttendanceType.fromJson(Map<String, dynamic> json) =
@@ -2990,6 +3021,12 @@ abstract class _PlanAttendanceType implements PlanAttendanceType {
   @JsonKey(name: 'is_default_org_plan')
   @PlanBoolConverter()
   bool get isDefaultOrgPlan;
+
+  /// Hervorgehobene Terminart (Vortrag, Konzert): its Werke are offered
+  /// for the Ablauf of the Proben before it.
+  @override
+  @PlanBoolConverter()
+  bool get highlight;
 
   /// Create a copy of PlanAttendanceType
   /// with the given fields replaced by the non-null parameter values.
