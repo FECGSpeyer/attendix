@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -53,7 +54,7 @@ class AttendanceLegendSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
+    return AppDraggableSheet(
       initialChildSize: 0.55,
       minChildSize: 0.3,
       maxChildSize: 0.75,

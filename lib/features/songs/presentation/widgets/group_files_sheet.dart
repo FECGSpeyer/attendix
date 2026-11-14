@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -62,7 +63,7 @@ class _GroupFilesSheetState extends ConsumerState<GroupFilesSheet> {
     final selected = _selectedGroup;
     final files = _files;
 
-    return DraggableScrollableSheet(
+    return AppDraggableSheet(
       initialChildSize: 0.9,
       minChildSize: 0.3,
       maxChildSize: 1,

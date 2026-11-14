@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -44,7 +45,7 @@ Future<bool> showAttendanceCreateSheet(BuildContext context) async {
     clipBehavior: Clip.antiAlias,
     builder: (context) => ValueListenableBuilder<bool>(
       valueListenable: saving,
-      builder: (context, isSaving, _) => DraggableScrollableSheet(
+      builder: (context, isSaving, _) => AppDraggableSheet(
         initialChildSize: 0.8,
         minChildSize: 0.4,
         maxChildSize: 1,
@@ -742,7 +743,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       // Ionic breakpoints [0, 0.5, 1]: opens at half height, can go full.
-      builder: (context) => DraggableScrollableSheet(
+      builder: (context) => AppDraggableSheet(
         initialChildSize: 0.5,
         minChildSize: 0.3,
         maxChildSize: 1,

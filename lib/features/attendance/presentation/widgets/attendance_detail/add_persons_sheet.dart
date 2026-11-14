@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../../core/theme/app_colors.dart';
@@ -100,7 +101,7 @@ Future<AddPersonsPick?> showAddPersonsSheet(
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     showDragHandle: true,
-    builder: (ctx) => DraggableScrollableSheet(
+    builder: (ctx) => AppDraggableSheet(
       expand: false,
       initialChildSize: 0.8,
       minChildSize: 0.4,

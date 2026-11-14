@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -339,7 +340,7 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
-    builder: (ctx) => DraggableScrollableSheet(
+    builder: (ctx) => AppDraggableSheet(
       expand: false,
       initialChildSize: 0.75,
       builder: (ctx, scroll) => Consumer(

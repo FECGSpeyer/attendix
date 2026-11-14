@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +31,7 @@ Future<void> showDescriptionAttachmentSheet(BuildContext context, {required Atte
     builder:
         (ctx) => Padding(
           padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-          child: DraggableScrollableSheet(
+          child: AppDraggableSheet(
             expand: false,
             initialChildSize: 0.8,
             minChildSize: 0.4,

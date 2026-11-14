@@ -13,6 +13,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/theme/redesign/rd_palette.dart';
 import 'package:attendix/shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup;
@@ -457,9 +458,12 @@ class IonSearchbar extends StatelessWidget {
   }
 }
 
-/// `ion-fab` button (vertical bottom, horizontal end). iOS: ionic-theme-ios27
-/// glass button (61pt, `rgba(glass, .72)` – dark `.5` – with the light rim
-/// ring, text-coloured icon); md: primary FloatingActionButton.
+/// `ion-fab` button (vertical bottom, horizontal end) – the one "+" button
+/// of every classic page. iOS: the theme's ionic-theme-ios27 glass button
+/// (61pt, `rgba(glass, .72)` – dark `.5` – with the 0.5pt `rgba(text, .22)`
+/// ring, no drop shadow, text-coloured 28pt icon); md: the round primary
+/// FloatingActionButton. Both come from the app theme's
+/// `floatingActionButtonTheme`, so every page shows the same button.
 class IonFabButton extends StatelessWidget {
   const IonFabButton({
     super.key,
@@ -477,42 +481,28 @@ class IonFabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Beta-Skin: the themed FAB of the new design.
-    if (!ionIsIos(context) || context.rdSkin != null) {
+    // Beta-Skin: the themed FAB of the new design (its own shape). md: the
+    // round Ionic `ion-fab-button`.
+    final beta = context.rdSkin != null;
+    if (beta || !ionIsIos(context)) {
       return FloatingActionButton(
         heroTag: heroTag,
         tooltip: tooltip,
         onPressed: onPressed,
+        shape: beta ? null : const CircleBorder(),
         child: Icon(icon ?? AppIcons.add),
       );
     }
-    final dark = _isDark(context);
-    final b = Theme.of(context).brightness;
-    final button = Container(
-      width: 61,
-      height: 61,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: IosGlass.background(b, dark ? 0.5 : 0.72),
-        border: Border.all(color: IosGlass.border(b), width: 0.5),
-        boxShadow: IosGlass.shadow(b),
-      ),
-      child: Material(
-        type: MaterialType.transparency,
-        shape: const CircleBorder(),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onPressed,
-          splashFactory: NoSplash.splashFactory,
-          child: Icon(
-            icon ?? AppIcons.add,
-            size: 28,
-            color: dark ? Colors.white : Colors.black,
-          ),
-        ),
+    return SizedBox(
+      width: AppTheme.iosFabSize,
+      height: AppTheme.iosFabSize,
+      child: FloatingActionButton(
+        heroTag: heroTag,
+        tooltip: tooltip,
+        onPressed: onPressed,
+        child: Icon(icon ?? AppIcons.add, size: 28),
       ),
     );
-    return tooltip == null ? button : Tooltip(message: tooltip!, child: button);
   }
 }
 

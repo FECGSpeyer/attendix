@@ -81,7 +81,9 @@ class AccountAccordion extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Email
+        // Ionic person.page.html: the e-mail `ion-item` with its button in
+        // `slot="end"` – the search (no account yet) or the danger trash
+        // that removes the account from the group.
         IonFieldRow(
           icon: AppIcons.email,
           label: context.l10n.peopleEmail,
@@ -91,51 +93,30 @@ class AccountAccordion extends ConsumerWidget {
               ? () => _launchEmail(person.email!)
               : null,
           onEdit: () => _editEmail(context),
+          trailing: !canEdit
+              ? null
+              : person.appId != null
+                  ? _ItemEndButton(
+                      key: const Key('account-unlink-button'),
+                      icon: AppIcons.delete,
+                      tooltip: context.l10n.personFlutterUnlinkAccount,
+                      color: AppColors.danger,
+                      onPressed: onUnlinkAccount,
+                    )
+                  : onSearchOtherInstance != null &&
+                          ((draftEmail ?? person.email)?.trim().isNotEmpty ?? false)
+                      ? _ItemEndButton(
+                          key: const Key('account-search-button'),
+                          icon: AppIcons.search,
+                          tooltip: context.l10n.personFlutterSearchOtherInstance,
+                          color: AppColors.primary,
+                          onPressed: onSearchOtherInstance,
+                        )
+                      : null,
         ),
-        if (canEdit &&
-            person.appId == null &&
-            onSearchOtherInstance != null &&
-            ((draftEmail ?? person.email)?.trim().isNotEmpty ?? false))
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
-            child: Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton.icon(
-              onPressed: onSearchOtherInstance,
-              icon: Icon(AppIcons.search, size: 18),
-              label: IonButtonLabel(context.l10n.personFlutterSearchOtherInstance),
-            ),
-          ),
-          ),
 
-        // Account linked status
-        if (person.appId != null) ...[
-          IonFieldRow(
-            icon: AppIcons.badge,
-            label: context.l10n.personAccount,
-            value: context.l10n.personFlutterLinked,
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-
-          // Role selector
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-            child: _buildRoleSelector(context, tenant?.id),
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-
-          // Unlink button
-          if (canEdit)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-              child: OutlinedButton.icon(
-                onPressed: onUnlinkAccount,
-                icon: Icon(AppIcons.linkOff, color: AppColors.danger),
-                label: IonButtonLabel(context.l10n.personFlutterUnlinkAccount),
-                style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
-              ),
-            ),
-        ],
+        // Ionic: `ion-select [label]="Rolle"` item (label start, value end).
+        if (person.appId != null) _buildRoleSelector(context, tenant?.id),
 
         // Create account button for persons with email but no account
         if (person.appId == null && person.email != null) ...[
@@ -234,45 +215,50 @@ class AccountAccordion extends ConsumerWidget {
       availableRoles.add(currentRole);
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          context.l10n.personRole,
-          style: const TextStyle(fontSize: 12, color: AppColors.medium),
-        ),
-        const SizedBox(height: AppDimensions.paddingXS),
-        AppDropdownFormField<Role>(
-          iosInterface: AppSelectInterface.alert,
-          value: currentRole,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: AppDimensions.paddingM,
-              vertical: AppDimensions.paddingS,
+    final enabled = canEdit && !isMainGroup;
+    final ios = ionIsIos(context);
+    final theme = Theme.of(context);
+    return Opacity(
+      opacity: enabled ? 1 : 0.5,
+      child: IonItem(
+        onTap: !enabled
+            ? null
+            : () async {
+                // Ionic `ion-select` without `interface`: the radio alert.
+                final picked = await showAppRadioAlert<Role>(
+                  context,
+                  title: context.l10n.personRole,
+                  options: [
+                    for (final role in availableRoles)
+                      (role, _getRoleLabel(context.l10n, role)),
+                  ],
+                  initialValue: currentRole,
+                  confirmText: context.l10n.commonOk,
+                );
+                final role = picked?.value;
+                if (role != null && role != currentRole) onRoleChanged(role);
+              },
+        end: [
+          Text(
+            _getRoleLabel(context.l10n, currentRole),
+            style: TextStyle(
+              fontSize: ios ? 17 : 16,
+              color: theme.colorScheme.onSurface,
             ),
           ),
-          items: availableRoles.map((role) {
-            return DropdownMenuItem(
-              value: role,
-              child: Row(
-                children: [
-                  Icon(_getRoleIcon(role), size: 20, color: AppColors.primary),
-                  const SizedBox(width: AppDimensions.paddingS),
-                  Text(_getRoleLabel(context.l10n, role)),
-                ],
-              ),
-            );
-          }).toList(),
-          onChanged: canEdit && !isMainGroup
-              ? (newRole) {
-                  if (newRole != null && newRole != currentRole) {
-                    onRoleChanged(newRole);
-                  }
-                }
-              : null,
+          if (ios)
+            const IonSelectIcon()
+          else
+            Icon(AppIcons.arrowDropDown, color: theme.hintColor),
+        ],
+        child: Text(
+          context.l10n.personRole,
+          style: TextStyle(
+            fontSize: ios ? 17 : 16,
+            color: theme.colorScheme.onSurface,
+          ),
         ),
-      ],
+      ),
     );
   }
 
@@ -370,19 +356,42 @@ class AccountAccordion extends ConsumerWidget {
       Role.none => l10n.personFlutterRoleNone,
     };
   }
+}
 
-  IconData _getRoleIcon(Role role) {
-    return switch (role) {
-      Role.admin => AppIcons.adminPanelSettings,
-      Role.responsible => AppIcons.manageAccounts,
-      Role.helper => AppIcons.handshake,
-      Role.viewer => AppIcons.visibility,
-      Role.player => AppIcons.person,
-      Role.voiceLeader => AppIcons.recordVoiceOver,
-      Role.voiceLeaderHelper => AppIcons.supportAgent,
-      Role.parent => AppIcons.familyRestroom,
-      Role.applicant => AppIcons.pending,
-      Role.none => AppIcons.personOff,
-    };
+/// Ionic `ion-button slot="end"` inside an `ion-item`: a small solid
+/// button with one icon (e.g. the danger trash next to the e-mail).
+class _ItemEndButton extends StatelessWidget {
+  const _ItemEndButton({
+    super.key,
+    required this.icon,
+    required this.tooltip,
+    required this.color,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final Color color;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: Tooltip(
+        message: tooltip,
+        child: FilledButton(
+          onPressed: onPressed,
+          style: FilledButton.styleFrom(
+            backgroundColor: color,
+            foregroundColor: Colors.white,
+            minimumSize: const Size(44, 36),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          child: Icon(icon, size: 20, semanticLabel: tooltip),
+        ),
+      ),
+    );
   }
 }

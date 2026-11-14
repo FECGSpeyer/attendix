@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,7 +74,7 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
   Widget build(BuildContext context) {
     if (widget.beta) return _buildBeta(context);
     final ios = useIosLook(context);
-    return DraggableScrollableSheet(
+    return AppDraggableSheet(
       initialChildSize: 0.5,
       minChildSize: 0.25,
       maxChildSize: 1,

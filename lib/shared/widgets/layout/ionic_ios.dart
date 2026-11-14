@@ -1110,6 +1110,11 @@ class IonSheetHeader extends StatelessWidget {
       // PARITY_R5: iOS sheet toolbar 64pt (ionic-theme-ios27 modal-sheet
       // `--min-height: 64px`, no padding); md toolbar 56.
       height: ios ? kIonModalToolbarHeight : 56,
+      // An `ion-toolbar` always spans the sheet: without the width the
+      // header shrank to its title and the start / end buttons sat
+      // indented next to it instead of at the sheet's edges. (The Beta
+      // design keeps its header as it was.)
+      width: rd == null ? double.infinity : null,
       decoration: BoxDecoration(
         // Beta-Skin: the sheet colour of the new design (page background).
         color: rd?.bg ?? Theme.of(context).colorScheme.surface,

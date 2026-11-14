@@ -5,6 +5,10 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' show IonSearchIcon, IonIos; // PARITY_R5, IOS27_SWEEP
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMdSearchbar;
 
+// The one `ion-fab-button` of the classic design lives with the other Ionic
+// widgets; re-exported for the pages that import this file.
+export '../../../people/presentation/widgets/ion/ion_widgets.dart' show IonFabButton;
+
 /// UX_ATT: true when the page should render Ionic's iOS mode (iPhone app and
 /// Flutter web in iPhone Safari). Elsewhere the Material (Ionic md) look stays.
 bool isIosLook(BuildContext context) =>
@@ -77,48 +81,6 @@ class IosLargeTitle extends StatelessWidget {
         style: IonIos.largeTitle.copyWith(
           color: Theme.of(context).colorScheme.onSurface,
         ),
-      ),
-    );
-  }
-}
-
-/// UX_ATT: Ionic `ion-fab-button`. Material (md) keeps the round primary FAB;
-/// iOS uses the ionic-theme-ios26 look: 61 px white glass circle with a dark
-/// icon (dark mode: dark glass, white icon).
-class IonFabButton extends StatelessWidget {
-  const IonFabButton({
-    super.key,
-    required this.onPressed,
-    required this.icon,
-    this.tooltip,
-    this.heroTag,
-  });
-
-  final VoidCallback? onPressed;
-  final IconData icon;
-  final String? tooltip;
-  final Object? heroTag;
-
-  @override
-  Widget build(BuildContext context) {
-    if (!isIosLook(context)) {
-      return FloatingActionButton(
-        heroTag: heroTag,
-        onPressed: onPressed,
-        tooltip: tooltip,
-        shape: const CircleBorder(),
-        child: Icon(icon),
-      );
-    }
-    // PWA_PARITY: the theme's flat glass FAB (Ionic has no drop shadow).
-    return SizedBox(
-      width: 61,
-      height: 61,
-      child: FloatingActionButton(
-        heroTag: heroTag,
-        onPressed: onPressed,
-        tooltip: tooltip,
-        child: Icon(icon, size: 28),
       ),
     );
   }

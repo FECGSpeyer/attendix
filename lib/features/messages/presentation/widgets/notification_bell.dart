@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,7 +88,7 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
       // ion-content color="light" behind the inset list
       backgroundColor: beta ? context.rd.bg : Theme.of(context).scaffoldBackgroundColor,
       builder:
-          (_) => DraggableScrollableSheet(
+          (_) => AppDraggableSheet(
             expand: false,
             initialChildSize: 0.75 * full,
             minChildSize: 0.4 * full,

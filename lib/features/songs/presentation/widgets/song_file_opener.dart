@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/services/native/native_file_service.dart';
+import '../../../../core/services/native/native_platform.dart' show isNativeApp;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -12,14 +13,35 @@ import 'pdf_viewer_page.dart';
 import 'pdf_viewer_sheet.dart';
 import '../../../../l10n/l10n.dart';
 
-/// Open a song file: PDFs, images (and in Beta Word files) in the in-app
-/// viewers, everything else
-/// externally (Ionic `Utils.openFileNative`).
+/// Files the classic native app is currently handing to the system viewer.
+final _openingNatively = <String>{};
+
+/// Open a song file (Ionic `Utils.openFileNative`).
 ///
-/// REDESIGN: the full-screen PDF viewer (scrolling, page mode) belongs to
-/// the new design; the normal app keeps its viewer.
+/// Normal design: in the iOS / Android app the system viewer, like Ionic;
+/// on the web PDFs and images in the in-app viewer sheets, everything else
+/// externally.
+///
+/// REDESIGN: the full-screen PDF viewer (scrolling, page mode) and the Word
+/// viewer belong to the new design; the normal app keeps its viewer on
+/// the web.
 Future<void> openSongFile(BuildContext context, SongFile file) async {
   if (file.url.isEmpty) return;
+  // Normal design in the iOS / Android app: every file opens in the system
+  // viewer (Quick Look, the Android viewer) like in the Ionic app
+  // (`Utils.openFileNative` → `FileViewer.openDocumentFromUrl`), not in an
+  // own viewer. The web keeps the in-app viewers.
+  if (!RedesignRoutes.active && isNativeApp) {
+    // The file is downloaded first: a second tap meanwhile must not start
+    // another download.
+    if (!_openingNatively.add(file.url)) return;
+    try {
+      await openSongFileExternally(context, file);
+    } finally {
+      _openingNatively.remove(file.url);
+    }
+    return;
+  }
   if (SongUtils.isPdf(file)) {
     if (RedesignRoutes.active) {
       await showPdfViewer(context, url: file.url, fileName: file.fileName);

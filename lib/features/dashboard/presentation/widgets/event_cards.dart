@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -241,7 +242,7 @@ class NextEventCard extends ConsumerWidget {
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (context) => DraggableScrollableSheet(
+      builder: (context) => AppDraggableSheet(
         expand: false,
         initialChildSize: 0.75,
         minChildSize: 0.3,

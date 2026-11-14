@@ -326,9 +326,15 @@ class IosTabBarScope extends InheritedWidget {
 /// the iOS shell (Material, desktop) the child is returned unchanged and the
 /// Scaffold places it as usual.
 class TabBarFab extends StatefulWidget {
-  const TabBarFab({super.key, required this.child});
+  const TabBarFab({super.key, required this.child}) : above = false;
+
+  /// A wide action (e.g. the "2 übertragen" pill of a multi-selection) that
+  /// does not fit into the 61pt slot beside the tab bar: centred right
+  /// above the floating tab bar instead of on top of it.
+  const TabBarFab.above({super.key, required this.child}) : above = true;
 
   final Widget child;
+  final bool above;
 
   /// `TabBarFab(child: fab)` or null when [fab] is null.
   static Widget? wrap(Widget? fab) => fab == null ? null : TabBarFab(child: fab);
@@ -357,12 +363,19 @@ class _TabBarFabState extends State<TabBarFab> {
       controller: _controller,
       overlayChildBuilder: (context) => !visible
           ? const SizedBox.shrink()
-          : Positioned(
-              right: scope.right,
-              bottom: scope.bottom,
-              height: IosTabBar.barHeight,
-              child: Center(widthFactor: 1, child: widget.child),
-            ),
+          : widget.above
+              ? Positioned(
+                  left: 16,
+                  right: 16,
+                  bottom: scope.bottom + IosTabBar.barHeight + 12,
+                  child: Center(child: widget.child),
+                )
+              : Positioned(
+                  right: scope.right,
+                  bottom: scope.bottom,
+                  height: IosTabBar.barHeight,
+                  child: Center(widthFactor: 1, child: widget.child),
+                ),
       child: const SizedBox.shrink(),
     );
   }
