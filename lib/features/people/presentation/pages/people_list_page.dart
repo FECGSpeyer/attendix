@@ -1319,6 +1319,51 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   Widget _buildReorderList(List<Person> people) {
     final byId = {for (final p in people) if (p.id != null) p.id!: p};
     final groupNames = _reorderIds.keys.toList();
+    if (context.rdSkin == null) {
+      // PEO-08: Ionic keeps the normal list – primary `ion-item-divider`s
+      // and the person items with `ion-reorder slot="start"`.
+      return ListView(
+        padding: EdgeInsets.only(
+            bottom: scrollEndPadding(context, base: 16, fabRoom: 64)),
+        children: [
+          for (final groupName in groupNames) ...[
+            IonItemDivider(
+              text: '$groupName (${_reorderIds[groupName]!.length})',
+              color: AppColors.primary,
+            ),
+            ReorderableListView(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              buildDefaultDragHandles: false,
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  final ids = _reorderIds[groupName]!;
+                  if (newIndex > oldIndex) newIndex -= 1;
+                  if (newIndex == oldIndex) return;
+                  final moved = ids.removeAt(oldIndex);
+                  ids.insert(newIndex, moved);
+                  _reorderedGroups.add(groupName);
+                });
+              },
+              children: [
+                for (var i = 0; i < _reorderIds[groupName]!.length; i++)
+                  IonItem(
+                    key: ValueKey('reorder_${_reorderIds[groupName]![i]}'),
+                    start: ReorderableDragStartListener(
+                      index: i,
+                      child: Icon(AppIcons.dragHandle, color: AppColors.medium),
+                    ),
+                    child: Text(
+                      byId[_reorderIds[groupName]![i]]?.fullName ?? '?',
+                      style: IonText.h2(context),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ],
+      );
+    }
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
       children: [
