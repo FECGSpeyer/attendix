@@ -1199,7 +1199,23 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       setState(() => _filterOption = 'all');
       return;
     }
-    final chosen = await showAppDialog<Tenant>(
+    // PEO-16: Ionic alert with radio inputs, Abbrechen (destructive) /
+    // Filtern; the Beta keeps its tap-to-choose dialog.
+    final Tenant? chosen;
+    if (context.rdSkin == null) {
+      final r = await showAppRadioAlert<int>(
+        context,
+        title: context.l10n.peopleChooseInstance,
+        options: [
+          for (var i = 0; i < linked.length; i++)
+            (i, linked[i].longName.isNotEmpty ? linked[i].longName : linked[i].shortName),
+        ],
+        confirmText: context.l10n.peopleFilter,
+        cancelDestructive: true,
+      );
+      chosen = r?.value == null ? null : linked[r!.value!];
+    } else {
+    chosen = await showAppDialog<Tenant>(
       context: context,
       builder: (ctx) => AppSimpleDialog(
         title: Text(context.l10n.peopleChooseInstance),
@@ -1212,6 +1228,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         ],
       ),
     );
+    }
     if (chosen == null || chosen.id == null || !mounted) return;
     try {
       final linkedIds = await ref.read(linkedTenantIdsProvider.future);
@@ -1225,7 +1242,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         _extraFilterValue = null;
         _otherInstanceUserIds = ids;
         _otherInstanceName =
-            chosen.longName.isNotEmpty ? chosen.longName : chosen.shortName;
+            chosen!.longName.isNotEmpty ? chosen.longName : chosen.shortName;
       });
       _saveFilterOption();
     } catch (e) {
@@ -1544,7 +1561,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       title: context.l10n.peopleRemoveConfirm,
       message: context.l10n.peopleCannotUndoExcl,
       confirmText: context.l10n.commonRemove,
-      isDestructive: true,
+      // PEO-29: Ionic "Entfernen" has no role (neutral); Beta keeps red.
+      isDestructive: context.rdSkin != null,
     );
 
     if (confirmed == true && mounted && person.id != null) {

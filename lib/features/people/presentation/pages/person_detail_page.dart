@@ -1371,18 +1371,22 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   }
 
   Future<void> _showPendingActions() async {
+    // PEO-15: Ionic action sheet without header and icons, "Abbrechen"
+    // with role destructive (the Beta keeps its icons).
+    final beta = context.rdSkin != null;
     final action = await showAppActionSheet<VoidCallback>(
       context,
+      cancelDestructive: !beta,
       actions: [
         AppActionSheetAction(
           value: _approvePerson,
-          icon: AppIcons.checkCircle,
-          color: AppColors.success,
+          icon: beta ? AppIcons.checkCircle : null,
+          color: beta ? AppColors.success : null,
           label: context.l10n.personApprovePerson,
         ),
         AppActionSheetAction(
           value: _declinePerson,
-          icon: AppIcons.cancel,
+          icon: beta ? AppIcons.cancel : null,
           label: context.l10n.personDeclinePerson,
           destructive: true,
         ),
@@ -1462,8 +1466,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         title: Text(ctx.l10n.personReactivatePerson),
         content: Text(ctx.l10n.personReactivateConfirm),
         actions: [
+          // PEO-13: Ionic "Abbrechen" with role destructive.
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
+            style: appAlertDestructiveStyle(ctx),
             child: Text(ctx.l10n.commonCancel),
           ),
           TextButton(
@@ -1496,13 +1502,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         title: Text(context.l10n.attendanceRemovePerson),
         content: Text(context.l10n.personRemovePersonMessage),
         actions: [
+          // PEO-13: Ionic – "Abbrechen" destructive, "Ja" neutral.
           TextButton(
             onPressed: () => Navigator.pop(context, false),
+            style: appAlertDestructiveStyle(context),
             child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            style: context.rdSkin != null
+                ? TextButton.styleFrom(foregroundColor: AppColors.danger)
+                : null,
             child: Text(context.l10n.commonYes),
           ),
         ],
@@ -1566,6 +1576,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
+            style: appAlertDestructiveStyle(context), // PEO-13
             child: Text(context.l10n.commonCancel),
           ),
           TextButton(
@@ -1794,7 +1805,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             title: Text(context.l10n.personDiscardChanges),
             content: Text(context.l10n.personDiscardChangesMessage),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.l10n.commonCancel)),
+              TextButton(onPressed: () => Navigator.pop(context, false), style: appAlertDestructiveStyle(context), child: Text(context.l10n.commonCancel)), // PEO-13
               TextButton(onPressed: () => Navigator.pop(context, true), child: Text(context.l10n.commonYes)), // Ionic: Abbrechen / Ja
             ],
           ),
@@ -1864,6 +1875,21 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             // Ionic: Vorname | Nachname inputs while editing the name
             if (canEdit && _editingName) ...[
               ...ionBetaGroup(context, [allgemein(AllgemeinPart.names, 'names')], inset: false),
+              if (rd == null)
+                // PEO-32: Ionic `ion-button expand="block" fill="clear"
+                // size="small"` with `checkmark-outline`.
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: IonButton(
+                    fill: IonButtonFill.clear,
+                    small: true,
+                    expand: true,
+                    icon: AppIcons.check,
+                    label: context.l10n.personDone,
+                    onPressed: () => setState(() => _editingName = false),
+                  ),
+                )
+              else
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextButton.icon(
@@ -1970,7 +1996,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 onToggle: () => _toggleSection('otherTenants', canEdit),
               ),
 
-            // Historie Accordion
+            // Historie Accordion (PEO-31: Ionic renders it only with
+            // history entries; the Beta keeps its empty state).
+            if (rd != null || (historyAsync.valueOrNull?.isNotEmpty ?? true))
             HistorieAccordion(
               isExpanded: _showHistorie,
               onToggle: () => setState(() => _showHistorie = !_showHistorie),
