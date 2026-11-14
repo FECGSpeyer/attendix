@@ -33,6 +33,7 @@ import '../widgets/duplicate_candidates_card.dart';
 import '../widgets/parent_review_hint.dart';
 import '../widgets/person_detail/person_detail.dart';
 import '../widgets/ion/ion_widgets.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
@@ -1988,7 +1989,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                   if (ref.watch(hasDutyTypesProvider))
                     IonItem(
                       detail: true,
-                      start: Icon(AppIcons.eventBusyOutlined,
+                      // PEO-28: Ionic `calendar-clear-outline`.
+                      start: Icon(
+                          AppIcons.ionic
+                              ? Ionicons.calendarClearOutline
+                              : AppIcons.eventBusyOutlined,
                           color: AppColors.primary),
                       onTap: () => openUnavailabilityPage(
                         context,

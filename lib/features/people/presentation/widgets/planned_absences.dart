@@ -19,6 +19,7 @@ import 'person_detail/upcoming_appointments_accordion.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
 import 'ion/ion_widgets.dart';
+import 'ion/ion_date_accordion.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 DateFormat get _dateFormat => DateFormat(dateFmt());
@@ -180,8 +181,96 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
     ));
   }
 
+  /// PEO-05: Ionic absence modal – `ion-content class="ion-padding"` with
+  /// the stacked reason textarea, two date accordions ("Von *" / "Bis *",
+  /// inline `ion-datetime`, each with its own clear button), the warning
+  /// note and the block button with `calendar-outline`.
+  Widget _buildClassic(BuildContext context) {
+    final now = DateTime.now();
+    final first = DateTime(now.year - 1);
+    final last = DateTime(now.year + 3);
+    final today = DateUtils.dateOnly(now);
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: IonSheetScaffold(
+        title: context.l10n.personEnterAbsence,
+        showClose: true,
+        body: SingleChildScrollView(
+          controller: widget.scrollController,
+          padding: const EdgeInsets.all(AppDimensions.paddingM),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              IonInputRow(
+                label: context.l10n.signoutReasonRequired,
+                value: _reasonController.text,
+                placeholder: context.l10n.signoutReasonPlaceholder,
+                textarea: true,
+                onChanged: (v) => setState(() => _reasonController.text = v),
+              ),
+              const SizedBox(height: AppDimensions.paddingM),
+              IonDateAccordion(
+                title: context.l10n.personFromRequired,
+                valueText: _from != null
+                    ? _dateFormat.format(_from!)
+                    : context.l10n.personNoDateChosen,
+                value: _from,
+                initialDate: today,
+                firstDate: first,
+                lastDate: last,
+                onChanged: (d) => setState(() {
+                  _from = d;
+                  // "Bis" may not lie before "Von" (`[min]`).
+                  if (_until != null && _until!.isBefore(d)) _until = null;
+                }),
+                onClear: _from != null ? () => setState(() => _from = null) : null,
+              ),
+              IonDateAccordion(
+                title: context.l10n.personUntilRequired,
+                valueText: _until != null
+                    ? _dateFormat.format(_until!)
+                    : context.l10n.personNoDateChosen,
+                value: _until,
+                initialDate: _from ?? today,
+                firstDate: _from ?? first,
+                lastDate: last,
+                onChanged: (d) => setState(() => _until = d),
+                onClear: _until != null ? () => setState(() => _until = null) : null,
+              ),
+              if (widget.showLongAbsenceHint)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8 + 16, 16, 16),
+                  child: Text(
+                    widget.forOther
+                        ? context.l10n.personLongAbsenceHint
+                        : context.l10n.signoutLongAbsenceHint,
+                    style: IonText.note(context).copyWith(color: AppColors.warning),
+                  ),
+                ),
+              const SizedBox(height: AppDimensions.paddingM),
+              FilledButton.icon(
+                onPressed: _isValid ? _submit : null,
+                // PEO-28: Ionic `calendar-outline`.
+                icon: Icon(AppIcons.calendarTodayOutlined),
+                label: IonButtonLabel(context.l10n.personEnterAbsence),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
+                ),
+              ),
+              const SizedBox(height: AppDimensions.paddingL),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (widget.scrollController != null && context.rdSkin == null) {
+      return _buildClassic(context);
+    }
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -453,6 +542,49 @@ class _PlannedAbsencesAccordionState
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // PEO-21: every row an `ion-item` (classic design).
+            if (context.rdSkin == null) ...[
+              for (final absence in absences)
+                IonItem(
+                  end: [
+                    IconButton(
+                      icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
+                      tooltip: context.l10n.signoutDeleteAbsence,
+                      onPressed: () => deletePlannedAbsenceFlow(context, ref, absence),
+                    ),
+                  ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${_fmt(absence.fromDate)} – ${_fmt(absence.untilDate)}',
+                          style: IonText.h2(context)),
+                      if (absence.reason.isNotEmpty)
+                        Text(absence.reason, style: IonText.p(context)),
+                    ],
+                  ),
+                ),
+              if (absences.isEmpty)
+                IonItem(
+                  child: Text(
+                    context.l10n.personNoAbsences,
+                    style: IonText.h2(context).copyWith(color: AppColors.medium),
+                  ),
+                ),
+              IonItem(
+                start: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
+                onTap: () => addPlannedAbsenceFlow(
+                  context,
+                  ref,
+                  personId: widget.personId,
+                  showLongAbsenceHint: true,
+                  forOther: true,
+                ),
+                child: Text(
+                  context.l10n.personAddAbsence,
+                  style: IonText.h2(context).copyWith(color: AppColors.primary),
+                ),
+              ),
+            ] else ...[
             for (final absence in absences)
               PlannedAbsenceTile(
                 absence: absence,
@@ -479,6 +611,7 @@ class _PlannedAbsencesAccordionState
                 forOther: true,
               ),
             ),
+            ],
             ...widget.extra,
           ],
       ),
