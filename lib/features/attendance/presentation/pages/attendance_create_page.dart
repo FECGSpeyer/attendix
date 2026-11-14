@@ -43,6 +43,9 @@ Future<bool> showAttendanceCreateSheet(BuildContext context) async {
       isScrollControlled: true,
       useSafeArea: true,
       showDragHandle: false,
+      // The Ionic sheet handles its own drag (and honours canDismiss); the
+      // Material drag-to-close would pop past it while saving.
+      enableDrag: false,
       clipBehavior: Clip.antiAlias,
       builder: (context) => ValueListenableBuilder<bool>(
         valueListenable: saving,

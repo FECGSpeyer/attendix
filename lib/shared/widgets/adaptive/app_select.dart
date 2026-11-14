@@ -94,12 +94,16 @@ class AppSelectOption<T> {
     List<DropdownMenuItem<T>> items,
   ) => [
     for (final i in items)
-      AppSelectOption<T>(
-        value: i.value as T,
-        label: _plainText(i.child),
-        child: i.child,
-        enabled: i.enabled,
-      ),
+      // A disabled header item without a value (e.g. a section caption in a
+      // `String` select) is no option: `ion-select` has no such rows, and
+      // the cast below would throw for a non-nullable T.
+      if (i.value is T)
+        AppSelectOption<T>(
+          value: i.value as T,
+          label: _plainText(i.child),
+          child: i.child,
+          enabled: i.enabled,
+        ),
   ];
 
   String textOr(String fallback) => label ?? _plainText(child) ?? fallback;
@@ -1273,7 +1277,7 @@ class _SelectFormField<T> extends FormField<T> {
                              (interface == AppSelectInterface.modal ? null : labelText),
                          cover: cover,
                        );
-                       if (picked == null) return;
+                       if (picked == null || !field.mounted) return;
                        field.didChange(picked.value);
                        if (picked.value != current) onChanged(picked.value);
                      },

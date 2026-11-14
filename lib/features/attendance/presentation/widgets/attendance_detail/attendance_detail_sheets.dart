@@ -125,6 +125,37 @@ Future<ConductorChoice?> showConductorChangeDialog(
           ],
           groupValue: selected,
           onChanged: (v) => setState(() => selected = v),
+          // Beta design: the list as before (12 px above, full width).
+          beta: Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: SizedBox(
+              width: double.maxFinite,
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  for (final con in conductors)
+                    // ignore: deprecated_member_use
+                    RadioListTile<int>(
+                      value: con.id!,
+                      // ignore: deprecated_member_use
+                      groupValue: selected,
+                      // ignore: deprecated_member_use
+                      onChanged: (v) => setState(() => selected = v),
+                      title: Text(con.fullName),
+                    ),
+                  // ignore: deprecated_member_use
+                  RadioListTile<int>(
+                    value: otherValue,
+                    // ignore: deprecated_member_use
+                    groupValue: selected,
+                    // ignore: deprecated_member_use
+                    onChanged: (v) => setState(() => selected = v),
+                    title: Text(context.l10n.attListOtherConductor),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),

@@ -138,7 +138,7 @@ class TenantSwitcherTitle extends ConsumerWidget {
                   tenants: tenants,
                   currentTenantId: tenant?.id,
                 );
-                if (picked != null) select(picked);
+                if (picked != null && context.mounted) select(picked);
               },
               child: trigger,
             ),
