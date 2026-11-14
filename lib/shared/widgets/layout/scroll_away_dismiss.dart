@@ -27,6 +27,9 @@ class _ScrollAwayDismissesKeyboardState extends State<ScrollAwayDismissesKeyboar
   BuildContext? _scrolling;
   bool _checkScheduled = false;
 
+  /// Lists the user is scrolling right now (drag and the momentum after it).
+  final Set<BuildContext> _userScrolls = {};
+
   /// Less than this share of the field still visible counts as scrolled away.
   static const double _minVisible = 0.5;
 
@@ -35,11 +38,29 @@ class _ScrollAwayDismissesKeyboardState extends State<ScrollAwayDismissesKeyboar
       (defaultTargetPlatform == TargetPlatform.iOS ||
           defaultTargetPlatform == TargetPlatform.android);
 
-  // Also momentum after the finger lifts and jumps (no drag details): a
-  // field only ever loses the focus when it is out of view.
-  bool _onScroll(ScrollUpdateNotification n) {
+  // Only scrolling the user started (a drag, plus the momentum after the
+  // finger lifts). Scrolling by the app, e.g. bringing a just tapped field
+  // above the keyboard, never closes it, even while the field is still
+  // hidden.
+  bool _onScroll(ScrollNotification n) {
     if (!_enabled) return false;
-    _scrolling = n.context;
+    final ctx = n.context;
+    if (ctx == null) return false;
+    if (n is ScrollStartNotification) {
+      _userScrolls.removeWhere((c) => !c.mounted);
+      if (n.dragDetails != null) {
+        _userScrolls.add(ctx);
+      } else {
+        _userScrolls.remove(ctx);
+      }
+      return false;
+    }
+    if (n is ScrollEndNotification) {
+      _userScrolls.remove(ctx);
+      return false;
+    }
+    if (n is! ScrollUpdateNotification || !_userScrolls.contains(ctx)) return false;
+    _scrolling = ctx;
     // The notification comes before layout: check the new positions after
     // the frame, once per frame.
     if (!_checkScheduled) {
@@ -90,7 +111,7 @@ class _ScrollAwayDismissesKeyboardState extends State<ScrollAwayDismissesKeyboar
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<ScrollUpdateNotification>(
+    return NotificationListener<ScrollNotification>(
       onNotification: _onScroll,
       child: widget.child,
     );
