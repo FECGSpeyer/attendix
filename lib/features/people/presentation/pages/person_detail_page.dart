@@ -231,6 +231,12 @@ enum PersonModalResult {
 /// pending ones offer approve / decline (both follow from the person).
 Future<PersonModalResult?> showPersonModal(
     BuildContext context, int personId) {
+  // E2E PERSONEN-56: the cached person can be stale (pause / unpause /
+  // archive from the list swipe actions or another page don't touch this
+  // family) – load it fresh whenever the modal opens, like Ionic opens the
+  // page with the current object.
+  ProviderScope.containerOf(context, listen: false)
+      .invalidate(personProvider(personId));
   Widget build(BuildContext _) =>
       PersonDetailPage(personId: personId, asModal: true);
   if (useIosLook(context)) {
