@@ -521,11 +521,25 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
           dense: true,
           minTileHeight: 36,
           leading: Icon(AppIcons.commit, color: AppColors.medium),
+          // F-ABL-07: Ionic `ion-label` keeps one line with an ellipsis
+          // (it never broke the word over 5 lines next to the button).
           title: Text(context.l10n.planningAgendaInsertPos,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(color: AppColors.medium, fontSize: 14)),
           trailing: Row(mainAxisSize: MainAxisSize.min, children: [
             if (widget.onAddTopics != null)
-              TextButton(onPressed: widget.onAddTopics, child: Text(context.l10n.attendanceAddTopics)),
+              // Ionic `ion-button fill="clear" size="small"`.
+              TextButton(
+                onPressed: widget.onAddTopics,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  minimumSize: const Size(0, 32),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  textStyle: const TextStyle(fontSize: 13),
+                ),
+                child: Text(context.l10n.attendanceAddTopics),
+              ),
             dragHandle,
           ]),
         ),
