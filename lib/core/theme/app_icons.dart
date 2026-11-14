@@ -337,4 +337,8 @@ abstract final class AppIcons {
   static IconData get musicalNoteOutline => _pick(Ionicons.musicalNoteOutline, Icons.music_note_outlined);
   static IconData get chevronDownOutline => _pick(Ionicons.chevronDownOutline, Icons.expand_more);
   static IconData get calendarClearOutline => _pick(Ionicons.calendarClearOutline, Icons.calendar_today_outlined);
+  // Klassik-Parität (Werke / Dateien): Ionic names used 1:1.
+  static IconData get shareSocialOutline => _pick(Ionicons.shareSocialOutline, Icons.share_outlined);
+  static IconData get optionsFilled => _pick(Ionicons.options, Icons.tune);
+  static IconData get linkFilled => _pick(Ionicons.link, Icons.link);
 }

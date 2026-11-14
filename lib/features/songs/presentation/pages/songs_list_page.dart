@@ -527,7 +527,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                                   child: Badge(
                                     isLabelVisible: filter.hasActiveFilters,
                                     smallSize: 8,
-                                    child: IosCircleIcon(icon: AppIcons.tune, size: 44),
+                                    child: IosCircleIcon(icon: AppIcons.optionsFilled, size: 44),
                                   ),
                                 ),
                               ),
@@ -543,7 +543,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                               icon: Badge(
                                 isLabelVisible: filter.hasActiveFilters,
                                 smallSize: 8,
-                                child: Icon(AppIcons.tune),
+                                child: Icon(AppIcons.optionsFilled),
                               ),
                               onPressed: toggleMenu,
                             ),
@@ -816,7 +816,7 @@ class _SongListItem extends StatelessWidget {
       ));
     }
     if ((song.link?.isNotEmpty ?? false) && view.showLink) {
-      badges.add(SongBadge(color: AppColors.primary, icon: AppIcons.link));
+      badges.add(SongBadge(color: AppColors.primary, icon: AppIcons.linkFilled));
     }
     if (view.showDifficulty) {
       badges.add(SongBadge(

@@ -29,6 +29,7 @@ import '../../../../l10n/l10n.dart';
 import '../widgets/files_move_modal.dart';
 import '../widgets/settings_list.dart';
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonInsetList;
 import '../../../../core/utils/file_mime.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -1070,7 +1071,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         if (!entry.isFolder && (_telegramChatId?.isNotEmpty ?? false))
           AppPopoverMenuItem(
             value: () => _sendEntryPerTelegram(entry),
-            icon: AppIcons.sendOutlined,
+            icon: AppIcons.paperPlaneOutline,
             label: context.l10n.filesSendTelegram,
           ),
         if (canEdit) ...[
@@ -1158,19 +1159,27 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       appBar: _selectionMode
           ? AppBar(
               automaticallyImplyLeading: false,
-              leading: IconButton(
-                icon: Icon(AppIcons.close),
-                tooltip: context.l10n.filesSelectionDone,
-                onPressed: _exitSelection,
+              // WER-18: `ion-buttons` (ios27 glass on iOS) at both ends.
+              leading: Center(
+                child: ToolbarButtonGroup(children: [
+                  IconButton(
+                    icon: Icon(AppIcons.close),
+                    tooltip: context.l10n.filesSelectionDone,
+                    onPressed: _exitSelection,
+                  ),
+                ]),
               ),
+              leadingWidth: ionIsIos(context) ? 72 : null,
               title: Text(context.l10n.filesSelectedCount(_selectedPaths.length)),
               actions: [
-                TextButton(
-                  onPressed: _toggleSelectAll,
-                  child: IonButtonLabel(_allVisibleSelected
-                      ? context.l10n.filesSelectNone
-                      : context.l10n.filesSelectAll),
-                ),
+                ToolbarButtonGroup(children: [
+                  TextButton(
+                    onPressed: _toggleSelectAll,
+                    child: IonButtonLabel(_allVisibleSelected
+                        ? context.l10n.filesSelectNone
+                        : context.l10n.filesSelectAll),
+                  ),
+                ]),
               ],
             )
           : AppBar(
@@ -1227,7 +1236,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                           ),
                           AppPopoverMenuItem(
                             value: 'folder',
-                            icon: AppIcons.createNewFolderOutlined,
+                            icon: AppIcons.folderOpenOutlined,
                             label: context.l10n.filesCreateFolder,
                           ),
                           if (_entries.isNotEmpty)
@@ -1239,7 +1248,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                         ],
                         AppPopoverMenuItem(
                           value: 'share',
-                          icon: AppIcons.shareOutlined,
+                          icon: AppIcons.shareSocialOutline,
                           label: _currentPath.isNotEmpty
                               ? context.l10n.filesFlutterShareFolderLink
                               : context.l10n.filesFlutterShareRootLink,
@@ -1340,7 +1349,21 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       ),
       // Ionic 4.19.1: footer of the selection – move / delete together.
       bottomNavigationBar: _selectionMode
-          ? SafeArea(
+          // WER-18: `ion-footer > ion-toolbar` – toolbar surface, line on top.
+          ? DecoratedBox(
+              decoration: BoxDecoration(
+                color: Theme.of(context).appBarTheme.backgroundColor ??
+                    Theme.of(context).colorScheme.surface,
+                border: Border(
+                  top: BorderSide(
+                    color: ionIsIos(context)
+                        ? IonIos.line(context)
+                        : IonMd.line(Theme.of(context).brightness),
+                    width: ionIsIos(context) ? 0.55 : 1,
+                  ),
+                ),
+              ),
+              child: SafeArea(
               top: false,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
@@ -1360,6 +1383,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                     ),
                   ],
                 ),
+              ),
               ),
             )
           : null,
@@ -1411,10 +1435,13 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         );
     final crumbs = <Widget>[crumb(context.l10n.filesRoot, '', segments.isEmpty)];
     for (var i = 0; i < segments.length; i++) {
-      crumbs.add(Icon(
-          ionIsIos(context) ? AppIcons.cupertinoChevronForward : AppIcons.chevronRight,
-          size: ionIsIos(context) ? 14 : 18,
-          color: AppColors.medium));
+      // WER-17: `ion-breadcrumb` separators – chevron in iOS, "/" in md.
+      crumbs.add(ionIsIos(context)
+          ? Icon(AppIcons.cupertinoChevronForward, size: 14, color: AppColors.medium)
+          : const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 2),
+              child: Text('/', style: TextStyle(fontSize: 14, color: AppColors.medium)),
+            ));
       crumbs.add(crumb(
         segments[i],
         segments.sublist(0, i + 1).join('/'),
@@ -1520,17 +1547,13 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         ),
       ];
     }
+    // WER-17: md `ion-list [inset]="true"` – rounded, no shadow, item lines
+    // from the label start (16 + 24px icon + 32px gap).
     return [
-      Card(
+      IonInsetList(
         margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-        child: Column(
-          children: [
-            for (var i = 0; i < filtered.length; i++) ...[
-              _buildEntryTile(filtered[i]),
-              if (i < filtered.length - 1) const Divider(height: 1, indent: 72),
-            ],
-          ],
-        ),
+        dividerIndent: 72,
+        children: [for (final e in filtered) _buildEntryTile(e)],
       ),
     ];
   }
