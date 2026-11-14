@@ -26,9 +26,19 @@ BorderSide _itemLine(BuildContext context, {bool focused = false}) {
   final dark = Theme.of(context).brightness == Brightness.dark;
   // md `.item-has-focus`: 2px highlight in the primary colour (iOS has
   // `--highlight-height: 0`).
-  if (focused && !ios) return const BorderSide(color: AppColors.primary, width: 2);
-  if (ios) return BorderSide(color: ios27.IonIos.line(Theme.of(context).brightness), width: 0.55);
-  return BorderSide(color: dark ? const Color(0xFF222222) : const Color(0x21000000), width: 1);
+  if (focused && !ios) {
+    return const BorderSide(color: AppColors.primary, width: 2);
+  }
+  if (ios) {
+    return BorderSide(
+      color: ios27.IonIos.line(Theme.of(context).brightness),
+      width: 0.55,
+    );
+  }
+  return BorderSide(
+    color: dark ? const Color(0xFF222222) : const Color(0x21000000),
+    width: 1,
+  );
 }
 
 /// Metrics of a legacy `<ion-label position="stacked">` item (measured on
@@ -37,11 +47,11 @@ BorderSide _itemLine(BuildContext context, {bool focused = false}) {
 /// above a 16px input; 20px text line.
 class _StackedMetrics {
   const _StackedMetrics(this.ios)
-      : labelSize = ios ? 14.875 : 12,
-        labelHeight = ios ? 18 : 15,
-        inputTop = ios ? 10 : 7,
-        inputBottom = ios ? 10 : 10,
-        inputSize = ios ? 17 : 16;
+    : labelSize = ios ? 14.875 : 12,
+      labelHeight = ios ? 18 : 15,
+      inputTop = ios ? 10 : 7,
+      inputBottom = ios ? 10 : 10,
+      inputSize = ios ? 17 : 16;
 
   final bool ios;
   final double labelSize;
@@ -133,8 +143,14 @@ class _IonStackedInputItemState extends State<IonStackedInputItem> {
     final ios = useIosLook(context);
     final m = _StackedMetrics(ios);
     final dark = theme.brightness == Brightness.dark;
-    final text = ios ? (theme.brightness == Brightness.dark ? Colors.white : Colors.black) : IonMd.text(theme.brightness);
-    final helperColor = dark ? const Color(0xFF8C8C8C) : const Color(0xFF737373);
+    final text =
+        ios
+            ? (theme.brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black)
+            : IonMd.text(theme.brightness);
+    final helperColor =
+        dark ? const Color(0xFF8C8C8C) : const Color(0xFF737373);
     final inputStyle = TextStyle(
       fontSize: m.inputSize,
       height: _StackedMetrics.lineHeight / m.inputSize,
@@ -160,38 +176,43 @@ class _IonStackedInputItemState extends State<IonStackedInputItem> {
       disabledBorder: InputBorder.none,
     );
     final multiline = widget.textarea;
-    final Widget field = widget.validator != null
-        ? TextFormField(
-            controller: widget.controller,
-            decoration: decoration,
-            style: inputStyle,
-            autofocus: widget.autofocus,
-            enabled: widget.enabled,
-            readOnly: widget.readOnly,
-            onTap: widget.onTap,
-            onChanged: widget.onChanged,
-            validator: widget.validator,
-            obscureText: widget.obscureText,
-            keyboardType: widget.keyboardType ?? (multiline ? TextInputType.multiline : null),
-            textCapitalization: widget.textCapitalization,
-            minLines: multiline ? 1 : null,
-            maxLines: multiline ? null : 1,
-          )
-        : TextField(
-            controller: widget.controller,
-            decoration: decoration,
-            style: inputStyle,
-            autofocus: widget.autofocus,
-            enabled: widget.enabled,
-            readOnly: widget.readOnly,
-            onTap: widget.onTap,
-            onChanged: widget.onChanged,
-            obscureText: widget.obscureText,
-            keyboardType: widget.keyboardType ?? (multiline ? TextInputType.multiline : null),
-            textCapitalization: widget.textCapitalization,
-            minLines: multiline ? 1 : null,
-            maxLines: multiline ? null : 1,
-          );
+    final Widget field =
+        widget.validator != null
+            ? TextFormField(
+              controller: widget.controller,
+              decoration: decoration,
+              style: inputStyle,
+              autofocus: widget.autofocus,
+              enabled: widget.enabled,
+              readOnly: widget.readOnly,
+              onTap: widget.onTap,
+              onChanged: widget.onChanged,
+              validator: widget.validator,
+              obscureText: widget.obscureText,
+              keyboardType:
+                  widget.keyboardType ??
+                  (multiline ? TextInputType.multiline : null),
+              textCapitalization: widget.textCapitalization,
+              minLines: multiline ? 1 : null,
+              maxLines: multiline ? null : 1,
+            )
+            : TextField(
+              controller: widget.controller,
+              decoration: decoration,
+              style: inputStyle,
+              autofocus: widget.autofocus,
+              enabled: widget.enabled,
+              readOnly: widget.readOnly,
+              onTap: widget.onTap,
+              onChanged: widget.onChanged,
+              obscureText: widget.obscureText,
+              keyboardType:
+                  widget.keyboardType ??
+                  (multiline ? TextInputType.multiline : null),
+              textCapitalization: widget.textCapitalization,
+              minLines: multiline ? 1 : null,
+              maxLines: multiline ? null : 1,
+            );
     final labelColor = _focused && !ios ? AppColors.primary : text;
     return Focus(
       canRequestFocus: false,
@@ -224,7 +245,9 @@ class _IonStackedInputItemState extends State<IonStackedInputItem> {
                     ),
                     // Ionic metrics are absolute: no compact desktop density.
                     Theme(
-                      data: theme.copyWith(visualDensity: VisualDensity.standard),
+                      data: theme.copyWith(
+                        visualDensity: VisualDensity.standard,
+                      ),
                       child: field,
                     ),
                   ],
@@ -264,9 +287,12 @@ class _IonItemFrame extends StatelessWidget {
         padding: const EdgeInsets.only(right: 16),
         // The 2px md focus highlight is painted over the 1px line so the
         // item height never changes.
-        foregroundDecoration: lines || focused
-            ? BoxDecoration(border: Border(bottom: _itemLine(context, focused: focused)))
-            : null,
+        foregroundDecoration:
+            lines || focused
+                ? BoxDecoration(
+                  border: Border(bottom: _itemLine(context, focused: focused)),
+                )
+                : null,
         child: child,
       ),
     );
@@ -293,9 +319,13 @@ class IonSelectItem extends StatefulWidget {
     this.placeholder,
     this.stacked = false,
     this.lines = true,
+    this.end,
   });
 
   final String label;
+
+  /// `slot="end"` content after the select (e.g. a clear trash button).
+  final Widget? end;
 
   /// The display text of the selection (Ionic joins multiple values with
   /// ", "); empty or null shows [placeholder].
@@ -328,7 +358,12 @@ class _IonSelectItemState extends State<IonSelectItem> {
     final theme = Theme.of(context);
     final ios = useIosLook(context);
     final m = _StackedMetrics(ios);
-    final text = ios ? (theme.brightness == Brightness.dark ? Colors.white : Colors.black) : IonMd.text(theme.brightness);
+    final text =
+        ios
+            ? (theme.brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black)
+            : IonMd.text(theme.brightness);
     final hasValue = widget.value != null && widget.value!.isNotEmpty;
     final enabled = widget.onOpen != null;
     final valueText = Text(
@@ -342,9 +377,13 @@ class _IonSelectItemState extends State<IonSelectItem> {
         color: hasValue ? text : text.withValues(alpha: 0.6),
       ),
     );
-    final icon = ios
-        ? const IonSelectIcon()
-        : IonMdSelectIcon(expanded: _open, color: _open && widget.stacked ? AppColors.primary : null);
+    final icon =
+        ios
+            ? const IonSelectIcon()
+            : IonMdSelectIcon(
+              expanded: _open,
+              color: _open && widget.stacked ? AppColors.primary : null,
+            );
     return Opacity(
       opacity: enabled ? 1 : 0.5,
       child: Semantics(
@@ -353,64 +392,89 @@ class _IonSelectItemState extends State<IonSelectItem> {
         label: widget.label,
         value: widget.value,
         child: Builder(
-          builder: (anchor) => InkWell(
-            onTap: enabled ? () => _tap(anchor) : null,
-            splashFactory: ios ? NoSplash.splashFactory : null,
-            child: _IonItemFrame(
-              lines: widget.lines,
-              focused: _open && widget.stacked,
-              minHeight: widget.stacked ? 0 : (ios ? 44 : IonMd.itemMinHeight),
-              child: widget.stacked
-                  ? Padding(
-                      padding: EdgeInsets.only(
-                          top: _StackedMetrics.itemTop, bottom: m.inputBottom),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          SizedBox(
-                            height: m.labelHeight,
-                            child: Text(
-                              widget.label,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: m.labelSize,
-                                height: m.labelHeight / m.labelSize,
-                                color: _open && !ios ? AppColors.primary : text,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: m.inputTop),
-                          Row(
+          builder:
+              (anchor) => InkWell(
+                onTap: enabled ? () => _tap(anchor) : null,
+                splashFactory: ios ? NoSplash.splashFactory : null,
+                child: _IonItemFrame(
+                  lines: widget.lines,
+                  focused: _open && widget.stacked,
+                  minHeight:
+                      widget.stacked ? 0 : (ios ? 44 : IonMd.itemMinHeight),
+                  child:
+                      widget.stacked
+                          ? Row(
                             children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    top: _StackedMetrics.itemTop,
+                                    bottom: m.inputBottom,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      SizedBox(
+                                        height: m.labelHeight,
+                                        child: Text(
+                                          widget.label,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: m.labelSize,
+                                            height: m.labelHeight / m.labelSize,
+                                            color:
+                                                _open && !ios
+                                                    ? AppColors.primary
+                                                    : text,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: m.inputTop),
+                                      Row(
+                                        children: [
+                                          Expanded(child: valueText),
+                                          const SizedBox(width: 8),
+                                          icon,
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              if (widget.end != null) ...[
+                                const SizedBox(width: 8),
+                                widget.end!,
+                              ],
+                            ],
+                          )
+                          : Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                ),
+                                child: Text(
+                                  widget.label,
+                                  style: TextStyle(
+                                    fontSize: ios ? 17 : 16,
+                                    color: text,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
                               Expanded(child: valueText),
                               const SizedBox(width: 8),
                               icon,
+                              if (widget.end != null) ...[
+                                const SizedBox(width: 8),
+                                widget.end!,
+                              ],
                             ],
                           ),
-                        ],
-                      ),
-                    )
-                  : Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            widget.label,
-                            style: TextStyle(
-                              fontSize: ios ? 17 : 16,
-                              color: text,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(child: valueText),
-                        const SizedBox(width: 8),
-                        icon,
-                      ],
-                    ),
-            ),
-          ),
+                ),
+              ),
         ),
       ),
     );
@@ -420,14 +484,19 @@ class _IonSelectItemState extends State<IonSelectItem> {
 /// Ionic `ion-button expand="full"`: full width, no radius, no side
 /// margin (e.g. the "Hinzufügen" button of the add sheets).
 class IonFullButton extends StatelessWidget {
-  const IonFullButton({super.key, required this.child, required this.onPressed});
+  const IonFullButton({
+    super.key,
+    required this.child,
+    required this.onPressed,
+  });
 
   final Widget child;
   final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
-    final base = Theme.of(context).filledButtonTheme.style ?? const ButtonStyle();
+    final base =
+        Theme.of(context).filledButtonTheme.style ?? const ButtonStyle();
     return Padding(
       // ion-button margin: 4px 0 (expand="full" drops the inline margin).
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -456,7 +525,8 @@ class IonArrowBackButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   /// `AppBar.leadingWidth`: iOS 12 + 48 + 12, md the default.
-  static double? leadingWidth(BuildContext context) => useIosLook(context) ? 72 : null;
+  static double? leadingWidth(BuildContext context) =>
+      useIosLook(context) ? 72 : null;
 
   @override
   Widget build(BuildContext context) {
@@ -474,7 +544,11 @@ class IonArrowBackButton extends StatelessWidget {
           onTap: onPressed,
           // Ionic `ion-buttons` glass around a clear icon-only
           // `ion-button` (28px ionicon) – larger than the 44pt circle.
-          child: IosCircleIcon(icon: AppIcons.arrowBack, size: 48, iconSize: 24),
+          child: IosCircleIcon(
+            icon: AppIcons.arrowBack,
+            size: 48,
+            iconSize: 24,
+          ),
         ),
       ),
     );
@@ -517,7 +591,9 @@ IonLoadingHandle showIonLoading(BuildContext context, {String? message}) {
         // Dismissed before the first frame.
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final route = handle._route;
-          if (route != null && route.isActive) route.navigator?.removeRoute(route);
+          if (route != null && route.isActive) {
+            route.navigator?.removeRoute(route);
+          }
         });
       }
       return IonLoadingBox(message: message);
@@ -550,7 +626,10 @@ class IonLoadingBox extends StatelessWidget {
   Widget build(BuildContext context) {
     final ios = useIosLook(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final bg = dark ? const Color(0xFF1E1E1E) : (ios ? const Color(0xFFF9F9F9) : const Color(0xFFF2F2F2));
+    final bg =
+        dark
+            ? const Color(0xFF1E1E1E)
+            : (ios ? const Color(0xFFF9F9F9) : const Color(0xFFF2F2F2));
     final fg = dark ? const Color(0xFFDBDBDB) : const Color(0xFF262626);
     return PopScope(
       canPop: false,
@@ -563,9 +642,10 @@ class IonLoadingBox extends StatelessWidget {
             shadowColor: Colors.black,
             borderRadius: BorderRadius.circular(ios ? 8 : 2),
             child: Padding(
-              padding: ios
-                  ? const EdgeInsets.symmetric(horizontal: 34, vertical: 24)
-                  : const EdgeInsets.all(24),
+              padding:
+                  ios
+                      ? const EdgeInsets.symmetric(horizontal: 34, vertical: 24)
+                      : const EdgeInsets.all(24),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

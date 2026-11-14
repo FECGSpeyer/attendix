@@ -8,7 +8,6 @@ import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/handover_request.dart';
@@ -20,7 +19,9 @@ import 'handover_page.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../widgets/ion_condense.dart';
-import '../widgets/settings_list.dart' show ionIsIos;
+import '../widgets/settings_list.dart';
+import '../../../people/presentation/widgets/ion/ion_widgets.dart' show IonFabButton;
+import '../../../../shared/widgets/layout/ion_form_items.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
@@ -125,6 +126,10 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
       targetGroups.where((g) => g.id == id).map((g) => g.name).firstOrNull ??
       context.l10n.commonUnknown;
 
+  /// Called once all people were handled, before the result alert / toast
+  /// (the classic page closes its `ion-loading` here, like Ionic).
+  void onTransferFinished() {}
+
   Future<void> confirmProceed() async {
     final data = handoverData!;
     final confirmed = await DialogHelper.showConfirmation(
@@ -184,6 +189,7 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
         },
       );
       container.invalidate(playersProvider);
+      onTransferFinished();
 
       if (!mounted) return;
       if (failed.isNotEmpty) {
@@ -202,6 +208,7 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
       }
       if (mounted) context.go(handoverDoneRoute);
     } catch (e) {
+      onTransferFinished();
       if (mounted) {
         ToastHelper.showError(context, context.l10n.handoverFailedWith(friendlyErrorMessage(e)));
       }
@@ -252,52 +259,107 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> with Ha
     if (picked != null) setState(() => groupMapping[person.id!] = picked);
   }
 
+  IonLoadingHandle? _loading;
+
+  @override
+  void onTransferFinished() {
+    _loading?.dismiss();
+    _loading = null;
+  }
+
+  @override
+  void dispose() {
+    _loading?.dismiss();
+    super.dispose();
+  }
+
+  /// EIB-18 / EIB-19: Ionic confirm alert – "Abbrechen" with
+  /// `role: 'destructive'`, "Übertragen" plain – then `ion-loading`
+  /// "Übertrage…" while the people are handed over.
+  Future<void> _confirmProceedClassic() async {
+    final data = widget.data!;
+    final confirmed = await showAppDialog<bool>(
+      context: context,
+      builder: (ctx) => AppAlertDialog(
+        title: Text(ctx.l10n.handoverTitle),
+        content: Text(handoverConfirmMessage(data)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            style: appAlertDestructiveStyle(ctx),
+            child: Text(ctx.l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(ctx.l10n.handoverTransfer),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    _loading = showIonLoading(context, message: context.l10n.handoverTransferring);
+    try {
+      await proceed();
+    } finally {
+      onTransferFinished();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = widget.data;
-    // IOS_R6: Ionic `ion-header collapse="condense"` (large title on iOS)
+    final l10n = context.l10n;
+    // EIB-09: Ionic handover-detail – arrow-back, condense title, inset
+    // list "Gruppen-Zuordnung" with `ion-item button detail="false"` and
+    // the mapping as `ion-note slot="end"`, walk FAB.
     return IonCondense(builder: (context, collapsed) => Scaffold(
-      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
       extendBodyBehindAppBar: ionIsIos(context),
-      // IOS_R6: `ion-header translucent` + `collapse="condense"`
-      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(title: IonCondenseTitle(context.l10n.handoverTitle, collapsed: collapsed))),
+      appBar: IonTranslucentAppBar(
+        condensed: collapsed,
+        child: AppBar(
+          leading: IonArrowBackButton(
+            onPressed: () => context.canPop() ? context.pop() : context.go('/settings/handover'),
+          ),
+          leadingWidth: IonArrowBackButton.leadingWidth(context),
+          title: IonCondenseTitle(l10n.handoverTitle, collapsed: collapsed),
+        ),
+      ),
       floatingActionButton: TabBarFab.wrap(data == null || loading
           ? null
-          : FloatingActionButton(
-              onPressed: transferring ? null : confirmProceed,
-              child: transferring
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: AppSpinner(
-                          strokeWidth: 2, color: Colors.white),
-                    )
-                  : Icon(AppIcons.directionsWalk),
+          : IonFabButton(
+              icon: AppIcons.directionsWalk,
+              onPressed: transferring ? null : _confirmProceedClassic,
             )),
       body: data == null || loading
           ? const Center(child: AppSpinner())
           : ListView(
-              padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, ionIsIos(context) ? 0 : AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: 16, fabRoom: 84)), // IOS_R6: large title on top
+              padding: EdgeInsets.fromLTRB(
+                ionListMargin(context),
+                ionIsIos(context) ? 0 : AppDimensions.paddingM,
+                ionListMargin(context),
+                scrollEndPadding(context, base: 16, fabRoom: 84),
+              ),
               children: [
                 const IonContentTopInset(),
-                IonLargeTitle(context.l10n.handoverTitle, padding: const EdgeInsets.only(bottom: 4)),
-                Text(context.l10n.handoverGroupMapping,
-                    style: Theme.of(context).textTheme.titleSmall),
-                const SizedBox(height: AppDimensions.paddingS),
-                Card(
-                  child: Column(
-                    children: [
-                      for (final p in data.persons)
-                        ListTile(
-                          title: Text('${p.firstName} ${p.lastName}'),
-                          trailing: Text(
+                IonLargeTitle(l10n.handoverTitle, padding: const EdgeInsets.only(bottom: 4)),
+                SettingsListSection(
+                  title: l10n.handoverGroupMapping,
+                  icons: false,
+                  children: [
+                    for (final p in data.persons)
+                      SettingsListTile(
+                        title: '${p.firstName} ${p.lastName}',
+                        detail: false,
+                        trailing: ConstrainedBox(
+                          constraints: BoxConstraints(
+                              maxWidth: MediaQuery.sizeOf(context).width * 0.5),
+                          child: IonNote(
                             '${p.groupName ?? ''} -> ${targetGroupName(groupMapping[p.id])}',
-                            style: const TextStyle(color: AppColors.medium),
                           ),
-                          onTap: targetGroups.isEmpty ? null : () => _changeGroup(p),
                         ),
-                    ],
-                  ),
+                        onTap: targetGroups.isEmpty ? null : () => _changeGroup(p),
+                      ),
+                  ],
                 ),
               ],
             ),
