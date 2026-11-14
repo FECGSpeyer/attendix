@@ -214,7 +214,10 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 )
               : null,
         ),
-        body: _isPublic
+        // OEFF-44: the toast alone was easy to miss on a cold deep link
+        // (unknown id in a valid format) and left a blank page; the hint
+        // stays on the page as well.
+        body: _isPublic && context.rdSkin != null
             ? const SizedBox.shrink()
             : ErrorStateView(
                 icon: AppIcons.linkOff,
