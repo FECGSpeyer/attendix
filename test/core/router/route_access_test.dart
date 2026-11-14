@@ -244,4 +244,11 @@ void main() {
     expect(_go('/settings/general', Role.responsible), isNull);
     expect(_go('/settings/general/extra-fields', Role.responsible), isNull);
   });
+
+  test('ROLLEN-B-45: /people/new only for admin/responsible, viewer leaves', () {
+    expect(_go('/people/new', Role.admin), isNull);
+    expect(_go('/people/new', Role.responsible), isNull);
+    expect(_go('/people/new', Role.viewer), isNotNull);
+    expect(_go('/people', Role.viewer), isNull);
+  });
 }
