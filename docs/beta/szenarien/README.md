@@ -6,16 +6,19 @@ Jede Datei beschreibt die Aufgaben einer Rolle im neuen Design (Beta). Wie ein
 Szenario aufgebaut ist und welche Regeln gelten, steht in der
 [Übersicht](../README.md#wie-ein-szenario-aufgebaut-ist).
 
-| Rolle | Kürzel | Datei | Stand |
-|-------|:------:|-------|-------|
-| Mitglied | `M` | [mitglied.md](mitglied.md) | fertig |
-| Stimmführer | `S` | [stimmfuehrer.md](stimmfuehrer.md) | fertig |
-| Helfer | `H` | [helfer.md](helfer.md) | fertig |
-| Beobachter | `B` | [beobachter.md](beobachter.md) | fertig |
-| Leitung (Verantwortlicher und Administrator) | `L` | [leitung.md](leitung.md) | fertig |
-| nur Administrator | `A` | [admin.md](admin.md) | fertig |
-| Elternteil | `E` | [eltern.md](eltern.md) | fertig |
-| Neu dabei (Registrieren, Beitreten, Bewerber) | `N` | [neu-dabei.md](neu-dabei.md) | fertig |
+| Rolle | Kürzel | Datei | Szenarien |
+|-------|:------:|-------|:---------:|
+| Mitglied | `M` | [mitglied.md](mitglied.md) | 34 |
+| Stimmführer | `S` | [stimmfuehrer.md](stimmfuehrer.md) | 3 |
+| Helfer | `H` | [helfer.md](helfer.md) | 15 |
+| Beobachter | `B` | [beobachter.md](beobachter.md) | 5 |
+| Leitung (Verantwortlicher und Administrator) | `L` | [leitung.md](leitung.md) | 64 |
+| nur Administrator | `A` | [admin.md](admin.md) | 10 |
+| Elternteil | `E` | [eltern.md](eltern.md) | 11 |
+| Neu dabei (Registrieren, Beitreten, Bewerber) | `N` | [neu-dabei.md](neu-dabei.md) | 8 |
+
+Ein Stichwort suchst du am schnellsten unter
+[Nachschlagen](../nachschlagen.md#stichwörter-von-a-bis-z).
 
 ## Wer baut auf wem auf?
 

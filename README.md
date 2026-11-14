@@ -90,4 +90,10 @@ dart analyze lib/     # Code analysieren
 flutter test          # Tests
 ```
 
-Weitere Hinweise für Entwickler stehen in [CLAUDE.md](CLAUDE.md) und unter [docs/](docs/).
+Weitere Hinweise für Entwickler stehen in [CLAUDE.md](CLAUDE.md).
+
+## Dokumentation
+
+- [Handbuch zum neuen Design (Beta)](docs/beta/README.md): Überblick, Rollen und Aufgaben je Rolle („Ich möchte …“).
+- [So ist die Beta gebaut](docs/beta/entwickler.md): Aufbau im Code und Regeln für Änderungen.
+- [Alle Dokumente](docs/README.md): Einrichten, Betrieb, Sicherheit.

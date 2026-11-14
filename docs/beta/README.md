@@ -4,18 +4,20 @@ Diese Dokumentation beschreibt Attendix so, wie die App mit eingeschaltetem
 **Neuen Design (Beta)** aussieht und funktioniert. Das klassische Design, das
 der früheren Ionic-App entspricht, ist hier nicht beschrieben.
 
-Stand: 14.11.2026. Die Doku ist im Aufbau, die Tabelle unten zeigt, was schon
-da ist.
+Stand: 14.11.2026. Beschrieben sind 150 Aufgaben für alle Rollen. Geprüft
+wurde gegen den Code und die Texte der App, nicht an einem Gerät. Fällt beim
+Benutzen eine Abweichung auf, gehört sie mit der Nummer des Szenarios
+gemeldet.
 
 ## Für wen ist was?
 
-| Teil | Für wen | Inhalt | Stand |
-|------|---------|--------|-------|
-| [Überblick](ueberblick.md) | alle | Aufbau der App, Reiter, Begriffe, Geräte | fertig |
-| [Rollen](rollen.md) | Leitung, Entwickler | Wer sieht was, wer darf was, welche Schalter es gibt | fertig |
-| [Szenarien](szenarien/README.md) | alle, Tester | Aufgaben je Rolle: „Ich möchte …“ mit Schritten und Ergebnis | Mitglied fertig, übrige Rollen folgen |
-| Nachschlagen je Bereich | Leitung | Was jede Seite zeigt und welche Einstellungen es gibt | folgt |
-| Für Entwickler | Entwickler | Wie die Beta im Code aufgebaut ist, Bausteine, Regeln | folgt |
+| Teil | Für wen | Inhalt |
+|------|---------|--------|
+| [Überblick](ueberblick.md) | alle | Aufbau der App, Reiter, Begriffe, Geräte |
+| [Rollen](rollen.md) | Leitung, Entwickler | Wer sieht was, wer darf was, welche Schalter es gibt |
+| [Szenarien](szenarien/README.md) | alle, Tester | Aufgaben je Rolle: „Ich möchte …“ mit Schritten und Ergebnis |
+| [Nachschlagen](nachschlagen.md) | Leitung | Alle Einträge der Verwaltung, Terminart, Stichwörter von A bis Z |
+| [Für Entwickler](entwickler.md) | Entwickler | Wie die Beta im Code aufgebaut ist, Bausteine, Regeln |
 
 ## So liest du die Doku
 
@@ -65,7 +67,8 @@ Die Beta ändert sich oft. Damit die Doku nicht veraltet:
   `lib/l10n/app_de.arb` übernommen.
 - Ein Prüfskript vergleicht alle Texte in „Anführungszeichen“ mit den Texten
   der App und meldet, was es dort nicht mehr gibt. So fällt auf, wenn ein Knopf
-  umbenannt wurde und die Doku noch den alten Namen nennt:
+  umbenannt wurde und die Doku noch den alten Namen nennt. Es prüft auch, ob
+  jede genannte Nummer ein Szenario hat und jeder Link ankommt:
 
   ```bash
   python3 tool/docs/check_app_texts.py

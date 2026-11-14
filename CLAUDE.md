@@ -172,10 +172,10 @@ Stattdessen legt jeder PR **eine** Changelog-Datei an:
 
 ## Beta-Dokumentation aktuell halten
 
-`docs/beta/` beschreibt das neue Design (Beta) für Nutzer: Überblick, Rollen und Szenarien je Rolle („Ich möchte …“ mit festen Nummern wie `M-02`).
+`docs/beta/` beschreibt das neue Design (Beta): Überblick, Rollen, Szenarien je Rolle („Ich möchte …“ mit festen Nummern wie `M-02`), Nachschlagen und `entwickler.md` (Aufbau der Beta im Code, Prüfliste für PRs).
 
 - Ändert ein PR, wie eine Aufgabe in der Beta abläuft, passt er das betroffene Szenario im selben PR an. Neue Aufgaben bekommen ein neues Szenario mit der nächsten freien Nummer.
-- Texte der App stehen dort in „Anführungszeichen“ und genau wie in `lib/l10n/app_de.arb`. Die CI prüft das (`python3 tool/docs/check_app_texts.py --strict`): Wer einen zitierten Text umbenennt, passt die Doku an.
+- Texte der App stehen dort in „Anführungszeichen“ und genau wie in `lib/l10n/app_de.arb`. Die CI prüft das (`python3 tool/docs/check_app_texts.py --strict`), dazu Nummern und Links innerhalb der Doku: Wer einen zitierten Text umbenennt, passt die Doku an.
 - Das Repo ist öffentlich: keine Zugangsdaten, keine internen Betriebsdetails, keine Sicherheitsbefunde in die Doku.
 
 ## Rollen-System
