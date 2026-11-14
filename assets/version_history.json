@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.144.3",
+      "date": "14.11.2026",
+      "changes": [
+        "⚡ Termine-Liste lädt die Anwesenheitszahlen nur noch für die gezeigten Termine statt für alle",
+        "⚡ Klassisches Design (iPhone-Aussehen): Fenster über der Seite scrollen flüssiger"
+      ]
+    },
+    {
       "version": "0.144.2",
       "date": "14.11.2026",
       "changes": [
