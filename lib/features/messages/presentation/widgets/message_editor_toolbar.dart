@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
@@ -180,8 +181,9 @@ class _LinkDialogState extends State<_LinkDialog> {
     if (useIosLook(context)) {
       return IosAlertCard(
         title: Text(l10n.editorLink),
-        // ios27 `.alert-message:empty { padding: 0 0 12px }` above the inputs.
-        contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 21),
+        // ios27 `.alert-message:empty { padding: 0 0 12px }` above the inputs
+        // (Beta keeps its spacing).
+        contentPadding: EdgeInsets.fromLTRB(16, context.rdSkin == null ? 12 : 0, 16, 21),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,

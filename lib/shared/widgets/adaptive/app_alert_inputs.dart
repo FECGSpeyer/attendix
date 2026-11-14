@@ -356,6 +356,7 @@ class _AlertOptionRow extends StatelessWidget {
             child: Text(
               description,
               style: TextStyle(
+                fontFamily: style.fontFamily,
                 fontSize: 12,
                 color: dark ? const Color(0xFFB3B3B3) : const Color(0xFF4D4D4D),
               ),
@@ -426,8 +427,9 @@ class _AlertOptionRow extends StatelessWidget {
     } else {
       // md: `min-height: 48px`, the control 24px from the edge, the label
       // 32px after it (`padding: 13px 24px 13px 56px` next to the control),
-      // 16px step-850.
+      // 16px step-850 in the app font (like the list rows it replaces).
       final style = TextStyle(
+        fontFamily: theme.textTheme.bodyLarge?.fontFamily,
         fontSize: 16,
         color: dark ? const Color(0xFFD9D9D9) : const Color(0xFF262626),
       );
