@@ -444,7 +444,11 @@ class _SidePanelShellState extends ConsumerState<_SidePanelShell> {
                       onClose: () {},
                     ),
                   ),
-                  Expanded(child: content),
+                  // ROLLEN-B-05: the pages' modal barriers carry a
+                  // BlockSemantics that would drop the side nav (painted
+                  // before them in the same semantics container) from the
+                  // accessibility tree; an own container keeps it reachable.
+                  Expanded(child: Semantics(container: true, child: content)),
                 ],
               )
             : content,

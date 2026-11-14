@@ -216,6 +216,9 @@ class _SideNavState extends ConsumerState<SideNav> {
     final mq = MediaQuery.of(context);
     return Semantics(
       container: true,
+      // ROLLEN-B-05: every entry is its own node (not merged into the
+      // navigation label).
+      explicitChildNodes: true,
       label: l10n.navLabel,
       child: Container(
         decoration: BoxDecoration(
@@ -575,8 +578,13 @@ class _NavButton extends StatelessWidget {
           );
 
     return Semantics(
+      // ROLLEN-B-05: an own focusable, tappable node per entry (Ionic
+      // `ion-item` buttons); excludeSemantics would drop the InkWell's tap.
+      container: true,
       button: true,
       selected: active,
+      focusable: true,
+      onTap: onTap,
       label: count > 0 ? '$label ($count)' : label,
       excludeSemantics: true,
       child: Tooltip(
@@ -667,6 +675,7 @@ class _TenantButton extends StatelessWidget {
       return Tooltip(message: longName, child: face);
     }
     return Semantics(
+      container: true,
       button: true,
       label: '${l10n.settingsSwitchTenant}: $longName',
       excludeSemantics: true,

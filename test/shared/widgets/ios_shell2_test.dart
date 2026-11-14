@@ -240,6 +240,28 @@ void main() {
     expect(_pageSize!.width, 1440 - 272);
   });
 
+  testWidgets('ROLLEN-B-05: the fixed side panel stays in the semantics tree',
+      (tester) async {
+    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final handle = tester.ensureSemantics();
+    await tester.pumpWidget(_app());
+    await tester.pumpAndSettle();
+    final buttons = find
+        .descendant(
+          of: find.byType(SideNav),
+          matching: find.byWidgetPredicate((w) =>
+              w is Semantics && w.properties.button == true && (w.properties.label ?? '').isNotEmpty),
+        )
+        .evaluate()
+        .map((e) => (e.widget as Semantics).properties.label!)
+        .toList();
+    expect(buttons, isNotEmpty);
+    expect(find.bySemanticsLabel(buttons.first), findsOneWidget);
+    handle.dispose();
+  });
+
   testWidgets('SIDE_NAV: tablet portrait → overlay panel, no tab bar',
       (tester) async {
     tester.view.physicalSize = const Size(820, 1180);
