@@ -17585,7 +17585,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPersonTomorrow => 'morgen';
 
   @override
-  String get redesignPlanAdd => 'Punkt hinzufügen';
+  String get redesignPlanAdd => 'Hinzufügen';
 
   @override
   String redesignPlanAddAfter(Object name) {
@@ -17603,9 +17603,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanAddBlock => 'Block';
 
   @override
-  String get redesignPlanAddBlockHint => 'Fasst mehrere Punkte zusammen';
-
-  @override
   String get redesignPlanAddDefaultField => 'Standardfeld hinzufügen';
 
   @override
@@ -17620,25 +17617,25 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanAddItem => 'Punkt';
 
   @override
-  String get redesignPlanAddItemHint => 'Mit Dauer, z. B. „Einsingen“';
-
-  @override
   String get redesignPlanAddNote => 'Notiz';
 
   @override
-  String get redesignPlanAddNoteHint => 'Ohne Dauer und Uhrzeit';
+  String get redesignPlanAddPlan => 'Plan';
 
   @override
-  String get redesignPlanAddPlan => 'Plan';
+  String get redesignPlanAddPoint => 'Programmpunkt';
+
+  @override
+  String get redesignPlanAddPointHint => 'Punkt, Notiz, Block oder Werke';
+
+  @override
+  String get redesignPlanAddPointHintNoWorks => 'Punkt, Notiz oder Block';
 
   @override
   String get redesignPlanAddTitle => 'Hinzufügen';
 
   @override
   String get redesignPlanAddWorks => 'Werke';
-
-  @override
-  String get redesignPlanAddWorksHint => 'Aktuelle Werke oder aus der Liste';
 
   @override
   String get redesignPlanAfterBlock => 'Punkt nach dem Block einfügen';
@@ -17773,6 +17770,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanEventWorksNone => 'Keine';
+
+  @override
+  String get redesignPlanEventWorksOther => 'Anderes Werk';
+
+  @override
+  String get redesignPlanEventWorksOtherHint => 'Aus der Werkliste';
 
   @override
   String get redesignPlanEventWorksOwn => 'Werke dieses Termins';
@@ -18047,7 +18050,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanRegisterShare => 'Als Tabelle teilen';
 
   @override
-  String get redesignPlanRegisterShareHint => 'PDF oder Telegram';
+  String get redesignPlanRegisterShareHint => 'PDF oder Bild';
 
   @override
   String get redesignPlanRegisterShuffle => 'Neu mischen';
@@ -18084,10 +18087,43 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanShare => 'Teilen';
 
   @override
-  String get redesignPlanShareExport => 'Teilen & Export';
+  String get redesignPlanShareBrandingHint =>
+      'Logo und Name im PDF und im Bild';
 
   @override
   String get redesignPlanShareHint => 'Mitglieder sehen den Ablauf im Termin';
+
+  @override
+  String get redesignPlanShareImage => 'Als Bild exportieren';
+
+  @override
+  String get redesignPlanShareImageHint => 'Speichern oder weitergeben';
+
+  @override
+  String get redesignPlanSharePdf2x => '2x A5';
+
+  @override
+  String get redesignPlanSharePdf2xHint =>
+      'Zweimal nebeneinander auf einem Blatt';
+
+  @override
+  String get redesignPlanSharePdfAll => 'Alle Pläne';
+
+  @override
+  String get redesignPlanSharePdfAllHint =>
+      'Alle Pläne dieses Termins in einem PDF';
+
+  @override
+  String get redesignPlanSharePdfHint => 'Normal oder 2x A5';
+
+  @override
+  String get redesignPlanSharePdfHintAll => 'Normal, 2x A5 oder alle Pläne';
+
+  @override
+  String get redesignPlanSharePdfNormal => 'Normal';
+
+  @override
+  String get redesignPlanSharePdfNormalHint => 'Ein Ablauf pro Seite';
 
   @override
   String get redesignPlanSongInPlan => 'im Ablauf';
@@ -19318,6 +19354,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignWorkEditNumberTaken(Object number, Object name) {
     return 'Nr. $number hat schon „$name“. Die Nummer wird so nicht gespeichert.';
   }
+
+  @override
+  String get redesignWorkEditPlanMinutes => 'Dauer im Ablauf';
+
+  @override
+  String redesignWorkEditPlanMinutesHint(Object minutes) {
+    return 'Mit dieser Dauer kommt das Werk in den Ablauf eines Termins. Leer: $minutes Minuten.';
+  }
+
+  @override
+  String get redesignWorkEditPlanMinutesLabel => 'Minuten';
 
   @override
   String get redesignWorkEditPrefix => 'Präfix';

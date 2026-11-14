@@ -15,6 +15,7 @@ import '../../../../data/models/song/song_additional_field.dart';
 import '../../../../data/repositories/song_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../planning/presentation/widgets/plan_song_helper.dart';
 import '../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../data/providers/rd_shared_library.dart';
 import '../../data/rd_words.dart';
@@ -43,6 +44,11 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
   final _prefix = TextEditingController();
   final _number = TextEditingController();
   final _link = TextEditingController();
+
+  /// The Werk's own length in an Ablauf (empty: the usual 5 minutes).
+  final _minutes = TextEditingController();
+  final _minutesFocus = FocusNode();
+  String _minutesTyped = '';
   final _nameFocus = FocusNode();
   final _prefixFocus = FocusNode();
   final _numberFocus = FocusNode();
@@ -97,6 +103,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
       (_prefixFocus, _saveNumber),
       (_numberFocus, _saveNumber),
       (_linkFocus, _saveLink),
+      (_minutesFocus, _saveFieldTexts),
     ]) {
       focus.addListener(() {
         if (!focus.hasFocus) save();
@@ -111,10 +118,10 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     _saveNumber();
     _saveLink();
     _saveFieldTexts();
-    for (final c in [_name, _prefix, _number, _link, ..._fieldControllers.values]) {
+    for (final c in [_name, _prefix, _number, _link, _minutes, ..._fieldControllers.values]) {
       c.dispose();
     }
-    for (final f in [_nameFocus, _prefixFocus, _numberFocus, _linkFocus, ..._fieldFocus.values]) {
+    for (final f in [_nameFocus, _prefixFocus, _numberFocus, _linkFocus, _minutesFocus, ..._fieldFocus.values]) {
       f.dispose();
     }
     super.dispose();
@@ -139,6 +146,8 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     _storedControls = (_difficulty, _withChoir, _withSolo, _categoryIds);
     // Like the old page: empty fields start with their default.
     _additional = {...?song.additionalFields};
+    _minutesTyped = PlanSongHelper.ownMinutes(song)?.toString() ?? '';
+    _minutes.text = _minutesTyped;
     _fields = data.additionalFields;
     for (final field in _fields) {
       _additional[field.id] ??= field.effectiveDefault;
@@ -242,6 +251,18 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
       final c = _fieldControllers[field.id];
       if (c == null) continue;
       _additional[field.id] = field.isNumber ? num.tryParse(c.text.trim()) ?? 0 : c.text;
+    }
+    // The own length lives with the Zusatzfelder (no column of its own);
+    // what is stored stays as it is until the field is changed.
+    final typed = _minutes.text.trim();
+    if (typed != _minutesTyped) {
+      _minutesTyped = typed;
+      final minutes = int.tryParse(typed);
+      if (minutes != null && minutes > 0) {
+        _additional[PlanSongHelper.minutesKey] = minutes;
+      } else {
+        _additional.remove(PlanSongHelper.minutesKey);
+      }
     }
     _writeFields();
   }
@@ -587,6 +608,26 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
             ),
           ],
         ),
+        const SizedBox(height: 20),
+        RdGroupLabel(l10n.redesignWorkEditPlanMinutes),
+        RdGroupedList(
+          children: [
+            RdFieldRow(
+              label: l10n.redesignWorkEditPlanMinutesLabel,
+              child: TextField(
+                key: const Key('rd-work-edit-minutes'),
+                controller: _minutes,
+                focusNode: _minutesFocus,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3)],
+                textInputAction: TextInputAction.done,
+                style: textStyle,
+                decoration: rdInputDecoration(p, '${PlanSongHelper.betaMinutes}'),
+              ),
+            ),
+          ],
+        ),
+        hint(l10n.redesignWorkEditPlanMinutesHint(PlanSongHelper.betaMinutes)),
         if (data.additionalFields.isNotEmpty) ...[
           const SizedBox(height: 20),
           RdGroupLabel(l10n.redesignWorkEditFields),

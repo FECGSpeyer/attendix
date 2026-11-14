@@ -232,6 +232,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// REDESIGN (Beta editor, [_PlanningBeta]): collapsed blocks and the row
   /// whose duration field is open.
   final Set<String> _rdCollapsed = {};
+
+  /// Beta: the load ([_loadGen]) whose plan showed the Überschrift field;
+  /// it then stays until another plan is loaded, also when emptied.
+  int? _rdHeadingGen;
   int? _rdDurationIndex;
 
   /// REDESIGN: the open block whose head is being dragged; its Unterpunkte
@@ -1660,11 +1664,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// to add them again when all are there; empty: nothing to add).
   Future<List<PlanField>> _currentSongFieldsOrAsk() async {
     final prefix = _songPrefix(_typeOf(_att));
+    // Beta: the Werk's own length or 5 minutes; classic 20 like Ionic.
+    final time = ref.read(redesignEnabledProvider) ? PlanSongHelper.betaTime : null;
     final all = PlanSongHelper.currentSongFields(
       const [],
       history: _history,
       songs: _songs,
       prefix: prefix,
+      time: time,
     );
     if (all.isEmpty) {
       ToastHelper.showWarning(context, context.l10n.planningNoCurrentSongs);
@@ -1675,6 +1682,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       history: _history,
       songs: _songs,
       prefix: prefix,
+      time: time,
     );
     if (added.isNotEmpty) return added;
     final loadGen = _loadGen;

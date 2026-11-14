@@ -40,13 +40,32 @@ class PlanSongHelper {
     );
   }
 
+  /// Beta: key of the Werk's own length in the Ablauf, kept with its
+  /// Zusatzfelder (`songs.additional_fields`; no tenant field has this id).
+  static const minutesKey = 'planMinutes';
+
+  /// Beta: minutes a Werk enters the Ablauf with unless it has its own.
+  static const betaMinutes = 5;
+
+  /// The Werk's own length in the Ablauf (null: none stored).
+  static int? ownMinutes(Song song) {
+    final value = song.additionalFields?[minutesKey];
+    final minutes = value is num ? value.round() : int.tryParse('${value ?? ''}');
+    return minutes == null || minutes <= 0 ? null : minutes;
+  }
+
+  /// Beta: `time` of a Werk that enters the Ablauf.
+  static String betaTime(Song song) => '${ownMinutes(song) ?? betaMinutes}';
+
   /// "Aktuelle Werke hinzufügen": all Werke of the current history that are
-  /// not yet part of the plan.
+  /// not yet part of the plan. [time]: the length of each (20 minutes
+  /// without it, like Ionic).
   static List<PlanField> currentSongFields(
     List<PlanField> fields, {
     required List<SongHistory> history,
     required List<Song> songs,
     required String Function(Song song) prefix,
+    String Function(Song song)? time,
     bool includeExisting = false,
   }) {
     // Ionic 4.17.25: [includeExisting] adds the current Werke again even when
@@ -61,10 +80,15 @@ class PlanSongHelper {
       final song = songs.where((s) => s.id == id).firstOrNull;
       if (song == null) continue;
       existing.add(id);
-      result.add(songField(song, history: history, prefix: prefix));
+      result.add(songField(song, history: history, prefix: prefix, time: time?.call(song) ?? '20'));
     }
     return result;
   }
+
+  /// Whether [att] is an Auftritt: its Terminart is highlighted (Vortrag,
+  /// Konzert), or it is an old "vortrag" Termin without a Terminart.
+  static bool isAuftritt(PlanAttendance att, List<PlanAttendanceType> types) =>
+      att.type == 'vortrag' || (types.where((t) => t.id == att.typeId).firstOrNull?.highlight ?? false);
 
   /// "Werke vom … übernehmen" (Beta): the Termine whose planned Werke are
   /// offered for the Ablauf of [att], at most [limit].
@@ -74,6 +98,8 @@ class PlanSongHelper {
   /// highlighted (Vortrag, Konzert) or differs from the one of [att]: a
   /// Probe takes the Werke of the next Auftritt, not those of the next Probe.
   /// [history] holds the Werke of the coming Termine (`currentSongsProvider`).
+  /// [distinct]: a Werk of several Termine is listed once, at the nearest
+  /// one; without it every Termin keeps its whole list.
   static List<PlanEventWorks> eventWorks(
     PlanAttendance att, {
     required List<PlanAttendance> attendances,
@@ -81,6 +107,7 @@ class PlanSongHelper {
     required List<SongHistory> history,
     required List<Song> songs,
     int limit = 3,
+    bool distinct = true,
   }) {
     DateTime? dayOf(PlanAttendance a) {
       final d = DateTime.tryParse(a.date);
@@ -91,8 +118,7 @@ class PlanSongHelper {
     if (att.id == null || day == null) return const [];
     final start = PlanUtils.parseTimeToMinutes(PlanUtils.formatTime(att.startTime));
     int? startOf(PlanAttendance a) => PlanUtils.parseTimeToMinutes(PlanUtils.formatTime(a.startTime));
-    bool highlighted(PlanAttendance a) =>
-        a.type == 'vortrag' || (types.where((t) => t.id == a.typeId).firstOrNull?.highlight ?? false);
+    bool highlighted(PlanAttendance a) => isAuftritt(a, types);
 
     final found = <({PlanAttendance att, DateTime day, List<PlanEventWork> works})>[];
     for (final a in attendances) {
@@ -131,7 +157,7 @@ class PlanSongHelper {
     for (final f in found) {
       final works = [
         for (final w in f.works)
-          if (listed.add(w.song.id!)) w,
+          if (!distinct || listed.add(w.song.id!)) w,
       ];
       if (works.isNotEmpty) result.add((att: f.att, own: f.att.id == att.id, works: works));
       if (result.length == limit) break;

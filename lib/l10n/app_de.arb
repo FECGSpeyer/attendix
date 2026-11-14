@@ -21197,7 +21197,7 @@
   "@redesignPersonTomorrow": {
     "description": "redesign.person.tomorrow"
   },
-  "redesignPlanAdd": "Punkt hinzufügen",
+  "redesignPlanAdd": "Hinzufügen",
   "@redesignPlanAdd": {
     "description": "redesign.plan.add"
   },
@@ -21220,10 +21220,6 @@
   "@redesignPlanAddBlock": {
     "description": "redesign.plan.addBlock"
   },
-  "redesignPlanAddBlockHint": "Fasst mehrere Punkte zusammen",
-  "@redesignPlanAddBlockHint": {
-    "description": "redesign.plan.addBlockHint"
-  },
   "redesignPlanAddDefaultField": "Standardfeld hinzufügen",
   "@redesignPlanAddDefaultField": {
     "description": "redesign.plan.addDefaultField"
@@ -21243,21 +21239,25 @@
   "@redesignPlanAddItem": {
     "description": "redesign.plan.addItem"
   },
-  "redesignPlanAddItemHint": "Mit Dauer, z. B. „Einsingen“",
-  "@redesignPlanAddItemHint": {
-    "description": "redesign.plan.addItemHint"
-  },
   "redesignPlanAddNote": "Notiz",
   "@redesignPlanAddNote": {
     "description": "redesign.plan.addNote"
   },
-  "redesignPlanAddNoteHint": "Ohne Dauer und Uhrzeit",
-  "@redesignPlanAddNoteHint": {
-    "description": "redesign.plan.addNoteHint"
-  },
   "redesignPlanAddPlan": "Plan",
   "@redesignPlanAddPlan": {
     "description": "redesign.plan.addPlan"
+  },
+  "redesignPlanAddPoint": "Programmpunkt",
+  "@redesignPlanAddPoint": {
+    "description": "redesign.plan.addPoint"
+  },
+  "redesignPlanAddPointHint": "Punkt, Notiz, Block oder Werke",
+  "@redesignPlanAddPointHint": {
+    "description": "redesign.plan.addPointHint"
+  },
+  "redesignPlanAddPointHintNoWorks": "Punkt, Notiz oder Block",
+  "@redesignPlanAddPointHintNoWorks": {
+    "description": "redesign.plan.addPointHintNoWorks"
   },
   "redesignPlanAddTitle": "Hinzufügen",
   "@redesignPlanAddTitle": {
@@ -21266,10 +21266,6 @@
   "redesignPlanAddWorks": "Werke",
   "@redesignPlanAddWorks": {
     "description": "redesign.plan.addWorks"
-  },
-  "redesignPlanAddWorksHint": "Aktuelle Werke oder aus der Liste",
-  "@redesignPlanAddWorksHint": {
-    "description": "redesign.plan.addWorksHint"
   },
   "redesignPlanAfterBlock": "Punkt nach dem Block einfügen",
   "@redesignPlanAfterBlock": {
@@ -21439,6 +21435,14 @@
   "redesignPlanEventWorksNone": "Keine",
   "@redesignPlanEventWorksNone": {
     "description": "redesign.plan.eventWorksNone"
+  },
+  "redesignPlanEventWorksOther": "Anderes Werk",
+  "@redesignPlanEventWorksOther": {
+    "description": "redesign.plan.eventWorksOther"
+  },
+  "redesignPlanEventWorksOtherHint": "Aus der Werkliste",
+  "@redesignPlanEventWorksOtherHint": {
+    "description": "redesign.plan.eventWorksOtherHint"
   },
   "redesignPlanEventWorksOwn": "Werke dieses Termins",
   "@redesignPlanEventWorksOwn": {
@@ -21770,7 +21774,7 @@
   "@redesignPlanRegisterShare": {
     "description": "redesign.plan.registerShare"
   },
-  "redesignPlanRegisterShareHint": "PDF oder Telegram",
+  "redesignPlanRegisterShareHint": "PDF oder Bild",
   "@redesignPlanRegisterShareHint": {
     "description": "redesign.plan.registerShareHint"
   },
@@ -21820,13 +21824,53 @@
   "@redesignPlanShare": {
     "description": "redesign.plan.share"
   },
-  "redesignPlanShareExport": "Teilen & Export",
-  "@redesignPlanShareExport": {
-    "description": "redesign.plan.shareExport"
+  "redesignPlanShareBrandingHint": "Logo und Name im PDF und im Bild",
+  "@redesignPlanShareBrandingHint": {
+    "description": "redesign.plan.shareBrandingHint"
   },
   "redesignPlanShareHint": "Mitglieder sehen den Ablauf im Termin",
   "@redesignPlanShareHint": {
     "description": "redesign.plan.shareHint"
+  },
+  "redesignPlanShareImage": "Als Bild exportieren",
+  "@redesignPlanShareImage": {
+    "description": "redesign.plan.shareImage"
+  },
+  "redesignPlanShareImageHint": "Speichern oder weitergeben",
+  "@redesignPlanShareImageHint": {
+    "description": "redesign.plan.shareImageHint"
+  },
+  "redesignPlanSharePdf2x": "2x A5",
+  "@redesignPlanSharePdf2x": {
+    "description": "redesign.plan.sharePdf2x"
+  },
+  "redesignPlanSharePdf2xHint": "Zweimal nebeneinander auf einem Blatt",
+  "@redesignPlanSharePdf2xHint": {
+    "description": "redesign.plan.sharePdf2xHint"
+  },
+  "redesignPlanSharePdfAll": "Alle Pläne",
+  "@redesignPlanSharePdfAll": {
+    "description": "redesign.plan.sharePdfAll"
+  },
+  "redesignPlanSharePdfAllHint": "Alle Pläne dieses Termins in einem PDF",
+  "@redesignPlanSharePdfAllHint": {
+    "description": "redesign.plan.sharePdfAllHint"
+  },
+  "redesignPlanSharePdfHint": "Normal oder 2x A5",
+  "@redesignPlanSharePdfHint": {
+    "description": "redesign.plan.sharePdfHint"
+  },
+  "redesignPlanSharePdfHintAll": "Normal, 2x A5 oder alle Pläne",
+  "@redesignPlanSharePdfHintAll": {
+    "description": "redesign.plan.sharePdfHintAll"
+  },
+  "redesignPlanSharePdfNormal": "Normal",
+  "@redesignPlanSharePdfNormal": {
+    "description": "redesign.plan.sharePdfNormal"
+  },
+  "redesignPlanSharePdfNormalHint": "Ein Ablauf pro Seite",
+  "@redesignPlanSharePdfNormalHint": {
+    "description": "redesign.plan.sharePdfNormalHint"
   },
   "redesignPlanSongInPlan": "im Ablauf",
   "@redesignPlanSongInPlan": {
@@ -23313,6 +23357,21 @@
       "number": {},
       "name": {}
     }
+  },
+  "redesignWorkEditPlanMinutes": "Dauer im Ablauf",
+  "@redesignWorkEditPlanMinutes": {
+    "description": "redesign.workEdit.planMinutes"
+  },
+  "redesignWorkEditPlanMinutesHint": "Mit dieser Dauer kommt das Werk in den Ablauf eines Termins. Leer: {minutes} Minuten.",
+  "@redesignWorkEditPlanMinutesHint": {
+    "description": "redesign.workEdit.planMinutesHint",
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+  "redesignWorkEditPlanMinutesLabel": "Minuten",
+  "@redesignWorkEditPlanMinutesLabel": {
+    "description": "redesign.workEdit.planMinutesLabel"
   },
   "redesignWorkEditPrefix": "Präfix",
   "@redesignWorkEditPrefix": {

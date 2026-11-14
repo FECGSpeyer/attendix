@@ -590,7 +590,8 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
   }
 }
 
-/// Saves [plan] as PDF, or sends it per Telegram (PDF or [asImage]).
+/// Saves [plan] as PDF or, with [asImage], as a picture of its first page;
+/// [perTelegram] sends it instead.
 /// [timeLabel]: the first column's header ("Minuten" by default). False
 /// when it failed (a toast says why) or Telegram is not linked.
 Future<bool> exportRegisterPlan(
@@ -639,6 +640,14 @@ Future<bool> exportRegisterPlan(
       } catch (_) {
         if (context.mounted) ToastHelper.showError(context, l10n.svcSendMessageFailed);
       }
+    } else if (asImage) {
+      Uint8List? png;
+      await for (final page in Printing.raster(pdf, pages: const [0], dpi: 150)) {
+        png = await page.toPng();
+        break;
+      }
+      if (png == null) throw StateError('no page');
+      await NativeFileService.saveBytes(png, '$shortName Registerprobenplan: $date.png');
     } else {
       // Ionic `Utils.downloadFileNative`: save, not print.
       await NativeFileService.saveBytes(pdf, '$shortName Registerprobenplan: $date.pdf');
