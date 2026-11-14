@@ -96,6 +96,16 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
           _rule = rule;
           _saved = rule;
           if (widget.initialTab == 'history') _tab = _Tab.history;
+        } else if (mounted) {
+          // EINST-60: an unknown id used to open an empty "Neue Regel" form
+          // (saving would create a new rule) – report it and go back.
+          ToastHelper.showError(context, l10n.autoMessagesLoadFailed);
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/settings/auto-messages');
+          }
+          return;
         }
       } else {
         final template = widget.template;
