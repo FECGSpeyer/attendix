@@ -801,6 +801,7 @@ extension _PlanningBeta on _PlanningPageState {
               value: field.time,
               start: at,
               onChanged: (v) => _rdSetMinutes(index, v),
+              onDone: () => _rdSet(() => _rdDurationIndex = null),
             ),
           if (divider) Divider(height: 1, thickness: 1, color: p.line),
         ],
@@ -2647,9 +2648,16 @@ class _RdDurationPill extends StatelessWidget {
 
 /// Inline duration field under a row (concept board 12): typical
 /// durations as chips, a number field for anything else, −/+ in steps of
-/// five and "bis HH:MM".
+/// five and "bis HH:MM". A tap on a chip (or "Fertig" on the keyboard)
+/// is the choice: the field closes ([onDone]); −/+ and typing leave it open.
 class _RdDurationEditor extends StatefulWidget {
-  const _RdDurationEditor({super.key, required this.value, required this.start, required this.onChanged});
+  const _RdDurationEditor({
+    super.key,
+    required this.value,
+    required this.start,
+    required this.onChanged,
+    required this.onDone,
+  });
 
   /// Stored minutes ("20"; may be empty while typing).
   final String value;
@@ -2657,6 +2665,9 @@ class _RdDurationEditor extends StatefulWidget {
   /// Start of the item (minutes of the day), for "bis HH:MM".
   final int? start;
   final ValueChanged<String> onChanged;
+
+  /// The duration is chosen: the field closes.
+  final VoidCallback onDone;
 
   @override
   State<_RdDurationEditor> createState() => _RdDurationEditorState();
@@ -2724,7 +2735,10 @@ class _RdDurationEditorState extends State<_RdDurationEditor> {
                   key: ValueKey('rd-plan-preset-$v'),
                   label: '$v',
                   selected: v == m && widget.value.trim().isNotEmpty,
-                  onTap: () => _set(v),
+                  onTap: () {
+                    _set(v);
+                    widget.onDone();
+                  },
                 ),
             ],
           ),
@@ -2749,7 +2763,9 @@ class _RdDurationEditorState extends State<_RdDurationEditor> {
                     suffixText: l10n.redesignPlanMinUnit,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
+                  textInputAction: TextInputAction.done,
                   onChanged: widget.onChanged,
+                  onSubmitted: (_) => widget.onDone(),
                 ),
               ),
               const SizedBox(width: 8),
