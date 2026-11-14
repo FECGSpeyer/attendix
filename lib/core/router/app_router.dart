@@ -12,7 +12,7 @@ import '../providers/tenant_providers.dart';
 import '../providers/role_permission_providers.dart';
 import 'page_transitions.dart';
 import 'tracking_observer.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent;
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent, AuthState;
 import '../services/tracking/tracking_event.dart';
 import '../services/browser_navigation.dart'
     show browserNavigationRouteChanged, setBrowserNavigationContext;
@@ -293,6 +293,19 @@ String? roleRouteRedirect(
   return null;
 }
 
+/// TERMINE-02 / EINST-03: on a cold start the auth stream has not emitted
+/// yet, but Supabase already restored the stored session. Treat that as
+/// signed in so the login form does not flash before the page (a failed
+/// refresh emits `signedOut` and the redirect sends the user to /login).
+bool _sessionRestoring(Ref ref, AsyncValue<AuthState> authState) {
+  if (!authState.isLoading || authState.hasValue || authState.hasError) return false;
+  try {
+    return ref.read(supabaseAuthProvider).currentSession != null;
+  } catch (_) {
+    return false;
+  }
+}
+
 /// Provider for the auth change notifier
 final authChangeNotifierProvider = Provider<AuthChangeNotifier>((ref) {
   return AuthChangeNotifier(ref);
@@ -326,7 +339,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final authState = ref.read(authStateProvider);
       final isLoggedIn = authState.whenOrNull(
         data: (auth) => auth.session != null,
-      ) ?? false;
+      ) ?? _sessionRestoring(ref, authState);
 
       // LINKS_STARTUP: legacy Ionic URLs (/tabs/..., /resetPassword) first,
       // before they can fall through to the public `/:songSharingId` routes.
