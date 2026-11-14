@@ -786,20 +786,26 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
                 ],
               ),
             ),
-            IonButton(
-              expand: true,
-              label: isEditing ? l10n.instrumentsUpdate : l10n.attendanceAdd,
-              onPressed: _busy ? null : _save,
-            ),
-            if (isEditing && !_isMain) ...[
-              const SizedBox(height: 8),
-              IonButton(
+            // NACHTEST-A-92: ion-button keeps its margin (2px inline, 4px
+            // block) around expand="block", so both rounded ends show.
+            Padding(
+              padding: _ionBlockButtonMargin,
+              child: IonButton(
                 expand: true,
-                color: AppColors.danger,
-                label: l10n.commonRemove,
-                onPressed: _busy ? null : () => _confirmDelete(context),
+                label: isEditing ? l10n.instrumentsUpdate : l10n.attendanceAdd,
+                onPressed: _busy ? null : _save,
               ),
-            ],
+            ),
+            if (isEditing && !_isMain)
+              Padding(
+                padding: _ionBlockButtonMargin,
+                child: IonButton(
+                  expand: true,
+                  color: AppColors.danger,
+                  label: l10n.commonRemove,
+                  onPressed: _busy ? null : () => _confirmDelete(context),
+                ),
+              ),
           ],
         ),
       ),
@@ -1088,3 +1094,6 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
     Navigator.of(context).pop(true);
   }
 }
+
+/// Ionic ion-button margin around a block button (2px inline, 4px block).
+const _ionBlockButtonMargin = EdgeInsets.symmetric(horizontal: 2, vertical: 4);

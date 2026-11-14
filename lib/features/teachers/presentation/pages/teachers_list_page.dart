@@ -483,7 +483,12 @@ class _TeacherFormState extends State<_TeacherForm> {
               child: IonButtonLabel(l10n.attendanceAdd),
             )
           else
-            IonButton(expand: true, label: l10n.teachersUpdate, onPressed: _submit),
+            // NACHTEST-A-92: ion-button margin (2px inline, 4px block)
+            // around expand="block" (teacher.page.html:53).
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+              child: IonButton(expand: true, label: l10n.teachersUpdate, onPressed: _submit),
+            ),
         ],
       ),
     );
