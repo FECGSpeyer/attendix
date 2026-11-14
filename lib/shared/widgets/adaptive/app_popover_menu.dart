@@ -29,19 +29,72 @@ class AppPopoverMenuItem<T> {
     this.submenuItems,
     this.destructive = false,
     this.header = false,
-  });
+    this.iconColor,
+    this.note,
+    this.selected = false,
+    this.lines,
+    this.end,
+  })  : info = false,
+        divider = true;
 
   /// Section header (Ionic `ion-item-divider` + `<small><b>` label): a
   /// divider line and a small bold, non-tappable label. [value] is never
-  /// returned.
-  const AppPopoverMenuItem.header(this.label, this.value)
+  /// returned. [divider] false: only the label (a second section right
+  /// below another one, Ionic: label item without `ion-item-divider`).
+  const AppPopoverMenuItem.header(this.label, this.value, {this.divider = true})
     : icon = null,
       subtitle = null,
       color = null,
       submenu = false,
       submenuItems = null,
       destructive = false,
-      header = true;
+      header = true,
+      iconColor = null,
+      note = null,
+      selected = false,
+      lines = false,
+      end = null,
+      info = false;
+
+  /// Only the divider line of a section (Ionic `ion-item-divider` without
+  /// a label row). [value] is never returned.
+  const AppPopoverMenuItem.divider(this.value)
+    : label = '',
+      icon = null,
+      subtitle = null,
+      color = null,
+      submenu = false,
+      submenuItems = null,
+      destructive = false,
+      header = true,
+      divider = true,
+      iconColor = null,
+      note = null,
+      selected = false,
+      lines = false,
+      end = null,
+      info = false;
+
+  /// Non-tappable text row (Ionic `ion-item` without `button`, label with
+  /// `<h3>` [label] and `<p>` [subtitle]), e.g. the current sorting.
+  /// [value] is never returned.
+  const AppPopoverMenuItem.info(
+    this.label,
+    this.value, {
+    this.subtitle,
+    this.lines = false,
+  })  : icon = null,
+        color = null,
+        submenu = false,
+        submenuItems = null,
+        destructive = false,
+        header = false,
+        iconColor = null,
+        note = null,
+        selected = false,
+        end = null,
+        info = true,
+        divider = true;
 
   /// Returned by [showAppPopoverMenu] when the entry is tapped (entries with
   /// [submenuItems] open their nested popover instead).
@@ -73,7 +126,54 @@ class AppPopoverMenuItem<T> {
   /// See [AppPopoverMenuItem.header].
   final bool header;
 
+  /// See [AppPopoverMenuItem.header].
+  final bool divider;
+
+  /// See [AppPopoverMenuItem.info].
+  final bool info;
+
+  /// Colour of the start icon only (Ionic `<ion-icon slot="start"
+  /// [color]>` next to an uncoloured label), e.g. the dot of a Termin type.
+  final Color? iconColor;
+
+  /// Grey text after the label on the same line (Ionic `<ion-note>` inside
+  /// the `ion-label`), e.g. "10 Min.".
+  final String? note;
+
+  /// The active entry of a filter: primary label and a primary checkmark
+  /// at the end (Ionic `ion-label color="primary"` +
+  /// `ion-icon slot="end" name="checkmark" color="primary"`).
+  final bool selected;
+
+  /// Item line below this entry. null: as the menu ([showAppPopoverMenu]
+  /// `lines`); false: Ionic `lines="none"`; true: a line although the menu
+  /// has none.
+  final bool? lines;
+
+  /// Small button at the end of the row with its own result (Ionic
+  /// `ion-button slot="end" fill="clear"` with `stopPropagation`), e.g.
+  /// "delete this template".
+  final AppPopoverMenuEndAction<T>? end;
+
   bool get _hasChevron => submenu || submenuItems != null;
+}
+
+/// See [AppPopoverMenuItem.end].
+class AppPopoverMenuEndAction<T> {
+  const AppPopoverMenuEndAction({
+    required this.value,
+    required this.icon,
+    required this.tooltip,
+    this.color,
+  });
+
+  /// Returned by [showAppPopoverMenu] when the button is tapped.
+  final T value;
+  final IconData icon;
+  final String tooltip;
+
+  /// Icon colour (Ionic `color="medium"` → [AppColors.medium] by default).
+  final Color? color;
 }
 
 /// PARITY_R3: one row of a nested popover (`ion-item button
@@ -113,6 +213,12 @@ class AppPopoverSubItem {
 /// to the left of the entry (Ionic `side="start"`). A tap outside closes
 /// everything; a tap on another entry closes the nested popover first.
 ///
+/// Entries follow the Ionic template: `lines` (item lines, per entry
+/// [AppPopoverMenuItem.lines]), start icon, [AppPopoverMenuItem.note],
+/// [AppPopoverMenuItem.selected] (checkmark at the end), danger colour,
+/// section headers and info rows. `iosArrow` is for triggers that are not
+/// toolbar buttons.
+///
 /// [context] must be the trigger button's context (use a [Builder]).
 /// [itemsBuilder] (optional) rebuilds the entries while a nested popover
 /// changes state (e.g. the "Filter aktiv" subtitle). Returns the tapped
@@ -129,6 +235,16 @@ Future<T?> showAppPopoverMenu<T>({
   List<AppPopoverMenuItem<T>> Function()? itemsBuilder,
   // Ionic `popover.ios.css`: `--width: 200px` (md 250px).
   double iosWidth = 200,
+  // Item lines of the entries: false = `ion-list lines="none"`; true = the
+  // Ionic default of an `ion-list` / of bare `ion-item`s (an inset line
+  // below every entry that does not say `lines: false`).
+  bool lines = false,
+  // iOS: the trigger is not an `ion-button` (e.g. an `ion-item`): the
+  // popover opens below the trigger, centred, with the arrow tip pointing
+  // at it (Ionic iOS default) instead of covering the trigger.
+  bool iosArrow = false,
+  // Ionic `--max-height` (e.g. 70 % of the screen); the menu scrolls.
+  double? maxHeight,
 }) {
   final navigator = Navigator.of(context, rootNavigator: true);
   final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
@@ -139,6 +255,9 @@ Future<T?> showAppPopoverMenu<T>({
     _PopoverRoute<T>(
       ios: ios,
       beta: context.rdSkin != null,
+      lines: lines,
+      arrow: ios && iosArrow,
+      maxHeight: maxHeight,
       anchor: anchor,
       // Opened from the keyboard (the focused trigger): the first entry
       // gets the focus, like the former action sheet. A mouse/touch open
@@ -358,6 +477,7 @@ class _AnchoredPopover extends StatefulWidget {
     required this.animation,
     required this.originX,
     required this.child,
+    this.arrow = false,
   });
 
   final bool ios;
@@ -370,6 +490,10 @@ class _AnchoredPopover extends StatefulWidget {
   final Animation<double> animation;
   final double originX;
   final Widget child;
+
+  /// iOS: the popover keeps [kIosPopoverArrowGap] to the anchor and shows
+  /// the arrow tip ([_IosPopoverArrow]) pointing at the anchor's centre.
+  final bool arrow;
 
   @override
   State<_AnchoredPopover> createState() => _AnchoredPopoverState();
@@ -389,6 +513,40 @@ class _AnchoredPopoverState extends State<_AnchoredPopover> {
 
   @override
   Widget build(BuildContext context) {
+    final card = !widget.arrow
+        ? widget.child
+        : LayoutBuilder(
+            builder: (context, constraints) {
+              // The card is centred on the anchor and pushed back into the
+              // viewport ([_AnchoredPopoverLayout]); the arrow stays on the
+              // anchor's centre (Ionic does not move it), but on the
+              // straight part of the card's edge.
+              final viewport = MediaQuery.sizeOf(context).width;
+              final w = constraints.maxWidth;
+              const m = _AnchoredPopoverLayout._margin;
+              final left = (widget.anchor.center.dx - w / 2)
+                  .clamp(m, math.max(m, viewport - w - m))
+                  .toDouble();
+              const aw = _IosPopoverArrow.width;
+              const r = 34.0;
+              final arrowLeft = (widget.anchor.center.dx - left - aw / 2)
+                  .clamp(math.min(r, (w - aw) / 2),
+                      math.max((w - aw) / 2, w - aw - r))
+                  .toDouble();
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  widget.child,
+                  Positioned(
+                    left: arrowLeft,
+                    top: _above ? null : -kIosPopoverArrowGap,
+                    bottom: _above ? -kIosPopoverArrowGap : null,
+                    child: _IosPopoverArrow(down: _above),
+                  ),
+                ],
+              );
+            },
+          );
     return CustomSingleChildLayout(
       delegate: _AnchoredPopoverLayout(
         ios: widget.ios,
@@ -398,6 +556,7 @@ class _AnchoredPopoverState extends State<_AnchoredPopover> {
         maxHeight: widget.maxHeight,
         topPadding: widget.topPadding,
         bottomPadding: widget.bottomPadding,
+        gap: widget.arrow ? kIosPopoverArrowGap : 0,
         placement: _placement,
         onPlaced: _onPlaced,
       ),
@@ -409,11 +568,92 @@ class _AnchoredPopoverState extends State<_AnchoredPopover> {
             end: 1,
           ).animate(widget.animation),
           alignment: Alignment(widget.originX, _above ? 1 : -1),
-          child: widget.child,
+          child: card,
         ),
       ),
     );
   }
+}
+
+/// Distance between an iOS popover with an arrow and its trigger: Ionic
+/// puts the content at `trigger.bottom + arrowHeight - 1` (ios27 arrow:
+/// 34 × 14).
+const double kIosPopoverArrowGap = 13;
+
+/// ionic-theme-ios27 `ion-popover::part(arrow)`: a 34 × 14 glass tip with a
+/// rounded point and concave shoulders that joins the popover's edge
+/// (`clip-path: path('M 0 14 L 0 13 C 3 13 4.5 12 6.5 10 L 14.5 1.5 C 16
+/// -0.5 18 -0.5 19.5 1.5 L 27.5 10 C 29.5 12 31 13 34 13 L 34 14 Z')`).
+/// [down]: the popover sits above its trigger, the tip points down.
+class _IosPopoverArrow extends StatelessWidget {
+  const _IosPopoverArrow({required this.down});
+
+  static const double width = 34;
+  static const double height = 14;
+
+  final bool down;
+
+  @override
+  Widget build(BuildContext context) {
+    final b = Theme.of(context).brightness;
+    // The colour of [IosGlassSurface.popover] (PERF_GLASS: frosted, opaque).
+    final glass = IosGlass.background(b, b == Brightness.dark ? 0.08 : 0.42);
+    final fill = IosGlass.liveBlur(context)
+        ? glass
+        : IosGlass.frosted(
+            glass,
+            page: IosGlass.pageColor(context),
+            backdropBrightness: b == Brightness.dark ? 0.9 : 1.35,
+          );
+    return IgnorePointer(
+      child: RotatedBox(
+        quarterTurns: down ? 2 : 0,
+        child: CustomPaint(
+          size: const Size(width, height),
+          painter: _IosPopoverArrowPainter(
+            fill: fill,
+            border: IosGlass.overlayBorder(b),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _IosPopoverArrowPainter extends CustomPainter {
+  const _IosPopoverArrowPainter({required this.fill, required this.border});
+
+  final Color fill;
+  final Color border;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Path outline() => Path()
+      ..moveTo(0, 13)
+      ..cubicTo(3, 13, 4.5, 12, 6.5, 10)
+      ..lineTo(14.5, 1.5)
+      ..cubicTo(16, -0.5, 18, -0.5, 19.5, 1.5)
+      ..lineTo(27.5, 10)
+      ..cubicTo(29.5, 12, 31, 13, 34, 13);
+    // The base overlaps the card's 0.5pt border so tip and card read as
+    // one surface.
+    final shape = outline()
+      ..lineTo(34, 14)
+      ..lineTo(0, 14)
+      ..close();
+    canvas.drawPath(shape, Paint()..color = fill);
+    canvas.drawPath(
+      outline(),
+      Paint()
+        ..color = border
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.5,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_IosPopoverArrowPainter old) =>
+      old.fill != fill || old.border != border;
 }
 
 /// Places a popover card at its anchor (see [showAppPopover]) and keeps it
@@ -433,9 +673,13 @@ class _AnchoredPopoverLayout extends SingleChildLayoutDelegate {
     required this.bottomPadding,
     required this.placement,
     required this.onPlaced,
+    this.gap = 0,
   });
 
   static const _margin = 8.0;
+
+  /// Space kept between the anchor and the popover (the iOS arrow).
+  final double gap;
 
   final bool ios;
   final Rect anchor;
@@ -492,12 +736,12 @@ class _AnchoredPopoverLayout extends SingleChildLayoutDelegate {
     // popover covering it keeps the trigger's top (Ionic "replace").
     final minTop = math.min(topPadding + _margin, math.max(0.0, anchor.top));
     final maxBottom = size.height - bottomPadding - _margin;
-    var top = coverAnchor ? anchor.top : anchor.bottom;
+    var top = coverAnchor ? anchor.top : anchor.bottom + gap;
     var isAbove = false;
     if (top + childSize.height > maxBottom) {
       // No room below: above the anchor (covering: bottom at its bottom).
-      final above =
-          (coverAnchor ? anchor.bottom : anchor.top) - childSize.height;
+      final above = (coverAnchor ? anchor.bottom : anchor.top - gap) -
+          childSize.height;
       isAbove = above >= minTop;
       top = isAbove ? above : maxBottom - childSize.height;
     }
@@ -517,7 +761,8 @@ class _AnchoredPopoverLayout extends SingleChildLayoutDelegate {
       old.width != width ||
       old.maxHeight != maxHeight ||
       old.topPadding != topPadding ||
-      old.bottomPadding != bottomPadding;
+      old.bottomPadding != bottomPadding ||
+      old.gap != gap;
 }
 
 /// Text styles of an `ion-label` inside a popover list (h3 heading and `p`
@@ -552,6 +797,9 @@ class _PopoverRoute<T> extends PopupRoute<T> {
   _PopoverRoute({
     required this.ios,
     required this.beta,
+    required this.lines,
+    required this.arrow,
+    required this.maxHeight,
     required this.anchor,
     required this.autofocusFirst,
     required this.overlaySize,
@@ -566,6 +814,13 @@ class _PopoverRoute<T> extends PopupRoute<T> {
 
   /// The Beta design: no dimmed page behind its menu card.
   final bool beta;
+
+  /// Default item lines of the entries (see [showAppPopoverMenu]).
+  final bool lines;
+
+  /// iOS: below the trigger with an arrow instead of covering it.
+  final bool arrow;
+  final double? maxHeight;
   final Rect anchor;
   final bool autofocusFirst;
   final Size overlaySize;
@@ -686,6 +941,18 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
     }
   }
 
+  /// Whether entry [index] gets its item line: as the entry / the menu
+  /// says, but not above a section divider (one line is enough) and, on
+  /// iOS, not below the last entry (in Ionic that line lies on the
+  /// popover's edge – the list has no padding there).
+  bool _hasLine(int index) {
+    if (!(_items[index].lines ?? widget.route.lines)) return false;
+    final last = index == _items.length - 1;
+    if (last) return !widget.route.ios;
+    final next = _items[index + 1];
+    return !(next.header && next.divider);
+  }
+
   void _onRowTap(int index, BuildContext rowContext) {
     final item = _items[index];
     if (item.submenuItems == null) {
@@ -752,13 +1019,14 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
         child: _AnchoredPopover(
           ios: ios,
           anchor: anchor,
-          coverAnchor: ios,
+          coverAnchor: ios && !route.arrow,
+          arrow: route.arrow,
           width: w,
-          maxHeight: null,
+          maxHeight: route.maxHeight,
           topPadding: widget.topPadding,
           bottomPadding: widget.bottomPadding,
           animation: curved,
-          originX: ios ? 1 : -1,
+          originX: route.arrow ? 0 : (ios ? 1 : -1),
           child: _PopoverCard(
             ios: ios,
             // PARITY_R8: while a nested popover is open the parent
@@ -774,7 +1042,18 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
             children: [
               for (var i = 0; i < _items.length; i++)
                 if (_items[i].header)
-                  _PopoverHeader(ios: ios, label: _items[i].label)
+                  _PopoverHeader(
+                    ios: ios,
+                    label: _items[i].label,
+                    divider: _items[i].divider,
+                  )
+                else if (_items[i].info)
+                  _PopoverInfoRow(
+                    ios: ios,
+                    label: _items[i].label,
+                    subtitle: _items[i].subtitle,
+                    line: _hasLine(i),
+                  )
                 else
                 Builder(
                   builder:
@@ -784,6 +1063,20 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
                         label: _items[i].label,
                         subtitle: _items[i].subtitle,
                         color: _itemColor(_items[i]),
+                        iconColor: _items[i].iconColor,
+                        note: _items[i].note,
+                        selected: _items[i].selected,
+                        line: _hasLine(i),
+                        end: _items[i].end == null
+                            ? null
+                            : _PopoverEndButton(
+                                ios: ios,
+                                icon: _items[i].end!.icon,
+                                tooltip: _items[i].end!.tooltip,
+                                color: _items[i].end!.color,
+                                onTap: () => Navigator.of(context)
+                                    .pop<T>(_items[i].end!.value),
+                              ),
                         chevron: _items[i]._hasChevron,
                         focusNode: _rowFocusNode(i),
                         autofocus: i == 0 && route.autofocusFirst,
@@ -1028,17 +1321,24 @@ class _PopoverCard extends StatelessWidget {
 }
 
 class _PopoverHeader extends StatelessWidget {
-  const _PopoverHeader({required this.ios, required this.label});
+  const _PopoverHeader({
+    required this.ios,
+    required this.label,
+    this.divider = true,
+  });
 
   final bool ios;
   final String label;
+  final bool divider;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (divider)
         Divider(height: 1, color: Theme.of(context).dividerColor),
+        if (label.isNotEmpty)
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
           child: Text(
@@ -1063,6 +1363,11 @@ class _PopoverRow extends StatelessWidget {
     this.chevron = false,
     this.focusNode,
     this.autofocus = false,
+    this.iconColor,
+    this.note,
+    this.selected = false,
+    this.line = false,
+    this.end,
   });
 
   final bool ios;
@@ -1076,14 +1381,24 @@ class _PopoverRow extends StatelessWidget {
   final FocusNode? focusNode;
   final bool autofocus;
 
+  /// See [AppPopoverMenuItem.iconColor], [AppPopoverMenuItem.note],
+  /// [AppPopoverMenuItem.selected], [AppPopoverMenuItem.lines] and
+  /// [AppPopoverMenuItem.end].
+  final Color? iconColor;
+  final String? note;
+  final bool selected;
+  final bool line;
+  final Widget? end;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
-    final fg = color ?? onSurface;
+    final fg = color ?? (selected ? AppColors.primary : onSurface);
     // md: `ion-icon` in an item = rgba(text, .54), 24 px, 32 px gap.
-    final iconColor =
-        color ?? (ios ? onSurface : onSurface.withValues(alpha: 0.54));
+    final iconColor = this.iconColor ??
+        color ??
+        (ios ? onSurface : onSurface.withValues(alpha: 0.54));
 
     Widget? leading;
     if (checked != null) {
@@ -1109,7 +1424,7 @@ class _PopoverRow extends StatelessWidget {
       leading = Icon(icon, size: ios ? 27.2 : 24, color: iconColor);
     }
 
-    return InkWell(
+    final row = InkWell(
       // No ripple on iOS, grey press highlight; nothing highlighted
       // initially (no initial value). Focusable for the keyboard (Tab /
       // arrow keys, Enter / Space); the focus highlight only shows in
@@ -1147,8 +1462,10 @@ class _PopoverRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // IOS27_SWEEP: ion-item 1rem = 17pt on the iPhone
-                      Text(
-                        label,
+                      _PopoverLabel(
+                        ios: ios,
+                        label: label,
+                        note: note,
                         style: TextStyle(
                           fontSize: ios ? 17 : 16,
                           // iOS: CSS `line-height: normal` (≈1.2) – 60pt two-line rows.
@@ -1176,6 +1493,17 @@ class _PopoverRow extends StatelessWidget {
                   ),
                 ),
               ),
+              // `ion-icon slot="end" name="checkmark" color="primary"`.
+              if (selected)
+                Padding(
+                  padding: EdgeInsets.only(left: ios ? 2 : 16),
+                  child: Icon(
+                    AppIcons.check,
+                    size: ios ? 27.2 : 24,
+                    color: AppColors.primary,
+                  ),
+                ),
+              if (end != null) end!,
               if (chevron) ...[
                 SizedBox(width: ios ? 8 : 6),
                 if (ios)
@@ -1192,6 +1520,205 @@ class _PopoverRow extends StatelessWidget {
           ),
         ),
       ),
+    );
+    if (!line) return row;
+    return _PopoverLine(
+      ios: ios,
+      // The Ionic default line is the inner border: it starts at the label
+      // (after the start icon and its margin) and runs to the edge.
+      inset: 16 +
+          (leading == null
+              ? 0
+              : (checked != null ? 24 : (ios ? 27.2 : 24)) +
+                  (ios ? 16 : (checked != null ? 16 : 32))),
+      child: row,
+    );
+  }
+}
+
+/// Label of a popover row with the optional grey [note] behind it. iOS
+/// (200pt popover): a single word wider than the row (e.g.
+/// "Werkkategorien" next to an icon) is set slightly smaller instead of
+/// being broken inside the word – CSS never breaks inside a word either.
+class _PopoverLabel extends StatelessWidget {
+  const _PopoverLabel({
+    required this.ios,
+    required this.label,
+    required this.style,
+    this.note,
+  });
+
+  final bool ios;
+  final String label;
+  final String? note;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    Widget text(TextStyle style) => Text.rich(
+          TextSpan(
+            text: label,
+            children: [
+              // `ion-note` inside the label: step-350 at the label's size
+              // (iOS) / step-600 14px (md).
+              if (note != null)
+                TextSpan(
+                  text: ' $note',
+                  style: TextStyle(
+                    fontSize: ios ? null : 14,
+                    color: ios
+                        ? IonIos.labelP(brightness)
+                        : (brightness == Brightness.dark
+                            ? const Color(0xFF999999)
+                            : const Color(0xFF666666)),
+                  ),
+                ),
+            ],
+          ),
+          style: style,
+        );
+    if (!ios) return text(style);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final max = constraints.maxWidth;
+        if (!max.isFinite || max <= 0) return text(style);
+        final scaler = MediaQuery.textScalerOf(context);
+        final base = DefaultTextStyle.of(context).style.merge(style);
+        var widest = 0.0;
+        for (final word in label.split(RegExp(r'[\s\-/]+'))) {
+          if (word.length < 8) continue;
+          final painter = TextPainter(
+            text: TextSpan(text: word, style: base),
+            textDirection: TextDirection.ltr,
+            textScaler: scaler,
+            maxLines: 1,
+          )..layout();
+          widest = math.max(widest, painter.width);
+          painter.dispose();
+        }
+        if (widest <= max) return text(style);
+        final size = style.fontSize ?? 17;
+        return text(
+          style.copyWith(
+            fontSize: math.max(size * 0.8, size * max / widest - 0.1),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Item line below [child]: Ionic `--inner-border-width` 0.55px (iOS) /
+/// 1px (md) in the item border colour, from [inset] to the end edge.
+class _PopoverLine extends StatelessWidget {
+  const _PopoverLine({
+    required this.ios,
+    required this.inset,
+    required this.child,
+  });
+
+  final bool ios;
+  final double inset;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final w = ios ? 0.5 : 1.0;
+    return Stack(
+      children: [
+        child,
+        PositionedDirectional(
+          start: inset,
+          end: 0,
+          bottom: 0,
+          height: w,
+          child: IgnorePointer(
+            child: ColoredBox(color: Theme.of(context).dividerColor),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// [AppPopoverMenuItem.info]: `ion-item` (no button) with an `ion-label`
+/// holding `<h3>` and `<p>` (both .875rem; the `p` grey).
+class _PopoverInfoRow extends StatelessWidget {
+  const _PopoverInfoRow({
+    required this.ios,
+    required this.label,
+    required this.subtitle,
+    required this.line,
+  });
+
+  final bool ios;
+  final String label;
+  final String? subtitle;
+  final bool line;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final p = AppPopoverText.paragraph(context);
+    final row = ConstrainedBox(
+      constraints: BoxConstraints(minHeight: ios ? 44 : 48),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: p.fontSize,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            if (subtitle != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 3),
+                child: Text(subtitle!, style: p),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (!line) return row;
+    return _PopoverLine(ios: ios, inset: 16, child: row);
+  }
+}
+
+/// [AppPopoverMenuItem.end]: `ion-button slot="end" fill="clear"
+/// size="small"` with an icon – a tap does not select the row.
+class _PopoverEndButton extends StatelessWidget {
+  const _PopoverEndButton({
+    required this.ios,
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+    this.color,
+  });
+
+  final bool ios;
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      tooltip: tooltip,
+      visualDensity: VisualDensity.compact,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+      splashRadius: 18,
+      color: color ?? AppColors.medium,
+      icon: Icon(icon, size: 20),
+      onPressed: onTap,
     );
   }
 }

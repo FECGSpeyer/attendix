@@ -10,7 +10,9 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 import '../widgets/ion_condense.dart';
 import 'attendance_type_edit_page.dart' show showAttendanceTypeCreateModal;
 import '../widgets/settings_list.dart';
@@ -124,13 +126,17 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
           );
         },
       ),
-      floatingActionButton: !_isReordering
+      // IOS_SHELL: iOS → ion-fab in the tab bar row
+      floatingActionButton: TabBarFab(child: !_isReordering
           ? FloatingActionButton(
               // Ionic openTypeModal(): the type page as modal in the "new"
               // mode (all settings); the notifier reloads the list.
               onPressed: () => showAttendanceTypeCreateModal(context),
               child: Icon(AppIcons.add),
             )
+          // Flutter extra (Ionic keeps the add button while sorting):
+          // leave the sort mode without saving. iOS: the same glass
+          // button as every FAB, md / Beta: the grey round button.
           : FloatingActionButton(
               onPressed: () {
                 setState(() {
@@ -138,9 +144,9 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
                   _localTypes = [];
                 });
               },
-              backgroundColor: AppColors.medium,
+              backgroundColor: ios && context.rdSkin == null ? null : AppColors.medium,
               child: Icon(AppIcons.close),
-            ),
+            )),
     ));
   }
 

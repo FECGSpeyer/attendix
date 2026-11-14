@@ -250,7 +250,7 @@ void main() {
       expect(src, isNot(contains('attendanceTimeOClock')));
       final addMenu = src.substring(src.indexOf('Future<void> _showAddMenu('));
       expect(addMenu.substring(0, addMenu.indexOf('if (action == null')),
-          allOf(contains('showMenu<String>('), isNot(contains('showPlanActionSheet'))));
+          allOf(contains('showAppPopoverMenu<String>('), isNot(contains('showPlanActionSheet'))));
     });
   });
 

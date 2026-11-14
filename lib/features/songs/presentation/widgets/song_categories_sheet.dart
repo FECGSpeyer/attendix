@@ -75,10 +75,10 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                         const SizedBox(height: AppDimensions.paddingM),
                         Text(context.l10n.songsFlutterErrorWith(friendlyErrorMessage(error))),
                         const SizedBox(height: AppDimensions.paddingM),
-                        ElevatedButton(
+                        IonButton(
                           onPressed: () =>
                               ref.invalidate(songCategoriesProvider),
-                          child: IonButtonLabel(context.l10n.messagesRetry),
+                          label: context.l10n.messagesRetry,
                         ),
                       ],
                     ),

@@ -14,6 +14,7 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../data/models/song/song_additional_field.dart';
@@ -32,6 +33,7 @@ import '../../../../core/providers/branding_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
+import '../../../../shared/widgets/adaptive/app_popover_menu.dart';
 import '../../../../shared/widgets/adaptive/app_segmented_button.dart';
 import '../../../../shared/widgets/adaptive/app_toolbar.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
@@ -252,6 +254,30 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
         ? data.publicTenant!.longName
         : context.l10n.songsSongsCount(data.songs.length);
     // UX_SONGS_SELF: Ionic `ion-header collapse="condense"` (large title on iOS)
+    // Entries of the ⋮ menu (Ionic songsMenuPopover).
+    void onMenuSelected(String value) {
+      switch (value) {
+        case 'categories':
+          showSongCategoriesSheet(context);
+        case 'share':
+          _copyShareLink(sharingId!);
+        case 'pdf':
+          _exportPdf(data, filtered, view);
+        // PEOPLE_IMPORT: song import (Ionic: Admin/Responsible only)
+        case 'import':
+          _openSongImport();
+        // SETTINGS2: "Als Tab anzeigen" / "Tab ausblenden"
+        case 'tab':
+          _toggleSongsTab();
+        // Ionic 4.17.13 openOrgSongSearch: search term goes along
+        case 'orgSearch':
+          final q = _search.trim();
+          context.push(q.isEmpty
+              ? '/settings/org-settings/songs'
+              : Uri(path: '/settings/org-settings/songs', queryParameters: {'q': q}).toString());
+      }
+    }
+
     return CondenseHeader(
       builder: (context, condensed) => Scaffold(
       // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
@@ -274,31 +300,12 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
         // IOS_SHELL: iOS → menu button in a glass circle
         actions: [
           ToolbarButtonGroup(children: [
+          // Beta design: its Material menu as before.
+          if (context.rdSkin != null)
           PopupMenuButton<String>(
             icon: Icon(AppIcons.moreVert),
             tooltip: context.l10n.songsFlutterMenu,
-            onSelected: (value) {
-              switch (value) {
-                case 'categories':
-                  showSongCategoriesSheet(context);
-                case 'share':
-                  _copyShareLink(sharingId!);
-                case 'pdf':
-                  _exportPdf(data, filtered, view);
-                // PEOPLE_IMPORT: song import (Ionic: Admin/Responsible only)
-                case 'import':
-                  _openSongImport();
-                // SETTINGS2: "Als Tab anzeigen" / "Tab ausblenden"
-                case 'tab':
-                  _toggleSongsTab();
-                // Ionic 4.17.13 openOrgSongSearch: search term goes along
-                case 'orgSearch':
-                  final q = _search.trim();
-                  context.push(q.isEmpty
-                      ? '/settings/org-settings/songs'
-                      : Uri(path: '/settings/org-settings/songs', queryParameters: {'q': q}).toString());
-              }
-            },
+            onSelected: onMenuSelected,
             itemBuilder: (context) => [
               if (isAdmin)
                 PopupMenuItem(
@@ -364,6 +371,69 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 ),
               ),
             ],
+          )
+          else
+          // Ionic `ion-popover #songsMenuPopover`: `ion-list` (item lines)
+          // of `ion-item button` with the icon in slot start; import, org
+          // search and PDF are `lines="none"`.
+          Builder(
+            builder: (buttonContext) => IconButton(
+              icon: Icon(AppIcons.moreVert),
+              tooltip: context.l10n.songsFlutterMenu,
+              onPressed: () async {
+                final value = await showAppPopoverMenu<String>(
+                  context: buttonContext,
+                  lines: true,
+                  items: [
+                    if (isAdmin)
+                      AppPopoverMenuItem(
+                        value: 'categories',
+                        icon: AppIcons.localLibraryOutlined,
+                        label: context.l10n.songsSongCategories,
+                      ),
+                    if (hasSongSharing)
+                      AppPopoverMenuItem(
+                        value: 'share',
+                        icon: AppIcons.link,
+                        label: context.l10n.songsCopyLink,
+                      ),
+                    if (!data.isPublic && ref.read(songsTabAllowedProvider))
+                      AppPopoverMenuItem(
+                        value: 'tab',
+                        icon: ref.read(optionalTabsNotifierProvider).songs
+                            ? AppIcons.bookmark
+                            : AppIcons.bookmarkOutline,
+                        label: ref.read(optionalTabsNotifierProvider).songs
+                            ? context.l10n.songsFlutterHideTab
+                            : context.l10n.songsFlutterShowAsTab,
+                      ),
+                    if (isAdmin)
+                      AppPopoverMenuItem(
+                        value: 'import',
+                        icon: AppIcons.cloudUploadOutlined,
+                        label: context.l10n.songsImportSongs,
+                        lines: false,
+                      ),
+                    if (isAdmin &&
+                        !data.isPublic &&
+                        ref.read(currentOrganisationProvider).valueOrNull != null)
+                      AppPopoverMenuItem(
+                        value: 'orgSearch',
+                        icon: AppIcons.search,
+                        label: context.l10n.orgSongsMenuEntry,
+                        lines: false,
+                      ),
+                    AppPopoverMenuItem(
+                      value: 'pdf',
+                      icon: AppIcons.descriptionOutlined,
+                      label: context.l10n.songsCatalogPdf,
+                      lines: false,
+                    ),
+                  ],
+                );
+                if (value != null && mounted) onMenuSelected(value);
+              },
+            ),
           ),
           ]),
         ],

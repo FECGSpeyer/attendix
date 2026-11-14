@@ -1661,11 +1661,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   /// (not for general tenants), Tagesordnung Platzhalter (protocol types).
   Future<void> _showPlanAddMenu(BuildContext anchorContext) async {
     final l10n = context.l10n;
+    final String? action;
+    if (context.rdSkin != null) {
+      // Beta design: its Material menu as before.
     final box = anchorContext.findRenderObject() as RenderBox;
     final overlay = Navigator.of(anchorContext).overlay!.context.findRenderObject() as RenderBox;
     final topLeft = box.localToGlobal(Offset(0, box.size.height), ancestor: overlay);
     final bottomRight = box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay);
-    final action = await showMenu<String>(
+    action = await showMenu<String>(
       context: anchorContext,
       position: RelativeRect.fromRect(Rect.fromPoints(topLeft, bottomRight), Offset.zero & overlay.size),
       constraints: const BoxConstraints(minWidth: 250, maxWidth: 320),
@@ -1684,6 +1687,36 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           ),
       ],
     );
+    } else {
+      // Bare `ion-item`s with item lines; the last entry (Notizfeld for
+      // general tenants, else the placeholders) is `lines="none"`.
+      action = await showAppPopoverMenu<String>(
+        context: anchorContext,
+        lines: true,
+        items: [
+          AppPopoverMenuItem(value: 'field', label: l10n.typeSettingsAddField),
+          AppPopoverMenuItem(
+            value: 'note',
+            label: l10n.typeSettingsAddNoteField,
+            lines: !_isGeneral,
+          ),
+          if (!_isGeneral)
+            AppPopoverMenuItem(
+              value: 'song',
+              label: l10n.typeSettingsSongPlaceholder,
+              lines: false,
+            ),
+          if (_protocol.enableProtocol)
+            AppPopoverMenuItem(
+              value: 'agenda',
+              label: l10n.typeSettingsAgendaPlaceholder,
+              icon: AppIcons.commit,
+              iconColor: AppColors.medium,
+              lines: false,
+            ),
+        ],
+      );
+    }
     if (action == null || !mounted) return;
     switch (action) {
       case 'field':

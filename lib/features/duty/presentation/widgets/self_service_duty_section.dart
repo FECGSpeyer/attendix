@@ -13,6 +13,7 @@ import '../../../../data/repositories/duty_repository.dart' show DutyTermin;
 import '../pages/unavailability_page.dart';
 import 'duty_actions.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/ion_button.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
@@ -196,7 +197,15 @@ class SelfServiceDutySection extends ConsumerWidget {
               ListTile(
                 title: Text(t.title),
                 subtitle: Text('${_dateShort(t)}${isUrgentDuty(t) ? ' · ${context.l10n.signoutUrgent}' : ''} · ${_dutyMeta(t)}'),
-                trailing: FilledButton.tonal(
+                // Ionic `ion-button slot="end" size="small"` (solid
+                // primary); the Beta design keeps its tonal button.
+                trailing: context.rdSkin == null
+                    ? IonButton(
+                        label: context.l10n.commonApply,
+                        small: true,
+                        onPressed: () => takeDutyAction(context, ref, t.attendance.id!),
+                      )
+                    : FilledButton.tonal(
                   onPressed: () => takeDutyAction(context, ref, t.attendance.id!),
                   child: IonButtonLabel(context.l10n.commonApply),
                 ),

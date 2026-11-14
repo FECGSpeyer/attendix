@@ -19,6 +19,8 @@ import '../../../../l10n/l10n.dart';
 import '../widgets/message_editor_toolbar.dart';
 import '../../../redesign/presentation/pages/rd_message_compose_page.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import '../../../planning/presentation/widgets/ion_items.dart' show IonChip;
 import '../../../settings/presentation/widgets/settings_list.dart';
 
 /// Opens the full-screen compose dialog. Returns the new message id when sent.
@@ -387,14 +389,16 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
 
                     return Column(
                       children: [
-                        RadioListTile<_Audience>(
+                        IonRadioItem<_Audience>(
+                          labelEnd: true,
                           value: _Audience.all,
                           groupValue: _audience,
                           onChanged: onAudience,
                           title: Text(l10n.messagesAllActive),
                           subtitle: Text(l10n.messagesInclMainGroup),
                         ),
-                        RadioListTile<_Audience>(
+                        IonRadioItem<_Audience>(
+                          labelEnd: true,
                           value: _Audience.groups,
                           groupValue: _audience,
                           onChanged: onAudience,
@@ -415,20 +419,39 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                                 for (final g in groups.where(
                                   (g) => g.id != null,
                                 ))
-                                  FilterChip(
-                                    label: Text(g.name),
-                                    selected: _selectedGroups.contains(g.id),
-                                    onSelected: (sel) {
-                                      setState(() {
-                                        if (sel) {
-                                          _selectedGroups.add(g.id!);
-                                        } else {
-                                          _selectedGroups.remove(g.id);
-                                        }
-                                      });
-                                      _loadCounts();
-                                    },
-                                  ),
+                                  if (context.rdSkin != null)
+                                    FilterChip(
+                                      label: Text(g.name),
+                                      selected: _selectedGroups.contains(g.id),
+                                      onSelected: (sel) {
+                                        setState(() {
+                                          if (sel) {
+                                            _selectedGroups.add(g.id!);
+                                          } else {
+                                            _selectedGroups.remove(g.id);
+                                          }
+                                        });
+                                        _loadCounts();
+                                      },
+                                    )
+                                  else
+                                    // ion-chip: outline medium, selected
+                                    // solid primary tint – no checkmark.
+                                    IonChip(
+                                      label: g.name,
+                                      outline: !_selectedGroups.contains(g.id),
+                                      color: _selectedGroups.contains(g.id)
+                                          ? AppColors.primary
+                                          : AppColors.medium,
+                                      onTap: () {
+                                        setState(() {
+                                          if (!_selectedGroups.remove(g.id)) {
+                                            _selectedGroups.add(g.id!);
+                                          }
+                                        });
+                                        _loadCounts();
+                                      },
+                                    ),
                               ],
                             ),
                           ),

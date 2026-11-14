@@ -507,7 +507,8 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
                 ),
               ),
             ),
-            RadioListTile<_Mode>(
+            IonRadioItem<_Mode>(
+              labelEnd: true,
               value: _Mode.existing,
               groupValue: _mode,
               title: Text(l10n.orgSongsModeExisting),
@@ -533,7 +534,8 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
                       }),
                 ),
               ),
-            RadioListTile<_Mode>(
+            IonRadioItem<_Mode>(
+              labelEnd: true,
               value: _Mode.created,
               groupValue: _mode,
               title: Text(l10n.orgSongsModeNew),

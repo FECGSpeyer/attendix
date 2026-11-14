@@ -481,20 +481,6 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
         ? (ref.read(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[])
         : const <PlanBlockTemplate>[];
     final l10n = context.l10n;
-    PopupMenuItem<String> item(String value, String label, [String? note]) => PopupMenuItem<String>(
-          value: value,
-          child: Text.rich(TextSpan(children: [
-            TextSpan(text: label),
-            if (note != null) TextSpan(text: ' $note', style: const TextStyle(color: AppColors.medium)),
-          ])),
-        );
-    PopupMenuItem<String> section(String label) => PopupMenuItem<String>(
-          enabled: false,
-          height: 32,
-          child: Text(label,
-              style: TextStyle(
-                  fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyMedium?.color)),
-        );
     final String? action;
     if (context.rdSkin != null) {
       // Beta: one sheet instead of the popover.
@@ -505,32 +491,36 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
         blockTemplates: blockTemplates,
       );
     } else {
-    final box = anchorContext.findRenderObject() as RenderBox;
-    final overlay = Navigator.of(anchorContext).overlay!.context.findRenderObject() as RenderBox;
-    final topLeft = box.localToGlobal(Offset(0, box.size.height), ancestor: overlay);
-    final bottomRight = box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay);
-    action = await showMenu<String>(
+    // Bare `ion-item button`s with item lines; `ion-item-divider` + small
+    // bold label per section, minutes as `ion-note`.
+    action = await showAppPopoverMenu<String>(
       context: anchorContext,
-      position: RelativeRect.fromRect(Rect.fromPoints(topLeft, bottomRight), Offset.zero & overlay.size),
+      lines: true,
       items: [
-        item('field', l10n.planningAddField),
-        item('group', l10n.planningAddBlock),
-        item('note', l10n.planningAddNoteField),
+        AppPopoverMenuItem(value: 'field', label: l10n.planningAddField),
+        AppPopoverMenuItem(value: 'group', label: l10n.planningAddBlock),
+        AppPopoverMenuItem(value: 'note', label: l10n.planningAddNoteField),
         if (loggedIn && !isGeneral) ...[
-          item('current', l10n.planningAddCurrentSongs),
-          if (_songs.isNotEmpty) item('song', l10n.planningAddSong),
+          AppPopoverMenuItem(value: 'current', label: l10n.planningAddCurrentSongs),
+          if (_songs.isNotEmpty) AppPopoverMenuItem(value: 'song', label: l10n.planningAddSong),
         ],
         if (orgFields.isNotEmpty) ...[
-          const PopupMenuDivider(),
-          section(l10n.planningFields),
+          AppPopoverMenuItem.header(l10n.planningFields, ''),
           for (var i = 0; i < orgFields.length; i++)
-            item('orgfield:$i', orgFields[i].name, l10n.planningMinShort(orgFields[i].time)),
+            AppPopoverMenuItem(
+              value: 'orgfield:$i',
+              label: orgFields[i].name,
+              note: l10n.planningMinShort(orgFields[i].time),
+            ),
         ],
         if (blockTemplates.isNotEmpty) ...[
-          const PopupMenuDivider(),
-          section(l10n.planningBlocks),
+          AppPopoverMenuItem.header(l10n.planningBlocks, ''),
           for (final tpl in blockTemplates)
-            item('block:${tpl.id}', tpl.name, l10n.planningMinShort(PlanUtils.templateMinutes(tpl))),
+            AppPopoverMenuItem(
+              value: 'block:${tpl.id}',
+              label: tpl.name,
+              note: l10n.planningMinShort(PlanUtils.templateMinutes(tpl)),
+            ),
         ],
       ],
     );

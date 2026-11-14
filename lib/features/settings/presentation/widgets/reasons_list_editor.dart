@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import '../../../../shared/widgets/adaptive/ion_accordion_tile.dart';
 import '../../../../l10n/l10n.dart';
 import 'settings_list.dart';
 
@@ -103,18 +105,33 @@ class _ReasonsListEditorState extends State<ReasonsListEditor> {
     final pad = ios
         ? const EdgeInsets.only(left: IonIos.itemPaddingStart, right: IonIos.itemPaddingEnd)
         : const EdgeInsets.symmetric(horizontal: 16);
-    return ExpansionTile(
-      tilePadding: pad,
-      shape: const Border(),
-      collapsedShape: const Border(),
-      iconColor: ios ? IonIos.text(context).withValues(alpha: 0.4) : null,
-      collapsedIconColor: ios ? IonIos.text(context).withValues(alpha: 0.4) : null,
+    final children = _reasonRows(context, ios, pad);
+    if (context.rdSkin != null) {
+      return ExpansionTile(
+        tilePadding: pad,
+        shape: const Border(),
+        collapsedShape: const Border(),
+        iconColor: ios ? IonIos.text(context).withValues(alpha: 0.4) : null,
+        collapsedIconColor: ios ? IonIos.text(context).withValues(alpha: 0.4) : null,
+        title: Text(widget.title),
+        subtitle: Text(
+          context.l10n.generalSettingsReasonsCount(_rows.length),
+          style: ios ? TextStyle(fontSize: 14, color: IonIos.labelP(context)) : null,
+        ),
+        children: children,
+      );
+    }
+    return IonAccordionTile(
+      headerPadding: pad,
+      chevronColor: ios ? IonIos.text(context).withValues(alpha: 0.4) : null,
       title: Text(widget.title),
-      subtitle: Text(
-        context.l10n.generalSettingsReasonsCount(_rows.length),
-        style: ios ? TextStyle(fontSize: 14, color: IonIos.labelP(context)) : null,
-      ),
-      children: [
+      subtitle: Text(context.l10n.generalSettingsReasonsCount(_rows.length)),
+      children: children,
+    );
+  }
+
+  List<Widget> _reasonRows(BuildContext context, bool ios, EdgeInsets pad) {
+    return [
         ReorderableListView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -180,7 +197,6 @@ class _ReasonsListEditorState extends State<ReasonsListEditor> {
               style: const TextStyle(color: AppColors.medium),
             ),
           ),
-      ],
-    );
+    ];
   }
 }

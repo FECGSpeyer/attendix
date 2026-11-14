@@ -1771,85 +1771,74 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final canAddTopics = _att?.id != null && _planIndex == 0 && hasProtocol && ref.read(isTeamLeaderProvider);
     final canInsertAgenda = hasProtocol && _planIndex == 0 && !_fields.any(PlanUtils.isAgendaPlaceholder);
 
-    // Ionic: ion-popover (class add-popover, max 70vh) anchored to the "+".
+    // Ionic: ion-popover (class add-popover, max 70vh) anchored to the "+":
+    // bare `ion-item`s with item lines, `ion-item-divider` + small bold
+    // section labels, `ion-note` minutes and the template's delete button.
     final l10n = context.l10n;
-    PopupMenuItem<String> item(String value, String label, {Widget? icon, String? note, Color? color, Widget? trailing}) =>
-        PopupMenuItem<String>(
-          value: value,
-          child: Row(
-            children: [
-              if (icon != null) ...[icon, const SizedBox(width: 12)],
-              Expanded(
-                child: Text.rich(TextSpan(children: [
-                  TextSpan(text: label, style: color != null ? TextStyle(color: color) : null),
-                  if (note != null) TextSpan(text: ' $note', style: const TextStyle(color: AppColors.medium)),
-                ])),
-              ),
-              if (trailing != null) trailing,
-            ],
-          ),
-        );
-    PopupMenuItem<String> section(String label) => PopupMenuItem<String>(
-          enabled: false,
-          height: 32,
-          child: Text(label,
-              style: TextStyle(
-                  fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyMedium?.color)),
-        );
-    final box = anchorContext.findRenderObject() as RenderBox;
-    final overlay = Navigator.of(anchorContext).overlay!.context.findRenderObject() as RenderBox;
-    final topLeft = box.localToGlobal(Offset(0, box.size.height), ancestor: overlay);
-    final bottomRight = box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay);
-    final action = await showMenu<String>(
+    final action = await showAppPopoverMenu<String>(
       context: anchorContext,
-      position: RelativeRect.fromRect(Rect.fromPoints(topLeft, bottomRight), Offset.zero & overlay.size),
-      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.7, minWidth: 250, maxWidth: 320),
+      lines: true,
+      maxHeight: MediaQuery.of(context).size.height * 0.7,
       items: [
-        item('field', l10n.planningAddField),
-        item('group', l10n.planningAddBlock),
-        item('note', l10n.planningAddNoteField),
-        if (!isGeneral) item('current', l10n.planningAddCurrentSongs),
-        if (!isGeneral && _songs.isNotEmpty) item('song', l10n.planningAddSong),
+        AppPopoverMenuItem(value: 'field', label: l10n.planningAddField),
+        AppPopoverMenuItem(value: 'group', label: l10n.planningAddBlock),
+        AppPopoverMenuItem(value: 'note', label: l10n.planningAddNoteField),
+        if (!isGeneral) AppPopoverMenuItem(value: 'current', label: l10n.planningAddCurrentSongs),
+        if (!isGeneral && _songs.isNotEmpty) AppPopoverMenuItem(value: 'song', label: l10n.planningAddSong),
         if (canAddTopics)
-          item('topics', l10n.attendanceAddTopics,
-              icon: Icon(AppIcons.playlistAddCircleOutlined, color: AppColors.primary)),
+          AppPopoverMenuItem(
+            value: 'topics',
+            label: l10n.attendanceAddTopics,
+            icon: AppIcons.playlistAddCircleOutlined,
+            iconColor: AppColors.primary,
+          ),
         if (canInsertAgenda)
-          item('agenda', l10n.planningInsertAgenda, icon: Icon(AppIcons.commit, color: AppColors.medium)),
+          AppPopoverMenuItem(
+            value: 'agenda',
+            label: l10n.planningInsertAgenda,
+            icon: AppIcons.commit,
+            iconColor: AppColors.medium,
+            lines: false,
+          ),
         if (blockTemplates.isNotEmpty) ...[
-          const PopupMenuDivider(),
-          section(l10n.planningBlocks),
+          AppPopoverMenuItem.header(l10n.planningBlocks, ''),
           for (final tpl in blockTemplates)
-            item(
-              'block:${tpl.id}',
-              tpl.name,
+            AppPopoverMenuItem(
+              value: 'block:${tpl.id}',
+              label: tpl.name,
               note: l10n.planningMinShort(PlanUtils.templateMinutes(tpl)),
-              trailing: role.isAdmin
-                  ? Builder(
-                      builder: (menuCtx) => IconButton(
-                        tooltip: l10n.planningDeleteTemplate,
-                        visualDensity: VisualDensity.compact,
-                        color: AppColors.medium,
-                        icon: Icon(AppIcons.deleteOutline, size: 20),
-                        onPressed: () => Navigator.pop(menuCtx, 'delblock:${tpl.id}'),
-                      ),
+              end: role.isAdmin
+                  ? AppPopoverMenuEndAction(
+                      value: 'delblock:${tpl.id}',
+                      icon: AppIcons.deleteOutline,
+                      tooltip: l10n.planningDeleteTemplate,
                     )
                   : null,
             ),
         ],
-        if (orgTemplates.isNotEmpty || orgFields.isNotEmpty) const PopupMenuDivider(),
         if (orgTemplates.isNotEmpty) ...[
-          section(l10n.planningTemplates),
-          for (var i = 0; i < orgTemplates.length; i++) item('tpl:$i', orgTemplates[i].title ?? ''),
+          AppPopoverMenuItem.header(l10n.planningTemplates, ''),
+          for (var i = 0; i < orgTemplates.length; i++)
+            AppPopoverMenuItem(value: 'tpl:$i', label: orgTemplates[i].title ?? ''),
         ],
         if (orgFields.isNotEmpty) ...[
-          section(l10n.planningFields),
+          AppPopoverMenuItem.header(l10n.planningFields, '', divider: orgTemplates.isEmpty),
           for (var i = 0; i < orgFields.length; i++)
-            item('orgfield:$i', orgFields[i].name, note: l10n.planningMinShort(orgFields[i].time)),
+            AppPopoverMenuItem(
+              value: 'orgfield:$i',
+              label: orgFields[i].name,
+              note: l10n.planningMinShort(orgFields[i].time),
+            ),
         ],
         if (_att != null) ...[
-          const PopupMenuDivider(),
-          item('plan', l10n.planningAddAnotherPlan,
-              icon: Icon(AppIcons.copyOutlined, color: AppColors.medium), color: AppColors.medium),
+          const AppPopoverMenuItem.divider(''),
+          AppPopoverMenuItem(
+            value: 'plan',
+            label: l10n.planningAddAnotherPlan,
+            icon: AppIcons.copyOutlined,
+            color: AppColors.medium,
+            lines: false,
+          ),
         ],
       ],
     );

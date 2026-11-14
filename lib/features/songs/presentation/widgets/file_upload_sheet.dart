@@ -8,6 +8,7 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/services/part_vision_service.dart';
 import '../../../../core/services/song_file_service.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -528,25 +529,31 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                   padding: const EdgeInsets.only(bottom: 24),
                   children: [
                     // Ionic accordion "Wichtige Infos" (warning colour, collapsed)
+                    // Classic: `ion-item slot="header" color="warning"`, the
+                    // content on `--ion-color-warning-tint` with ion-padding.
                     Material(
-                      color: AppColors.warning.withAlpha(45),
-                      child: ExpansionTile(
-                        leading: Icon(AppIcons.infoOutline),
-                        title: Text(context.l10n.songsImportantInfo),
-                        shape: const Border(),
-                        collapsedShape: const Border(),
-                        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                        expandedAlignment: Alignment.centerLeft,
-                        children: [
-                          Text(
-                            // Ionic renders this key as HTML (<br>, link).
-                            context.l10n.songsUploadInfo
-                                .replaceAll('<br>', '\n')
-                                .replaceAll(RegExp(r'<[^>]+>'), ''),
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ],
-                      ),
+                      color: context.rdSkin != null
+                          ? AppColors.warning.withAlpha(45)
+                          : AppColors.warningLight,
+                      child: context.rdSkin != null
+                          ? ExpansionTile(
+                              leading: Icon(AppIcons.infoOutline),
+                              title: Text(context.l10n.songsImportantInfo),
+                              shape: const Border(),
+                              collapsedShape: const Border(),
+                              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                              expandedAlignment: Alignment.centerLeft,
+                              children: [_uploadInfoText(context)],
+                            )
+                          : IonAccordionTile(
+                              headerColor: AppColors.warning,
+                              foregroundColor: Colors.black,
+                              leading: Icon(AppIcons.infoOutline),
+                              title: Text(context.l10n.songsImportantInfo),
+                              childrenPadding: const EdgeInsets.all(16),
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [_uploadInfoText(context, onWarning: true)],
+                            ),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -926,3 +933,12 @@ class _FileItemState extends State<_FileItem> {
     );
   }
 }
+
+/// Ionic renders `songs.uploadInfo` as HTML (<br>, link); here as text.
+/// [onWarning]: on the warning tint of the classic accordion (dark text).
+Widget _uploadInfoText(BuildContext context, {bool onWarning = false}) => Text(
+      context.l10n.songsUploadInfo
+          .replaceAll('<br>', '\n')
+          .replaceAll(RegExp(r'<[^>]+>'), ''),
+      style: TextStyle(fontSize: 14, color: onWarning ? Colors.black : null),
+    );

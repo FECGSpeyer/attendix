@@ -10,6 +10,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/repositories/public_plan_repository.dart';
 import '../../../planning/presentation/widgets/plan_export_actions.dart';
@@ -216,42 +217,55 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
   Widget _planCard(OrgPlanEntry e, {bool initiallyExpanded = false, bool past = false}) {
     final live = !past && _live.contains(e.key);
     final liveNow = !past && _isLiveNow(e);
+    final title = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (e.tenantLabel.isNotEmpty)
+          Text(e.tenantLabel, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+        Text(PlanUtils.longDate(e.dateTime)),
+      ],
+    );
+    final liveToggle = liveNow
+        ? IconButton(
+            tooltip: context.l10n.planningFlutterLive,
+            icon: Icon(live ? AppIcons.radioButtonChecked : AppIcons.radioButtonUnchecked,
+                color: live ? AppColors.danger : AppColors.primary),
+            onPressed: () => setState(() => live ? _live.remove(e.key) : _live.add(e.key)),
+          )
+        : null;
+    final children = [
+      const Divider(height: 1),
+      ListTile(
+        leading: Icon(AppIcons.iosShare, color: AppColors.primary),
+        title: Text(context.l10n.planningExport, style: const TextStyle(color: AppColors.primary)),
+        onTap: () => _export(e),
+      ),
+      const Divider(height: 1),
+      ListTile(title: Text(e.title)),
+      PlanViewList(plan: e.plan, date: e.dateTime, liveMode: live),
+    ];
     return Card(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
       clipBehavior: Clip.antiAlias,
-      child: ExpansionTile(
-        key: PageStorageKey('org-plan-${e.key}-$past'),
-        initiallyExpanded: initiallyExpanded,
-        shape: const Border(),
-        collapsedShape: const Border(),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (e.tenantLabel.isNotEmpty)
-              Text(e.tenantLabel, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
-            Text(PlanUtils.longDate(e.dateTime)),
-          ],
-        ),
-        trailing: liveNow
-            ? IconButton(
-                tooltip: context.l10n.planningFlutterLive,
-                icon: Icon(live ? AppIcons.radioButtonChecked : AppIcons.radioButtonUnchecked,
-                    color: live ? AppColors.danger : AppColors.primary),
-                onPressed: () => setState(() => live ? _live.remove(e.key) : _live.add(e.key)),
-              )
-            : null,
-        children: [
-          const Divider(height: 1),
-          ListTile(
-            leading: Icon(AppIcons.iosShare, color: AppColors.primary),
-            title: Text(context.l10n.planningExport, style: const TextStyle(color: AppColors.primary)),
-            onTap: () => _export(e),
-          ),
-          const Divider(height: 1),
-          ListTile(title: Text(e.title)),
-          PlanViewList(plan: e.plan, date: e.dateTime, liveMode: live),
-        ],
-      ),
+      child: context.rdSkin != null
+          ? ExpansionTile(
+              key: PageStorageKey('org-plan-${e.key}-$past'),
+              initiallyExpanded: initiallyExpanded,
+              shape: const Border(),
+              collapsedShape: const Border(),
+              title: title,
+              trailing: liveToggle,
+              children: children,
+            )
+          // ion-accordion: the live toggle sits in the header item next to
+          // the accordion chevron.
+          : IonAccordionTile(
+              key: PageStorageKey('org-plan-${e.key}-$past'),
+              initiallyExpanded: initiallyExpanded,
+              title: title,
+              trailing: liveToggle,
+              children: children,
+            ),
     );
   }
 

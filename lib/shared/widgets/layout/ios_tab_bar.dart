@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../core/utils/haptic_helper.dart';
 import '../adaptive/adaptive_platform.dart';
 
@@ -316,6 +317,16 @@ class IosTabBarScope extends InheritedWidget {
   @override
   bool updateShouldNotify(IosTabBarScope oldWidget) =>
       bottom != oldWidget.bottom || right != oldWidget.right;
+}
+
+/// Colour of a progress spinner shown inside a FAB instead of its icon:
+/// the FAB's own icon colour. In the iOS look the FAB is the light glass
+/// button with a text-coloured icon, where a white spinner is invisible;
+/// md keeps white on primary, the Beta design its white spinner.
+Color fabSpinnerColor(BuildContext context) {
+  if (context.rdSkin != null) return Colors.white;
+  return Theme.of(context).floatingActionButtonTheme.foregroundColor ??
+      Colors.white;
 }
 
 /// IOS_LOOK: wraps a page's `floatingActionButton`. Inside the iOS tab shell

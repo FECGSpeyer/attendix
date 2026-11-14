@@ -321,7 +321,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppDimensions.paddingL),
-              ElevatedButton.icon(
+              IonButton(
                 onPressed: () {
                   setState(() {
                     _isLoading = true;
@@ -329,8 +329,8 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                   });
                   _loadPdf();
                 },
-                icon: Icon(AppIcons.refresh),
-                label: IonButtonLabel(context.l10n.messagesRetry),
+                icon: AppIcons.refresh,
+                label: context.l10n.messagesRetry,
               ),
               // Fallback when the in-app viewer is unavailable (e.g. pdf.js
               // blocked on web): open the file in the browser / system viewer.

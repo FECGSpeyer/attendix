@@ -525,12 +525,20 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             // Extra Fields Section - as ExpansionTile like Ionic Accordion
             if (extraFields.isNotEmpty)
               ...ionBetaGroup(context, [
-                ExpansionTile(
-                  title: Text(context.l10n.peopleExtraFields),
-                  initiallyExpanded: true,
-                  tilePadding: EdgeInsets.zero,
-                  children: extraFields.map((field) => _buildExtraFieldInput(field)).toList(),
-                ),
+                if (rd != null)
+                  ExpansionTile(
+                    title: Text(context.l10n.peopleExtraFields),
+                    initiallyExpanded: true,
+                    tilePadding: EdgeInsets.zero,
+                    children: extraFields.map((field) => _buildExtraFieldInput(field)).toList(),
+                  )
+                else
+                  IonAccordionTile(
+                    title: Text(context.l10n.peopleExtraFields),
+                    initiallyExpanded: true,
+                    headerPadding: EdgeInsets.zero,
+                    children: extraFields.map((field) => _buildExtraFieldInput(field)).toList(),
+                  ),
               ]),
 
             const SizedBox(height: AppDimensions.paddingL),

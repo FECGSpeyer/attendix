@@ -10,6 +10,7 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
@@ -283,6 +284,35 @@ class _HandoverPageState extends ConsumerState<HandoverPage> with HandoverSelect
                     onChanged: (v) => setState(() => targetTenantId = v),
                   ),
                 ),
+                // Ionic `ion-item id="filter-btn-handover" button
+                // detail="false"` (label only) + `ion-popover` with an
+                // `ion-list` (item lines); iOS: below the row, with arrow.
+                if (context.rdSkin == null)
+                  Builder(
+                    builder: (rowContext) => ListTile(
+                      title: Text(context.l10n.handoverAddFilter),
+                      onTap: () async {
+                        final items = [
+                          if (!filters.contains('younger') && !filters.contains('older')) ...[
+                            AppPopoverMenuItem(value: 'younger', label: context.l10n.handoverYoungerThanDots),
+                            AppPopoverMenuItem(value: 'older', label: context.l10n.handoverOlderThanDots),
+                          ],
+                          if (!filters.contains('group'))
+                            AppPopoverMenuItem(value: 'group', label: context.l10n.handoverInGroupDots),
+                        ];
+                        if (items.isEmpty) return;
+                        final f = await showAppPopoverMenu<String>(
+                          context: rowContext,
+                          lines: true,
+                          iosArrow: true,
+                          items: items,
+                        );
+                        if (f != null && context.mounted) setState(() => filters.add(f));
+                      },
+                    ),
+                  )
+                else
+                // Beta design: its Material menu as before.
                 PopupMenuButton<String>(
                   onSelected: (f) => setState(() => filters.add(f)),
                   itemBuilder: (context) => [

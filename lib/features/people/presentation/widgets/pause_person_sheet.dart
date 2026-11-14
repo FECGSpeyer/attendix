@@ -17,6 +17,7 @@ import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
 import 'ion/ion_widgets.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../redesign/presentation/widgets/members/rd_pause_sheets.dart';
 
@@ -186,9 +187,13 @@ class _PauseSheetState extends State<_PauseSheet> {
                   : null,
               icon: Icon(AppIcons.pause),
               label: IonButtonLabel(context.l10n.peoplePause),
+              // Ionic `ion-button expand="block"` in the default primary
+              // colour (the theme's solid button); the Beta design keeps
+              // its warning button.
               style: FilledButton.styleFrom(
-                backgroundColor: AppColors.warning,
-                disabledBackgroundColor: AppColors.warning.withValues(alpha: 0.5),
+                backgroundColor: context.rdSkin != null ? AppColors.warning : null,
+                disabledBackgroundColor:
+                    context.rdSkin != null ? AppColors.warning.withValues(alpha: 0.5) : null,
                 padding:
                     const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
               ),
