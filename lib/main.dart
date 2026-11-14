@@ -43,6 +43,7 @@ import 'core/services/telegram_service.dart' show notificationConfigProvider;
 import 'l10n/l10n.dart';
 import 'shared/widgets/dialogs/ion_modal.dart';
 import 'shared/widgets/adaptive/app_toolbar.dart' show IonToolbarMetrics;
+import 'shared/widgets/layout/side_safe_area.dart';
 import 'shared/widgets/layout/tap_outside_dismiss.dart';
 import 'core/services/error_reporter.dart';
 import 'core/constants/app_constants.dart';
@@ -290,13 +291,17 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       builder: (context, child) => TooltipVisibility(
         visible: false,
         child: WebSafeArea(
-          // PARITY_R3: Ionic ion-modal sheet sizes (600 wide on desktop).
-          child: IonModalTheme(
-            // IOS_R4: Ionic iOS toolbar height (safe area dependent)
-            child: IonToolbarMetrics(
-              // PLATFORM: tap outside a field closes the keyboard (web view).
-              child: TapOutsideToDismissKeyboard(
-                child: child ?? const SizedBox.shrink(),
+          // Phone held sideways: stay clear of notch / Dynamic Island.
+          child: SideSafeArea(
+            // PARITY_R3: Ionic ion-modal sheet sizes (600 wide on desktop).
+            child: IonModalTheme(
+              // IOS_R4: Ionic iOS toolbar height (safe area dependent)
+              child: IonToolbarMetrics(
+                // PLATFORM: tap outside a field closes the keyboard (web
+                // view).
+                child: TapOutsideToDismissKeyboard(
+                  child: child ?? const SizedBox.shrink(),
+                ),
               ),
             ),
           ),
