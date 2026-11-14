@@ -55,6 +55,11 @@ class PersonCreatePage extends ConsumerStatefulWidget {
 
 class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   final _formKey = GlobalKey<FormState>();
+
+  /// E2E PERSONEN-23: after a failed save the hints update while typing
+  /// (and disappear once a field is valid) instead of staying until the
+  /// next save.
+  AutovalidateMode _autovalidate = AutovalidateMode.disabled;
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -371,6 +376,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           opacity: _canEdit ? 1 : 0.5,
           child: Form(
         key: _formKey,
+        autovalidateMode: _autovalidate,
         child: IonFormTheme(
           child: ListView(
           padding: rd != null
@@ -490,7 +496,16 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                 hintText: 'max@example.com',
                 prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.email),
               ),
-              // Ionic addPerson does not validate the e-mail.
+              // E2E PERSONEN-28: an invalid e-mail used to reach the account
+              // sign-up (HTTP 400, "Fehler beim Erstellen des Accounts");
+              // check it at the field before anything is sent.
+              validator: (value) {
+                final email = value?.trim() ?? '';
+                if (email.isNotEmpty && !isValidPersonEmail(email)) {
+                  return context.l10n.personInvalidEmail;
+                }
+                return null;
+              },
               keyboardType: TextInputType.emailAddress,
             ),
             gap,
@@ -972,7 +987,11 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     // Commit a typed date (applied on focus loss) before reading the form.
     FocusManager.instance.primaryFocus?.unfocus();
     await Future<void>.delayed(Duration.zero);
-    if (!mounted || !_formKey.currentState!.validate()) return;
+    if (!mounted) return;
+    if (!_formKey.currentState!.validate()) {
+      setState(() => _autovalidate = AutovalidateMode.onUserInteraction);
+      return;
+    }
 
     setState(() => _isLoading = true);
 
