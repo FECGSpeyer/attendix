@@ -20,6 +20,7 @@ import '../../../../core/providers/profile_providers.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import 'package:ionicons/ionicons.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart' show showPageModal;
 import '../../../../core/utils/demo_guard.dart' show DemoModeException;
 import '../../../../core/utils/dialog_helper.dart';
@@ -641,7 +642,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: IonNoData(
-                  icon: AppIcons.filterAltOutlined,
+                  // PEO-28: Ionic `filter-outline`.
+                  icon: AppIcons.ionic ? Ionicons.filterOutline : AppIcons.filterAltOutlined,
                   label: context.l10n.peopleNoPeopleFound,
                   message: context.l10n.peopleFiltersNoMatch,
                   actions: [(context.l10n.peopleResetFilter, _clearFilters)],
@@ -973,7 +975,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       builder: (buttonContext) => IconButton(
         key: const Key('people_options_button'),
         icon: Icon(
-          AppIcons.tune,
+          // PEO-28: Ionic `options` (filled).
+          AppIcons.ionic ? Ionicons.options : AppIcons.tune,
           color: _filterOption != 'all' || !rate.isDefault ? AppColors.primary : null,
         ),
         tooltip: context.l10n.typeSettingsOptions,
