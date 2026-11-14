@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.151.0",
+      "date": "14.11.2026",
+      "changes": [
+        "✨ Beta-Ablauf: „Hinzufügen“ führt zu Programmpunkt (Punkt, Notiz, Block, Werke) oder Registerprobe, darunter die Vorlagen",
+        "✨ Beta-Ablauf: „Teilen“ bietet PDF (Normal oder 2x A5), Bild und öffentlichen Link, Telegram entfällt dort (auch bei der Registerprobe)",
+        "✨ Beta: Werke kommen mit 5 Minuten in den Ablauf, am Werk lässt sich eine eigene Dauer hinterlegen",
+        "✨ Beta-Ablauf: Proben haben keine Überschrift mehr"
+      ]
+    },
+    {
       "version": "0.150.2",
       "date": "14.11.2026",
       "changes": [
