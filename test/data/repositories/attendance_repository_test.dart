@@ -77,13 +77,25 @@ void main() {
 
         for (final match in readQueries) {
           final query = match.group(0)!;
+          // LINK_TERMIN: findTenantIdOfAttendance looks a Termin up among
+          // the user's own groups only (explicit tenant list).
           expect(
-            query,
-            contains(".eq('tenantId', currentTenantId)"),
+            query.contains(".eq('tenantId', currentTenantId)") ||
+                query.contains(".inFilter('tenantId', tenantIds)"),
+            isTrue,
             reason: 'SELECT query missing tenantId filter:\n$query',
           );
         }
       });
+    });
+
+    test('findTenantIdOfAttendance only searches the given groups', () {
+      final section =
+          _extractMethodBody(attendanceRepoSource, 'findTenantIdOfAttendance');
+      expect(section, isNotNull);
+      expect(section, contains("if (tenantIds.isEmpty) return null;"));
+      expect(section, contains(".eq('id', id)"));
+      expect(section, contains(".inFilter('tenantId', tenantIds)"));
     });
 
     group('Core Mutation Methods', () {

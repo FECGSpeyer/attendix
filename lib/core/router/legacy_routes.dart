@@ -13,13 +13,18 @@
 /// its `to` location (or the role's home page when `to` is missing).
 const String kOpenLinkRoute = '/open-link';
 
+/// Resolver for Termin links (`?id=&tenantId=`), see OpenAttendancePage.
+const String kOpenAttendanceRoute = '/open-attendance';
+
 /// Query parameter of [kOpenLinkRoute] holding the target location.
 const String kOpenLinkTargetParam = 'to';
 
 /// Translates a legacy Ionic location into the Flutter location, or returns
 /// `null` when [uri] is not a legacy URL. Query parameters (e.g. `tenantId`,
-/// `tab`) are carried over.
-String? legacyRouteRedirect(Uri uri) {
+/// `tab`) are carried over. [terminResolver]: Termin links open through
+/// [kOpenAttendanceRoute] (links from outside the app); false keeps
+/// `/attendance/:id` (in-app routes like the notification bell).
+String? legacyRouteRedirect(Uri uri, {bool terminResolver = true}) {
   final path = uri.path;
   // Ionic app-routing: '' → /login (LoginGuard then opens the role's home).
   // An attendix.de root link opens the app on '/', which has no route.
@@ -36,6 +41,19 @@ String? legacyRouteRedirect(Uri uri) {
 
   final segments =
       path.substring('/tabs'.length).split('/').where((s) => s.isNotEmpty).toList();
+  // LINK_TERMIN: a Termin link (duty-delivery `/tabs/attendance/:id`, often
+  // without `tenantId`) opens through the Termin resolver: it switches to the
+  // Termin's group and opens it by role, like reminder links and pushes
+  // (players land on their Termine with this Termin selected).
+  if (terminResolver &&
+      segments.length == 2 &&
+      segments.first == 'attendance' &&
+      int.tryParse(segments[1]) != null) {
+    return Uri(path: kOpenAttendanceRoute, queryParameters: {
+      ...uri.queryParameters,
+      'id': segments[1],
+    }).toString();
+  }
   final target = _mapTabs(segments);
   if (uri.queryParameters.isEmpty) return target;
   return Uri(path: target, queryParameters: uri.queryParameters).toString();
