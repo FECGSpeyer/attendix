@@ -10,6 +10,9 @@ They never talk to production. Every run starts a fresh **local Supabase**
 (`e2e/seed_accounts.sh`, password `attendix-e2e`, exists only in that local
 instance).
 
+The local Supabase has no tables yet (the schema follows), so today's flows
+end at the sign-in.
+
 ## Where they run
 
 GitHub: workflow **E2E** (`.github/workflows/e2e.yml`). It runs on pull

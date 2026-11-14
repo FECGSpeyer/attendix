@@ -1,18 +1,24 @@
-import 'package:attendix/features/tenant_selection/presentation/pages/tenant_selection_page.dart';
+import 'package:attendix/features/auth/presentation/pages/login_page.dart';
 import 'package:patrol/patrol.dart';
 
 import 'support/app.dart';
 
+// The local Supabase has accounts but no tables yet. Until the schema is
+// there, these flows stay on the sign-in page: the app asks the local
+// Supabase, gets the refusal and shows it. Flows behind the sign-in follow
+// with the schema.
 void main() {
-  patrolTest('Anmeldung mit Passwort (Beta)', ($) async {
+  patrolTest('Falsches Passwort wird abgelehnt (Beta)', ($) async {
     await startApp($);
-    await signIn($, email: 'admin@attendix.test');
-    await waitForPage($, TenantSelectionPage);
+    await signIn($, email: 'admin@attendix.test', password: 'falsch-falsch');
+    await $('Ungültige Anmeldedaten').waitUntilVisible(timeout: const Duration(seconds: 20));
+    await waitForPage($, LoginPage);
   });
 
-  patrolTest('Anmeldung mit Passwort (klassisch)', ($) async {
+  patrolTest('Falsches Passwort wird abgelehnt (klassisch)', ($) async {
     await startApp($, beta: false);
-    await signIn($, email: 'admin@attendix.test');
-    await waitForPage($, TenantSelectionPage);
+    await signIn($, email: 'admin@attendix.test', password: 'falsch-falsch');
+    await $('Ungültige Anmeldedaten').waitUntilVisible(timeout: const Duration(seconds: 20));
+    await waitForPage($, LoginPage);
   });
 }
