@@ -378,9 +378,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   /// page. On `registered` show the toast, on `signedIn` route like a login.
   Future<void> _openRegister() async {
     final email = _emailController.text.trim();
+    // F-LOGIN-10: Ionic opens the register modal empty (no componentProps);
+    // only the Beta design prefills the login e-mail.
+    final prefill = ref.read(redesignEnabledProvider) && email.isNotEmpty;
     final outcome = await showRegisterModal(
       context,
-      email: email.isNotEmpty ? email : null,
+      email: prefill ? email : null,
     );
     if (!mounted || outcome == null) return;
     if (outcome == RegisterOutcome.signedIn) {
@@ -556,6 +559,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
   }
 
+  /// A persisted session exists but the auth stream has not reported yet.
+  bool _restoringSession() {
+    try {
+      if (!ref.watch(authStateProvider).isLoading) return false;
+      return ref.read(supabaseAuthProvider).currentSession != null;
+    } catch (_) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ios = useIosLook(context);
@@ -575,6 +588,28 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     // Ionic login.page.scss `.around` in rem: on the iPhone 1rem = 17px.
     final rem = ios ? 17.0 : 16.0;
     final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+
+    // EINST-03: cold start / reload with a stored session (e.g. a deep link
+    // stashed via /open-link): until the auth stream reports it, the router
+    // still sees "signed out" and lands here. Show the background with a
+    // spinner instead of flashing the login form; the router leaves as soon
+    // as the session is reported (a failed restore shows the form).
+    if (!beta && _restoringSession()) {
+      return Scaffold(
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              'assets/images/login_bg.jpg',
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) =>
+                  const ColoredBox(color: AppColors.primary),
+            ),
+            const Center(child: AppSpinner()),
+          ],
+        ),
+      );
+    }
     _measurePasswordForm();
 
     // Ionic login: background photo, centered card (60 % / 95 % under
@@ -745,7 +780,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                             const TextSpan(text: ' | '),
                             TextSpan(
-                              text: context.l10n.loginLegal,
+                              // OEFF-46: classic keeps "Impressum &
+                              // Datenschutz" on one line, so its tap area
+                              // (one rect around the span) no longer covers
+                              // "Demo starten" when the footer wraps.
+                              text: beta
+                                  ? context.l10n.loginLegal
+                                  : context.l10n.loginLegal
+                                      .replaceAll(' ', '\u00A0'),
                               recognizer: _legalTap,
                             ),
                           ],
@@ -1044,11 +1086,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             const SizedBox(height: AppDimensions.paddingM),
             _primaryButton(context.l10n.loginSignIn, _verifyCode),
             const SizedBox(height: AppDimensions.paddingS),
-            Center(
-              child: ResendCodeButton(
-                cooldown: _cooldown,
-                enabled: !_isLoading,
-                onResend: _requestCode,
+            // SEL-21: Ionic `ion-button size="small" fill="clear"` in a
+            // left-aligned column.
+            Align(
+              alignment: Alignment.centerLeft,
+              child: ListenableBuilder(
+                listenable: _cooldown,
+                builder: (context, _) => _smallClearButton(
+                  _cooldown.active
+                      ? context.l10n.loginResendIn(_cooldown.remaining)
+                      : context.l10n.loginResendCode,
+                  (_isLoading || _cooldown.active) ? null : _requestCode,
+                ),
               ),
             ),
           ],

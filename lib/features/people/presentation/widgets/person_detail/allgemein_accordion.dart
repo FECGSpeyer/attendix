@@ -27,6 +27,8 @@ import '../church_picker_sheet.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import '../../../../../data/models/instrument/instrument.dart' show Group;
 
 /// Ionic VoS "Andere Orchester" options
 const otherOrchestraOptions = ['SoS', 'GoS', 'BoS'];
@@ -230,7 +232,38 @@ class AllgemeinAccordion extends ConsumerWidget {
     );
   }
 
+  /// PEO-01/02: the classic design edits inline (Ionic `ion-input` /
+  /// `ion-select` in the item); the Beta skin keeps the tap-to-edit rows.
+  bool _inline(BuildContext context) => canEdit && context.rdSkin == null;
+
   Widget _buildNameFields(BuildContext context) {
+    if (_inline(context)) {
+      // Ionic ion-grid: two ion-col, `ion-item lines="none"` with stacked
+      // label + ion-input (no placeholder).
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: IonInputRow(
+              label: context.l10n.peopleFirstName,
+              value: person.firstName,
+              lines: false,
+              textCapitalization: TextCapitalization.words,
+              onChanged: (v) => onFieldChanged('firstName', v.trim()),
+            ),
+          ),
+          Expanded(
+            child: IonInputRow(
+              label: context.l10n.peopleLastName,
+              value: person.lastName,
+              lines: false,
+              textCapitalization: TextCapitalization.words,
+              onChanged: (v) => onFieldChanged('lastName', v.trim()),
+            ),
+          ),
+        ],
+      );
+    }
     return Row(
       children: [
         Expanded(
@@ -273,6 +306,16 @@ class AllgemeinAccordion extends ConsumerWidget {
     final notes = person.notes;
     if (notes == null && !canEdit) return const SizedBox.shrink();
 
+    if (_inline(context)) {
+      // Ionic: stacked label + `ion-textarea autoGrow`.
+      return IonInputRow(
+        label: context.l10n.peopleNotes,
+        value: notes,
+        textarea: true,
+        onChanged: (v) => onFieldChanged('notes', v.trim().isEmpty ? null : v),
+      );
+    }
+
     return IonFieldRow(
       icon: AppIcons.notes,
       label: context.l10n.peopleNotes,
@@ -301,6 +344,32 @@ class AllgemeinAccordion extends ConsumerWidget {
         final groupName = currentGroupId != null
             ? groups[currentGroupId] ?? context.l10n.commonUnknown
             : context.l10n.personFlutterNotAssigned;
+
+        if (_inline(context)) {
+          // Ionic: `ion-select interface="modal" [label]` (label at the
+          // start, value + icon at the end), options in the order of the
+          // group settings (E2E PERSONEN-36: the map was unsorted).
+          final sorted =
+              ref.watch(groupsProvider).valueOrNull ?? const <Group>[];
+          final options = sorted.isNotEmpty
+              ? [
+                  for (final g in sorted)
+                    if (g.id != null)
+                      AppSelectOption<int>(value: g.id!, label: g.name),
+                ]
+              : [
+                  for (final e in groups.entries)
+                    AppSelectOption<int>(value: e.key, label: e.value),
+                ];
+          return IonSelectRow<int>(
+            label: groupLabel(tenantType),
+            value: currentGroupId,
+            selectedText: currentGroupId != null ? groupName : null,
+            options: options,
+            interface: AppSelectInterface.modal,
+            onChanged: (id) => onFieldChanged('instrument', id),
+          );
+        }
 
         return IonFieldRow(
           icon: AppIcons.group,
@@ -333,6 +402,23 @@ class AllgemeinAccordion extends ConsumerWidget {
   Widget _buildPhoneField(BuildContext context) {
     final phone = person.phone;
     if (phone == null && !canEdit) return const SizedBox.shrink();
+
+    if (_inline(context)) {
+      return IonInputRow(
+        label: context.l10n.peoplePhone,
+        value: phone,
+        keyboardType: TextInputType.phone,
+        onChanged: (v) => onFieldChanged('phone', v.trim().isEmpty ? null : v),
+        // Flutter extra: calling keeps its own button at the end.
+        trailing: phone != null && phone.trim().isNotEmpty
+            ? IconButton(
+                tooltip: context.l10n.peopleFlutterContactCall,
+                icon: Icon(AppIcons.callOutlined),
+                onPressed: () => _launchPhone(phone),
+              )
+            : null,
+      );
+    }
 
     return IonFieldRow(
       icon: AppIcons.phone,
@@ -455,6 +541,21 @@ class AllgemeinAccordion extends ConsumerWidget {
             .where((t) => groupId != null && t.instruments.contains(groupId))
             .toList();
 
+        if (_inline(context)) {
+          // Ionic: `ion-select interface="modal" [label]`, no empty option.
+          return IonSelectRow<int>(
+            label: context.l10n.peopleTeacher,
+            value: teacherId,
+            selectedText: teacher?.name,
+            options: [
+              for (final t in teachers)
+                if (t.id != null) AppSelectOption<int>(value: t.id!, label: t.name),
+            ],
+            interface: AppSelectInterface.modal,
+            onChanged: (id) => onFieldChanged('teacher', id),
+          );
+        }
+
         return Padding(
           padding: EdgeInsets.zero,
           child: IonFieldRow(
@@ -497,6 +598,49 @@ class AllgemeinAccordion extends ConsumerWidget {
         if (shifts.isEmpty) return const SizedBox.shrink();
         final shift = shifts.where((s) => s.id == currentShiftId).firstOrNull;
         final shiftName = shift?.name ?? context.l10n.personNoShift;
+
+        void onShiftChanged(String? id) {
+          final plan = shifts.where((s) => s.id == id).firstOrNull;
+          onFieldChanged('shiftId', id);
+          // Ionic onShiftChange: a plan with named shifts starts with its
+          // first shift, otherwise the start date is today.
+          if (plan == null) {
+            onFieldChanged('shiftName', null);
+            onFieldChanged('shiftStart', null);
+          } else if (plan.hasNamedShifts) {
+            onFieldChanged('shiftName', plan.shifts.first.name);
+            onFieldChanged('shiftStart', null);
+          } else {
+            onFieldChanged('shiftName', null);
+            onFieldChanged(
+                'shiftStart', DateTime.now().toUtc().toIso8601String());
+          }
+        }
+
+        if (_inline(context)) {
+          // Ionic: `ion-select [label]` with the default alert interface
+          // and a "Keine Schicht" option.
+          return Column(
+            children: [
+              IonSelectRow<String?>(
+                label: context.l10n.personShiftPlan,
+                value: currentShiftId,
+                options: [
+                  AppSelectOption<String?>(
+                      value: null, label: context.l10n.personNoShift),
+                  for (final s in shifts)
+                    if (s.id != null)
+                      AppSelectOption<String?>(value: s.id, label: s.name),
+                ],
+                onChanged: onShiftChanged,
+              ),
+              if (shift != null && shift.hasNamedShifts)
+                _buildShiftNameField(context, shift),
+              if (shift != null && !shift.hasNamedShifts)
+                _buildShiftStartField(context),
+            ],
+          );
+        }
 
         return Column(
           children: [
@@ -557,6 +701,19 @@ class AllgemeinAccordion extends ConsumerWidget {
         .toSet()
         .toList();
 
+    if (_inline(context)) {
+      // PEO-27: a normal full-width item (no indentation), default alert.
+      return IonSelectRow<String>(
+        label: context.l10n.personShift,
+        value: currentShiftName,
+        options: [
+          for (final String n in uniqueShiftNames)
+            AppSelectOption<String>(value: n, label: n),
+        ],
+        onChanged: (n) => onFieldChanged('shiftName', n),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.only(left: AppDimensions.paddingL),
       child: IonFieldRow(
@@ -593,6 +750,52 @@ class AllgemeinAccordion extends ConsumerWidget {
     final displayValue = currentShiftStart != null
         ? DateFormat(dateFmt()).format(currentShiftStart)
         : context.l10n.personFlutterNotSpecified;
+
+    Future<void> pick() async {
+      final date = await DateEditorSheet.show(
+        context,
+        title: context.l10n.personStartDate,
+        initialDate: currentShiftStart,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+        // Ionic: `ion-datetime-button` with the calendar grid.
+        overlay: IonDatetimeOverlay.button,
+        preferWheel: false,
+      );
+      if (date != null) {
+        onFieldChanged('shiftStart', date.toIso8601String());
+      }
+    }
+
+    if (_inline(context)) {
+      // PEO-27: Ionic `ion-label` + `ion-datetime-button` (grey date pill
+      // at the end), full width.
+      final ios = ionIsIos(context);
+      return Padding(
+        padding: const EdgeInsets.only(left: 16),
+        child: Container(
+          constraints: BoxConstraints(minHeight: ios ? 44 : 48),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                  color: ionLineColor(context), width: ios ? 0.55 : 1),
+            ),
+          ),
+          padding: const EdgeInsets.only(right: 16, top: 6, bottom: 6),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  context.l10n.personStartDate,
+                  style: TextStyle(fontSize: ios ? 17 : 16),
+                ),
+              ),
+              IonDatetimeButton(date: displayValue, onDateTap: pick),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.only(left: AppDimensions.paddingL),
@@ -631,6 +834,25 @@ class AllgemeinAccordion extends ConsumerWidget {
         final parent = parents.where((p) => p.id == currentParentId).firstOrNull;
         final parentName = parent?.fullName ?? context.l10n.personFlutterNotAssigned;
 
+        if (_inline(context)) {
+          // Ionic: stacked label + `ion-select interface="modal"` with the
+          // "Nicht festgelegt" option first (E2E PERSONEN-39: same wording
+          // as on the create page).
+          return IonSelectRow<int?>(
+            label: context.l10n.personParents,
+            stacked: true,
+            value: currentParentId,
+            options: [
+              AppSelectOption<int?>(value: null, label: context.l10n.personNotSet),
+              for (final p in parents)
+                if (p.id != null)
+                  AppSelectOption<int?>(value: p.id, label: p.fullName),
+            ],
+            interface: AppSelectInterface.modal,
+            onChanged: (id) => onFieldChanged('parentId', id),
+          );
+        }
+
         return IonFieldRow(
           icon: AppIcons.familyRestroom,
           label: context.l10n.personParents,
@@ -664,6 +886,15 @@ class AllgemeinAccordion extends ConsumerWidget {
 
   Widget _buildOtherExerciseField(BuildContext context) {
     final otherExercise = person.otherExercise;
+
+    if (_inline(context)) {
+      return IonInputRow(
+        label: context.l10n.peopleOtherDuties,
+        value: otherExercise,
+        onChanged: (v) =>
+            onFieldChanged('otherExercise', v.trim().isEmpty ? null : v),
+      );
+    }
 
     return IonFieldRow(
       icon: AppIcons.work,
@@ -724,6 +955,16 @@ class AllgemeinAccordion extends ConsumerWidget {
                   onPressed: () => Navigator.pop(ctx),
                   child: Text(context.l10n.commonCancel),
                 ),
+                // PEO-17: `ion-select multiple` alert = Abbrechen / OK.
+                if (context.rdSkin == null)
+                  TextButton(
+                    onPressed: () => Navigator.pop(
+                      ctx,
+                      otherOrchestraOptions.where(current.contains).toList(),
+                    ),
+                    child: Text(context.l10n.commonOk),
+                  )
+                else
                 FilledButton(
                   onPressed: () => Navigator.pop(
                     ctx,
@@ -753,6 +994,53 @@ class AllgemeinAccordion extends ConsumerWidget {
       return Consumer(
         builder: (context, ref, _) {
           final churches = ref.watch(churchesProvider).valueOrNull ?? const [];
+          Future<void> pick() async {
+            final selected = await showChurchPickerSheet(
+              context,
+              title: field.name,
+              churches: churches,
+              selectedId: value?.toString(),
+            );
+            if (selected != null) {
+              onFieldChanged('additionalFields.${field.id}', selected);
+            }
+          }
+
+          if (_inline(context)) {
+            // PEO-23: Ionic `ion-label` + `ion-button slot="end"
+            // fill="clear"` showing the church.
+            final ios = ionIsIos(context);
+            return Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Container(
+                constraints: BoxConstraints(minHeight: ios ? 44 : 48),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                        color: ionLineColor(context), width: ios ? 0.55 : 1),
+                  ),
+                ),
+                padding: const EdgeInsets.only(right: 8),
+                child: Row(
+                  children: [
+                    Text(field.name,
+                        style: TextStyle(fontSize: ios ? 17 : 16)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: IonButton(
+                          fill: IonButtonFill.clear,
+                          label: churchLabel(value, churches),
+                          onPressed: pick,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
           return IonFieldRow(
             icon: AppIcons.churchOutlined,
             label: field.name,
@@ -792,6 +1080,41 @@ class AllgemeinAccordion extends ConsumerWidget {
         editable: canEdit,
         onChanged: (v) => onFieldChanged('additionalFields.${field.id}', v),
       );
+    }
+
+    if (_inline(context)) {
+      final key = 'additionalFields.${field.id}';
+      switch (field.type) {
+        case 'text':
+        case 'textarea':
+          // Ionic `ion-input` / `ion-textarea autoGrow` with stacked label.
+          return IonInputRow(
+            label: field.name,
+            value: value?.toString(),
+            textarea: field.type == 'textarea',
+            onChanged: (v) => onFieldChanged(key, v),
+          );
+        case 'number':
+          return IonInputRow(
+            label: field.name,
+            value: value?.toString(),
+            keyboardType: const TextInputType.numberWithOptions(
+                decimal: true, signed: true),
+            onChanged: (v) => onFieldChanged(key, parseExtraFieldNumber(v)),
+          );
+        case 'select':
+          // Ionic `ion-select [label]`, default alert interface.
+          final current = value?.toString();
+          final options = field.options ?? const <String>[];
+          return IonSelectRow<String>(
+            label: field.name,
+            value: current,
+            options: [
+              for (final o in options) AppSelectOption<String>(value: o, label: o),
+            ],
+            onChanged: (o) => onFieldChanged(key, o),
+          );
+      }
     }
 
     return IonFieldRow(
@@ -872,6 +1195,14 @@ class AllgemeinAccordion extends ConsumerWidget {
     final rangeValue = person.range;
     if (rangeValue == null && !canEdit) return const SizedBox.shrink();
 
+    if (_inline(context)) {
+      return IonInputRow(
+        label: context.l10n.personVocalRange,
+        value: rangeValue,
+        onChanged: (v) => onFieldChanged('range', v.trim().isEmpty ? null : v),
+      );
+    }
+
     return IonFieldRow(
       icon: AppIcons.musicNoteOutlined,
       label: context.l10n.personVocalRange,
@@ -890,6 +1221,15 @@ class AllgemeinAccordion extends ConsumerWidget {
   Widget _buildInstrumentsField(BuildContext context) {
     final instrumentsValue = person.instruments;
     if (instrumentsValue == null && !canEdit) return const SizedBox.shrink();
+
+    if (_inline(context)) {
+      return IonInputRow(
+        label: context.l10n.peopleInstruments,
+        value: instrumentsValue,
+        onChanged: (v) =>
+            onFieldChanged('instruments', v.trim().isEmpty ? null : v),
+      );
+    }
 
     return IonFieldRow(
       icon: AppIcons.pianoOutlined,
@@ -919,6 +1259,15 @@ class AllgemeinAccordion extends ConsumerWidget {
   Widget _buildTestResultField(BuildContext context) {
     final testResultValue = person.testResult;
     if (testResultValue == null && !canEdit) return const SizedBox.shrink();
+
+    if (_inline(context)) {
+      return IonInputRow(
+        label: context.l10n.peopleTestResult,
+        value: testResultValue,
+        onChanged: (v) =>
+            onFieldChanged('testResult', v.trim().isEmpty ? null : v),
+      );
+    }
 
     return IonFieldRow(
       icon: AppIcons.assignmentOutlined,

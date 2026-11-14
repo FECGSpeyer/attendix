@@ -57,11 +57,14 @@ List<InstrumentCategorySection> groupInstrumentsByCategory(
   String? noCategoryLabel,
 }) {
   final fallbackName = noCategoryLabel ?? l10nWithoutContext.instrumentsNoCategory;
+  final categoryMap = {for (final c in categories) c.id: c};
   final byCategory = <int?, List<Group>>{};
   for (final g in groups) {
-    byCategory.putIfAbsent(g.categoryId, () => []).add(g);
+    // PERSONEN-64: an id without a known category (e.g. just deleted) joins
+    // the one "Keine Kategorie" section instead of opening a second one.
+    final key = categoryMap.containsKey(g.categoryId) ? g.categoryId : null;
+    byCategory.putIfAbsent(key, () => []).add(g);
   }
-  final categoryMap = {for (final c in categories) c.id: c};
 
   final sections = byCategory.entries.map((e) {
     final cat = e.key == null ? null : categoryMap[e.key];

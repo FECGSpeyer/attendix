@@ -29,9 +29,11 @@ import '../../../../l10n/l10n.dart';
 import '../widgets/files_move_modal.dart';
 import '../widgets/settings_list.dart';
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonInsetList;
 import '../../../../core/utils/file_mime.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/adaptive/ion_loading.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -472,10 +474,15 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       ToastHelper.showWarning(context, context.l10n.filesConnectTelegram);
       return;
     }
-    ToastHelper.showInfo(context, context.l10n.filesSendingTelegram);
+    final beta = ref.read(redesignEnabledProvider);
+    if (beta) ToastHelper.showInfo(context, context.l10n.filesSendingTelegram);
     try {
-      final url = await repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
-      await ref.read(telegramServiceProvider).sendDocumentPerTelegram(url: url, chatId: chatId);
+      Future<void> send() async {
+        final url = await repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
+        await ref.read(telegramServiceProvider).sendDocumentPerTelegram(url: url, chatId: chatId);
+      }
+      // Ionic: `ion-loading` "Datei wird per Telegram gesendet..." (WER-19).
+      beta ? await send() : await _withLoading(send, message: context.l10n.filesSendingTelegram);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.svcMessageSent);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.filesTelegramFailed(_errorText(e)));
@@ -487,7 +494,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final openFailed = context.l10n.filesFlutterOpenLinkFailed;
     final repo = _repo;
     try {
-      final url = await repo.getSignedFileUrl(entry.path, downloadName: entry.name);
+      // Ionic downloadFile: `ion-loading` while the link is fetched (WER-19).
+      Future<String> link() => repo.getSignedFileUrl(entry.path, downloadName: entry.name);
+      final url = ref.read(redesignEnabledProvider)
+          ? await link()
+          : await withIonLoading(context, link);
       // NATIVE_MISC: native app → cache dir + system viewer (Ionic downloadFileNative)
       final ok = await NativeFileService.openUrl(url, fileName: entry.name);
       if (!ok) throw Exception(openFailed);
@@ -579,20 +590,10 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
   Future<void> _moveEntry(StorageEntry entry) => _moveEntries([entry]);
 
-  /// Ionic `Utils.getLoadingElement()`: blocking spinner until [work] is done.
-  Future<void> _withLoading(Future<void> Function() work) async {
-    final navigator = Navigator.of(context, rootNavigator: true);
-    showAppDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const PopScope(canPop: false, child: Center(child: AppSpinner())),
-    );
-    try {
-      await work();
-    } finally {
-      navigator.pop();
-    }
-  }
+  /// Ionic `Utils.getLoadingElement()`: the `ion-loading` box until [work]
+  /// is done (WER-19).
+  Future<void> _withLoading(Future<void> Function() work, {String? message}) =>
+      withIonLoading<void>(context, work, message: message);
 
   // ---- Ionic 4.19.1: Mehrfachauswahl ----
 
@@ -884,6 +885,42 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     return false;
   }
 
+  /// Upload progress: Ionic `ion-loading` whose message follows the upload
+  /// (WER-19); the Beta keeps its alert with spinner and text.
+  ({void Function(String) update, VoidCallback close}) _showUploadProgress(String initial) {
+    if (!ref.read(redesignEnabledProvider)) {
+      final loading = showIonLoading(context, message: initial);
+      return (update: (m) => loading.message = m, close: loading.dismiss);
+    }
+    final progress = ValueNotifier<String>(initial);
+    final navigator = Navigator.of(context, rootNavigator: true);
+    showAppDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AppAlertDialog(
+        content: Row(
+          children: [
+            const AppSpinner(),
+            const SizedBox(width: AppDimensions.paddingM),
+            Expanded(
+              child: ValueListenableBuilder<String>(
+                valueListenable: progress,
+                builder: (_, value, __) => Text(value),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    return (
+      update: (m) => progress.value = m,
+      close: () {
+        if (mounted) navigator.pop();
+        progress.dispose();
+      },
+    );
+  }
+
   Future<void> _upload() async {
     if (!_canEdit) {
       ToastHelper.showWarning(context, context.l10n.filesNoEditRights);
@@ -911,25 +948,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     }
     if (!await _hasEnoughSpace(files, names, duplicates, overwrite) || !mounted || !_stillIn(tenantId)) return;
 
-    final progress = ValueNotifier<String>(context.l10n.filesUploadProgress(0, files.length, 0));
-    showAppDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AppAlertDialog(
-        content: Row(
-          children: [
-            const AppSpinner(),
-            const SizedBox(width: AppDimensions.paddingM),
-            Expanded(
-              child: ValueListenableBuilder<String>(
-                valueListenable: progress,
-                builder: (_, value, __) => Text(value),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    final loading = _showUploadProgress(context.l10n.filesUploadProgress(0, files.length, 0));
 
     var success = 0, failed = 0, skipped = 0, processed = 0;
     String progressText(String? name) {
@@ -941,7 +960,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     for (final f in files) {
       final name = names[f]!;
       final isDuplicate = duplicates.contains(name);
-      progress.value = progressText(name);
+      loading.update(progressText(name));
       // Group switched meanwhile: the rest is skipped (nothing more is
       // uploaded into the old group).
       if ((isDuplicate && !overwrite) || !mounted || !_stillIn(tenantId)) {
@@ -957,11 +976,10 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         failed++;
       }
       processed++;
-      progress.value = progressText(null);
+      loading.update(progressText(null));
     }
 
-    if (mounted) Navigator.of(context, rootNavigator: true).pop();
-    progress.dispose();
+    loading.close();
     if (!mounted) return;
 
     if (success > 0 && failed == 0 && skipped == 0) {
@@ -1070,7 +1088,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         if (!entry.isFolder && (_telegramChatId?.isNotEmpty ?? false))
           AppPopoverMenuItem(
             value: () => _sendEntryPerTelegram(entry),
-            icon: AppIcons.sendOutlined,
+            icon: AppIcons.paperPlaneOutline,
             label: context.l10n.filesSendTelegram,
           ),
         if (canEdit) ...[
@@ -1158,19 +1176,27 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       appBar: _selectionMode
           ? AppBar(
               automaticallyImplyLeading: false,
-              leading: IconButton(
-                icon: Icon(AppIcons.close),
-                tooltip: context.l10n.filesSelectionDone,
-                onPressed: _exitSelection,
+              // WER-18: `ion-buttons` (ios27 glass on iOS) at both ends.
+              leading: Center(
+                child: ToolbarButtonGroup(children: [
+                  IconButton(
+                    icon: Icon(AppIcons.close),
+                    tooltip: context.l10n.filesSelectionDone,
+                    onPressed: _exitSelection,
+                  ),
+                ]),
               ),
+              leadingWidth: ionIsIos(context) ? 72 : null,
               title: Text(context.l10n.filesSelectedCount(_selectedPaths.length)),
               actions: [
-                TextButton(
-                  onPressed: _toggleSelectAll,
-                  child: IonButtonLabel(_allVisibleSelected
-                      ? context.l10n.filesSelectNone
-                      : context.l10n.filesSelectAll),
-                ),
+                ToolbarButtonGroup(children: [
+                  TextButton(
+                    onPressed: _toggleSelectAll,
+                    child: IonButtonLabel(_allVisibleSelected
+                        ? context.l10n.filesSelectNone
+                        : context.l10n.filesSelectAll),
+                  ),
+                ]),
               ],
             )
           : AppBar(
@@ -1227,7 +1253,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                           ),
                           AppPopoverMenuItem(
                             value: 'folder',
-                            icon: AppIcons.createNewFolderOutlined,
+                            icon: AppIcons.folderOpenOutlined,
                             label: context.l10n.filesCreateFolder,
                           ),
                           if (_entries.isNotEmpty)
@@ -1239,7 +1265,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                         ],
                         AppPopoverMenuItem(
                           value: 'share',
-                          icon: AppIcons.shareOutlined,
+                          icon: AppIcons.shareSocialOutline,
                           label: _currentPath.isNotEmpty
                               ? context.l10n.filesFlutterShareFolderLink
                               : context.l10n.filesFlutterShareRootLink,
@@ -1340,7 +1366,21 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       ),
       // Ionic 4.19.1: footer of the selection – move / delete together.
       bottomNavigationBar: _selectionMode
-          ? SafeArea(
+          // WER-18: `ion-footer > ion-toolbar` – toolbar surface, line on top.
+          ? DecoratedBox(
+              decoration: BoxDecoration(
+                color: Theme.of(context).appBarTheme.backgroundColor ??
+                    Theme.of(context).colorScheme.surface,
+                border: Border(
+                  top: BorderSide(
+                    color: ionIsIos(context)
+                        ? IonIos.line(context)
+                        : IonMd.line(Theme.of(context).brightness),
+                    width: ionIsIos(context) ? 0.55 : 1,
+                  ),
+                ),
+              ),
+              child: SafeArea(
               top: false,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
@@ -1360,6 +1400,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                     ),
                   ],
                 ),
+              ),
               ),
             )
           : null,
@@ -1411,10 +1452,13 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         );
     final crumbs = <Widget>[crumb(context.l10n.filesRoot, '', segments.isEmpty)];
     for (var i = 0; i < segments.length; i++) {
-      crumbs.add(Icon(
-          ionIsIos(context) ? AppIcons.cupertinoChevronForward : AppIcons.chevronRight,
-          size: ionIsIos(context) ? 14 : 18,
-          color: AppColors.medium));
+      // WER-17: `ion-breadcrumb` separators – chevron in iOS, "/" in md.
+      crumbs.add(ionIsIos(context)
+          ? Icon(AppIcons.cupertinoChevronForward, size: 14, color: AppColors.medium)
+          : const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 2),
+              child: Text('/', style: TextStyle(fontSize: 14, color: AppColors.medium)),
+            ));
       crumbs.add(crumb(
         segments[i],
         segments.sublist(0, i + 1).join('/'),
@@ -1520,17 +1564,13 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         ),
       ];
     }
+    // WER-17: md `ion-list [inset]="true"` – rounded, no shadow, item lines
+    // from the label start (16 + 24px icon + 32px gap).
     return [
-      Card(
+      IonInsetList(
         margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-        child: Column(
-          children: [
-            for (var i = 0; i < filtered.length; i++) ...[
-              _buildEntryTile(filtered[i]),
-              if (i < filtered.length - 1) const Divider(height: 1, indent: 72),
-            ],
-          ],
-        ),
+        dividerIndent: 72,
+        children: [for (final e in filtered) _buildEntryTile(e)],
       ),
     ];
   }

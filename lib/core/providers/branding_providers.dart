@@ -44,3 +44,15 @@ Future<PdfBranding?> resolvePdfBranding(WidgetRef ref) async {
     return null;
   }
 }
+
+/// DAS-07: logo of the current instance for the side panel header (Ionic
+/// `db.tenant()?.logo_url`); null = show the initials. Never throws.
+final tenantLogoUrlProvider = FutureProvider<String?>((ref) async {
+  final repo = ref.watch(organisationSettingsRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return null;
+  try {
+    return await repo.getTenantLogoUrl();
+  } catch (_) {
+    return null;
+  }
+});

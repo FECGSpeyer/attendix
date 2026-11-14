@@ -531,8 +531,10 @@ class _ExportPageState extends ConsumerState<ExportPage> with ExportLogic {
                 style: const TextStyle(fontSize: 12, color: AppColors.medium),
               ),
             ),
+          // DAS-17: `ion-button expand="block"` directly in `ion-content`
+          // (no ion-padding): only the button's own margin 4px 2px.
           Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
             child: FilledButton(
               onPressed: isExporting ? null : runExport,
               child: isExporting

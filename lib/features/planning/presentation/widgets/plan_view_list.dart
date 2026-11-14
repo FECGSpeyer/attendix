@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../l10n/l10n.dart';
@@ -23,6 +24,8 @@ class PlanViewList extends StatefulWidget {
     this.onFieldTap,
     this.trailingBuilder,
     this.showStartEnd = true,
+    this.badges = false,
+    this.allDone = false,
   });
 
   final Plan plan;
@@ -46,6 +49,13 @@ class PlanViewList extends StatefulWidget {
   /// Extra trailing widget per row (e.g. delete button in edit mode).
   final Widget? Function(int index)? trailingBuilder;
   final bool showStartEnd;
+
+  /// ABL-20: Ionic org-plan-public – start, minutes and end as `ion-badge
+  /// slot="end"` instead of grey notes.
+  final bool badges;
+
+  /// ABL-20: every row dimmed like Ionic `.done-slot` (past plans).
+  final bool allDone;
 
   @override
   State<PlanViewList> createState() => _PlanViewListState();
@@ -105,7 +115,10 @@ class _PlanViewListState extends State<PlanViewList> {
         subtitle: startCountdown.isNotEmpty
             ? Text(startCountdown, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500))
             : null,
-        trailing: Text(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(plan.time)), style: noteStyle),
+        trailing: widget.badges
+            ? IonBadge(
+                label: context.l10n.attendanceTimeOClock(PlanUtils.formatTime(plan.time)), color: AppColors.primary)
+            : Text(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(plan.time)), style: noteStyle),
       ));
     }
 
@@ -152,6 +165,9 @@ class _PlanViewListState extends State<PlanViewList> {
                 label: PlanUtils.activeCountdown(widget.date, plan.time, fields, active, now),
                 color: AppColors.primary,
               )
+            : widget.badges
+            ? IonBadge(
+                label: context.l10n.planningMinShort(PlanUtils.displayMinutes(f, fields)), color: AppColors.primary)
             : Text(
                 context.l10n.planningMinShort(PlanUtils.displayMinutes(f, fields)),
                 style: isHead
@@ -196,7 +212,7 @@ class _PlanViewListState extends State<PlanViewList> {
       }
       children.add(Opacity(
         // Ionic `.done-slot`: opacity .4
-        opacity: isDone ? 0.4 : 1,
+        opacity: isDone || widget.allDone ? 0.4 : 1,
         child: Container(
           // Ionic `.active-slot` / `.active-group`: tinted + 3px primary border.
           decoration: BoxDecoration(
@@ -217,7 +233,9 @@ class _PlanViewListState extends State<PlanViewList> {
       if (end.isNotEmpty) {
         children.add(ListTile(
           title: Text(context.l10n.attendanceEnd),
-          trailing: Text(context.l10n.attendanceTimeOClock(end), style: noteStyle),
+          trailing: widget.badges
+              ? IonBadge(label: context.l10n.attendanceTimeOClock(end), color: AppColors.primary)
+              : Text(context.l10n.attendanceTimeOClock(end), style: noteStyle),
         ));
       }
     }
@@ -278,6 +296,9 @@ class PlanChips extends StatelessWidget {
   }
 }
 
+/// ABL-29: Ionic `ion-chip` of app-plan-chips (plan-chips.component.scss:
+/// font-size 13px, normal weight): outline medium, selected = color primary
+/// (`current-color(base, .08..12)` background, shade text).
 class _PlanChip extends StatelessWidget {
   const _PlanChip({required this.label, required this.selected, required this.onTap});
 
@@ -304,7 +325,8 @@ class _PlanChip extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               color: selected ? AppColors.primaryDark : color,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+              // The Beta keeps its bold selected chip.
+              fontWeight: selected && context.rdSkin != null ? FontWeight.w600 : FontWeight.w400,
             ),
           ),
         ),

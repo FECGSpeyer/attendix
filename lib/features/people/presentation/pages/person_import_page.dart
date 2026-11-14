@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -21,6 +20,12 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/providers/user_registration_providers.dart';
 import '../widgets/import_widgets.dart';
+import '../widgets/ion/ion_widgets.dart'
+    show IonSelectRow, IonToggleRow, IonText, ionLightColor, ionIsIos;
+import '../../../../shared/widgets/layout/ionic_ios.dart' as ios27
+    show IonInsetList, IonItem;
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import 'package:attendix/core/theme/app_icons.dart';
 import '../../people_list_utils.dart' show accountRoleForGroup;
 import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
@@ -285,19 +290,29 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
   Widget build(BuildContext context) {
     final groups = ref.watch(groupsProvider).valueOrNull ?? _groups;
 
+    final classic = context.rdSkin == null;
     return Scaffold(
+      // PEO-07: Ionic `ion-content color="light"`.
+      backgroundColor: classic ? ionLightColor(context) : null,
       appBar: AppBar(
         title: Text(context.l10n.peopleImportPeople),
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-            icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
-            onPressed: _busy ? null : () => Navigator.of(context).pop(),
+          // PEO-10: Ionic modal close (iOS glass circle).
+          IonCloseButton(
+            onPressed: _busy ? () {} : () => Navigator.of(context).pop(),
           ),
         ],
       ),
       body: Stack(
         children: [
+          if (classic)
+            switch (_step) {
+              _Step.file => _buildIonFileStep(context),
+              _Step.mapping => _buildIonMappingStep(context),
+              _Step.preview => _buildIonPreview(groups),
+            }
+          else
           switch (_step) {
             _Step.file => ImportFileStep(
                 intro: context.l10n.peopleImportIntro,
@@ -342,7 +357,21 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
             ),
         ],
       ),
-      bottomNavigationBar: switch (_step) {
+      bottomNavigationBar: classic
+          ? switch (_step) {
+              _Step.file => null,
+              _Step.mapping => _IonFooterBar(
+                  onBack: () => setState(() => _step = _Step.file),
+                  primaryLabel: context.l10n.commonNext,
+                  onPrimary: mappingHasName(_mapping) && !_busy ? _proceedToPreview : null,
+                ),
+              _Step.preview => _IonFooterBar(
+                  onBack: () => setState(() => _step = _Step.mapping),
+                  primaryLabel: context.l10n.peopleImportCount(_importable.length),
+                  onPrimary: _busy || _importable.isEmpty ? null : _startImport,
+                ),
+            }
+          : switch (_step) {
         _Step.file => null,
         _Step.mapping => ImportBottomBar(
             onBack: () => setState(() => _step = _Step.file),
@@ -355,6 +384,197 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
             onPrimary: _busy || _importable.isEmpty ? null : _startImport,
           ),
       },
+    );
+  }
+
+  // PEO-07: Ionic import steps – intro text with `ion-padding`, inset lists
+  // on the light background, stacked popover selects, outline chips.
+  Widget _intro(List<Widget> children) => Padding(
+        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: children,
+        ),
+      );
+
+  Widget _buildIonFileStep(BuildContext context) {
+    return ListView(
+      children: [
+        _intro([Text(context.l10n.peopleImportIntro)]),
+        ios27.IonInsetList(children: [
+          ios27.IonItem(
+            leading: Icon(AppIcons.cloudUploadOutlined, color: AppColors.primary),
+            title: Text(context.l10n.peopleChooseFile),
+            titleColor: AppColors.primary,
+            onTap: _pickFile,
+          ),
+          ios27.IonItem(
+            leading: Icon(AppIcons.downloadOutlined),
+            title: Text(context.l10n.peopleDownloadTemplate),
+            onTap: _downloadTemplate,
+          ),
+        ]),
+      ],
+    );
+  }
+
+  Widget _buildIonMappingStep(BuildContext context) {
+    final canProceed = mappingHasName(_mapping);
+    return ListView(
+      padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
+      children: [
+        _intro([
+          Text.rich(TextSpan(children: [
+            TextSpan(text: _fileName, style: const TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(text: ' — ${context.l10n.peopleFileRows(_rawRows.length)}'),
+          ])),
+          const SizedBox(height: AppDimensions.paddingS),
+          Text(context.l10n.peopleMappingIntro),
+        ]),
+        ios27.IonInsetList(children: [
+          for (final header in _headers)
+            IonSelectRow<String?>(
+              lines: false,
+              stacked: true,
+              label: header,
+              value: _mapping[header],
+              placeholder: context.l10n.peopleChooseFieldPlaceholder,
+              interface: AppSelectInterface.popover,
+              options: [
+                for (final opt in _options)
+                  AppSelectOption<String?>(value: opt.key, label: opt.label),
+              ],
+              onChanged: (key) => setState(() => _mapping[header] = key),
+            ),
+        ]),
+        if (!canProceed)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+            child: Text(context.l10n.peopleMappingMissing,
+                style: const TextStyle(color: AppColors.warning)),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildIonPreview(List<Group> groups) {
+    final errorCount = _mappedRows.where((r) => r.errors.isNotEmpty).length;
+    final duplicateCount =
+        _mappedRows.where((r) => r.isDuplicate && r.errors.isEmpty).length;
+    final warningCount = _mappedRows
+        .where((r) => r.errors.isEmpty && !r.isDuplicate && r.warnings.isNotEmpty)
+        .length;
+    final unresolved = _mappedRows.where((r) => !r.groupResolved).length;
+
+    String groupName(int? id) =>
+        groups.where((g) => g.id == id).map((g) => g.name).firstOrNull ?? '';
+
+    return ListView(
+      padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(AppDimensions.paddingM),
+          child: Wrap(
+            spacing: 4,
+            runSpacing: 4,
+            children: [
+              _OutlineChip(context.l10n.peopleReady(_importable.length), AppColors.success),
+              if (warningCount > 0)
+                _OutlineChip(context.l10n.peopleWithHint(warningCount), AppColors.warning),
+              if (duplicateCount > 0)
+                _OutlineChip(context.l10n.peopleDuplicates(duplicateCount), AppColors.medium),
+              if (errorCount > 0)
+                _OutlineChip(context.l10n.peopleFaulty(errorCount), AppColors.danger),
+            ],
+          ),
+        ),
+        if (unresolved > 0)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+            child: Text(
+              context.l10n.peopleUnresolvedGroups(unresolved),
+              style: const TextStyle(color: AppColors.warning),
+            ),
+          ),
+        ios27.IonInsetList(children: [
+          IonToggleRow(
+            label: context.l10n.peopleCreateAccounts,
+            value: _createAccounts,
+            editable: true,
+            onChanged: (v) => setState(() => _createAccounts = v),
+          ),
+          if (_createAccounts)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+              child: Text(
+                context.l10n.peopleCreateAccountsHint,
+                style: IonText.note(context).copyWith(color: AppColors.warning),
+              ),
+            ),
+        ]),
+        ios27.IonInsetList(children: [
+          for (final row in _mappedRows)
+            Opacity(
+              opacity: row.isImportable ? 1 : 0.6,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 10, 0, 6),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2, right: 16),
+                      child: ImportRowStatusIcon(status: row.status),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: Text('${row.firstName} ${row.lastName}',
+                                style: IonText.h3(context)),
+                          ),
+                          if (row.email != null)
+                            Text(row.email!, style: IonText.p(context)),
+                          if (row.errors.isEmpty &&
+                              !_savedWithoutTermine.containsKey(row.rowIndex))
+                            Transform.translate(
+                              offset: const Offset(-16, 0),
+                              child: IonSelectRow<int>(
+                                lines: false,
+                                stacked: true,
+                                label: context.l10n.peopleGroup,
+                                value: groups.any((g) => g.id == row.instrument)
+                                    ? row.instrument
+                                    : null,
+                                interface: AppSelectInterface.popover,
+                                options: [
+                                  for (final g in groups)
+                                    if (g.id != null)
+                                      AppSelectOption<int>(value: g.id!, label: g.name),
+                                ],
+                                onChanged: (v) => setState(() {
+                                  row.instrument = v;
+                                  row.groupResolved = true;
+                                }),
+                              ),
+                            )
+                          else
+                            Text(groupName(row.instrument), style: IonText.p(context)),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: ImportRowMessages(
+                                errors: row.errors, warnings: row.warnings),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ]),
+      ],
     );
   }
 
@@ -455,6 +675,77 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Ionic `ion-chip outline="true"` with a colour.
+class _OutlineChip extends StatelessWidget {
+  const _OutlineChip(this.label, this.color);
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        height: 32,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          border: Border.all(color: color),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(label, style: TextStyle(color: color, fontSize: 14)),
+      );
+}
+
+/// Ionic `ion-footer` > `ion-toolbar` with "Zurück" (slot start) and the
+/// `strong` primary text button (slot end).
+class _IonFooterBar extends StatelessWidget {
+  const _IonFooterBar({
+    required this.onBack,
+    required this.primaryLabel,
+    required this.onPrimary,
+  });
+
+  final VoidCallback onBack;
+  final String primaryLabel;
+  final VoidCallback? onPrimary;
+
+  @override
+  Widget build(BuildContext context) {
+    final ios = ionIsIos(context);
+    final theme = Theme.of(context);
+    return Material(
+      color: theme.colorScheme.surface,
+      child: SafeArea(
+        top: false,
+        child: Container(
+          height: ios ? 44 : 56,
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(color: theme.dividerColor, width: ios ? 0.5 : 1),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            children: [
+              TextButton(
+                onPressed: onBack,
+                child: IonButtonLabel(context.l10n.commonBack),
+              ),
+              const Spacer(),
+              TextButton(
+                onPressed: onPrimary,
+                child: DefaultTextStyle.merge(
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  child: IonButtonLabel(primaryLabel),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

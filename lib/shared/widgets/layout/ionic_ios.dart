@@ -1303,7 +1303,10 @@ class IonSheetHeader extends StatelessWidget {
 
 /// Input decoration of an Ionic `ion-item` with `ion-label position="stacked"`
 /// / `labelPlacement="stacked"`. iOS: label above a borderless input with an
-/// inset hairline below the item; Material: the theme's filled field.
+/// inset hairline below the item; md: the 12px label (16px scaled .75)
+/// above a plain line – no box, no fill – with the 2px primary highlight
+/// and a primary label while focused (Ionic md `has-focus`). The Beta
+/// design keeps the theme's field.
 InputDecoration ionInputDecoration(
   BuildContext context, {
   required String label,
@@ -1311,12 +1314,48 @@ InputDecoration ionInputDecoration(
   String? hintText,
 }) {
   // Beta-Skin: the theme's field of the new design on every platform.
-  if (context.rdSkin != null || !isIosLook(context)) {
+  if (context.rdSkin != null) {
     return InputDecoration(
       labelText: label,
       helperText: helperText,
       helperMaxLines: helperText == null ? null : 2,
       hintText: hintText,
+    );
+  }
+  if (!isIosLook(context)) {
+    final theme = Theme.of(context);
+    final b = theme.brightness;
+    final line = BorderSide(color: IonMd.line(b), width: IonMd.lineWidth);
+    final primary = theme.colorScheme.primary;
+    return InputDecoration(
+      labelText: label,
+      helperText: helperText,
+      helperMaxLines: helperText == null ? null : 3,
+      hintText: hintText,
+      filled: false,
+      floatingLabelBehavior: FloatingLabelBehavior.always,
+      labelStyle: TextStyle(fontSize: 16, color: IonMd.labelP(b)),
+      floatingLabelStyle: WidgetStateTextStyle.resolveWith(
+        (states) => TextStyle(
+          fontSize: 16,
+          color: states.contains(WidgetState.focused) ? primary : IonMd.labelP(b),
+        ),
+      ),
+      helperStyle: TextStyle(fontSize: 12, color: IonMd.labelP(b)),
+      contentPadding: const EdgeInsets.fromLTRB(0, 8, 0, 10),
+      border: UnderlineInputBorder(borderSide: line),
+      enabledBorder: UnderlineInputBorder(borderSide: line),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: primary, width: 2),
+      ),
+      // Keep the underline when a validator fires (the app theme would
+      // switch to its boxed error border and the field would jump).
+      errorBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.danger),
+      ),
+      focusedErrorBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.danger, width: 2),
+      ),
     );
   }
   final hairline = BorderSide(color: Theme.of(context).dividerColor, width: 0.5);

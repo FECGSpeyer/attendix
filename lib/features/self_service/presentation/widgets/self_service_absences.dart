@@ -5,7 +5,6 @@ import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
@@ -24,8 +23,11 @@ import '../../../people/presentation/widgets/planned_absences.dart';
 import '../../../redesign/presentation/widgets/members/rd_pause_sheets.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'
+    show IonAccordionTile, IonButton, IonMdCalendar, IonMdDatetime;
+import '../../../../shared/widgets/dialogs/ion_sheet.dart'
+    show showIonSheet, IonSheetScaffold, IonCloseButton;
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Self-service planned absences and self pause (Ionic signout page).
 ///
@@ -67,12 +69,15 @@ Future<void> selfServiceReportAbsence(
   Person player, {
   required bool canSelfPause,
 }) async {
-  final input = await showModalBottomSheet<AbsenceInput>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (_) => SelfServiceAbsenceSheet(showLongAbsenceHint: canSelfPause),
+  // SEL-11: Ionic absence modal – sheet [0, 0.92, 1] above the tab bar.
+  final input = await showIonSheet<AbsenceInput>(
+    context,
+    breakpoints: const [0, 0.92, 1],
+    initialBreakpoint: 0.92,
+    builder: (_, scrollController) => SelfServiceAbsenceSheet(
+      showLongAbsenceHint: canSelfPause,
+      scrollController: scrollController,
+    ),
   );
   if (input == null || !context.mounted) return;
   await saveSelfServiceAbsence(context, ref, player, input);
@@ -136,11 +141,14 @@ Future<void> selfServicePause(BuildContext context, WidgetRef ref, Person player
     );
     result = input == null ? null : (reason: input.reason, until: input.until);
   } else {
-    result = await showModalBottomSheet<({String reason, DateTime? until})>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (context) => const _SelfPauseSheet(),
+    // SEL-10/SEL-11: Ionic pause modal – sheet [0, 0.75, 1] above the tab
+    // bar (showIonSheet uses the root navigator).
+    result = await showIonSheet<({String reason, DateTime? until})>(
+      context,
+      breakpoints: const [0, 0.75, 1],
+      initialBreakpoint: 0.75,
+      builder: (context, scrollController) =>
+          _SelfPauseSheet(scrollController: scrollController),
     );
   }
   if (result == null || !context.mounted) return;
@@ -270,9 +278,17 @@ class _SelfServicePlannedAbsencesState extends ConsumerState<SelfServicePlannedA
 /// "Abwesenheit melden" sheet (Ionic signout absence modal): reason, then
 /// start and end day tapped in one inline calendar.
 class SelfServiceAbsenceSheet extends StatefulWidget {
-  const SelfServiceAbsenceSheet({super.key, this.showLongAbsenceHint = false});
+  const SelfServiceAbsenceSheet({
+    super.key,
+    this.showLongAbsenceHint = false,
+    this.scrollController,
+  });
 
   final bool showLongAbsenceHint;
+
+  /// The controller of the Ionic breakpoint sheet ([showIonSheet]); null =
+  /// a plain content-sized sheet with its own header.
+  final ScrollController? scrollController;
 
   @override
   State<SelfServiceAbsenceSheet> createState() => _SelfServiceAbsenceSheetState();
@@ -373,6 +389,73 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
+    final content = <Widget>[
+      // SEL-11: Ionic `ion-list [inset]` (margin-top 12) with one item:
+      // stacked label + auto-growing `ion-textarea`.
+      IonInsetList(
+        margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+            child: TextField(
+              controller: _reasonController,
+              textCapitalization: TextCapitalization.sentences,
+              minLines: 1,
+              maxLines: null,
+              onChanged: (_) => setState(() {}),
+              decoration: ionInputDecoration(
+                context,
+                label: context.l10n.signoutReasonRequired,
+                hintText: context.l10n.signoutReasonPlaceholder,
+              ),
+            ),
+          ),
+        ],
+      ),
+      _rangeHeader(),
+      _inlineCalendar(
+        context,
+        key: ValueKey(_calendarKey),
+        initialDate: _until ?? _from ?? now,
+        firstDate: DateTime(now.year - 1),
+        lastDate: DateTime(now.year + 5),
+        onPick: _onPick,
+      ),
+      if (widget.showLongAbsenceHint)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: Text(
+            context.l10n.signoutLongAbsenceHint,
+            style: const TextStyle(color: AppColors.warningDark),
+          ),
+        ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        child: IonButton(
+          expand: true,
+          icon: AppIcons.calendarTodayOutlined,
+          label: context.l10n.signoutEnterAbsence,
+          onPressed: _valid ? _confirm : null,
+        ),
+      ),
+    ];
+    final scrollController = widget.scrollController;
+    if (scrollController != null) {
+      return IonSheetScaffold(
+        title: context.l10n.signoutReportAbsence,
+        showClose: true,
+        body: SingleChildScrollView(
+          controller: scrollController,
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: content,
+          ),
+        ),
+      );
+    }
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
@@ -382,57 +465,9 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
           children: [
             IonSheetHeader(
               title: context.l10n.signoutReportAbsence,
-              end: [
-                IconButton(
-                  icon: Icon(AppIcons.close),
-                  tooltip: context.l10n.commonClose,
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
+              end: [IonCloseButton(onPressed: () => Navigator.of(context).pop())],
             ),
-            Card(
-              margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                child: TextField(
-                  controller: _reasonController,
-                  textCapitalization: TextCapitalization.sentences,
-                  minLines: 1,
-                  maxLines: 4,
-                  onChanged: (_) => setState(() {}),
-                  decoration: InputDecoration(
-                    labelText: context.l10n.signoutReasonRequired,
-                    hintText: context.l10n.signoutReasonPlaceholder,
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-            ),
-            _rangeHeader(),
-            CalendarDatePicker(
-              key: ValueKey(_calendarKey),
-              initialDate: _until ?? _from ?? now,
-              firstDate: DateTime(now.year - 1),
-              lastDate: DateTime(now.year + 5),
-              onDateChanged: _onPick,
-            ),
-            if (widget.showLongAbsenceHint)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: Text(
-                  context.l10n.signoutLongAbsenceHint,
-                  style: const TextStyle(color: AppColors.warningDark),
-                ),
-              ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              child: FilledButton.icon(
-                onPressed: _valid ? _confirm : null,
-                icon: Icon(AppIcons.calendarTodayOutlined),
-                label: IonButtonLabel(context.l10n.signoutEnterAbsence),
-              ),
-            ),
+            ...content,
           ],
         ),
       ),
@@ -440,9 +475,51 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
   }
 }
 
+/// SEL-03 (md part): the inline `ion-datetime presentation="date"` of the
+/// absence / pause sheets. md look = the Ionic md calendar of stage 1
+/// ([IonMdCalendar]); the iOS look keeps the calendar grid the app uses for
+/// every iOS date card (the same one as `showAppDatePicker`).
+Widget _inlineCalendar(
+  BuildContext context, {
+  Key? key,
+  required DateTime initialDate,
+  required DateTime firstDate,
+  required DateTime lastDate,
+  required ValueChanged<DateTime> onPick,
+}) {
+  if (isIosLook(context)) {
+    return CalendarDatePicker(
+      key: key,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      onDateChanged: onPick,
+    );
+  }
+  return SizedBox(
+    key: key,
+    height: IonMdDatetime.gridHeight,
+    child: IonMdCalendar(
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      onChanged: (d, {required bool byDay}) {
+        if (byDay) onPick(d);
+      },
+    ),
+  );
+}
+
 /// "Pausieren" sheet: reason (required) + optional end date.
+///
+/// SEL-10: Ionic pause modal content (`ion-content class="ion-padding"`):
+/// `ion-item` with a stacked `ion-textarea rows=3`, an `ion-accordion` whose
+/// header is an `ion-item color="light"` (end date + clear button) and whose
+/// content is the calendar, then the warning block button.
 class _SelfPauseSheet extends StatefulWidget {
-  const _SelfPauseSheet();
+  const _SelfPauseSheet({required this.scrollController});
+
+  final ScrollController scrollController;
 
   @override
   State<_SelfPauseSheet> createState() => _SelfPauseSheetState();
@@ -451,7 +528,6 @@ class _SelfPauseSheet extends StatefulWidget {
 class _SelfPauseSheetState extends State<_SelfPauseSheet> {
   final _reasonController = TextEditingController();
   DateTime? _until;
-  bool _calendarOpen = false;
 
   @override
   void dispose() {
@@ -471,75 +547,65 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: SingleChildScrollView(
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return IonSheetScaffold(
+      title: context.l10n.signoutPause,
+      showClose: true,
+      body: SingleChildScrollView(
+        controller: widget.scrollController,
+        padding: EdgeInsets.fromLTRB(16, 16, 16,
+            16 + MediaQuery.of(context).viewInsets.bottom),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            IonSheetHeader(
-              title: context.l10n.signoutPause,
-              end: [
-                IconButton(
-                  icon: Icon(AppIcons.close),
-                  tooltip: context.l10n.commonClose,
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
             Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              padding: const EdgeInsets.only(left: 16),
               child: TextField(
                 controller: _reasonController,
                 textCapitalization: TextCapitalization.sentences,
                 minLines: 3,
                 maxLines: 5,
-                decoration: InputDecoration(
-                  labelText: context.l10n.excuseReason,
+                decoration: ionInputDecoration(
+                  context,
+                  label: context.l10n.excuseReason,
                   hintText: context.l10n.signoutPauseReasonPlaceholder,
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
                 ),
               ),
             ),
             // Ionic: accordion "Pausiert bis (optional)" with inline calendar
-            ListTile(
-              tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+            IonAccordionTile(
+              headerColor: dark ? AppColors.lightOnDark : AppColors.light,
               title: Text(context.l10n.signoutPausedUntil),
               subtitle: Text(_until != null
                   ? DateFormat(dateFmt()).format(_until!)
                   : context.l10n.signoutNoEndDate),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (_until != null)
-                    IconButton(
-                      icon: Icon(AppIcons.cancelOutlined, color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
+              trailing: _until == null
+                  ? null
+                  : IconButton(
+                      icon: Icon(AppIcons.cancelOutlined,
+                          color: AppColors.medium,
+                          semanticLabel: context.l10n.commonRemove),
                       onPressed: () => setState(() => _until = null),
                     ),
-                  Icon(_calendarOpen ? AppIcons.expandLess : AppIcons.expandMore),
-                ],
-              ),
-              onTap: () => setState(() => _calendarOpen = !_calendarOpen),
-            ),
-            if (_calendarOpen)
-              CalendarDatePicker(
-                initialDate: _until ?? now,
-                firstDate: DateTime(now.year, now.month, now.day),
-                lastDate: DateTime(now.year + 5),
-                onDateChanged: (d) => setState(() => _until = d),
-              ),
-            Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: FilledButton(
-                // Ionic color="warning": black contrast text
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.warning,
-                  foregroundColor: Colors.black,
+              children: [
+                _inlineCalendar(
+                  context,
+                  initialDate: _until ?? now,
+                  firstDate: DateTime(now.year, now.month, now.day),
+                  lastDate: DateTime(now.year + 5),
+                  onPick: (d) => setState(() => _until = d),
                 ),
-                onPressed: _confirm,
-                child: IonButtonLabel(context.l10n.signoutConfirmPause),
-              ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            IonButton(
+              // Ionic color="warning": black contrast text
+              color: AppColors.warning,
+              foregroundColor: Colors.black,
+              expand: true,
+              label: context.l10n.signoutConfirmPause,
+              onPressed: _confirm,
             ),
           ],
         ),

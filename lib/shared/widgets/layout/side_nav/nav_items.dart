@@ -155,7 +155,7 @@ List<NavGroup> buildNavGroups(NavContext ctx) {
   if (isVoiceLeader && !isGeneral) {
     main.add(NavItem(
         id: 'voiceLeader',
-        icon: AppIcons.musicNoteOutlined,
+        icon: AppIcons.musicalNoteOutline,
         label: (l) => l.settingsMyVoice,
         route: '/settings/voice-leader'));
   }

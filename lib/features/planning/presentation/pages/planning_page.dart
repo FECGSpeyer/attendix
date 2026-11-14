@@ -6,6 +6,7 @@ import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/semantics.dart' show CustomSemanticsAction;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -88,11 +89,28 @@ typedef _PlanRef = ({String key, int count, String? json});
 /// Ionic `modalController.create({ component: PlanningPage, cssClass:
 /// 'planningModal' })`: the Ablaufplan editor as `ion-modal` (full screen on
 /// phones, centred card on desktop) with its own close button.
-Future<void> showPlanningModal(BuildContext context, {int? attendanceId}) {
-  return showIonModal<void>(
+Future<bool?> showPlanningModal(BuildContext context, {int? attendanceId, int? planIndex}) {
+  return showIonModal<bool>(
     context,
-    builder: (_) => PlanningPage(attendanceId: attendanceId),
+    builder: (_) => PlanningPage(attendanceId: attendanceId, initialPlanIndex: planIndex),
   );
+}
+
+/// ABL-01: opens the Ablaufplan editor from inside the app. Classic design:
+/// the Ionic modal ([showPlanningModal]: full screen on phones, centred card
+/// from 768px; no tab bar / side nav). The Beta keeps its route; the route
+/// `/planning?attendanceId=…&plan=…` also stays the entry for deep links.
+Future<bool?> openPlanningEditor(BuildContext context, {int? attendanceId, int? planIndex}) {
+  final beta = context.rdSkin != null ||
+      ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider);
+  if (beta) {
+    final query = [
+      if (attendanceId != null) 'attendanceId=$attendanceId',
+      if (planIndex != null && planIndex > 0) 'plan=$planIndex',
+    ].join('&');
+    return context.push<bool>(query.isEmpty ? '/planning' : '/planning?$query');
+  }
+  return showPlanningModal(context, attendanceId: attendanceId, planIndex: planIndex);
 }
 
 /// Ablaufplan editor of a Termin (Ionic `PlanningPage`).
@@ -718,7 +736,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   PlanAttendance? get _att => _attendances.where((a) => a.id == _attId).firstOrNull;
 
-  List<PlanAttendanceType> get _types => ref.read(planAttendanceTypesProvider).valueOrNull ?? const [];
+  // TERMINE-22: these getters also run from writes that finish after the
+  // editor was disposed (deep link / browser back while a write runs), where
+  // `ref` throws "Cannot use ref after the widget was disposed". The
+  // container captured in initState stays usable.
+  List<PlanAttendanceType> get _types => _container.read(planAttendanceTypesProvider).valueOrNull ?? const [];
 
   PlanAttendanceType? _typeOf(PlanAttendance? att) =>
       att?.typeId == null ? null : _types.where((t) => t.id == att!.typeId).firstOrNull;
@@ -927,9 +949,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   }
 
   List<SongHistory> get _history =>
-      (ref.read(currentSongsProvider).valueOrNull ?? const []).expand((e) => e.history).toList();
+      (_container.read(currentSongsProvider).valueOrNull ?? const []).expand((e) => e.history).toList();
 
-  List<Song> get _songs => ref.read(planSongsProvider).valueOrNull ?? const [];
+  List<Song> get _songs => _container.read(planSongsProvider).valueOrNull ?? const [];
 
   /// Ionic 4.17.10: unique row uids for the Gemeinde App (linked orgs only).
   List<PlanField> _withFieldUids(List<PlanField> fields) =>
@@ -1149,8 +1171,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   ///
   /// SOL_FIX30: [planRef] names the plan ([_refOf], matched by
   /// [_indexOfRef]); a plan without id that no longer matches is a conflict.
-  Future<int?> _writePlanOp(int attId, _PlanRef? planRef, _PlanListOp op) => _serialised(attId, () async {
-        final repo = ref.read(planRepositoryWithTenantProvider);
+  Future<int?> _writePlanOp(int attId, _PlanRef? planRef, _PlanListOp op) {
+    // TERMINE-22: read while mounted; the queued task may run after dispose.
+    final repo = ref.read(planRepositoryWithTenantProvider);
+    return _serialised(attId, () async {
         final latest =
             PlanningWriteSync.latestSince(PlanningWriteSync.keyFor(_tenantId, attId), _knownSeq[attId] ?? 0);
         final own = _att;
@@ -1176,6 +1200,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         _replaceAtt(saved);
         return result.open;
       });
+  }
 
   void _replaceAtt(PlanAttendance saved) {
     final updated = [for (final a in _attendances) a.id == saved.id ? saved : a];
@@ -1789,7 +1814,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           AppPopoverMenuItem(
             value: 'topics',
             label: l10n.attendanceAddTopics,
-            icon: AppIcons.playlistAddCircleOutlined,
+            // ABL-29: Ionic list-circle-outline.
+            icon: AppIcons.listCircleOutline,
             iconColor: AppColors.primary,
           ),
         if (canInsertAgenda)
@@ -2265,7 +2291,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                 headerWidget: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // ABL-09: same inset-list header as "Zugehöriger Termin".
                     IonListHeader(
+                      inset: true,
                       title: context.l10n.planningRunSheet,
                       trailing: Builder(
                         builder: (anchor) => IconButton(

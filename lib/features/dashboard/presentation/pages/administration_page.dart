@@ -22,6 +22,8 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/widgets/ion_condense.dart';
 import '../../../settings/presentation/widgets/settings_list.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/layout/ion_form_items.dart';
+import '../../../people/presentation/widgets/ion/ion_widgets.dart' show ionLightColor;
 
 const int _gb = 1024 * 1024 * 1024;
 
@@ -108,18 +110,24 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
       validator: (v) => v.trim().isEmpty ? context.l10n.adminInvalidValues : null,
     );
     if (name == null || !mounted) return;
-    final navigator = Navigator.of(context, rootNavigator: true);
-    showAppDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const PopScope(
-        canPop: false,
-        child: Center(child: AppSpinner()),
-      ),
-    );
     final notifier = ref.read(churchNotifierProvider.notifier);
-    final id = await notifier.createChurch(name.trim());
-    navigator.pop();
+    final String? id;
+    if (context.rdSkin == null) {
+      // EIB-19: Ionic `Utils.getLoadingElement()` – `ion-loading`.
+      id = await withIonLoading(context, () => notifier.createChurch(name.trim()));
+    } else {
+      final navigator = Navigator.of(context, rootNavigator: true);
+      showAppDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const PopScope(
+          canPop: false,
+          child: Center(child: AppSpinner()),
+        ),
+      );
+      id = await notifier.createChurch(name.trim());
+      navigator.pop();
+    }
     if (!mounted) return;
     if (id != null) {
       ToastHelper.showSuccess(context, context.l10n.adminChurchAdded);
@@ -159,7 +167,12 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    final count = await ref.read(administrationNotifierProvider.notifier).mergeChurches(pairs);
+    final notifier = ref.read(administrationNotifierProvider.notifier);
+    // EIB-19: Ionic `ion-loading` "Wird zusammengeführt…" while merging.
+    final count = context.rdSkin == null
+        ? await withIonLoading(context, () => notifier.mergeChurches(pairs),
+            message: context.l10n.adminMerging)
+        : await notifier.mergeChurches(pairs);
     if (!mounted) return;
     if (count == null) {
       ToastHelper.showError(context, context.l10n.adminMergeFailed);
@@ -177,6 +190,27 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     final targets = churches.where((c) => c.id != source.id).toList();
     if (targets.isEmpty) return;
     String? selected = targets.first.id;
+    if (context.rdSkin == null) {
+      // EIB-07: Ionic alert with `type: 'radio'` inputs, Abbrechen /
+      // Zusammenführen (both plain).
+      final picked = await showAppRadioAlert<String>(
+        context,
+        title: context.l10n.adminMergeWith(source.name),
+        options: [for (final c in targets) (c.id!, c.name)],
+        initialValue: selected,
+        confirmText: context.l10n.adminMerge,
+      );
+      final id = picked?.value;
+      if (id == null || !mounted) return;
+      final target = targets.firstWhere((c) => c.id == id);
+      await _merge(
+        [(id, source.id!)],
+        title: context.l10n.commonConfirm,
+        message: context.l10n.adminMergeMoveMessage(source.name, target.name),
+        confirm: context.l10n.adminMerge,
+      );
+      return;
+    }
     final targetId = await showAppDialog<String>(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -270,7 +304,9 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
       // IOS_R6: `ion-header translucent` (blur once condensed)
       appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(title: IonCondenseTitle(context.l10n.adminTitle, collapsed: collapsed))),
       body: ListView(
-        padding: EdgeInsets.fromLTRB(16, ios ? 0 : 8, 16, scrollEndPadding(context, base: 24)),
+        // EIB-21: the Ionic inset list margin (iOS 20).
+        padding: EdgeInsets.fromLTRB(ionListMargin(context), ios ? 0 : 8, ionListMargin(context),
+            scrollEndPadding(context, base: 24)),
         children: [
           const IonContentTopInset(),
           IonLargeTitle(context.l10n.adminTitle, padding: const EdgeInsets.only(bottom: 4)),
@@ -289,18 +325,17 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
             title: context.l10n.adminStorageFor(tenant?.longName ?? ''),
             icons: false,
             children: [
-              IonStackedField(
+              // EIB-15: `ion-input labelPlacement="stacked"` in both looks.
+              IonStackedInputItem(
+                lines: false,
                 label: context.l10n.adminMaxStorage,
-                hint: context.l10n.adminUnlimited,
+                placeholder: context.l10n.adminUnlimited,
                 helper: context.l10n.adminLimitHelper,
-                builder: (decoration) => TextField(
-                  controller: _limitController,
-                  focusNode: _limitFocus,
-                  enabled: !saving,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: decoration.copyWith(helperMaxLines: 2),
-                  onSubmitted: (_) => _saveFilesLimit(),
-                ),
+                controller: _limitController,
+                focusNode: _limitFocus,
+                enabled: !saving,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                onSubmitted: (_) => _saveFilesLimit(),
               ),
               if (storage.valueOrNull?.usedBytes != null)
                 ListTile(
@@ -324,10 +359,9 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                 : [
                     if (duplicates.isNotEmpty) ...[
                       // ion-item color="warning"
+                      // EIB-24: solid `color="warning"` in both looks.
                       Material(
-                        color: ios
-                            ? AppColors.warning
-                            : AppColors.warning.withAlpha((0.25 * 255).round()),
+                        color: AppColors.warning,
                         child: ListTile(
                           leading: Icon(AppIcons.warningAmberOutlined, color: Colors.black),
                           title: Text(
@@ -348,13 +382,14 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                             spacing: 4,
                             children: [
                               for (final dup in g.duplicates)
-                                OutlinedButton.icon(
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: AppColors.warningDark,
-                                    side: const BorderSide(color: AppColors.warning),
-                                  ),
-                                  icon: Icon(AppIcons.mergeType, size: 16),
-                                  label: IonButtonLabel(context.l10n.adminMerge),
+                                // EIB-24: `ion-button size="small"
+                                // fill="outline" color="warning"`.
+                                IonButton(
+                                  small: true,
+                                  fill: IonButtonFill.outline,
+                                  color: AppColors.warning,
+                                  icon: AppIcons.mergeType,
+                                  label: context.l10n.adminMerge,
                                   onPressed: saving
                                       ? null
                                       : () => _merge(
@@ -376,45 +411,36 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                         onTap: saving ? null : mergeAll,
                       ),
                     ],
-                    // ion-accordion: header item color="light"
-                    Material(
-                      color: ios ? Theme.of(context).scaffoldBackgroundColor : Colors.transparent,
-                      child: Column(
-                        children: [
+                    // EIB-11: `ion-accordion` with the `ion-item
+                    // slot="header" color="light"` header; the content is
+                    // a plain list (medium home icon, clear medium buttons).
+                    IonAccordionTile(
+                      headerColor: ionLightColor(context),
+                      initiallyExpanded: _showAllChurches,
+                      onExpansionChanged: (v) => _showAllChurches = v,
+                      title: Text(context.l10n.adminShowAllChurches),
+                      children: [
+                        for (final c in churches)
                           ListTile(
-                            title: Text(context.l10n.adminShowAllChurches),
-                            trailing: Icon(
-                              _showAllChurches ? AppIcons.expandLess : AppIcons.expandMore,
-                              color: ios ? IonIos.text(context).withValues(alpha: 0.5) : null,
-                            ),
-                            onTap: () => setState(() => _showAllChurches = !_showAllChurches),
-                          ),
-                          if (_showAllChurches)
-                            for (final c in churches)
-                              Material(
-                                color: ios ? IonIos.itemBackground(context) : Colors.transparent,
-                                child: ListTile(
-                                  leading: Icon(AppIcons.homeOutlined, color: AppColors.medium),
-                                  title: Text(c.name),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        tooltip: context.l10n.adminRenameChurch,
-                                        icon: Icon(AppIcons.editOutlined, color: AppColors.medium),
-                                        onPressed: saving ? null : () => _rename(c),
-                                      ),
-                                      IconButton(
-                                        tooltip: context.l10n.adminMerge,
-                                        icon: Icon(AppIcons.mergeType, color: AppColors.medium),
-                                        onPressed: saving ? null : () => _mergeManual(c, churches),
-                                      ),
-                                    ],
-                                  ),
+                            leading: Icon(AppIcons.homeOutlined, color: AppColors.medium),
+                            title: Text(c.name),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  tooltip: context.l10n.adminRenameChurch,
+                                  icon: Icon(AppIcons.editOutlined, color: AppColors.medium),
+                                  onPressed: saving ? null : () => _rename(c),
                                 ),
-                              ),
-                        ],
-                      ),
+                                IconButton(
+                                  tooltip: context.l10n.adminMerge,
+                                  icon: Icon(AppIcons.mergeType, color: AppColors.medium),
+                                  onPressed: saving ? null : () => _mergeManual(c, churches),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
                     SettingsListTile(
                       icon: AppIcons.add,

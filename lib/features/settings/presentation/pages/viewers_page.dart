@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -269,11 +270,19 @@ class ViewersPage extends ConsumerWidget {
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(context.l10n.commonCancel),
           ),
+          // EIA-29: Ionic "Ja" without role – a plain alert button; the
+          // Beta keeps its red button.
+          if (ctx.rdSkin != null)
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(context.l10n.commonYes),
-          ),
+          )
+          else
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(context.l10n.commonYes),
+            ),
         ],
       ),
     );

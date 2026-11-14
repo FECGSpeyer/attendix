@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
+import '../../../../shared/widgets/layout/ion_form_items.dart' show IonArrowBackButton;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -51,10 +51,9 @@ class _HelpGlossaryPageState extends ConsumerState<HelpGlossaryPage> {
       // `ion-header translucent` (no large title: always blurred)
       extendBodyBehindAppBar: ios,
       appBar: IonTranslucentAppBar(child: AppBar(
-        leading: IconButton(
-          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
+        // EIB-12: Ionic custom `arrow-back` ion-button (glass circle on iOS).
+        leading: IonArrowBackButton(onPressed: () => Navigator.of(context).maybePop()),
+        leadingWidth: IonArrowBackButton.leadingWidth(context),
         title: Text(context.l10n.helpGlossary),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(ios ? 60 : 64),
@@ -66,7 +65,8 @@ class _HelpGlossaryPageState extends ConsumerState<HelpGlossaryPage> {
         ),
       )),
       body: ListView(
-        padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
+        // EIB-21: Ionic inset list margin (iOS 20).
+      padding: EdgeInsets.fromLTRB(ionListMargin(context), AppDimensions.paddingM, ionListMargin(context), scrollEndPadding(context, base: AppDimensions.paddingM)),
         children: [
           const IonContentTopInset(),
           SettingsListSection(

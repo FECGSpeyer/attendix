@@ -61,7 +61,12 @@ class AppFilterMultiSelect<T> extends AppFilterRow {
     required this.values,
     required this.options,
     required this.onChanged,
+    this.popoverWidth,
   });
+
+  /// Ionic `--width` of the nested popover when the page sets one (e.g.
+  /// the Werke page: `ion-popover { --width: 18rem }`); default 200 / 250.
+  final double? popoverWidth;
 
   /// Read again after every change, so the checkboxes follow.
   final List<T> Function() values;
@@ -79,6 +84,7 @@ class AppFilterMultiSelect<T> extends AppFilterRow {
   Future<void> _open(BuildContext trigger, VoidCallback changed) {
     return showAppPopover<void>(
       context: trigger,
+      width: popoverWidth,
       // global.scss: `ion-select-popover ion-list { max-height: 23rem }`.
       maxHeight: 368,
       builder: (context) => StatefulBuilder(

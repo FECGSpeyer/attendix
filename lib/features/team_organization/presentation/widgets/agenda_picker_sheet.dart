@@ -12,6 +12,9 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal, isIonModalCard;
+import '../../../../shared/widgets/dialogs/ion_sheet.dart' show IonSheetScaffold;
 
 /// "Themen aufnehmen": picks open topics (and creates new ones inline) and
 /// inserts them as TOPs into a Termin's Ablaufplan. Unchecking a TOP that is
@@ -22,6 +25,27 @@ Future<Map<String, dynamic>?> showAgendaPickerSheet(
   ProtocolType? type,
   AgendaPlanSave? save,
 }) {
+  if (context.rdSkin == null) {
+    // DAS-18: Ionic `modalController.create({ component: AgendaPickerComponent })`
+    // – a default `ion-modal`: full screen on phones, centred card from
+    // 768 px.
+    return showIonModal<Map<String, dynamic>>(
+      context,
+      builder: (ctx) {
+        final picker = AgendaPickerSheet(attendance: attendance, type: type, save: save, modal: true);
+        if (isIonModalCard(MediaQuery.sizeOf(ctx))) return picker;
+        final theme = Theme.of(ctx);
+        // Full screen: the status bar strip takes the toolbar colour.
+        return ColoredBox(
+          color: theme.appBarTheme.backgroundColor ?? theme.colorScheme.surface,
+          child: SafeArea(
+            bottom: false,
+            child: Material(color: theme.scaffoldBackgroundColor, child: picker),
+          ),
+        );
+      },
+    );
+  }
   return showModalBottomSheet<Map<String, dynamic>>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -55,8 +79,12 @@ class _Row {
 }
 
 class AgendaPickerSheet extends ConsumerStatefulWidget {
-  const AgendaPickerSheet({super.key, required this.attendance, this.type, this.save});
+  const AgendaPickerSheet({super.key, required this.attendance, this.type, this.save, this.modal = false});
   final ProtocolAttendance attendance;
+
+  /// Classic design: shown as an Ionic modal ([showIonModal]) instead of the
+  /// 90 % bottom sheet.
+  final bool modal;
   final ProtocolType? type;
 
   /// SOL_FIX30: see [AgendaPlanSave].
@@ -291,7 +319,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
         style: const TextStyle(color: AppColors.medium),
       ),
       trailing: row.selected && !row.inPlan
-          ? Row(
+          ? (widget.modal ? _stepper(row) : Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Ionic `.stepper`: clear "−" / "+" text buttons around the minutes.
@@ -311,8 +339,56 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
                   onPressed: () => setState(() => row.duration += 5),
                 ),
               ],
-            )
+            ))
           : IonNote(l10n.planningMinShort(row.duration)),
+    );
+  }
+
+  /// DAS-19: Ionic `.stepper` – a light pill (radius 999) with clear "−" /
+  /// "+" text buttons (18px, padding 10) around the minutes (13px / 600,
+  /// min width 48).
+  Widget _stepper(_Row row) {
+    final l10n = context.l10n;
+    Widget button(String text, String label, VoidCallback onTap) => Semantics(
+          button: true,
+          label: label,
+          excludeSemantics: true,
+          child: InkWell(
+            customBorder: const StadiumBorder(),
+            onTap: onTap,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 32),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Center(
+                  widthFactor: 1,
+                  child: Text(text, style: const TextStyle(fontSize: 18, color: AppColors.primary)),
+                ),
+              ),
+            ),
+          ),
+        );
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: dark ? AppColors.dark : AppColors.light,
+      shape: const StadiumBorder(),
+      clipBehavior: Clip.antiAlias,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          button('−', l10n.agendaShorter,
+              () => setState(() => row.duration = (row.duration - 5).clamp(5, 999))),
+          ConstrainedBox(
+            constraints: const BoxConstraints(minWidth: 48),
+            child: Text(
+              l10n.planningMinShort(row.duration),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+          ),
+          button('+', l10n.agendaLonger, () => setState(() => row.duration += 5)),
+        ],
+      ),
     );
   }
 
@@ -321,36 +397,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
     final visiblePostponed = _postponedRows.where(_matches).toList();
     final visibleOthers = _otherRows.where(_matches).toList();
     final l10n = context.l10n;
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.9,
-      child: Column(
-        children: [
-          // An AppBar with `bottom` needs a bounded height inside a Column.
-          SizedBox(
-            height: (ionModalToolbarHeight(context) ?? kToolbarHeight) + 52,
-            child: AppBar(
-            toolbarHeight: ionModalToolbarHeight(context),
-            automaticallyImplyLeading: false,
-            primary: false,
-            leading: IconButton(
-              icon: Icon(AppIcons.close),
-              tooltip: l10n.commonClose,
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            title: Text(l10n.attendanceAddTopics),
-            // Ionic: second toolbar with the searchbar.
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(52),
-              child: IonSearchbar(
-                controller: _searchController,
-                placeholder: l10n.agendaSearchOrCreate,
-                onChanged: (v) => setState(() => _search = v),
-              ),
-            ),
-          ),
-          ),
-          Expanded(
-            child: _loading
+    final list = _loading
                 ? const Center(child: AppSpinner())
                 : ListView(
                     padding: const EdgeInsets.only(bottom: 16),
@@ -387,10 +434,9 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
                         ],
                       ),
                     ],
-                  ),
-          ),
-          // Ionic ion-footer: insert hint + block button.
-          Material(
+                  );
+    // Ionic ion-footer: insert hint + block button.
+    final footer = Material(
             color: Theme.of(context).appBarTheme.backgroundColor,
             child: SafeArea(
               top: false,
@@ -413,7 +459,55 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
                 ),
               ),
             ),
+          );
+    if (widget.modal) {
+      return IonSheetScaffold(
+        title: l10n.attendanceAddTopics,
+        start: [IonCloseButton(onPressed: () => Navigator.of(context).pop())],
+        // Ionic: second toolbar with the searchbar.
+        bottom: IonSearchbar(
+          controller: _searchController,
+          placeholder: l10n.agendaSearchOrCreate,
+          onChanged: (v) => setState(() => _search = v),
+        ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: list,
+        footer: footer,
+      );
+    }
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.9,
+      child: Column(
+        children: [
+          // An AppBar with `bottom` needs a bounded height inside a Column.
+          SizedBox(
+            height: (ionModalToolbarHeight(context) ?? kToolbarHeight) + 52,
+            child: AppBar(
+            toolbarHeight: ionModalToolbarHeight(context),
+            automaticallyImplyLeading: false,
+            primary: false,
+            leading: IconButton(
+              icon: Icon(AppIcons.close),
+              tooltip: l10n.commonClose,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            title: Text(l10n.attendanceAddTopics),
+            // Ionic: second toolbar with the searchbar.
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(52),
+              child: IonSearchbar(
+                controller: _searchController,
+                placeholder: l10n.agendaSearchOrCreate,
+                onChanged: (v) => setState(() => _search = v),
+              ),
+            ),
           ),
+          ),
+          Expanded(
+            child: list,
+          ),
+          // Ionic ion-footer: insert hint + block button.
+          footer,
         ],
       ),
     );

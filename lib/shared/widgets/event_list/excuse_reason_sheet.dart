@@ -11,6 +11,7 @@ import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../dialogs/ion_sheet.dart';
+import '../layout/ion_stacked_field.dart';
 import '../layout/ionic_ios.dart';
 
 // Internal sentinel for the free-text option (never stored).
@@ -135,7 +136,7 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: _rows(context),
+              children: _classicRows(context),
             ),
           ),
         ),
@@ -158,6 +159,67 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
     );
   }
 
+  /// SEL-09: classic = Ionic excuse-reason-picker content: `ion-content
+  /// class="ion-padding"`, `ion-list lines="full"` of `ion-radio
+  /// justify="start" labelPlacement="end"`, the free text as `ion-item` with a
+  /// stacked label + auto-growing `ion-textarea`; no button (the header
+  /// checkmark confirms).
+  List<Widget> _classicRows(BuildContext context) {
+    final ios = isIosLook(context);
+    final line = Divider(height: ios ? 0.5 : 1, thickness: ios ? 0.5 : 1);
+    final options = [...widget.reasons, _customReason];
+    return [
+      Padding(
+        padding: const EdgeInsets.all(16),
+        // Ionic item height (48 instead of the 56+ of a ListTile).
+        child: ListTileTheme.merge(
+          visualDensity: VisualDensity.compact,
+          child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final reason in options) ...[
+              IonRadioItem<String>(
+                value: reason,
+                groupValue: _selection,
+                labelEnd: true,
+                onChanged: (v) => setState(() => _selection = v ?? _selection),
+                title: Text(reason == _customReason
+                    ? context.l10n.excuseCustomOption
+                    : reason),
+              ),
+              line,
+            ],
+            if (_selection == _customReason)
+              Padding(
+                padding: const EdgeInsets.only(left: 16, top: 8),
+                child: TextField(
+                  controller: _controller,
+                  // Ionic's textarea has no autofocus (the keyboard would
+                  // scroll the 0.6 sheet away from the reasons).
+                  minLines: 1,
+                  maxLines: null, // ion-textarea autoGrow
+                  textCapitalization: TextCapitalization.sentences,
+                  onChanged: (_) => setState(() {}),
+                  decoration: ionInputDecoration(
+                    context,
+                    label: context.l10n.excuseReason,
+                    hintText: context.l10n.excuseMinChars,
+                  ),
+                ),
+              ),
+          ],
+        ),
+        ),
+      ),
+      // Ionic `.keyboard-spacer`: room to scroll the textarea clear of the
+      // on-screen keyboard.
+      if (_selection == _customReason)
+        SizedBox(height: MediaQuery.sizeOf(context).height * 0.5),
+    ];
+  }
+
+  /// The Beta design (no breakpoint sheet): rows, free text and button.
   List<Widget> _rows(BuildContext context) => [
               // Ionic ion-radio (justify start, label end, lines full); iOS
               // draws a checkmark for the selected reason.
@@ -287,6 +349,7 @@ Future<Map<String, dynamic>?> showRegistrationFieldsSheet(
   Map<String, dynamic>? existing,
   bool editMode = false,
   bool requireText = true,
+  bool closeIcon = false,
 }) {
   final answers = <String, dynamic>{
     for (final f in fields)
@@ -300,12 +363,15 @@ Future<Map<String, dynamic>?> showRegistrationFieldsSheet(
       context,
       breakpoints: const [0, 0.85, 1],
       initialBreakpoint: 0.85,
-      backdropDismiss: editMode,
+      // Ionic: the self-service modal has `[backdropDismiss]="false"` in
+      // both modes; only the modal of the attendance page closes that way.
+      backdropDismiss: closeIcon,
       builder: (ctx, scrollController) => _RegistrationFieldsSheet(
         fields: fields,
         answers: answers,
         editMode: editMode,
         requireText: requireText,
+        closeIcon: closeIcon,
         scrollController: scrollController,
       ),
     );
@@ -331,8 +397,12 @@ class _RegistrationFieldsSheet extends StatefulWidget {
     required this.answers,
     required this.editMode,
     required this.requireText,
+    this.closeIcon = false,
     this.scrollController,
   });
+
+  /// Classic: close icon in the toolbar (the modal of the attendance page).
+  final bool closeIcon;
 
   final List<RegistrationField> fields;
   final Map<String, dynamic> answers;
@@ -375,6 +445,76 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
       }
     }
     Navigator.of(context).pop(_answers);
+  }
+
+  /// TER-07: the fields as Ionic items of one inset list.
+  List<Widget> _ionFields(BuildContext context) {
+    final ios = isIosLook(context);
+    final labelSize = ios ? 17.0 : 16.0;
+    final rows = <Widget>[];
+    for (final field in widget.fields) {
+      switch (field.type) {
+        case RegistrationFieldType.boolean:
+          rows.add(IonItem(
+            title: Text(field.label),
+            trailing: Switch.adaptive(
+              value: _answers[field.id] == true,
+              onChanged: (v) => setState(() => _answers[field.id] = v),
+            ),
+            onTap: () => setState(() => _answers[field.id] = _answers[field.id] != true),
+          ));
+        case RegistrationFieldType.select:
+          final options = field.options ?? const <String>[];
+          rows.add(Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(field.label, style: TextStyle(fontSize: labelSize * 0.75)),
+                DropdownButtonHideUnderline(
+                  child: AppDropdownButton<String>(
+                    interface: AppSelectInterface.alert,
+                    header: field.label,
+                    isExpanded: true,
+                    value: options.contains(_answers[field.id]) ? _answers[field.id] as String : null,
+                    items: [
+                      for (final opt in options) DropdownMenuItem(value: opt, child: Text(opt)),
+                    ],
+                    onChanged: (v) => setState(() => _answers[field.id] = v ?? ''),
+                  ),
+                ),
+              ],
+            ),
+          ));
+        case RegistrationFieldType.multiSelect:
+          final selected = List<String>.from(_answers[field.id] as List? ?? const []);
+          rows.add(Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+            child: Text(field.label, style: TextStyle(fontSize: labelSize * 0.75)),
+          ));
+          for (final opt in field.options ?? const <String>[]) {
+            void toggle() => setState(() {
+                  if (!selected.remove(opt)) selected.add(opt);
+                  _answers[field.id] = List<String>.from(selected);
+                });
+            rows.add(IonItem(
+              leading: Checkbox(value: selected.contains(opt), onChanged: (_) => toggle()),
+              title: Text(opt),
+              onTap: toggle,
+            ));
+          }
+        default:
+          rows.add(IonStackedField(
+            label: field.label,
+            hintText: '...',
+            controller: _controllerFor(field),
+            line: false,
+            onChanged: (v) => _answers[field.id] = v,
+          ));
+      }
+    }
+    return rows;
   }
 
   Widget _buildField(RegistrationField field) {
@@ -455,17 +595,42 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
     ];
     final scrollController = widget.scrollController;
     if (scrollController != null) {
+      // TER-07: Ionic regFieldsModal – close icon at the end,
+      // `ion-content color="light"`, one inset list, block button.
       return IonSheetScaffold(
         title: title,
-        end: end,
+        // Attendance page (Ionic attendance.page regFieldsModal): close icon.
+        // Self-service (signout.page): "Abbrechen" only when editing; sign
+        // in has no button and is not dismissable by the backdrop either.
+        showClose: widget.closeIcon,
+        end: !widget.closeIcon && widget.editMode ? end : const [],
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
           top: false,
           child: SingleChildScrollView(
             controller: scrollController,
+            padding: const EdgeInsets.only(top: 12),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: _rows(context),
+              children: [
+                IonInsetList(children: _ionFields(context)),
+                if (_error != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                    child: Text(_error!, style: const TextStyle(color: AppColors.danger)),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: FilledButton.icon(
+                    onPressed: _submit,
+                    icon: Icon(AppIcons.checkCircleOutline),
+                    label: IonButtonLabel(widget.editMode
+                        ? context.l10n.commonSave
+                        : context.l10n.signoutSignIn),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

@@ -105,19 +105,21 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.tasksTask),
+        // DAS-02: Ionic `ion-buttons slot="end"` (iOS glass capsule).
         actions: [
-          if (isLeader && task != null) ...[
-            IconButton(
-              tooltip: l10n.commonEdit,
-              icon: Icon(AppIcons.editOutlined),
-              onPressed: () => showTaskFormSheet(context, task: task),
-            ),
-            IconButton(
-              tooltip: l10n.commonDelete,
-              icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
-              onPressed: () => _delete(task),
-            ),
-          ],
+          if (isLeader && task != null)
+            ToolbarButtonGroup(children: [
+              IconButton(
+                tooltip: l10n.commonEdit,
+                icon: Icon(AppIcons.editOutlined),
+                onPressed: () => showTaskFormSheet(context, task: task),
+              ),
+              IconButton(
+                tooltip: l10n.commonDelete,
+                icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
+                onPressed: () => _delete(task),
+              ),
+            ]),
         ],
       ),
       bottomNavigationBar: task != null && canChange && task.status != 'completed'

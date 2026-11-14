@@ -18,6 +18,9 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../utils/song_utils.dart';
 import 'file_upload_sheet.dart';
+import 'song_form_items.dart' show songItemLine;
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonItem, IonInsetList;
+import '../../../people/presentation/widgets/ion/ion_widgets.dart' show IonItemDivider;
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
@@ -261,7 +264,9 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                 const Divider(height: 1),
               Flexible(
                 fit: controller == null ? FlexFit.loose : FlexFit.tight,
-                child: ListView(
+                child: controller != null
+                    ? _classicList(context, controller, options)
+                    : ListView(
                   controller: controller,
                   shrinkWrap: controller == null,
                   children: [
@@ -400,8 +405,18 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                 ),
               ),
               // Ionic footer toolbar
-              const Divider(height: 1),
-              SafeArea(
+              if (controller == null) const Divider(height: 1),
+              Container(
+                decoration: controller == null
+                    ? null
+                    : BoxDecoration(
+                        // `ion-footer > ion-toolbar`: toolbar surface with
+                        // the line on top.
+                        color: Theme.of(context).appBarTheme.backgroundColor ??
+                            Theme.of(context).colorScheme.surface,
+                        border: Border(top: songItemLine(context)),
+                      ),
+                child: SafeArea(
                 top: false,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -434,6 +449,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                   ),
                 ),
               ),
+              ),
             ],
           );
     return PopScope(
@@ -452,6 +468,150 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                 child: content(null),
               ),
             ),
+    );
+  }
+
+  /// Classic: Ionic `ion-content color="light"` with one inset list: the
+  /// file item, the `ion-radio-group`, the free-text divider + input and
+  /// the warning item(s).
+  Widget _classicList(
+    BuildContext context,
+    ScrollController controller,
+    List<(int?, String)> options,
+  ) {
+    final hint = _reading && !_reviewed
+        ? Text(
+            context.l10n.songsFlutterVisionReading,
+            style: const TextStyle(fontSize: 12, color: AppColors.medium),
+          )
+        : _visionLabel != null && !_reviewed
+            ? Text(
+                _confidence == MatchConfidence.sure
+                    ? context.l10n.songsFlutterVisionSure(_visionLabel!)
+                    : context.l10n.songsFlutterVisionUnsure,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: _confidence == MatchConfidence.sure ? AppColors.success : AppColors.warning,
+                ),
+              )
+            : !_reviewed && _confidence != MatchConfidence.sure
+                ? Text(
+                    _confidence == MatchConfidence.unsure
+                        ? context.l10n.songsFlutterDetectUnsure
+                        : context.l10n.songsFlutterDetectNone,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: _confidence == MatchConfidence.unsure ? AppColors.warning : AppColors.danger,
+                    ),
+                  )
+                : null;
+    final rows = <Widget>[
+      IonItem(
+        leading: Icon(AppIcons.insertDriveFileOutlined),
+        title: Text(widget.file.name),
+        subtitle: hint,
+      ),
+      for (final o in options)
+        // ion-radio (default placement): label first, the control at the
+        // end of the item.
+        IonRadioItem<int?>(
+          value: o.$1,
+          groupValue: _choirAll ? kChoirAllOptionValue : _instrumentId,
+          title: Text(o.$2),
+          subtitle: o.$1 == kChoirAllOptionValue ? Text(context.l10n.songsChoirAllHint) : null,
+          onChanged: _uploading ? null : (v) => setState(() => _choose(v)),
+        ),
+      if (_learnTerm != null && _instrumentId != null)
+        CheckboxListTile(
+          dense: true,
+          controlAffinity: ListTileControlAffinity.leading,
+          value: _learn,
+          title: Text(
+            context.l10n.songsFlutterLearnTerm(
+              _learnTerm!,
+              widget.groups.where((g) => g.id == _instrumentId).firstOrNull?.name ?? '',
+            ),
+            style: const TextStyle(fontSize: 13),
+          ),
+          onChanged: _uploading
+              ? null
+              : (v) => setState(() {
+                    _learn = v ?? false;
+                    _reviewed = true;
+                  }),
+        ),
+    ];
+    final freeText = _instrumentId == null && !_choirAll;
+    final warning = <Widget>[
+      if (_conflicts.isNotEmpty)
+        // `ion-item color="warning"` with the warning icon in slot start.
+        Material(
+          color: AppColors.warning,
+          child: IconTheme.merge(
+            data: const IconThemeData(color: Colors.black),
+            child: DefaultTextStyle.merge(
+              style: const TextStyle(color: Colors.black),
+              child: IonItem(
+                leading: Icon(AppIcons.warningAmberRounded),
+                title: Text(_conflicts.length == 1
+                    ? context.l10n.songsReplaces(_conflicts.first.fileName)
+                    : context.l10n.songsWhichReplace),
+                titleColor: Colors.black,
+              ),
+            ),
+          ),
+        ),
+      if (_conflicts.length > 1)
+        for (final c in _conflicts)
+          CheckboxListTile(
+            dense: true,
+            controlAffinity: ListTileControlAffinity.leading,
+            value: _toReplace.contains(c.url),
+            title: Text(c.fileName),
+            secondary: SongBadge(
+              color: SongUtils.fileBadgeColor(c),
+              label: SongUtils.fileLabel(c, widget.groups, isChoir: widget.isChoir),
+            ),
+            onChanged: (_) => setState(() {
+              _reviewed = true;
+              _toReplace.contains(c.url) ? _toReplace.remove(c.url) : _toReplace.add(c.url);
+            }),
+          ),
+    ];
+    return ColoredBox(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: ListView(
+        controller: controller,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        children: [
+          IonInsetList(
+            children: [
+              ...rows,
+              if (freeText) ...[
+                IonItemDivider(text: context.l10n.songsFreeText),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: TextField(
+                    controller: _note,
+                    decoration: InputDecoration(
+                      hintText: context.l10n.songsEnterCategory,
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      filled: false,
+                    ),
+                    onChanged: (_) => setState(() {
+                      _reviewed = true;
+                      _refreshConflicts();
+                    }),
+                  ),
+                ),
+              ],
+              ...warning,
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

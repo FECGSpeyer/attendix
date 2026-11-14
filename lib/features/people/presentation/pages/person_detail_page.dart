@@ -33,6 +33,7 @@ import '../widgets/duplicate_candidates_card.dart';
 import '../widgets/parent_review_hint.dart';
 import '../widgets/person_detail/person_detail.dart';
 import '../widgets/ion/ion_widgets.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
@@ -231,6 +232,12 @@ enum PersonModalResult {
 /// pending ones offer approve / decline (both follow from the person).
 Future<PersonModalResult?> showPersonModal(
     BuildContext context, int personId) {
+  // E2E PERSONEN-56: the cached person can be stale (pause / unpause /
+  // archive from the list swipe actions or another page don't touch this
+  // family) – load it fresh whenever the modal opens, like Ionic opens the
+  // page with the current object.
+  ProviderScope.containerOf(context, listen: false)
+      .invalidate(personProvider(personId));
   Widget build(BuildContext _) =>
       PersonDetailPage(personId: personId, asModal: true);
   if (useIosLook(context)) {
@@ -1364,18 +1371,22 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   }
 
   Future<void> _showPendingActions() async {
+    // PEO-15: Ionic action sheet without header and icons, "Abbrechen"
+    // with role destructive (the Beta keeps its icons).
+    final beta = context.rdSkin != null;
     final action = await showAppActionSheet<VoidCallback>(
       context,
+      cancelDestructive: !beta,
       actions: [
         AppActionSheetAction(
           value: _approvePerson,
-          icon: AppIcons.checkCircle,
-          color: AppColors.success,
+          icon: beta ? AppIcons.checkCircle : null,
+          color: beta ? AppColors.success : null,
           label: context.l10n.personApprovePerson,
         ),
         AppActionSheetAction(
           value: _declinePerson,
-          icon: AppIcons.cancel,
+          icon: beta ? AppIcons.cancel : null,
           label: context.l10n.personDeclinePerson,
           destructive: true,
         ),
@@ -1455,8 +1466,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         title: Text(ctx.l10n.personReactivatePerson),
         content: Text(ctx.l10n.personReactivateConfirm),
         actions: [
+          // PEO-13: Ionic "Abbrechen" with role destructive.
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
+            style: appAlertDestructiveStyle(ctx),
             child: Text(ctx.l10n.commonCancel),
           ),
           TextButton(
@@ -1489,13 +1502,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         title: Text(context.l10n.attendanceRemovePerson),
         content: Text(context.l10n.personRemovePersonMessage),
         actions: [
+          // PEO-13: Ionic – "Abbrechen" destructive, "Ja" neutral.
           TextButton(
             onPressed: () => Navigator.pop(context, false),
+            style: appAlertDestructiveStyle(context),
             child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            style: context.rdSkin != null
+                ? TextButton.styleFrom(foregroundColor: AppColors.danger)
+                : null,
             child: Text(context.l10n.commonYes),
           ),
         ],
@@ -1559,6 +1576,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
+            style: appAlertDestructiveStyle(context), // PEO-13
             child: Text(context.l10n.commonCancel),
           ),
           TextButton(
@@ -1787,7 +1805,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             title: Text(context.l10n.personDiscardChanges),
             content: Text(context.l10n.personDiscardChangesMessage),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.l10n.commonCancel)),
+              TextButton(onPressed: () => Navigator.pop(context, false), style: appAlertDestructiveStyle(context), child: Text(context.l10n.commonCancel)), // PEO-13
               TextButton(onPressed: () => Navigator.pop(context, true), child: Text(context.l10n.commonYes)), // Ionic: Abbrechen / Ja
             ],
           ),
@@ -1826,6 +1844,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                       onPressed: onFab,
                       icon: Icon(fabAction.$2),
                     ),
+            // PEO-10: Ionic modal close (iOS glass circle); md keeps the
+            // white icon on the danger toolbar.
+            if (!person.isCritical || useIosLook(context))
+              IonCloseButton(onPressed: () => Navigator.of(context).maybePop())
+            else
             IconButton(
               tooltip: context.l10n.commonClose,
               icon: Icon(
@@ -1837,7 +1860,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           ],
         ),
         body: ListView(
-          padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 84)),
+          // PERSONEN-27/81: the FAB floats over the person modal even inside
+          // the iOS shell – keep room for it (classic; Beta has no FAB).
+          padding: EdgeInsets.only(
+              bottom: rd == null
+                  ? 16 + 84 + MediaQuery.paddingOf(context).bottom
+                  : scrollEndPadding(context, base: 16, fabRoom: 84)),
           children: [
             // Ionic .profile-header: avatar + name with pencil
             PersonHeader(
@@ -1852,6 +1880,21 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             // Ionic: Vorname | Nachname inputs while editing the name
             if (canEdit && _editingName) ...[
               ...ionBetaGroup(context, [allgemein(AllgemeinPart.names, 'names')], inset: false),
+              if (rd == null)
+                // PEO-32: Ionic `ion-button expand="block" fill="clear"
+                // size="small"` with `checkmark-outline`.
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: IonButton(
+                    fill: IonButtonFill.clear,
+                    small: true,
+                    expand: true,
+                    icon: AppIcons.check,
+                    label: context.l10n.personDone,
+                    onPressed: () => setState(() => _editingName = false),
+                  ),
+                )
+              else
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextButton.icon(
@@ -1940,6 +1983,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 onCreateAccount: () => _createAccount(person),
                 canEdit: canEdit,
                 onFieldChanged: _onAccountFieldChanged,
+                onEmailTyped: _onFieldChanged,
                 draftEmail: _draft.email,
                 isLeader: _isLeader,
                 isMainGroup: _isMainGroupSelected,
@@ -1957,7 +2001,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 onToggle: () => _toggleSection('otherTenants', canEdit),
               ),
 
-            // Historie Accordion
+            // Historie Accordion (PEO-31: Ionic renders it only with
+            // history entries; the Beta keeps its empty state).
+            if (rd != null || (historyAsync.valueOrNull?.isNotEmpty ?? true))
             HistorieAccordion(
               isExpanded: _showHistorie,
               onToggle: () => setState(() => _showHistorie = !_showHistorie),
@@ -1981,7 +2027,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                   if (ref.watch(hasDutyTypesProvider))
                     IonItem(
                       detail: true,
-                      start: Icon(AppIcons.eventBusyOutlined,
+                      // PEO-28: Ionic `calendar-clear-outline`.
+                      start: Icon(
+                          AppIcons.ionic
+                              ? Ionicons.calendarClearOutline
+                              : AppIcons.eventBusyOutlined,
                           color: AppColors.primary),
                       onTap: () => openUnavailabilityPage(
                         context,

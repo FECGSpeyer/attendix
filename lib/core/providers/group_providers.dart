@@ -306,6 +306,8 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
       await _repo.deleteGroupCategory(id);
       state = const AsyncValue.data(null);
       ref.invalidate(groupCategoriesProvider);
+      // PERSONEN-64: groups still carried the deleted category id.
+      ref.invalidate(groupsProvider);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }

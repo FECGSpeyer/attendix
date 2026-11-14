@@ -38,6 +38,9 @@ import '../../../../l10n/l10n.dart';
 import '../widgets/ion/ion_widgets.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/error_message.dart';
+import '../widgets/person_detail/account_accordion.dart' show showAccountHelpSheet;
+import '../../../../data/models/instrument/instrument.dart' show Group;
+import 'package:intl/intl.dart';
 import '../../person_create_prefill.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -55,6 +58,11 @@ class PersonCreatePage extends ConsumerStatefulWidget {
 
 class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   final _formKey = GlobalKey<FormState>();
+
+  /// E2E PERSONEN-23: after a failed save the hints update while typing
+  /// (and disappear once a field is valid) instead of staying until the
+  /// next save.
+  AutovalidateMode _autovalidate = AutovalidateMode.disabled;
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -345,11 +353,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               onPressed: _isLoading || !_canEdit ? null : _save,
               child: Text(context.l10n.commonSave),
             ),
-          IconButton(
-            tooltip: context.l10n.commonClose,
-            icon: Icon(AppIcons.close),
-            onPressed: _close,
-          ),
+          // PEO-10: Ionic modal close (iOS glass circle).
+          IonCloseButton(onPressed: _close),
         ],
       ),
       // IOS_SHELL2: iOS → ion-fab in the tab bar row
@@ -371,8 +376,19 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           opacity: _canEdit ? 1 : 0.5,
           child: Form(
         key: _formKey,
+        autovalidateMode: _autovalidate,
         child: IonFormTheme(
-          child: ListView(
+          child: context.rdSkin == null
+              ? ListView(
+                  // PEO-06: the create modal is the person page template.
+                  // ROLLEN-B-17: the save FAB floats over this modal even
+                  // inside the iOS shell (it is not in the tab bar here), so
+                  // always keep room for it below the last row.
+                  padding: EdgeInsets.only(
+                      bottom: 16 + 80 + MediaQuery.paddingOf(context).bottom),
+                  children: _buildClassicForm(instrumentsAsync, tenant, extraFields),
+                )
+              : ListView(
           padding: rd != null
               ? EdgeInsets.only(bottom: scrollEndPadding(context, base: 16))
               : ios
@@ -490,7 +506,16 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                 hintText: 'max@example.com',
                 prefixIcon: ionIsIos(context) ? null : Icon(AppIcons.email),
               ),
-              // Ionic addPerson does not validate the e-mail.
+              // E2E PERSONEN-28: an invalid e-mail used to reach the account
+              // sign-up (HTTP 400, "Fehler beim Erstellen des Accounts");
+              // check it at the field before anything is sent.
+              validator: (value) {
+                final email = value?.trim() ?? '';
+                if (email.isNotEmpty && !isValidPersonEmail(email)) {
+                  return context.l10n.personInvalidEmail;
+                }
+                return null;
+              },
               keyboardType: TextInputType.emailAddress,
             ),
             gap,
@@ -551,6 +576,479 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       ),
       ),
     );
+  }
+
+  /// PEO-06: which accordion of the create form is open (Ionic
+  /// `ion-accordion-group [value]="existingPlayer && !readOnly ? '' : 'more'"`
+  /// → "Allgemein" starts open for a new person).
+  String? _openSection = 'general';
+
+  void _toggle(String key) =>
+      setState(() => _openSection = _openSection == key ? null : key);
+
+  /// Ionic `ion-item` + stacked `ion-label` + `ion-input` as a form field
+  /// (keeps the validator; the error text shows below the input).
+  Widget _ionField({
+    required String label,
+    required TextEditingController controller,
+    FormFieldValidator<String>? validator,
+    TextInputType? keyboardType,
+    TextCapitalization textCapitalization = TextCapitalization.sentences,
+    FocusNode? focusNode,
+    bool lines = true,
+    bool autocorrect = true,
+  }) {
+    final ios = ionIsIos(context);
+    final fg = Theme.of(context).colorScheme.onSurface;
+    return Padding(
+      padding: const EdgeInsets.only(left: 16),
+      child: Container(
+        constraints: BoxConstraints(minHeight: ios ? 68 : 72),
+        decoration: BoxDecoration(
+          border: lines
+              ? Border(
+                  bottom: BorderSide(
+                      color: ionLineColor(context), width: ios ? 0.55 : 1),
+                )
+              : null,
+        ),
+        padding: const EdgeInsets.only(right: 16, top: 10, bottom: 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label,
+                style: TextStyle(
+                    fontSize: ios ? 14 : 12,
+                    color: ios ? fg : AppColors.medium)),
+            TextFormField(
+              controller: controller,
+              focusNode: focusNode,
+              validator: validator,
+              keyboardType: keyboardType,
+              textCapitalization: textCapitalization,
+              autocorrect: autocorrect,
+              style: TextStyle(fontSize: ios ? 17 : 16, color: fg),
+              decoration: const InputDecoration(
+                isDense: true,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                filled: false,
+                contentPadding: EdgeInsets.symmetric(vertical: 6),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// PEO-06: Ionic person page (new person) – names side by side, then the
+  /// accordions "Allgemein", "Account" and "Zusatzfelder" with the same
+  /// rows as the person page.
+  List<Widget> _buildClassicForm(
+    AsyncValue<List<Group>> instrumentsAsync,
+    Tenant? tenant,
+    List<ExtraField> extraFields,
+  ) {
+    final l10n = context.l10n;
+    final groups = instrumentsAsync.valueOrNull ?? const <Group>[];
+    return [
+      _CreateProfileHeader(
+        firstName: _firstNameController,
+        lastName: _lastNameController,
+        imageBytes: _pickedImage,
+        imageUrl: _adoptedImg,
+        onTap: _onProfileImageTap,
+      ),
+      // Ionic ion-grid: Vorname | Nachname, `ion-item lines="none"`, no
+      // placeholder.
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _ionField(
+                label: l10n.peopleFirstName,
+                controller: _firstNameController,
+                lines: false,
+                textCapitalization: TextCapitalization.words,
+                validator: (v) => v == null || v.trim().isEmpty
+                    ? l10n.peopleFlutterFirstNameRequired
+                    : null,
+              ),
+            ),
+            Expanded(
+              child: _ionField(
+                label: l10n.peopleLastName,
+                controller: _lastNameController,
+                lines: false,
+                textCapitalization: TextCapitalization.words,
+                validator: (v) => v == null || v.trim().isEmpty
+                    ? l10n.peopleFlutterLastNameRequired
+                    : null,
+              ),
+            ),
+          ],
+        ),
+      ),
+      if (_nameSuggestions.isNotEmpty)
+        PersonMatchSuggestions(
+          matches: _nameSuggestions,
+          onSelected: _applyMatchedPerson,
+          onDismiss: _dismissNameSuggestions,
+        ),
+      const SizedBox(height: 8),
+      IonAccordion(
+        title: l10n.attendanceGeneral,
+        expanded: _openSection == 'general',
+        onToggle: () => _toggle('general'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Ionic: `ion-select interface="modal" [label]` (no "none").
+            IonSelectRow<int>(
+              label: groupLabel(tenant?.type),
+              value: _selectedInstrument,
+              interface: AppSelectInterface.modal,
+              options: [
+                for (final g in groups)
+                  if (g.id != null) AppSelectOption<int>(value: g.id!, label: g.name),
+              ],
+              onChanged: (v) => setState(() => _selectedInstrument = v),
+            ),
+            ..._buildClassicGeneralRows(tenant),
+          ],
+        ),
+      ),
+      IonAccordion(
+        title: l10n.personAccount,
+        expanded: _openSection == 'account',
+        onToggle: () => _toggle('account'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _ionField(
+              label: l10n.peopleEmail,
+              controller: _emailController,
+              focusNode: _emailFocus,
+              keyboardType: TextInputType.emailAddress,
+              textCapitalization: TextCapitalization.none,
+              autocorrect: false,
+              // E2E PERSONEN-28: check the e-mail at the field before the
+              // account sign-up is sent.
+              validator: (value) {
+                final email = value?.trim() ?? '';
+                if (email.isNotEmpty && !isValidPersonEmail(email)) {
+                  return l10n.personInvalidEmail;
+                }
+                return null;
+              },
+            ),
+            // Ionic: `ion-button fill="clear" size="small"` "Hilfe" → sheet.
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: IonButton(
+                  fill: IonButtonFill.clear,
+                  small: true,
+                  icon: AppIcons.helpOutline,
+                  label: l10n.personHelp,
+                  onPressed: () => showAccountHelpSheet(context),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      if (extraFields.isNotEmpty)
+        IonAccordion(
+          title: l10n.peopleExtraFields,
+          expanded: _openSection == 'extra',
+          onToggle: () => _toggle('extra'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [for (final f in extraFields) _buildClassicExtraField(f)],
+          ),
+        ),
+    ];
+  }
+
+  /// Rows of the "Allgemein" accordion after the group (Ionic order).
+  List<Widget> _buildClassicGeneralRows(Tenant? tenant) {
+    final l10n = context.l10n;
+    final isGeneral = tenant?.type == 'general';
+    final isChoir = tenant?.type == 'choir';
+    final isVoS = tenant?.shortName == 'VoS';
+    final isMain = _isMainGroup;
+    final teachers = (ref.watch(teachersProvider).valueOrNull ?? const [])
+        .where((t) =>
+            _selectedInstrument == null ||
+            t.instruments.contains(_selectedInstrument))
+        .toList();
+    final parents = (tenant?.parents ?? false)
+        ? ref.watch(parentsProvider).valueOrNull ?? const []
+        : const [];
+    final shifts = ref.watch(shiftsProvider).valueOrNull ?? const [];
+    final shift = shifts.where((s) => s.id == _shiftId).firstOrNull;
+    final ios = ionIsIos(context);
+
+    return [
+      if (isChoir)
+        _ionField(label: l10n.personVocalRange, controller: _rangeController),
+      _ionField(
+        label: l10n.peoplePhone,
+        controller: _phoneController,
+        keyboardType: TextInputType.phone,
+      ),
+      _dateTile(
+        icon: AppIcons.cake,
+        label: l10n.peopleBirthday,
+        value: _birthday,
+        highlight: !_birthdayEdited,
+        onChanged: (d) => setState(() {
+          _birthday = d;
+          _birthdayEdited = true;
+        }),
+      ),
+      if (!isGeneral && !isChoir && !isMain)
+        _dateTile(
+          icon: AppIcons.musicNote,
+          label: l10n.personPlaysSince,
+          value: _playsSince,
+          lastDate: DateTime.now(),
+          onChanged: (d) => setState(() => _playsSince = d),
+        ),
+      _dateTile(
+        icon: AppIcons.login,
+        label: l10n.personJoinedOn,
+        value: _joined,
+        clearable: false,
+        onChanged: (d) => setState(() => _joined = d ?? _joined),
+      ),
+      if ((tenant?.parents ?? false) && !isMain)
+        IonSelectRow<int?>(
+          label: l10n.personParents,
+          stacked: true,
+          value: _parentId,
+          interface: AppSelectInterface.modal,
+          options: [
+            AppSelectOption<int?>(value: null, label: l10n.personNotSet),
+            for (final p in parents)
+              if (p.id != null) AppSelectOption<int?>(value: p.id, label: p.fullName),
+          ],
+          onChanged: (v) => setState(() => _parentId = v),
+        ),
+      if ((tenant?.maintainTeachers ?? false) && !isMain) ...[
+        IonToggleRow(
+          label: l10n.personPlaysWithTeacher,
+          value: _hasTeacher,
+          editable: true,
+          onChanged: (v) => setState(() {
+            _hasTeacher = v;
+            if (!v) _teacherId = null;
+          }),
+        ),
+        if (_hasTeacher)
+          IonSelectRow<int?>(
+            label: l10n.peopleTeacher,
+            value: teachers.any((t) => t.id == _teacherId) ? _teacherId : null,
+            interface: AppSelectInterface.modal,
+            options: [
+              AppSelectOption<int?>(value: null, label: l10n.peopleNoTeacher),
+              for (final t in teachers)
+                if (t.id != null) AppSelectOption<int?>(value: t.id, label: t.name),
+            ],
+            onChanged: (v) => setState(() => _teacherId = v),
+          ),
+      ],
+      if (!isGeneral && !isMain)
+        IonToggleRow(
+          label: l10n.peopleVoiceLeader,
+          value: _isLeader,
+          editable: true,
+          onChanged: (v) => setState(() => _isLeader = v),
+        ),
+      if (!isMain && isChoir)
+        _ionField(label: l10n.peopleInstruments, controller: _instrumentsController),
+      if (!isMain && isVoS) ...[
+        // Ionic `ion-select multiple [label]` → checkbox alert (OK).
+        _OtherOrchestrasRow(
+          label: l10n.personOtherOrchestras,
+          values: _otherOrchestras,
+          onChanged: (v) => setState(() => _otherOrchestras = v),
+        ),
+        IonToggleRow(
+          label: l10n.peopleCandidate,
+          value: _examinee,
+          editable: true,
+          onChanged: (v) => setState(() => _examinee = v),
+        ),
+        _ionField(label: l10n.peopleTestResult, controller: _testResultController),
+      ],
+      if (shifts.isNotEmpty) ...[
+        IonSelectRow<String?>(
+          label: l10n.personShiftPlan,
+          value: _shiftId,
+          options: [
+            AppSelectOption<String?>(value: null, label: l10n.personNoShift),
+            for (final sp in shifts)
+              if (sp.id != null) AppSelectOption<String?>(value: sp.id, label: sp.name),
+          ],
+          // Ionic onShiftChange: named shifts → first name, else start = today
+          onChanged: (v) => setState(() {
+            _shiftId = v;
+            final sp = shifts.where((x) => x.id == v).firstOrNull;
+            if (sp == null) {
+              _shiftName = null;
+              _shiftStart = null;
+            } else if (sp.hasNamedShifts) {
+              _shiftName = sp.shifts.first.name;
+              _shiftStart = null;
+            } else {
+              _shiftName = null;
+              _shiftStart = DateTime.now();
+            }
+          }),
+        ),
+        if (shift != null && shift.hasNamedShifts)
+          IonSelectRow<String>(
+            label: l10n.personShift,
+            value: _shiftName,
+            options: [
+              for (final name in shift.shifts.map((x) => x.name).toSet())
+                AppSelectOption<String>(value: name, label: name),
+            ],
+            onChanged: (v) => setState(() => _shiftName = v),
+          ),
+        if (shift != null && !shift.hasNamedShifts)
+          // Ionic `ion-label` + `ion-datetime-button`.
+          Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Container(
+              constraints: BoxConstraints(minHeight: ios ? 44 : 48),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                      color: ionLineColor(context), width: ios ? 0.55 : 1),
+                ),
+              ),
+              padding: const EdgeInsets.only(right: 16, top: 6, bottom: 6),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(l10n.personStartDate,
+                        style: TextStyle(fontSize: ios ? 17 : 16)),
+                  ),
+                  IonDatetimeButton(
+                    date: DateFormat(dateFmt()).format(_shiftStart ?? DateTime.now()),
+                    onDateTap: () async {
+                      final d = await showAppDatePicker(
+                        context: context,
+                        initialDate: _shiftStart ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (d != null && mounted) setState(() => _shiftStart = d);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+      _ionField(label: l10n.peopleOtherDuties, controller: _otherExerciseController),
+    ];
+  }
+
+  /// Ionic "Zusatzfelder" items of the person page (classic design).
+  Widget _buildClassicExtraField(ExtraField field) {
+    final value = _additionalFieldValues[field.id];
+    switch (field.type) {
+      case 'text':
+      case 'textarea':
+        return IonInputRow(
+          label: field.name,
+          value: value?.toString(),
+          textarea: field.type == 'textarea',
+          onChanged: (v) => _additionalFieldValues[field.id] = v,
+        );
+      case 'number':
+        return IonInputRow(
+          label: field.name,
+          value: value?.toString(),
+          keyboardType:
+              const TextInputType.numberWithOptions(decimal: true, signed: true),
+          onChanged: (v) =>
+              _additionalFieldValues[field.id] = parseExtraFieldNumber(v),
+        );
+      case 'boolean':
+        return IonToggleRow(
+          label: field.name,
+          value: value as bool? ?? true,
+          editable: true,
+          onChanged: (v) => setState(() => _additionalFieldValues[field.id] = v),
+        );
+      case 'select':
+        return IonSelectRow<String>(
+          label: field.name,
+          value: value?.toString(),
+          options: [
+            for (final o in field.options ?? const <String>[])
+              AppSelectOption<String>(value: o, label: o),
+          ],
+          onChanged: (v) => setState(() => _additionalFieldValues[field.id] = v),
+        );
+      case 'bfecg_church':
+        final churches = ref.watch(churchesProvider).valueOrNull ?? const [];
+        final ios = ionIsIos(context);
+        return Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: Container(
+            constraints: BoxConstraints(minHeight: ios ? 44 : 48),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                    color: ionLineColor(context), width: ios ? 0.55 : 1),
+              ),
+            ),
+            padding: const EdgeInsets.only(right: 8),
+            child: Row(
+              children: [
+                Text(field.name, style: TextStyle(fontSize: ios ? 17 : 16)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: IonButton(
+                      fill: IonButtonFill.clear,
+                      label: churchLabel(value, churches),
+                      onPressed: () async {
+                        final selected = await showChurchPickerSheet(
+                          context,
+                          title: field.name,
+                          churches: churches,
+                          selectedId: value?.toString(),
+                        );
+                        if (selected != null) {
+                          setState(() => _additionalFieldValues[field.id] = selected);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      default:
+        // date (and unknown types) as before
+        return _buildExtraFieldInput(field);
+    }
   }
 
   bool get _canEdit {
@@ -972,7 +1470,11 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     // Commit a typed date (applied on focus loss) before reading the form.
     FocusManager.instance.primaryFocus?.unfocus();
     await Future<void>.delayed(Duration.zero);
-    if (!mounted || !_formKey.currentState!.validate()) return;
+    if (!mounted) return;
+    if (!_formKey.currentState!.validate()) {
+      setState(() => _autovalidate = AutovalidateMode.onUserInteraction);
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -1165,6 +1667,42 @@ class _CreateProfileHeader extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Ionic `ion-select multiple [label]` "Andere Orchester": label at the
+/// start, the chosen values + select icon at the end; opens the checkbox
+/// alert (Abbrechen / OK).
+class _OtherOrchestrasRow extends StatelessWidget {
+  const _OtherOrchestrasRow({
+    required this.label,
+    required this.values,
+    required this.onChanged,
+  });
+
+  final String label;
+  final List<String> values;
+  final ValueChanged<List<String>> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return IonSelectRow<String>(
+      label: label,
+      value: null,
+      selectedText: values.join(', '),
+      options: const [],
+      onTap: () async {
+        final result = await showAppCheckboxAlert<String>(
+          context,
+          title: label,
+          options: [for (final o in otherOrchestraOptions) AppAlertOption(o, o)],
+          initialValues: values,
+        );
+        if (result != null) {
+          onChanged(otherOrchestraOptions.where(result.contains).toList());
+        }
+      },
     );
   }
 }

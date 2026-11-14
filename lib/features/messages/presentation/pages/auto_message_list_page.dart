@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -346,15 +347,17 @@ class _RuleRow extends StatelessWidget {
                       runSpacing: 4,
                       children: [
                         for (final c in chips)
+                          // EIB-23: Ionic `.chip` – radius 10, 2 / 8 padding,
+                          // 0.75rem in primary-shade.
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
                               color: AppColors.primary.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
                               c,
-                              style: const TextStyle(fontSize: 11.5, color: AppColors.primary),
+                              style: TextStyle(fontSize: 12, color: IonMd.shade(AppColors.primary)),
                             ),
                           ),
                       ],

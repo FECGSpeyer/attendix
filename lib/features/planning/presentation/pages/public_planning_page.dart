@@ -39,6 +39,7 @@ import '../../../../shared/widgets/layout/centered_content.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
 
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/organisation/organisation.dart' show Organisation;
@@ -679,11 +680,15 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       if (plan != null && mounted) _loadPlan(plan);
       return;
     }
-    // Ionic: full ion-modal (MyPlansComponent).
-    final plan = await Navigator.of(context, rootNavigator: true).push<SharedPlan>(MaterialPageRoute(
-      fullscreenDialog: true,
-      builder: (_) => const _MyPlansSheet(),
-    ));
+    // ABL-04: Ionic sheet modal (MyPlansComponent) with `breakpoints:
+    // [0, 0.5, 0.9], initialBreakpoint: 0.9, handleBehavior: 'none'`.
+    final plan = await showIonSheet<SharedPlan>(
+      context,
+      breakpoints: const [0, 0.5, 0.9],
+      initialBreakpoint: 0.9,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (_, controller) => _MyPlansSheet(scrollController: controller),
+    );
     if (plan != null) _loadPlan(plan);
   }
 
@@ -888,36 +893,19 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
               padding: centeredListPadding(context, bottom: 32),
               children: [
                 if (largeTitle != null) largeTitle,
-                // Ionic: ion-list [inset]="true" with full-width item lines.
-                _InsetList(
-                  margin: const EdgeInsets.all(AppDimensions.paddingM),
-                  // lines="none" on the action items
-                  dividerCount: 3,
+                // Ionic: ion-list [inset]="true"; the action items have
+                // lines="none" (ABL-17: the shared inset list).
+                IonInsetList(
+                  dividerIndent: null,
                   children: [
                     // ion-input labelPlacement="stacked" (no box)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
-                      child: Focus(
-                        onFocusChange: (f) {
-                          if (!f) _changed();
-                        },
-                        child: TextField(
-                          controller: _titleController,
-                          textCapitalization: TextCapitalization.sentences,
-                          decoration: InputDecoration(
-                            labelText: context.l10n.plansTitle,
-                            hintText: context.l10n.plansRunSheet,
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            filled: false,
-                            isDense: true,
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            contentPadding: const EdgeInsets.only(top: 6, bottom: 4),
-                          ),
-                        ),
-                      ),
+                    IonStackedInput(
+                      controller: _titleController,
+                      label: context.l10n.plansTitle,
+                      hint: context.l10n.plansRunSheet,
+                      onFocusLost: _changed,
                     ),
+                    _itemLine(context),
                     // ion-select interface="popover": label left, value right
                     IonSelect<String>(
                       key: ValueKey('tpl-$_templateId'),
@@ -935,6 +923,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                       ],
                       onChanged: _onTemplateChange,
                     ),
+                    _itemLine(context),
                     IonSelect<String>(
                       key: ValueKey('brand-$_brandingId'),
                       label: context.l10n.plansBranding,
@@ -949,6 +938,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                         _changed();
                       },
                     ),
+                    _itemLine(context),
                     ListTile(
                       title: Text(context.l10n.plansDate),
                       trailing: IonDatetimeChip(
@@ -956,6 +946,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                         onTap: _pickDate,
                       ),
                     ),
+                    _itemLine(context),
                     ListTile(
                       leading: Icon(AppIcons.refresh, color: AppColors.primary),
                       title: Text(context.l10n.plansRestoreTemplate, style: const TextStyle(color: AppColors.primary)),
@@ -979,25 +970,19 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                       ),
                   ],
                 ),
-                // ion-list-header: bold title with the "+" popover trigger
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(AppDimensions.paddingM, 8, AppDimensions.paddingM, 0),
-                  child: IonListHeader(
-                    title: context.l10n.planningRunSheet,
-                    trailing: Builder(
-                      builder: (anchor) => IconButton(
-                        key: const ValueKey('plan-add-trigger'),
-                        color: AppColors.primary,
-                        tooltip: context.l10n.planningAddField,
-                        icon: Icon(AppIcons.add),
-                        onPressed: () => _showAddMenu(anchor),
-                      ),
+                // ABL-09/17: second ion-list [inset] with its ion-list-header
+                // (same header style as every inset list) and the "+".
+                IonInsetList(
+                  header: context.l10n.planningRunSheet,
+                  headerTrailing: Builder(
+                    builder: (anchor) => IconButton(
+                      key: const ValueKey('plan-add-trigger'),
+                      color: AppColors.primary,
+                      tooltip: context.l10n.planningAddField,
+                      icon: Icon(AppIcons.add),
+                      onPressed: () => _showAddMenu(anchor),
                     ),
                   ),
-                ),
-                _InsetList(
-                  margin: const EdgeInsets.fromLTRB(AppDimensions.paddingM, 4, AppDimensions.paddingM, 0),
-                  dividerCount: 1,
                   children: [
                     ListTile(
                       title: Text(context.l10n.attendanceStartLabel),
@@ -1041,26 +1026,33 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
 
 /// "Meine Pläne" (Ionic `MyPlansComponent`).
 class _MyPlansSheet extends ConsumerWidget {
-  const _MyPlansSheet();
+  const _MyPlansSheet({required this.scrollController});
+
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final plansAsync = ref.watch(mySharedPlansProvider);
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(context.l10n.plansMyPlans),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: IonButtonLabel(context.l10n.commonClose)),
-        ],
-      ),
+    return IonSheetScaffold(
+      title: context.l10n.plansMyPlans,
+      end: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonClose)),
+      ],
       body: plansAsync.when(
-        loading: () => const Center(child: AppSpinner()),
-        error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
+        loading: () => ListView(
+          controller: scrollController,
+          children: const [Padding(padding: EdgeInsets.all(16), child: Center(child: AppSpinner()))],
+        ),
+        error: (e, _) => ListView(
+          controller: scrollController,
+          padding: const EdgeInsets.all(16),
+          children: [Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)), textAlign: TextAlign.center)],
+        ),
         // Ionic: inset list, ion-item-sliding with a danger option; empty
         // text as a centered grey item.
         data: (plans) => ListView(
-          padding: const EdgeInsets.only(bottom: 16),
+          controller: scrollController,
+          padding: EdgeInsets.only(bottom: 16 + MediaQuery.paddingOf(context).bottom),
           children: [
             SlidableAutoCloseBehavior(
               child: IonInsetList(
@@ -1138,30 +1130,6 @@ class _MyPlanTile extends ConsumerWidget {
   }
 }
 
-
-/// Ionic `ion-list [inset]="true"`: rounded white card; the first
-/// [dividerCount] children are separated by full-width item lines.
-class _InsetList extends StatelessWidget {
-  const _InsetList({required this.children, required this.margin, this.dividerCount = 0});
-
-  final List<Widget> children;
-  final EdgeInsets margin;
-  final int dividerCount;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: margin,
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (var i = 0; i < children.length; i++) ...[
-            children[i],
-            if (i < dividerCount && i < children.length - 1) const Divider(height: 1, indent: 16),
-          ],
-        ],
-      ),
-    );
-  }
-}
+/// Ionic item line between two items of an inset list (`lines` inset).
+Widget _itemLine(BuildContext context) =>
+    Divider(height: 1, thickness: useIosLook(context) ? 0.5 : 1, indent: 16);

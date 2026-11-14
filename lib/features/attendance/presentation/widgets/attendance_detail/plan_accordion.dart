@@ -19,6 +19,7 @@ import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
 import '../../../../../l10n/l10n.dart';
 import 'attendance_accordion.dart';
+import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/services/error_reporter.dart';
 
 /// Accordion widget for displaying attendance plan/schedule.
@@ -234,7 +235,8 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     // lives in the planning page like in Ionic.
     const primaryStyle = TextStyle(color: AppColors.primary);
     final addTopicsRow = ListTile(
-      dense: true,
+      // TER-15: theme item size in the classic design (Ionic ion-item).
+      dense: context.rdSkin != null,
       leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
       title: Text(context.l10n.attendanceAddTopics, style: primaryStyle),
       onTap: () => openAgendaPickerForAttendance(context, ref,
@@ -251,7 +253,8 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
           if (!hasPlan) ...[
             if (canAddTopics) addTopicsRow,
             ListTile(
-              dense: true,
+              // TER-15: theme item size in the classic design (Ionic ion-item).
+      dense: context.rdSkin != null,
               title: Text(context.l10n.attendanceCreateRunSheet, style: primaryStyle),
               onTap: widget.onEditPlan != null ? edit : (widget.onCreate ?? widget.onEdit),
             ),
@@ -275,12 +278,14 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
             ),
             if (canAddTopics) addTopicsRow,
             ListTile(
-              dense: true,
+              // TER-15: theme item size in the classic design (Ionic ion-item).
+      dense: context.rdSkin != null,
               title: Text(context.l10n.attendanceEditRunSheet, style: primaryStyle),
               onTap: edit,
             ),
             ListTile(
-              dense: true,
+              // TER-15: theme item size in the classic design (Ionic ion-item).
+      dense: context.rdSkin != null,
               leading: Icon(AppIcons.iosShare, color: AppColors.primary),
               title: Text(context.l10n.attendanceShare, style: primaryStyle),
               onTap: () => _export(att, plans, _planIndex),

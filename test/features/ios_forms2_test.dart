@@ -145,7 +145,7 @@ void main() {
 
     test('Werke filter in a glass circle, detail actions grouped', () {
       final list = _read('lib/features/songs/presentation/pages/songs_list_page.dart');
-      expect(list, contains('IosCircleIcon(icon: AppIcons.tune'));
+      expect(list, contains('IosCircleIcon(icon: AppIcons.optionsFilled'));
       final detail = _read('lib/features/songs/presentation/pages/song_detail_page.dart');
       expect(detail, contains('ToolbarButtonGroup(children: ['));
       expect(detail, contains('class _FilesGroup'));

@@ -9,7 +9,10 @@ import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/ion_accordion_tile.dart';
 import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
+import '../../../../../shared/widgets/layout/ionic_ios.dart' show IonItem, IonInsetList, ionItemBackground;
+import '../../../../people/presentation/widgets/ion/ion_widgets.dart' show IonBadge;
 
 /// Candidates for "Person hinzufügen" (Ionic openAddPersonModal).
 class AddPersonCandidates {
@@ -183,8 +186,158 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
 
   void _createNew() => Navigator.of(context).pop(const AddPersonsPick.createNew());
 
+  void _toggle(Person p) => setState(() {
+        if (!_selected.remove(p.id)) _selected.add(p.id!);
+      });
+
+  /// TER-09: `<ion-item><ion-checkbox>` wrapping the label – the checkbox
+  /// sits at the end of the row (Ionic default `labelPlacement="start"`).
+  Widget _ionPersonItem(Person p) => IonItem(
+        title: Text('${p.firstName} ${p.lastName}'),
+        subtitle: Text(widget.groupNameOf(p)),
+        trailing: Checkbox(
+          value: _selected.contains(p.id),
+          onChanged: (_) => _toggle(p),
+        ),
+        onTap: () => _toggle(p),
+      );
+
+  /// TER-09: one `ion-accordion` of `.add-person-accordion` (radius 8,
+  /// 8 px apart): header `ion-item color="light"` with label + badge, the
+  /// person items as its content.
+  Widget _ionAccordion({
+    required String label,
+    required int count,
+    required Color badgeColor,
+    required bool initiallyExpanded,
+    required List<Person> persons,
+  }) {
+    final light = Theme.of(context).scaffoldBackgroundColor;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: ionItemBackground(context),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: IonAccordionTile(
+          initiallyExpanded: initiallyExpanded,
+          headerColor: light,
+          title: Row(
+            children: [
+              Flexible(child: Text(label)),
+              const SizedBox(width: 8),
+              IonBadge(text: '$count', color: badgeColor),
+            ],
+          ),
+          children: [
+            IonInsetList(
+              margin: EdgeInsets.zero,
+              grouped: false,
+              children: [for (final p in persons) _ionPersonItem(p)],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// TER-04 / TER-09: Ionic add-person modal – toolbar with title + close,
+  /// `ion-content color="light"`, two accordions ("Passende" open), a
+  /// block button without icon.
+  Widget _buildClassic(BuildContext context) {
+    final c = widget.candidates;
+    final count = _selected.length;
+    final bottom = MediaQuery.paddingOf(context).bottom;
+    return IonSheetScaffold(
+      title: context.l10n.attendanceAddPerson,
+      showClose: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: ListView(
+        controller: widget.scrollController,
+        padding: EdgeInsets.only(bottom: bottom),
+        children: [
+          if (c.isEmpty) ...[
+            IonInsetList(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    context.l10n.attendanceAllAlreadyIncluded,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+            if (widget.offerCreate)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: FilledButton(
+                  key: const Key('add-persons-create-new'),
+                  onPressed: _createNew,
+                  child: IonButtonLabel(context.l10n.attendanceCreateNewPerson),
+                ),
+              ),
+          ] else ...[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (c.matching.isNotEmpty)
+                    _ionAccordion(
+                      label: context.l10n.attendanceMatchingPeople,
+                      count: c.matching.length,
+                      badgeColor: AppColors.primary,
+                      initiallyExpanded: true,
+                      persons: c.matching,
+                    ),
+                  if (c.others.isNotEmpty)
+                    _ionAccordion(
+                      label: context.l10n.attendanceOtherPeople,
+                      count: c.others.length,
+                      badgeColor: AppColors.medium,
+                      initiallyExpanded: false,
+                      persons: c.others,
+                    ),
+                ],
+              ),
+            ),
+            if (widget.offerCreate)
+              IonInsetList(
+                children: [
+                  IonItem(
+                    key: const Key('add-persons-create-new'),
+                    title: Text(context.l10n.attendanceCreateNewPerson),
+                    titleColor: AppColors.primary,
+                    subtitle: Text(context.l10n.attendanceCreateNewPersonHint),
+                    onTap: _createNew,
+                  ),
+                ],
+              ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: FilledButton(
+                onPressed: count == 0
+                    ? null
+                    : () => Navigator.of(context).pop(AddPersonsPick.persons(_selected.toList())),
+                child: IonButtonLabel(count == 0
+                    ? context.l10n.attendanceChoosePeople
+                    : context.l10n.attendanceAddPersonsCount(count)),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin == null) return _buildClassic(context);
     final c = widget.candidates;
     final count = _selected.length;
     return Column(

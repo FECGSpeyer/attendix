@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../planning/presentation/pages/planning_page.dart' show openPlanningEditor;
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/archived_attendance.dart';
@@ -46,7 +48,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonInsetList;
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonInsetList, IonItem;
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../../duty/presentation/widgets/duty_staffing_section.dart';
@@ -550,7 +552,36 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             ),
             actions: [
               // UX_ATT: Ionic offline chip in the header
-              if (!isOnline)
+              if (!isOnline && context.rdSkin == null)
+                // TER-23: Ionic `ion-chip color="warning"` – tinted
+                // background, warning-shade text and icon, 28 high, 12px.
+                Padding(
+                  padding: const EdgeInsets.only(right: 4),
+                  child: Center(
+                    child: Container(
+                      height: 28,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: AppColors.warning.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(AppIcons.cloudOff, size: 16, color: AppColors.warningDark),
+                          const SizedBox(width: 4),
+                          Text(
+                            pendingOffline > 0
+                                ? context.l10n.attendancePending(pendingOffline)
+                                : context.l10n.attendanceOffline,
+                            style: const TextStyle(fontSize: 12, color: AppColors.warningDark),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              else if (!isOnline)
                 Padding(
                   padding: const EdgeInsets.only(right: 4),
                   child: Chip(
@@ -675,7 +706,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   attendanceType, ref.watch(currentTenantProvider)?.type);
               final canAccessFiles = ref.watch(canAccessFilesProvider);
 
-              return CustomScrollView(
+              final scroll = CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
                     // UX_ATT: Ionic iOS inset list: 16 px between the groups
@@ -725,6 +756,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           onExportExcel: _exportAttendanceToExcel,
                           onDateSelect: _changeDate,
                           onPlaceChanged: _updatePlace,
+                          onDurationChanged: (days) =>
+                              _updateAttendanceField({'duration_days': days}),
                           onOpenNavigation: attendance.place?.isNotEmpty == true
                               ? () => openEventNavigation(context, attendance.place!)
                               : null,
@@ -786,11 +819,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           // IOS_DETAIL: Ionic never opens an accordion by itself
                           // (no auto-expand after the planning page); the open
                           // state lives with the accordion like Ionic's.
-                          onCreate: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
-                          onEdit: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
+                          onCreate: () => openPlanningEditor(context, attendanceId: widget.attendanceId),
+                          onEdit: () => openPlanningEditor(context, attendanceId: widget.attendanceId),
                           // P10_ATTENDANCE: Ionic editPlan(initialPlanIndex: planIndex)
-                          onEditPlan: (i) => context.push<bool>(
-                              '/planning?attendanceId=${widget.attendanceId}${i > 0 ? '&plan=$i' : ''}'),
+                          onEditPlan: (i) => openPlanningEditor(context, attendanceId: widget.attendanceId, planIndex: i),
                           onExportPdf: _exportPlanPdf,
                           onSendViaTelegram: _showTelegramFormatOptions,
                           onSharePlanChanged: _toggleSharePlan,
@@ -856,6 +888,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   SliverToBoxAdapter(child: SizedBox(height: bottomSpace)),
                 ],
               );
+              // TERMINE-21: like Ionic, opening a swipe row closes the one
+              // that was open before (classic design).
+              return context.rdSkin == null
+                  ? SlidableAutoCloseBehavior(child: scroll)
+                  : scroll;
             },
           ),
           // UX_ATT: no Flutter-only bottom summary bar (Ionic has none; the
@@ -867,7 +904,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   child: IonFabButton(
                     heroTag: 'att-detail-plan-fab',
                     icon: AppIcons.formatListBulleted,
-                    onPressed: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
+                    onPressed: () => openPlanningEditor(context, attendanceId: widget.attendanceId),
                   ),
                 )
               : null,
@@ -1547,6 +1584,25 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   /// "Neu laden" banner when the persons of the Termin could not be loaded.
   Widget _buildLoadFailedBanner() {
+    if (context.rdSkin == null) {
+      // TER-27: Ionic `ion-item lines="none" class="ion-padding-vertical
+      // ion-text-center"` with h2 / p and an outline reload button at the end.
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: IonItem(
+          title: Text(context.l10n.attendanceLoadFailed, textAlign: TextAlign.center),
+          subtitle: SizedBox(
+            width: double.infinity,
+            child: Text(context.l10n.attendanceTryAgain, textAlign: TextAlign.center),
+          ),
+          trailing: OutlinedButton.icon(
+            onPressed: _reloadFromBanner,
+            icon: Icon(AppIcons.refresh),
+            label: IonButtonLabel(context.l10n.attendanceReload),
+          ),
+        ),
+      );
+    }
     return Card(
       margin: const EdgeInsets.all(AppDimensions.paddingM),
       child: Padding(
@@ -2283,14 +2339,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       title: entry.songName,
       message: entry.displayConductor,
       actions: [
+        // TER-22: Ionic buttons without icons (the Beta keeps them).
         AppActionSheetAction(
           value: 'conductor',
-          icon: AppIcons.personOutline,
+          icon: context.rdSkin != null ? AppIcons.personOutline : null,
           label: context.l10n.attendanceChangeConductor,
         ),
         AppActionSheetAction(
           value: 'song',
-          icon: AppIcons.musicNoteOutlined,
+          icon: context.rdSkin != null ? AppIcons.musicNoteOutlined : null,
           label: context.l10n.attendanceToSong,
         ),
       ],
@@ -2425,6 +2482,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         existing: existing,
         editMode: true,
         requireText: false,
+        closeIcon: true,
       );
       if (answers == null || !mounted) return;
       merged = <String, dynamic>{...?existing, ...answers};

@@ -11,6 +11,8 @@ import '../../../../data/repositories/files_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonInsetList;
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../data/file_move.dart';
 import 'settings_list.dart';
 
@@ -195,20 +197,25 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
       backgroundColor: ios ? Colors.transparent : null,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leadingWidth: 110,
+        // WERKE-75: 110 was too narrow, "Abbrechen" wrapped inside the button.
+        leadingWidth: 132,
         leading: Align(
           alignment: Alignment.centerLeft,
           child: TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: IonButtonLabel(l10n.commonCancel),
+            child: IonButtonLabel(l10n.commonCancel, maxLines: 1, softWrap: false),
           ),
         ),
         title: Text(l10n.filesMoveTitle(count)),
-        centerTitle: true,
+        // WER-16: Ionic title centred in iOS, at the start in md.
+        centerTitle: ios || context.rdSkin != null,
         actions: [
           IconButton(
             tooltip: l10n.filesCreateFolder,
-            icon: Icon(AppIcons.createNewFolderOutlined),
+            // Ionic `folder-open-outline` (Beta: as before).
+            icon: Icon(context.rdSkin != null
+                ? AppIcons.createNewFolderOutlined
+                : AppIcons.folderOpenOutlined),
             onPressed: _createFolder,
           ),
         ],
@@ -227,6 +234,13 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
             padding: const EdgeInsets.all(AppDimensions.paddingM),
             child: ios
                 ? IonInsetGroup(children: tiles)
+                : context.rdSkin == null
+                // WER-16: md `ion-list [inset]` instead of a Material card.
+                ? IonInsetList(
+                    margin: EdgeInsets.zero,
+                    dividerIndent: 56,
+                    children: tiles,
+                  )
                 : Card(
                     margin: EdgeInsets.zero,
                     child: Column(children: [

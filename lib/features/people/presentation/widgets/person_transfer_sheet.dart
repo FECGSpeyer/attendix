@@ -224,70 +224,65 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
     final name = '${widget.person.firstName} ${widget.person.lastName}';
     if (widget.beta) return _buildBeta(context, tenants, name.trim());
 
-    // Ionic: ion-title + close ✕ in the end slot.
+    // Ionic: ion-title + close ✕ in the end slot; PEO-22: `ion-content
+    // color="light"` with an inset list of two label-start selects
+    // (default alert interface) and the block button.
     return IonSheetScaffold(
       title: widget.copy ? l10n.personCopyFrom(name) : l10n.personTransferFrom(name),
       showClose: true,
       onClose: () => Navigator.pop(context, false),
+      backgroundColor: ionLightColor(context),
       body: SingleChildScrollView(
         controller: widget.scrollController,
-        padding: const EdgeInsets.fromLTRB(
-          AppDimensions.paddingM,
-          0,
-          AppDimensions.paddingM,
-          AppDimensions.paddingL,
-        ),
+        padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: AppDimensions.paddingM),
-            IonFormTheme(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppDropdownFormField<int>(
-                    interface: AppSelectInterface.alert,
-                    value: _tenantId,
-                    isExpanded: true,
-                    decoration: InputDecoration(labelText: l10n.personTargetInstance),
-                    items: [
-                      for (final t in tenants)
-                        if (t.id != null)
-                          DropdownMenuItem(value: t.id, child: Text(t.longName)),
-                    ],
-                    onChanged: _busy
-                        ? null
-                        : (id) {
-                            if (id == null || id == _tenantId) return;
-                            setState(() => _tenantId = id);
-                            _loadGroups(id);
-                          },
-                  ),
-                  if (_tenantId != null && _groups.isNotEmpty) ...[
-                    const SizedBox(height: AppDimensions.paddingM),
-                    AppDropdownFormField<int>(
-                      interface: AppSelectInterface.alert,
-                      value: _groupId,
-                      isExpanded: true,
-                      decoration: InputDecoration(labelText: l10n.personTargetGroup),
-                      items: [
-                        for (final g in _groups)
-                          if (g.id != null)
-                            DropdownMenuItem(value: g.id, child: Text(g.name)),
-                      ],
-                      onChanged: _busy ? null : (id) => setState(() => _groupId = id),
-                    ),
+            IonInsetList(
+              children: [
+                IonSelectRow<int>(
+                  lines: false,
+                  label: l10n.personTargetInstance,
+                  value: _tenantId,
+                  options: [
+                    for (final t in tenants)
+                      if (t.id != null)
+                        AppSelectOption<int>(value: t.id!, label: t.longName),
                   ],
-                ],
-              ),
+                  onChanged: _busy
+                      ? null
+                      : (id) {
+                          if (id == _tenantId) return;
+                          setState(() => _tenantId = id);
+                          _loadGroups(id);
+                        },
+                ),
+                if (_tenantId != null && _groups.isNotEmpty)
+                  IonSelectRow<int>(
+                    lines: false,
+                    label: l10n.personTargetGroup,
+                    value: _groupId,
+                    options: [
+                      for (final g in _groups)
+                        if (g.id != null)
+                          AppSelectOption<int>(value: g.id!, label: g.name),
+                    ],
+                    onChanged: _busy ? null : (id) => setState(() => _groupId = id),
+                  ),
+              ],
             ),
             const SizedBox(height: AppDimensions.paddingL),
-            FilledButton(
-              onPressed: _busy || _tenantId == null || _groupId == null
-                  ? null
-                  : () => _transfer(tenants),
-              child: Text(widget.copy ? l10n.peopleFlutterHandoverCopy : l10n.handoverTransfer),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+              child: FilledButton(
+                onPressed: _busy || _tenantId == null || _groupId == null
+                    ? null
+                    : () => _transfer(tenants),
+                child: IonButtonLabel(
+                    widget.copy ? l10n.peopleFlutterHandoverCopy : l10n.handoverTransfer),
+              ),
             ),
           ],
         ),

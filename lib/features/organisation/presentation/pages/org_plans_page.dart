@@ -23,6 +23,10 @@ import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTransluce
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart' show scrollEndPadding, TabBarFab;
 import '../../../../core/services/native/native_file_service.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
+import '../../../../shared/widgets/loading/skeleton_base.dart' show SkeletonText;
+import '../../../planning/presentation/widgets/ion_items.dart' show IonDetailIcon;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
@@ -156,19 +160,35 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
 
   /// Ionic: the history modal is bound to `pastPlans`, so a deleted plan
   /// disappears right away – the page watches the plans instead of a copy.
+  /// ABL-08: an `ion-modal` with title, close ✕ and one inset list (full
+  /// screen on phones, centred card from 768px).
   void _showHistory() {
-    Navigator.of(context).push(MaterialPageRoute(
+    showIonModal<void>(
+      context,
       builder: (_) => Consumer(builder: (context, ref, _) {
         final entries = ref.watch(orgPlansProvider).valueOrNull;
         final past = entries == null ? const <OrgPlanEntry>[] : splitOrgPlanEntries(entries).past;
         return Scaffold(
-          appBar: AppBar(title: Text(context.l10n.plansPastPlans)),
-          body: ListView(children: [for (final e in past) _entryTile(e)]),
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Text(context.l10n.plansPastPlans),
+            actions: const [IonCloseButton()],
+          ),
+          body: ListView(
+            padding: const EdgeInsets.only(bottom: 16),
+            children: [
+              if (past.isNotEmpty)
+                _orgPlansBox(context, [for (final e in past) _entryTile(e)], margin: const EdgeInsets.all(16)),
+            ],
+          ),
         );
       }),
-    ));
+    );
   }
 
+  /// Ionic `ion-item button detail`: h2 title, `.plan-meta` line (0.8rem
+  /// medium), `.tenant-label` (0.75rem, 600, uppercase, 0.04em) and, for
+  /// ad-hoc plans, a medium trash button before the detail chevron (ABL-19).
   Widget _entryTile(OrgPlanEntry entry) {
     final count = entry.fieldCount;
     return ListTile(
@@ -176,20 +196,44 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('${orgPlanDate(entry.date)}${count > 0 ? ' · ${orgPlanPoints(count)}' : ''}'),
+          Text('${orgPlanDate(entry.date)}${count > 0 ? ' · ${orgPlanPoints(count)}' : ''}',
+              style: const TextStyle(fontSize: 13.6, color: AppColors.medium)),
           if (entry.tenantLabel.isNotEmpty)
-            Text(entry.tenantLabel, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+            Text(entry.tenantLabel.toUpperCase(),
+                style: const TextStyle(
+                    fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.48, color: AppColors.medium)),
         ],
       ),
-      trailing: entry.isAdHoc
-          ? IconButton(
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (entry.isAdHoc)
+            IconButton(
               icon: Icon(AppIcons.deleteOutline, color: AppColors.medium, semanticLabel: context.l10n.commonDelete),
               onPressed: () => _deleteAdHoc(entry),
-            )
-          : Icon(AppIcons.chevronRight),
+            ),
+          const IonDetailIcon(),
+        ],
+      ),
       onTap: () => openOrgPlanEntry(context, entry),
     );
   }
+
+  /// Ionic skeleton list while the plans load (three items, 55 % / 35 %).
+  Widget _skeleton(BuildContext context) => _orgPlansBox(context, [
+        for (var i = 0; i < 3; i++)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonText(widthFactor: 0.55, height: 16),
+                SizedBox(height: 6),
+                SkeletonText(widthFactor: 0.35, height: 12),
+              ],
+            ),
+          ),
+      ], margin: const EdgeInsets.all(16));
 
   /// REDESIGN (Termin-Werkzeuge T2): Org-Pläne as a Verwaltungsliste. Tap
   /// opens "Ablauf ansehen", "+" the Ablaufplanung, calendar, public link,
@@ -342,7 +386,9 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
       // IOS_R6: `ion-header translucent` (blur once condensed)
       appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         title: IonCondenseTitle(context.l10n.plansOrgPlans, collapsed: collapsed),
+        // ABL-18: one `ion-buttons slot="end"` (iOS: one glass capsule).
         actions: [
+          ToolbarButtonGroup(children: [
           // SETTINGS2: Ionic toggleOrgTab ("Als Tab anzeigen" / "Tab ausblenden")
           IconButton(
             tooltip: ref.watch(optionalTabsNotifierProvider).orgPlans
@@ -371,9 +417,11 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
           if (org != null)
             IconButton(
               tooltip: context.l10n.plansPublicLink,
-              icon: Icon(key != null ? AppIcons.link : AppIcons.addLink),
+              // ABL-19: Ionic `link` (active) / `link-outline`.
+              icon: Icon(key != null ? AppIcons.linkFilled : AppIcons.addLink),
               onPressed: () => _managePublicLink(key),
             ),
+          ]),
         ],
       )),
       // P10_SELF_PLAN: Ionic `@if (isTabRoute && isIos)` ion-fab "+".
@@ -400,19 +448,17 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
             const IonContentTopInset(),
             IonLargeTitle(context.l10n.plansOrgPlans),
             if (orgAsync.isLoading)
-              const Padding(padding: EdgeInsets.all(24), child: Center(child: AppSpinner()))
+              _skeleton(context)
             else if (org == null)
               _orgPlansBox(context, [
                 ListTile(
                   leading: Icon(AppIcons.infoOutline, color: AppColors.medium),
                   title: Text(context.l10n.plansNoOrg),
                 ),
-              ], margin: const EdgeInsets.all(16), bare: true)
+              ], margin: const EdgeInsets.all(16))
             else
               ...plansAsync.when(
-                loading: () => [
-                  const Padding(padding: EdgeInsets.all(24), child: Center(child: AppSpinner())),
-                ],
+                loading: () => [_skeleton(context)],
                 error: (e, _) => [ListTile(title: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e))))],
                 data: (entries) {
                   final split = splitOrgPlanEntries(entries);
@@ -423,17 +469,15 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                           leading: Icon(AppIcons.eventOutlined, color: AppColors.medium),
                           title: Text(context.l10n.plansNoUpcomingOrgPlans),
                         ),
-                      ], margin: ionIsIos(context) ? const EdgeInsets.all(16) : EdgeInsets.zero, bare: true)
+                      ], margin: const EdgeInsets.all(16))
                     else
                       _orgPlansBox(context, [for (final e in split.upcoming) _entryTile(e)],
-                          margin: EdgeInsets.all(ionIsIos(context) ? 16 : 12)),
-                    _orgPlansBox(context, margin: EdgeInsets.symmetric(horizontal: ionIsIos(context) ? 16 : 12), [
+                          margin: const EdgeInsets.all(16)),
+                    _orgPlansBox(context, margin: const EdgeInsets.symmetric(horizontal: 16), [
                           ListTile(
                             leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
                             title: Text(context.l10n.plansOpenPlanning, style: const TextStyle(color: AppColors.primary)),
-                            trailing: ionIsIos(context)
-                                ? const IonDetailChevron()
-                                : Icon(AppIcons.chevronRight),
+                            trailing: const IonDetailIcon(),
                             onTap: () => context.push(_planningRoute(context)),
                           ),
                           if (split.past.isNotEmpty)
@@ -444,7 +488,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                             ),
                     ]),
                     if (key != null)
-                      _orgPlansBox(context, margin: EdgeInsets.all(ionIsIos(context) ? 16 : 12), [ListTile(
+                      _orgPlansBox(context, margin: const EdgeInsets.all(16), [ListTile(
                           leading: Icon(AppIcons.public, color: AppColors.success),
                           title: Text(context.l10n.plansPublicLinkActive),
                           trailing: TextButton(
@@ -471,17 +515,34 @@ String _planningRoute(BuildContext context) =>
     _isTabRoute(context) ? '/org-plans-tab/planung' : '/settings/org-plans/planung';
 
 /// Ionic `ion-list [inset]`: iOS item group with hairlines (margin 16);
-/// md: Material card (or the bare tiles when [bare]).
+/// ABL-07: md the md-ion-list-inset item group (radius 16, item
+/// background, no shadow, 1px inset lines) instead of a Material card.
 Widget _orgPlansBox(
   BuildContext context,
   List<Widget> children, {
   EdgeInsetsGeometry margin = EdgeInsets.zero,
-  bool bare = false,
 }) {
   if (ionIsIos(context)) {
     return Padding(padding: margin, child: IonInsetGroup(children: children));
   }
-  if (bare) return Column(children: children);
-  return Card(margin: margin, child: Column(children: children));
+  final b = Theme.of(context).brightness;
+  return Padding(
+    padding: margin,
+    child: Card(
+      margin: EdgeInsets.zero,
+      elevation: 0,
+      color: IonMd.itemBackground(b),
+      shape: IonMd.insetGroupShape,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < children.length; i++) ...[
+            if (i > 0) Divider(height: IonMd.lineWidth, thickness: IonMd.lineWidth, indent: IonMd.itemPaddingStart),
+            children[i],
+          ],
+        ],
+      ),
+    ),
+  );
 }
-

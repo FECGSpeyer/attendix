@@ -9,8 +9,18 @@ import 'legacy_routes.dart';
 void promoteLegacyPathToHash() {
   try {
     final base = Uri.parse(web.document.baseURI).path;
+    final current = Uri.parse(web.window.location.href);
+    // OEFF-41: a fragment that is no route (Supabase `#error=…` /
+    // `#access_token=…`) would leave go_router without a start location.
+    final cleaned =
+        nonRouteFragmentUrl(current, basePath: base.isEmpty ? '/' : base);
+    if (cleaned != null) {
+      startupLinkUri = current;
+      web.window.history.replaceState(null, '', cleaned);
+      return;
+    }
     final target = legacyPathToHashUrl(
-      Uri.parse(web.window.location.href),
+      current,
       basePath: base.isEmpty ? '/' : base,
     );
     if (target != null) web.window.history.replaceState(null, '', target);

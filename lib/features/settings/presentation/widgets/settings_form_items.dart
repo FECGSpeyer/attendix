@@ -1,0 +1,313 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/theme/app_icons.dart';
+import '../../../../shared/widgets/adaptive/app_toolbar.dart' show IosCircleIcon, ToolbarButtonGroup;
+
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../shared/widgets/adaptive/app_select.dart' show IonSelectIcon, IonMdSelectIcon;
+import '../../../../shared/widgets/adaptive/ion_md_stacked_item.dart';
+import '../../../../shared/widgets/layout/ionic_md.dart';
+import 'settings_list.dart';
+
+// Classic-design form rows of the settings pages (EIA-15, EIA-22): the iOS
+// look and the Beta design keep [IonStackedField] / [IonStackedValue]
+// exactly as before, the md look gets the Ionic md stacked row
+// ([IonMdStackedField]) instead of the boxed Material field.
+
+bool _keepLegacy(BuildContext context) =>
+    context.rdSkin != null || ionIsIos(context);
+
+/// `ion-item` + `ion-input labelPlacement="stacked"` in both looks.
+/// Same API as [IonStackedField].
+class SettingsStackedField extends StatelessWidget {
+  const SettingsStackedField({
+    super.key,
+    this.label,
+    this.helper,
+    this.hint,
+    required this.builder,
+    this.flush = false,
+  });
+
+  final String? label;
+  final String? helper;
+  final String? hint;
+  final bool flush;
+  final Widget Function(InputDecoration decoration) builder;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_keepLegacy(context)) {
+      return IonStackedField(
+        label: label,
+        helper: helper,
+        hint: hint,
+        flush: flush,
+        builder: builder,
+      );
+    }
+    return IonMdStackedField(
+      label: label,
+      helper: helper,
+      hint: hint,
+      flush: flush,
+      builder: builder,
+    );
+  }
+}
+
+/// Stacked label + read-only value in both looks. Same API as
+/// [IonStackedValue].
+class SettingsStackedValue extends StatelessWidget {
+  const SettingsStackedValue({
+    super.key,
+    required this.label,
+    required this.value,
+    this.helper,
+    this.onTap,
+    this.trailing,
+    this.flush = false,
+  });
+
+  final String label;
+  final String value;
+  final String? helper;
+  final VoidCallback? onTap;
+  final Widget? trailing;
+  final bool flush;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_keepLegacy(context)) {
+      return IonStackedValue(
+        label: label,
+        value: value,
+        helper: helper,
+        onTap: onTap,
+        trailing: trailing,
+        flush: flush,
+      );
+    }
+    return IonMdStackedValue(
+      label: label,
+      value: value,
+      helper: helper,
+      onTap: onTap,
+      trailing: trailing,
+      flush: flush,
+    );
+  }
+}
+
+/// Ionic `ion-input type="number" labelPlacement="start" class="ion-text-end"`
+/// in an `ion-item` (EIA-22): label at the start, the borderless number
+/// right-aligned at the end of the row. Classic design only.
+class SettingsNumberItem extends StatelessWidget {
+  const SettingsNumberItem({
+    super.key,
+    required this.label,
+    required this.controller,
+    this.placeholder,
+    this.onChanged,
+    this.helper,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final String? placeholder;
+  final ValueChanged<String>? onChanged;
+  final String? helper;
+
+  @override
+  Widget build(BuildContext context) {
+    final ios = ionIsIos(context);
+    final b = Theme.of(context).brightness;
+    final text = ios ? IonIos.text(context) : IonMd.text(b);
+    final fontSize = ios ? IonIos.itemFontSize : IonMd.itemFontSize;
+    final style = TextStyle(fontSize: fontSize, letterSpacing: 0, color: text);
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: ios ? IonIos.itemMinHeight : IonMd.itemMinHeight,
+      ),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          ios ? IonIos.itemPaddingStart : IonMd.itemPaddingStart,
+          8,
+          ios ? IonIos.itemPaddingEnd : IonMd.itemPaddingEnd,
+          8,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(label, style: style),
+                  if (helper != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        helper!,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: ios
+                              ? IonStackedField.iosHelper
+                              : IonMd.step550(b),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            SizedBox(
+              width: 72,
+              child: TextField(
+                controller: controller,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.end,
+                style: style,
+                onChanged: onChanged,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  filled: false,
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                  hintText: placeholder,
+                  hintStyle: style.copyWith(
+                    color: ios ? IonIos.note(context) : text.withValues(alpha: 0.6),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Ionic `ion-select [label]` (default label placement "start") in an
+/// `ion-item` (EIA-03 / EIA-23): label at the start, the value (or the grey
+/// placeholder) right-aligned at the end, then the select icon (iOS
+/// `chevron-expand`, md caret). [onTap] opens the alert / popover; use it
+/// for `multiple` selects ([showAppMultiSelect]). Classic design only.
+class SettingsSelectItem extends StatelessWidget {
+  const SettingsSelectItem({
+    super.key,
+    required this.label,
+    required this.value,
+    this.placeholder,
+    this.helper,
+    required this.onTap,
+  });
+
+  final String label;
+
+  /// Shown value; empty → [placeholder].
+  final String value;
+  final String? placeholder;
+
+  /// Ionic `helperText` under the row.
+  final String? helper;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ios = ionIsIos(context);
+    final b = Theme.of(context).brightness;
+    final text = ios ? IonIos.text(context) : IonMd.text(b);
+    final fontSize = ios ? IonIos.itemFontSize : IonMd.itemFontSize;
+    final empty = value.isEmpty;
+    return InkWell(
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: ios ? IonIos.itemMinHeight : IonMd.itemMinHeight,
+        ),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            ios ? IonIos.itemPaddingStart : IonMd.itemPaddingStart,
+            10,
+            ios ? IonIos.itemPaddingEnd : IonMd.itemPaddingEnd,
+            10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  Text(label,
+                      style: TextStyle(fontSize: fontSize, letterSpacing: 0, color: text)),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      empty ? (placeholder ?? '') : value,
+                      textAlign: TextAlign.end,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        letterSpacing: 0,
+                        color: empty
+                            ? text.withValues(alpha: 0.6)
+                            : (ios ? IonIos.note(context) : text),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: ios ? 6 : 4),
+                  ios ? const IonSelectIcon() : const IonMdSelectIcon(),
+                ],
+              ),
+              if (helper != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    helper!,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: ios ? IonStackedField.iosHelper : IonMd.step550(b),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+bool _iosClassic(BuildContext context) =>
+    context.rdSkin == null && ionIsIos(context);
+
+/// EIA-13: the explicit Ionic `arrow-back` button of the settings sub pages
+/// (`ion-buttons slot="start"` > icon-only `ion-button`). iOS look: the
+/// ios27 Liquid Glass circle (like the themed back button); md and the
+/// Beta: the plain toolbar icon as before.
+Widget settingsBackButton(BuildContext context, {required VoidCallback onPressed}) {
+  final label = MaterialLocalizations.of(context).backButtonTooltip;
+  if (!_iosClassic(context)) {
+    return IconButton(
+      icon: Icon(AppIcons.arrowBack, semanticLabel: label),
+      onPressed: onPressed,
+    );
+  }
+  return IconButton(
+    tooltip: label,
+    icon: IosCircleIcon(icon: AppIcons.arrowBack, iconSize: 20),
+    onPressed: onPressed,
+  );
+}
+
+/// EIA-13: the end `ion-buttons` slot – in the iOS look all buttons share
+/// one glass capsule ([ToolbarButtonGroup]); md / Beta unchanged.
+List<Widget> settingsToolbarActions(BuildContext context, List<Widget> actions) {
+  if (actions.isEmpty || !_iosClassic(context)) return actions;
+  return [ToolbarButtonGroup(children: actions)];
+}

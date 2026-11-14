@@ -236,20 +236,28 @@ class _OtpCodeFieldState extends State<OtpCodeField> {
           Stack(
             alignment: Alignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var i = 0; i < kOtpLength; i++) ...[
-                    if (i > 0) const SizedBox(width: 8),
-                    box(i),
+              // The digits are read out by the text field below.
+              ExcludeSemantics(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (var i = 0; i < kOtpLength; i++) ...[
+                      if (i > 0) const SizedBox(width: 8),
+                      box(i),
+                    ],
                   ],
-                ],
+                ),
               ),
               // Invisible input on top: keyboard, paste and SMS/e-mail
               // one-time-code autofill go through a real text field.
               Positioned.fill(
+                // Hidden visually only: with `alwaysIncludeSemantics` the
+                // field keeps its semantics node, which on the web (with the
+                // accessibility tree on) is the DOM input that takes the
+                // typing; without it the code could not be typed in.
                 child: Opacity(
                   opacity: 0,
+                  alwaysIncludeSemantics: true,
                   child: TextField(
                     controller: widget.controller,
                     focusNode: _focusNode,

@@ -126,6 +126,11 @@ class ShiftPreviewSheet extends StatelessWidget {
 
     return Column(
       children: [
+        // EIA-16: classic = the shared sheet toolbar (no title, close ✕ in
+        // the end slot) instead of an AppBar.
+        if (context.rdSkin == null)
+          const IonSheetHeader(title: '', end: [IonCloseButton()])
+        else
         AppBar(
           toolbarHeight: ionModalToolbarHeight(context),
           automaticallyImplyLeading: false,

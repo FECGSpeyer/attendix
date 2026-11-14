@@ -6,6 +6,10 @@ import '../../../../data/models/plan/plan.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart';
+import '../../../../shared/widgets/dialogs/ion_sheet.dart' show IonSheetScaffold;
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonItem;
+import 'ion_items.dart' show IonInsetList, IonStackedInput;
 import 'rd_plan_widgets.dart';
 
 /// Values entered in a plan field dialog.
@@ -332,7 +336,10 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
                 controller: _conductor,
                 caption: widget.conductorLabel ?? l10n.planningPerformer,
                 placeholder: _nz(widget.conductorHint) ?? _nz(widget.conductorLabel) ?? l10n.planningEnterPerformer,
-                maxLines: 3,
+                // F-ABL-03: Ionic alert inputs are single-line; with room
+                // for 3 lines the long placeholder wrapped and doubled the
+                // field height. A performer name never needs more.
+                maxLines: 1,
                 textCapitalization: TextCapitalization.words,
               ),
             if (widget.withInfo)
@@ -480,23 +487,261 @@ Future<T?> showPlanActionSheet<T>(
   String? title,
   String? subtitle,
   required List<PlanSheetAction<T>> actions,
+  bool cancelDestructive = false,
 }) {
   if (context.rdSkin != null) {
     return showRdPlanActionSheet<T>(context, title: title, subtitle: subtitle, actions: actions);
   }
-  // IOS_LOOK: adaptive ion-action-sheet
+  // IOS_LOOK: adaptive ion-action-sheet. ABL-11: the Ionic plan / export /
+  // org-plan action sheets are text-only buttons, so the classic design
+  // leaves the icons out (the Beta sheet above keeps them).
+  // ABL-30: [cancelDestructive] = Ionic `{ role: 'destructive' }` cancel.
   return showAppActionSheet<T>(
     context,
     title: title,
     message: title != null ? subtitle : null,
+    cancelDestructive: cancelDestructive,
     actions: [
       for (final a in actions)
         AppActionSheetAction(
           value: a.value,
-          icon: a.icon,
           label: a.label,
           destructive: a.destructive,
         ),
     ],
   );
+}
+
+/// ABL-02: Ionic `PlanFieldEditComponent` ("Feld bearbeiten" of a
+/// Programmpunkt in the editor) – an `ion-modal` page, not an alert:
+/// header "Abbrechen" | title | strong "Updaten", `ion-content
+/// color="light"` with one inset list (stacked Programmpunkt, Ausführender,
+/// Info, Minuten) and, on ORG plans of linked orgs, the inset list "Beamer"
+/// with the toggle, the file row and the hint below.
+///
+/// Full screen on phones, centred card from 768px ([showIonModal]). The Beta
+/// keeps its sheet ([showPlanFieldDialog]). Returns null when cancelled.
+Future<PlanFieldInput?> showPlanFieldEditModal(
+  BuildContext context, {
+  String? initialName,
+  String? initialConductor,
+  String? initialInfo,
+  int? initialMinutes,
+  PlanFieldBeamerOptions? beamer,
+}) {
+  if (context.rdSkin != null) {
+    final l10n = context.l10n;
+    return showPlanFieldDialog(
+      context,
+      title: l10n.planningEditField,
+      nameLabel: l10n.planningItem,
+      nameHint: l10n.planningEnterItem,
+      infoHint: l10n.planningInfoOptionalEllipsis,
+      confirmText: l10n.planningUpdate,
+      initialName: initialName,
+      initialConductor: initialConductor,
+      initialInfo: initialInfo,
+      initialMinutes: initialMinutes,
+      beamer: beamer,
+    );
+  }
+  return showIonModal<PlanFieldInput>(
+    context,
+    builder: (ctx) => PlanFieldEditPage(
+      initialName: initialName,
+      initialConductor: initialConductor,
+      initialInfo: initialInfo,
+      initialMinutes: initialMinutes,
+      beamer: beamer,
+    ),
+  );
+}
+
+/// Content of [showPlanFieldEditModal] (Ionic `plan-field-edit`).
+class PlanFieldEditPage extends StatefulWidget {
+  const PlanFieldEditPage({
+    super.key,
+    this.initialName,
+    this.initialConductor,
+    this.initialInfo,
+    this.initialMinutes,
+    this.beamer,
+  });
+
+  final String? initialName;
+  final String? initialConductor;
+  final String? initialInfo;
+  final int? initialMinutes;
+  final PlanFieldBeamerOptions? beamer;
+
+  @override
+  State<PlanFieldEditPage> createState() => _PlanFieldEditPageState();
+}
+
+class _PlanFieldEditPageState extends State<PlanFieldEditPage> {
+  late final TextEditingController _name = TextEditingController(text: widget.initialName ?? '');
+  late final TextEditingController _conductor = TextEditingController(text: widget.initialConductor ?? '');
+  late final TextEditingController _info = TextEditingController(text: widget.initialInfo ?? '');
+  late final TextEditingController _minutes =
+      TextEditingController(text: widget.initialMinutes?.toString() ?? '');
+  bool _showNameError = false;
+
+  /// Beamer switch set by hand; null while the automatic rule applies.
+  late bool? _manualBeamer = widget.beamer?.manual;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.beamer != null) _name.addListener(_onNameChanged);
+  }
+
+  void _onNameChanged() => setState(() {});
+
+  @override
+  void dispose() {
+    _name.removeListener(_onNameChanged);
+    _name.dispose();
+    _conductor.dispose();
+    _info.dispose();
+    _minutes.dispose();
+    super.dispose();
+  }
+
+  bool get _beamerOn =>
+      _manualBeamer ?? PlanBeamer.autoNeedsBeamer(name: _name.text, songId: widget.beamer?.songId);
+
+  void _setBeamer(bool on) {
+    if (on != _beamerOn) setState(() => _manualBeamer = on);
+  }
+
+  void _save() {
+    final name = _name.text.trim();
+    if (name.isEmpty) {
+      setState(() => _showNameError = true);
+      return;
+    }
+    final info = _info.text.trim();
+    Navigator.of(context).pop(PlanFieldInput(
+      name: name,
+      conductor: _conductor.text.trim(),
+      info: info.isEmpty ? null : info,
+      minutes: int.tryParse(_minutes.text.trim()),
+      needsBeamer: widget.beamer != null ? _manualBeamer : null,
+    ));
+  }
+
+  List<Widget> _beamerLists(BuildContext context) {
+    final l10n = context.l10n;
+    final reason = PlanBeamer.autoReason(
+      name: _name.text,
+      songId: widget.beamer?.songId,
+      manual: _manualBeamer,
+    );
+    final file = widget.beamer?.file;
+    return [
+      IonInsetList(
+        header: l10n.planningBeamer,
+        dividerIndent: 16,
+        children: [
+          SwitchListTile.adaptive(
+            key: const ValueKey('plan-field-beamer-toggle'),
+            value: _beamerOn,
+            onChanged: _setBeamer,
+            title: Text(l10n.planningBeamerNeeded),
+            subtitle: reason == null
+                ? null
+                : Text(reason.song ? l10n.planningBeamerAutoSong : l10n.planningBeamerAutoWord(reason.word ?? '')),
+          ),
+          if (_beamerOn)
+            IonItem(
+              leading: Icon(AppIcons.tvOutlined, color: file != null ? AppColors.primary : AppColors.warning),
+              title: Text(file?.name ?? l10n.planningBeamerNoFile),
+              subtitle: Text(file != null ? l10n.planningBeamerChangeInApp : l10n.planningBeamerLinkInApp),
+            ),
+        ],
+      ),
+      // Ionic `p.hint` under the list.
+      Padding(
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+        child: Text(
+          l10n.planningBeamerAutoHint,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
+        ),
+      ),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final narrow = !isIonModalCard(MediaQuery.sizeOf(context));
+    Widget page = IonSheetScaffold(
+      title: l10n.planningEditField,
+      start: [
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
+      ],
+      end: [
+        TextButton(
+          key: const ValueKey('plan-field-edit-save'),
+          onPressed: _save,
+          child: Text(l10n.planningUpdate, style: const TextStyle(fontWeight: FontWeight.w600)),
+        ),
+      ],
+      body: ListView(
+        padding: EdgeInsets.only(bottom: 16 + MediaQuery.paddingOf(context).bottom),
+        children: [
+          IonInsetList(
+            children: [
+              IonStackedInput(
+                controller: _name,
+                label: l10n.planningItem,
+                hint: l10n.planningEnterItem,
+                minLines: 1,
+                maxLines: null,
+                onChanged: (_) {
+                  if (_showNameError) setState(() => _showNameError = false);
+                },
+              ),
+              if (_showNameError)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Text(l10n.planningEnterItemPlease,
+                      style: TextStyle(color: theme.colorScheme.error, fontSize: 14)),
+                ),
+              IonStackedInput(
+                controller: _conductor,
+                label: l10n.planningPerformer,
+                hint: l10n.planningEnterPerformer,
+                minLines: 1,
+                maxLines: null,
+              ),
+              IonStackedInput(
+                controller: _info,
+                label: l10n.planningInfo,
+                hint: l10n.planningInfoOptionalEllipsis,
+                minLines: 1,
+                maxLines: null,
+              ),
+              IonStackedInput(
+                controller: _minutes,
+                label: l10n.planningMinutes,
+                hint: l10n.planningMinutes,
+                keyboardType: TextInputType.number,
+                textCapitalization: TextCapitalization.none,
+              ),
+            ],
+          ),
+          if (widget.beamer != null) ..._beamerLists(context),
+        ],
+      ),
+    );
+    page = Material(color: theme.scaffoldBackgroundColor, child: page);
+    if (!narrow) return page;
+    // Full-screen modal: the status bar strip takes the toolbar colour.
+    return ColoredBox(
+      color: theme.appBarTheme.backgroundColor ?? theme.colorScheme.surface,
+      child: SafeArea(bottom: false, child: page),
+    );
+  }
 }

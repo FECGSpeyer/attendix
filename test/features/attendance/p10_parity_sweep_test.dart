@@ -109,7 +109,8 @@ void main() {
 
     test('plan accordion opens the editor on the shown plan', () {
       expect(detail, contains('onEditPlan:'));
-      expect(detail, contains('&plan='));
+      // ABL-01: the editor opens as a modal; the shown plan is passed on.
+      expect(detail, contains('planIndex: i'));
     });
 
     test('stats page always resets the period', () {

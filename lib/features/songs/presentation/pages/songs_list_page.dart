@@ -22,6 +22,7 @@ import '../../../../data/models/song/song_filter.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/loading/skeleton_list_tile.dart';
 import '../../data/song_print_service.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showPageModal;
 import '../utils/song_utils.dart';
 import '../widgets/add_song_sheet.dart';
 import '../widgets/current_songs_sheet.dart';
@@ -100,12 +101,21 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
   }
 
   Future<void> _openSongImport() async {
-    final imported = await Navigator.of(context, rootNavigator: true).push<bool>(
-      MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (_) => const SongImportPage(),
-      ),
-    );
+    // WER-15: Ionic `modalController.create({ component: SongImportPage,
+    // presentingElement, backdropDismiss: false })` – card modal on the
+    // iPhone, centred card from 768px, full screen on md phones.
+    final imported = context.rdSkin != null
+        ? await Navigator.of(context, rootNavigator: true).push<bool>(
+            MaterialPageRoute(
+              fullscreenDialog: true,
+              builder: (_) => const SongImportPage(),
+            ),
+          )
+        : await showPageModal<bool>(
+            context,
+            barrierDismissible: false,
+            builder: (_) => const SongImportPage(),
+          );
     if (imported == true) {
       ref.invalidate(songsProvider);
       ref.invalidate(songsListDataProvider);
@@ -159,7 +169,13 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
   @override
   Widget build(BuildContext context) {
     if (!_isPublic) ref.watch(songsRealtimeProvider);
-    final dataAsync = ref.watch(songsListDataProvider(widget.songSharingId));
+    // A public link whose id is no UUID cannot exist: answer like an unknown
+    // link without asking the database (its error would be shown raw).
+    final invalidPublicId =
+        _isPublic && !SongUtils.isValidSharingId(widget.songSharingId);
+    final AsyncValue<SongsListData?> dataAsync = invalidPublicId
+        ? const AsyncValue.data(null)
+        : ref.watch(songsListDataProvider(widget.songSharingId));
     final role = ref.watch(currentRoleProvider);
     final isAdmin = !_isPublic && (role.isAdmin || role.isResponsible);
     final data = dataAsync.valueOrNull;
@@ -198,7 +214,10 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 )
               : null,
         ),
-        body: _isPublic
+        // OEFF-44: the toast alone was easy to miss on a cold deep link
+        // (unknown id in a valid format) and left a blank page; the hint
+        // stays on the page as well.
+        body: _isPublic && context.rdSkin != null
             ? const SizedBox.shrink()
             : ErrorStateView(
                 icon: AppIcons.linkOff,
@@ -207,6 +226,33 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
       );
     }
 
+    if (data == null && context.rdSkin == null) {
+      // WER-26: Ionic keeps header, large title and the list card while
+      // loading; only the rows are skeleton items inside the inset list.
+      final title = _isPublic ? '' : context.l10n.settingsSongs;
+      return Scaffold(
+        extendBodyBehindAppBar: isIosLook(context),
+        appBar: IonTranslucentAppBar(
+          condensed: false,
+          child: AppBar(title: CondenseTitle(condensed: false, child: Text(title))),
+        ),
+        body: CustomScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          slivers: [
+            const SliverIonContentTopInset(),
+            SliverToBoxAdapter(child: IonLargeTitle(title)),
+            SliverToBoxAdapter(
+              child: IonInsetList(
+                children: List.generate(
+                  10,
+                  (_) => const SkeletonListTile(showAvatar: false),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     if (data == null) {
       return Scaffold(
         appBar: AppBar(title: Text(_isPublic ? '' : context.l10n.settingsSongs)),
@@ -257,8 +303,11 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     // Entries of the ⋮ menu (Ionic songsMenuPopover).
     void onMenuSelected(String value) {
       switch (value) {
+        // ROLLEN-A-18: Ionic offers the categories to every role; only
+        // admins / responsibles may change them (server rule), so the
+        // others get the list read-only.
         case 'categories':
-          showSongCategoriesSheet(context);
+          showSongCategoriesSheet(context, readOnly: !isAdmin);
         case 'share':
           _copyShareLink(sharingId!);
         case 'pdf':
@@ -384,8 +433,12 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 final value = await showAppPopoverMenu<String>(
                   context: buttonContext,
                   lines: true,
+                  // songs.page.scss: `ion-popover { --width: 18rem }`
+                  // (17pt root font in iOS mode, 16px in md).
+                  iosWidth: 306,
+                  mdWidth: 288,
                   items: [
-                    if (isAdmin)
+                    if (!data.isPublic)
                       AppPopoverMenuItem(
                         value: 'categories',
                         icon: AppIcons.localLibraryOutlined,
@@ -507,7 +560,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                                   child: Badge(
                                     isLabelVisible: filter.hasActiveFilters,
                                     smallSize: 8,
-                                    child: IosCircleIcon(icon: AppIcons.tune, size: 44),
+                                    child: IosCircleIcon(icon: AppIcons.optionsFilled, size: 44),
                                   ),
                                 ),
                               ),
@@ -523,7 +576,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                               icon: Badge(
                                 isLabelVisible: filter.hasActiveFilters,
                                 smallSize: 8,
-                                child: Icon(AppIcons.tune),
+                                child: Icon(AppIcons.optionsFilled),
                               ),
                               onPressed: toggleMenu,
                             ),
@@ -796,7 +849,7 @@ class _SongListItem extends StatelessWidget {
       ));
     }
     if ((song.link?.isNotEmpty ?? false) && view.showLink) {
-      badges.add(SongBadge(color: AppColors.primary, icon: AppIcons.link));
+      badges.add(SongBadge(color: AppColors.primary, icon: AppIcons.linkFilled));
     }
     if (view.showDifficulty) {
       badges.add(SongBadge(

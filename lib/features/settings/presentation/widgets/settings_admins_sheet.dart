@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -88,7 +89,9 @@ Future<void> removeAdminWithConfirmation(
       actions: [
         TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(ctx.l10n.commonCancel)),
         TextButton(
-          style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+          // EIA-29: Ionic "Ja" has no role (plain alert button); the Beta
+          // keeps its red label.
+          style: ctx.rdSkin != null ? TextButton.styleFrom(foregroundColor: AppColors.danger) : null,
           onPressed: () => Navigator.pop(ctx, true),
           child: Text(ctx.l10n.commonYes),
         ),

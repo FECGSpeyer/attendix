@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/song_providers.dart';
@@ -8,6 +7,8 @@ import '../../../../data/models/plan/plan.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart' show IonCloseButton;
+import '../../../../shared/widgets/dialogs/ion_modal.dart';
 import 'ion_items.dart';
 import 'rd_plan_widgets.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -138,10 +139,12 @@ Future<PlanWorksPick?> showPlanWorksPicker(
       offerAllCurrent: offerAllCurrent,
     );
   }
-  final song = await Navigator.of(context, rootNavigator: true).push<Song>(MaterialPageRoute(
-    fullscreenDialog: true,
+  // ABL-15: Ionic `ion-modal` (full screen on phones, centred card from
+  // 768px) instead of a full-screen page.
+  final song = await showIonModal<Song>(
+    context,
     builder: (_) => _SongPicker(songs: plannable),
-  ));
+  );
   return song == null ? null : (song: song, allCurrent: false);
 }
 
@@ -168,13 +171,7 @@ class _SongPickerState extends State<_SongPicker> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(context.l10n.planningChooseSong),
-        actions: [
-          IconButton(
-            tooltip: context.l10n.commonClose,
-            icon: Icon(AppIcons.close),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
+        actions: const [IonCloseButton()],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(52),
           child: IonSearchbar(

@@ -10,6 +10,7 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/plan_beamer.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
@@ -90,7 +91,7 @@ class OrgSettingsPage extends ConsumerWidget {
               children: [
                 const IonContentTopInset(),
                 IonLargeTitle(context.l10n.orgTitle),
-                if (ionIsIos(context)) const SizedBox(height: 16),
+                if (ionIsIos(context) || context.rdSkin == null) const SizedBox(height: 16),
                 _Section(children: [
                   ListTile(
                     title: Text(context.l10n.orgNoneLinked),
@@ -114,7 +115,7 @@ class OrgSettingsPage extends ConsumerWidget {
             children: [
               const IonContentTopInset(),
               IonLargeTitle(context.l10n.orgTitle),
-              if (ionIsIos(context)) const SizedBox(height: 16),
+              if (ionIsIos(context) || context.rdSkin == null) const SizedBox(height: 16),
               _Section(title: context.l10n.orgTitle, children: [
                 ListTile(
                   leading: Icon(AppIcons.businessOutlined),
@@ -244,15 +245,23 @@ class OrgSettingsPage extends ConsumerWidget {
   }
 }
 
-/// Ionic detail chevron (iOS) / Material chevron.
+/// Ionic detail chevron (iOS). ABL-25: the items are `button` without
+/// `detail`, and Ionic md shows no detail arrow for them.
 class _Chevron extends StatelessWidget {
   const _Chevron();
 
   @override
   Widget build(BuildContext context) =>
-      ionIsIos(context) ? const IonDetailChevron() : Icon(AppIcons.chevronRight);
+      ionIsIos(context)
+          ? const IonDetailChevron()
+          // Beta skin on md keeps its previous chevron.
+          : context.rdSkin != null
+              ? Icon(AppIcons.chevronRight)
+              : const SizedBox.shrink();
 }
 
+/// ABL-07: `ion-list [inset]` + `ion-list-header` in both looks – the shared
+/// [SettingsListSection] (md: md-ion-list-inset header and item group).
 class _Section extends StatelessWidget {
   const _Section({this.title, required this.children});
   final String? title;
@@ -260,12 +269,13 @@ class _Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (ionIsIos(context)) {
+    if (ionIsIos(context) || context.rdSkin == null) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: SettingsListSection(title: title, children: children),
       );
     }
+    // Beta skin on md: the previous section, unchanged.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -314,16 +324,21 @@ Future<void> createGemeindeAppKey(BuildContext context, WidgetRef ref, Organisat
   await showAppDialog<void>(
     context: context,
     builder: (ctx) => AppAlertDialog(
-      title: Text(ctx.l10n.orgGaKeyHeader),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SelectableText(created.key, style: const TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-          const SizedBox(height: 8),
-          Text(ctx.l10n.orgGaKeyMessage),
-        ],
-      ),
+      // ABL-26: Ionic header + the key as `subHeader`, then the message.
+      title: ctx.rdSkin != null
+          ? Text(ctx.l10n.orgGaKeyHeader)
+          : AppAlertTitle(ctx.l10n.orgGaKeyHeader, subHeader: created.key),
+      content: ctx.rdSkin != null
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SelectableText(created.key, style: const TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
+                Text(ctx.l10n.orgGaKeyMessage),
+              ],
+            )
+          : Text(ctx.l10n.orgGaKeyMessage),
       actions: [
         TextButton(
           onPressed: () async {
@@ -336,7 +351,10 @@ Future<void> createGemeindeAppKey(BuildContext context, WidgetRef ref, Organisat
           },
           child: Text(ctx.l10n.orgGaCopy),
         ),
-        FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonClose)),
+        // ABL-26: both plain alert buttons in the classic design.
+        ctx.rdSkin != null
+            ? FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonClose))
+            : TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonClose)),
       ],
     ),
   );

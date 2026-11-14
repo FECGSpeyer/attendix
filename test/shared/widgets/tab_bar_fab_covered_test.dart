@@ -1,0 +1,143 @@
+import 'package:attendix/core/theme/app_theme.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import 'package:attendix/shared/widgets/layout/shell_popup_observer.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+
+void main() {
+  testWidgets('ROLLEN-A-35: TabBarFab of a covered page does not break hit tests after an address change', (tester) async {
+    var taps = 0;
+    final router = GoRouter(initialLocation: '/signout', routes: [
+      ShellRoute(
+        builder: (context, state, child) => Scaffold(
+          body: Stack(children: [
+            Positioned.fill(child: IosTabBarScope(bottom: 20, right: 16, child: child)),
+          ]),
+        ),
+        routes: [
+          GoRoute(
+            path: '/signout',
+            pageBuilder: (c, s) => NoTransitionPage(key: s.pageKey, child: const Scaffold(body: Text('signout'))),
+          ),
+          GoRoute(
+            path: '/settings',
+            pageBuilder: (c, s) => NoTransitionPage(
+              key: s.pageKey,
+              child: Scaffold(
+                body: const Text('settings'),
+                floatingActionButton: TabBarFab(child: FloatingActionButton(onPressed: () {}, child: const Icon(Icons.apps))),
+              ),
+            ),
+            routes: [
+              GoRoute(
+                path: 'notifications',
+                builder: (c, s) => Scaffold(
+                  appBar: AppBar(title: const Text('notif')),
+                  body: Center(child: ElevatedButton(onPressed: () => taps++, child: const Text('tap me'))),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ]);
+    await tester.pumpWidget(MaterialApp.router(
+      theme: AppTheme.forPlatform(Brightness.light, TargetPlatform.iOS, web: true),
+      routerConfig: router,
+    ));
+    await tester.pumpAndSettle();
+    router.go('/settings/notifications');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('tap me'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(taps, 1);
+  });
+
+  testWidgets('F-RAHMEN-08: ShellPopupObserver reports an open sheet', (tester) async {
+    final observer = ShellPopupObserver();
+    final key = GlobalKey<NavigatorState>();
+    await tester.pumpWidget(MaterialApp(
+      navigatorKey: key,
+      navigatorObservers: [observer],
+      home: const Scaffold(body: Text('page')),
+    ));
+    expect(observer.popupOpen.value, isFalse);
+    showModalBottomSheet<void>(context: key.currentContext!, builder: (_) => const Text('sheet'));
+    await tester.pumpAndSettle();
+    expect(observer.popupOpen.value, isTrue);
+    key.currentState!.pop();
+    await tester.pumpAndSettle();
+    expect(observer.popupOpen.value, isFalse);
+  });
+  testWidgets('ShellPopupObserver forgets a sheet whose navigator was disposed', (tester) async {
+    final observer = ShellPopupObserver();
+    final key = GlobalKey<NavigatorState>();
+    Widget shell(Key k) => MaterialApp(
+          key: k,
+          navigatorKey: key,
+          navigatorObservers: [observer],
+          home: const Scaffold(body: Text('page')),
+        );
+    await tester.pumpWidget(shell(const ValueKey(1)));
+    showModalBottomSheet<void>(context: key.currentContext!, builder: (_) => const Text('sheet'));
+    await tester.pumpAndSettle();
+    expect(observer.popupOpen.value, isTrue);
+    // The shell is left with the sheet open (e.g. sign-out → /login) and
+    // entered again: a new navigator with the same observer.
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(shell(const ValueKey(2)));
+    await tester.pumpAndSettle();
+    expect(observer.popupOpen.value, isFalse);
+  });
+  testWidgets('WERKE-82: a FAB that appears later on a covered page (role loaded) does not break hit tests', (tester) async {
+    var taps = 0;
+    final showFab = ValueNotifier(false);
+    final router = GoRouter(initialLocation: '/settings/notifications', routes: [
+      ShellRoute(
+        builder: (context, state, child) => Scaffold(
+          body: Stack(children: [
+            Positioned.fill(child: IosTabBarScope(bottom: 20, right: 16, child: child)),
+          ]),
+        ),
+        routes: [
+          GoRoute(
+            path: '/signout',
+            pageBuilder: (c, s) => NoTransitionPage(key: s.pageKey, child: const Scaffold(body: Text('signout'))),
+          ),
+          GoRoute(
+            path: '/settings',
+            pageBuilder: (c, s) => NoTransitionPage(
+              key: s.pageKey,
+              child: Scaffold(
+                body: const Text('settings'),
+                floatingActionButton: ValueListenableBuilder<bool>(valueListenable: showFab, builder: (c, v, _) => v ? TabBarFab(child: FloatingActionButton(onPressed: () {}, child: const Icon(Icons.apps))) : const SizedBox.shrink()),
+              ),
+            ),
+            routes: [
+              GoRoute(
+                path: 'notifications',
+                builder: (c, s) => Scaffold(
+                  appBar: AppBar(title: const Text('notif')),
+                  body: Center(child: ElevatedButton(onPressed: () => taps++, child: const Text('tap me'))),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ]);
+    await tester.pumpWidget(MaterialApp.router(
+      theme: AppTheme.forPlatform(Brightness.light, TargetPlatform.iOS, web: true),
+      routerConfig: router,
+    ));
+    await tester.pumpAndSettle();
+    showFab.value = true;
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('tap me'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(taps, 1);
+  });
+}

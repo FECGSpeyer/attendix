@@ -39,6 +39,9 @@ import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/services/native/native_file_service.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
+import '../../../../shared/widgets/layout/ionic_ios.dart' as ios27 show IonItem;
+import '../../../../shared/widgets/layout/ionic_ios.dart' show ionItemBackground;
 
 const _saveDebounce = Duration(milliseconds: 800);
 const _avatarColors = [
@@ -896,7 +899,29 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     if (!mounted) return;
     setState(() {});
     var sendPdf = true;
-    final confirmed = await showModalBottomSheet<bool>(
+    final bool? confirmed;
+    if (context.rdSkin == null) {
+      // DAS-01/DAS-24: Ionic sheet modal `[initialBreakpoint]="1"
+      // [breakpoints]="[0, 1]"`, "Abbrechen" in `slot="start"`,
+      // `ion-content color="light"` with three inset lists.
+      confirmed = await showIonSheet<bool>(
+        context,
+        breakpoints: const [0, 1],
+        initialBreakpoint: 1,
+        builder: (ctx, controller) => StatefulBuilder(
+          builder: (ctx, setLocal) => IonSheetScaffold(
+            title: ctx.l10n.protocolPublish,
+            start: [
+              TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: IonButtonLabel(ctx.l10n.commonCancel)),
+            ],
+            backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
+            body: _publishSheetBody(ctx, controller, summary, closures, sendPdf, (v) => setLocal(() => sendPdf = v),
+                () => setLocal(() {})),
+          ),
+        ),
+      );
+    } else {
+    confirmed = await showModalBottomSheet<bool>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
@@ -1009,8 +1034,138 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         ),
       ),
     );
+    }
     if (confirmed == true) await _publish(closures, sendPdf);
   }
+
+  /// Classic "Freigeben" sheet content (Ionic `protocol.page.html` publish
+  /// modal): Zusammenfassung / Themen abschließen / Sichtbarkeit as inset
+  /// lists with list headers, grey hint, block buttons.
+  Widget _publishSheetBody(
+    BuildContext ctx,
+    ScrollController controller,
+    PublishSummary summary,
+    List<TopicClosure> closures,
+    bool sendPdf,
+    ValueChanged<bool> onSendPdf,
+    VoidCallback onClosureChanged,
+  ) {
+    final l10n = ctx.l10n;
+    return ListView(
+      controller: controller,
+      padding: const EdgeInsets.only(bottom: 16),
+      children: [
+        IonInsetList(
+          header: l10n.protocolSummary,
+          children: [
+            if (summary.decided.isNotEmpty)
+              _ionSummaryItem(AppIcons.checkCircle, AppColors.success,
+                  l10n.protocolDecidedCount(summary.decided.length), summary.decided.join(', ')),
+            if (summary.discussed.isNotEmpty)
+              _ionSummaryItem(AppIcons.forumOutlined, AppColors.primary,
+                  l10n.protocolDiscussedCount(summary.discussed.length), summary.discussed.join(', ')),
+            if (summary.postponed.isNotEmpty)
+              _ionSummaryItem(
+                  AppIcons.accessTime,
+                  AppColors.warning,
+                  l10n.protocolPostponedCount(summary.postponed.length),
+                  '${summary.postponed.join(', ')}${_type?.suggestPostponed == true ? l10n.protocolSuggestNext : ''}'),
+            _ionSummaryItem(AppIcons.checkBoxOutlined, AppColors.medium, l10n.protocolTaskCount(summary.taskCount),
+                summary.taskOwners.isNotEmpty ? l10n.protocolForNames(joinNames(summary.taskOwners)) : null),
+            if (summary.withoutOutcome.isNotEmpty)
+              _ionSummaryItem(AppIcons.helpOutline, AppColors.medium,
+                  l10n.protocolWithoutOutcome(summary.withoutOutcome.length), summary.withoutOutcome.join(', ')),
+            if (summary.withoutNotes.isNotEmpty)
+              _ionSummaryItem(AppIcons.errorOutline, AppColors.warning,
+                  l10n.protocolWithoutNotes(summary.withoutNotes.length), summary.withoutNotes.join(', ')),
+          ],
+        ),
+        if (closures.isNotEmpty)
+          IonInsetList(
+            header: l10n.protocolCloseTopics,
+            children: [
+              // Ionic `ion-checkbox justify="space-between"`: label first,
+              // checkbox at the end.
+              for (final c in closures)
+                ios27.IonItem(
+                  title: Text(c.title),
+                  subtitle: Text(outcomeLabels[c.outcome] ?? ''),
+                  trailing: Checkbox.adaptive(
+                    value: c.close,
+                    onChanged: (v) {
+                      c.close = v ?? false;
+                      onClosureChanged();
+                    },
+                  ),
+                  onTap: () {
+                    c.close = !c.close;
+                    onClosureChanged();
+                  },
+                ),
+            ],
+          ),
+        IonInsetList(
+          header: l10n.protocolVisibility,
+          children: [
+            _ionSummaryItem(
+              AppIcons.visibilityOutlined,
+              AppColors.medium,
+              l10n.protocolMayRead,
+              (_type?.relevantGroups?.isNotEmpty ?? false)
+                  ? l10n.protocolReadGroups(_type?.name ?? '')
+                  : l10n.protocolReadAll(_type?.name ?? ''),
+            ),
+            _ionSummaryItem(
+              AppIcons.notificationsOutlined,
+              AppColors.medium,
+              l10n.protocolNotified,
+              '${l10n.protocolRecipients(summary.recipientCount)}${summary.taskOwners.isNotEmpty ? l10n.protocolTaskOwners(summary.taskOwners.length) : ''}',
+            ),
+            ios27.IonItem(
+              title: Text(l10n.protocolSendPdf),
+              subtitle: Text(l10n.protocolViaTelegram),
+              trailing: Switch.adaptive(value: sendPdf, onChanged: onSendPdf),
+              onTap: () => onSendPdf(!sendPdf),
+            ),
+          ],
+        ),
+        // Ionic `.hint-text ion-padding-horizontal`: 13px grey.
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+          child: Text(l10n.protocolEditAfterPublish, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+        ),
+        // Ionic `.ion-padding`: two block buttons, the first in the accent
+        // colour with `paper-plane-outline`.
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              FilledButton.icon(
+                style: FilledButton.styleFrom(backgroundColor: _protocolAccent, foregroundColor: Colors.white),
+                onPressed: () => Navigator.of(ctx).pop(true),
+                icon: Icon(AppIcons.paperPlaneOutline),
+                label: IonButtonLabel(
+                    _isPublished ? l10n.protocolFlutterRepublishNotify : l10n.protocolFlutterPublishNotify),
+              ),
+              const SizedBox(height: 4),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: IonButtonLabel(_isPublished ? l10n.commonCancel : l10n.protocolFlutterKeepDraft),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Ionic summary `ion-item`: icon in `slot="start"`, h3 + p.
+  Widget _ionSummaryItem(IconData icon, Color color, String title, String? subtitle) => ios27.IonItem(
+        leading: Icon(icon, color: color),
+        title: Text(title),
+        subtitle: subtitle != null && subtitle.isNotEmpty ? Text(subtitle) : null,
+      );
 
   Widget _summaryTile(IconData icon, Color color, String title, String? subtitle) => ListTile(
         leading: Icon(icon, color: color),
@@ -1118,9 +1273,12 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 ),
             ],
           ),
+          // DAS-02: Ionic `ion-buttons slot="end"` (iOS glass capsule).
           actions: [
             if (_attendance != null && !_notAvailable && !_loadFailed)
-              IconButton(tooltip: context.l10n.protocolSharePdf, icon: Icon(AppIcons.iosShare), onPressed: _sharePdf),
+              ToolbarButtonGroup(children: [
+                IconButton(tooltip: context.l10n.protocolSharePdf, icon: Icon(AppIcons.iosShare), onPressed: _sharePdf),
+              ]),
           ],
         ),
         // Ionic `.protocol-footer`: centered save state above two equal buttons.
@@ -1148,20 +1306,34 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                         Row(
                           children: [
                             Expanded(
+                              // Ionic: the `.notes-dot` follows the label.
                               child: OutlinedButton.icon(
                                 onPressed: _openGeneralNotes,
-                                icon: Badge(
-                                  isLabelVisible: _hasNotes(protocolGeneralSectionId),
-                                  smallSize: 7,
-                                  backgroundColor: AppColors.primary,
-                                  child: Icon(AppIcons.descriptionOutlined),
+                                icon: Icon(AppIcons.descriptionOutlined),
+                                label: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(child: IonButtonLabel(context.l10n.protocolNotes)),
+                                    if (_hasNotes(protocolGeneralSectionId))
+                                      Semantics(
+                                        label: context.l10n.protocolHasNotes,
+                                        child: Container(
+                                          width: 7,
+                                          height: 7,
+                                          margin: const EdgeInsets.only(left: 6),
+                                          decoration: const BoxDecoration(
+                                              color: AppColors.primary, shape: BoxShape.circle),
+                                        ),
+                                      ),
+                                  ],
                                 ),
-                                label: IonButtonLabel(context.l10n.protocolNotes),
                               ),
                             ),
                             const SizedBox(width: AppDimensions.paddingS),
                             Expanded(
                               child: FilledButton(
+                                // Ionic `.publish-button`: accent #3b7d84.
+                                style: FilledButton.styleFrom(backgroundColor: _protocolAccent),
                                 onPressed: _openPublish,
                                 child: IonButtonLabel(
                                     _isPublished ? context.l10n.protocolRepublish : context.l10n.protocolPublishShort),
@@ -1181,7 +1353,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 ? _centerState(AppIcons.lockOutline, context.l10n.protocolNotPublished, context.l10n.protocolNotPublishedHint)
                 : _loadFailed || _attendance == null
                     ? IonEmptyState(
-                        icon: AppIcons.cloudOff,
+                        icon: context.rdSkin == null ? AppIcons.cloudOffOutlined : AppIcons.cloudOff,
                         padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
                         title: context.l10n.protocolLoadFailed,
                         text: '',
@@ -1347,6 +1519,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final att = _attendees;
     final preview = att.present.take(4).toList();
     final more = att.present.length - preview.length;
+    if (context.rdSkin == null) return _classicAttendeeRow(preview, more);
     return Card(
       child: ListTile(
         onTap: _openAttendees,
@@ -1379,6 +1552,65 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     );
   }
 
+  /// DAS-23: Ionic `.attendee-row` in a `.card`: overlapping 28px initials
+  /// with a 2px card-coloured border, 16px title, 13px grey line, chevron.
+  Widget _classicAttendeeRow(List<ProtocolAttendee> preview, int more) {
+    final att = _attendees;
+    final bg = ionItemBackground(context);
+    Widget ini(String text, Color color) => Container(
+          width: 28,
+          height: 28,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle, border: Border.all(color: bg, width: 2)),
+          child: Text(text, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white)),
+        );
+    final count = preview.length + (more > 0 ? 1 : 0);
+    return _ProtocolCard(
+      child: InkWell(
+        onTap: _openAttendees,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              if (count > 0) ...[
+                SizedBox(
+                  width: 28 + 20.0 * (count - 1),
+                  height: 28,
+                  child: Stack(children: [
+                    for (var i = 0; i < preview.length; i++)
+                      Positioned(
+                        left: i * 20.0,
+                        child: ini(_initials(preview[i]),
+                            _avatarColors[(preview[i].personId ?? i) % _avatarColors.length]),
+                      ),
+                    if (more > 0)
+                      Positioned(left: preview.length * 20.0, child: ini('+$more', const Color(0xFF8E8E93))),
+                  ]),
+                ),
+                const SizedBox(width: 12),
+              ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(context.l10n.protocolPresentCount(att.present.length),
+                        style: const TextStyle(fontSize: 16, height: 1.25)),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${att.excused.isNotEmpty ? context.l10n.protocolExcusedCount(att.excused.length) : ''}${context.l10n.protocolFromAttendance}',
+                      style: const TextStyle(fontSize: 13, color: AppColors.medium),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(AppIcons.chevronRight, size: 16, color: const Color(0xFFC4C4C7)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   String _initials(ProtocolAttendee a) {
     final f = a.firstName.trim();
     final l = a.lastName.trim();
@@ -1388,6 +1620,72 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   Future<void> _openAttendees() async {
     final att = _attendees;
+    if (context.rdSkin == null) {
+      // DAS-01/DAS-25: Ionic `[initialBreakpoint]="0.6" [breakpoints]="[0, 0.6, 1]"`,
+      // "Fertig" in `slot="end"`, `ion-content color="light"`, one inset list
+      // with list header per group, 32px initials (excused grey).
+      Widget ini(ProtocolAttendee a, Color color) => Container(
+            width: 32,
+            height: 32,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            child: Text(_initials(a),
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white)),
+          );
+      await showIonSheet<void>(
+        context,
+        breakpoints: const [0, 0.6, 1],
+        initialBreakpoint: 0.6,
+        builder: (ctx, controller) => IonSheetScaffold(
+          title: ctx.l10n.protocolParticipants,
+          end: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(ctx.l10n.personDone))],
+          backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
+          body: ListView(
+            controller: controller,
+            padding: const EdgeInsets.only(bottom: 16),
+            children: [
+              IonInsetList(
+                header: ctx.l10n.protocolPresentList(att.present.length),
+                children: [
+                  for (final a in att.present)
+                    ios27.IonItem(
+                      leading: ini(a, _avatarColors[(a.personId ?? 0) % _avatarColors.length]),
+                      title: Text(a.name),
+                    ),
+                  if (att.present.isEmpty)
+                    ios27.IonItem(title: Text(ctx.l10n.protocolNobodyPresent), titleColor: AppColors.medium),
+                ],
+              ),
+              if (att.excused.isNotEmpty)
+                IonInsetList(
+                  header: ctx.l10n.protocolExcusedList(att.excused.length),
+                  children: [
+                    for (final a in att.excused)
+                      ios27.IonItem(
+                        leading: ini(a, const Color(0xFF8E8E93)),
+                        title: Text(a.name),
+                        subtitle: a.notes?.isNotEmpty == true ? Text(a.notes!) : null,
+                      ),
+                  ],
+                ),
+              if (att.others.isNotEmpty)
+                IonInsetList(
+                  header: ctx.l10n.protocolOthersList(att.others.length),
+                  children: [
+                    for (final a in att.others) ios27.IonItem(title: Text(a.name), titleColor: AppColors.medium),
+                  ],
+                ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                child: Text(ctx.l10n.protocolListFromAttendance,
+                    style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+              ),
+            ],
+          ),
+        ),
+      );
+      return;
+    }
     await showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -1450,6 +1748,51 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   Future<void> _openGeneralNotes() async {
     final controller = _controllerFor(protocolGeneralSectionId);
+    if (context.rdSkin == null) {
+      // DAS-01: Ionic `[initialBreakpoint]="0.75" [breakpoints]="[0, 0.75, 1]"`,
+      // "Fertig" in `slot="end"`, `ion-content color="light" class="ion-padding"`.
+      await showIonSheet<void>(
+        context,
+        breakpoints: const [0, 0.75, 1],
+        initialBreakpoint: 0.75,
+        builder: (ctx, scroll) => IonSheetScaffold(
+          title: ctx.l10n.protocolGeneralNotes,
+          end: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(ctx.l10n.personDone))],
+          backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
+          body: ListView(
+            controller: scroll,
+            padding: const EdgeInsets.all(16),
+            children: [
+              Text(ctx.l10n.protocolWholeMeeting, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+              const SizedBox(height: 10),
+              _editor(controller),
+              StatefulBuilder(
+                builder: (sheetCtx, setSheet) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _taskList(_tasksFor(protocolGeneralSectionId, _taskSectionMap)),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: () async {
+                          await _createTask(protocolGeneralSectionId);
+                          if (sheetCtx.mounted) setSheet(() {});
+                        },
+                        icon: Icon(AppIcons.addCircleOutline),
+                        label: IonButtonLabel(ctx.l10n.tasksTask),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+      await _flush(protocolGeneralSectionId);
+      if (mounted) setState(() {});
+      return;
+    }
     await showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -1537,6 +1880,55 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   Widget _taskList(List<TeamTask> list) {
     if (list.isEmpty) return const SizedBox.shrink();
+    if (context.rdSkin == null) {
+      // Ionic `.task-row`: 20px icon, 15px title, 13px grey line, hairline
+      // separators between the rows.
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < list.length; i++)
+            InkWell(
+              onTap: () => context.push('/settings/tasks/${list[i].id}'),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: i == 0
+                    ? null
+                    : BoxDecoration(border: Border(top: BorderSide(color: Theme.of(context).dividerColor))),
+                child: Row(
+                  children: [
+                    Icon(
+                      list[i].status == 'completed' ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
+                      size: 20,
+                      color: list[i].status == 'completed' ? AppColors.success : AppColors.medium,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            list[i].title,
+                            style: list[i].status == 'completed'
+                                ? const TextStyle(
+                                    fontSize: 15, decoration: TextDecoration.lineThrough, color: AppColors.medium)
+                                : const TextStyle(fontSize: 15),
+                          ),
+                          if (_taskLine(list[i]).isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(_taskLine(list[i]),
+                                  style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      );
+    }
     return Column(
       children: [
         for (final t in list)
@@ -1559,6 +1951,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   Widget _outcomeSelector(String sectionId) {
     final current = _outcomes[sectionId];
+    if (context.rdSkin == null) {
+      return _OutcomeSegment(value: current, onChanged: (o) => _setOutcome(sectionId, o));
+    }
     return Wrap(
       spacing: 8,
       children: [
@@ -1590,7 +1985,15 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
         _attendeeRow(),
-        if (_live != null && liveSec != null)
+        if (_live != null && liveSec != null && context.rdSkin == null)
+          _LiveBar(
+            label: context.l10n.protocolRunning(
+                liveSec.topNumber != null ? context.l10n.protocolTop(liveSec.topNumber!) : liveSec.name,
+                _live!.remainingMinutes),
+            nextLabel: hasNext ? context.l10n.protocolNextPoint : null,
+            onNext: hasNext ? () => setState(() => _activeId = _sections[activeIndex + 1].id) : null,
+          )
+        else if (_live != null && liveSec != null)
           Card(
             color: AppColors.danger.withValues(alpha: 0.08),
             child: ListTile(
@@ -1615,7 +2018,12 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               Expanded(child: Text(_statusLine)),
             ]),
           ),
-        if (_sections.isEmpty)
+        if (_sections.isEmpty && context.rdSkin == null)
+          _ProtocolCard(
+            padding: const EdgeInsets.all(16),
+            child: Text(context.l10n.protocolPlanEmpty, style: const TextStyle(color: AppColors.medium)),
+          )
+        else if (_sections.isEmpty)
           Card(
             child: Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -1623,12 +2031,23 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             ),
           ),
         for (final s in _sections) _sectionCard(s, map),
+        // Ionic `.add-point`: clear block button in the accent colour.
         TextButton.icon(
+          style: context.rdSkin == null ? TextButton.styleFrom(foregroundColor: _protocolAccent) : null,
           onPressed: _addSpontaneousTopic,
           icon: Icon(AppIcons.add),
           label: IonButtonLabel(context.l10n.protocolPoint),
         ),
-        if (unassigned.isNotEmpty) ...[
+        if (unassigned.isNotEmpty && context.rdSkin == null) ...[
+          // Ionic `.group-label`: 13px / 600 uppercase grey.
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 18, 0, 6),
+            child: Text(context.l10n.protocolMoreTasks.toUpperCase(),
+                style: const TextStyle(
+                    fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.26, color: AppColors.medium)),
+          ),
+          _ProtocolCard(padding: const EdgeInsets.symmetric(horizontal: 16), child: _taskList(unassigned)),
+        ] else if (unassigned.isNotEmpty) ...[
           Text(context.l10n.protocolMoreTasks, style: Theme.of(context).textTheme.titleSmall),
           Card(child: _taskList(unassigned)),
         ],
@@ -1643,12 +2062,16 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final tasks = _tasksFor(s.id, map);
     final outcome = _outcomes[s.id];
     final theme = Theme.of(context);
+    if (context.rdSkin == null) return _classicSectionCard(s, map, active, isLive, tasks, outcome);
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppDimensions.borderRadiusL),
         side: BorderSide(
-          color: isLive ? AppColors.danger : (active ? AppColors.primary : Colors.transparent),
-          width: 1.5,
+          // Ionic: live TOP = green ring, active = accent ring.
+          color: isLive
+              ? (context.rdSkin == null ? AppColors.success : AppColors.danger)
+              : (active ? (context.rdSkin == null ? _protocolAccent : AppColors.primary) : Colors.transparent),
+          width: context.rdSkin == null ? 2 : 1.5,
         ),
       ),
       child: Column(
@@ -1710,6 +2133,104 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               padding: const EdgeInsets.fromLTRB(AppDimensions.paddingM, 0, AppDimensions.paddingM, AppDimensions.paddingS),
               child: Text(context.l10n.protocolTaskCount(tasks.length),
                   style: theme.textTheme.bodySmall),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// DAS-23: Ionic `.card.section-card` – flat card (radius 20), head row
+  /// padding 12 / 16 with the uppercase accent kicker, 16px title, grey
+  /// conductor / preview line, outcome badge, `.dur` pill and a 16px grey
+  /// chevron; 2px inset ring when active (accent) or live (green).
+  Widget _classicSectionCard(
+      _Section s, Map<String, String> map, bool active, bool isLive, List<TeamTask> tasks, String? outcome) {
+    final l10n = context.l10n;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final muted = const TextStyle(fontSize: 13, color: AppColors.medium);
+    return _ProtocolCard(
+      ring: active ? _protocolAccent : (isLive ? AppColors.success.withValues(alpha: 0.6) : null),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Semantics(
+            button: true,
+            expanded: active,
+            child: InkWell(
+              onTap: () => setState(() => _activeId = active ? null : s.id),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    if (!active && _hasNotes(s.id) && outcome == null) ...[
+                      Icon(AppIcons.checkCircleOutline, color: AppColors.success, size: 20),
+                      const SizedBox(width: 10),
+                    ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (s.isTop) ...[
+                            Text(
+                                '${l10n.protocolTop(s.topNumber!)}${s.start != null ? ' · ${s.start}' : ''}'
+                                    .toUpperCase(),
+                                style: _kickerStyle),
+                            Text(s.name, style: const TextStyle(fontSize: 16, height: 1.25)),
+                            if (s.conductor != null)
+                              Padding(padding: const EdgeInsets.only(top: 2), child: Text(s.conductor!, style: muted)),
+                          ] else
+                            Text('${s.start != null ? '${s.start} · ' : ''}${s.name}',
+                                style: const TextStyle(fontSize: 16, height: 1.25)),
+                          if (!active && _hasNotes(s.id))
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(_previewOf(s.id), maxLines: 2, overflow: TextOverflow.ellipsis, style: muted),
+                            ),
+                        ],
+                      ),
+                    ),
+                    if (!active && outcome != null) ...[
+                      const SizedBox(width: 10),
+                      TeamOrgBadge(label: outcomeLabels[outcome] ?? outcome, color: outcomeColor(outcome)),
+                    ],
+                    if (s.duration > 0) ...[
+                      const SizedBox(width: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: dark ? const Color(0xFF2C2C2E) : const Color(0xFFF2F2F7),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(l10n.planningMinShort(s.duration), style: const TextStyle(fontSize: 12)),
+                      ),
+                    ],
+                    const SizedBox(width: 10),
+                    Icon(active ? AppIcons.expandLess : AppIcons.expandMore, size: 16, color: const Color(0xFFC4C4C7)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          if (active) ...[
+            if (s.isTop)
+              Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 8), child: _outcomeSelector(s.id)),
+            Padding(padding: const EdgeInsets.fromLTRB(16, 4, 16, 8), child: _editor(_controllerFor(s.id))),
+            Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: _taskList(tasks)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 6),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: () => _createTask(s.id),
+                  icon: Icon(AppIcons.addCircleOutline),
+                  label: IonButtonLabel(l10n.tasksTask),
+                ),
+              ),
+            ),
+          ] else if (tasks.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: Text(l10n.protocolTaskCount(tasks.length), style: muted),
             ),
         ],
       ),
@@ -1879,6 +2400,13 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final hasNext = nextSectionId(_sectionIds, _activeId) != null;
     final l10n = context.l10n;
     final label = liveSec.topNumber != null ? l10n.protocolTop(liveSec.topNumber!) : liveSec.name;
+    if (context.rdSkin == null) {
+      return _LiveBar(
+        label: l10n.protocolRunning(label, _live!.remainingMinutes),
+        nextLabel: hasNext ? l10n.protocolNextPoint : null,
+        onNext: hasNext ? _nextSection : null,
+      );
+    }
     return Card(
       color: AppColors.danger.withValues(alpha: 0.08),
       child: ListTile(
@@ -1892,6 +2420,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   Widget _buildWideLayout(BuildContext context) {
     final theme = Theme.of(context);
+    final classic = context.rdSkin == null;
     final map = _taskSectionMap;
     _Section? active;
     for (final s in _sections) {
@@ -1905,7 +2434,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final left = ListView(
       padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
-        Text(_title, style: theme.textTheme.titleLarge),
+        // Ionic `.side-title`: 17px / 700.
+        Text(_title,
+            style: classic ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w700) : theme.textTheme.titleLarge),
         Text([_dateLabel, if (_timeRange.isNotEmpty) _timeRange].join(' · '), style: theme.textTheme.bodySmall),
         Text(_statusLine,
             style: theme.textTheme.bodySmall?.copyWith(color: _isPublished ? AppColors.success : AppColors.medium)),
@@ -1920,11 +2451,29 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 ListTile(
                   dense: true,
                   selected: _activeId == s.id,
-                  selectedTileColor: AppColors.primary.withValues(alpha: 0.08),
-                  shape: _live?.fieldId == s.id
-                      ? const Border(left: BorderSide(color: AppColors.danger, width: 3))
-                      : null,
-                  leading: SizedBox(width: 40, child: Text(s.start ?? '', style: theme.textTheme.bodySmall)),
+                  // Ionic `.agenda-item.sel`: accent tint + 3px accent left
+                  // border; `.live`: green bold time (Beta: red border).
+                  selectedTileColor: classic
+                      ? const Color(0x1F438E96)
+                      : AppColors.primary.withValues(alpha: 0.08),
+                  selectedColor: classic ? theme.colorScheme.onSurface : null,
+                  shape: classic
+                      ? Border(
+                          left: BorderSide(
+                              color: _activeId == s.id ? _protocolAccent : Colors.transparent, width: 3))
+                      : (_live?.fieldId == s.id
+                          ? const Border(left: BorderSide(color: AppColors.danger, width: 3))
+                          : null),
+                  leading: SizedBox(
+                      width: 40,
+                      child: Text(s.start ?? '',
+                          style: classic
+                              ? TextStyle(
+                                  fontSize: 13,
+                                  fontFeatures: const [FontFeature.tabularFigures()],
+                                  fontWeight: _live?.fieldId == s.id ? FontWeight.w700 : null,
+                                  color: _live?.fieldId == s.id ? const Color(0xFF00815E) : AppColors.medium)
+                              : theme.textTheme.bodySmall)),
                   minLeadingWidth: 40,
                   title: Text(s.title, maxLines: 2, overflow: TextOverflow.ellipsis),
                   subtitle: (s.conductor != null || s.duration > 0)
@@ -1958,9 +2507,15 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 ),
               ListTile(
                 dense: true,
-                leading: SizedBox(width: 40, child: Icon(AppIcons.add, size: 18, color: AppColors.primary)),
+                leading: SizedBox(
+                    width: 40,
+                    child: Icon(AppIcons.add, size: 18, color: classic ? _protocolAccent : AppColors.primary)),
                 minLeadingWidth: 40,
-                title: Text(context.l10n.protocolPoint, style: const TextStyle(color: AppColors.primary)),
+                // Ionic `.agenda-item.add`: accent / 600.
+                title: Text(context.l10n.protocolPoint,
+                    style: classic
+                        ? const TextStyle(color: _protocolAccent, fontWeight: FontWeight.w600)
+                        : const TextStyle(color: AppColors.primary)),
                 onTap: _addSpontaneousTopic,
               ),
             ],
@@ -1987,18 +2542,34 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         if (s.duration > 0) context.l10n.planningMinShort(s.duration),
       ].join(' · ');
       main = Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        // Ionic `.main`: padding 24 28 16 on the card colour.
+        padding: classic ? const EdgeInsets.fromLTRB(28, 24, 28, 16) : const EdgeInsets.all(AppDimensions.paddingM),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (kicker.isNotEmpty) Text(kicker, style: theme.textTheme.labelMedium?.copyWith(color: AppColors.medium)),
-            Text(s.name, style: theme.textTheme.headlineSmall),
+            if (kicker.isNotEmpty)
+              Text(kicker,
+                  style: classic
+                      ? const TextStyle(
+                          fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.44, color: _protocolAccent)
+                      : theme.textTheme.labelMedium?.copyWith(color: AppColors.medium)),
+            // Ionic `.main-head h1`: 26px / 700, margin 4 0 12.
+            if (classic)
+              Padding(
+                padding: const EdgeInsets.only(top: 4, bottom: 4),
+                child: Text(s.name, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700)),
+              )
+            else
+              Text(s.name, style: theme.textTheme.headlineSmall),
             const SizedBox(height: AppDimensions.paddingS),
             Wrap(
               spacing: AppDimensions.paddingM,
+              runSpacing: 8,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                if (s.isTop) _outcomeSelector(s.id),
+                // Ionic `.main-head .outcome-seg { min-width: 320px }`.
+                if (s.isTop && classic) SizedBox(width: 320, child: _outcomeSelector(s.id))
+                else if (s.isTop) _outcomeSelector(s.id),
                 if (s.conductor != null)
                   Text(context.l10n.protocolResponsible(s.conductor!), style: theme.textTheme.bodySmall),
               ],
@@ -2165,7 +2736,8 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             children: [
               SizedBox(width: leftW, child: left),
               _resizer('left', container),
-              Expanded(child: main),
+              // Ionic `.main`: white `--protocol-card` surface.
+              Expanded(child: classic ? ColoredBox(color: ionItemBackground(context), child: main) : main),
               _resizer('right', container),
               SizedBox(width: rightW, child: right),
             ],
@@ -2191,12 +2763,28 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final map = _taskSectionMap;
     final att = _attendees;
     final unassigned = _unassignedTasks(map);
-    return ListView(
+    final classic = context.rdSkin == null;
+    // Ionic `.card.padded` (radius 20, no shadow) / Beta: the theme card.
+    Widget card(Widget child) => classic
+        ? _ProtocolCard(padding: const EdgeInsets.fromLTRB(16, 14, 16, 14), child: child)
+        : Card(child: Padding(padding: const EdgeInsets.all(AppDimensions.paddingM), child: child));
+    // Ionic `.card-label` 13px / 600 grey, `.read-title` 17px / 600.
+    final cardLabel = classic
+        ? const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.medium)
+        : theme.textTheme.titleSmall;
+    final readTitle = classic ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w600) : theme.textTheme.titleMedium;
+    Widget pill(String name, {bool muted = false}) => classic
+        ? _NamePill(name, muted: muted)
+        : Chip(label: Text(name, style: muted ? const TextStyle(color: AppColors.medium) : null));
+    final list = ListView(
       padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
         if (context.rdSkin == null) ...[
-          Text(_title, style: theme.textTheme.headlineSmall),
-          Text([_dateLabel, if (_timeRange.isNotEmpty) context.l10n.attendanceTimeOClock(_timeRange)].join(' · ')),
+          // Ionic `.read-head h1`: 26px / 700.
+          Text(_title, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 4),
+          Text([_dateLabel, if (_timeRange.isNotEmpty) context.l10n.attendanceTimeOClock(_timeRange)].join(' · '),
+              style: const TextStyle(fontSize: 13, color: AppColors.medium)),
         ],
         if (_isPublished)
           Padding(
@@ -2208,39 +2796,37 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             ]),
           ),
         if (att.present.isNotEmpty || att.excused.isNotEmpty)
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Column(
+          card(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(context.l10n.protocolPresentList(att.present.length), style: theme.textTheme.titleSmall),
-                  Wrap(spacing: 6, runSpacing: 4, children: [
-                    for (final a in att.present) Chip(label: Text(a.name)),
+                  Text(context.l10n.protocolPresentList(att.present.length), style: cardLabel),
+                  if (classic) const SizedBox(height: 8),
+                  Wrap(spacing: 6, runSpacing: classic ? 6 : 4, children: [
+                    for (final a in att.present) pill(a.name),
                   ]),
                   if (att.excused.isNotEmpty) ...[
-                    const SizedBox(height: AppDimensions.paddingS),
-                    Text(context.l10n.protocolExcusedList(att.excused.length), style: theme.textTheme.titleSmall),
-                    Wrap(spacing: 6, runSpacing: 4, children: [
-                      for (final a in att.excused)
-                        Chip(label: Text(a.name, style: const TextStyle(color: AppColors.medium))),
+                    SizedBox(height: classic ? 12 : AppDimensions.paddingS),
+                    Text(context.l10n.protocolExcusedList(att.excused.length), style: cardLabel),
+                    if (classic) const SizedBox(height: 8),
+                    Wrap(spacing: 6, runSpacing: classic ? 6 : 4, children: [
+                      for (final a in att.excused) pill(a.name, muted: true),
                     ]),
                   ],
                 ],
               ),
-            ),
           ),
         for (final s in _sections)
           if (s.isTop || _hasNotes(s.id) || _outcomes[s.id] != null || _tasksFor(s.id, map).isNotEmpty)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Column(
+            card(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (s.topNumber != null) Text(context.l10n.protocolTop(s.topNumber!), style: theme.textTheme.labelSmall),
+                    if (s.topNumber != null)
+                      Text(context.l10n.protocolTop(s.topNumber!),
+                          style: classic ? _kickerStyle : theme.textTheme.labelSmall),
                     Row(children: [
-                      Expanded(child: Text(s.name, style: theme.textTheme.titleMedium)),
+                      Expanded(child: Text(s.name, style: readTitle)),
                       if (_outcomes[s.id] != null)
                         TeamOrgBadge(
                             label: outcomeLabels[_outcomes[s.id]] ?? '', color: outcomeColor(_outcomes[s.id])),
@@ -2252,23 +2838,19 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     _taskList(_tasksFor(s.id, map)),
                   ],
                 ),
-              ),
             ),
         ..._leftoverWidgets(),
         if (_hasNotes(protocolGeneralSectionId) || unassigned.isNotEmpty)
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Column(
+          card(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(context.l10n.protocolGeneralNotes, style: theme.textTheme.titleMedium),
+                  Text(context.l10n.protocolGeneralNotes, style: readTitle),
                   if (_hasNotes(protocolGeneralSectionId))
                     _editor(_controllerFor(protocolGeneralSectionId, readOnly: true), editable: false),
                   _taskList(unassigned),
                 ],
               ),
-            ),
           ),
         const SizedBox(height: AppDimensions.paddingM),
         OutlinedButton.icon(
@@ -2277,6 +2859,207 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           label: IonButtonLabel(context.l10n.protocolSharePdf),
         ),
       ],
+    );
+    if (!classic) return list;
+    // Ionic `.read { max-width: 760px; margin: 0 auto }`.
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 760), child: list),
+    );
+  }
+}
+
+
+/// Ionic `--protocol-accent`.
+const Color _protocolAccent = Color(0xFF3B7D84);
+
+/// DAS-21: Ionic `.outcome-seg` – a full-width pill track
+/// (`rgba(118,118,128,.12)`, radius 999, padding 3) with three equal
+/// 13px / 600 buttons; the selected one is solid (decided #00815e,
+/// discussed accent, postponed #b25d00) with white text.
+class _OutcomeSegment extends StatelessWidget {
+  const _OutcomeSegment({required this.value, required this.onChanged});
+
+  final String? value;
+  final ValueChanged<String> onChanged;
+
+  static const _colors = {
+    'decided': Color(0xFF00815E),
+    'discussed': _protocolAccent,
+    'postponed': Color(0xFFB25D00),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).colorScheme.onSurface;
+    return Semantics(
+      label: context.l10n.protocolOutcome,
+      container: true,
+      child: Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: const Color(0x1F767680),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          children: [
+            for (final o in const ['discussed', 'decided', 'postponed'])
+              Expanded(
+                child: Semantics(
+                  inMutuallyExclusiveGroup: true,
+                  checked: value == o,
+                  button: true,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => onChanged(o),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 150),
+                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: value == o ? _colors[o] : Colors.transparent,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        outcomeLabels[o]!,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: value == o ? Colors.white : text,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// DAS-22: Ionic `.live-bar` – green pill (success 12 %, radius 16,
+/// padding 6 6 6 14) with the pulsing 8px dot, success-shade 14px / 600
+/// text and a small clear "Nächster Punkt" button.
+class _LiveBar extends StatefulWidget {
+  const _LiveBar({required this.label, this.nextLabel, this.onNext});
+
+  final String label;
+  final String? nextLabel;
+  final VoidCallback? onNext;
+
+  @override
+  State<_LiveBar> createState() => _LiveBarState();
+}
+
+class _LiveBarState extends State<_LiveBar> with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse =
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 800))..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  static const _shade = Color(0xFF00815E);
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      liveRegion: true,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
+        constraints: const BoxConstraints(minHeight: 44),
+        decoration: BoxDecoration(
+          color: AppColors.success.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            FadeTransition(
+              opacity: Tween<double>(begin: 1, end: 0.35).animate(_pulse),
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(color: AppColors.success, shape: BoxShape.circle),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(widget.label,
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: _shade)),
+            ),
+            if (widget.onNext != null)
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: _shade,
+                  visualDensity: VisualDensity.compact,
+                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                onPressed: widget.onNext,
+                child: IonButtonLabel(widget.nextLabel ?? ''),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+/// Ionic `.kicker`: 11px / 700, uppercase, accent.
+const TextStyle _kickerStyle =
+    TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.44, color: _protocolAccent);
+
+/// DAS-23/DAS-26: Ionic `.card` of the protocol page – `--protocol-card`
+/// (item background), radius 20, no shadow, 10px below.
+class _ProtocolCard extends StatelessWidget {
+  const _ProtocolCard({required this.child, this.padding = EdgeInsets.zero, this.ring});
+
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+
+  /// Ionic `.card.active` / `.card.live`: 2px inset ring.
+  final Color? ring;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: ionItemBackground(context),
+        borderRadius: BorderRadius.circular(20),
+        border: ring != null ? Border.all(color: ring!, width: 2) : null,
+      ),
+      child: Material(type: MaterialType.transparency, child: Padding(padding: padding, child: child)),
+    );
+  }
+}
+
+/// DAS-26: Ionic `.chip` – 13px name pill (padding 4 10, radius 999, light
+/// grey, no border); `.muted` greys the text.
+class _NamePill extends StatelessWidget {
+  const _NamePill(this.name, {this.muted = false});
+
+  final String name;
+  final bool muted;
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: dark ? const Color(0xFF2C2C2E) : const Color(0xFFF2F2F7),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(name, style: TextStyle(fontSize: 13, color: muted ? AppColors.medium : null)),
     );
   }
 }

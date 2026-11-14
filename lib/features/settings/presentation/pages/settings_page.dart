@@ -19,6 +19,7 @@ import '../../../../core/providers/viewer_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/sheets/feedback_sheet.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
+import '../../../planning/presentation/pages/planning_page.dart' show openPlanningEditor;
 import '../../../profile/presentation/widgets/account_dialogs.dart';
 import '../../../profile/presentation/widgets/profile_hero_card.dart';
 import '../../../../shared/widgets/sheets/version_history_sheet.dart';
@@ -362,7 +363,8 @@ class SettingsPage extends ConsumerWidget {
                         icon: AppIcons.list,
                         title: l10n.settingsRunSheets,
                         detail: false,
-                        onTap: () => context.push('/planning'),
+                        // F-ABL-01: classic opens the Ionic modal (no tab bar), Beta keeps its route.
+                        onTap: () => openPlanningEditor(context),
                       ),
                     SettingsListTile(
                       icon: AppIcons.calendarTodayOutlined,
@@ -520,11 +522,14 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 const LanguagePickerTile(),
                 const RedesignBetaTile(),
-                SettingsListTile(
-                  icon: AppIcons.notificationsOutlined,
-                  title: l10n.settingsNotifications,
-                  onTap: () => context.push('/settings/notifications'),
-                ),
+                // ROLLEN-B-57: Ionic blocks the notifications page for
+                // viewers / parents / applicants (Utils.isUrlAccessAllowed).
+                if (role.canSeeNotifications)
+                  SettingsListTile(
+                    icon: AppIcons.notificationsOutlined,
+                    title: l10n.settingsNotifications,
+                    onTap: () => context.push('/settings/notifications'),
+                  ),
                 SettingsListTile(
                   icon: AppIcons.keyOutlined,
                   title: l10n.settingsChangePassword,

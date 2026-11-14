@@ -168,4 +168,22 @@ class OrganisationSettingsRepository extends BaseRepository
       rethrow;
     }
   }
+
+  /// DAS-07: the instance's own logo (`tenants.logo_url`, Ionic
+  /// `db.tenant()?.logo_url` in the side panel); null when none is set.
+  Future<String?> getTenantLogoUrl() async {
+    try {
+      final row = await supabase
+          .from('tenants')
+          .select('logo_url')
+          // `tenants` has no tenantId column — its primary key IS the tenant id.
+          .eq('id', currentTenantId)
+          .maybeSingle();
+      final url = row?['logo_url'] as String?;
+      return (url?.isNotEmpty ?? false) ? url : null;
+    } catch (e, stack) {
+      handleError(e, stack, 'getTenantLogoUrl');
+      rethrow;
+    }
+  }
 }

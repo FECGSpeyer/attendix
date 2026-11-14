@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -56,6 +55,7 @@ class LegalContentView extends ConsumerWidget {
 /// h3 1.1rem, h4 1rem (1rem top margin), p/ul 0.95rem with line-height 1.5.
 DefaultStyles legalTextStyles(BuildContext context) {
   final color = Theme.of(context).textTheme.bodyMedium?.color;
+  final primary = Theme.of(context).colorScheme.primary;
   DefaultTextBlockStyle heading(double size) => DefaultTextBlockStyle(
         TextStyle(
             fontSize: size,
@@ -72,10 +72,14 @@ DefaultStyles legalTextStyles(BuildContext context) {
     h2: heading(20),
     h3: heading(17.6),
     h4: heading(16),
+    // OEFF-12: `a` in --ion-color-primary (browser underline kept).
+    link: TextStyle(color: primary, decoration: TextDecoration.underline,
+        decorationColor: primary),
+    // OEFF-12: browser `p` margin (1em, collapsed) between paragraphs.
     paragraph: DefaultTextBlockStyle(
       TextStyle(fontSize: 15.2, height: 1.5, color: color),
       HorizontalSpacing.zero,
-      VerticalSpacing.zero,
+      const VerticalSpacing(0, 8),
       VerticalSpacing.zero,
       null,
     ),
@@ -110,7 +114,8 @@ class _LegalHtmlState extends State<_LegalHtml> {
   }
 
   QuillController _build(String html) => QuillController(
-        document: QuillUtils.documentFromNotesString(html),
+        document:
+            QuillUtils.documentFromNotesString(html, separateParagraphs: true),
         selection: const TextSelection.collapsed(offset: 0),
         readOnly: true,
       );
@@ -148,12 +153,9 @@ Future<void> showLegalModal(BuildContext context) {
         appBar: AppBar(
           title: Text(context.l10n.legalTitle),
           automaticallyImplyLeading: false,
+          // SEL-13: Ionic `ion-buttons slot="end"` close button.
           actions: [
-            IconButton(
-              icon: Icon(AppIcons.close),
-              tooltip: context.l10n.commonClose,
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+            IonCloseButton(onPressed: () => Navigator.of(context).pop()),
           ],
         ),
         body: const LegalContentView(),

@@ -46,4 +46,14 @@ void main() {
     final reordered = reorderSectionsByCategories(sections, [1, 2]);
     expect(reordered.map((s) => s.categoryId), [1, 2, null]);
   });
+
+  test('a deleted category joins the single no-category section', () {
+    final sections = groupInstrumentsByCategory(
+      [...groups, const Group(id: 15, name: 'Harfe', categoryId: 99)],
+      categories,
+      noCategoryLabel: 'Keine Kategorie',
+    );
+    expect(sections.where((s) => s.categoryId == null), hasLength(1));
+    expect(sections.last.groups.map((g) => g.name), containsAll(['Harfe', 'Pauke']));
+  });
 }

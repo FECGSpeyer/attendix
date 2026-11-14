@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
@@ -247,6 +248,20 @@ class DateEditorSheet {
     bool preferWheel = true,
   }) async {
     final now = DateTime.now();
+    // PEO-26: iOS look (classic) – Ionic `ion-modal.dateModal` (max 400px,
+    // auto height, radius 8) with `ion-datetime [preferWheel]="true"`: the
+    // day / month / year wheel instead of the month grid.
+    if (preferWheel &&
+        overlay == IonDatetimeOverlay.dateModal &&
+        useIosLook(context) &&
+        context.rdSkin == null) {
+      return _showIosWheelDateModal(
+        context,
+        initialDate: initialDate ?? now,
+        firstDate: firstDate ?? DateTime(1900),
+        lastDate: lastDate ?? DateTime(2100),
+      );
+    }
     return showAppDatePicker(
       context: context,
       initialDate: initialDate ?? now,
@@ -256,4 +271,55 @@ class DateEditorSheet {
       preferWheel: preferWheel,
     );
   }
+}
+
+/// iOS `ion-modal.dateModal` with a wheel `ion-datetime`: a centred card
+/// (max 400px, radius 8) holding the date wheel. Turning a wheel picks the
+/// date; closing the modal (tap outside) returns the last picked date, or
+/// null when nothing was turned.
+Future<DateTime?> _showIosWheelDateModal(
+  BuildContext context, {
+  required DateTime initialDate,
+  required DateTime firstDate,
+  required DateTime lastDate,
+}) async {
+  var initial = initialDate;
+  if (initial.isBefore(firstDate)) initial = firstDate;
+  if (initial.isAfter(lastDate)) initial = lastDate;
+  DateTime? picked;
+  await showDialog<void>(
+    context: context,
+    useRootNavigator: true,
+    barrierColor: const Color(0x33000000),
+    builder: (ctx) {
+      final theme = Theme.of(ctx);
+      final w = (MediaQuery.sizeOf(ctx).width - 32).clamp(240.0, 400.0);
+      return Center(
+        child: SizedBox(
+          width: w,
+          child: Material(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(8),
+            clipBehavior: Clip.antiAlias,
+            child: SizedBox(
+              height: 216,
+              child: CupertinoTheme(
+                data: CupertinoThemeData(brightness: theme.brightness),
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  dateOrder: DatePickerDateOrder.dmy,
+                  initialDateTime: initial,
+                  minimumDate: firstDate,
+                  maximumDate: lastDate,
+                  onDateTimeChanged: (d) =>
+                      picked = DateTime(d.year, d.month, d.day),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+  return picked;
 }

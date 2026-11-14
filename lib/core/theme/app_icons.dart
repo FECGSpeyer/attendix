@@ -330,4 +330,20 @@ abstract final class AppIcons {
   static IconData get cupertinoMusicNote2 => _pick(Ionicons.musicalNotesOutline, CupertinoIcons.music_note_2);
   static IconData get cupertinoQuestionCircle => _pick(Ionicons.helpCircleOutline, CupertinoIcons.question_circle);
   static IconData get cupertinoSearch => _pick(Ionicons.searchOutline, CupertinoIcons.search);
+
+  // KP2 rahmen (DAS-10): outline variants named by the Ionic templates.
+  static IconData get paperPlaneOutline => _pick(Ionicons.paperPlaneOutline, Icons.send_outlined);
+  static IconData get closeOutline => _pick(Ionicons.closeOutline, Icons.close);
+  static IconData get musicalNoteOutline => _pick(Ionicons.musicalNoteOutline, Icons.music_note_outlined);
+  static IconData get chevronDownOutline => _pick(Ionicons.chevronDownOutline, Icons.expand_more);
+  static IconData get calendarClearOutline => _pick(Ionicons.calendarClearOutline, Icons.calendar_today_outlined);
+  // Klassik-Parität (Werke / Dateien): Ionic names used 1:1.
+  static IconData get shareSocialOutline => _pick(Ionicons.shareSocialOutline, Icons.share_outlined);
+  static IconData get optionsFilled => _pick(Ionicons.options, Icons.tune);
+  static IconData get linkFilled => _pick(Ionicons.link, Icons.link);
+  // Ablauf (stage 2): Ionic icon names used by the planning / org plan pages.
+  static IconData get listCircleOutline => _pick(Ionicons.listCircleOutline, Icons.playlist_add_circle_outlined);
+  static IconData get documentOutline => _pick(Ionicons.documentOutline, Icons.description_outlined);
+  static IconData get documentsOutline => _pick(Ionicons.documentsOutline, Icons.file_copy_outlined);
+  static IconData get documentAttachOutline => _pick(Ionicons.documentAttachOutline, Icons.attach_file);
 }

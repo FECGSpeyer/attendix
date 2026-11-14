@@ -8,6 +8,10 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
+import '../../../settings/presentation/widgets/settings_list.dart' as sl;
+import '../../../settings/presentation/widgets/settings_form_items.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -32,11 +36,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
     // intro ion-card, inset list "Pläne", FAB opening the create sheet.
     return IonCondenseScaffold(
       title: context.l10n.shiftsPlans,
-      leading: IconButton(
-        icon: Icon(AppIcons.arrowBack),
-        tooltip: context.l10n.commonBack,
-        onPressed: () => context.pop(),
-      ),
+      leading: settingsBackButton(context, onPressed: () => context.pop()),
       floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         onPressed: () => showCreateShiftPlanSheet(context, ref),
         child: Icon(AppIcons.add),
@@ -55,8 +55,12 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
               padding: const EdgeInsets.all(16),
               child: Text(context.l10n.shiftsFlutterErrorWith(friendlyErrorMessage(error))),
             ),
-            data: (shifts) => IonInsetList(
-              header: context.l10n.shiftsPlans,
+            // EIA-14: the settings inset list (header above the group).
+            data: (shifts) => Padding(
+              padding: EdgeInsets.symmetric(horizontal: sl.ionListMargin(context)),
+              child: sl.SettingsListSection(
+              title: context.l10n.shiftsPlans,
+              icons: false,
               children: shifts.isEmpty
                   ? [ListTile(title: Text(context.l10n.shiftsNone))]
                   : [
@@ -68,7 +72,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
                           onTap: () => _openShiftDetail(shift),
                         ),
                     ],
-            ),
+            )),
           ),
         ],
       ),
@@ -78,18 +82,20 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
   /// Ionic intro `ion-card`: centered time icon (4rem) and centered text with
   /// the warning line.
   Widget _buildInfoCard(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+    // EIA-26: the shared Ionic `ion-card` box, 4rem `.headerIcon`.
+    final ios = sl.ionIsIos(context);
+    return sl.IonCardBox(
+      margin: EdgeInsets.fromLTRB(sl.ionListMargin(context), 12, sl.ionListMargin(context), 16),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Icon(AppIcons.schedule, size: 64, color: AppColors.medium),
+            Icon(AppIcons.schedule, size: 64, color: ios ? sl.IonIos.text(context) : AppColors.medium),
             const SizedBox(height: 16),
             Text(
               context.l10n.shiftsIntro,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, color: AppColors.medium),
+              style: const TextStyle(fontSize: 14),
             ),
             const SizedBox(height: 16),
             Text(
@@ -119,7 +125,45 @@ Future<void> showCreateShiftPlanSheet(BuildContext context, WidgetRef ref) async
   final descriptionController = TextEditingController();
 
   try {
-    final result = await showModalBottomSheet<Map<String, String>?>(
+    Map<String, String>? result;
+    if (context.rdSkin == null) {
+      // EIA-16: Ionic sheet modal `[breakpoints]="[0, 0.7]"`, toolbar
+      // title, inset list with stacked inputs and `ion-button expand="block"`.
+      result = await showIonSheet<Map<String, String>?>(
+        context,
+        breakpoints: const [0, 0.7],
+        initialBreakpoint: 0.7,
+        builder: (sheetContext, controller) => IonSheetScaffold(
+          title: sheetContext.l10n.shiftsCreate,
+          body: ListView(
+            controller: controller,
+            padding: EdgeInsets.symmetric(horizontal: sl.ionListMargin(sheetContext), vertical: 16),
+            children: [
+              sl.SettingsListSection(icons: false, children: [
+                IonStackedInput(
+                  controller: nameController,
+                  label: sheetContext.l10n.typeSettingsName,
+                  autofocus: true,
+                ),
+                IonStackedInput(
+                  controller: descriptionController,
+                  label: sheetContext.l10n.tasksDescription,
+                ),
+              ]),
+              IonButton(
+                label: sheetContext.l10n.filesCreate,
+                expand: true,
+                onPressed: () => Navigator.pop(sheetContext, {
+                  'name': nameController.text,
+                  'description': descriptionController.text,
+                }),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+    result = await showModalBottomSheet<Map<String, String>?>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
@@ -171,6 +215,7 @@ Future<void> showCreateShiftPlanSheet(BuildContext context, WidgetRef ref) async
         ),
       ),
     );
+    }
 
     if (result == null || !context.mounted) return;
     // Ionic: dismiss first, then validate with a danger toast.

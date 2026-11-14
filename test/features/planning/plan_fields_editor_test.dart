@@ -131,7 +131,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Noch keine Datei verknüpft'), findsNothing);
 
-      await tester.tap(find.text('UPDATEN'));
+      await tester.tap(find.byKey(const ValueKey('plan-field-edit-save')));
       await tester.pumpAndSettle();
       expect(emitted()?.single.needsBeamer, isFalse);
     });

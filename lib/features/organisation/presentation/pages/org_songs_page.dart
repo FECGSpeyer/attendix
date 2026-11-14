@@ -16,7 +16,7 @@ import '../../../../data/models/song/org_song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
-import '../../../planning/presentation/widgets/ion_items.dart' show IonChip;
+import '../../../planning/presentation/widgets/ion_items.dart' show IonChip, IonBadge;
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 import '../widgets/org_song_copy_sheet.dart';
@@ -284,8 +284,26 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic 
       });
     }
 
+    // ABL-23: Ionic second header toolbar with the searchbar (stays fixed
+    // while the results scroll). Beta keeps it in the list.
+    final searchInHeader = allowed && context.rdSkin == null;
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.orgSongsTitle)),
+      appBar: AppBar(
+        title: Text(context.l10n.orgSongsTitle),
+        bottom: searchInHeader
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(60),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: IonSearchbar(
+                    controller: searchController,
+                    hintText: context.l10n.orgSongsSearchPh,
+                    onChanged: onSearchChanged,
+                  ),
+                ),
+              )
+            : null,
+      ),
       body:
           orgAsync.isLoading && !orgAsync.hasValue
               ? const Center(child: AppSpinner())
@@ -305,14 +323,15 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic 
       controller: scrollController,
       padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 24)),
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: IonSearchbar(
-            controller: searchController,
-            hintText: context.l10n.orgSongsSearchPh,
-            onChanged: onSearchChanged,
+        if (context.rdSkin != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: IonSearchbar(
+              controller: searchController,
+              hintText: context.l10n.orgSongsSearchPh,
+              onChanged: onSearchChanged,
+            ),
           ),
-        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: Wrap(
@@ -331,7 +350,7 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic 
               ] else ...[
                 // ion-chip: outline medium, selected primary – no checkmark.
                 IonChip(
-                  icon: AppIcons.attachFile,
+                  icon: AppIcons.documentAttachOutline,
                   label: context.l10n.orgSongsOnlyWithFiles,
                   outline: !onlyWithFiles,
                   color: onlyWithFiles ? AppColors.primary : AppColors.medium,
@@ -376,7 +395,13 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic 
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (ownNames.contains(normOrgSongName(song.name)))
+                      if (ownNames.contains(normOrgSongName(song.name)) && context.rdSkin == null)
+                        // ABL-23: Ionic `ion-badge color="success"` slot end.
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: IonBadge(label: context.l10n.orgSongsAlreadyOwn, color: AppColors.success),
+                        )
+                      else if (ownNames.contains(normOrgSongName(song.name)))
                         Container(
                           margin: const EdgeInsets.only(right: 8),
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),

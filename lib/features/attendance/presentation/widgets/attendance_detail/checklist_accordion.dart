@@ -8,6 +8,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
 import 'attendance_accordion.dart';
+import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../shared/widgets/display/ion_badge_text.dart';
 
 /// Deadline status for checklist items
@@ -39,6 +40,7 @@ class ChecklistAccordion extends StatelessWidget {
     final completedCount = checklist.where((item) => item.completed).length;
     final totalCount = checklist.length;
     final progress = totalCount > 0 ? completedCount / totalCount : 0.0;
+    final beta = context.rdSkin != null;
 
     // IOS_DETAIL: shared accordion (iOS header look, Ionic state reset)
     return AttendanceAccordion(
@@ -85,12 +87,14 @@ class ChecklistAccordion extends StatelessWidget {
                   : '$relative · ${context.l10n.attendanceTimeOClock(DateFormat('dd.MM.yyyy HH:mm').format(due))}';
 
               Color? tileColor;
+              Color? barColor;
               if (!item.completed) {
                 if (deadlineStatus == DeadlineStatus.overdue) {
-                  tileColor = AppColors.danger.withValues(alpha: 0.1);
+                  barColor = AppColors.danger;
                 } else if (deadlineStatus == DeadlineStatus.warning) {
-                  tileColor = AppColors.warning.withValues(alpha: 0.1);
+                  barColor = AppColors.warning;
                 }
+                tileColor = barColor?.withValues(alpha: 0.1);
               }
 
               return Slidable(
@@ -107,8 +111,15 @@ class ChecklistAccordion extends StatelessWidget {
                     ),
                   ],
                 ),
+                // TER-24: Ionic `.checklist-overdue` / `.checklist-warning`:
+                // 10 % tint plus a 3 px bar on the left.
                 child: Container(
-                  color: tileColor,
+                  decoration: BoxDecoration(
+                    color: tileColor,
+                    border: beta || barColor == null
+                        ? null
+                        : Border(left: BorderSide(color: barColor, width: 3)),
+                  ),
                   child: CheckboxListTile(
                     value: item.completed,
                     onChanged: (_) => onToggle(index),
@@ -135,18 +146,38 @@ class ChecklistAccordion extends StatelessWidget {
                           )
                         : null,
                     controlAffinity: ListTileControlAffinity.leading,
-                    dense: true,
+                    // TER-15: theme item size in the classic design.
+                    dense: beta,
                   ),
                 ),
               );
             }),
           // UX_ATT: Ionic "To-Do hinzufügen" row (primary, add-circle icon)
-          ListTile(
-            dense: true,
-            leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
-            title: Text(context.l10n.attendanceAddTodo, style: const TextStyle(color: AppColors.primary)),
-            onTap: onAdd,
-          ),
+          if (beta)
+            ListTile(
+              dense: true,
+              leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
+              title: Text(context.l10n.attendanceAddTodo, style: const TextStyle(color: AppColors.primary)),
+              onTap: onAdd,
+            )
+          else
+            // TER-24: Ionic shows the add-circle icon inline in the label.
+            ListTile(
+              title: Text.rich(
+                TextSpan(
+                  children: [
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: Icon(AppIcons.addCircleOutline, color: AppColors.primary, size: 18),
+                    ),
+                    const TextSpan(text: ' '),
+                    TextSpan(text: context.l10n.attendanceAddTodo),
+                  ],
+                ),
+                style: const TextStyle(color: AppColors.primary),
+              ),
+              onTap: onAdd,
+            ),
           // UX_ATT: "Checkliste zurücksetzen" lives in the header menu (Ionic)
         ],
     );

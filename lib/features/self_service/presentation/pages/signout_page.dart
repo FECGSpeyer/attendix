@@ -685,6 +685,8 @@ class _GreetTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.zero,
+      // SEL-18: Ionic `.greet-tile` is flat (no md card shadow).
+      elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),

@@ -19,7 +19,11 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Bottom sheet for managing song categories (CRUD)
 class SongCategoriesSheet extends ConsumerStatefulWidget {
-  const SongCategoriesSheet({super.key});
+  const SongCategoriesSheet({super.key, this.readOnly = false});
+
+  /// Roles that may not change categories (server: admins only) see the
+  /// list without add / edit / delete / reorder.
+  final bool readOnly;
 
   @override
   ConsumerState<SongCategoriesSheet> createState() =>
@@ -59,11 +63,12 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
               IonSheetHeader(
                 title: context.l10n.songsSongCategories,
                 end: [
-                  IconButton(
-                    icon: Icon(AppIcons.add),
-                    onPressed: () => _showAddCategoryDialog(context),
-                    tooltip: context.l10n.songsAddCategory,
-                  ),
+                  if (!widget.readOnly)
+                    IconButton(
+                      icon: Icon(AppIcons.add),
+                      onPressed: () => _showAddCategoryDialog(context),
+                      tooltip: context.l10n.songsAddCategory,
+                    ),
                 ],
               ),
               if (notifierState.isLoading) const LinearProgressIndicator(),
@@ -133,6 +138,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                           isFirst: index == 0,
                           isLast: index == displayCategories.length - 1,
                           category: category,
+                          readOnly: widget.readOnly,
                           onEdit: () =>
                               _showEditCategoryDialog(context, category),
                           onDelete: () =>
@@ -286,9 +292,11 @@ class _CategoryTile extends StatelessWidget {
   final bool isLast;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final bool readOnly;
 
   const _CategoryTile({
     super.key,
+    this.readOnly = false,
     required this.category,
     required this.index,
     required this.isFirst,
@@ -318,6 +326,7 @@ class _CategoryTile extends StatelessWidget {
       child: Row(
         children: [
           Expanded(child: Text(category.name, style: const TextStyle(fontSize: 16))),
+          if (!readOnly) ...[
           IconButton(
             icon: Icon(AppIcons.edit, size: 20, color: AppColors.warning),
             onPressed: onEdit,
@@ -335,6 +344,7 @@ class _CategoryTile extends StatelessWidget {
               child: Icon(AppIcons.reorder, color: AppColors.medium),
             ),
           ),
+          ],
         ],
       ),
     );
@@ -343,7 +353,7 @@ class _CategoryTile extends StatelessWidget {
 
 /// Shows the song categories management sheet. In the Beta the page
 /// Verwaltung › Werk-Kategorien opens instead.
-Future<void> showSongCategoriesSheet(BuildContext context) async {
+Future<void> showSongCategoriesSheet(BuildContext context, {bool readOnly = false}) async {
   if (ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)) {
     await context.push(RedesignRoutes.workCategories);
     return;
@@ -355,6 +365,6 @@ Future<void> showSongCategoriesSheet(BuildContext context) async {
     useSafeArea: true,
     clipBehavior: Clip.antiAlias,
     backgroundColor: Colors.transparent,
-    builder: (context) => const SongCategoriesSheet(),
+    builder: (context) => SongCategoriesSheet(readOnly: readOnly),
   );
 }

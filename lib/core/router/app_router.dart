@@ -12,7 +12,7 @@ import '../providers/tenant_providers.dart';
 import '../providers/role_permission_providers.dart';
 import 'page_transitions.dart';
 import 'tracking_observer.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent;
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent, AuthState;
 import '../services/tracking/tracking_event.dart';
 import '../services/browser_navigation.dart'
     show browserNavigationRouteChanged, setBrowserNavigationContext;
@@ -22,6 +22,7 @@ import '../../features/tenant_selection/presentation/pages/tenant_selection_page
 import '../../features/tenant_selection/presentation/pages/tenant_create_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_detail_page.dart';
 import '../../shared/widgets/layout/main_shell.dart';
+import '../../shared/widgets/layout/shell_popup_observer.dart' show ShellPopupObserver;
 import '../../features/people/presentation/pages/people_list_page.dart';
 import '../../features/people/presentation/pages/person_detail_page.dart';
 import '../../features/people/presentation/pages/person_create_page.dart';
@@ -45,6 +46,7 @@ import '../../features/songs/presentation/pages/songs_list_page.dart';
 import '../../features/songs/presentation/pages/song_detail_page.dart';
 import '../../features/songs/presentation/pages/song_create_page.dart';
 import '../../features/songs/presentation/pages/song_edit_page.dart';
+import '../../features/songs/presentation/utils/song_utils.dart' show SongUtils;
 import '../../features/instruments/presentation/pages/instruments_list_page.dart';
 import '../../features/self_service/presentation/pages/self_service_overview_page.dart';
 import '../../features/self_service/presentation/pages/signout_page.dart';
@@ -218,6 +220,8 @@ const Map<String, RoleCheck> _protectedRoutes = {
   // (/settings/files prüft den Zugriff selbst: abhängig von tenants.files_shared)
   // END SETTINGS_EXT
   '/settings/messages': _isAdminOrResponsible,
+  // ROLLEN-B-57: Ionic isUrlAccessAllowed('/tabs/settings/notifications').
+  '/settings/notifications': _canSeeNotifications,
   // AUTO_MESSAGES (Ionic 4.18): rules are admin/responsible only (RLS too)
   '/settings/auto-messages': _isAdminOrResponsible,
   '/settings/handover': _isAdminOrResponsible,
@@ -228,6 +232,7 @@ const Map<String, RoleCheck> _protectedRoutes = {
 
   // Conductor routes (Admin, Responsible, Viewer)
   '/settings/teachers': _isConductor,
+  '/people/new': _isAdminOrResponsible, // ROLLEN-B-45: create = Admin/Verantwortlich (person_create_page _canEdit)
   '/people': _canSeePeopleTab,
   // SEC-017 / PARITY_R7: Statistik + Export (Ionic settings `isAdmin`:
   // ADMIN/RESPONSIBLE, not VIEWER). /planning and /history: route_access.dart.
@@ -248,6 +253,10 @@ bool _isAdminOrResponsible(Role role) => role.isAdmin || role.isResponsible;
 bool _isConductor(Role role) => role.isConductor;
 bool _canSeePeopleTab(Role role) => role.canSeePeopleTab;
 bool _canSeeAttendanceTab(Role role) => role.canSeeAttendanceTab;
+// The Ionic rule applies to the classic design only; the Beta keeps its
+// own page reachable as before (rd_me_page decides who sees the entry).
+bool _canSeeNotifications(Role role) =>
+    RedesignRoutes.active || role.canSeeNotifications;
 /// ORG_PLANS: public plan routes reachable without login (share keys)
 const Set<String> _publicPlanRoutes = {'/plan', '/planung', '/org-plan'};
 
@@ -289,6 +298,19 @@ String? roleRouteRedirect(
   return null;
 }
 
+/// TERMINE-02 / EINST-03: on a cold start the auth stream has not emitted
+/// yet, but Supabase already restored the stored session. Treat that as
+/// signed in so the login form does not flash before the page (a failed
+/// refresh emits `signedOut` and the redirect sends the user to /login).
+bool _sessionRestoring(Ref ref, AsyncValue<AuthState> authState) {
+  if (!authState.isLoading || authState.hasValue || authState.hasError) return false;
+  try {
+    return ref.read(supabaseAuthProvider).currentSession != null;
+  } catch (_) {
+    return false;
+  }
+}
+
 /// Provider for the auth change notifier
 final authChangeNotifierProvider = Provider<AuthChangeNotifier>((ref) {
   return AuthChangeNotifier(ref);
@@ -322,7 +344,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final authState = ref.read(authStateProvider);
       final isLoggedIn = authState.whenOrNull(
         data: (auth) => auth.session != null,
-      ) ?? false;
+      ) ?? _sessionRestoring(ref, authState);
 
       // LINKS_STARTUP: legacy Ionic URLs (/tabs/..., /resetPassword) first,
       // before they can fall through to the public `/:songSharingId` routes.
@@ -625,6 +647,9 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Main app shell with tabs
       ShellRoute(
+        // F-RAHMEN-08: lets the classic iOS shell hide its floating tab bar
+        // while a sheet / dialog is open on the shell navigator.
+        observers: [ShellPopupObserver()],
         // REDESIGN: the new shell (fixed tabs) while the Beta is on.
         builder: (context, state, child) => _AppShell(child: child),
         routes: [
@@ -1635,6 +1660,28 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/:songSharingId',
+        // EINST-60: an unknown single-segment address (no sharing-id UUID)
+        // is no Werke link. Signed in → the start page of the open
+        // instance; visitors keep the page, which shows "Link ungültig"
+        // without asking the database.
+        redirect: (context, state) {
+          if (SongUtils.isValidSharingId(state.pathParameters['songSharingId'])) {
+            return null;
+          }
+          final authState = ref.read(authStateProvider);
+          final isLoggedIn = authState.whenOrNull(
+                    data: (auth) => auth.session != null,
+                  ) ??
+              _sessionRestoring(ref, authState);
+          if (!isLoggedIn) return null;
+          final tenantId = ref.read(currentTenantIdProvider);
+          if (tenantId == null || ref.read(isRoleLoadingProvider)) return '/tenants';
+          return homeRouteFor(
+            ref.read(currentRoleProvider),
+            tenantId,
+            ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
+          );
+        },
         builder: (context, state) => SongsListPage(
           songSharingId: state.pathParameters['songSharingId'],
         ),

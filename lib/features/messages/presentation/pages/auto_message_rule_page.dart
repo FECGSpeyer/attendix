@@ -30,6 +30,9 @@ import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
 
+import '../../../../shared/widgets/layout/ion_form_items.dart';
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
+
 part 'auto_message_rule_beta.dart';
 
 enum _Tab { rule, history }
@@ -93,6 +96,16 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
           _rule = rule;
           _saved = rule;
           if (widget.initialTab == 'history') _tab = _Tab.history;
+        } else if (mounted) {
+          // EINST-60: an unknown id used to open an empty "Neue Regel" form
+          // (saving would create a new rule) – report it and go back.
+          ToastHelper.showError(context, l10n.autoMessagesLoadFailed);
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/settings/auto-messages');
+          }
+          return;
         }
       } else {
         final template = widget.template;
@@ -372,18 +385,12 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
         title: l10n.autoMessagesGeneral,
         icons: false,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: TextField(
-              controller: _nameController,
-              maxLength: 100,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(
-                labelText: l10n.autoMessagesName,
-                border: InputBorder.none,
-                counterText: '',
-              ),
-            ),
+          // EIB-15: `ion-input labelPlacement="stacked"`.
+          IonStackedInputItem(
+            lines: false,
+            label: l10n.autoMessagesName,
+            controller: _nameController,
+            maxLength: 100,
           ),
           SwitchListTile.adaptive(
             value: rule.enabled,
@@ -585,16 +592,23 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
             Builder(
               builder: (context) {
                 final sample = _sample(types);
+                // EIB-23: Ionic `.sample` – 12 / 16 / 16 padding, 0.9rem,
+                // the body in the text colour.
                 return Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(sample.title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 6),
+                      Text(sample.title,
+                          style: const TextStyle(fontSize: 14.4, height: 1.45, fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
                       Text(
                         sample.body,
-                        style: const TextStyle(fontSize: 14, height: 1.4, color: AppColors.medium),
+                        style: TextStyle(
+                          fontSize: 14.4,
+                          height: 1.45,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                     ],
                   ),
@@ -608,18 +622,11 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
         SettingsListSection(
           icons: false,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: TextField(
-                controller: _titleController,
-                maxLength: 200,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(
-                  labelText: l10n.messagesTitle,
-                  border: InputBorder.none,
-                  counterText: '',
-                ),
-              ),
+            IonStackedInputItem(
+              lines: false,
+              label: l10n.messagesTitle,
+              controller: _titleController,
+              maxLength: 200,
             ),
           ],
         ),
@@ -646,7 +653,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
         AutoMessageChipWrap(
           children: [
             for (final p in autoMessagePlaceholders)
-              AutoMessageChip(label: '{$p}', selected: true, onTap: () => _insertPlaceholder(p)),
+              AutoMessageChip(label: '{$p}', selected: true, placeholder: true, onTap: () => _insertPlaceholder(p)),
           ],
         ),
         AutoMessageHint(
@@ -743,15 +750,23 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
       IonListHeader(title: l10n.autoMessagesPreview),
       Padding(
         padding: const EdgeInsets.only(bottom: 12),
-        child: OutlinedButton.icon(
-          onPressed: _previewLoading ? null : _loadPreview,
-          icon:
-              _previewLoading
-                  ? const SizedBox(width: 16, height: 16, child: AppSpinner(strokeWidth: 2))
-                  : Icon(AppIcons.visibilityOutlined),
-          label: IonButtonLabel(l10n.autoMessagesShowPreview),
-          style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
-        ),
+        // EIB-23: `ion-button expand="block" fill="outline"` without an
+        // icon; the spinner only while the preview loads.
+        child: _previewLoading
+            ? SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: null,
+                  icon: const SizedBox(width: 16, height: 16, child: AppSpinner(strokeWidth: 2)),
+                  label: IonButtonLabel(l10n.autoMessagesShowPreview),
+                ),
+              )
+            : IonButton(
+                expand: true,
+                fill: IonButtonFill.outline,
+                label: l10n.autoMessagesShowPreview,
+                onPressed: _loadPreview,
+              ),
       ),
       if (_previewError) AutoMessageHint(l10n.autoMessagesPreviewFailed),
       ..._buildPreview(groups.map((g) => (g.id!, g.name)).toList()),
@@ -987,9 +1002,7 @@ class _SelectTile<T> extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              ios
-                  ? const IonSelectIcon()
-                  : Icon(AppIcons.arrowDropDown, color: AppColors.medium),
+              ios ? const IonSelectIcon() : const IonMdSelectIcon(),
             ],
           );
         },
@@ -1034,11 +1047,14 @@ class _HistoryTile extends StatelessWidget {
         ],
       ),
     );
-    if (!ios) return Card(margin: EdgeInsets.zero, child: content);
+    // EIB-17: Ionic `.tile` – a flat box (item background, radius 12) in
+    // both looks, no Material card.
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: IonIos.itemBackground(context),
-        borderRadius: BorderRadius.circular(10),
+        color: ios
+            ? IonIos.itemBackground(context)
+            : IonMd.itemBackground(Theme.of(context).brightness),
+        borderRadius: BorderRadius.circular(ios ? 10 : 12),
       ),
       child: content,
     );

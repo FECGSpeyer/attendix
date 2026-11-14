@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
@@ -144,15 +145,52 @@ class DashLoading extends StatelessWidget {
   const DashLoading({super.key});
 
   @override
-  Widget build(BuildContext context) => const Padding(
-        padding: EdgeInsets.all(20),
+  Widget build(BuildContext context) {
+    if (context.rdSkin == null) {
+      // DAS-15: Ionic `<ion-spinner name="crescent">` (28px, stroke 4 of a
+      // 64 viewBox, currentColor) in both modes instead of the iOS lines
+      // spinner.
+      return Padding(
+        padding: const EdgeInsets.all(20),
         child: Center(
           child: SizedBox(
-            width: 24,
-            height: 24,
-            child: AppSpinner(strokeWidth: 2.5),
+            width: 28,
+            height: 28,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.4,
+              strokeCap: StrokeCap.round,
+              color: DefaultTextStyle.of(context).style.color ?? Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
+      );
+    }
+    return const Padding(
+      padding: EdgeInsets.all(20),
+      child: Center(
+        child: SizedBox(
+          width: 24,
+          height: 24,
+          child: AppSpinner(strokeWidth: 2.5),
+        ),
+      ),
+    );
+  }
+}
+
+/// DAS-13: Ionic loading state of a card that has no header yet
+/// (`<ion-card><ion-card-content><div class="loading-center">`): only a
+/// card with the spinner.
+class DashSpinnerCard extends StatelessWidget {
+  const DashSpinnerCard({super.key});
+
+  @override
+  Widget build(BuildContext context) => Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        elevation: 3,
+        shadowColor: Colors.black26,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: const DashLoading(),
       );
 }
 

@@ -17,6 +17,8 @@ import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
 import 'ion/ion_widgets.dart';
+import 'ion/ion_date_accordion.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -108,50 +110,36 @@ class _PauseSheetState extends State<_PauseSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ion-item + stacked label + textarea
-            IonFormTheme(
-              child: TextField(
-                controller: _reasonController,
-                decoration: InputDecoration(
-                  labelText: context.l10n.peopleReasonRequired,
-                  hintText: context.l10n.personPauseReasonPlaceholder,
-                  border: ionIsIos(context) ? null : const OutlineInputBorder(),
-                ),
-                textCapitalization: TextCapitalization.sentences,
-                minLines: 1,
-                maxLines: 5,
-                autofocus: true,
-                onChanged: (_) => setState(() {}),
-              ),
+            // PEO-04: ion-item + stacked label + `ion-textarea autoGrow`
+            // (no autofocus: Ionic opens the sheet without the keyboard).
+            IonInputRow(
+              label: context.l10n.peopleReasonRequired,
+              value: _reasonController.text,
+              placeholder: context.l10n.personPauseReasonPlaceholder,
+              textarea: true,
+              onChanged: (v) => setState(() => _reasonController.text = v),
             ),
             const SizedBox(height: AppDimensions.paddingM),
-            _DateHeaderItem(
+            // Two `ion-accordion`s with an inline `ion-datetime`.
+            IonDateAccordion(
               title: context.l10n.peoplePausedFrom,
-              value: _from != null ? DateFormat(dateFmt()).format(_from!) : context.l10n.peopleFromToday,
+              valueText: _from != null ? DateFormat(dateFmt()).format(_from!) : context.l10n.peopleFromToday,
+              value: _from,
+              initialDate: today,
+              firstDate: DateTime(today.year - 5),
+              lastDate: today,
+              onChanged: (d) => setState(() => _from = d),
               onClear: _from != null ? () => setState(() => _from = null) : null,
-              onTap: () async {
-                final date = await showAppDatePicker(
-                  context: context,
-                  initialDate: _from ?? today,
-                  firstDate: DateTime(today.year - 5),
-                  lastDate: today,
-                );
-                if (date != null) setState(() => _from = date);
-              },
             ),
-            _DateHeaderItem(
+            IonDateAccordion(
               title: context.l10n.signoutPausedUntil,
-              value: _until != null ? DateFormat(dateFmt()).format(_until!) : context.l10n.peopleNoEndDate,
+              valueText: _until != null ? DateFormat(dateFmt()).format(_until!) : context.l10n.peopleNoEndDate,
+              value: _until,
+              initialDate: today,
+              firstDate: today,
+              lastDate: DateTime(today.year + 3),
+              onChanged: (d) => setState(() => _until = d),
               onClear: _until != null ? () => setState(() => _until = null) : null,
-              onTap: () async {
-                final date = await showAppDatePicker(
-                  context: context,
-                  initialDate: _until ?? today.add(const Duration(days: 30)),
-                  firstDate: today,
-                  lastDate: DateTime(today.year + 3),
-                );
-                if (date != null) setState(() => _until = date);
-              },
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
@@ -172,7 +160,8 @@ class _PauseSheetState extends State<_PauseSheet> {
                         ),
                       )
                   : null,
-              icon: Icon(AppIcons.pause),
+              // PEO-28: Ionic `pause-outline`.
+              icon: Icon(AppIcons.ionic ? Ionicons.pauseOutline : AppIcons.pause),
               label: IonButtonLabel(context.l10n.peoplePause),
               // Ionic `ion-button expand="block"` in the default primary
               // colour (the theme's solid button); the Beta design keeps
@@ -374,43 +363,4 @@ Future<List<LinkedTenantRef>?> _askPauseInOtherTenants(
       ),
     ),
   );
-}
-
-/// UX_PEOPLE: Ionic `ion-item slot="header" color="light"` with h3 title,
-/// p value and a close-circle clear button (pause modal date rows).
-class _DateHeaderItem extends StatelessWidget {
-  const _DateHeaderItem({
-    required this.title,
-    required this.value,
-    required this.onTap,
-    this.onClear,
-  });
-
-  final String title;
-  final String value;
-  final VoidCallback onTap;
-  final VoidCallback? onClear;
-
-  @override
-  Widget build(BuildContext context) {
-    return IonItem(
-      background: ionLightColor(context),
-      onTap: onTap,
-      end: [
-        if (onClear != null)
-          IconButton(
-            icon: Icon(AppIcons.highlightOff, color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
-            onPressed: onClear,
-          ),
-      ],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: IonText.h3(context)),
-          const SizedBox(height: 2),
-          Text(value, style: IonText.p(context)),
-        ],
-      ),
-    );
-  }
 }

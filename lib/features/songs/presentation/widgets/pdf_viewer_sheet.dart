@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
@@ -29,6 +31,10 @@ class PdfViewerSheet extends StatefulWidget {
 
 class _PdfViewerSheetState extends State<PdfViewerSheet> {
   PdfControllerPinch? _pdfController;
+
+  /// The loaded file: the full-screen view opens its own document from it
+  /// (a [PdfControllerPinch] can only drive one [PdfViewPinch]).
+  Uint8List? _bytes;
   bool _isLoading = true;
   String? _error;
   int _currentPage = 1;
@@ -54,6 +60,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
 
       if (mounted) {
         setState(() {
+          _bytes = bytes;
           _totalPages = document.pagesCount;
           _pdfController = PdfControllerPinch(
             document: Future.value(document),
@@ -81,12 +88,18 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
     }
   }
 
-  void _openFullscreen() {
-    Navigator.of(context).push(
+  Future<void> _openFullscreen() async {
+    final bytes = _bytes;
+    if (bytes == null) return;
+    await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
         builder: (context) => EscapeToClose(
           child: _FullscreenPdfViewer(
-            pdfController: _pdfController!,
+            // WERKE-33: own controller + own document. Sharing the sheet's
+            // controller with a second PdfViewPinch left the full-screen
+            // view black. A copy of the bytes, because pdf.js may take over
+            // (detach) the buffer it is given on the web.
+            bytes: Uint8List.fromList(bytes),
             fileName: widget.fileName,
             totalPages: _totalPages,
             currentPage: _currentPage,
@@ -99,6 +112,10 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
         ),
       ),
     );
+    // Back in the sheet on the page the full-screen view ended on.
+    if (mounted && _pdfController != null) {
+      _pdfController!.jumpToPage(_currentPage);
+    }
   }
 
   @override
@@ -318,14 +335,14 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
 
 /// Fullscreen PDF viewer
 class _FullscreenPdfViewer extends StatefulWidget {
-  final PdfControllerPinch pdfController;
+  final Uint8List bytes;
   final String fileName;
   final int totalPages;
   final int currentPage;
   final ValueChanged<int> onPageChanged;
 
   const _FullscreenPdfViewer({
-    required this.pdfController,
+    required this.bytes,
     required this.fileName,
     required this.totalPages,
     required this.currentPage,
@@ -338,12 +355,23 @@ class _FullscreenPdfViewer extends StatefulWidget {
 
 class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
   late int _currentPage;
+  late final PdfControllerPinch _controller;
   bool _showControls = true;
 
   @override
   void initState() {
     super.initState();
     _currentPage = widget.currentPage;
+    _controller = PdfControllerPinch(
+      document: PdfDocument.openData(widget.bytes),
+      initialPage: widget.currentPage,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   void _toggleControls() {
@@ -360,7 +388,7 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
           children: [
             // PDF view
             PdfViewPinch(
-              controller: widget.pdfController,
+              controller: _controller,
               onPageChanged: (page) {
                 setState(() => _currentPage = page);
                 widget.onPageChanged(page);
@@ -445,7 +473,7 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                             icon: Icon(AppIcons.chevronLeft,
                                 color: Colors.white, size: 32, semanticLabel: context.l10n.a11yPreviousPage),
                             onPressed: _currentPage > 1
-                                ? () => widget.pdfController.animateToPage(
+                                ? () => _controller.animateToPage(
                                       pageNumber: _currentPage - 1,
                                       duration:
                                           const Duration(milliseconds: 300),
@@ -472,7 +500,7 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                             icon: Icon(AppIcons.chevronRight,
                                 color: Colors.white, size: 32, semanticLabel: context.l10n.a11yNextPage),
                             onPressed: _currentPage < widget.totalPages
-                                ? () => widget.pdfController.animateToPage(
+                                ? () => _controller.animateToPage(
                                       pageNumber: _currentPage + 1,
                                       duration:
                                           const Duration(milliseconds: 300),

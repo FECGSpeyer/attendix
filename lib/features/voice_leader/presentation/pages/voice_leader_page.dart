@@ -3,6 +3,10 @@ import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import '../../../settings/presentation/widgets/settings_form_items.dart' show settingsBackButton;
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/tenant_providers.dart';
@@ -38,6 +42,14 @@ class VoiceLeaderPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: ionLightColor(context),
       appBar: AppBar(
+        // EIA-30: Ionic explicit `arrow-back` icon button (the Beta keeps
+        // the implied back button).
+        leading: context.rdSkin != null
+            ? null
+            : settingsBackButton(
+                context,
+                onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
+              ),
         title: Text(context.l10n.voiceLeaderMyVoice),
       ),
       body: RefreshIndicator.adaptive(

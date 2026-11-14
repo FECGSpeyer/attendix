@@ -20,6 +20,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet;
 
 /// "Aktuelle Werke" sheet (Ionic signout songsModal): one inset list per
 /// Termin, rows "Nr. Name" / "Dirigent: …", red rows when there are no notes
@@ -329,7 +330,13 @@ class AttendanceSongsSheet extends ConsumerWidget {
     this.instrumentId,
     this.linkOnly = false,
     this.onOpenPlan,
+    this.scrollController,
   });
+
+  /// TER-30: set when the classic look presents the sheet via
+  /// [showIonSheet] (Ionic breakpoints and handle); null = own draggable
+  /// sheet (Beta).
+  final ScrollController? scrollController;
 
   final String title;
   final String subtitle;
@@ -373,15 +380,8 @@ class AttendanceSongsSheet extends ConsumerWidget {
     final isChoir = ref.watch(currentTenantProvider)?.type == 'choir';
     final theme = Theme.of(context);
     final heading = [title, subtitle].where((t) => t.isNotEmpty).join(' · ');
-    return AppDraggableSheet(
-      // Ionic: initialBreakpoint 0.75, breakpoints [0, 0.75, 1]
-      breakpoints: const [0, 0.75, 1],
-      initialBreakpoint: 0.75,
-      initialChildSize: 0.75,
-      minChildSize: 0.3,
-      maxChildSize: 1,
-      expand: false,
-      builder: (context, scrollController) => Container(
+    Widget content(BuildContext context, ScrollController scrollController) =>
+        Container(
         decoration: BoxDecoration(
           color: theme.scaffoldBackgroundColor,
           borderRadius: context.rdSkin == null
@@ -451,7 +451,17 @@ class AttendanceSongsSheet extends ConsumerWidget {
             ),
           ],
         ),
-      ),
+      );
+    if (scrollController != null) return content(context, scrollController!);
+    return AppDraggableSheet(
+      // Ionic: initialBreakpoint 0.75, breakpoints [0, 0.75, 1]
+      breakpoints: const [0, 0.75, 1],
+      initialBreakpoint: 0.75,
+      initialChildSize: 0.75,
+      minChildSize: 0.3,
+      maxChildSize: 1,
+      expand: false,
+      builder: content,
     );
   }
 }
@@ -466,6 +476,25 @@ Future<void> showAttendanceSongsSheet(
   bool linkOnly = false,
   VoidCallback? onOpenPlan,
 }) {
+  // TER-30: classic = Ionic sheet [0, 0.75, 1] with the modal handle and
+  // the shared sheet radius (stage-1 block); Beta keeps its own sheet.
+  if (context.rdSkin == null) {
+    return showIonSheet<void>(
+      context,
+      breakpoints: const [0, 0.75, 1],
+      initialBreakpoint: 0.75,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (context, scrollController) => AttendanceSongsSheet(
+        title: title,
+        subtitle: subtitle,
+        entries: entries,
+        instrumentId: instrumentId,
+        linkOnly: linkOnly,
+        onOpenPlan: onOpenPlan,
+        scrollController: scrollController,
+      ),
+    );
+  }
   return showModalBottomSheet(
     context: context,
     useRootNavigator: true,

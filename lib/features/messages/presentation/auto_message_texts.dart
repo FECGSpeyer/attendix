@@ -159,14 +159,42 @@ class AutoMessageChip extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
+    this.placeholder = false,
   });
 
   final String label;
   final bool selected;
   final VoidCallback onTap;
 
+  /// EIB-23: the placeholder chips of the rule editor – `ion-chip
+  /// outline="true" color="primary" class="ph"` (primary outline, monospace
+  /// 0.8rem); [selected] is ignored.
+  final bool placeholder;
+
   @override
   Widget build(BuildContext context) {
+    if (placeholder) {
+      return Material(
+        color: Colors.transparent,
+        shape: StadiumBorder(side: BorderSide(color: AppColors.primary.withValues(alpha: 0.32))),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12.8,
+                color: AppColors.primary,
+                fontFamily: 'Menlo',
+                fontFamilyFallback: ['Courier New', 'Courier', 'monospace'],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
     final color = selected ? AppColors.primary : AppColors.medium;
     return Material(
       color: selected ? AppColors.primary.withValues(alpha: 0.12) : Colors.transparent,

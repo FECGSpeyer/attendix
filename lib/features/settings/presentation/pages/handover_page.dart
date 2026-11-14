@@ -10,7 +10,6 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
@@ -18,7 +17,9 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../people/people_list_utils.dart';
 import '../widgets/ion_condense.dart';
-import '../widgets/settings_list.dart' show ionIsIos;
+import '../widgets/settings_list.dart';
+import '../../../people/presentation/widgets/ion/ion_widgets.dart' show IonFabButton;
+import '../../../../shared/widgets/layout/ion_form_items.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
@@ -204,6 +205,43 @@ mixin HandoverSelectionLogic<T extends ConsumerStatefulWidget> on ConsumerState<
 }
 
 class _HandoverPageState extends ConsumerState<HandoverPage> with HandoverSelectionLogic {
+  final _dateController = TextEditingController();
+
+  @override
+  void dispose() {
+    _dateController.dispose();
+    super.dispose();
+  }
+
+  void _goBack() => context.canPop() ? context.pop() : context.go('/settings');
+
+  Future<void> _addFilter(BuildContext rowContext) async {
+    final items = [
+      if (!filters.contains('younger') && !filters.contains('older')) ...[
+        AppPopoverMenuItem(value: 'younger', label: context.l10n.handoverYoungerThanDots),
+        AppPopoverMenuItem(value: 'older', label: context.l10n.handoverOlderThanDots),
+      ],
+      if (!filters.contains('group'))
+        AppPopoverMenuItem(value: 'group', label: context.l10n.handoverInGroupDots),
+    ];
+    if (items.isEmpty) return;
+    // Ionic `ion-popover` with an `ion-list` (item lines) below the row.
+    final f = await showAppPopoverMenu<String>(
+      context: rowContext,
+      lines: true,
+      iosArrow: true,
+      items: items,
+    );
+    if (f != null && mounted) setState(() => filters.add(f));
+  }
+
+  /// `ion-button fill="clear" slot="end"` with the trash icon.
+  Widget _removeButton(VoidCallback onPressed) => IconButton(
+        icon: Icon(AppIcons.deleteOutline, semanticLabel: context.l10n.commonDelete),
+        color: AppColors.primary,
+        onPressed: onPressed,
+      );
+
   @override
   Widget build(BuildContext context) {
     final view = handoverView();
@@ -213,217 +251,174 @@ class _HandoverPageState extends ConsumerState<HandoverPage> with HandoverSelect
     final filtered = view.filtered;
     final selectedPersons = view.selectedPersons;
     final playersLoading = view.loading;
+    final canProceed = targetTenantId != null && selectedPersons.isNotEmpty;
+    final l10n = context.l10n;
+    _dateController.text = dateFormat.format(date);
+    final dateFilter = filters.contains('younger') || filters.contains('older');
 
-    // IOS_R6: Ionic `ion-header collapse="condense"` (large title on iOS)
+    // EIB-06: Ionic settings/handover – arrow-back button, condense title,
+    // intro `ion-card` with the header icon, ONE inset list "Einstellungen"
+    // (toggles with helper text, target select, filter item, active
+    // filters), the person list as an inset list with "Alle auswählen" in
+    // its header, the arrow FAB.
     return IonCondense(builder: (context, collapsed) => Scaffold(
-      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
       extendBodyBehindAppBar: ionIsIos(context),
-      // IOS_R6: `ion-header translucent` + `collapse="condense"`
-      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(title: IonCondenseTitle(context.l10n.handoverTitle, collapsed: collapsed))),
-      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
-        onPressed: targetTenantId == null || selectedPersons.isEmpty
-            ? null
-            : () => openHandoverDetail(view, '/settings/handover/detail'),
-        backgroundColor: targetTenantId == null || selectedPersons.isEmpty
-            ? AppColors.medium
-            : null,
-        child: Icon(AppIcons.arrowForward),
+      appBar: IonTranslucentAppBar(
+        condensed: collapsed,
+        child: AppBar(
+          leading: IonArrowBackButton(onPressed: _goBack),
+          leadingWidth: IonArrowBackButton.leadingWidth(context),
+          title: IonCondenseTitle(l10n.handoverTitle, collapsed: collapsed),
+        ),
+      ),
+      // Ionic `[disabled]` on the fab button: the same button at .5.
+      floatingActionButton: TabBarFab.wrap(Opacity(
+        opacity: canProceed ? 1 : 0.5,
+        child: IonFabButton(
+          icon: AppIcons.arrowForward,
+          onPressed: canProceed
+              ? () => openHandoverDetail(view, '/settings/handover/detail')
+              : null,
+        ),
       )),
       body: ListView(
-        padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, ionIsIos(context) ? 0 : AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: 16, fabRoom: 84)), // IOS_R6: large title on top
+        padding: EdgeInsets.fromLTRB(
+          ionListMargin(context),
+          ionIsIos(context) ? 0 : AppDimensions.paddingM,
+          ionListMargin(context),
+          scrollEndPadding(context, base: 16, fabRoom: 84),
+        ),
         children: [
           const IonContentTopInset(),
-          IonLargeTitle(context.l10n.handoverTitle, padding: const EdgeInsets.only(bottom: 4)),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Column(
-                children: [
-                  Icon(AppIcons.directionsWalk, size: 48, color: AppColors.primary),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Text(
-                    context.l10n.handoverIntro,
-                  ),
-                ],
+          IonLargeTitle(l10n.handoverTitle, padding: const EdgeInsets.only(bottom: 4)),
+          SettingsHintCard(icon: AppIcons.directionsWalk, text: l10n.handoverIntro),
+          SettingsListSection(
+            title: l10n.handoverSettings,
+            icons: false,
+            children: [
+              IonToggleItem(
+                title: l10n.handoverKeepInTenant,
+                helper: l10n.handoverKeepHelper,
+                value: stayInInstance,
+                onChanged: (v) => setState(() => stayInInstance = v),
               ),
-            ),
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-          Text(context.l10n.handoverSettings, style: Theme.of(context).textTheme.titleSmall),
-          Card(
-            child: Column(
-              children: [
-                SwitchListTile.adaptive(
-                  title: Text(context.l10n.handoverKeepInTenant),
-                  subtitle: Text(context.l10n.handoverKeepHelper),
-                  value: stayInInstance,
-                  onChanged: (v) => setState(() => stayInInstance = v),
-                ),
-                SwitchListTile.adaptive(
-                  title: Text(context.l10n.handoverRespectMainGroup),
-                  subtitle: Text(context.l10n.handoverMainGroupHelper),
-                  value: includeMainGroup,
-                  onChanged: (v) => setState(() => includeMainGroup = v),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.paddingM,
-                    vertical: AppDimensions.paddingS,
-                  ),
-                  child: AppDropdownFormField<int>(
+              IonToggleItem(
+                title: l10n.handoverRespectMainGroup,
+                helper: l10n.handoverMainGroupHelper,
+                value: includeMainGroup,
+                onChanged: (v) => setState(() => includeMainGroup = v),
+              ),
+              // `ion-select [label]` (alert interface, label at the start).
+              IonSelectItem(
+                lines: false,
+                label: l10n.handoverTargetTenant,
+                value: tenants.where((t) => t.id == targetTenantId).map((t) => t.longName).firstOrNull,
+                onOpen: (anchor) async {
+                  final picked = await showAppSelect<int>(
+                    context: anchor,
                     interface: AppSelectInterface.alert,
-                    // ignore: deprecated_member_use
+                    header: l10n.handoverTargetTenant,
                     value: targetTenantId,
-                    isExpanded: true,
-                    decoration: InputDecoration(labelText: context.l10n.handoverTargetTenant),
-                    items: [
+                    options: [
                       for (final t in tenants)
-                        if (t.id != null)
-                          DropdownMenuItem(value: t.id, child: Text(t.longName)),
+                        if (t.id != null) AppSelectOption(value: t.id!, label: t.longName),
                     ],
-                    onChanged: (v) => setState(() => targetTenantId = v),
-                  ),
+                  );
+                  if (picked != null && mounted) setState(() => targetTenantId = picked.value);
+                },
+              ),
+              // `ion-item button detail="false"`: label only.
+              Builder(
+                builder: (rowContext) => SettingsListTile(
+                  title: l10n.handoverAddFilter,
+                  detail: false,
+                  onTap: () => _addFilter(rowContext),
                 ),
-                // Ionic `ion-item id="filter-btn-handover" button
-                // detail="false"` (label only) + `ion-popover` with an
-                // `ion-list` (item lines); iOS: below the row, with arrow.
-                if (context.rdSkin == null)
-                  Builder(
-                    builder: (rowContext) => ListTile(
-                      title: Text(context.l10n.handoverAddFilter),
-                      onTap: () async {
-                        final items = [
-                          if (!filters.contains('younger') && !filters.contains('older')) ...[
-                            AppPopoverMenuItem(value: 'younger', label: context.l10n.handoverYoungerThanDots),
-                            AppPopoverMenuItem(value: 'older', label: context.l10n.handoverOlderThanDots),
-                          ],
-                          if (!filters.contains('group'))
-                            AppPopoverMenuItem(value: 'group', label: context.l10n.handoverInGroupDots),
-                        ];
-                        if (items.isEmpty) return;
-                        final f = await showAppPopoverMenu<String>(
-                          context: rowContext,
-                          lines: true,
-                          iosArrow: true,
-                          items: items,
-                        );
-                        if (f != null && context.mounted) setState(() => filters.add(f));
-                      },
-                    ),
-                  )
-                else
-                // Beta design: its Material menu as before.
-                PopupMenuButton<String>(
-                  onSelected: (f) => setState(() => filters.add(f)),
-                  itemBuilder: (context) => [
-                    if (!filters.contains('younger') && !filters.contains('older')) ...[
-                      PopupMenuItem(value: 'younger', child: Text(context.l10n.handoverYoungerThanDots)),
-                      PopupMenuItem(value: 'older', child: Text(context.l10n.handoverOlderThanDots)),
-                    ],
-                    if (!filters.contains('group'))
-                      PopupMenuItem(value: 'group', child: Text(context.l10n.handoverInGroupDots)),
-                  ],
-                  child: ListTile(
-                    leading: Icon(AppIcons.filterList),
-                    title: Text(context.l10n.handoverAddFilter),
-                  ),
+              ),
+              if (dateFilter)
+                IonStackedInputItem(
+                  lines: false,
+                  label: filters.contains('younger') ? l10n.handoverYoungerThan : l10n.handoverOlderThan,
+                  controller: _dateController,
+                  readOnly: true,
+                  onTap: pickDate,
+                  end: _removeButton(() => setState(() {
+                    filters.remove(filters.contains('younger') ? 'younger' : 'older');
+                  })),
                 ),
-                if (filters.contains('younger') || filters.contains('older'))
-                  ListTile(
-                    title: Text(filters.contains('younger') ? context.l10n.handoverYoungerThan : context.l10n.handoverOlderThan),
-                    subtitle: Text(dateFormat.format(date)),
-                    onTap: pickDate,
-                    trailing: IconButton(
-                      icon: Icon(AppIcons.deleteOutline, semanticLabel: context.l10n.commonDelete),
-                      onPressed: () => setState(() {
-                        filters.remove(filters.contains('younger') ? 'younger' : 'older');
-                      }),
-                    ),
-                  ),
-                if (filters.contains('group'))
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: AppDropdownFormField<int>(
-                            interface: AppSelectInterface.alert,
-                            // ignore: deprecated_member_use
-                            value: groupId,
-                            isExpanded: true,
-                            decoration: InputDecoration(labelText: context.l10n.peopleGroup),
-                            items: [
-                              for (final g in groups)
-                                if (g.id != null)
-                                  DropdownMenuItem(value: g.id, child: Text(g.name)),
-                            ],
-                            onChanged: (v) => setState(() => groupId = v),
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(AppIcons.deleteOutline, semanticLabel: context.l10n.commonDelete),
-                          onPressed: () => setState(() => filters.remove('group')),
-                        ),
+              if (filters.contains('group'))
+                IonSelectItem(
+                  lines: false,
+                  stacked: true,
+                  label: l10n.peopleGroup,
+                  value: groups.where((g) => g.id == groupId).map((g) => g.name).firstOrNull,
+                  onOpen: (anchor) async {
+                    final picked = await showAppSelect<int>(
+                      context: anchor,
+                      interface: AppSelectInterface.alert,
+                      header: l10n.peopleGroup,
+                      value: groupId,
+                      options: [
+                        for (final g in groups)
+                          if (g.id != null) AppSelectOption(value: g.id!, label: g.name),
                       ],
-                    ),
-                  ),
-              ],
-            ),
+                    );
+                    if (picked != null && mounted) setState(() => groupId = picked.value);
+                  },
+                  end: _removeButton(() => setState(() => filters.remove('group'))),
+                ),
+            ],
           ),
-          const SizedBox(height: AppDimensions.paddingM),
           if (playersLoading)
             const Center(child: AppSpinner())
           else if (filtered.isEmpty)
-            Card(
+            IonCardBox(
               child: Padding(
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Text(context.l10n.handoverNoneSelected,
+                child: Text(l10n.handoverNoneSelected,
                     style: const TextStyle(color: AppColors.danger)),
               ),
             )
-          else ...[
-            Row(
+          else
+            SettingsListSection(
+              title: l10n.handoverPersonList,
+              icons: false,
+              // `ion-list-header` > `ion-button size="small" fill="clear"`.
+              headerAction: IonButton(
+                small: true,
+                fill: IonButtonFill.clear,
+                label: l10n.handoverSelectAll,
+                onPressed: () => setState(() {
+                  selected
+                    ..clear()
+                    ..addAll(filtered.where((p) => p.id != null).map((p) => p.id!));
+                }),
+              ),
               children: [
-                Expanded(
-                  child: Text(context.l10n.handoverPersonList,
-                      style: Theme.of(context).textTheme.titleSmall),
-                ),
-                TextButton(
-                  onPressed: () => setState(() {
-                    selected
-                      ..clear()
-                      ..addAll(filtered.where((p) => p.id != null).map((p) => p.id!));
-                  }),
-                  child: IonButtonLabel(context.l10n.handoverSelectAll),
-                ),
+                for (final p in filtered)
+                  // `ion-checkbox` with the label at the start and the box
+                  // at the end (h2 name, p birthday | group).
+                  CheckboxListTile(
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    value: selected.contains(p.id),
+                    onChanged: p.id == null
+                        ? null
+                        : (v) => setState(() {
+                              if (v == true) {
+                                selected.add(p.id!);
+                              } else {
+                                selected.remove(p.id);
+                              }
+                            }),
+                    title: Text('${p.firstName} ${p.lastName}'),
+                    subtitle: Text([
+                      if (p.birthday != null && DateTime.tryParse(p.birthday!) != null)
+                        dateFormat.format(DateTime.parse(p.birthday!)),
+                      p.groupName ?? groupNames[p.instrument] ?? '',
+                    ].join(' | ')),
+                  ),
               ],
             ),
-            Card(
-              child: Column(
-                children: [
-                  for (final p in filtered)
-                    CheckboxListTile(
-                      value: selected.contains(p.id),
-                      onChanged: p.id == null
-                          ? null
-                          : (v) => setState(() {
-                                if (v == true) {
-                                  selected.add(p.id!);
-                                } else {
-                                  selected.remove(p.id);
-                                }
-                              }),
-                      title: Text('${p.firstName} ${p.lastName}'),
-                      subtitle: Text([
-                        if (p.birthday != null && DateTime.tryParse(p.birthday!) != null)
-                          dateFormat.format(DateTime.parse(p.birthday!)),
-                        p.groupName ?? groupNames[p.instrument] ?? '',
-                      ].join(' | ')),
-                    ),
-                ],
-              ),
-            ),
-          ],
         ],
       ),
     ));

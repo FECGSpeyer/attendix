@@ -29,6 +29,7 @@ class AccountAccordion extends ConsumerWidget {
     required this.onCreateAccount,
     required this.canEdit,
     this.onFieldChanged,
+    this.onEmailTyped,
     this.draftEmail,
     this.isLeader = false,
     this.isMainGroup = false,
@@ -45,6 +46,11 @@ class AccountAccordion extends ConsumerWidget {
   final VoidCallback onCreateAccount;
   final bool canEdit;
   final void Function(String field, dynamic value)? onFieldChanged;
+
+  /// Inline e-mail input (classic): every keystroke updates the draft
+  /// through this callback; [onFieldChanged] (with the lookup in other
+  /// instances) runs when the field loses focus.
+  final void Function(String field, dynamic value)? onEmailTyped;
 
   /// Unsaved email value (shown instead of the stored one)
   final String? draftEmail;
@@ -86,6 +92,39 @@ class AccountAccordion extends ConsumerWidget {
         // Ionic person.page.html: the e-mail `ion-item` with its button in
         // `slot="end"` – the search (no account yet) or the danger trash
         // that removes the account from the group.
+        if (canEdit && person.appId == null && context.rdSkin == null)
+          // PEO-01: Ionic `ion-input` in the item – typed inline; the
+          // lookup in other instances runs on blur (Ionic onEmailBlur).
+          IonInputRow(
+            label: context.l10n.peopleEmail,
+            value: draftEmail ?? person.email,
+            keyboardType: TextInputType.emailAddress,
+            textCapitalization: TextCapitalization.none,
+            onChanged: (v) {
+              final t = v.trim();
+              (onEmailTyped ?? onFieldChanged)
+                  ?.call('email', t.isEmpty ? null : t);
+            },
+            onFocusLost: onEmailTyped == null
+                ? null
+                : (v) {
+                    final t = v.trim();
+                    if (t.isNotEmpty && t != (person.email ?? '')) {
+                      onFieldChanged?.call('email', t);
+                    }
+                  },
+            trailing: onSearchOtherInstance != null &&
+                    ((draftEmail ?? person.email)?.trim().isNotEmpty ?? false)
+                ? _ItemEndButton(
+                    key: const Key('account-search-button'),
+                    icon: AppIcons.search,
+                    tooltip: context.l10n.personFlutterSearchOtherInstance,
+                    color: AppColors.primary,
+                    onPressed: onSearchOtherInstance,
+                  )
+                : null,
+          )
+        else
         IonFieldRow(
           icon: AppIcons.email,
           label: context.l10n.peopleEmail,
@@ -268,28 +307,7 @@ class AccountAccordion extends ConsumerWidget {
   /// "Hilfe" and a close button.
   void _showHelp(BuildContext context) {
     if (context.rdSkin == null) {
-      // [breakpoints]="[0, 0.5, 1]" [initialBreakpoint]="0.5"; ion-title +
-      // close ✕ (end), padded text.
-      showIonSheet<void>(
-        context,
-        breakpoints: const [0, 0.5, 1],
-        initialBreakpoint: 0.5,
-        builder: (ctx, controller) => IonSheetScaffold(
-          title: ctx.l10n.personHelp,
-          showClose: true,
-          body: ListView(
-            controller: controller,
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
-            children: [
-              if (person.appId == null) ...[
-                Text(ctx.l10n.personAccountHelp),
-                const SizedBox(height: AppDimensions.paddingM),
-              ],
-              Text(ctx.l10n.personExistingUserHint),
-            ],
-          ),
-        ),
-      );
+      showAccountHelpSheet(context, hasAccount: person.appId != null);
       return;
     }
     showModalBottomSheet<void>(
@@ -421,4 +439,30 @@ class _ItemEndButton extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Ionic person page account "Hilfe" sheet (classic design):
+/// `[breakpoints]="[0, 0.5, 1]" [initialBreakpoint]="0.5"`, ion-title +
+/// close ✕ (end), padded text. Also used by the create page.
+Future<void> showAccountHelpSheet(BuildContext context, {bool hasAccount = false}) {
+  return showIonSheet<void>(
+    context,
+    breakpoints: const [0, 0.5, 1],
+    initialBreakpoint: 0.5,
+    builder: (ctx, controller) => IonSheetScaffold(
+      title: ctx.l10n.personHelp,
+      showClose: true,
+      body: ListView(
+        controller: controller,
+        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        children: [
+          if (!hasAccount) ...[
+            Text(ctx.l10n.personAccountHelp),
+            const SizedBox(height: AppDimensions.paddingM),
+          ],
+          Text(ctx.l10n.personExistingUserHint),
+        ],
+      ),
+    ),
+  );
 }

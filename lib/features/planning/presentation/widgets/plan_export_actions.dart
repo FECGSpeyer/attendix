@@ -63,6 +63,7 @@ Future<void> showPlanExportSheet(
   String? pdfFileName,
   String? imageFileName,
   Future<PdfBranding?> Function()? branding,
+  bool cancelDestructive = false,
 }) async {
   // P10_SELF_PLAN: [pdfLabel] / [pdf2xLabel] carry the Ionic wording of the
   // sheet ("PDF exportieren" on the Ablaufplan editor and viewer, "PDF (A4)"
@@ -75,6 +76,7 @@ Future<void> showPlanExportSheet(
   final action = await showPlanActionSheet<String>(
     context,
     title: title ?? l10n.planningExport,
+    cancelDestructive: cancelDestructive,
     actions: [
       ...extraActions,
       if (showExports) ...[
@@ -314,13 +316,14 @@ class _PlanShareSheetState extends State<_PlanShareSheet> {
                 ),
               ),
               IonInsetList(
+                // ABL-16: Ionic icons document / documents / paper-plane.
                 dividerIndent: 56,
                 children: [
-                  option(AppIcons.descriptionOutlined, l10n.attendanceExportPdf, PlanExportAction.pdf),
-                  option(AppIcons.fileCopyOutlined, l10n.attendanceExportPdfA5, PlanExportAction.pdf2x),
+                  option(AppIcons.documentOutline, l10n.attendanceExportPdf, PlanExportAction.pdf),
+                  option(AppIcons.documentsOutline, l10n.attendanceExportPdfA5, PlanExportAction.pdf2x),
                   if (widget.hasChatId) ...[
-                    option(AppIcons.sendOutlined, l10n.attendanceTelegramPdf, PlanExportAction.telegram),
-                    option(AppIcons.sendOutlined, l10n.attendanceTelegramPdfA5, PlanExportAction.telegram2x),
+                    option(AppIcons.paperPlaneOutline, l10n.attendanceTelegramPdf, PlanExportAction.telegram),
+                    option(AppIcons.paperPlaneOutline, l10n.attendanceTelegramPdfA5, PlanExportAction.telegram2x),
                     if (!_all) option(AppIcons.imageOutlined, l10n.attendanceTelegramImage, PlanExportAction.telegramImage),
                   ],
                 ],

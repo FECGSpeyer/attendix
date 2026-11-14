@@ -53,6 +53,14 @@ void main() {
       expect(link.isSignupConfirm, isTrue);
     });
 
+    test('expired e-mail link without type is an auth link (OEFF-41)', () {
+      final link = AuthLink.parse(Uri.parse(
+          'https://attendix.de/#error=access_denied&error_code=otp_expired'
+          '&error_description=Email+link+is+invalid+or+has+expired'));
+      expect(link.errorCode, 'otp_expired');
+      expect(link.isAuthLink, isTrue);
+    });
+
     test('normal app URL is no auth link', () {
       final link = AuthLink.parse(Uri.parse('https://attendix.de/#/people'));
       expect(link.isAuthLink, isFalse);
@@ -123,6 +131,12 @@ void main() {
           contains('nicht mit dem alten'));
       expect(mapUpdatePasswordError(null), contains('nicht geändert'));
     });
+  });
+
+  test('register links: only the uuid format is looked up (OEFF-18)', () {
+    expect(isRegisterIdFormat('abc'), isFalse);
+    expect(isRegisterIdFormat('3f2b1c4e-9a7d-4e21-b8a0-1c2d3e4f5a6'), isFalse);
+    expect(isRegisterIdFormat('3f2b1c4e-9a7d-4e21-b8a0-1c2d3e4f5a6b'), isTrue);
   });
 
   group('Validation helpers', () {

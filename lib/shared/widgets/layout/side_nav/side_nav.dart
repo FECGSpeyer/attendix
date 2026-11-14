@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/providers/branding_providers.dart' show tenantLogoUrlProvider;
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -216,6 +217,9 @@ class _SideNavState extends ConsumerState<SideNav> {
     final mq = MediaQuery.of(context);
     return Semantics(
       container: true,
+      // ROLLEN-B-05: every entry is its own node (not merged into the
+      // navigation label).
+      explicitChildNodes: true,
       label: l10n.navLabel,
       child: Container(
         decoration: BoxDecoration(
@@ -266,14 +270,14 @@ class _SideNavState extends ConsumerState<SideNav> {
                 '${collapsed ? l10n.navExpand : l10n.navCollapse} (${l10n.navShortcut})',
             colors: colors,
             onTap: _toggleCollapsed,
-            child: Icon(AppIcons.viewSidebarOutlined,
-                size: 22, color: colors.muted, textDirection: TextDirection.rtl),
+            // DAS-09: Ionic `.sn-sidebar-icon` (22px, stroke 1.8).
+            child: _SidebarGlyph(color: colors.muted),
           )
         : _IconBtn(
             tooltip: l10n.navClose,
             colors: colors,
             onTap: widget.onClose,
-            child: Icon(AppIcons.close, size: 24, color: colors.muted),
+            child: Icon(AppIcons.closeOutline, size: 24, color: colors.muted),
           );
     final Widget bell = hasTenant
         ? IconTheme.merge(
@@ -575,8 +579,13 @@ class _NavButton extends StatelessWidget {
           );
 
     return Semantics(
+      // ROLLEN-B-05: an own focusable, tappable node per entry (Ionic
+      // `ion-item` buttons); excludeSemantics would drop the InkWell's tap.
+      container: true,
       button: true,
       selected: active,
+      focusable: true,
+      onTap: onTap,
       label: count > 0 ? '$label ($count)' : label,
       excludeSemantics: true,
       child: Tooltip(
@@ -596,7 +605,7 @@ class _NavButton extends StatelessWidget {
   }
 }
 
-class _TenantButton extends StatelessWidget {
+class _TenantButton extends ConsumerWidget {
   const _TenantButton({
     required this.tenant,
     required this.tenants,
@@ -612,12 +621,12 @@ class _TenantButton extends StatelessWidget {
   final ValueChanged<Tenant> onSelected;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final multiple = tenants.length > 1;
     final longName = tenant?.longName ?? '';
     final short = tenant?.shortName ?? '';
-    final logo = Container(
+    final initials = Container(
       width: 34,
       height: 34,
       alignment: Alignment.center,
@@ -630,6 +639,21 @@ class _TenantButton extends StatelessWidget {
         style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14),
       ),
     );
+    // DAS-07: Ionic `<img class="sn-logo" [src]="db.tenant()?.logo_url">`
+    // (34px, radius 9), the initials only as the fallback.
+    final logoUrl = ref.watch(tenantLogoUrlProvider).valueOrNull;
+    final Widget logo = logoUrl == null
+        ? initials
+        : ClipRRect(
+            borderRadius: BorderRadius.circular(9),
+            child: Image.network(
+              logoUrl,
+              width: 34,
+              height: 34,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => initials,
+            ),
+          );
 
     final Widget face = collapsed
         ? Padding(padding: const EdgeInsets.fromLTRB(0, 4, 0, 6), child: Center(child: logo))
@@ -659,7 +683,7 @@ class _TenantButton extends StatelessWidget {
                   ],
                 ),
               ),
-              if (multiple) Icon(AppIcons.keyboardArrowDown, color: colors.muted),
+              if (multiple) Icon(AppIcons.chevronDownOutline, color: colors.muted),
             ]),
           );
 
@@ -667,6 +691,7 @@ class _TenantButton extends StatelessWidget {
       return Tooltip(message: longName, child: face);
     }
     return Semantics(
+      container: true,
       button: true,
       label: '${l10n.settingsSwitchTenant}: $longName',
       excludeSemantics: true,
@@ -747,4 +772,44 @@ String _initials(String name) {
     return (p.length > 2 ? p.substring(0, 2) : p).toUpperCase();
   }
   return (parts.first[0] + parts.last[0]).toUpperCase();
+}
+
+
+/// DAS-09: the sidebar glyph of the Ionic side panel
+/// (`<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16"/>`
+/// in a 24 viewBox, drawn at 22px with stroke 1.8, round caps / joins).
+class _SidebarGlyph extends StatelessWidget {
+  const _SidebarGlyph({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) =>
+      CustomPaint(size: const Size.square(22), painter: _SidebarGlyphPainter(color));
+}
+
+class _SidebarGlyphPainter extends CustomPainter {
+  _SidebarGlyphPainter(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final k = size.width / 24;
+    canvas.scale(k);
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(const Rect.fromLTWH(3, 4, 18, 16), const Radius.circular(2.5)),
+      paint,
+    );
+    canvas.drawLine(const Offset(9, 4), const Offset(9, 20), paint);
+  }
+
+  @override
+  bool shouldRepaint(_SidebarGlyphPainter old) => old.color != color;
 }

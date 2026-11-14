@@ -24,6 +24,7 @@ import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../widgets/ion_condense.dart';
 import '../widgets/settings_list.dart';
+import '../widgets/settings_form_items.dart';
 
 enum ExtraFieldTarget { person, song }
 
@@ -249,19 +250,16 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
         extendBodyBehindAppBar: ionIsIos(context),
         // IOS_R6: `ion-header translucent` (blur once condensed)
         appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
-          leading: IconButton(
-            icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-            onPressed: () => Navigator.of(context).maybePop(),
-          ),
+          leading: settingsBackButton(context, onPressed: () => Navigator.of(context).maybePop()),
           title: IonCondenseTitle(context.l10n.extraFieldsTitle, collapsed: collapsed),
-          actions: [
+          actions: settingsToolbarActions(context, [
             IconButton(
               icon: _saving
                   ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
                   : Icon(AppIcons.check, semanticLabel: context.l10n.commonSave),
               onPressed: _saving ? null : _save,
             ),
-          ],
+          ]),
         )),
         // SOL_FIX20: Ionic shows a blocking loading overlay
         // ("Felder werden gespeichert...") while saving – no edits meanwhile.
@@ -275,14 +273,21 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
             IonLargeTitle(context.l10n.extraFieldsTitle, padding: const EdgeInsets.only(bottom: 4)),
             if (ionIsIos(context)) const SizedBox(height: 16),
             _buildSection(ExtraFieldTarget.person, context.l10n.extraFieldsForPersons),
-            if (!ionIsIos(context)) const SizedBox(height: AppDimensions.paddingL),
+            if (!ionIsIos(context) && context.rdSkin != null) const SizedBox(height: AppDimensions.paddingL),
             _buildSection(ExtraFieldTarget.song, context.l10n.extraFieldsForSongs),
-            if (!ionIsIos(context)) const SizedBox(height: AppDimensions.paddingL),
+            if (!ionIsIos(context) && context.rdSkin != null) const SizedBox(height: AppDimensions.paddingL),
             // Ionic: ion-padding + expand="block" button
+            if (context.rdSkin != null)
             ElevatedButton(
               onPressed: _saving ? null : _save,
               child: IonButtonLabel(context.l10n.commonSave),
-            ),
+            )
+            else
+              IonButton(
+                label: context.l10n.commonSave,
+                expand: true,
+                onPressed: _saving ? null : _save,
+              ),
           ],
             ),
           ),
@@ -359,7 +364,8 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                     );
                   },
                 );
-    if (ionIsIos(context)) {
+    // EIA-07: the same inset list in md (the Beta keeps its card).
+    if (ionIsIos(context) || context.rdSkin == null) {
       return SettingsListSection(
         title: title,
         icons: false,
@@ -650,7 +656,177 @@ Future<ExtraField?> showExtraFieldSheet(
               Navigator.pop(sheetContext, buildField(id));
             }
 
-            final form = Column(
+            /// Ionic `ion-select [label]` alert for a single value.
+            Future<void> pickOne(BuildContext anchor, String header, String value,
+                Map<String, String> choices, void Function(String) apply) async {
+              final picked = await showAppSelect<String>(
+                context: anchor,
+                interface: AppSelectInterface.alert,
+                header: header,
+                value: value,
+                options: [
+                  for (final e in choices.entries) AppSelectOption(value: e.key, label: e.value),
+                ],
+              );
+              if (picked == null || !ctx.mounted) return;
+              setSheet(() => apply(picked.value));
+            }
+
+            /// EIA-07: the Ionic sheet content – inset item groups: type /
+            /// display selects (label start, value end), stacked name, toggles,
+            /// "Optionen" header with "+", option rows with the trash at the
+            /// end, the default value and the coloured label item.
+            Widget classicForm() {
+              final l10n = context.l10n;
+              final typeNames = {
+                'text': l10n.typeSettingsText,
+                'number': l10n.extraFieldsNumber,
+                'boolean': l10n.extraFieldsYesNo,
+                'select': l10n.extraFieldsSelect,
+                if (isPerson && tenantId == 12) 'bfecg_church': l10n.extraFieldsChurch,
+              };
+              final displayNames = {
+                'chip': l10n.extraFieldsAsChip,
+                'underneath': l10n.extraFieldsUnderName,
+              };
+              final ios = ionIsIos(ctx);
+              final rowPad = ios ? null : const EdgeInsets.symmetric(horizontal: 16);
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SettingsListSection(icons: false, children: [
+                    if (isEdit)
+                      ListTile(
+                        contentPadding: rowPad,
+                        title: Text(l10n.typeSettingsType),
+                        trailing: IonNote(extraFieldTypeName(type)),
+                      )
+                    else
+                      Builder(
+                        builder: (anchor) => SettingsSelectItem(
+                          label: l10n.typeSettingsType,
+                          value: typeNames[type] ?? extraFieldTypeName(type),
+                          onTap: () => pickOne(anchor, l10n.typeSettingsType, type, typeNames, (v) {
+                            type = v;
+                            boolDefault = false;
+                            defaultController.text = type == 'number' ? '0' : '';
+                          }),
+                        ),
+                      ),
+                    SettingsStackedField(
+                      label: l10n.typeSettingsName,
+                      builder: (decoration) => TextField(
+                        controller: nameController,
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: decoration,
+                      ),
+                    ),
+                    Builder(
+                      builder: (anchor) => SettingsSelectItem(
+                        label: l10n.extraFieldsDisplay,
+                        value: displayNames[displayMode] ?? displayMode,
+                        onTap: () => pickOne(anchor, l10n.extraFieldsDisplay, displayMode, displayNames,
+                            (v) => displayMode = v),
+                      ),
+                    ),
+                    if (isPerson) ...[
+                      IonToggleItem(
+                        title: l10n.extraFieldsVisible,
+                        helper: l10n.extraFieldsVisibleHelper,
+                        value: visible,
+                        onChanged: (v) => setSheet(() => visible = v),
+                      ),
+                      if (visible)
+                        IonToggleItem(
+                          title: l10n.extraFieldsEditable,
+                          helper: l10n.extraFieldsEditableHelper,
+                          value: editable,
+                          onChanged: (v) => setSheet(() => editable = v),
+                        ),
+                    ],
+                  ]),
+                  if (type == 'select')
+                    SettingsListSection(
+                      title: l10n.typeSettingsOptions,
+                      icons: false,
+                      headerAction: IconButton(
+                        icon: Icon(AppIcons.add, color: AppColors.primary, semanticLabel: l10n.a11yAdd),
+                        onPressed: () => setSheet(() => options.add(TextEditingController())),
+                      ),
+                      children: [
+                        if (options.isEmpty)
+                          ListTile(
+                            contentPadding: rowPad,
+                            title: Text(isEdit ? l10n.extraFieldsNoOptions : l10n.extraFieldsNoOptionsSelected),
+                          ),
+                        for (var i = 0; i < options.length; i++)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: SettingsStackedField(
+                                  hint: l10n.extraFieldsValuePh,
+                                  helper: i == 0 ? l10n.extraFieldsFlutterFirstOptionDefault : null,
+                                  builder: (decoration) => TextField(
+                                    controller: options[i],
+                                    textCapitalization: TextCapitalization.sentences,
+                                    decoration: decoration,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(AppIcons.deleteOutline, color: AppColors.danger, semanticLabel: l10n.commonDelete),
+                                onPressed: () => removeOption(i),
+                              ),
+                              const SizedBox(width: 4),
+                            ],
+                          ),
+                      ],
+                    ),
+                  if (type != 'select' && type != 'bfecg_church')
+                    SettingsListSection(icons: false, children: [
+                      if (type == 'boolean')
+                        SwitchListTile.adaptive(
+                          contentPadding: rowPad,
+                          title: Text(l10n.extraFieldsDefaultValue),
+                          value: boolDefault,
+                          onChanged: (v) => setSheet(() => boolDefault = v),
+                        )
+                      else
+                        SettingsStackedField(
+                          label: isEdit ? l10n.extraFieldsDefaultValue : l10n.extraFieldsDefaultOptional,
+                          builder: (decoration) => TextField(
+                            controller: defaultController,
+                            keyboardType: type == 'number' ? TextInputType.number : TextInputType.text,
+                            decoration: decoration,
+                          ),
+                        ),
+                    ]),
+                  // Ionic: the last `ion-item-group` is one `ion-item button
+                  // detail="false"` with a coloured label – "Alle
+                  // zurücksetzen" (warning, edit) / "Feld hinzufügen"
+                  // (primary, add); the edit sheet applies on close.
+                  if (isEdit && isPerson)
+                    SettingsListSection(icons: false, children: [
+                      ListTile(
+                        contentPadding: rowPad,
+                        title: Text(l10n.extraFieldsResetAll, style: const TextStyle(color: AppColors.warning)),
+                        onTap: resetValues,
+                      ),
+                    ]),
+                  if (!isEdit)
+                    SettingsListSection(icons: false, children: [
+                      ListTile(
+                        contentPadding: rowPad,
+                        title: Text(l10n.typeSettingsAddField, style: const TextStyle(color: AppColors.primary)),
+                        onTap: submit,
+                      ),
+                    ]),
+                ],
+              );
+            }
+
+            final form = classic ? classicForm() : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -836,11 +1012,13 @@ Future<ExtraField?> showExtraFieldSheet(
                 title: isEdit ? context.l10n.typeSettingsEditField : context.l10n.extraFieldsAddNew,
                 showClose: isEdit,
                 onClose: () => Navigator.pop(sheetContext),
+                // `ion-content color="light"`.
+                backgroundColor: Theme.of(ctx).brightness == Brightness.dark ? null : AppColors.light,
                 body: SafeArea(
                   top: false,
                   child: SingleChildScrollView(
                     controller: scrollController,
-                    padding: const EdgeInsets.all(AppDimensions.paddingM),
+                    padding: EdgeInsets.fromLTRB(ionListMargin(ctx), AppDimensions.paddingM, ionListMargin(ctx), 0),
                     child: form,
                   ),
                 ),

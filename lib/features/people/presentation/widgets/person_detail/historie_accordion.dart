@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -285,6 +286,7 @@ class HistorieAccordion extends ConsumerWidget {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
+                style: appAlertDestructiveStyle(context), // PEO-13
                 child: Text(context.l10n.commonCancel),
               ),
               TextButton(
@@ -361,8 +363,14 @@ Future<void> showOldHistoryNote(BuildContext context, DateTime date, String note
       context: context,
       builder:
           (ctx) => AppAlertDialog(
-            title: Text(context.l10n.personNoteChanged),
-            content: Column(
+            // PEO-30: Ionic header + subHeader (date) + message.
+            title: context.rdSkin == null
+                ? AppAlertTitle(context.l10n.personNoteChanged,
+                    subHeader: DateFormat(dateFmt()).format(date))
+                : Text(context.l10n.personNoteChanged),
+            content: context.rdSkin == null
+                ? Text(context.l10n.personOldNote(note))
+                : Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

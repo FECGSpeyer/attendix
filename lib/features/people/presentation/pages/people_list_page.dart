@@ -20,6 +20,8 @@ import '../../../../core/providers/profile_providers.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import 'package:ionicons/ionicons.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showPageModal;
 import '../../../../core/utils/demo_guard.dart' show DemoModeException;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -640,7 +642,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: IonNoData(
-                  icon: AppIcons.filterAltOutlined,
+                  // PEO-28: Ionic `filter-outline`.
+                  icon: AppIcons.ionic ? Ionicons.filterOutline : AppIcons.filterAltOutlined,
                   label: context.l10n.peopleNoPeopleFound,
                   message: context.l10n.peopleFiltersNoMatch,
                   actions: [(context.l10n.peopleResetFilter, _clearFilters)],
@@ -972,7 +975,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       builder: (buttonContext) => IconButton(
         key: const Key('people_options_button'),
         icon: Icon(
-          AppIcons.tune,
+          // PEO-28: Ionic `options` (filled).
+          AppIcons.ionic ? Ionicons.options : AppIcons.tune,
           color: _filterOption != 'all' || !rate.isDefault ? AppColors.primary : null,
         ),
         tooltip: context.l10n.typeSettingsOptions,
@@ -1198,7 +1202,23 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       setState(() => _filterOption = 'all');
       return;
     }
-    final chosen = await showAppDialog<Tenant>(
+    // PEO-16: Ionic alert with radio inputs, Abbrechen (destructive) /
+    // Filtern; the Beta keeps its tap-to-choose dialog.
+    final Tenant? chosen;
+    if (context.rdSkin == null) {
+      final r = await showAppRadioAlert<int>(
+        context,
+        title: context.l10n.peopleChooseInstance,
+        options: [
+          for (var i = 0; i < linked.length; i++)
+            (i, linked[i].longName.isNotEmpty ? linked[i].longName : linked[i].shortName),
+        ],
+        confirmText: context.l10n.peopleFilter,
+        cancelDestructive: true,
+      );
+      chosen = r?.value == null ? null : linked[r!.value!];
+    } else {
+    chosen = await showAppDialog<Tenant>(
       context: context,
       builder: (ctx) => AppSimpleDialog(
         title: Text(context.l10n.peopleChooseInstance),
@@ -1211,6 +1231,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         ],
       ),
     );
+    }
     if (chosen == null || chosen.id == null || !mounted) return;
     try {
       final linkedIds = await ref.read(linkedTenantIdsProvider.future);
@@ -1224,7 +1245,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         _extraFilterValue = null;
         _otherInstanceUserIds = ids;
         _otherInstanceName =
-            chosen.longName.isNotEmpty ? chosen.longName : chosen.shortName;
+            chosen!.longName.isNotEmpty ? chosen.longName : chosen.shortName;
       });
       _saveFilterOption();
     } catch (e) {
@@ -1301,6 +1322,51 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   Widget _buildReorderList(List<Person> people) {
     final byId = {for (final p in people) if (p.id != null) p.id!: p};
     final groupNames = _reorderIds.keys.toList();
+    if (context.rdSkin == null) {
+      // PEO-08: Ionic keeps the normal list – primary `ion-item-divider`s
+      // and the person items with `ion-reorder slot="start"`.
+      return ListView(
+        padding: EdgeInsets.only(
+            bottom: scrollEndPadding(context, base: 16, fabRoom: 64)),
+        children: [
+          for (final groupName in groupNames) ...[
+            IonItemDivider(
+              text: '$groupName (${_reorderIds[groupName]!.length})',
+              color: AppColors.primary,
+            ),
+            ReorderableListView(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              buildDefaultDragHandles: false,
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  final ids = _reorderIds[groupName]!;
+                  if (newIndex > oldIndex) newIndex -= 1;
+                  if (newIndex == oldIndex) return;
+                  final moved = ids.removeAt(oldIndex);
+                  ids.insert(newIndex, moved);
+                  _reorderedGroups.add(groupName);
+                });
+              },
+              children: [
+                for (var i = 0; i < _reorderIds[groupName]!.length; i++)
+                  IonItem(
+                    key: ValueKey('reorder_${_reorderIds[groupName]![i]}'),
+                    start: ReorderableDragStartListener(
+                      index: i,
+                      child: Icon(AppIcons.dragHandle, color: AppColors.medium),
+                    ),
+                    child: Text(
+                      byId[_reorderIds[groupName]![i]]?.fullName ?? '?',
+                      style: IonText.h2(context),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ],
+      );
+    }
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
       children: [
@@ -1395,7 +1461,16 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     // PARITY_B (I3): bulk edit works on hydrated values (Ionic list players)
     final people = _listPeople();
     final players = _sortPeople(_filterPeople(people));
-    final updated = await Navigator.of(context, rootNavigator: true).push<bool>(
+    // PEO-12: Ionic `modalController.create({ backdropDismiss: false })` –
+    // iOS card modal / centred modal on desktop (Beta: full-screen route).
+    final updated = context.rdSkin == null
+        ? await showPageModal<bool>(
+            context,
+            barrierDismissible: false,
+            iosBackgroundColor: ionLightColor(context),
+            builder: (_) => BulkEditPage(players: players),
+          )
+        : await Navigator.of(context, rootNavigator: true).push<bool>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => BulkEditPage(players: players),
@@ -1408,7 +1483,15 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
   // PEOPLE_IMPORT: open the person import
   Future<void> _openImport() async {
-    final imported = await Navigator.of(context, rootNavigator: true).push<bool>(
+    // PEO-12: Ionic modal (see _openBulkEdit).
+    final imported = context.rdSkin == null
+        ? await showPageModal<bool>(
+            context,
+            barrierDismissible: false,
+            iosBackgroundColor: ionLightColor(context),
+            builder: (_) => const PersonImportPage(),
+          )
+        : await Navigator.of(context, rootNavigator: true).push<bool>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => const PersonImportPage(),
@@ -1526,7 +1609,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       title: context.l10n.peopleRemoveConfirm,
       message: context.l10n.peopleCannotUndoExcl,
       confirmText: context.l10n.commonRemove,
-      isDestructive: true,
+      // PEO-29: Ionic "Entfernen" has no role (neutral); Beta keeps red.
+      isDestructive: context.rdSkin != null,
     );
 
     if (confirmed == true && mounted && person.id != null) {

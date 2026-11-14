@@ -5,6 +5,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../l10n/l10n.dart';
 import '../songs_selection_sheet.dart';
 import 'attendance_accordion.dart';
+import '../../../../../core/theme/redesign/rd_theme.dart';
 
 /// Accordion widget for displaying songs/works in attendance
 class SongsHistoryAccordion extends StatelessWidget {
@@ -33,7 +34,8 @@ class SongsHistoryAccordion extends StatelessWidget {
         children: [
           for (var index = 0; index < entries.length; index++)
             ListTile(
-              dense: true,
+              // TER-15: theme item size in the classic design (Ionic ion-item).
+      dense: context.rdSkin != null,
               title: Text(
                 entries[index].songName,
                 style: const TextStyle(color: AppColors.primary, fontSize: 15),
@@ -47,7 +49,8 @@ class SongsHistoryAccordion extends StatelessWidget {
               onTap: onTap == null ? null : () => onTap!(index),
             ),
           ListTile(
-            dense: true,
+            // TER-15: theme item size in the classic design (Ionic ion-item).
+      dense: context.rdSkin != null,
             title: Text(context.l10n.attListAddSongs, style: const TextStyle(color: AppColors.primary)),
             onTap: onAdd,
           ),

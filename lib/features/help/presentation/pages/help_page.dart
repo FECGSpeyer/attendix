@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/widgets/layout/ion_form_items.dart' show IonArrowBackButton;
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -54,10 +55,9 @@ class _HelpPageState extends ConsumerState<HelpPage> {
       // `ion-header translucent` (no large title: always blurred)
       extendBodyBehindAppBar: ios,
       appBar: IonTranslucentAppBar(child: AppBar(
-        leading: IconButton(
-          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
+        // EIB-12: Ionic custom `arrow-back` ion-button (glass circle on iOS).
+        leading: IonArrowBackButton(onPressed: () => Navigator.of(context).maybePop()),
+        leadingWidth: IonArrowBackButton.leadingWidth(context),
         title: Text(context.l10n.helpTitle),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(ios ? 60 : 64),
@@ -92,7 +92,8 @@ class _HelpPageState extends ConsumerState<HelpPage> {
 
   Widget _buildSearchResults(HelpSearchResults results, String term) {
     return ListView(
-      padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
+      // EIB-21: Ionic inset list margin (iOS 20).
+      padding: EdgeInsets.fromLTRB(ionListMargin(context), AppDimensions.paddingM, ionListMargin(context), scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
         const IonContentTopInset(),
         SettingsListSection(
@@ -124,7 +125,8 @@ class _HelpPageState extends ConsumerState<HelpPage> {
     final ios = ionIsIos(context);
 
     return ListView(
-      padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
+      // EIB-21: Ionic inset list margin (iOS 20).
+      padding: EdgeInsets.fromLTRB(ionListMargin(context), AppDimensions.paddingM, ionListMargin(context), scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
         const IonContentTopInset(),
         SettingsListSection(
@@ -155,17 +157,10 @@ class _HelpPageState extends ConsumerState<HelpPage> {
                 children: [
                   for (final article
                       in service.getArticlesByCategory(category.id))
-                    ListTile(
-                      contentPadding: ios
-                          ? null
-                          : const EdgeInsets.only(
-                              left: 72,
-                              right: AppDimensions.paddingM,
-                            ),
-                      title: Text(article.title),
-                      trailing: ios
-                          ? const IonDetailChevron()
-                          : Icon(AppIcons.chevronRight),
+                    // EIB-11: plain `ion-item button detail="true"` (item
+                    // padding, Ionic detail chevron) in both looks.
+                    SettingsListTile(
+                      title: article.title,
                       onTap: () => _openArticle(article.id),
                     ),
                 ],

@@ -6,6 +6,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
+import '../../../../core/router/go_replace.dart';
 import '../../../../core/router/legacy_routes.dart';
 import '../../../../core/utils/dashboard_logic.dart';
 import '../../../../data/models/tenant/tenant.dart';
@@ -41,6 +42,12 @@ class _OpenLinkPageState extends ConsumerState<OpenLinkPage> {
   }
 
   Future<void> _resolve() async {
+    // F-RAHMEN-17: opened inside the running app, this page sits on top of
+    // the tab shell – wait until it is shown before switching the tenant or
+    // going back into the shell, and navigate with the router captured now.
+    final route = ModalRoute.of(context);
+    final router = GoRouter.of(context);
+    if (!await untilReadyToLeave(route) || !mounted) return;
     final linkTenantId = int.tryParse(widget.tenantId ?? '');
     try {
       final current = ref.read(currentTenantProvider);
@@ -65,6 +72,7 @@ class _OpenLinkPageState extends ConsumerState<OpenLinkPage> {
     } catch (_) {
       // Fall back to whatever tenant is selected.
     }
+    if (!mounted) return;
 
     Role role = Role.none;
     try {
@@ -75,11 +83,11 @@ class _OpenLinkPageState extends ConsumerState<OpenLinkPage> {
 
     final tenant = ref.read(currentTenantProvider);
     if (tenant == null) {
-      context.go('/tenants');
+      router.go('/tenants');
       return;
     }
     final target = sanitizeOpenLinkTarget(widget.target);
-    context.go(
+    router.go(
       target ??
           homeRouteFor(
             role,

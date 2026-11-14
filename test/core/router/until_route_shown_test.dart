@@ -35,12 +35,38 @@ class _SelectionState extends State<_Selection> {
   Widget build(BuildContext context) => const Scaffold(body: Text('Gruppen'));
 }
 
+/// Stand-in for the deep-link resolver pages (/open-link,
+/// /open-attendance, /open-file): opened in the running app on top of the
+/// shell, it jumps straight back into it.
+class _Resolver extends StatefulWidget {
+  const _Resolver();
+  @override
+  State<_Resolver> createState() => _ResolverState();
+}
+
+class _ResolverState extends State<_Resolver> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final route = ModalRoute.of(context);
+      final router = GoRouter.of(context);
+      if (!await untilReadyToLeave(route) || !mounted) return;
+      router.go('/heute');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => const Scaffold(body: Text('Link'));
+}
+
 Future<Object?> _leaveShellAndReturn(WidgetTester tester, {required bool wait, bool leaveAgain = false}) async {
   shownResults.clear();
   final router = GoRouter(
     initialLocation: '/ich',
     routes: [
       GoRoute(path: '/tenants', builder: (_, __) => _Selection(wait: wait)),
+      GoRoute(path: '/open-link', builder: (_, __) => const _Resolver()),
       ShellRoute(
         builder: (_, __, child) => Scaffold(body: Row(children: [const Text('Tabs'), Expanded(child: child)])),
         routes: [
@@ -79,5 +105,28 @@ void main() {
     expect(shownResults, [false]);
     expect(find.text('Ich'), findsOneWidget);
     expect(find.text('Heute'), findsNothing);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+
+  testWidgets('a deep-link resolver opened in the running app re-enters the shell cleanly (F-RAHMEN-17)', (tester) async {
+    final router = GoRouter(
+      initialLocation: '/ich',
+      routes: [
+        GoRoute(path: '/open-link', builder: (_, __) => const _Resolver()),
+        ShellRoute(
+          builder: (_, __, child) => Scaffold(body: Row(children: [const Text('Tabs'), Expanded(child: child)])),
+          routes: [
+            GoRoute(path: '/heute', builder: (_, __) => const Text('Heute')),
+            GoRoute(path: '/ich', builder: (_, __) => const Text('Ich')),
+          ],
+        ),
+      ],
+    );
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.pumpAndSettle();
+    router.go('/open-link');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Heute'), findsOneWidget);
+    expect(find.text('Tabs'), findsOneWidget);
   }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 }

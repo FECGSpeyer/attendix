@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import 'file_drop_platform.dart';
 import 'file_drop_types.dart';
 import '../../../../../l10n/l10n.dart';
@@ -111,11 +112,13 @@ class FileDropZone extends StatelessWidget {
       enabled: onTap != null,
       builder: (context, hovering) {
         final color = hovering ? AppColors.primary : AppColors.medium;
-        return Material(
+        // WER-27: Ionic `border: 2px dashed` (Beta: the solid border).
+        final dashed = context.rdSkin == null;
+        final material = Material(
           color: hovering ? AppColors.primary.withAlpha(20) : Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: color, width: 2),
+            side: dashed ? BorderSide.none : BorderSide(color: color, width: 2),
           ),
           child: InkWell(
             borderRadius: BorderRadius.circular(12),
@@ -136,7 +139,60 @@ class FileDropZone extends StatelessWidget {
             ),
           ),
         );
+        if (!dashed) return material;
+        return CustomPaint(
+          foregroundPainter: DashedRRectPainter(color: color, radius: 12),
+          child: material,
+        );
       },
     );
   }
+}
+
+/// A CSS `border: <width> dashed <color>` around a rounded rectangle
+/// (Ionic `.drop-zone`, `.files-drop-area--active` outline).
+class DashedRRectPainter extends CustomPainter {
+  const DashedRRectPainter({
+    required this.color,
+    this.radius = 12,
+    this.strokeWidth = 2,
+    this.dash = 6,
+    this.gap = 4,
+    this.outset = 0,
+  });
+
+  final Color color;
+  final double radius;
+  final double strokeWidth;
+  final double dash;
+  final double gap;
+
+  /// Draws outside the box (CSS `outline`) instead of inside (`border`).
+  final double outset;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final half = strokeWidth / 2;
+    final rect = (Offset.zero & size).deflate(half - outset);
+    final path = Path()
+      ..addRRect(RRect.fromRectAndRadius(rect, Radius.circular(radius)));
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+    for (final metric in path.computeMetrics()) {
+      var d = 0.0;
+      while (d < metric.length) {
+        canvas.drawPath(metric.extractPath(d, d + dash), paint);
+        d += dash + gap;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(DashedRRectPainter old) =>
+      old.color != color ||
+      old.radius != radius ||
+      old.strokeWidth != strokeWidth ||
+      old.outset != outset;
 }

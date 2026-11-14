@@ -258,9 +258,8 @@ class _MessageRow extends StatelessWidget {
                 ),
               ),
               SizedBox(width: ios ? 8 : AppDimensions.paddingS),
-              ios
-                  ? const IonDetailChevron()
-                  : Icon(AppIcons.chevronRight, color: AppColors.medium),
+              // EIB-25: the Ionic detail chevron in both looks.
+              const IonDetailChevron(),
             ],
           ),
         ),
@@ -308,11 +307,12 @@ class _MessagesEmptyState extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
+          // EIB-25: `ion-button shape="round"` with `create-outline`.
+          IonButton(
+            round: true,
+            icon: AppIcons.editNote,
+            label: l10n.messagesWriteFirst,
             onPressed: onCompose,
-            icon: Icon(AppIcons.editNote),
-            label: IonButtonLabel(l10n.messagesWriteFirst),
           ),
         ],
       ),

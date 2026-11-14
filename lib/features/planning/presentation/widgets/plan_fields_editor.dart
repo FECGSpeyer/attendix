@@ -226,24 +226,34 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     }
     final beamerFileOf = widget.beamerFileOf;
     final showBeamer = beamerFileOf != null && !isNote;
-    final result = await showPlanFieldDialog(
-      context,
-      title: context.l10n.planningEditField,
-      nameLabel: isNote ? context.l10n.planningNote : context.l10n.planningItem,
-      nameHint: isNote ? context.l10n.planningEnterNote : context.l10n.planningEnterItem,
-      infoHint: context.l10n.planningInfoOptionalEllipsis,
-      confirmText: context.l10n.planningUpdate,
-      initialName: field.name,
-      initialConductor: field.conductor,
-      initialInfo: field.info,
-      initialMinutes: int.tryParse(field.time) ?? 20,
-      withConductor: !isNote,
-      withInfo: !isNote,
-      withMinutes: !isNote,
-      beamer: showBeamer
-          ? PlanFieldBeamerOptions(manual: field.needsBeamer, songId: field.songId, file: beamerFileOf(field))
-          : null,
-    );
+    // ABL-02: Ionic changeField opens the PlanFieldEditComponent modal;
+    // a note keeps its alert (changeNoteField).
+    final result = isNote
+        ? await showPlanFieldDialog(
+            context,
+            title: context.l10n.planningEditField,
+            nameLabel: context.l10n.planningNote,
+            nameHint: context.l10n.planningEnterNote,
+            infoHint: context.l10n.planningInfoOptionalEllipsis,
+            confirmText: context.l10n.planningUpdate,
+            initialName: field.name,
+            initialConductor: field.conductor,
+            initialInfo: field.info,
+            initialMinutes: int.tryParse(field.time) ?? 20,
+            withConductor: false,
+            withInfo: false,
+            withMinutes: false,
+          )
+        : await showPlanFieldEditModal(
+            context,
+            initialName: field.name,
+            initialConductor: field.conductor,
+            initialInfo: field.info,
+            initialMinutes: int.tryParse(field.time) ?? 20,
+            beamer: showBeamer
+                ? PlanFieldBeamerOptions(manual: field.needsBeamer, songId: field.songId, file: beamerFileOf(field))
+                : null,
+          );
     if (result == null) return;
     final updated = [..._fields];
     updated[index] = isNote
@@ -511,11 +521,25 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
           dense: true,
           minTileHeight: 36,
           leading: Icon(AppIcons.commit, color: AppColors.medium),
+          // F-ABL-07: Ionic `ion-label` keeps one line with an ellipsis
+          // (it never broke the word over 5 lines next to the button).
           title: Text(context.l10n.planningAgendaInsertPos,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(color: AppColors.medium, fontSize: 14)),
           trailing: Row(mainAxisSize: MainAxisSize.min, children: [
             if (widget.onAddTopics != null)
-              TextButton(onPressed: widget.onAddTopics, child: Text(context.l10n.attendanceAddTopics)),
+              // Ionic `ion-button fill="clear" size="small"`.
+              TextButton(
+                onPressed: widget.onAddTopics,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  minimumSize: const Size(0, 32),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  textStyle: const TextStyle(fontSize: 13),
+                ),
+                child: Text(context.l10n.attendanceAddTopics),
+              ),
             dragHandle,
           ]),
         ),
@@ -658,10 +682,17 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       key: ValueKey('slide-${_fields[index].id}-$index'),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
-        extentRatio: canIndent ? 0.45 : 0.2,
+        // F-ABL-11: room for the whole "Ausrücken" label on phones.
+        extentRatio: canIndent ? 0.5 : 0.2,
+        // ABL-29: Ionic `(ionSwipe)` + `expandable` – a full swipe deletes
+        // (a block head asks first, so it keeps the plain options).
+        dismissible: PlanUtils.isGroupHead(_fields[index])
+            ? null
+            : DismissiblePane(onDismissed: () => _removeField(index)),
         children: [
           if (canIndent)
             SlidableAction(
+              flex: 2,
               onPressed: (_) => _toggleIndent(index),
               backgroundColor: AppColors.medium,
               foregroundColor: Colors.white,

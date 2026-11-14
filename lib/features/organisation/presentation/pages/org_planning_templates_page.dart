@@ -20,6 +20,8 @@ import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTransluce
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/widgets/ion_condense.dart';
 import '../../../settings/presentation/widgets/settings_list.dart';
+import '../../../planning/presentation/widgets/ion_items.dart' as pl show IonListHeader;
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
@@ -356,13 +358,24 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
 
   // UX_SETTINGS (WAVE 8): org-planning-templates.page.html — condense
   // title, inset lists with header "+" buttons, hint items in their own
-  // inset lists (iOS).
+  // inset lists. ABL-07: md uses the md-ion-list-inset group and header
+  // instead of an uppercase caption + Material card.
   Widget _box(Widget child) => ionIsIos(context)
       ? Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: IonInsetGroup(children: [child]),
         )
-      : Card(margin: const EdgeInsets.symmetric(horizontal: 12), child: child);
+      : Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Card(
+            margin: EdgeInsets.zero,
+            elevation: 0,
+            color: IonMd.itemBackground(Theme.of(context).brightness),
+            shape: IonMd.insetGroupShape,
+            clipBehavior: Clip.antiAlias,
+            child: child,
+          ),
+        );
 
   Widget _header(String text, VoidCallback onAdd) => ionIsIos(context)
       ? Padding(
@@ -376,17 +389,16 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
           ),
         )
       : Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 4, 0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(text.toUpperCase(),
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium)),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: pl.IonListHeader(
+            inset: true,
+            title: text,
+            trailing: IconButton(
+              icon: Icon(AppIcons.add, color: AppColors.primary, semanticLabel: context.l10n.a11yAdd),
+              onPressed: onAdd,
             ),
-            IconButton(icon: Icon(AppIcons.add, semanticLabel: context.l10n.a11yAdd), onPressed: onAdd),
-          ],
-        ),
-      );
+          ),
+        );
 
   Widget _hint(String text) {
     final tile = ListTile(
@@ -399,7 +411,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
         ),
       ),
     );
-    return ionIsIos(context) ? _box(tile) : tile;
+    return _box(tile);
   }
 
   @override
@@ -562,11 +574,19 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
             _saveTemplates();
           },
         ),
-        Builder(
-          builder: (buttonContext) => ListTile(
-            leading: Icon(AppIcons.add, color: AppColors.primary),
-            title: Text(context.l10n.typeSettingsAddField, style: const TextStyle(color: AppColors.primary)),
-            onTap: () => _addToTemplate(i, buttonContext),
+        // ABL-27: Ionic `ion-item` with a small clear button (add-outline).
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Builder(
+              builder: (buttonContext) => TextButton.icon(
+                style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+                icon: Icon(AppIcons.add, size: 18),
+                label: IonButtonLabel(context.l10n.typeSettingsAddField),
+                onPressed: () => _addToTemplate(i, buttonContext),
+              ),
+            ),
           ),
         ),
         if (end.isNotEmpty)

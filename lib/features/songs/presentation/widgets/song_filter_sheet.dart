@@ -7,6 +7,7 @@ import '../../../../core/providers/song_providers.dart';
 import '../../../../data/models/song/song_filter.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 
 /// Ionic songs `ion-popover trigger="filter-trigger-songs"`: one row per
 /// option, only an icon at the start (no headings) and the current value at
@@ -37,6 +38,9 @@ class SongFilterMenu extends ConsumerWidget {
           final container = ProviderScope.containerOf(triggerContext);
           showAppFilterPopover(
             context: triggerContext,
+            // songs.page.scss: `ion-popover { --width: 18rem }` (17pt root
+            // font in iOS mode, 16px in md).
+            width: _popoverWidth(triggerContext),
             rows: () => triggerContext.mounted
                 ? _rows(triggerContext, container)
                 : const [],
@@ -45,6 +49,11 @@ class SongFilterMenu extends ConsumerWidget {
       ),
     );
   }
+
+  /// 18rem; the Beta design keeps the default widths.
+  static double? _popoverWidth(BuildContext context) => context.rdSkin != null
+      ? null
+      : (useIosLook(context) ? 306 : 288);
 
   List<AppFilterRow> _rows(BuildContext context, ProviderContainer ref) {
     final filter = ref.read(songFilterProvider(data.tenantId));
@@ -108,6 +117,7 @@ class SongFilterMenu extends ConsumerWidget {
             for (final c in data.categories)
               if (c.id != null) (c.id!, c.name),
           ],
+          popoverWidth: _popoverWidth(context),
           onChanged: (id, on) => notifier.setCategoryIds(
               toggled(ref.read(songFilterProvider(data.tenantId)).categoryIds, id, on)),
         ),
@@ -119,6 +129,7 @@ class SongFilterMenu extends ConsumerWidget {
             for (final g in instruments)
               if (g.id != null) (g.id!, g.name),
           ],
+          popoverWidth: _popoverWidth(context),
           onChanged: (id, on) => notifier.setInstrumentIds(
               toggled(ref.read(songFilterProvider(data.tenantId)).instrumentIds, id, on)),
         ),
@@ -130,6 +141,7 @@ class SongFilterMenu extends ConsumerWidget {
         },
         options: viewEntries,
         onChanged: (id, _) => viewNotifier.toggle(id),
+        popoverWidth: _popoverWidth(context),
       ),
       for (final field in data.additionalFields)
         if (field.isSelect || field.isBoolean)

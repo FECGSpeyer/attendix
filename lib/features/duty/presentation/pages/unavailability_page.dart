@@ -19,6 +19,7 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 
 /// Opens "Regelmäßig verhindert" for a person (as a full screen dialog).
 /// REDESIGN: in the Beta the page "Nicht verfügbar" ([RdUnavailabilityPage]).
@@ -33,10 +34,12 @@ Future<void> openUnavailabilityPage(
       builder: (_) => RdUnavailabilityPage(personId: personId, personName: personName, forOther: forOther),
     ));
   }
-  return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute<void>(
-    fullscreenDialog: true,
+  // DAS-29: Ionic default `ion-modal` – full screen on phones, a centred
+  // card from 768 × 600.
+  return showIonModal<void>(
+    context,
     builder: (_) => UnavailabilityPage(personId: personId, personName: personName, forOther: forOther),
-  ));
+  );
 }
 
 /// "Regelmäßig verhindert": weekly rules (e.g. every Wednesday, Kinderstunde).
@@ -215,24 +218,25 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
       child: Scaffold(
         appBar: AppBar(
           // Ionic: text button "Zurück" while editing a rule.
-          leadingWidth: editing != null ? 90 : null,
+          // DAS-02: Ionic `ion-buttons` (iOS glass capsule).
+          leadingWidth: editing != null ? (useIosLook(context) ? 120 : 90) : (useIosLook(context) ? 68 : null),
           leading: editing != null
-              ? TextButton(
-                  onPressed: () => setState(() => _editing = null),
-                  child: IonButtonLabel(context.l10n.commonBack),
-                )
-              : IconButton(
-                  icon: Icon(AppIcons.close),
-                  tooltip: context.l10n.commonClose,
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
+              ? ToolbarButtonGroup(children: [
+                  TextButton(
+                    onPressed: () => setState(() => _editing = null),
+                    child: IonButtonLabel(context.l10n.commonBack),
+                  ),
+                ])
+              : IonCloseButton(onPressed: () => Navigator.of(context).pop()),
           title: title,
           actions: [
             if (editing != null)
-              TextButton(
-                onPressed: _saving ? null : _save,
-                child: IonButtonLabel(context.l10n.commonSave, style: const TextStyle(fontWeight: FontWeight.bold)),
-              ),
+              ToolbarButtonGroup(children: [
+                TextButton(
+                  onPressed: _saving ? null : _save,
+                  child: IonButtonLabel(context.l10n.commonSave, style: const TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ]),
           ],
         ),
         body: editing != null ? _buildEditor(editing) : _buildList(),

@@ -48,7 +48,12 @@ class QuillUtils {
   /// - JSON object `{"ops":[...]}` → Quill Delta
   /// - HTML → converted to Quill Delta (preserving formatting)
   /// - Plain text → Document with text content
-  static Document documentFromNotesString(String? notes) {
+  ///
+  /// [separateParagraphs] (OEFF-12): `HtmlToDelta` joins consecutive `<p>`
+  /// elements into one line ("…de</p><p>Quelle…" → "…deQuelle…"); with
+  /// `true` every `<p>` ends its own line, like a browser renders it.
+  static Document documentFromNotesString(String? notes,
+      {bool separateParagraphs = false}) {
     if (notes == null || notes.trim().isEmpty) {
       return Document();
     }
@@ -74,7 +79,10 @@ class QuillUtils {
     // HTML → Quill Delta (preserves formatting like bold, lists, headers)
     if (_isHtml(notes)) {
       try {
-        final delta = HtmlToDelta().convert(notes);
+        final delta = HtmlToDelta(
+          shouldInsertANewLine:
+              separateParagraphs ? (name) => name == 'p' : null,
+        ).convert(notes);
         return Document.fromDelta(delta);
       } catch (_) {
         // Fallback: strip HTML to plain text

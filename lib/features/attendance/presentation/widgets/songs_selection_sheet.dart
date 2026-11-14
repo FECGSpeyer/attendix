@@ -14,6 +14,8 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_sheet.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' as ion;
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/data/rd_collections_logic.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
@@ -54,7 +56,15 @@ class SongsSelectionSheet extends ConsumerStatefulWidget {
   final List<SongHistoryEntry> existingEntries;
   final ValueChanged<List<SongHistoryEntry>> onEntriesChanged;
 
-  const SongsSelectionSheet({super.key, required this.existingEntries, required this.onEntriesChanged});
+  const SongsSelectionSheet({
+    super.key,
+    required this.existingEntries,
+    required this.onEntriesChanged,
+    this.scrollController,
+  });
+
+  /// Classic design: the controller of the breakpoint sheet.
+  final ScrollController? scrollController;
 
   /// Show the bottom sheet and return updated entries
   static Future<List<SongHistoryEntry>?> show(
@@ -62,6 +72,24 @@ class SongsSelectionSheet extends ConsumerStatefulWidget {
     required List<SongHistoryEntry> existingEntries,
   }) async {
     List<SongHistoryEntry>? result;
+
+    if (context.rdSkin == null) {
+      // TER-13: Ionic addHisModal – [breakpoints]="[0, 0.7]"
+      // [initialBreakpoint]="0.7", toolbar with only the title,
+      // `ion-content color="light"`.
+      await showIonSheet<void>(
+        context,
+        breakpoints: const [0, 0.7],
+        initialBreakpoint: 0.7,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        builder: (ctx, controller) => SongsSelectionSheet(
+          existingEntries: existingEntries,
+          scrollController: controller,
+          onEntriesChanged: (entries) => result = entries,
+        ),
+      );
+      return result;
+    }
 
     await showModalBottomSheet(
       context: context,
@@ -200,9 +228,92 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
   // UX_ATT: Ionic addHisModal: inset group with the "Werk(e)" picker row
   // (opens "Werke auswählen" with search) and the "Dirigent" select
   // (+ "Anderer Dirigent" input), then the primary "Werk(e) hinzufügen" row.
+  /// TER-13: Ionic addHisModal content – one inset list: an item group with
+  /// "Werk(e)" (detail chevron) and the "Dirigent" select (+ the name of the
+  /// other conductor), then an item group with the primary "Werk(e)
+  /// hinzufügen" item.
+  Widget _buildClassic(BuildContext context) {
+    final conductors = ref.watch(activeConductorsProvider).valueOrNull ?? const <Person>[];
+    const otherValue = -1;
+    final conductorValue = _useOtherConductor ? otherValue : _selectedConductorId;
+    final canAdd = _canAdd();
+    return IonSheetScaffold(
+      title: context.l10n.attListAddSongs,
+      body: ListView(
+        controller: widget.scrollController,
+        padding: EdgeInsets.only(top: 12, bottom: 16 + MediaQuery.paddingOf(context).bottom),
+        children: [
+          ion.IonInsetList(
+            children: [
+              ion.IonItem(
+                title: Text(context.l10n.attListSongsLabel),
+                subtitle: Text(
+                  _selectedSongIds.isEmpty
+                      ? context.l10n.attListNoSongsSelected
+                      : context.l10n.attListSongsSelected(_selectedSongIds.length),
+                ),
+                detail: true,
+                onTap: _openSongPicker,
+              ),
+              ion.IonItem(
+                title: Text(context.l10n.attListConductor),
+                trailing: Flexible(
+                  child: DropdownButtonHideUnderline(
+                    child: AppDropdownButton<int>(
+                      interface: AppSelectInterface.alert,
+                      header: context.l10n.attListConductor,
+                      value: conductorValue,
+                      hint: Text(context.l10n.attendanceChoose),
+                      alignment: AlignmentDirectional.centerEnd,
+                      items: [
+                        for (final c in conductors)
+                          if (c.id != null) DropdownMenuItem(value: c.id, child: Text(c.fullName)),
+                        DropdownMenuItem(value: otherValue, child: Text(context.l10n.attListOtherConductor)),
+                      ],
+                      onChanged: _onConductorChanged,
+                    ),
+                  ),
+                ),
+              ),
+              if (_useOtherConductor && _otherConductorSaved)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: TextField(
+                    controller: _otherConductorController,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      filled: false,
+                    ),
+                    onChanged: (value) => setState(() => _otherConductorName = value),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ion.IonInsetList(
+            children: [
+              ion.IonItem(
+                title: Opacity(
+                  opacity: canAdd ? 1 : 0.4,
+                  child: Text(context.l10n.attListAddSongs),
+                ),
+                titleColor: AppColors.primary,
+                onTap: canAdd ? _addSongs : null,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (context.rdSkin != null) return _rdBuild(context);
+    if (widget.scrollController != null) return _buildClassic(context);
     final conductorsAsync = ref.watch(activeConductorsProvider);
     final conductors = conductorsAsync.valueOrNull ?? const <Person>[];
     const otherValue = -1;
@@ -315,7 +426,14 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
   /// Full-screen "Werke auswählen" with "Werk suchen..." (Ionic songSelectModal).
   /// Returns false when it was cancelled.
   Future<bool> _openSongPicker() async {
-    final result = await Navigator.of(context, rootNavigator: true).push<Set<int>>(
+    final result = context.rdSkin == null
+        // TER-14: Ionic default `ion-modal` – full screen on phones, the
+        // centred card on tablet / desktop.
+        ? await showIonCardModal<Set<int>>(
+            context,
+            builder: (ctx) => _SongPickerPage(initialSelection: _selectedSongIds),
+          )
+        : await Navigator.of(context, rootNavigator: true).push<Set<int>>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder:
@@ -410,9 +528,105 @@ class _SongPickerPage extends ConsumerStatefulWidget {
 class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
   late final Set<int> _selected = {...widget.initialSelection};
   String _search = '';
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _toggle(int id) => setState(() {
+        if (!_selected.remove(id)) _selected.add(id);
+      });
+
+  /// TER-14: Ionic songSelectModal – toolbar with title + checkmark, a
+  /// second toolbar with `ion-searchbar`, `ion-content color="light"` with
+  /// an inset list of `ion-checkbox slot="start"` items.
+  Widget _buildClassic(BuildContext context) {
+    final songsAsync = ref.watch(songsProvider);
+    final collectionsAsync = ref.watch(songCollectionsProvider);
+    final collections = collectionsAsync.valueOrNull;
+    final Widget body = songsAsync.when(
+      loading: () => const Center(child: AppSpinner()),
+      error: (e, _) => Center(child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)))),
+      data: (allSongs) {
+        if (!collectionsAsync.hasValue && !collectionsAsync.hasError) {
+          return const Center(child: AppSpinner());
+        }
+        final songs = collectionsAsync.hasValue ? rdPlannableWorks(allSongs, collections) : rdWorksIn(allSongs, null);
+        final filtered = _search.isEmpty
+            ? songs
+            : songs
+                .where((s) => '${s.prefix ?? ''}${s.number ?? ''} ${s.name}'.toLowerCase().contains(_search))
+                .toList();
+        final bottom = MediaQuery.paddingOf(context).bottom;
+        if (filtered.isEmpty) {
+          return ListView(
+            padding: EdgeInsets.only(top: 12, bottom: bottom),
+            children: [
+              ion.IonInsetList(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      context.l10n.attListNoSongsFound,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        }
+        return ListView(
+          padding: EdgeInsets.only(top: 12, bottom: 16 + bottom),
+          children: [
+            ion.IonInsetList(
+              dividerIndent: 56,
+              children: [
+                for (final song in filtered)
+                  ion.IonItem(
+                    leading: Checkbox(
+                      value: song.id != null && _selected.contains(song.id),
+                      onChanged: song.id == null ? null : (_) => _toggle(song.id!),
+                    ),
+                    title: Text('${song.prefix ?? ''}${song.number ?? ''} ${song.name}'.trim()),
+                    subtitle: (song.composer?.isNotEmpty ?? false) ? Text(song.composer!) : null,
+                    onTap: song.id == null ? null : () => _toggle(song.id!),
+                  ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+    return IonSheetScaffold(
+      title: context.l10n.attListChooseSongs,
+      end: [
+        IconButton(
+          icon: Icon(AppIcons.check),
+          tooltip: context.l10n.commonApply,
+          onPressed: () => Navigator.of(context).pop(_selected),
+        ),
+      ],
+      bottom: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+        child: ion.IonSearchbar(
+          controller: _searchController,
+          hintText: context.l10n.attListSearchSong,
+          onChanged: (v) => setState(() => _search = v.trim().toLowerCase()),
+        ),
+      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: body,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin == null) return _buildClassic(context);
     final songsAsync = ref.watch(songsProvider);
     // Sammlungen (Beta): Werke of a Sammlung that is not "planbar" stay out
     // (while they load nothing is offered, after an error only the
@@ -530,7 +744,8 @@ class SelectedSongsList extends StatelessWidget {
                           onEntriesChanged?.call(newEntries);
                         },
                       ),
-              dense: true,
+              // TER-15: theme item size in the classic design.
+              dense: context.rdSkin != null,
             );
           }).toList(),
     );

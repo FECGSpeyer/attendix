@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/church_providers.dart';
+import '../../../../core/router/go_replace.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/display/attendix_logo.dart';
@@ -142,12 +143,15 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               )
             : Text(context.l10n.tenantRegisterTitle),
         automaticallyImplyLeading: false,
+        // SEL-13: Ionic `ion-buttons slot="end"` (iOS glass capsule).
         actions: [
-          IconButton(
-            icon: Icon(AppIcons.homeOutlined),
-            tooltip: context.l10n.coreFlutterRouterGoHome,
-            onPressed: _goHome,
-          ),
+          ToolbarButtonGroup(children: [
+            IconButton(
+              icon: Icon(AppIcons.homeOutlined),
+              tooltip: context.l10n.coreFlutterRouterGoHome,
+              onPressed: _goHome,
+            ),
+          ]),
         ],
       ),
       ),
@@ -1111,6 +1115,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
   Future<void> _checkExistingRegistration(Tenant tenant) async {
     if (!_isLoggedIn || tenant.id == null) return;
+    final route = ModalRoute.of(context);
+    final router = GoRouter.of(context);
 
     try {
       final supabase = ref.read(supabaseClientProvider);
@@ -1131,9 +1137,13 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         return;
       }
       if (existing != null && mounted) {
+        // EINST-61: opened in the running app this page sits on top of the
+        // tab shell; going back into it before the page is shown left the
+        // start page blank (shared shell navigator key).
+        if (!await untilReadyToLeave(route) || !mounted) return;
         ToastHelper.showWarning(
             context, context.l10n.tenantRegisterAlreadyRegistered);
-        context.go('/login');
+        router.go('/login');
         return;
       }
       await _prefillFromProfile(userId);
@@ -1158,9 +1168,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               // (tenant-register.page.ts login); the hint / a login error is
               // the alert message.
               content: AppAlertInputGroup(
-                message: Text(
-                  loginError.isNotEmpty ? loginError : context.l10n.tenantRegisterFlutterSignInExisting,
-                ),
+                // SEL-07: Ionic has no message; only a login error is shown.
+                message: loginError.isNotEmpty ? Text(loginError) : null,
                 children: [
                   AppAlertInput(
                     controller: emailController,
@@ -1207,7 +1216,9 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                   onPressed: () => Navigator.pop(context, false),
                   child: Text(context.l10n.commonCancel),
                 ),
-                ElevatedButton(
+                // SEL-07: classic = plain Ionic alert button (Beta keeps
+                // its raised button).
+                (context.rdSkin != null ? ElevatedButton.new : TextButton.new)(
                   onPressed: () async {
                     try {
                       await ref.read(authFlowServiceProvider).signInWithPassword(

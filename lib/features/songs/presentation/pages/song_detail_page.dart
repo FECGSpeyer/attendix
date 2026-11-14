@@ -35,6 +35,9 @@ import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../data/song_print_service.dart';
 import '../utils/song_utils.dart';
 import '../widgets/copy_to_tenant_sheet.dart';
+import '../../../../shared/widgets/adaptive/ion_loading.dart';
+import '../widgets/song_form_items.dart';
+import '../../../people/presentation/widgets/ion/ion_widgets.dart' show IonItemDivider;
 import '../widgets/file_drop/file_drop_target.dart';
 import '../widgets/file_upload_sheet.dart';
 import '../widgets/group_pdf_print.dart';
@@ -347,7 +350,11 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    final ok = await ref.read(songNotifierProvider.notifier).deleteSong(data.song.id!);
+    Future<bool> delete() => ref.read(songNotifierProvider.notifier).deleteSong(data.song.id!);
+    // Ionic: `ion-loading` "Werk wird gelöscht..." (WER-19).
+    final ok = context.rdSkin == null
+        ? await withIonLoading(context, delete, message: context.l10n.songsDeleting)
+        : await delete();
     if (!mounted) return;
     if (ok) {
       // Beta: back to the Werke of the new design, not the old list.
@@ -359,6 +366,23 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final publicId = widget.songSharingId;
+    if (publicId != null && !SongUtils.isValidSharingId(publicId)) {
+      // No UUID: no such public link, without a database round trip (its
+      // error would be shown raw).
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(context.l10n.songsFlutterSong),
+          leading: BackButton(
+            onPressed: () => context.canPop() ? context.pop() : context.go('/login'),
+          ),
+        ),
+        body: ErrorStateView(
+          icon: AppIcons.linkOff,
+          message: context.l10n.songsInvalidShareLink,
+        ),
+      );
+    }
     if (_songId == null) {
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.songsFlutterSong)),
@@ -551,7 +575,134 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
         child: child,
       );
 
+  /// WER-04/05/06: Ionic `ion-list [inset]` > `ion-item-group`: every field
+  /// its own `ion-item` (stacked inputs, the popover select, two toggles,
+  /// the modal multi-selects), lines from the label start to the card edge.
   Widget _buildEditForm(SongDetailData data) {
+    if (context.rdSkin != null) return _buildEditFormBeta(data);
+    final fileIds = _idsFromFiles(data);
+    final difficulties = <AppSelectOption<int?>>[
+      AppSelectOption(value: null, label: context.l10n.songsNotDefined),
+      AppSelectOption(value: 1, label: context.l10n.songsEasy),
+      AppSelectOption(value: 2, label: context.l10n.songsMedium),
+      AppSelectOption(value: 3, label: context.l10n.songsHard),
+    ];
+    final instrumentOptions = [
+      for (final g in data.instruments)
+        if (g.id != null)
+          AppSelectOption<int>(value: g.id!, label: g.name, enabled: !fileIds.contains(g.id)),
+    ];
+    final categoryOptions = [
+      for (final c in data.categories)
+        if (c.id != null) AppSelectOption<String>(value: c.id!, label: c.name),
+    ];
+    String names<T>(List<AppSelectOption<T>> options, List<T> values) => [
+          for (final o in options)
+            if (values.contains(o.value)) o.label!,
+        ].join(', ');
+    return IonInsetList(
+      // The items draw their own lines.
+      dividerIndent: 0,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _blurSaver(
+              data,
+              SongStackedInput(
+                controller: _prefix,
+                label: context.l10n.songsPrefixOptional,
+                helperText: context.l10n.songsPrefixHelper,
+              ),
+            ),
+            _blurSaver(
+              data,
+              SongStackedInput(
+                controller: _number,
+                label: context.l10n.songsNumber,
+                keyboardType: TextInputType.number,
+                // Ionic `type="number"`: digits only.
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+            ),
+            _blurSaver(
+              data,
+              SongStackedInput(controller: _name, label: context.l10n.songsName),
+            ),
+            Builder(
+              builder: (itemContext) => SongSelectItem(
+                label: context.l10n.songsDifficulty,
+                text: difficulties.firstWhere((o) => o.value == _difficulty, orElse: () => difficulties.first).label!,
+                onTap: () async {
+                  final picked = await showAppSelect<int?>(
+                    context: itemContext,
+                    options: difficulties,
+                    value: _difficulty,
+                    interface: AppSelectInterface.popover,
+                  );
+                  if (picked == null || !mounted) return;
+                  setState(() => _difficulty = picked.value);
+                  _update(data);
+                },
+              ),
+            ),
+            SongToggleItem(
+              label: context.l10n.songsChoirOrchestra,
+              value: _withChoir,
+              onChanged: (v) {
+                setState(() => _withChoir = v);
+                _update(data);
+              },
+            ),
+            SongToggleItem(
+              label: context.l10n.songsWithSoloSinging,
+              value: _withSolo,
+              onChanged: (v) {
+                setState(() => _withSolo = v);
+                _update(data);
+              },
+            ),
+            if (data.isOrchestra)
+              SongSelectItem(
+                label: context.l10n.songsInstrumentation,
+                text: names(instrumentOptions, _instrumentIds),
+                onTap: instrumentOptions.isEmpty
+                    ? null
+                    : () async {
+                        // `ion-select interface="modal" multiple`, saved on
+                        // `ionDismiss`.
+                        await showAppMultiSelectModal<int>(
+                          context: context,
+                          options: instrumentOptions,
+                          values: _instrumentIds,
+                          onChanged: (v) => setState(() => _instrumentIds = v),
+                        );
+                        if (mounted) _update(data);
+                      },
+              ),
+            SongSelectItem(
+              label: context.l10n.songsCategories,
+              text: names(categoryOptions, _categoryIds),
+              lines: false,
+              onTap: categoryOptions.isEmpty
+                  ? null
+                  : () async {
+                      await showAppMultiSelectModal<String>(
+                        context: context,
+                        options: categoryOptions,
+                        values: _categoryIds,
+                        onChanged: (v) => setState(() => _categoryIds = v),
+                      );
+                      if (mounted) _update(data);
+                    },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEditFormBeta(SongDetailData data) {
     final fileIds = _idsFromFiles(data);
     return IonInsetList(children: [
       Padding(
@@ -819,12 +970,16 @@ class _IonChip extends StatelessWidget {
     return Container(
       height: 32,
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Text(label, style: TextStyle(color: color, fontSize: 14)),
+      // WERKE-57: as wide as the label (an `alignment` made every chip in
+      // the Wrap a full-width bar).
+      child: Center(
+        widthFactor: 1,
+        child: Text(label, style: TextStyle(color: color, fontSize: 14)),
+      ),
     );
   }
 }
@@ -1081,10 +1236,16 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
 
   bool get _isIos => !kIsWeb && Platform.isIOS;
 
-  Future<void> _run(Future<void> Function() action) async {
+  /// [loading]: Ionic `ion-loading` with this message while [action] runs
+  /// (classic design; the Beta keeps the progress line only).
+  Future<void> _run(Future<void> Function() action, {String? loading}) async {
     setState(() => _busy = true);
     try {
-      await action();
+      if (loading != null && context.rdSkin == null) {
+        await withIonLoading<void>(context, action, message: loading);
+      } else {
+        await action();
+      }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterErrorWith(friendlyErrorMessage(e)));
     } finally {
@@ -1176,7 +1337,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
       await (await ref.read(readySongFileServiceProvider.future)).deleteAllFiles(songId: song.id!);
       await widget.onClearInstrumentIds();
       widget.onChanged();
-    });
+    }, loading: context.l10n.songsDeletingFiles);
   }
 
   /// Ionic `printSongFiles`: group PDFs with copies per player count
@@ -1293,7 +1454,11 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
           enabled: !data.readOnly && !_busy,
           onFiles: _onFilesDropped,
           builder: (context, hovering) => _FilesGroup(
-            border: hovering ? Border.all(color: AppColors.primary, width: 2) : null,
+            // WER-27: Ionic `outline: 2px dashed primary` (Beta: solid).
+            border: hovering && context.rdSkin != null
+                ? Border.all(color: AppColors.primary, width: 2)
+                : null,
+            dashedOutline: hovering && context.rdSkin == null,
             color: hovering
                 ? Color.alphaBlend(
                     AppColors.primary.withAlpha(13), Theme.of(context).colorScheme.surface)
@@ -1334,7 +1499,13 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         if (!data.readOnly) AppActionSheetAction(value: 'category', icon: AppIcons.swapHoriz, label: context.l10n.songsChangeCategory),
         if (telegramChatId != null && telegramChatId.isNotEmpty) AppActionSheetAction(value: 'telegram', icon: AppIcons.sendOutlined, label: context.l10n.songsSendTelegram),
         if (!data.readOnly) AppActionSheetAction(value: 'delete', icon: AppIcons.deleteOutline, label: context.l10n.songsDeleteFile, destructive: true),
+        // WER-14: Ionic's last button `{ text: Abbrechen, icon:
+        // 'close-outline', role: 'destructive' }` – red, with its icon, in
+        // the button group (Beta: the separate cancel button).
+        if (context.rdSkin == null)
+          AppActionSheetAction(value: 'cancel', icon: AppIcons.close, label: context.l10n.commonCancel, destructive: true),
       ],
+      showCancel: context.rdSkin != null,
     );
     if (!mounted || action == null) return;
 
@@ -1372,7 +1543,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
               .read(telegramServiceProvider)
               .sendDocumentPerTelegram(url: file.url, chatId: telegramChatId!);
           if (mounted) ToastHelper.showSuccess(context, context.l10n.songsFlutterTelegramSent);
-        });
+        }, loading: context.l10n.songsSendingFile);
       case 'delete':
         final ok = await DialogHelper.showConfirmation(
           context,
@@ -1543,7 +1714,6 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
   }
 
   Widget _buildSheet(BuildContext context, List<(int?, String)> options) {
-    final theme = Theme.of(context);
     return Scaffold(
       appBar: settingsSheetBar(
         context,
@@ -1559,23 +1729,31 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
         padding: const EdgeInsets.only(bottom: 16),
         children: [
           for (final o in options)
-            IonRadioItem<int?>(
-              value: o.$1,
-              groupValue: _id,
-              title: Text(o.$2),
-              subtitle: o.$1 == kChoirAllOptionValue
-                  ? Text(context.l10n.songsChoirAllHint)
-                  : null,
-              onChanged: (v) => setState(() => _id = v),
+            // `ion-list` items: the inset item line below every radio.
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                IonRadioItem<int?>(
+                value: o.$1,
+                groupValue: _id,
+                title: Text(o.$2),
+                subtitle: o.$1 == kChoirAllOptionValue
+                    ? Text(context.l10n.songsChoirAllHint)
+                    : null,
+                onChanged: (v) => setState(() => _id = v),
+                ),
+                Divider(
+                  height: songItemLine(context).width,
+                  thickness: songItemLine(context).width,
+                  indent: 16,
+                  color: songItemLine(context).color,
+                ),
+              ],
             ),
           if (_id == null) ...[
             // Ionic `ion-item-divider` + `ion-input clearInput`
-            Container(
-              color: theme.colorScheme.surfaceContainerHighest,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: Text(context.l10n.songsFreeText,
-                  style: theme.textTheme.bodySmall),
-            ),
+            IonItemDivider(text: context.l10n.songsFreeText),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ValueListenableBuilder<TextEditingValue>(
@@ -1618,17 +1796,43 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
 /// apply: on iOS the rows ("Keine Dateien vorhanden." / the files) form a
 /// plain full-width block with square corners. Material keeps the inset card.
 class _FilesGroup extends StatelessWidget {
-  const _FilesGroup({required this.children, this.color, this.border});
+  const _FilesGroup({
+    required this.children,
+    this.color,
+    this.border,
+    this.dashedOutline = false,
+  });
 
   final List<Widget> children;
   final Color? color;
   final BoxBorder? border;
 
+  /// `.files-drop-area--active`: a 2px dashed primary outline.
+  final bool dashedOutline;
+
   @override
   Widget build(BuildContext context) {
+    if (dashedOutline) {
+      const margin = EdgeInsets.symmetric(horizontal: 16, vertical: 4);
+      return Padding(
+        padding: margin,
+        child: CustomPaint(
+          foregroundPainter: DashedRRectPainter(
+            color: AppColors.primary,
+            radius: 12,
+            outset: 2,
+          ),
+          child: _FilesGroup(color: color, children: children)._group(context, EdgeInsets.zero),
+        ),
+      );
+    }
+    return _group(context, const EdgeInsets.symmetric(horizontal: 16, vertical: 4));
+  }
+
+  Widget _group(BuildContext context, EdgeInsets margin) {
     // Beta-Skin: the files are a card like every other group.
     if (!isIosLook(context) || context.rdSkin != null) {
-      return IonInsetList(color: color, border: border, children: children);
+      return IonInsetList(color: color, border: border, margin: margin, children: children);
     }
     final rows = <Widget>[];
     for (var i = 0; i < children.length; i++) {
@@ -1636,7 +1840,7 @@ class _FilesGroup extends StatelessWidget {
       rows.add(children[i]);
     }
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      margin: margin,
       decoration: BoxDecoration(
         color: color ?? Theme.of(context).colorScheme.surface,
         border: border,

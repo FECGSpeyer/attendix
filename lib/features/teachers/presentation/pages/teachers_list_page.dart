@@ -18,6 +18,7 @@ import '../../../../data/repositories/teacher_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/layout/ion_form_items.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../people/presentation/widgets/ion/ion_widgets.dart';
@@ -145,6 +146,12 @@ class TeachersListPage extends ConsumerWidget {
     // plain ion-list with ion-items, glass FAB.
     return IonPage(
       title: context.l10n.teachersTitle,
+      // ROLLEN-B-63: `ion-back-button` – the themed glass chevron of the other
+      // classic pages instead of Cupertino's bare teal "‹".
+      leading: ionIsIos(context) &&
+              (ModalRoute.of(context)?.impliesAppBarDismissal ?? false)
+          ? const BackButton()
+          : null,
       onRefresh: refresh,
       slivers: [
         ...teachersAsync.when(
@@ -200,15 +207,22 @@ class TeachersListPage extends ConsumerWidget {
   ) async {
     final groups = await loadTeacherGroups(ref);
     if (!context.mounted) return;
-    final result = await Navigator.of(context, rootNavigator: true).push<Teacher>(
-      MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (_) => _TeacherEditPage(
+    Widget page(BuildContext _) => _TeacherEditPage(
           teacher: teacher,
           availableInstruments: groups,
-        ),
-      ),
-    );
+        );
+    // EIB-01: Ionic `modalController.create({ component: TeacherPage,
+    // presentingElement })` – iOS card modal, md phone full screen, from
+    // 768px a centred 600px card. The Beta keeps its full-screen route.
+    final result = context.rdSkin == null
+        ? await showIonCardModal<Teacher>(
+            context,
+            builder: page,
+            iosBackgroundColor: ionPlainContentBackground(context),
+          )
+        : await Navigator.of(context, rootNavigator: true).push<Teacher>(
+            MaterialPageRoute(fullscreenDialog: true, builder: page),
+          );
 
     if (result != null && teacher.id != null) {
       try {
@@ -403,12 +417,85 @@ class _TeacherFormState extends State<_TeacherForm> {
     );
   }
 
+  /// EIB-02 / EIB-04 / EIB-05: classic form – `ion-item`s with stacked
+  /// labels, the instruments `ion-select multiple` with the label at the
+  /// start, the private toggle, the players accordion and the button
+  /// (`expand="full"` in the add sheet, `expand="block"` in the modal).
+  Widget _buildClassic(BuildContext context, String names) {
+    final l10n = context.l10n;
+    return SingleChildScrollView(
+      controller: widget.scrollController,
+      padding: EdgeInsets.only(bottom: _isNew ? 0 : scrollEndPadding(context, base: AppDimensions.paddingM)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          IonStackedInputItem(
+            label: l10n.typeSettingsName,
+            controller: _nameController,
+            textCapitalization: TextCapitalization.words,
+          ),
+          // Ionic `ion-select interface="modal" multiple`.
+          IonSelectItem(
+            label: l10n.teachersInstruments,
+            value: names,
+            onOpen: (anchor) async {
+              final picked = await showAppMultiSelect<int>(
+                context: anchor,
+                header: l10n.teachersInstruments,
+                values: _selectedInstruments.toList(),
+                options: [
+                  for (final g in widget.availableInstruments)
+                    if (g.id != null) AppSelectOption(value: g.id!, label: g.name),
+                ],
+              );
+              if (picked != null && mounted) {
+                setState(() => _selectedInstruments = picked.toSet());
+              }
+            },
+          ),
+          IonToggleRow(
+            label: l10n.teachersPrivate,
+            value: _private,
+            editable: true,
+            onChanged: (v) => setState(() => _private = v),
+          ),
+          IonStackedInputItem(
+            label: l10n.teachersContact,
+            controller: _numberController,
+          ),
+          IonStackedInputItem(
+            label: l10n.peopleNotes,
+            controller: _notesController,
+            textarea: true,
+          ),
+          if (widget.players.isNotEmpty)
+            IonAccordionTile(
+              title: Text(l10n.teachersPlayers),
+              initiallyExpanded: true,
+              children: [
+                for (final p in widget.players) IonItem(child: Text(p)),
+              ],
+            ),
+          if (_isNew)
+            IonFullButton(
+              onPressed: _submit,
+              child: IonButtonLabel(l10n.attendanceAdd),
+            )
+          else
+            IonButton(expand: true, label: l10n.teachersUpdate, onPressed: _submit),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final names = widget.availableInstruments
         .where((g) => _selectedInstruments.contains(g.id))
         .map((g) => g.name)
         .join(', ');
+    if (context.rdSkin == null) return _buildClassic(context, names);
     return SingleChildScrollView(
       controller: widget.scrollController,
       padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -502,6 +589,19 @@ class _TeacherEditPage extends ConsumerWidget {
         .where((p) => teacher.id != null && p.teacher == teacher.id)
         .map((p) => '${p.firstName} ${p.lastName}')
         .toList();
+    if (context.rdSkin == null) {
+      // EIB-01: modal toolbar with the title and the close button.
+      return IonSheetScaffold(
+        title: context.l10n.teachersEdit,
+        showClose: true,
+        backgroundColor: ionPlainContentBackground(context),
+        body: _TeacherForm(
+          teacher: teacher,
+          availableInstruments: availableInstruments,
+          players: players,
+        ),
+      );
+    }
     return Scaffold(
       // PARITY_R5: teacher.page.html `<ion-content>` without colour → white.
       backgroundColor: ionPlainContentBackground(context),

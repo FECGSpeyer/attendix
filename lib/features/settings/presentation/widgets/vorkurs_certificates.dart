@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
@@ -140,10 +141,18 @@ class _GroupSelectDialogState extends State<_GroupSelectDialog> {
           onPressed: () => Navigator.pop(context),
           child: Text(context.l10n.commonCancel),
         ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context, _selected),
-          child: Text(context.l10n.settingsGenerate),
-        ),
+        // EIA-32: Ionic alert buttons are plain text buttons (Beta keeps the
+        // filled one).
+        if (context.rdSkin == null)
+          TextButton(
+            onPressed: () => Navigator.pop(context, _selected),
+            child: Text(context.l10n.settingsGenerate),
+          )
+        else
+          FilledButton(
+            onPressed: () => Navigator.pop(context, _selected),
+            child: Text(context.l10n.settingsGenerate),
+          ),
       ],
     );
   }

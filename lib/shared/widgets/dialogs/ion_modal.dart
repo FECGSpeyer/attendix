@@ -11,6 +11,25 @@ bool isIonModalCard(Size size) => size.width >= 768 && size.height >= 600;
 /// (`@media (min-width: 768px) and (min-height: 768px)`).
 double ionModalCardHeight(Size size) => size.height >= 768 ? 600 : 500;
 
+/// PERSONEN-92: the size Ionic's modal media queries see – the WINDOW. The
+/// classic shell hands the pages next to the fixed side panel a narrower
+/// [MediaQuery] size and puts the real window size in an
+/// [IonWindowSizeScope]; without that scope this is the MediaQuery size.
+Size ionModalWindowSize(BuildContext context) =>
+    context.getInheritedWidgetOfExactType<IonWindowSizeScope>()?.size ??
+    MediaQuery.sizeOf(context);
+
+/// Carries the window size below a shell that narrows [MediaQuery] (see
+/// [ionModalWindowSize]).
+class IonWindowSizeScope extends InheritedWidget {
+  const IonWindowSizeScope({super.key, required this.size, required super.child});
+
+  final Size size;
+
+  @override
+  bool updateShouldNotify(IonWindowSizeScope oldWidget) => size != oldWidget.size;
+}
+
 /// Presents [builder] like a default Ionic `ion-modal`
 /// (`modalController.create({ component })`):
 /// - desktop/tablet ([isIonModalCard]): a centred [width] × [height] card over
@@ -26,7 +45,7 @@ Future<T?> showIonModal<T>(
   double? height,
   bool barrierDismissible = true,
 }) {
-  final size = MediaQuery.sizeOf(context);
+  final size = ionModalWindowSize(context);
   final cardHeight = height ?? ionModalCardHeight(size);
   if (isIonModalCard(size)) {
     final ios = useIosLook(context);
@@ -116,7 +135,7 @@ Future<T?> showPageModal<T>(
   Widget wrap(BuildContext ctx) => IonPageModalScope(
         child: _CloseOnNavigation(router: router, child: builder(ctx)),
       );
-  if (useIosLook(context) && !isIonModalCard(MediaQuery.sizeOf(context))) {
+  if (useIosLook(context) && !isIonModalCard(ionModalWindowSize(context))) {
     return showIosCardModal<T>(
       context,
       backgroundColor: iosBackgroundColor,

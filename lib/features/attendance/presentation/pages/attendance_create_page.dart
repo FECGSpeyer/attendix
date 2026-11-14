@@ -187,6 +187,10 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     final showSongs = showSongsForType(_selectedType, ref.watch(currentTenantProvider)?.type);
     final types = typesAsync.valueOrNull ?? const <AttendanceType>[];
     final ios = isIosLook(context);
+    // TER-12 / TER-20: the classic md look shares the Ionic item layout
+    // (stacked labels, clear list-header button) with iOS.
+    final classic = context.rdSkin == null;
+    final ionForm = ios || classic;
 
     // Auto-select first visible type (Ionic type_id = first visible type)
     if (_selectedType == null && types.isNotEmpty) {
@@ -205,7 +209,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       children: [
         _InsetGroup(children: [
           // Datum (Mehrfachauswahl möglich) + info button
-          if (ios)
+          if (ionForm)
             _iosDateRow(context)
           else
           ListTile(
@@ -261,7 +265,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               ],
             ),
           ),
-          if (isAllDay && ios)
+          if (isAllDay && ionForm)
             _IosStackedField(
               label: context.l10n.attListDurationDays,
               controller: _durationController,
@@ -292,7 +296,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               ),
             ),
           // Info-Text: Ionic stacked label + plain ion-textarea + helper text
-          if (ios)
+          if (ionForm)
             _IosStackedField(
               label: context.l10n.attListInfoText,
               helperText: context.l10n.attListInfoTextHelper,
@@ -321,8 +325,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               ListTile(
                 title: Text(context.l10n.attListNeededPeople(DateFormat('EEEE', currentIntlLocale()).format(DateTime(2024, 1, wd.weekday)))),
                 subtitle: Text(context.l10n.attendanceFlutterEventsCount(wd.count)),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
+                trailing: _DutyStepper(
+                  pill: classic,
                   children: [
                     IconButton(
                       icon: Icon(AppIcons.remove),
@@ -332,7 +336,16 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                           : () => setState(
                               () => _dutyRequiredByWeekday[wd.weekday] = wd.required - 1),
                     ),
-                    Text('${wd.required}'),
+                    classic
+                        ? ConstrainedBox(
+                            constraints: const BoxConstraints(minWidth: 22),
+                            child: Text(
+                              '${wd.required}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          )
+                        : Text('${wd.required}'),
                     IconButton(
                       icon: Icon(AppIcons.add),
                       tooltip: context.l10n.attListMore,
@@ -343,7 +356,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                 ),
               ),
           // ATT_DETAIL: "Ort (für Navigation)" for types with place_enabled
-          if (_selectedType?.placeEnabled == true && ios)
+          if (_selectedType?.placeEnabled == true && ionForm)
             _IosStackedField(
               label: context.l10n.attListPlace,
               hintText: context.l10n.attListPlacePlaceholder,
@@ -376,7 +389,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         if (showSongs) ...[
           // IOS_FORMS2: Ionic `ion-list-header` button defaults to fill
           // "clear" → a small primary "+" next to the header label.
-          if (ios)
+          if (ionForm)
             IonListHeader(
               context.l10n.attListSongs,
               trailing: [
@@ -524,6 +537,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   // the readonly ion-input value below and a clear "information" button.
   Widget _iosDateRow(BuildContext context) {
     final onSurface = Theme.of(context).colorScheme.onSurface;
+    final ios = isIosLook(context);
     return InkWell(
       onTap: _onDateClick,
       child: ConstrainedBox(
@@ -539,12 +553,12 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                   children: [
                     Text(
                       context.l10n.attListDateMulti,
-                      style: TextStyle(fontSize: 16, color: onSurface),
+                      style: TextStyle(fontSize: ios ? 16 : 12, color: onSurface),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       _getDateDisplayText(),
-                      style: TextStyle(fontSize: 17, color: onSurface),
+                      style: TextStyle(fontSize: ios ? 17 : 16, color: onSurface),
                     ),
                   ],
                 ),
@@ -774,6 +788,17 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   }
 
   Future<void> _pickDates() async {
+    if (context.rdSkin == null) {
+      // TER-02: Ionic `ion-modal.dateModal` – the choice applies live.
+      await showIonMultiDateCard(
+        context,
+        initialDates: _selectedDates,
+        onChanged: (dates) {
+          if (mounted) setState(() => _selectedDates = dates);
+        },
+      );
+      return;
+    }
     final result = await MultiDateCalendarDialog.show(
       context,
       initialDates: _selectedDates,
@@ -869,6 +894,100 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
             ],
           );
         });
+    // TER-13 / TER-26: Ionic info modal content – `ion-content
+    // color="light"`, an inset list with `ion-list-header` "Veranstaltungs-
+    // typen" and `lines="none"` items (ellipse in the type colour, holidays
+    // in `holiday`), then the plain lists "Ferien" and "Feiertage".
+    Widget classicContent(BuildContext context, ScrollController scrollController) =>
+        Consumer(builder: (context, ref, _) {
+          final holidaysAsync = ref.watch(holidaysProvider);
+          final holidays = holidaysAsync.valueOrNull;
+          final hasHolidays = holidays != null &&
+              (holidays.publicHolidays.isNotEmpty || holidays.schoolHolidays.isNotEmpty);
+          Widget plainList(List<String> rows) => rows.isEmpty
+              ? const SizedBox.shrink()
+              : ColoredBox(
+                  color: ionItemBackground(context),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (var i = 0; i < rows.length; i++) ...[
+                        IonItem(title: Text(rows[i])),
+                        if (i < rows.length - 1)
+                          Divider(
+                            height: isIosLook(context) ? 0.5 : 1,
+                            thickness: isIosLook(context) ? 0.5 : 1,
+                            indent: 16,
+                          ),
+                      ],
+                    ],
+                  ),
+                );
+          return ColoredBox(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: ListView(
+              controller: scrollController,
+              padding: EdgeInsets.only(
+                top: 16,
+                bottom: 16 + MediaQuery.paddingOf(context).bottom,
+              ),
+              children: [
+                IonListHeader(context.l10n.attListEventTypes),
+                // ion-item-group with `lines="none"` items.
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: ionItemBackground(context),
+                    borderRadius: BorderRadius.circular(IonInsetList.radiusOf(context)),
+                  ),
+                  child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (final type in types)
+                      IonItem(
+                        leading: dot(ColorUtils.parseNamedColor(type.color)),
+                        title: Text(type.name),
+                      ),
+                    if (hasHolidays) ...[
+                      IonItem(
+                        leading: dot(AppColors.holiday),
+                        title: Text(context.l10n.attListHolidaysOfState),
+                      ),
+                      IonItem(
+                        leading: dot(AppColors.medium),
+                        title: Text(context.l10n.attListSchoolHolidaysOfState),
+                      ),
+                    ],
+                  ],
+                  ),
+                ),
+                if (holidays == null && holidaysAsync.isLoading)
+                  const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(child: AppSpinner()),
+                  )
+                else if (holidaysAsync.hasError && holidays == null)
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(holidaysAsync.error!))),
+                  )
+                else if (holidays != null) ...[
+                  IonListHeader(context.l10n.attListSchoolHolidays),
+                  plainList([
+                    for (final h in holidays.schoolHolidays.where((h) => !h.isPast))
+                      '${fmt.format(h.startDate)} - ${fmt.format(h.endDate)}: ${h.name}',
+                  ]),
+                  IonListHeader(context.l10n.attListHolidays),
+                  plainList([
+                    for (final h in holidays.publicHolidays.where((h) => !h.isPast))
+                      '${fmt.format(h.startDate)}: ${h.name}',
+                  ]),
+                ],
+              ],
+            ),
+          );
+        });
     if (context.rdSkin == null) {
       // Ionic: [breakpoints]="[0, 0.5, 1]" [initialBreakpoint]="0.5", no
       // header, `ion-content color="light"`.
@@ -876,7 +995,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         context,
         breakpoints: const [0, 0.5, 1],
         initialBreakpoint: 0.5,
-        builder: content,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        builder: classicContent,
       );
       return;
     }
@@ -1050,7 +1170,8 @@ class _InsetGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // IOS_FORMS2: iOS inset group (ion-list inset > ion-item-group)
-    if (isIosLook(context)) {
+    // TER-12: the classic md look gets the Ionic md inset list too.
+    if (isIosLook(context) || context.rdSkin == null) {
       return IonInsetList(margin: margin, children: children);
     }
     final rows = <Widget>[];
@@ -1096,13 +1217,16 @@ class _IosStackedField extends StatelessWidget {
   Widget build(BuildContext context) {
     final onSurface = Theme.of(context).colorScheme.onSurface;
     final multiline = keyboardType != TextInputType.number;
+    // TER-12: md stacked label = 16px scaled to .75, 16px input.
+    final ios = isIosLook(context);
+    final inputSize = ios ? 17.0 : 16.0;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label, style: TextStyle(fontSize: 16, color: onSurface)),
+          Text(label, style: TextStyle(fontSize: ios ? 16 : 12, color: onSurface)),
           const SizedBox(height: 6),
           TextField(
             controller: controller,
@@ -1110,11 +1234,11 @@ class _IosStackedField extends StatelessWidget {
             textCapitalization: textCapitalization,
             minLines: multiline ? minLines : null,
             maxLines: multiline ? null : 1,
-            style: TextStyle(fontSize: 17, color: onSurface),
+            style: TextStyle(fontSize: inputSize, color: onSurface),
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: TextStyle(
-                fontSize: 17,
+                fontSize: inputSize,
                 color: onSurface.withValues(alpha: 0.6),
               ),
               isCollapsed: true,
@@ -1135,6 +1259,28 @@ class _IosStackedField extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// TER-25: Ionic `div.duty-stepper` – the clear − / + buttons and the
+/// count on a light, rounded (10) background; [pill] false = bare row.
+class _DutyStepper extends StatelessWidget {
+  const _DutyStepper({required this.children, this.pill = true});
+
+  final List<Widget> children;
+  final bool pill;
+
+  @override
+  Widget build(BuildContext context) {
+    final row = Row(mainAxisSize: MainAxisSize.min, children: children);
+    if (!pill) return row;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.adaptive(context, AppColors.light),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: row,
     );
   }
 }

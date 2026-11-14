@@ -19,8 +19,8 @@ import '../../data/providers/parents_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
-import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
+import '../../../auth/presentation/widgets/ion_buttons.dart' show IonSmallClearButton;
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
@@ -177,9 +177,10 @@ class ParentsWelcomeCard extends ConsumerWidget {
             ),
             if (songs.isNotEmpty) ...[
               const SizedBox(height: AppDimensions.paddingS),
-              TextButton(
+              // SEL-22: Ionic `ion-button fill="clear" size="small"`.
+              IonSmallClearButton(
+                label: context.l10n.selfServiceShowCurrentSongs,
                 onPressed: () => showCurrentSongsSheet(context, songs),
-                child: IonButtonLabel(context.l10n.selfServiceShowCurrentSongs),
               ),
             ],
           ],
@@ -325,14 +326,15 @@ Future<void> showCurrentSongsSheet(
                               trailing: (his.song!.link ?? '').isNotEmpty
                                   ? Icon(AppIcons.downloadOutlined)
                                   : null,
-                              // Ionic `ion-item button` → iOS detail chevron
-                              detail: true,
-                              onTap: () {
-                                final link = his.song!.link ?? '';
-                                if (link.isEmpty) return;
-                                // Ionic parents Browser.open (in-app browser).
-                                NativeFileService.openLinkInApp(Uri.parse(link));
-                              },
+                              // SEL-22: Ionic `[button]="!!entry.song?.link"` –
+                              // only rows with a link are buttons (iOS detail
+                              // chevron).
+                              detail: (his.song!.link ?? '').isNotEmpty,
+                              onTap: (his.song!.link ?? '').isEmpty
+                                  ? null
+                                  // Ionic parents Browser.open (in-app browser).
+                                  : () => NativeFileService.openLinkInApp(
+                                      Uri.parse(his.song!.link!)),
                             ),
                       ],
                     ),

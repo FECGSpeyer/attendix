@@ -22,6 +22,9 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../planning/presentation/widgets/ion_items.dart' show IonChip;
 import '../../../settings/presentation/widgets/settings_list.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
+import '../../../../shared/widgets/layout/ion_form_items.dart';
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 
 /// Opens the full-screen compose dialog. Returns the new message id when sent.
 /// [preset]: fixed recipients and prefilled text (Ionic 4.18
@@ -30,6 +33,15 @@ import '../../../settings/presentation/widgets/settings_list.dart';
 /// REDESIGN: with the Beta on, the Beta form ([RdMessageComposePage]) opens.
 Future<String?> openMessageCompose(BuildContext context, {MessageComposePreset? preset}) {
   final beta = ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider);
+  if (!beta) {
+    // EIB-01: Ionic `modalController.create({ component })` without
+    // `presentingElement` – full screen on phones, from 768px a centred
+    // 600px card.
+    return showIonModal<String>(
+      context,
+      builder: (_) => MessageComposePage(preset: preset),
+    );
+  }
   return Navigator.of(context, rootNavigator: true).push<String>(
     MaterialPageRoute(
       fullscreenDialog: true,
@@ -242,7 +254,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                 onPressed: () => Navigator.of(ctx).pop(false),
                 child: Text(l10n.commonCancel),
               ),
-              ElevatedButton(
+              TextButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
                 child: Text(l10n.messagesSend),
               ),
@@ -255,6 +267,8 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
   Future<void> _send(String title) async {
     if (_sending) return;
     setState(() => _sending = true);
+    // EIB-14 / EIB-19: Ionic `loadingController` "Wird gesendet…".
+    final loading = showIonLoading(context, message: context.l10n.messagesSendingNow);
     final id = await ref
         .read(messageNotifierProvider.notifier)
         .send(
@@ -267,6 +281,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
           attendanceId: _preset?.attendanceId,
           allowResponses: _preset?.allowResponses ?? false,
         );
+    loading.dismiss();
     if (!mounted) return;
     setState(() => _sending = false);
     if (id == null) {
@@ -292,18 +307,27 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
             padding: const EdgeInsets.only(top: 16),
             child: IonListHeader(title: text),
           )
-        : Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppDimensions.paddingS,
-        AppDimensions.paddingL,
-        AppDimensions.paddingS,
-        AppDimensions.paddingS,
-      ),
-      child: Text(
-        text,
-        style: theme.textTheme.titleSmall?.copyWith(color: AppColors.medium),
-      ),
-    );
+        // EIB-14: md `ion-list-header` (45px, label 14.4 semibold in
+        // medium-tint) instead of a Material subtitle.
+        : ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 45),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(4, 16, 4, 4),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: kMdSettingsHeaderFontSize,
+                    fontWeight: FontWeight.w600,
+                    color: theme.brightness == Brightness.dark
+                        ? const Color(0xFFA2A4AB)
+                        : const Color(0xFF737478),
+                  ),
+                ),
+              ),
+            ),
+          );
 
     return Scaffold(
       appBar: AppBar(
@@ -323,28 +347,21 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
       body: Stack(
         children: [
           ListView(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            padding: EdgeInsets.all(ionListMargin(context)),
             children: [
+              // EIB-15: `ion-input labelPlacement="stacked"` – the label
+              // always above, the placeholder visible.
               _ComposeBox(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.paddingM,
-                  ),
-                  child: TextField(
-                    controller: _titleController,
-                    maxLength: 200,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      labelText: l10n.messagesTitle,
-                      hintText: l10n.messagesTitlePlaceholder,
-                      border: InputBorder.none,
-                      counterText: '',
-                    ),
-                    onChanged: (_) {
-                      setState(() {});
-                      _saveDraft();
-                    },
-                  ),
+                child: IonStackedInputItem(
+                  lines: false,
+                  label: l10n.messagesTitle,
+                  placeholder: l10n.messagesTitlePlaceholder,
+                  controller: _titleController,
+                  maxLength: 200,
+                  onChanged: (_) {
+                    setState(() {});
+                    _saveDraft();
+                  },
                 ),
               ),
               const SizedBox(height: AppDimensions.paddingM),
@@ -352,7 +369,8 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                 child: Column(
                   children: [
                     MessageEditorToolbar(controller: _quill),
-                    const Divider(height: 1),
+                    // The classic toolbar draws its own bottom border.
+                    if (context.rdSkin != null) const Divider(height: 1),
                     ConstrainedBox(
                       constraints: const BoxConstraints(minHeight: 180),
                       child: Padding(
@@ -503,35 +521,19 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                   child: _buildSummary(theme),
                 ),
               ),
-              FilledButton.icon(
-                onPressed: _canSend ? _confirmSend : null,
-                icon: Icon(AppIcons.sendOutlined),
-                label: IonButtonLabel(l10n.messagesSend),
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(48),
+              // `.actions { margin: 1rem 16px 2rem }` + `ion-button
+              // expand="block"` with `send-outline` at the start.
+              Padding(
+                padding: const EdgeInsets.only(bottom: 32),
+                child: IonButton(
+                  expand: true,
+                  icon: AppIcons.sendOutlined,
+                  label: l10n.messagesSend,
+                  onPressed: _canSend ? _confirmSend : null,
                 ),
               ),
-              const SizedBox(height: AppDimensions.paddingXL),
             ],
           ),
-          if (_sending)
-            Container(
-              color: Colors.black26,
-              alignment: Alignment.center,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppDimensions.paddingL),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const AppSpinner(),
-                      const SizedBox(width: AppDimensions.paddingM),
-                      Text(l10n.messagesSendingNow),
-                    ],
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );
@@ -547,9 +549,16 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
             '${l10n.messagesCountsFailed} ',
             style: TextStyle(color: theme.colorScheme.error),
           ),
-          TextButton(
-            onPressed: _loadCounts,
-            child: Text(l10n.messagesRetry),
+          // EIB-14: inline `<a>` in the primary colour.
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: _loadCounts,
+              child: Text(
+                l10n.messagesRetry,
+                style: const TextStyle(color: AppColors.primary),
+              ),
+            ),
           ),
         ],
       );
@@ -608,7 +617,13 @@ class _ComposeBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!ionIsIos(context)) {
-      return Card(margin: EdgeInsets.zero, clipBehavior: Clip.antiAlias, child: child);
+      // EIB-17: md-ion-list-inset item group – radius 16, item background,
+      // no shadow (not a Material card).
+      final b = Theme.of(context).brightness;
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(IonMd.groupRadius),
+        child: Material(color: IonMd.itemBackground(b), child: child),
+      );
     }
     return ClipRRect(
       borderRadius: BorderRadius.circular(IonIos.groupRadius),

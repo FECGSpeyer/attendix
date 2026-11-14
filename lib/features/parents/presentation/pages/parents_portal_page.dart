@@ -155,6 +155,9 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
     return CondenseHeader(
       enabled: !multiTenant,
       builder: (context, condensed) => Scaffold(
+      // SEL-02: Ionic `ion-content` without color – the white Termin page
+      // of "Meine Termine", not the grey `color="light"` default.
+      backgroundColor: eventPageBackground(context),
       // IOS_R6: Ionic `ion-content [fullscreen]` under the translucent header
       extendBodyBehindAppBar: isIosLook(context),
       // IOS_R6: `ion-header [translucent]` (blur once condensed; always with
@@ -289,7 +292,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                         // Ionic: one `ev-list--card` per Termin, item
                         // without lines and the `.ev-kids` row below it.
                         for (final g in group.items)
-                          EventListCard(dividers: false, children: [
+                          EventListCard(dividers: false, plain: true, children: [
                             EventRow(
                               date: g.date,
                               title: _title(g),
@@ -327,7 +330,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                     ],
                     if (past.isNotEmpty) ...[
                       EventSectionHeader(title: context.l10n.signoutPast, count: past.length),
-                      EventListCard(children: [
+                      EventListCard(plain: true, children: [
                         for (final g in pastPreview)
                           EventRow(
                             date: g.date,
@@ -426,17 +429,16 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
 
     final action = await showAppActionSheet<String>(
       context,
-      title: child != null ? '${child.childFirstName} · ${_title(group)}' : _title(group),
-      message: _meta(group, withDate: true),
+      // SEL-06: Ionic parents action sheet has no header and no icons.
       cancelDestructive: true,
       actions: [
-        if (showSignIn) AppActionSheetAction(value: 'signin', icon: AppIcons.checkCircleOutline, label: context.l10n.signoutSignIn),
-        if (showSignOut) AppActionSheetAction(value: 'signout', icon: AppIcons.cancelOutlined, label: context.l10n.signoutSignOut),
-        if (showLate) AppActionSheetAction(value: 'late', icon: AppIcons.schedule, label: context.l10n.signoutEnterLate),
-        if (group.sharePlan && group.plan != null) AppActionSheetAction(value: 'plan', icon: AppIcons.descriptionOutlined, label: context.l10n.signoutShowRunSheet),
-        if (group.description?.isNotEmpty ?? false) AppActionSheetAction(value: 'description', icon: AppIcons.infoOutline, label: context.l10n.signoutShowDescription),
-        if (group.attachmentUrl?.isNotEmpty ?? false) AppActionSheetAction(value: 'attachment', icon: AppIcons.attachFile, label: context.l10n.signoutOpenAttachment),
-        if (group.place?.isNotEmpty ?? false) AppActionSheetAction(value: 'navigation', icon: AppIcons.navigationOutlined, label: context.l10n.signoutOpenNavigation),
+        if (showSignIn) AppActionSheetAction(value: 'signin', label: context.l10n.signoutSignIn),
+        if (showSignOut) AppActionSheetAction(value: 'signout', label: context.l10n.signoutSignOut),
+        if (showLate) AppActionSheetAction(value: 'late', label: context.l10n.signoutEnterLate),
+        if (group.sharePlan && group.plan != null) AppActionSheetAction(value: 'plan', label: context.l10n.signoutShowRunSheet),
+        if (group.description?.isNotEmpty ?? false) AppActionSheetAction(value: 'description', label: context.l10n.signoutShowDescription),
+        if (group.attachmentUrl?.isNotEmpty ?? false) AppActionSheetAction(value: 'attachment', label: context.l10n.signoutOpenAttachment),
+        if (group.place?.isNotEmpty ?? false) AppActionSheetAction(value: 'navigation', label: context.l10n.signoutOpenNavigation),
       ],
     );
     if (action == null || !mounted) return;

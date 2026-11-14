@@ -16,9 +16,18 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 
 /// Opens "Dienste verteilen". Returns true when assignments were saved.
+/// DAS-29: Ionic default `ion-modal` – full screen on phones, a centred
+/// card from 768 × 600 ([showIonModal]); the Beta keeps the full-screen
+/// route.
 Future<bool> openDutyDistributePage(BuildContext context) async {
+  if (context.rdSkin == null) {
+    final result = await showIonModal<bool>(context, builder: (_) => const DutyDistributePage());
+    return result ?? false;
+  }
   final result = await Navigator.of(context, rootNavigator: true).push<bool>(MaterialPageRoute(
     fullscreenDialog: true,
     builder: (_) => const DutyDistributePage(),
@@ -294,28 +303,39 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
 
   @override
   Widget build(BuildContext context) {
+    final classic = context.rdSkin == null;
+    final back = TextButton(
+      onPressed: () => setState(() => _preview = false),
+      child: IonButtonLabel(context.l10n.commonBack),
+    );
+    final shuffle = IconButton(
+      icon: Icon(AppIcons.shuffle),
+      tooltip: context.l10n.dutyRedistribute,
+      onPressed: _run,
+    );
     return Scaffold(
       appBar: AppBar(
         // Ionic: text button "Zurück" in the preview step, close icon otherwise.
-        leadingWidth: _preview ? 90 : null,
+        // DAS-02: Ionic `ion-buttons slot="start"` (iOS glass capsule);
+        // the Beta keeps its plain buttons.
+        leadingWidth: classic && useIosLook(context) ? (_preview ? 120 : 68) : (_preview ? 90 : null),
         leading: _preview
-            ? TextButton(
-                onPressed: () => setState(() => _preview = false),
-                child: IonButtonLabel(context.l10n.commonBack),
-              )
-            : IconButton(
-                icon: Icon(AppIcons.close),
-                tooltip: context.l10n.commonCancel,
-                onPressed: () => Navigator.of(context).pop(false),
-              ),
+            ? (classic
+                ? ToolbarButtonGroup(children: [back])
+                : back)
+            : classic
+                ? IonCloseButton(tooltip: context.l10n.commonCancel, onPressed: () => Navigator.of(context).pop(false))
+                : IconButton(
+                    icon: Icon(AppIcons.close),
+                    tooltip: context.l10n.commonCancel,
+                    onPressed: () => Navigator.of(context).pop(false),
+                  ),
         title: Text(_preview ? context.l10n.teamOrgProposal : context.l10n.attListDistributeDuties),
         actions: [
-          if (_preview)
-            IconButton(
-              icon: Icon(AppIcons.shuffle),
-              tooltip: context.l10n.dutyRedistribute,
-              onPressed: _run,
-            ),
+          if (_preview && classic)
+            ToolbarButtonGroup(children: [shuffle])
+          else if (_preview)
+            shuffle,
         ],
       ),
       // P10_SELF_PLAN: Ionic loading messages "Verteile Dienste…" /

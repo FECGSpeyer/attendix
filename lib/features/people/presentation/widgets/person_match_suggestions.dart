@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -138,8 +139,16 @@ Future<CrossTenantPersonCandidate?> showEmailTakenDialog(
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
+            // PEO-13: Ionic "Abbrechen" role destructive.
+            style: appAlertDestructiveStyle(ctx),
             child: Text(context.l10n.commonCancel),
           ),
+          if (context.rdSkin == null)
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, m),
+              child: Text(context.l10n.commonYes),
+            )
+          else
           FilledButton(
             onPressed: () => Navigator.pop(ctx, m),
             child: Text(context.l10n.commonYes),
@@ -147,6 +156,19 @@ Future<CrossTenantPersonCandidate?> showEmailTakenDialog(
         ],
       ),
     );
+  }
+  if (context.rdSkin == null) {
+    // PEO-16: Ionic alert with radio inputs (first checked), Abbrechen
+    // (destructive) / Ja.
+    return showAppRadioAlert<int>(
+      context,
+      title: context.l10n.personEmailTaken,
+      subtitle: usedMany ?? context.l10n.personEmailUsedMany,
+      options: [for (var i = 0; i < matches.length; i++) (i, matches[i].label)],
+      initialValue: 0,
+      confirmText: context.l10n.commonYes,
+      cancelDestructive: true,
+    ).then((r) => r == null ? null : matches[r.value ?? 0]);
   }
   return showAppDialog<CrossTenantPersonCandidate>(
     context: context,

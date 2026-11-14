@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -111,8 +112,9 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
                       ),
               ),
     ];
-    // UX_SETTINGS (WAVE 8): Ionic inset list with list header on iOS.
-    if (ionIsIos(context)) {
+    // UX_SETTINGS (WAVE 8): Ionic inset list with list header on iOS;
+    // ABL-07: the same shared section in md (Beta md keeps the old one).
+    if (ionIsIos(context) || context.rdSkin == null) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: SettingsListSection(title: context.l10n.orgSongSync, children: items),

@@ -20,11 +20,13 @@ import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive_platform.dart';
 import '../audio_player/audio_player_widget.dart';
 import '../debug/debug_role_fab.dart';
+import '../dialogs/ion_modal.dart' show IonWindowSizeScope;
 import '../dialogs/native_app_ad.dart';
 import 'ios_tab_bar.dart';
 import 'root_back_button_scope.dart';
 import 'ionic_md.dart' show IonMd;
 import 'route_leave_guard.dart';
+import 'shell_popup_observer.dart';
 import 'side_nav/side_nav.dart';
 import 'side_nav/side_nav_layout.dart';
 
@@ -182,6 +184,13 @@ class MainShell extends ConsumerWidget {
       }
     }
 
+    // ROLLEN-A-20: right after "Tab ausblenden" the page stays on the hidden
+    // optional tab ("Werke" / "Org"); it lives under "Mehr" now, so mark
+    // that tab instead of the first one.
+    if (location.startsWith('/songs-tab') || location.startsWith('/org-plans-tab')) {
+      return destinations.length - 1;
+    }
+
     // If current route doesn't match any tab, default to first
     return 0;
   }
@@ -283,14 +292,27 @@ class MainShell extends ConsumerWidget {
               left: 0,
               right: 0,
               bottom: 0,
-              child: IosTabBar(
-                selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
-                onSelected: (index) =>
-                    _onItemTapped(context, ref, index, destinations),
-                items: [
-                  for (final d in destinations)
-                    IosTabBarItem(icon: d.icon, label: d.label),
-                ],
+              // F-RAHMEN-08: Ionic overlays cover the tab bar – hide it while
+              // a sheet / dialog is open on the shell navigator (which lies
+              // under the bar).
+              child: ValueListenableBuilder<bool>(
+                valueListenable: ShellPopupObserver.current?.popupOpen ?? _noPopup,
+                builder: (context, popupOpen, bar) => Visibility(
+                  visible: !popupOpen,
+                  maintainState: true,
+                  maintainAnimation: true,
+                  maintainSize: true,
+                  child: bar!,
+                ),
+                child: IosTabBar(
+                  selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
+                  onSelected: (index) =>
+                      _onItemTapped(context, ref, index, destinations),
+                  items: [
+                    for (final d in destinations)
+                      IosTabBarItem(icon: d.icon, label: d.label),
+                  ],
+                ),
               ),
             ),
           ],
@@ -412,6 +434,10 @@ class _SidePanelShellState extends ConsumerState<_SidePanelShell> {
         ),
         child: content,
       );
+      // PERSONEN-92: Ionic decides modal card vs full screen by the WINDOW
+      // (min-width 768px, min-height 600px), not by the room next to the
+      // side panel.
+      content = IonWindowSizeScope(size: mq.size, child: content);
     }
     content = SideNavScope(
       mode: widget.mode,
@@ -444,7 +470,11 @@ class _SidePanelShellState extends ConsumerState<_SidePanelShell> {
                       onClose: () {},
                     ),
                   ),
-                  Expanded(child: content),
+                  // ROLLEN-B-05: the pages' modal barriers carry a
+                  // BlockSemantics that would drop the side nav (painted
+                  // before them in the same semantics container) from the
+                  // accessibility tree; an own container keeps it reachable.
+                  Expanded(child: Semantics(container: true, child: content)),
                 ],
               )
             : content,
@@ -655,6 +685,8 @@ class _IosPageWithFadeState extends State<_IosPageWithFade> {
 }
 
 /// IOS_SHELL2: "Neue Version verfügbar" closed for this session (iOS toast).
+final _noPopup = ValueNotifier<bool>(false);
+
 final _updateToastDismissedProvider = StateProvider<bool>((ref) => false);
 
 /// IOS_SHELL2: iOS update notice as an Ionic iOS 26 `ion-toast` (Liquid

@@ -526,9 +526,11 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
               actions: [settingsButton],
             )
           : AppBar(
-              leading: addButton,
+              // SEL-13: Ionic toolbar buttons (iOS glass capsules).
+              leading: ToolbarButtonGroup(children: [addButton]),
               title: Text(title),
               actions: [
+                ToolbarButtonGroup(children: [
                 settingsButton,
                 if (currentTenant == null)
                   IconButton(
@@ -542,6 +544,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                     icon: Icon(AppIcons.close),
                     onPressed: () => context.go('/settings'),
                   ),
+                ]),
               ],
             ),
       body: tenantsAsync.when(
@@ -741,6 +744,22 @@ class _InstanceSelectionToggleState extends ConsumerState<_InstanceSelectionTogg
     final prefs = ref.watch(userPreferencesProvider);
     final value = ref.watch(wantedInstanceSelectionProvider) ??
         prefs.wantInstanceSelection;
+    if (context.rdSkin == null) {
+      // SEL-20: Ionic `ion-list [inset]` with one `ion-item` > `ion-toggle`
+      // (label + helperText), no card.
+      return SafeArea(
+        child: IonInsetGroup(
+          children: [
+            IonItem(
+              title: Text(context.l10n.settingsEnableTenantSelect),
+              subtitle: Text(context.l10n.settingsTenantSelectHelper),
+              onTap: () => _onChanged(!value),
+              end: Switch.adaptive(value: value, onChanged: _onChanged),
+            ),
+          ],
+        ),
+      );
+    }
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
