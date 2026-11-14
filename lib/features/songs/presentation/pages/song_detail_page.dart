@@ -965,12 +965,16 @@ class _IonChip extends StatelessWidget {
     return Container(
       height: 32,
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Text(label, style: TextStyle(color: color, fontSize: 14)),
+      // WERKE-57: as wide as the label (an `alignment` made every chip in
+      // the Wrap a full-width bar).
+      child: Center(
+        widthFactor: 1,
+        child: Text(label, style: TextStyle(color: color, fontSize: 14)),
+      ),
     );
   }
 }
