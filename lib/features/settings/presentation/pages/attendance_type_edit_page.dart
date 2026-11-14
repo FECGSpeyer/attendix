@@ -420,17 +420,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                 ],
               )
             : IonTranslucentAppBar(child: AppBar(
-          leading: IconButton(
-          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-          onPressed: _onBackPressed,
-        ),
-        actions: [
+          leading: settingsBackButton(context, onPressed: _onBackPressed),
+        actions: settingsToolbarActions(context, [
           IconButton(
             icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
             tooltip: context.l10n.commonDelete,
             onPressed: _deleteType,
           ),
-        ],
+        ]),
       )),
       // Ionic isNew: "+" FAB creates the type (always enabled).
       floatingActionButton: _isNew

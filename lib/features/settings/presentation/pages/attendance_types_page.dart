@@ -16,6 +16,7 @@ import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 import '../widgets/ion_condense.dart';
 import 'attendance_type_edit_page.dart' show showAttendanceTypeCreateModal;
 import '../widgets/settings_list.dart';
+import '../widgets/settings_form_items.dart';
 
 /// Attendance Types List Page
 ///
@@ -45,12 +46,20 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
       extendBodyBehindAppBar: ionIsIos(context),
       // IOS_R6: `ion-header translucent` (blur once condensed)
       appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
-        leading: IconButton(
-          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-          onPressed: () => context.pop(),
-        ),
+        leading: settingsBackButton(context, onPressed: () => context.pop()),
         title: IonCondenseTitle(title, collapsed: collapsed),
-        actions: [
+        actions: settingsToolbarActions(context, [
+          // EIA-27: classic – the Flutter-only "cancel sorting" sits in the
+          // toolbar, the add FAB stays like in Ionic.
+          if (_isReordering && context.rdSkin == null)
+            IconButton(
+              icon: Icon(AppIcons.close),
+              tooltip: context.l10n.commonCancel,
+              onPressed: () => setState(() {
+                _isReordering = false;
+                _localTypes = [];
+              }),
+            ),
           if (_isReordering)
             IconButton(
               // UX_SETTINGS: Ionic checkmark to save the order
@@ -69,7 +78,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
                 });
               },
             ),
-        ],
+        ]),
       )),
       body: typesAsync.when(
         loading: () => const Center(child: AppSpinner()),
@@ -127,7 +136,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
         },
       ),
       // IOS_SHELL: iOS → ion-fab in the tab bar row
-      floatingActionButton: TabBarFab(child: !_isReordering
+      floatingActionButton: TabBarFab(child: !_isReordering || context.rdSkin == null
           ? FloatingActionButton(
               // Ionic openTypeModal(): the type page as modal in the "new"
               // mode (all settings); the notifier reloads the list.

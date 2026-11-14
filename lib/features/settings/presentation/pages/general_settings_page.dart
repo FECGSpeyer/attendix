@@ -483,16 +483,13 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       // IOS_R6: `ion-header translucent` (blur once condensed)
       appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         title: IonCondenseTitle(context.l10n.settingsSettings, collapsed: collapsed),
-        leading: IconButton(
-          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-          onPressed: () {
+        leading: settingsBackButton(context, onPressed: () {
             if (_hasChanges) {
               _showUnsavedChangesDialog();
             } else {
               context.pop();
             }
-          },
-        ),
+          }),
       )),
       // UX_SETTINGS: Ionic saves via FAB (save-outline)
       floatingActionButton: _isLoading

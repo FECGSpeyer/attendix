@@ -15,6 +15,7 @@ import '../../../../data/models/shift/shift_plan.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../widgets/copy_shift_to_tenant_sheet.dart';
 import '../../../settings/presentation/widgets/settings_list.dart' as sl;
+import '../../../settings/presentation/widgets/settings_form_items.dart';
 import '../widgets/shift_preview_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
@@ -142,12 +143,8 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
 
     return IonCondenseScaffold(
       title: context.l10n.shiftsEdit,
-      leading: IconButton(
-        icon: Icon(AppIcons.arrowBack),
-        tooltip: context.l10n.commonBack,
-        onPressed: _goBack,
-      ),
-      actions: [
+      leading: settingsBackButton(context, onPressed: _goBack),
+      actions: settingsToolbarActions(context, [
         // Copy to tenant button (only with linked tenants)
         copyTargetsAsync.when(
           loading: () => const SizedBox.shrink(),
@@ -167,7 +164,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
           tooltip: context.l10n.commonDelete,
           onPressed: () => _confirmDelete(context),
         ),
-      ],
+      ]),
       floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         onPressed: _isLoading ? null : _saveChanges,
         tooltip: context.l10n.commonSave,

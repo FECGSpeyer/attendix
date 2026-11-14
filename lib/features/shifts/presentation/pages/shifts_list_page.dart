@@ -9,6 +9,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../settings/presentation/widgets/settings_list.dart' as sl;
+import '../../../settings/presentation/widgets/settings_form_items.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
 import '../../../../l10n/l10n.dart';
@@ -35,11 +36,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
     // intro ion-card, inset list "Pläne", FAB opening the create sheet.
     return IonCondenseScaffold(
       title: context.l10n.shiftsPlans,
-      leading: IconButton(
-        icon: Icon(AppIcons.arrowBack),
-        tooltip: context.l10n.commonBack,
-        onPressed: () => context.pop(),
-      ),
+      leading: settingsBackButton(context, onPressed: () => context.pop()),
       floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         onPressed: () => showCreateShiftPlanSheet(context, ref),
         child: Icon(AppIcons.add),

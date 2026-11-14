@@ -11,6 +11,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/settings_list.dart';
+import '../widgets/settings_form_items.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
@@ -117,18 +118,15 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
     // intro / logo / text as inset lists, block save button.
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
+        leading: settingsBackButton(context, onPressed: () => Navigator.of(context).maybePop()),
         title: Text(context.l10n.generalSettingsBranding),
-        actions: [
+        actions: settingsToolbarActions(context, [
           if (hasOrg)
             IconButton(
               icon: Icon(AppIcons.check, semanticLabel: context.l10n.commonSave),
               onPressed: _busy ? null : _save,
             ),
-        ],
+        ]),
       ),
       body: orgAsync.when(
         loading: () => const Center(child: AppSpinner()),

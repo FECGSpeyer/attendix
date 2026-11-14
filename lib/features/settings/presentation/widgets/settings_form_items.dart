@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_icons.dart';
+import '../../../../shared/widgets/adaptive/app_toolbar.dart' show IosCircleIcon, ToolbarButtonGroup;
+
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/adaptive/app_select.dart' show IonSelectIcon, IonMdSelectIcon;
 import '../../../../shared/widgets/adaptive/ion_md_stacked_item.dart';
@@ -278,4 +281,33 @@ class SettingsSelectItem extends StatelessWidget {
       ),
     );
   }
+}
+
+bool _iosClassic(BuildContext context) =>
+    context.rdSkin == null && ionIsIos(context);
+
+/// EIA-13: the explicit Ionic `arrow-back` button of the settings sub pages
+/// (`ion-buttons slot="start"` > icon-only `ion-button`). iOS look: the
+/// ios27 Liquid Glass circle (like the themed back button); md and the
+/// Beta: the plain toolbar icon as before.
+Widget settingsBackButton(BuildContext context, {required VoidCallback onPressed}) {
+  final label = MaterialLocalizations.of(context).backButtonTooltip;
+  if (!_iosClassic(context)) {
+    return IconButton(
+      icon: Icon(AppIcons.arrowBack, semanticLabel: label),
+      onPressed: onPressed,
+    );
+  }
+  return IconButton(
+    tooltip: label,
+    icon: IosCircleIcon(icon: AppIcons.arrowBack, iconSize: 20),
+    onPressed: onPressed,
+  );
+}
+
+/// EIA-13: the end `ion-buttons` slot – in the iOS look all buttons share
+/// one glass capsule ([ToolbarButtonGroup]); md / Beta unchanged.
+List<Widget> settingsToolbarActions(BuildContext context, List<Widget> actions) {
+  if (actions.isEmpty || !_iosClassic(context)) return actions;
+  return [ToolbarButtonGroup(children: actions)];
 }

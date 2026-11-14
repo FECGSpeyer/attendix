@@ -250,19 +250,16 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
         extendBodyBehindAppBar: ionIsIos(context),
         // IOS_R6: `ion-header translucent` (blur once condensed)
         appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
-          leading: IconButton(
-            icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-            onPressed: () => Navigator.of(context).maybePop(),
-          ),
+          leading: settingsBackButton(context, onPressed: () => Navigator.of(context).maybePop()),
           title: IonCondenseTitle(context.l10n.extraFieldsTitle, collapsed: collapsed),
-          actions: [
+          actions: settingsToolbarActions(context, [
             IconButton(
               icon: _saving
                   ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
                   : Icon(AppIcons.check, semanticLabel: context.l10n.commonSave),
               onPressed: _saving ? null : _save,
             ),
-          ],
+          ]),
         )),
         // SOL_FIX20: Ionic shows a blocking loading overlay
         // ("Felder werden gespeichert...") while saving – no edits meanwhile.
