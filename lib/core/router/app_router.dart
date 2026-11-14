@@ -46,6 +46,7 @@ import '../../features/songs/presentation/pages/songs_list_page.dart';
 import '../../features/songs/presentation/pages/song_detail_page.dart';
 import '../../features/songs/presentation/pages/song_create_page.dart';
 import '../../features/songs/presentation/pages/song_edit_page.dart';
+import '../../features/songs/presentation/utils/song_utils.dart' show SongUtils;
 import '../../features/instruments/presentation/pages/instruments_list_page.dart';
 import '../../features/self_service/presentation/pages/self_service_overview_page.dart';
 import '../../features/self_service/presentation/pages/signout_page.dart';
@@ -1656,6 +1657,27 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/:songSharingId',
+        // EINST-60: an unknown single-segment address (no sharing-id UUID)
+        // is no Werke link. Signed in → the start page of the open
+        // instance; visitors keep the page, which shows "Link ungültig"
+        // without asking the database.
+        redirect: (context, state) {
+          if (SongUtils.isValidSharingId(state.pathParameters['songSharingId'])) {
+            return null;
+          }
+          final isLoggedIn = ref.read(authStateProvider).whenOrNull(
+                    data: (auth) => auth.session != null,
+                  ) ??
+              false;
+          if (!isLoggedIn) return null;
+          final tenantId = ref.read(currentTenantIdProvider);
+          if (tenantId == null || ref.read(isRoleLoadingProvider)) return '/tenants';
+          return homeRouteFor(
+            ref.read(currentRoleProvider),
+            tenantId,
+            ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
+          );
+        },
         builder: (context, state) => SongsListPage(
           songSharingId: state.pathParameters['songSharingId'],
         ),
