@@ -1,6 +1,26 @@
 {
   "versions": [
     {
+      "version": "0.147.0",
+      "date": "14.11.2026",
+      "changes": [
+        "✨ Beta: Archiv und Anfragen öffnen sich aus „Mitglieder“ und führen dorthin zurück",
+        "✨ Beta: Archivieren als Blatt mit Grund, Datum und Hinweis, was passiert",
+        "✨ Beta: Werkliste importieren als eigene Beta-Seite mit einem Knopf pro Schritt",
+        "✨ Beta: Die eigene Antwort steht in der Karte „Nächster Termin“ und oben im Termin",
+        "✨ Beta: Termine „Diese Woche“ zählen bis Sonntag, danach „Nächste Woche“",
+        "✨ Beta: Eine Anwesenheitszahl für Liste, Person und „Ich“",
+        "✨ Beta: „Meine Gruppen“ heißt überall gleich und bleibt im Tab „Ich“",
+        "✨ Beta: Liste und Detail stehen schon ab 1024 px nebeneinander",
+        "✨ Beta: Neue Person ohne vorausgewähltes Register, neues Register öffnet gleich seine Seite",
+        "✨ Beta: Sammlungskürzel weicht aus, wenn der Buchstabe schon vergeben ist",
+        "💄 Beta: Ein Hauptknopf pro Seite bei Werke auswählen, Aufgabe, Bewerber und „Noch keine Gruppe“",
+        "💄 Beta: Beim Laden eines Termins bleiben Kopf und Zahlen stehen",
+        "💄 Beta: Abmelden zeigt sofort „Du wirst abgemeldet …“, kein Aufblitzen der Gruppenliste nach dem Anmelden",
+        "💄 Beta: 26 Texte klarer formuliert"
+      ]
+    },
+    {
       "version": "0.146.0",
       "date": "14.11.2026",
       "changes": [
