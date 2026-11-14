@@ -520,11 +520,14 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 const LanguagePickerTile(),
                 const RedesignBetaTile(),
-                SettingsListTile(
-                  icon: AppIcons.notificationsOutlined,
-                  title: l10n.settingsNotifications,
-                  onTap: () => context.push('/settings/notifications'),
-                ),
+                // ROLLEN-B-57: Ionic blocks the notifications page for
+                // viewers / parents / applicants (Utils.isUrlAccessAllowed).
+                if (role.canSeeNotifications)
+                  SettingsListTile(
+                    icon: AppIcons.notificationsOutlined,
+                    title: l10n.settingsNotifications,
+                    onTap: () => context.push('/settings/notifications'),
+                  ),
                 SettingsListTile(
                   icon: AppIcons.keyOutlined,
                   title: l10n.settingsChangePassword,

@@ -218,6 +218,8 @@ const Map<String, RoleCheck> _protectedRoutes = {
   // (/settings/files prüft den Zugriff selbst: abhängig von tenants.files_shared)
   // END SETTINGS_EXT
   '/settings/messages': _isAdminOrResponsible,
+  // ROLLEN-B-57: Ionic isUrlAccessAllowed('/tabs/settings/notifications').
+  '/settings/notifications': _canSeeNotifications,
   // AUTO_MESSAGES (Ionic 4.18): rules are admin/responsible only (RLS too)
   '/settings/auto-messages': _isAdminOrResponsible,
   '/settings/handover': _isAdminOrResponsible,
@@ -249,6 +251,7 @@ bool _isAdminOrResponsible(Role role) => role.isAdmin || role.isResponsible;
 bool _isConductor(Role role) => role.isConductor;
 bool _canSeePeopleTab(Role role) => role.canSeePeopleTab;
 bool _canSeeAttendanceTab(Role role) => role.canSeeAttendanceTab;
+bool _canSeeNotifications(Role role) => role.canSeeNotifications;
 /// ORG_PLANS: public plan routes reachable without login (share keys)
 const Set<String> _publicPlanRoutes = {'/plan', '/planung', '/org-plan'};
 
