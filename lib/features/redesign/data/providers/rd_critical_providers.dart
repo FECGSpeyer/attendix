@@ -141,17 +141,24 @@ class RdCriticalContext {
     now: now,
   );
 
-  /// Why [person] is a Problemfall by all rules; null when no rule hits
-  /// (e.g. right after the rules changed, before the server checked again).
-  RdCriticalReason? reasonOf(Person person) {
-    final hits = rdCriticalHits(
+  /// Every rule that makes [person] a Problemfall, in the rules' order
+  /// (the "nur zusammen" parts all at once); empty when none hits.
+  List<RdCriticalReason> hitsOf(Person person) => [
+    for (final (rule, result) in rdCriticalHits(
       rules,
       entries[person.id] ?? const [],
       lastSolve: _lastSolve(person),
       seasonStart: seasonStart,
       now: now,
-    );
-    return hits.isEmpty ? null : RdCriticalReason(hits.first.$1, hits.first.$2);
+    ))
+      RdCriticalReason(rule, result),
+  ];
+
+  /// Why [person] is a Problemfall by all rules; null when no rule hits
+  /// (e.g. right after the rules changed, before the server checked again).
+  RdCriticalReason? reasonOf(Person person) {
+    final hits = hitsOf(person);
+    return hits.isEmpty ? null : hits.first;
   }
 }
 

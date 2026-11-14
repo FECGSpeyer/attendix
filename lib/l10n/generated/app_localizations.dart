@@ -17689,6 +17689,12 @@ abstract class AppLocalizations {
   /// **'und außerdem …'**
   String get rdCriticalAddAnd;
 
+  /// rdCritical.alsoRule
+  ///
+  /// In de, this message translates to:
+  /// **'auch „{rule}“'**
+  String rdCriticalAlsoRule(Object rule);
+
   /// rdCritical.and
   ///
   /// In de, this message translates to:
@@ -17761,6 +17767,12 @@ abstract class AppLocalizations {
   /// **'Wer gerade nach einer Regel auffällt, mit dem Grund. Antippen öffnet die Person.'**
   String get rdCriticalMembersIntro;
 
+  /// rdCritical.membersIntroLead
+  ///
+  /// In de, this message translates to:
+  /// **'Wer gerade nach einer Regel auffällt, mit dem Grund. Nach einem Gespräch hier eintragen, dann zählt die Person wieder von vorn.'**
+  String get rdCriticalMembersIntroLead;
+
   /// rdCritical.membersTitle
   ///
   /// In de, this message translates to:
@@ -17802,6 +17814,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{names} und {count} weitere'**
   String rdCriticalNames(Object names, Object count);
+
+  /// rdCritical.noRuleNow
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Regel trifft mehr zu'**
+  String get rdCriticalNoRuleNow;
 
   /// rdCritical.or
   ///
@@ -17923,6 +17941,12 @@ abstract class AppLocalizations {
   /// **'Bedingung entfernen'**
   String get rdCriticalRemoveAnd;
 
+  /// rdCritical.rulesEdit
+  ///
+  /// In de, this message translates to:
+  /// **'Regeln bearbeiten'**
+  String get rdCriticalRulesEdit;
+
   /// rdCritical.sentenceLead
   ///
   /// In de, this message translates to:
@@ -17970,6 +17994,48 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{threshold} {what} {period}'**
   String rdCriticalSummary(Object threshold, Object what, Object period);
+
+  /// rdCritical.talk
+  ///
+  /// In de, this message translates to:
+  /// **'Gespräch eintragen'**
+  String get rdCriticalTalk;
+
+  /// rdCritical.talkFor
+  ///
+  /// In de, this message translates to:
+  /// **'Gespräch mit {name} eintragen'**
+  String rdCriticalTalkFor(Object name);
+
+  /// rdCritical.talkHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ab heute zählt {name} wieder von vorn. Die Notiz steht im Verlauf.'**
+  String rdCriticalTalkHint(Object name);
+
+  /// rdCritical.talkNote
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz (optional)'**
+  String get rdCriticalTalkNote;
+
+  /// rdCritical.talkNoteHint
+  ///
+  /// In de, this message translates to:
+  /// **'Was wurde besprochen?'**
+  String get rdCriticalTalkNoteHint;
+
+  /// rdCritical.talkSaved
+  ///
+  /// In de, this message translates to:
+  /// **'Gespräch mit {name} eingetragen'**
+  String rdCriticalTalkSaved(Object name);
+
+  /// rdCritical.talkTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Mit {name} gesprochen'**
+  String rdCriticalTalkTitle(Object name);
 
   /// rdCritical.thresholdCount
   ///

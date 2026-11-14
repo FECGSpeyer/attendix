@@ -10982,6 +10982,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdCriticalAddAnd => 'und außerdem …';
 
   @override
+  String rdCriticalAlsoRule(Object rule) {
+    return 'auch „$rule“';
+  }
+
+  @override
   String get rdCriticalAnd => 'und';
 
   @override
@@ -11041,6 +11046,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Wer gerade nach einer Regel auffällt, mit dem Grund. Antippen öffnet die Person.';
 
   @override
+  String get rdCriticalMembersIntroLead =>
+      'Wer gerade nach einer Regel auffällt, mit dem Grund. Nach einem Gespräch hier eintragen, dann zählt die Person wieder von vorn.';
+
+  @override
   String get rdCriticalMembersTitle => 'Aktuelle Problemfälle';
 
   @override
@@ -11062,6 +11071,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String rdCriticalNames(Object names, Object count) {
     return '$names und $count weitere';
   }
+
+  @override
+  String get rdCriticalNoRuleNow => 'Keine Regel trifft mehr zu';
 
   @override
   String get rdCriticalOr => ' oder ';
@@ -11166,6 +11178,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdCriticalRemoveAnd => 'Bedingung entfernen';
 
   @override
+  String get rdCriticalRulesEdit => 'Regeln bearbeiten';
+
+  @override
   String get rdCriticalSentenceLead => 'Problemfall ist, wer';
 
   @override
@@ -11191,6 +11206,35 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String rdCriticalSummary(Object threshold, Object what, Object period) {
     return '$threshold $what $period';
+  }
+
+  @override
+  String get rdCriticalTalk => 'Gespräch eintragen';
+
+  @override
+  String rdCriticalTalkFor(Object name) {
+    return 'Gespräch mit $name eintragen';
+  }
+
+  @override
+  String rdCriticalTalkHint(Object name) {
+    return 'Ab heute zählt $name wieder von vorn. Die Notiz steht im Verlauf.';
+  }
+
+  @override
+  String get rdCriticalTalkNote => 'Notiz (optional)';
+
+  @override
+  String get rdCriticalTalkNoteHint => 'Was wurde besprochen?';
+
+  @override
+  String rdCriticalTalkSaved(Object name) {
+    return 'Gespräch mit $name eingetragen';
+  }
+
+  @override
+  String rdCriticalTalkTitle(Object name) {
+    return 'Mit $name gesprochen';
   }
 
   @override

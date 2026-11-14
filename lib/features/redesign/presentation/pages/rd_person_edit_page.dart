@@ -56,9 +56,8 @@ import '../../../people/presentation/widgets/planned_absences.dart'
 import '../../data/rd_words.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/members/rd_person_form.dart';
+import '../widgets/members/rd_critical_talk.dart' show RdCriticalReasonRow, rdRecordTalk;
 import '../../data/providers/rd_critical_providers.dart';
-import '../../data/rd_critical_logic.dart';
-import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
@@ -87,7 +86,6 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   final _email = TextEditingController();
   final _phone = TextEditingController();
   final _notes = TextEditingController();
-  final _problemNotes = TextEditingController();
   final _firstFocus = FocusNode();
   final _lastFocus = FocusNode();
   final _emailFocus = FocusNode();
@@ -107,7 +105,6 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   bool _roleUnknown = false;
   bool _canTransfer = false;
   bool _showMore = false;
-  bool _problemSolved = false;
   bool _emailInvalid = false;
   bool _deleted = false;
   bool _saved = false;
@@ -223,7 +220,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     _saveTyped();
     _typingTimer?.cancel();
     _savedTimer?.cancel();
-    for (final c in [_first, _last, _email, _phone, _notes, _problemNotes]) {
+    for (final c in [_first, _last, _email, _phone, _notes]) {
       c.dispose();
     }
     for (final f in [_firstFocus, _lastFocus, _emailFocus, _phoneFocus, _notesFocus]) {
@@ -874,25 +871,6 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   // Actions (same calls as the person page of the normal app)
   // ---------------------------------------------------------------------
 
-  Future<void> _solveProblem() async {
-    if (!_editable) return;
-    final remarks = _problemNotes.text;
-    final entry = personProblemSolvedEntry(remarks);
-    final columns = personProblemSolvedColumns();
-    setState(() => _problemSolved = false);
-    _problemNotes.clear();
-    _enqueue(() => _storeWithHistory(
-          columns,
-          (_) => entry,
-          // The remarks are shown again to save them later.
-          revert: () {
-            if (!mounted || _disposing) return;
-            setState(() => _problemSolved = true);
-            if (_problemNotes.text.isEmpty) _problemNotes.text = remarks;
-          },
-        ));
-  }
-
   Future<void> _resetLateCount(Person person) async {
     try {
       await ref.read(playerNotifierProvider.notifier).resetLateCount(person);
@@ -1371,6 +1349,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     final canManageAbsences = ref.watch(canManagePlannedAbsencesProvider);
     final absences = canManageAbsences ? ref.watch(playerAbsencesByPersonIdProvider(_personId)).valueOrNull ?? const [] : const [];
     final others = person.appId == null ? null : ref.watch(otherTenantsProvider(person.appId!)).valueOrNull;
+    final criticalReason = person.isCritical ? rdCriticalContextOf(ref)?.reasonOf(person) : null;
 
     return RdFormBody(
       children: [
@@ -1449,49 +1428,38 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         ],
         hint(l10n.redesignPersonFormLiveHint),
 
-        // Problemfall (Ionic: !readOnly && isCritical)
+        // Problemfall (Ionic: !readOnly && isCritical): the same
+        // "Gespräch eintragen" as on the person page and in the list of the
+        // Problemfälle, written in this page's queue.
         if (person.isCritical) ...[
           const SizedBox(height: 20),
           RdGroupLabel(l10n.peopleProblemCase),
           RdGroupedList(children: [
             // Why (the rule that hits); none while it cannot be worked out.
-            if (rdCriticalContextOf(ref)?.reasonOf(person) case final reason?)
-              RdListRow(
-                title: rdCriticalHitText(reason.rule, reason.result, l10n),
-                titleColor: p.absent,
-                subtitle: (reason.rule.name ?? '').trim().isEmpty
-                    ? rdCriticalPeriodText(reason.rule, l10n)
-                    : l10n.rdCriticalReasonDetail(rdCriticalPeriodText(reason.rule, l10n), reason.rule.name!.trim()),
-                showChevron: false,
-              ),
+            if (criticalReason != null) RdCriticalReasonRow(criticalReason),
             RdListRow(
-              title: l10n.personTalkedTo,
+              key: const Key('rd-person-edit-talk'),
+              leading: Icon(Icons.check, color: p.link),
+              title: l10n.rdCriticalTalk,
+              titleColor: p.link,
               showChevron: false,
-              trailing: Switch.adaptive(
-                value: _problemSolved,
-                activeTrackColor: p.primary,
-                onChanged: (v) => setState(() => _problemSolved = v),
-              ),
-              onTap: () => setState(() => _problemSolved = !_problemSolved),
+              onTap:
+                  _editable
+                      ? () => rdRecordTalk(
+                        context,
+                        ref,
+                        person,
+                        reason: criticalReason,
+                        // Like _store: nothing once the person left the group
+                        // or may no longer be edited (while the sheet was open).
+                        run: (write) => _enqueue(() async {
+                          if (_deleted || !_editable) return;
+                          await write();
+                        }),
+                      )
+                      : null,
             ),
-            if (_problemSolved)
-              RdFieldRow(
-                label: l10n.personRemarks,
-                child: TextField(
-                  controller: _problemNotes,
-                  minLines: 2,
-                  maxLines: 6,
-                  textCapitalization: TextCapitalization.sentences,
-                  style: textStyle,
-                  decoration: rdInputDecoration(p, ''),
-                ),
-              ),
           ]),
-          if (_problemSolved) ...[
-            RdListNote(l10n.rdCriticalSolveHint(person.firstName.isEmpty ? _name(person) : person.firstName)),
-            const SizedBox(height: 12),
-            RdPrimaryButton(label: l10n.redesignPersonFormProblemSave, onPressed: _solveProblem),
-          ],
         ],
 
         // Verspätungen (Ionic late-warning-card)
