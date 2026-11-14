@@ -300,8 +300,11 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     // Entries of the ⋮ menu (Ionic songsMenuPopover).
     void onMenuSelected(String value) {
       switch (value) {
+        // ROLLEN-A-18: Ionic offers the categories to every role; only
+        // admins / responsibles may change them (server rule), so the
+        // others get the list read-only.
         case 'categories':
-          showSongCategoriesSheet(context);
+          showSongCategoriesSheet(context, readOnly: !isAdmin);
         case 'share':
           _copyShareLink(sharingId!);
         case 'pdf':
@@ -432,7 +435,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                   iosWidth: 306,
                   mdWidth: 288,
                   items: [
-                    if (isAdmin)
+                    if (!data.isPublic)
                       AppPopoverMenuItem(
                         value: 'categories',
                         icon: AppIcons.localLibraryOutlined,
