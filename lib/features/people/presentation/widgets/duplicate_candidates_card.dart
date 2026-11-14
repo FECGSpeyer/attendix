@@ -12,6 +12,7 @@ import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/utils/toast_helper.dart';
 
 /// Same-tenant, account-less people similar to a pending applicant
 /// (Ionic person.page loadDuplicateCandidates).
@@ -77,7 +78,8 @@ class _DuplicateCandidatesCardState
     );
     if (confirmed != true || !mounted) return;
 
-    final messenger = ScaffoldMessenger.of(context);
+    // The root messenger outlives this card.
+    final toastContext = ScaffoldMessenger.of(context).context;
     final l10n = context.l10n;
     setState(() => _merging = true);
     try {
@@ -87,20 +89,14 @@ class _DuplicateCandidatesCardState
           '';
       await playerRepo
           .mergePendingPlayerIntoExisting(p, candidate, approverEmail: approver);
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(l10n.personMerged),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      if (toastContext.mounted) {
+        ToastHelper.showSuccess(toastContext, l10n.personMerged, beta: LegacySnackBar.success);
+      }
       widget.onMerged();
     } catch (_) {
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(l10n.personMergeFailed),
-          backgroundColor: AppColors.danger,
-        ),
-      );
+      if (toastContext.mounted) {
+        ToastHelper.showError(toastContext, l10n.personMergeFailed, beta: LegacySnackBar.danger);
+      }
     } finally {
       if (mounted) setState(() => _merging = false);
     }

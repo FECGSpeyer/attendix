@@ -15,6 +15,7 @@ import '../presentation/widgets/password_recovery_alert.dart';
 import 'auth_flow_service.dart';
 import 'browser_url.dart';
 import '../../../l10n/l10n.dart';
+import '../../../core/utils/toast_helper.dart';
 
 /// AUTH: wires up the Ionic auth-link handling (app.component.ts):
 /// * `PASSWORD_RECOVERY` auth events → alert "Neues Passwort" over /login
@@ -137,14 +138,20 @@ Future<void> _processLink(WidgetRef ref, GoRouter router, AuthLink link) async {
 
 void _toast(String message, Color color) {
   try {
-    rootScaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: color,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 4),
-      ),
+    final context = rootScaffoldMessengerKey.currentContext;
+    if (context == null) return;
+    final beta = LegacySnackBar(
+      color: color,
+      floating: true,
+      duration: const Duration(seconds: 4),
     );
+    // Ionic app.component: 'success' for 4000 ms, 'danger' for the default.
+    if (color == AppColors.success) {
+      ToastHelper.showSuccess(context, message,
+          duration: const Duration(seconds: 4), beta: beta);
+    } else {
+      ToastHelper.showError(context, message, beta: beta);
+    }
   } catch (_) {
     // No messenger available (e.g. tests)
   }

@@ -265,7 +265,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _linkTeamsAccount() async {
     // The root messenger outlives this page (the auth redirect may already
     // have left /login when linking finishes).
-    final messenger = ScaffoldMessenger.maybeOf(context);
+    final toastContext = ScaffoldMessenger.maybeOf(context)?.context;
     final l10n = context.l10n;
     final result = await ref.read(teamsServiceProvider).ssoLink(() async {
       await ref.read(authFlowServiceProvider).signInWithPassword(
@@ -278,12 +278,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final message = result.ok
         ? l10n.loginToastMsLinked
         : (result.error ?? l10n.svcLinkFailed);
-    messenger?.showSnackBar(SnackBar(
-      content: Text(message),
-      backgroundColor: result.ok ? AppColors.success : AppColors.danger,
-      behavior: SnackBarBehavior.floating,
-      duration: const Duration(seconds: 4),
-    ));
+    if (toastContext != null && toastContext.mounted) {
+      final beta = LegacySnackBar(
+        color: result.ok ? AppColors.success : AppColors.danger,
+        floating: true,
+        duration: const Duration(seconds: 4),
+      );
+      // Ionic login(): 'success' for 4000 ms; teams.service: 'danger'.
+      if (result.ok) {
+        ToastHelper.showSuccess(toastContext, message,
+            duration: const Duration(seconds: 4), beta: beta);
+      } else {
+        ToastHelper.showError(toastContext, message, beta: beta);
+      }
+    }
     // Usually the auth redirect has already left /login at this point.
     if (!result.ok || !mounted) return;
     setState(() => _teamsLinkMode = false);

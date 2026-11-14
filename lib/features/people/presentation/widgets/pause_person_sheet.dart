@@ -224,7 +224,8 @@ Future<bool> pausePersonFlow(
     return false;
   }
 
-  final messenger = ScaffoldMessenger.of(context);
+  // The root messenger outlives the sheet and this page.
+  final toastContext = ScaffoldMessenger.of(context).context;
   final text = buildPauseHistoryText(input.reason,
       from: input.from, until: input.until);
   final until = input.until != null ? DateHelper.isoDay(input.until!) : null;
@@ -233,18 +234,21 @@ Future<bool> pausePersonFlow(
   try {
     await repo.pausePlayer(person, until, text, pauseFrom: from);
   } catch (e) {
-    messenger.showSnackBar(
-      SnackBar(content: Text(l10nWithoutContext.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
-    );
+    if (toastContext.mounted) {
+      ToastHelper.showError(
+        toastContext,
+        l10nWithoutContext.peopleFlutterErrorWith(friendlyErrorMessage(e)),
+        beta: LegacySnackBar.danger,
+      );
+    }
     return false;
   }
 
-  if (showSuccessToast) {
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(l10nWithoutContext.peopleFlutterPausedToast(person.firstName)),
-        backgroundColor: AppColors.success,
-      ),
+  if (showSuccessToast && toastContext.mounted) {
+    ToastHelper.showSuccess(
+      toastContext,
+      l10nWithoutContext.peopleFlutterPausedToast(person.firstName),
+      beta: LegacySnackBar.success,
     );
   }
 
@@ -292,13 +296,14 @@ Future<bool> pausePersonFlow(
           pauseFrom: from,
         );
       } catch (e) {
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text(l10nWithoutContext.peopleErrorAt(
-                tenant.shortName.isNotEmpty ? tenant.shortName : tenant.name, e)),
-            backgroundColor: AppColors.danger,
-          ),
-        );
+        if (toastContext.mounted) {
+          ToastHelper.showError(
+            toastContext,
+            l10nWithoutContext.peopleErrorAt(
+                tenant.shortName.isNotEmpty ? tenant.shortName : tenant.name, e),
+            beta: LegacySnackBar.danger,
+          );
+        }
       }
     }
   } catch (_) {
