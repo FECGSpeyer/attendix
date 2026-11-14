@@ -665,15 +665,7 @@ extension _PlanningBeta on _PlanningPageState {
         sub.add(Text(field.info!, style: RdType.meta(p, size: 13).copyWith(fontStyle: FontStyle.italic)));
       }
     }
-    final warning = isHead || isNote ? null : _missingGroups(field);
-    if (warning != null && warning.isNotEmpty) {
-      sub.add(
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Align(alignment: Alignment.centerLeft, child: RdPill(warning, tone: RdTone.late)),
-        ),
-      );
-    }
+    // "Ohne Tenor" stands at the Werke of the Termin (Überblick), not here.
     if (showBeamer && !isHead && !isNote && !isAgenda && PlanBeamer.needsBeamer(field)) {
       final file = _beamerFileOf(field);
       sub.add(
@@ -1143,7 +1135,11 @@ extension _PlanningBeta on _PlanningPageState {
   /// Same row; the Gemeinde App uid a write may add meanwhile does not count.
   static bool _rdSame(PlanField a, PlanField b) => a.copyWith(uid: null) == b.copyWith(uid: null);
 
-  void _rdRemove(List<PlanField> next, String name) {
+  void _rdRemove(List<PlanField> next, String name) =>
+      _rdApplyWithUndo(next, context.l10n.redesignPlanRemoved(name));
+
+  /// Applies [next] and offers "Rückgängig" next to [message].
+  void _rdApplyWithUndo(List<PlanField> next, String message) {
     final before = _fields;
     final loadGen = _loadGen;
     _rdApply(next);
@@ -1155,7 +1151,7 @@ extension _PlanningBeta on _PlanningPageState {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(l10n.redesignPlanRemoved(name)),
+          content: Text(message),
           duration: const Duration(seconds: 5),
           persist: false,
           action: SnackBarAction(
@@ -1337,6 +1333,45 @@ extension _PlanningBeta on _PlanningPageState {
           time: PlanSongHelper.betaTime(w.song),
         ),
     ];
+  }
+
+  /// Opened with "Einfügen" (Termin › Programm): the Werke of the Termin
+  /// that are not in the Ablauf yet go to its end, with "Rückgängig".
+  Future<void> _rdStartWorks() async {
+    final att = _att;
+    final id = att?.id;
+    if (id == null) return;
+    final l10n = context.l10n;
+    final loadGen = _loadGen;
+    final RdEventWorks works;
+    final List<Song> songs;
+    try {
+      works = await _container.read(rdEventWorksProvider(id).future);
+      songs = await _container.read(planSongsProvider.future);
+    } catch (_) {
+      return; // the Ablauf opens as it is
+    }
+    if (!_samePlan(loadGen)) return;
+    final inPlan = _fields.map((f) => f.songId).whereType<int>().toSet();
+    final prefix = _songPrefix(_typeOf(att));
+    final rows = <PlanField>[];
+    for (final e in works.entries) {
+      final song = songs.where((s) => s.id == e.songId).firstOrNull;
+      if (song == null || !inPlan.add(e.songId)) continue;
+      rows.add(PlanSongHelper.songField(
+        song,
+        history: [
+          SongHistory(
+            songId: song.id,
+            conductorName: e.otherConductor != null || e.conductorName != null ? e.displayConductor : null,
+          ),
+        ],
+        prefix: prefix,
+        time: PlanSongHelper.betaTime(song),
+      ));
+    }
+    if (rows.isEmpty) return;
+    _rdApplyWithUndo([..._fields, ...rows], l10n.redesignPlanWorksInserted(rows.length));
   }
 
   /// Empty Ablauf: the chosen Werke are its first rows.

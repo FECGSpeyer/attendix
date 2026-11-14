@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../../core/providers/attendance_providers.dart';
@@ -8,6 +9,8 @@ import '../../../../../core/providers/attendance_type_providers.dart';
 import '../../../../../core/providers/conductor_providers.dart';
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/debug_providers.dart';
+import '../../../../../core/providers/group_providers.dart';
+import '../../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
 import '../../../../../core/providers/role_permission_providers.dart';
 import '../../../../../core/providers/song_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
@@ -20,9 +23,11 @@ import '../../../../../core/utils/dialog_helper.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../core/utils/haptic_helper.dart';
+import '../../../../../core/utils/plan_utils.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/person/person.dart';
+import '../../../../../data/models/song/song.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../../shared/widgets/event_list/event_list_widgets.dart' show openEventNavigation;
@@ -32,12 +37,16 @@ import '../../../../attendance/presentation/widgets/attendance_detail/attendance
 import '../../../../attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart';
 import '../../../../attendance/presentation/widgets/songs_selection_sheet.dart';
 import '../../../../planning/presentation/attendance_plan_viewer.dart';
+import '../../../../planning/presentation/widgets/rd_plan_widgets.dart' show PlanEventWork, showRdEventWorksSheet;
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart' show openFilesFolderRoute;
+import '../../../../songs/presentation/utils/song_utils.dart';
+import '../../../data/providers/rd_event_works_providers.dart';
 import '../../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
 import '../../../data/rd_event_details_logic.dart';
 import '../../../data/rd_type_flags.dart';
 import '../rd_widgets.dart';
 import '../today/rd_today_common.dart';
+import 'rd_event_now.dart' show rdPlanOf;
 
 /// REDESIGN: sections of a Termin's "Überblick" for Dirigent and Helfer
 /// (Programm/Werke, Ablauf, Vorbereitung, Infos zum Termin). They replace
@@ -126,17 +135,29 @@ class RdProgramNumber extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Programm / Werke
+// Werke
 // ---------------------------------------------------------------------------
 
-/// Werke of the Termin: numbered, "+ Werk", tap → Zum Werk / Dirigent
-/// ändern / Werk entfernen (with Rückgängig). Shown for types that manage
-/// Werke (Ionic `manageSongs && !isGeneral`).
+/// Werke of the Termin in the Überblick (always called "Werke").
+///
+/// * Auftritt (hervorgehobene Terminart): numbered, "+ Werk".
+/// * Every other Termin ("Probe"): while it has no Werke of its own it
+///   shows those of the next Auftritt ("Vom Adventskonzert"); "Ändern"
+///   ticks what is rehearsed, from then on the list is its own. A Werk in
+///   the Ablauf carries its clock time.
+/// * Tap → Zum Werk / Dirigent ändern / Werk entfernen (with Rückgängig;
+///   a removed Werk also leaves the Ablauf).
+/// * "Ohne Tenor": the Werk has no Noten for a group somebody plays in.
+///
+/// Shown for types that manage Werke (Ionic `manageSongs && !isGeneral`).
 class RdEventProgramSection extends ConsumerStatefulWidget {
-  const RdEventProgramSection({super.key, required this.attendance, required this.type});
+  const RdEventProgramSection({super.key, required this.attendance, required this.type, this.ended = false});
 
   final Attendance attendance;
   final AttendanceType? type;
+
+  /// The Termin is over: nothing is taken from a coming Auftritt any more.
+  final bool ended;
 
   @override
   ConsumerState<RdEventProgramSection> createState() => _RdEventProgramSectionState();
@@ -151,6 +172,8 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
   SongHistoryEntry? _removing;
 
   int get _id => widget.attendance.id!;
+
+  bool get _auftritt => widget.type?.highlight ?? false;
 
   /// Writes [entries] as the Werke of the Termin; false when it failed.
   Future<bool> _save(List<SongHistoryEntry> entries) async {
@@ -188,7 +211,7 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
       ..invalidate(currentSongsProvider)
       ..invalidate(songHistoryProvider(null));
     try {
-      await container.read(attendanceSongEntriesProvider(id).future);
+      await container.read(rdEventWorksProvider(id).future);
     } catch (_) {
       // The section shows the load error with "Erneut versuchen".
     }
@@ -200,7 +223,88 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     await _save(result);
   }
 
-  Future<void> _open(List<SongHistoryEntry> entries, int index) async {
+  /// "Ändern" (Probe): the Werke of this Termin and of the coming
+  /// Auftritte as a checklist. [shown]: the list on screen, [own]: whether
+  /// it is the Termin's own one (else the one of `sources.first`).
+  Future<void> _change(List<SongHistoryEntry> shown, List<RdWorksSource> sources, {required bool own}) async {
+    final l10n = context.l10n;
+    final songs = ref.read(songsProvider).valueOrNull ?? const <Song>[];
+    PlanEventWork? work(SongHistoryEntry e) {
+      final song = songs.where((s) => s.id == e.songId).firstOrNull;
+      if (song == null) return null;
+      return (song: song, conductor: e.otherConductor != null || e.conductorName != null ? e.displayConductor : '');
+    }
+
+    // Every Werk once: at this Termin first, then at the nearest Auftritt.
+    final listed = <int>{};
+    List<PlanEventWork> works(List<SongHistoryEntry> entries) => [
+      for (final e in entries)
+        if (listed.add(e.songId))
+          if (work(e) case final w?) w,
+    ];
+    final groups = <({String label, List<PlanEventWork> works})>[
+      if (own) (label: l10n.redesignPlanEventWorksThis, works: works(shown)),
+      for (final source in sources) (label: _sourceLabel(source), works: works(source.entries)),
+    ]..removeWhere((g) => g.works.isEmpty);
+    final plan = rdPlanOf(widget.attendance);
+    final kind = rdWorksKind(widget.type);
+    final choice = await showRdEventWorksSheet(
+      context,
+      title: l10n.redesignEventWorksOfThis(kind),
+      subtitle: l10n.redesignEventWorksOfThisHint(kind),
+      groups: groups,
+      initial: {for (final e in shown) e.songId},
+      inPlanIds: {...?plan?.fields.map((f) => f.songId).whereType<int>()},
+      offerOther: true,
+      confirmLabel: l10n.redesignEventWorksTake,
+      followLabel: own && sources.isNotEmpty ? l10n.redesignEventWorksFollowAgain : null,
+    );
+    if (choice == null || !mounted) return;
+    if (choice.follow) {
+      await _save(const []);
+      return;
+    }
+    if (choice.other) {
+      await _add(shown);
+      return;
+    }
+    // The Termin's own entry when it has one (its conductor), else the one
+    // of the Auftritt the Werk comes from.
+    final byId = <int, SongHistoryEntry>{
+      for (final source in sources.reversed)
+        for (final e in source.entries) e.songId: e,
+      for (final e in shown) e.songId: e,
+    };
+    final next = [
+      for (final w in choice.works)
+        if (byId[w.song.id] case final e?) e,
+    ];
+    // Still the list of the Auftritt: it keeps following it.
+    if (!own && _sameWorks(next, shown)) return;
+    await _save(next);
+  }
+
+  static bool _sameWorks(List<SongHistoryEntry> a, List<SongHistoryEntry> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i].songId != b[i].songId) return false;
+    }
+    return true;
+  }
+
+  /// "Adventskonzert · So., 13. Dez."
+  String _sourceLabel(RdWorksSource source) {
+    final date = EventListUtils.parse(source.att.date);
+    String? day;
+    try {
+      day = date == null ? null : DateFormat('EEE, d. MMM', currentIntlLocale()).format(date);
+    } catch (_) {
+      // Locale data not loaded: the name alone.
+    }
+    return [if (source.name.isNotEmpty) source.name, if (day != null) day].join(' · ');
+  }
+
+  Future<void> _open(List<SongHistoryEntry> entries, int index, {required bool own}) async {
     final entry = entries[index];
     final l10n = context.l10n;
     final canOpenWork = canOpenSongsTab(ref.read(effectiveRoleProvider));
@@ -267,7 +371,7 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
       case 'conductor':
         await _changeConductor(entries, index);
       case 'remove':
-        await _remove(entries, index);
+        await _remove(entries, index, own: own);
     }
   }
 
@@ -295,7 +399,9 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     await _save(updated);
   }
 
-  Future<void> _remove(List<SongHistoryEntry> entries, int index) async {
+  /// [own] false: [entries] is the list of the next Auftritt, which becomes
+  /// the Termin's own without this Werk.
+  Future<void> _remove(List<SongHistoryEntry> entries, int index, {required bool own}) async {
     final entry = entries[index];
     HapticHelper.light();
     final l10n = context.l10n;
@@ -308,12 +414,15 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
     final id = _id;
     final date = widget.attendance.date;
+    final inPlan = rdPlanOf(widget.attendance)?.fields.any((f) => f.songId == entry.songId) ?? false;
     setState(() => _removing = entry);
     final reason = messenger == null
         ? SnackBarClosedReason.timeout
         : await messenger
             .showSnackBar(SnackBar(
-              content: Text(l10n.redesignEventWorkRemoved(entry.songName)),
+              content: Text(
+                inPlan ? l10n.redesignEventWorkRemovedPlan(entry.songName) : l10n.redesignEventWorkRemoved(entry.songName),
+              ),
               duration: const Duration(seconds: 5),
               persist: false,
               action: SnackBarAction(label: l10n.redesignEventUndo, onPressed: () {}),
@@ -332,9 +441,27 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
         attendanceId: id,
       );
       if (latest == null) return;
-      final at = latest.indexOf(entry);
+      // Still without Werke of its own: the list of the Auftritt as shown.
+      final base = !own && latest.isEmpty ? entries : latest;
+      final at = base.indexOf(entry);
       if (at < 0) return; // already gone (other device)
-      await syncAttendanceSongHistory(repo, id, date, [...latest]..removeAt(at));
+      final rest = [...base]..removeAt(at);
+      await syncAttendanceSongHistory(repo, id, date, rest);
+      // The Werk also leaves the Ablauf (unless it is still in the list).
+      if (!rest.any((e) => e.songId == entry.songId)) {
+        final fresh = await container.read(attendanceDetailProvider(id).future);
+        final plan = fresh == null ? null : rdPlanOf(fresh);
+        if (plan != null && plan.fields.any((f) => f.songId == entry.songId)) {
+          final fields = PlanUtils.normalizeGroups([
+            for (final f in plan.fields)
+              if (f.songId != entry.songId) f,
+          ]);
+          await repo.updateAttendance(id, {
+            'plan': plan.copyWith(fields: fields, end: PlanUtils.computeEndIso(plan.time, fields)).toJson(),
+          });
+          container.invalidate(attendanceDetailProvider(id));
+        }
+      }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
     } finally {
@@ -347,13 +474,48 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
-    final async = ref.watch(attendanceSongEntriesProvider(_id));
-    final all = async.valueOrNull;
+    final async = ref.watch(rdEventWorksProvider(_id));
+    final works = async.valueOrNull;
+    final own = works?.own ?? false;
+    final sources = widget.ended ? const <RdWorksSource>[] : (works?.sources ?? const <RdWorksSource>[]);
+    // A Probe takes the Werke of the next Auftritt until it has its own.
+    final source = widget.ended ? null : works?.source;
+    final all = works == null ? null : (own || source != null ? works.entries : const <SongHistoryEntry>[]);
     final hidden = all == null || _removing == null ? -1 : all.indexOf(_removing!);
     final entries = hidden < 0 ? all : ([...all!]..removeAt(hidden));
     // A removal waiting for its Rückgängig counts as a write in flight.
     final busy = _saving || _removing != null;
-    final title = rdProgramTitle(l10n, widget.type);
+    // Who edits Termine changes the Werke (Helfer too, like the Ablauf).
+    final canEdit = ref.watch(effectiveRoleProvider).canEdit;
+    final canOpenWork = canOpenSongsTab(ref.watch(effectiveRoleProvider));
+    final title = l10n.redesignEventWorks;
+    final plan = rdPlanOf(widget.attendance);
+    final songs = ref.watch(songsProvider).valueOrNull ?? const <Song>[];
+    final isGeneral = ref.watch(currentTenantProvider)?.type == 'general';
+    final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
+    final categories = ref.watch(groupCategoriesProvider).valueOrNull ?? const [];
+    final playerCounts = ref.watch(missingGroupsPlayerCountsProvider);
+
+    /// "19:45": where the Werk stands in the Ablauf (null: not in it).
+    String? planTime(int songId) {
+      if (plan == null) return null;
+      final at = plan.fields.indexWhere((f) => f.songId == songId);
+      if (at < 0) return null;
+      final start = PlanUtils.parseTimeToMinutes(plan.time);
+      return start == null
+          ? l10n.redesignPlanSongInPlan
+          : PlanUtils.formatMinutes(PlanUtils.startMinutesAt(start, plan.fields, at));
+    }
+
+    /// "Ohne Tenor": no Noten for a group somebody plays in.
+    String? missing(int songId) {
+      if (isGeneral) return null;
+      final ids = songs.where((s) => s.id == songId).firstOrNull?.instrumentIds;
+      if (ids == null || ids.isEmpty) return null;
+      final text = SongUtils.missingInstrumentsText(ids, groups, categories, playerCounts: playerCounts);
+      return text.isEmpty ? null : text;
+    }
+
     final Widget body;
     if (entries == null) {
       body = async.hasError
@@ -367,6 +529,7 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
             )
           : RdInfoCard(text: l10n.redesignTodayLoading, loading: true);
     } else if (entries.isEmpty) {
+      if (!canEdit) return const SizedBox.shrink();
       body = RdGroupedList(children: [
         RdListRow(
           leading: const RdRowIcon(Icons.music_note_outlined),
@@ -376,29 +539,86 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
       ]);
     } else {
       body = RdGroupedList(children: [
+        // Whose list this is while the Probe has none of its own.
+        if (source != null)
+          Container(
+            key: const Key('rd-program-source'),
+            color: p.soft,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              children: [
+                Icon(Icons.event_outlined, size: 18, color: p.softText),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l10n.redesignEventWorksFrom(_sourceLabel(source)),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: p.softText),
+                  ),
+                ),
+              ],
+            ),
+          ),
         for (var i = 0; i < entries.length; i++)
           RdListRow(
             key: ValueKey('rd-program-$i-${entries[i].songId}'),
-            leading: RdProgramNumber(i + 1),
+            leading: _auftritt ? RdProgramNumber(i + 1) : const RdRowIcon(Icons.music_note),
             title: entries[i].songName,
             subtitle: entries[i].otherConductor != null || entries[i].conductorName != null
                 ? l10n.signoutConductor(entries[i].displayConductor)
                 : null,
-            onTap: busy ? null : () => _open(entries, i),
+            trailing: switch (planTime(entries[i].songId)) {
+              final time? => RdPill(time, key: ValueKey('rd-program-time-$i')),
+              null => null,
+            },
+            footer: switch (missing(entries[i].songId)) {
+              final text? => Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Align(alignment: Alignment.centerLeft, child: RdPill(text, tone: RdTone.late)),
+                ),
+              null => null,
+            },
+            showChevron: canEdit || canOpenWork,
+            onTap: canEdit
+                ? (busy ? null : () => _open(entries, i, own: own))
+                : (canOpenWork ? () => context.push(RedesignRoutes.work(entries[i].songId)) : null),
           ),
       ]);
     }
+    // "3 von 6 stehen im Ablauf. Die Liste folgt dem Adventskonzert, …"
+    final inPlan = entries == null || plan == null ? 0 : entries.where((e) => planTime(e.songId) != null).length;
+    final caption = [
+      if (!_auftritt && entries != null && inPlan > 0 && inPlan < entries.length)
+        l10n.redesignEventWorksInPlan(inPlan, entries.length),
+      if (source != null) l10n.redesignEventWorksFollows,
+    ].join(' ');
+    // A Probe ticks its Werke from the coming Auftritte; without one (and
+    // for an Auftritt) a Werk is added from the Werk list.
+    final change = sources.isNotEmpty;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        const SizedBox(height: 24),
         RdSectionLabel(
           entries == null || entries.isEmpty ? title : l10n.redesignEventSectionCount(title, '${entries.length}'),
-          actionLabel: entries != null && entries.isNotEmpty ? l10n.redesignEventAddWork : null,
-          actionSemantics: l10n.redesignEventAddWorkLabel,
-          onAction: entries == null || busy ? null : () => _add(entries),
+          key: const Key('rd-program-label'),
+          actionLabel: entries == null || entries.isEmpty || !canEdit
+              ? null
+              : (change ? l10n.redesignEventWorksChange : l10n.redesignEventAddWork),
+          actionSemantics: change ? l10n.redesignEventWorksOfThis(rdWorksKind(widget.type)) : l10n.redesignEventAddWorkLabel,
+          actionIcon: change ? Icons.tune : Icons.add,
+          onAction: entries == null || busy || !canEdit
+              ? null
+              : (change ? () => _change(entries, sources, own: own) : () => _add(entries)),
         ),
         if (_saving) LinearProgressIndicator(minHeight: 2, color: p.primary, backgroundColor: p.track),
         body,
+        if (caption.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(caption, key: const Key('rd-program-caption'), style: RdType.meta(p, size: 13)),
+          ),
+        ],
       ],
     );
   }
@@ -421,9 +641,19 @@ bool rdShowsProgram(WidgetRef ref, AttendanceType? type) =>
 /// Beobachter do not see it. Taking the Ablauf over for the Terminart is
 /// in the ••• of the Ablauf editor.
 class RdEventPlanSection extends ConsumerStatefulWidget {
-  const RdEventPlanSection({super.key, required this.attendance, this.preview, this.end = '', this.freeMinutes});
+  const RdEventPlanSection({
+    super.key,
+    required this.attendance,
+    this.type,
+    this.preview,
+    this.end = '',
+    this.freeMinutes,
+  });
 
   final Attendance attendance;
+
+  /// The Termin's Terminart ("Werke dieser Probe" in the hint).
+  final AttendanceType? type;
 
   /// The Ablauf itself (Reiter Programm).
   final Widget? preview;
@@ -443,7 +673,10 @@ class RdEventPlanSection extends ConsumerStatefulWidget {
 class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
   bool? _share;
 
-  void _edit() => context.push<bool>('/planning?attendanceId=${widget.attendance.id}');
+  /// [start]: what the editor does first ("works": the Werke of the
+  /// Termin that are not in the Ablauf yet go to its end).
+  void _edit({String? start}) =>
+      context.push<bool>('/planning?attendanceId=${widget.attendance.id}${start == null ? '' : '&start=$start'}');
 
   bool _sharing = false;
 
@@ -494,6 +727,16 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
     // the rows carry their times and the line below names the end.
     final heading = l10n.redesignEventPlanSection;
     final free = widget.freeMinutes;
+    // "3 Werke dieser Probe stehen noch nicht im Ablauf": only while the
+    // Termin is not over, for those who edit the Ablauf.
+    final day = EventListUtils.parse(att.date);
+    final now = DateTime.now();
+    final coming = day != null && !day.isBefore(DateTime(now.year, now.month, now.day));
+    final works = canEdit && hasPlan && coming && att.id != null && rdShowsProgram(ref, widget.type)
+        ? ref.watch(rdEventWorksProvider(att.id!)).valueOrNull
+        : null;
+    final inPlan = {...?rdPlanOf(att)?.fields.map((f) => f.songId).whereType<int>()};
+    final missing = works == null ? 0 : {for (final e in works.entries) e.songId}.difference(inPlan).length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -505,7 +748,7 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
               key: const Key('rd-plan-create'),
               leading: const RdRowIcon(Icons.view_timeline_outlined),
               title: l10n.redesignEventPlanCreate,
-              onTap: _edit,
+              onTap: () => _edit(),
             ),
           ]),
         ] else ...[
@@ -514,7 +757,7 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
             actionLabel: canEdit ? l10n.redesignEventPlanEditShort : null,
             actionSemantics: l10n.redesignEventPlanEdit,
             actionIcon: Icons.chevron_right,
-            onAction: canEdit ? _edit : null,
+            onAction: canEdit ? () => _edit() : null,
           ),
           // The preview is the Ablauf: a tap opens it whole (live on the day).
           Semantics(
@@ -542,6 +785,38 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
                 l10n.redesignEventPlanEndsEarly(widget.end, free),
                 key: const Key('rd-plan-free'),
                 style: RdType.meta(p, size: 13),
+              ),
+            ),
+          ],
+          if (missing > 0) ...[
+            const SizedBox(height: 12),
+            Material(
+              color: p.lateSoft,
+              borderRadius: BorderRadius.circular(14),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                key: const Key('rd-plan-works-missing'),
+                onTap: () => _edit(start: 'works'),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  child: Row(
+                    children: [
+                      Icon(Icons.music_note, size: 20, color: p.late),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          l10n.redesignEventWorksMissing(rdWorksKind(widget.type), missing),
+                          style: TextStyle(fontSize: 14, color: p.text, height: 1.3),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        l10n.redesignEventWorksMissingInsert,
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: p.late),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],

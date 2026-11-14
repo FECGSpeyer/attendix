@@ -23064,17 +23064,83 @@ abstract class AppLocalizations {
   /// **'{name} entfernt'**
   String redesignEventWorkRemoved(Object name);
 
+  /// redesign.event.workRemovedPlan
+  ///
+  /// In de, this message translates to:
+  /// **'{name} entfernt, auch aus dem Ablauf'**
+  String redesignEventWorkRemovedPlan(Object name);
+
   /// redesign.event.works
   ///
   /// In de, this message translates to:
   /// **'Werke'**
   String get redesignEventWorks;
 
+  /// redesign.event.worksChange
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get redesignEventWorksChange;
+
+  /// redesign.event.worksFollowAgain
+  ///
+  /// In de, this message translates to:
+  /// **'Wieder dem Auftritt folgen'**
+  String get redesignEventWorksFollowAgain;
+
+  /// redesign.event.worksFollows
+  ///
+  /// In de, this message translates to:
+  /// **'Die Liste folgt dem Auftritt, bis du sie änderst.'**
+  String get redesignEventWorksFollows;
+
+  /// redesign.event.worksFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Vom nächsten Auftritt: {label}'**
+  String redesignEventWorksFrom(Object label);
+
+  /// redesign.event.worksInPlan
+  ///
+  /// In de, this message translates to:
+  /// **'{count} von {total} stehen im Ablauf.'**
+  String redesignEventWorksInPlan(Object count, Object total);
+
   /// redesign.event.worksLoadFailed
   ///
   /// In de, this message translates to:
   /// **'Die Werke konnten nicht geladen werden.'**
   String get redesignEventWorksLoadFailed;
+
+  /// redesign.event.worksMissing
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, probe{{count, plural, one {1 Werk dieser Probe steht noch nicht im Ablauf} other {{count} Werke dieser Probe stehen noch nicht im Ablauf}}} other{{count, plural, one {1 Werk dieses Termins steht noch nicht im Ablauf} other {{count} Werke dieses Termins stehen noch nicht im Ablauf}}}}'**
+  String redesignEventWorksMissing(String kind, num count);
+
+  /// redesign.event.worksMissingInsert
+  ///
+  /// In de, this message translates to:
+  /// **'Einfügen'**
+  String get redesignEventWorksMissingInsert;
+
+  /// redesign.event.worksOfThis
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, probe{Werke dieser Probe} other{Werke dieses Termins}}'**
+  String redesignEventWorksOfThis(String kind);
+
+  /// redesign.event.worksOfThisHint
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, probe{Angehakt ist, was geprobt wird.} other{Angehakt ist, was drankommt.}}'**
+  String redesignEventWorksOfThisHint(String kind);
+
+  /// redesign.event.worksTake
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk übernehmen} other {{count} Werke übernehmen}}'**
+  String redesignEventWorksTake(num count);
 
   /// redesign.event.yesterday
   ///
@@ -28037,6 +28103,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ganzer Ablauf'**
   String get redesignPlanViewWhole;
+
+  /// redesign.plan.worksInserted
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk am Ende eingefügt} other {{count} Werke am Ende eingefügt}}'**
+  String redesignPlanWorksInserted(num count);
 
   /// redesign.pult.allOpen
   ///

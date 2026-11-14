@@ -17956,13 +17956,84 @@
       "name": {}
     }
   },
+  "redesignEventWorkRemovedPlan": "{name} entfernt, auch aus dem Ablauf",
+  "@redesignEventWorkRemovedPlan": {
+    "description": "redesign.event.workRemovedPlan",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignEventWorks": "Werke",
   "@redesignEventWorks": {
     "description": "redesign.event.works"
   },
+  "redesignEventWorksChange": "Ändern",
+  "@redesignEventWorksChange": {
+    "description": "redesign.event.worksChange"
+  },
+  "redesignEventWorksFollowAgain": "Wieder dem Auftritt folgen",
+  "@redesignEventWorksFollowAgain": {
+    "description": "redesign.event.worksFollowAgain"
+  },
+  "redesignEventWorksFollows": "Die Liste folgt dem Auftritt, bis du sie änderst.",
+  "@redesignEventWorksFollows": {
+    "description": "redesign.event.worksFollows"
+  },
+  "redesignEventWorksFrom": "Vom nächsten Auftritt: {label}",
+  "@redesignEventWorksFrom": {
+    "description": "redesign.event.worksFrom",
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "redesignEventWorksInPlan": "{count} von {total} stehen im Ablauf.",
+  "@redesignEventWorksInPlan": {
+    "description": "redesign.event.worksInPlan",
+    "placeholders": {
+      "count": {},
+      "total": {}
+    }
+  },
   "redesignEventWorksLoadFailed": "Die Werke konnten nicht geladen werden.",
   "@redesignEventWorksLoadFailed": {
     "description": "redesign.event.worksLoadFailed"
+  },
+  "redesignEventWorksMissing": "{kind, select, probe{{count, plural, one {1 Werk dieser Probe steht noch nicht im Ablauf} other {{count} Werke dieser Probe stehen noch nicht im Ablauf}}} other{{count, plural, one {1 Werk dieses Termins steht noch nicht im Ablauf} other {{count} Werke dieses Termins stehen noch nicht im Ablauf}}}}",
+  "@redesignEventWorksMissing": {
+    "description": "redesign.event.worksMissing",
+    "placeholders": {
+      "kind": {},
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventWorksMissingInsert": "Einfügen",
+  "@redesignEventWorksMissingInsert": {
+    "description": "redesign.event.worksMissingInsert"
+  },
+  "redesignEventWorksOfThis": "{kind, select, probe{Werke dieser Probe} other{Werke dieses Termins}}",
+  "@redesignEventWorksOfThis": {
+    "description": "redesign.event.worksOfThis",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignEventWorksOfThisHint": "{kind, select, probe{Angehakt ist, was geprobt wird.} other{Angehakt ist, was drankommt.}}",
+  "@redesignEventWorksOfThisHint": {
+    "description": "redesign.event.worksOfThisHint",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignEventWorksTake": "{count, plural, one {1 Werk übernehmen} other {{count} Werke übernehmen}}",
+  "@redesignEventWorksTake": {
+    "description": "redesign.event.worksTake",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignEventYesterday": "gestern",
   "@redesignEventYesterday": {
@@ -21929,6 +22000,15 @@
   "redesignPlanViewWhole": "Ganzer Ablauf",
   "@redesignPlanViewWhole": {
     "description": "redesign.plan.viewWhole"
+  },
+  "redesignPlanWorksInserted": "{count, plural, one {1 Werk am Ende eingefügt} other {{count} Werke am Ende eingefügt}}",
+  "@redesignPlanWorksInserted": {
+    "description": "redesign.plan.worksInserted",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignPultAllOpen": "Alle Offenen da",
   "@redesignPultAllOpen": {

@@ -9,9 +9,10 @@ import '../../../core/utils/choir_file_utils.dart';
 /// REDESIGN: pure logic of the Termin details (Überblick sections, Termin
 /// bearbeiten, the Programm of Spieler).
 
-/// "Programm" for highlighted types (Vortrag, Konzert), "Werke" otherwise.
-String rdProgramTitle(AppLocalizations l10n, AttendanceType? type) =>
-    (type?.highlight ?? false) ? l10n.redesignEventProgram : l10n.redesignEventWorks;
+/// How texts name a Termin that takes its Werke from an Auftritt: "probe"
+/// when its Terminart is one ("Probe", "Generalprobe"), else "other"
+/// ("Werke dieser Probe" / "Werke dieses Termins").
+String rdWorksKind(AttendanceType? type) => (type?.name ?? '').toLowerCase().contains('probe') ? 'probe' : 'other';
 
 /// Start of the Termin for checklist due dates (start time or 19:00, like
 /// the Termin page).

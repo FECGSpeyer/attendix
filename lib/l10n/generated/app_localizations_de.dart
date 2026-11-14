@@ -14729,11 +14729,89 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String redesignEventWorkRemovedPlan(Object name) {
+    return '$name entfernt, auch aus dem Ablauf';
+  }
+
+  @override
   String get redesignEventWorks => 'Werke';
+
+  @override
+  String get redesignEventWorksChange => 'Ändern';
+
+  @override
+  String get redesignEventWorksFollowAgain => 'Wieder dem Auftritt folgen';
+
+  @override
+  String get redesignEventWorksFollows =>
+      'Die Liste folgt dem Auftritt, bis du sie änderst.';
+
+  @override
+  String redesignEventWorksFrom(Object label) {
+    return 'Vom nächsten Auftritt: $label';
+  }
+
+  @override
+  String redesignEventWorksInPlan(Object count, Object total) {
+    return '$count von $total stehen im Ablauf.';
+  }
 
   @override
   String get redesignEventWorksLoadFailed =>
       'Die Werke konnten nicht geladen werden.';
+
+  @override
+  String redesignEventWorksMissing(String kind, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke dieser Probe stehen noch nicht im Ablauf',
+      one: '1 Werk dieser Probe steht noch nicht im Ablauf',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke dieses Termins stehen noch nicht im Ablauf',
+      one: '1 Werk dieses Termins steht noch nicht im Ablauf',
+    );
+    String _temp2 = intl.Intl.selectLogic(kind, {
+      'probe': '$_temp0',
+      'other': '$_temp1',
+    });
+    return '$_temp2';
+  }
+
+  @override
+  String get redesignEventWorksMissingInsert => 'Einfügen';
+
+  @override
+  String redesignEventWorksOfThis(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'probe': 'Werke dieser Probe',
+      'other': 'Werke dieses Termins',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignEventWorksOfThisHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'probe': 'Angehakt ist, was geprobt wird.',
+      'other': 'Angehakt ist, was drankommt.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignEventWorksTake(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke übernehmen',
+      one: '1 Werk übernehmen',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignEventYesterday => 'gestern';
@@ -18167,6 +18245,17 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanViewWhole => 'Ganzer Ablauf';
+
+  @override
+  String redesignPlanWorksInserted(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke am Ende eingefügt',
+      one: '1 Werk am Ende eingefügt',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignPultAllOpen => 'Alle Offenen da';

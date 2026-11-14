@@ -56,6 +56,9 @@ import '../../../../core/services/register_plan_service.dart';
 import '../../data/planning_write_sync.dart';
 import '../../../../core/providers/redesign_providers.dart' show redesignEnabledProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntryExtension;
+import '../../../redesign/data/providers/rd_event_works_providers.dart';
+import '../../../redesign/data/rd_event_works_sync.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
 import '../../../redesign/presentation/widgets/event/rd_plan_take_over.dart';
@@ -119,9 +122,13 @@ Future<bool?> openPlanningEditor(BuildContext context, {int? attendanceId, int? 
 /// block templates, org templates / default fields, share links and the
 /// org plan flag.
 class PlanningPage extends ConsumerStatefulWidget {
-  const PlanningPage({super.key, this.attendanceId, this.initialPlanIndex});
+  const PlanningPage({super.key, this.attendanceId, this.initialPlanIndex, this.start});
 
   final int? attendanceId;
+
+  /// REDESIGN: what the editor does once the Termin is loaded ("works": the
+  /// Werke of the Termin that are not in the Ablauf yet go to its end).
+  final String? start;
 
   /// Plan to open first when the Termin has several. Null or out of range
   /// (SOL_FIX22: also negative) opens the first plan.
@@ -793,6 +800,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       }
       _started = true;
       _loadAttendance(att, planIndex: widget.initialPlanIndex);
+      if (widget.start == 'works' && ref.read(redesignEnabledProvider)) unawaited(_rdStartWorks());
       return;
     }
     // No Termin requested: first upcoming Termin (list is sorted newest first).
@@ -1276,6 +1284,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       _container.invalidate(orgPlansProvider);
       // SOL_FIX29: rows loaded from the caches from now on hold every commit.
       PlanningWriteSync.markCachesRefreshed();
+      // REDESIGN: a Werk in the Ablauf belongs to the Werke of its Termin.
+      if (_container.read(redesignEnabledProvider)) {
+        for (final id in ids) {
+          unawaited(rdSyncPlanWorks(_container, id));
+        }
+      }
     } catch (_) {
       // Container already disposed (app closed): nothing to refresh.
     }
