@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -59,13 +60,15 @@ Future<String?> showPersonNoteSheet(
     context: context,
     builder: (ctx) => AppAlertDialog(
       title: Text(context.l10n.attendanceCustomNote),
-      content: TextField(
+      // Ionic alert input `type: 'textarea'` (attendance.page.ts).
+      content: AppAlertInput(
         controller: controller,
         autofocus: true,
         maxLines: 4,
         minLines: 2,
+        textarea: true,
         textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(hintText: context.l10n.attendanceEnterNote),
+        placeholder: context.l10n.attendanceEnterNote,
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
@@ -113,26 +116,45 @@ Future<ConductorChoice?> showConductorChangeDialog(
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AppAlertDialog(
         title: Text(context.l10n.attendanceChangeConductor),
-        contentPadding: const EdgeInsets.only(top: 12),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              for (final con in conductors)
-                RadioListTile<int>(
-                  value: con.id!,
-                  groupValue: selected,
-                  onChanged: (v) => setState(() => selected = v),
-                  title: Text(con.fullName),
-                ),
-              RadioListTile<int>(
-                value: otherValue,
-                groupValue: selected,
-                onChanged: (v) => setState(() => selected = v),
-                title: Text(context.l10n.attListOtherConductor),
+        // Ionic alert with `type: 'radio'` inputs (attendance.page.ts
+        // changeConductor).
+        content: AppAlertRadioGroup<int>(
+          options: [
+            for (final con in conductors) AppAlertOption(con.id!, con.fullName),
+            AppAlertOption(otherValue, context.l10n.attListOtherConductor),
+          ],
+          groupValue: selected,
+          onChanged: (v) => setState(() => selected = v),
+          // Beta design: the list as before (12 px above, full width).
+          beta: Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: SizedBox(
+              width: double.maxFinite,
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  for (final con in conductors)
+                    // ignore: deprecated_member_use
+                    RadioListTile<int>(
+                      value: con.id!,
+                      // ignore: deprecated_member_use
+                      groupValue: selected,
+                      // ignore: deprecated_member_use
+                      onChanged: (v) => setState(() => selected = v),
+                      title: Text(con.fullName),
+                    ),
+                  // ignore: deprecated_member_use
+                  RadioListTile<int>(
+                    value: otherValue,
+                    // ignore: deprecated_member_use
+                    groupValue: selected,
+                    // ignore: deprecated_member_use
+                    onChanged: (v) => setState(() => selected = v),
+                    title: Text(context.l10n.attListOtherConductor),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
         actions: [
@@ -158,11 +180,11 @@ Future<ConductorChoice?> showConductorChangeDialog(
     context: context,
     builder: (ctx) => AppAlertDialog(
       title: Text(context.l10n.attListEnterConductor),
-      content: TextField(
+      content: AppAlertInput(
         controller: controller,
         autofocus: true,
         textCapitalization: TextCapitalization.words,
-        decoration: InputDecoration(hintText: context.l10n.attListConductor),
+        placeholder: context.l10n.attListConductor,
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
@@ -240,6 +262,18 @@ Future<String?> showFilesFolderPicker(
   String initialPath = '',
 }) {
   final supabase = ProviderScope.containerOf(context, listen: false).read(supabaseClientProvider);
+  if (context.rdSkin == null) {
+    // Ionic files-folder-picker: [breakpoints]="[0, 1]" [initialBreakpoint]="1".
+    return showIonSheet<String>(
+      context,
+      builder: (ctx, controller) => _FilesFolderPicker(
+        supabase: supabase,
+        tenantId: tenantId,
+        initialPath: initialPath,
+        scrollController: controller,
+      ),
+    );
+  }
   return showModalBottomSheet<String>(
     backgroundColor: context.rdSkin != null ? context.rd.bg : null,
     context: context,
@@ -259,11 +293,15 @@ class _FilesFolderPicker extends StatefulWidget {
     required this.supabase,
     required this.tenantId,
     required this.initialPath,
+    this.scrollController,
   });
 
   final SupabaseClient supabase;
   final int tenantId;
   final String initialPath;
+
+  /// Classic design: the controller of the breakpoint sheet.
+  final ScrollController? scrollController;
 
   @override
   State<_FilesFolderPicker> createState() => _FilesFolderPickerState();
@@ -400,36 +438,28 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
   Widget build(BuildContext context) {
     if (context.rdSkin != null) return _buildBeta(context);
     final segments = _segments;
-    return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.75),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Ionic toolbar: X (start), title, checkmark (end, disabled at
-            // the root or while loading).
-            Row(
-              children: [
-                IconButton(
-                  tooltip: context.l10n.commonCancel,
-                  icon: Icon(AppIcons.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                Expanded(
-                  child: Text(
-                    context.l10n.folderPickerTitle,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-                IconButton(
-                  tooltip: context.l10n.folderPickerChooseThis,
-                  icon: Icon(AppIcons.check),
-                  onPressed: _path.isEmpty || _loading ? null : () => Navigator.pop(context, _path),
-                ),
-              ],
-            ),
+    // Ionic: ion-toolbar with ✕ (start), title, checkmark (end, disabled at
+    // the root or while loading); second toolbar with the breadcrumbs.
+    return IonSheetScaffold(
+      title: context.l10n.folderPickerTitle,
+      start: [
+        IconButton(
+          tooltip: context.l10n.commonCancel,
+          icon: Icon(AppIcons.close),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
+      end: [
+        IconButton(
+          tooltip: context.l10n.folderPickerChooseThis,
+          icon: Icon(AppIcons.check),
+          onPressed: _path.isEmpty || _loading ? null : () => Navigator.pop(context, _path),
+        ),
+      ],
+      bottom: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -446,10 +476,13 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                 ],
               ),
             ),
-            const Divider(height: 1),
-            Flexible(
-              child: ListView(
-                shrinkWrap: true,
+        ],
+      ),
+      body: SafeArea(
+        top: false,
+        child: ListView(
+                controller: widget.scrollController,
+                padding: EdgeInsets.zero,
                 children: [
                   if (segments.isNotEmpty) ...[
                     // Ionic files-folder-picker: first row in primary,
@@ -503,9 +536,6 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                       ),
                   ],
                 ],
-              ),
-            ),
-          ],
         ),
       ),
     );

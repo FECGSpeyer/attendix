@@ -785,15 +785,16 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       context: context,
       builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.filesRequestMore),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+        // Ionic alert: message + `type: 'textarea'` input (files.page.ts).
+        content: AppAlertInputGroup(
+          message: Text(context.l10n.filesRequestHint),
           children: [
-            Text(context.l10n.filesRequestHint),
-            const SizedBox(height: AppDimensions.paddingS),
-            TextField(
+            const AppAlertBetaGap(AppDimensions.paddingS),
+            AppAlertInput(
               controller: controller,
               maxLines: 3,
-              decoration: InputDecoration(hintText: ctx.l10n.filesHowMuch),
+              textarea: true,
+              placeholder: ctx.l10n.filesHowMuch,
             ),
           ],
         ),
@@ -1205,6 +1206,80 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                 tooltip: context.l10n.filesSelect,
                 onPressed: () => _startSelection(),
               ),
+            // Ionic `ion-popover #filesMenuPopover`: `ion-list` (item
+            // lines) with icons in slot start; the sorting row is a plain
+            // `ion-item lines="none"` with h3 / p – no divider.
+            if (context.rdSkin == null)
+              Builder(
+                builder: (buttonContext) => IconButton(
+                  icon: Icon(AppIcons.moreVert),
+                  tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                  onPressed: () async {
+                    final value = await showAppPopoverMenu<String>(
+                      context: buttonContext,
+                      lines: true,
+                      items: [
+                        if (canEdit) ...[
+                          AppPopoverMenuItem(
+                            value: 'upload',
+                            icon: AppIcons.cloudUploadOutlined,
+                            label: context.l10n.filesUpload,
+                          ),
+                          AppPopoverMenuItem(
+                            value: 'folder',
+                            icon: AppIcons.createNewFolderOutlined,
+                            label: context.l10n.filesCreateFolder,
+                          ),
+                          if (_entries.isNotEmpty)
+                            AppPopoverMenuItem(
+                              value: 'select',
+                              icon: AppIcons.checkCircleOutline,
+                              label: context.l10n.filesSelectMultiple,
+                            ),
+                        ],
+                        AppPopoverMenuItem(
+                          value: 'share',
+                          icon: AppIcons.shareOutlined,
+                          label: _currentPath.isNotEmpty
+                              ? context.l10n.filesFlutterShareFolderLink
+                              : context.l10n.filesFlutterShareRootLink,
+                        ),
+                        AppPopoverMenuItem.info(
+                          context.l10n.filesSorting,
+                          '',
+                          subtitle: _sortLabel,
+                        ),
+                        AppPopoverMenuItem(
+                          value: 'sort_name',
+                          icon: AppIcons.textFields,
+                          label: context.l10n.filesName,
+                        ),
+                        AppPopoverMenuItem(
+                          value: 'sort_date',
+                          icon: AppIcons.calendarTodayOutlined,
+                          label: context.l10n.filesModified,
+                        ),
+                        AppPopoverMenuItem(
+                          value: 'sort_size',
+                          icon: AppIcons.straighten,
+                          label: context.l10n.filesSize,
+                        ),
+                        AppPopoverMenuItem(
+                          value: 'sort_dir',
+                          icon: _ascending ? AppIcons.arrowUpward : AppIcons.arrowDownward,
+                          label: _ascending
+                              ? context.l10n.filesFlutterAscending
+                              : context.l10n.filesFlutterDescending,
+                          lines: false,
+                        ),
+                      ],
+                    );
+                    if (value != null && mounted) _onMenuSelected(value);
+                  },
+                ),
+              )
+            else
+            // Beta design: its Material menu as before.
             PopupMenuButton<String>(
               icon: Icon(AppIcons.moreVert),
               onSelected: _onMenuSelected,

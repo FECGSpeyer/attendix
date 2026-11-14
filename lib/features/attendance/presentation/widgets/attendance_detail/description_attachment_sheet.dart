@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -22,6 +23,20 @@ import '../../../../redesign/presentation/widgets/rd_widgets.dart';
 /// rich text description (stored as HTML like the Ionic quill editor) and
 /// one file attachment (upload, open, remove).
 Future<void> showDescriptionAttachmentSheet(BuildContext context, {required Attendance attendance}) {
+  if (context.rdSkin == null) {
+    // Ionic descriptionModal: [breakpoints]="[0, 0.8, 1]"
+    // [initialBreakpoint]="0.8", ion-title + close ✕ (end).
+    return showIonSheet<void>(
+      context,
+      breakpoints: const [0, 0.8, 1],
+      initialBreakpoint: 0.8,
+      builder: (ctx, controller) => IonSheetScaffold(
+        title: ctx.l10n.attendanceDescriptionAttachment,
+        showClose: true,
+        body: DescriptionAttachmentEditor(attendance: attendance, scrollController: controller),
+      ),
+    );
+  }
   return showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -258,10 +273,9 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
     if (context.rdSkin != null) return _buildBeta(context);
     return ListView(
       controller: widget.scrollController,
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      // ion-content class="ion-padding"; the title is in the sheet toolbar.
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
       children: [
-        Text(context.l10n.attendanceDescriptionAttachment, style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 12),
         Card(
           margin: EdgeInsets.zero,
           clipBehavior: Clip.antiAlias,

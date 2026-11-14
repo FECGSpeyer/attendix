@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../shared/widgets/adaptive/app_select.dart';
+import '../../../../shared/widgets/adaptive/ion_datetime_button.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' as ion;
 
 /// UX_AUTH: building blocks for the Ionic `ion-list [inset]="true"` forms of
@@ -352,35 +356,23 @@ class IonButtonItem extends StatelessWidget {
 }
 
 /// `ion-datetime-button` at the end of an item: light grey rounded chip
-/// with the formatted value.
+/// with the formatted value. QUE-28: the shared [IonDatetimeButton] under
+/// its old name.
 class IonDateButton extends StatelessWidget {
   const IonDateButton({super.key, required this.text, required this.onTap});
 
   final String text;
-  final VoidCallback? onTap;
+  final FutureOr<void> Function()? onTap;
 
   @override
-  Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    return Material(
-      color: dark ? const Color(0xFF2C2C2E) : const Color(0xFFEDEEF0),
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: ionItemFontSize(context),
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
+  Widget build(BuildContext context) => IonDatetimeButton(
+        date: text,
+        onDateTap: onTap,
+        betaStyle: TextStyle(
+          fontSize: ionItemFontSize(context),
+          color: Theme.of(context).colorScheme.onSurface,
         ),
-      ),
-    );
-  }
+      );
 }
 
 /// Value + caret at the end of an `ion-select` item (non-stacked label).
@@ -411,25 +403,46 @@ class IonSelectValue extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 4),
-          Icon(
-            ionIsIos(context) ? AppIcons.unfoldMore : AppIcons.arrowDropDown,
-            size: 18,
-            color: AppColors.medium,
-          ),
+          // md: the `ion-select` md caret of the shared select.
+          if (!ionIsIos(context) && context.rdSkin == null)
+            const IonMdSelectIcon()
+          else
+            Icon(
+              ionIsIos(context) ? AppIcons.unfoldMore : AppIcons.arrowDropDown,
+              size: 18,
+              color: AppColors.medium,
+            ),
         ],
       ),
     );
   }
 }
 
-/// Simple option list for an `ion-select` (alert interface): the options
-/// with a checkmark on the current value. Returns the chosen value.
+/// Options of an `ion-select` without `interface` (Ionic default: the
+/// alert with a radio list and "Abbrechen" / "OK"): the shared select
+/// ([showAppSelect], `interface: alert`) with [title] as its header.
+/// Returns the chosen value, null when cancelled.
+///
+/// The Beta design keeps its bottom sheet list (checkmark on the current
+/// value).
 Future<T?> showIonSelectOptions<T>(
   BuildContext context, {
   required String title,
   required List<(T, String)> options,
   T? selected,
-}) {
+}) async {
+  if (context.rdSkin == null) {
+    final picked = await showAppSelect<T>(
+      context: context,
+      interface: AppSelectInterface.alert,
+      header: title,
+      value: selected,
+      options: [
+        for (final (value, label) in options) AppSelectOption<T>(value: value, label: label),
+      ],
+    );
+    return picked?.value;
+  }
   return showModalBottomSheet<T>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 
 import '../../../../core/constants/enums.dart';
@@ -129,14 +131,8 @@ class StatusOverviewSheet extends StatelessWidget {
         ? theme.scaffoldBackgroundColor
         : AppColors.adaptive(context, AppColors.light);
 
-    return AppDraggableSheet(
-      initialChildSize: 0.5,
-      minChildSize: 0.25,
-      maxChildSize: 0.75,
-      snap: true,
-      snapSizes: const [0.5],
-      expand: false,
-      builder: (context, scrollController) {
+    final classic = context.rdSkin == null;
+    Widget content(BuildContext context, ScrollController scrollController) {
         final sheet = Container(
           decoration: BoxDecoration(
             color: background,
@@ -149,7 +145,7 @@ class StatusOverviewSheet extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (ios)
+              if (ios && !classic)
                 IonModalHeader(
                   title: Text(context.l10n.attendanceStatusOverview),
                 )
@@ -181,8 +177,26 @@ class StatusOverviewSheet extends StatelessWidget {
             ],
           ),
         );
-        return ios ? IonModalHandleOverlay(child: sheet) : sheet;
-      },
+        // Classic: the breakpoint sheet draws the handle in both looks.
+        return ios && !classic ? IonModalHandleOverlay(child: sheet) : sheet;
+    }
+
+    if (classic) {
+      // Ionic StatusInfo modal: breakpoints [0, 0.5, 0.75], initial 0.5.
+      return IonBreakpointSheet(
+        breakpoints: const [0, 0.5, 0.75],
+        initialBreakpoint: 0.5,
+        builder: content,
+      );
+    }
+    return AppDraggableSheet(
+      initialChildSize: 0.5,
+      minChildSize: 0.25,
+      maxChildSize: 0.75,
+      snap: true,
+      snapSizes: const [0.5],
+      expand: false,
+      builder: content,
     );
   }
 }

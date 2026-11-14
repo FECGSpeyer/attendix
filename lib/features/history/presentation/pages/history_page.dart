@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -11,6 +13,7 @@ import '../../../../core/providers/history_providers.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -140,10 +143,10 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         const SizedBox(height: 16),
                         Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e))),
                         const SizedBox(height: 16),
-                        ElevatedButton(
+                        IonButton(
                           onPressed:
                               () => ref.invalidate(performanceHistoryProvider),
-                          child: IonButtonLabel(context.l10n.messagesRetry),
+                          label: context.l10n.messagesRetry,
                         ),
                       ],
                     ),
@@ -328,21 +331,16 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       dateController.text = DateFormat(dateFmt()).format(selectedDate);
     }
 
-    final result = await showModalBottomSheet<bool>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      showDragHandle: true,
-      useSafeArea: true,
-      builder: (sheetContext) => StatefulBuilder(
+    final classic = context.rdSkin == null;
+    Widget sheet(BuildContext sheetContext, ScrollController? scrollController) => StatefulBuilder(
         builder: (sheetContext, setSheetState) {
           final l10n = sheetContext.l10n;
           final divider = Divider(height: 0.5, thickness: 0.5, indent: 16, color: Theme.of(sheetContext).dividerColor);
-          return SizedBox(
-            height: MediaQuery.sizeOf(sheetContext).height * 0.7,
-            child: ListView(
+          final list = ListView(
+              controller: scrollController,
               padding: const EdgeInsets.only(bottom: 24),
               children: [
+                if (!classic)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
@@ -380,7 +378,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                       Expanded(child: Text(l10n.attListConductor, style: const TextStyle(fontSize: 17))),
                       DropdownButtonHideUnderline(
                         child: AppDropdownButton<int>(
-                          iosInterface: AppSelectInterface.alert,
+                          interface: AppSelectInterface.alert,
                           value: otherConductor != null ? -1 : selectedConductorId,
                           alignment: AlignmentDirectional.centerEnd,
                           items: [
@@ -451,6 +449,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         initialDate: selectedDate,
                         firstDate: DateTime(2000),
                         lastDate: DateTime.now().add(const Duration(days: 365)),
+                        // Ionic: `ion-modal.dateModal` with a wheel datetime.
+                        overlay: IonDatetimeOverlay.dateModal,
+                        preferWheel: true,
                       );
                       if (date != null) {
                         setSheetState(() {
@@ -481,11 +482,31 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                   ),
                 ),
               ],
-            ),
+            );
+          // Ionic: ion-header > ion-toolbar > ion-title only.
+          if (classic) return IonSheetScaffold(title: l10n.historyAddSongs, body: list);
+          return SizedBox(
+            height: MediaQuery.sizeOf(sheetContext).height * 0.7,
+            child: list,
           );
         },
-      ),
-    );
+      );
+    final result = classic
+        // Ionic addHisModal: [breakpoints]="[0, 0.7]" [initialBreakpoint]="0.7".
+        ? await showIonSheet<bool>(
+            context,
+            breakpoints: const [0, 0.7],
+            initialBreakpoint: 0.7,
+            builder: sheet,
+          )
+        : await showModalBottomSheet<bool>(
+            context: context,
+            useRootNavigator: true, // IOS_SHELL2: above the tab bar
+            isScrollControlled: true,
+            showDragHandle: true,
+            useSafeArea: true,
+            builder: (sheetContext) => sheet(sheetContext, null),
+          );
 
     // A date typed without leaving the field still counts (Ionic ionBlur
     // fires before the button tap).
@@ -515,10 +536,12 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
         context: context,
         builder: (context) => AppAlertDialog(
           title: Text(context.l10n.attListEnterConductor),
-          content: TextField(
+          // Ionic alert input with a placeholder (history.page.ts).
+          content: AppAlertInput(
             controller: controller,
             textCapitalization: TextCapitalization.words,
-            decoration: InputDecoration(labelText: context.l10n.attListConductor),
+            placeholder: context.l10n.attListConductor,
+            betaDecoration: InputDecoration(labelText: context.l10n.attListConductor),
           ),
           actions: [
             TextButton(
@@ -676,6 +699,21 @@ class _HistoryGroupState extends State<_HistoryGroup> {
     // UX_ATT: accordion header is an `ion-item color="light"` (grey row)
     final dark = Theme.of(context).brightness == Brightness.dark;
     final headerColor = dark ? const Color(0xFF222428) : AppColors.light;
+    if (!isIosLook(context) && context.rdSkin == null) {
+      // md: ion-accordion with an `ion-item color="light"` header that
+      // stays light when open; the rows sit on the page surface.
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5)),
+        ),
+        child: IonAccordionTile(
+          headerColor: headerColor,
+          title: Text(widget.date, style: const TextStyle(fontSize: 17)),
+          children: _entryRows(),
+        ),
+      );
+    }
     if (!isIosLook(context)) {
       return ExpansionTile(
         backgroundColor: Theme.of(context).colorScheme.surface,

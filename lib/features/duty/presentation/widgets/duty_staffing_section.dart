@@ -21,6 +21,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook;
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/ion_button.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -172,6 +173,24 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                       child: Text('${l10n.signoutYouAreAssigned} · ${l10n.signoutPleaseConfirm}',
                           style: const TextStyle(color: AppColors.medium, fontSize: 13)),
                     ),
+                    // Ionic: `size="small" fill="outline" color="medium"`
+                    // and `size="small" color="success"`.
+                    if (context.rdSkin == null) ...[
+                      IonButton(
+                        label: l10n.signoutCannot,
+                        fill: IonButtonFill.outline,
+                        color: AppColors.medium,
+                        small: true,
+                        onPressed: () => declineDutyAction(context, ref, pa.id!, _attendanceId),
+                      ),
+                      const SizedBox(width: 8),
+                      IonButton(
+                        label: l10n.commonConfirm,
+                        color: AppColors.success,
+                        small: true,
+                        onPressed: () => confirmDutyAction(context, ref, pa.id!, _attendanceId),
+                      ),
+                    ] else ...[
                     OutlinedButton(
                       onPressed: () => declineDutyAction(context, ref, pa.id!, _attendanceId),
                       child: IonButtonLabel(l10n.signoutCannot),
@@ -182,6 +201,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                       onPressed: () => confirmDutyAction(context, ref, pa.id!, _attendanceId),
                       child: IonButtonLabel(l10n.commonConfirm),
                     ),
+                    ],
                   ],
                 ),
               ),

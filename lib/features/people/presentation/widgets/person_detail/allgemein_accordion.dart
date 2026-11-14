@@ -608,6 +608,9 @@ class AllgemeinAccordion extends ConsumerWidget {
             initialDate: currentShiftStart,
             firstDate: DateTime(2000),
             lastDate: DateTime(2100),
+            // Ionic: `ion-datetime-button` with the calendar grid.
+            overlay: IonDatetimeOverlay.button,
+            preferWheel: false,
           );
           if (date != null) {
             onFieldChanged('shiftStart', date.toIso8601String());
@@ -691,7 +694,14 @@ class AllgemeinAccordion extends ConsumerWidget {
           builder: (ctx) => StatefulBuilder(
             builder: (ctx, setState) => AppAlertDialog(
               title: Text(context.l10n.personOtherOrchestras),
-              content: Column(
+              // Ionic alert with `type: 'checkbox'` inputs.
+              content: AppAlertCheckboxGroup<String>(
+                options: [for (final o in otherOrchestraOptions) AppAlertOption(o, o)],
+                values: current,
+                onChanged: (o, checked) => setState(() {
+                  checked ? current.add(o) : current.remove(o);
+                }),
+                beta: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   for (final o in otherOrchestraOptions)
@@ -707,6 +717,7 @@ class AllgemeinAccordion extends ConsumerWidget {
                       }),
                     ),
                 ],
+              ),
               ),
               actions: [
                 TextButton(

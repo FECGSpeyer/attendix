@@ -143,7 +143,7 @@ void main() {
       await tester.pumpWidget(app(AppDropdownFormField<String>(
         value: 'de',
         items: items,
-        iosInterface: AppSelectInterface.alert,
+        interface: AppSelectInterface.alert,
         decoration: const InputDecoration(labelText: 'Sprache'),
         onChanged: (v) => changed = v,
       )));
@@ -161,17 +161,114 @@ void main() {
       expect(find.text('English'), findsOneWidget);
     }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-    testWidgets('Material keeps the Flutter dropdowns', (tester) async {
+    testWidgets('md: Ionic md select instead of the Flutter dropdowns', (tester) async {
       await tester.pumpWidget(app(Column(children: [
         AppDropdownFormField<String>(
             value: 'de', items: items, onChanged: (_) {}),
         AppDropdownButton<String>(
             value: 'de', items: items, onChanged: (_) {}),
       ])));
-      expect(find.byType(DropdownButtonFormField<String>), findsOneWidget);
-      expect(find.byType(DropdownButton<String>), findsNWidgets(2));
+      expect(find.byType(DropdownButtonFormField<String>), findsNothing);
+      expect(find.byType(DropdownButton<String>), findsNothing);
       expect(find.byType(IonSelectIcon), findsNothing);
+      expect(find.byType(IonMdSelectIcon), findsNWidgets(2));
     }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
+    testWidgets('md popover interface: below the value, current option tinted', (tester) async {
+      String? changed;
+      await tester.pumpWidget(app(Align(
+        alignment: Alignment.topRight,
+        child: AppDropdownButton<String>(
+          value: 'de',
+          items: items,
+          onChanged: (v) => changed = v,
+        ),
+      )));
+      final value = tester.getRect(find.text('Deutsch'));
+      await tester.tap(find.text('Deutsch'));
+      await tester.pumpAndSettle();
+      // no Material menu, no radios, no checkmark: a tinted row
+      expect(find.byType(PopupMenuItem<AppSelection<String>>), findsNothing);
+      expect(find.byIcon(AppIcons.check), findsNothing);
+      expect(tester.getTopLeft(find.text('English')).dy, greaterThan(value.bottom));
+      final card = tester.getRect(
+          find.ancestor(of: find.text('English'), matching: find.byType(SingleChildScrollView)));
+      expect(card.width, 250);
+      await tester.tap(find.text('English'));
+      await tester.pumpAndSettle();
+      expect(changed, 'en');
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
+    testWidgets('md alert interface: radio list, the choice counts with OK', (tester) async {
+      String? changed;
+      await tester.pumpWidget(app(AppDropdownFormField<String>(
+        value: 'de',
+        items: items,
+        interface: AppSelectInterface.alert,
+        decoration: const InputDecoration(labelText: 'Sprache'),
+        onChanged: (v) => changed = v,
+      )));
+      await tester.tap(find.text('Deutsch'));
+      await tester.pumpAndSettle();
+      expect(find.byType(IosAlertCard), findsNothing);
+      expect(find.byType(AlertDialog), findsOneWidget);
+      // header = the field's label, md buttons are uppercase
+      expect(find.text('Sprache'), findsNWidgets(2));
+      expect(find.text('ABBRECHEN'), findsOneWidget);
+      await tester.tap(find.text('English'));
+      await tester.pumpAndSettle();
+      expect(changed, isNull);
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+      expect(changed, 'en');
+
+      // cancel keeps the value
+      await tester.tap(find.text('English'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Deutsch'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('ABBRECHEN'));
+      await tester.pumpAndSettle();
+      expect(changed, 'en');
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
+    testWidgets('md action-sheet interface: options and the cancel button', (tester) async {
+      String? changed;
+      await tester.pumpWidget(app(AppDropdownButton<String>(
+        value: 'de',
+        items: items,
+        interface: AppSelectInterface.actionSheet,
+        onChanged: (v) => changed = v,
+      )));
+      await tester.tap(find.text('Deutsch'));
+      await tester.pumpAndSettle();
+      expect(find.text('Abbrechen'), findsOneWidget);
+      await tester.tap(find.text('English'));
+      await tester.pumpAndSettle();
+      expect(changed, 'en');
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
+    testWidgets('modal interface: title, cancel button, a tap chooses', (tester) async {
+      String? changed;
+      await tester.pumpWidget(app(AppDropdownButton<String>(
+        value: 'de',
+        items: items,
+        interface: AppSelectInterface.modal,
+        header: 'Sprache',
+        onChanged: (v) => changed = v,
+      )));
+      await tester.tap(find.text('Deutsch'));
+      await tester.pumpAndSettle();
+      // ion-select-modal: header with title + cancel, no OK
+      expect(find.text('Sprache'), findsOneWidget);
+      expect(find.text('OK'), findsNothing);
+      expect(find.byType(AppBar), findsOneWidget);
+      await tester.tap(find.text('English'));
+      await tester.pumpAndSettle();
+      expect(changed, 'en');
+      expect(find.byType(AppBar), findsNothing);
+    }, variant: const TargetPlatformVariant(
+        <TargetPlatform>{TargetPlatform.iOS, TargetPlatform.android}));
 
     test('Sprache picker uses the adaptive select popover (source)', () {
       final src = File(

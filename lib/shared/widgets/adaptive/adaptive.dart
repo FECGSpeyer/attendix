@@ -1,6 +1,7 @@
 // IOS_LOOK: adaptive widgets – Ionic iOS mode on iOS, Material elsewhere.
 export 'adaptive_platform.dart';
 export 'app_action_sheet.dart';
+export 'app_alert_inputs.dart';
 export 'app_dialog.dart';
 export 'app_filter_popover.dart';
 export 'app_multi_select.dart';
@@ -10,6 +11,11 @@ export 'app_segmented_button.dart';
 export 'app_select.dart';
 export 'app_spinner.dart';
 export 'app_toolbar.dart';
+export 'ion_accordion_tile.dart';
+export 'ion_button.dart';
 export 'ion_button_label.dart';
+export 'ion_datetime_button.dart';
 export 'ion_icons.dart';
+export 'ion_md_datetime.dart';
+export 'ion_radio_item.dart';
 export 'ios_card_modal.dart';

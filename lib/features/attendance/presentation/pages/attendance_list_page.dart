@@ -35,6 +35,7 @@ import '../../../duty/presentation/widgets/my_duty_requests_section.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
 import '../widgets/ios_condense_header.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
@@ -166,17 +167,67 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     final canSeeArchived = canSeeArchivedAttendances(ref.watch(currentRoleProvider));
     final showArchived = canSeeArchived && ref.watch(attendanceListShowArchivedProvider);
     final archivedCount = ref.watch(categorizedAttendancesProvider.select((c) => c.archivedCount));
+    void onSelected(String value) {
+      if (value == '__archived__') {
+        ref.read(attendanceListShowArchivedProvider.notifier).state = !showArchived;
+        return;
+      }
+      ref.read(attendanceListTypeFilterProvider.notifier).state =
+          value == '__all__' ? null : value;
+    }
+
+    // Ionic `ion-popover` (trigger "att-filter-trigger", dismissOnSelect):
+    // `ion-list` with item lines; the type's dot in slot start, the active
+    // entry with a primary label and a checkmark in slot end; "Archivierte
+    // anzeigen" is `lines="none"`.
+    if (context.rdSkin == null) {
+      return Builder(
+        builder: (buttonContext) => IconButton(
+          tooltip: context.l10n.teamOrgFilter,
+          icon: Icon(AppIcons.tune, color: active || showArchived ? AppColors.primary : null),
+          onPressed: () async {
+            final value = await showAppPopoverMenu<String>(
+              context: buttonContext,
+              lines: true,
+              items: [
+                AppPopoverMenuItem(
+                  value: '__all__',
+                  label: context.l10n.attListShowAll,
+                  selected: !active,
+                ),
+                for (final type in types)
+                  if (type.id != null)
+                    AppPopoverMenuItem(
+                      value: type.id!,
+                      icon: AppIcons.circle,
+                      iconColor: ColorUtils.parseNamedColor(type.color),
+                      label: type.name,
+                      selected: filter == type.id,
+                    ),
+                if (canSeeArchived)
+                  AppPopoverMenuItem(
+                    value: '__archived__',
+                    icon: AppIcons.archiveOutlined,
+                    iconColor: showArchived ? AppColors.primary : null,
+                    label: context.l10n.attListShowArchived,
+                    subtitle: archivedCount > 0
+                        ? context.l10n.attListArchivedCount(archivedCount)
+                        : null,
+                    selected: showArchived,
+                    lines: false,
+                  ),
+              ],
+            );
+            if (value != null && mounted) onSelected(value);
+          },
+        ),
+      );
+    }
+    // Beta design: its Material menu as before.
     return PopupMenuButton<String>(
       tooltip: context.l10n.teamOrgFilter,
       icon: Icon(AppIcons.tune, color: active || showArchived ? AppColors.primary : null),
-      onSelected: (value) {
-        if (value == '__archived__') {
-          ref.read(attendanceListShowArchivedProvider.notifier).state = !showArchived;
-          return;
-        }
-        ref.read(attendanceListTypeFilterProvider.notifier).state =
-            value == '__all__' ? null : value;
-      },
+      onSelected: onSelected,
       itemBuilder: (context) => [
         PopupMenuItem<String>(
           value: '__all__',

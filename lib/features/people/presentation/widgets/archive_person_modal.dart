@@ -55,6 +55,8 @@ class _ArchivePersonModalState extends State<_ArchivePersonModal> {
       initialDate: _date,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
+      // md look: Ionic has a native date input here (calendar with buttons).
+      overlay: IonDatetimeOverlay.buttons,
     );
     if (picked != null && mounted) {
       setState(() => _date = DateTime(picked.year, picked.month, picked.day));

@@ -258,7 +258,7 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                           title: Text(context.l10n.attListConductor),
                           trailing: DropdownButtonHideUnderline(
                             child: AppDropdownButton<int>(
-                              iosInterface: AppSelectInterface.alert,
+                              interface: AppSelectInterface.alert,
                               value: conductorValue,
                               hint: Text(context.l10n.attendanceChoose),
                               alignment: AlignmentDirectional.centerEnd,

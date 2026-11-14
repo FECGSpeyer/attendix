@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,6 +13,7 @@ import '../../../../data/repositories/duty_repository.dart' show DutyTermin;
 import '../pages/unavailability_page.dart';
 import 'duty_actions.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/ion_button.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
@@ -196,7 +197,15 @@ class SelfServiceDutySection extends ConsumerWidget {
               ListTile(
                 title: Text(t.title),
                 subtitle: Text('${_dateShort(t)}${isUrgentDuty(t) ? ' · ${context.l10n.signoutUrgent}' : ''} · ${_dutyMeta(t)}'),
-                trailing: FilledButton.tonal(
+                // Ionic `ion-button slot="end" size="small"` (solid
+                // primary); the Beta design keeps its tonal button.
+                trailing: context.rdSkin == null
+                    ? IonButton(
+                        label: context.l10n.commonApply,
+                        small: true,
+                        onPressed: () => takeDutyAction(context, ref, t.attendance.id!),
+                      )
+                    : FilledButton.tonal(
                   onPressed: () => takeDutyAction(context, ref, t.attendance.id!),
                   child: IonButtonLabel(context.l10n.commonApply),
                 ),
@@ -335,26 +344,26 @@ Widget _openDutyTile(
 /// Sheet "Offene Dienste" with "Ich übernehme" and "Regelmäßig verhindert".
 Future<void> showOpenDutiesSheet(BuildContext context) {
   if (context.rdSkin != null) return _rdOpenDutiesSheet(context);
-  return showModalBottomSheet<void>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (ctx) => AppDraggableSheet(
-      expand: false,
-      initialChildSize: 0.75,
-      builder: (ctx, scroll) => Consumer(
+  // Ionic openDuties modal: [initialBreakpoint]="0.75"
+  // [breakpoints]="[0, 0.75, 1]", toolbar with ion-title and the end button
+  // "Schließen".
+  return showIonSheet<void>(
+    context,
+    breakpoints: const [0, 0.75, 1],
+    initialBreakpoint: 0.75,
+    builder: (ctx, scroll) => Consumer(
         builder: (ctx, ref, _) {
           final overview = ref.watch(myDutyOverviewProvider).valueOrNull;
           final open = overview?.openDuties ?? const <DutyTermin>[];
-          return ListView(
+          return IonSheetScaffold(
+            title: context.l10n.signoutOpenDuties,
+            end: [
+              TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(context.l10n.commonClose)),
+            ],
+            body: ListView(
             controller: scroll,
+            padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(ctx).bottom),
             children: [
-              ListTile(
-                title: Text(context.l10n.signoutOpenDuties, style: const TextStyle(fontWeight: FontWeight.w600)),
-                trailing: TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(context.l10n.commonClose)),
-              ),
-              const Divider(height: 1),
               if (open.isEmpty)
                 Padding(
                   padding: const EdgeInsets.all(AppDimensions.paddingL),
@@ -383,9 +392,9 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
                   },
                 ),
             ],
+            ),
           );
         },
-      ),
     ),
   );
 }

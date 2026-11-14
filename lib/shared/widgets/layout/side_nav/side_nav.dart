@@ -22,7 +22,7 @@ import '../../../../features/statistics/presentation/pages/statistics_page.dart'
 import '../../../../features/planning/presentation/pages/planning_page.dart'
     show showPlanningModal;
 import '../../../../l10n/l10n.dart';
-import '../../tenant/tenant_switcher_title.dart' show switchTenant;
+import '../../tenant/tenant_switcher_title.dart' show switchTenant, showTenantPopover;
 import '../route_leave_guard.dart';
 import 'nav_items.dart';
 import 'side_nav_layout.dart';
@@ -670,39 +670,33 @@ class _TenantButton extends StatelessWidget {
       button: true,
       label: '${l10n.settingsSwitchTenant}: $longName',
       excludeSemantics: true,
-      child: PopupMenuButton<Tenant>(
-        tooltip: longName,
-        position: PopupMenuPosition.under,
-        offset: collapsed ? const Offset(sidePanelRailWidth - 8, -40) : Offset.zero,
-        constraints: const BoxConstraints.tightFor(width: 240),
-        onSelected: onSelected,
-        itemBuilder: (context) => [
-          for (final t in tenants)
-            PopupMenuItem<Tenant>(
-              value: t,
-              child: Row(children: [
-                Expanded(
-                  child: Text(t.longName.isNotEmpty ? t.longName : t.shortName,
-                      overflow: TextOverflow.ellipsis),
-                ),
-                if (t.id == tenant?.id)
-                  Container(
-                    margin: const EdgeInsets.only(left: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      l10n.settingsCurrent,
-                      style: const TextStyle(
-                          color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-              ]),
-            ),
-        ],
-        child: face,
+      // KP_SELECTS (QUE-03): the Ionic `ion-popover` of the side panel
+      // (`--width: 240px`, `side` bottom – collapsed: end –, `alignment`
+      // start) through the shared tenant switcher popover.
+      child: Tooltip(
+        message: longName,
+        child: Builder(
+          builder: (triggerContext) => InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () async {
+              final box = triggerContext.findRenderObject()! as RenderBox;
+              final rect = box.localToGlobal(Offset.zero) & box.size;
+              final picked = await showTenantPopover(
+                triggerContext,
+                tenants: tenants,
+                currentTenantId: tenant?.id,
+                width: 240,
+                anchor: collapsed
+                    // beside the rail, top edge at the logo
+                    ? Rect.fromLTWH(rect.right, rect.top + 4, 240, 0)
+                    // below the instance card (its margins: 10 / 4 / 10 / 6)
+                    : Rect.fromLTRB(rect.left + 10, rect.top + 4, rect.right - 10, rect.bottom - 6),
+              );
+              if (picked != null) onSelected(picked);
+            },
+            child: face,
+          ),
+        ),
       ),
     );
   }

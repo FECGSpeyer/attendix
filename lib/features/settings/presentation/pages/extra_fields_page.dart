@@ -2,6 +2,8 @@ import 'dart:async' show unawaited;
 
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,7 +19,8 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/extra_fields_repository.dart';
 import '../../../../data/repositories/song_repository.dart' show songRepositoryForTenantProvider;
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonInsetList, IonItem;
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../widgets/ion_condense.dart';
 import '../widgets/settings_list.dart';
@@ -539,13 +542,10 @@ Future<ExtraField?> showExtraFieldSheet(
       }
     }
 
-    final result = await showModalBottomSheet<ExtraField>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      // Controllers are disposed once the sheet is unmounted (after its
-      // exit animation), not as soon as its future completes.
-      builder: (sheetContext) => _DisposeOnUnmount(
+    final classic = context.rdSkin == null;
+    // Controllers are disposed once the sheet is unmounted (after its
+    // exit animation), not as soon as its future completes.
+    Widget sheet(BuildContext sheetContext, ScrollController? scrollController) => _DisposeOnUnmount(
         onDispose: disposeControllers,
         child: StatefulBuilder(
           builder: (ctx, setSheet) {
@@ -650,15 +650,11 @@ Future<ExtraField?> showExtraFieldSheet(
               Navigator.pop(sheetContext, buildField(id));
             }
 
-            return Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-              child: SafeArea(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  child: Column(
+            final form = Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (!classic) ...[
                       Row(
                         children: [
                           Expanded(
@@ -671,6 +667,7 @@ Future<ExtraField?> showExtraFieldSheet(
                         ],
                       ),
                       const SizedBox(height: AppDimensions.paddingS),
+                      ],
                       if (isEdit)
                         ListTile(
                           contentPadding: EdgeInsets.zero,
@@ -679,7 +676,7 @@ Future<ExtraField?> showExtraFieldSheet(
                         )
                       else
                         AppDropdownFormField<String>(
-                          iosInterface: AppSelectInterface.alert,
+                          interface: AppSelectInterface.alert,
                           value: type,
                           decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
                           items: [
@@ -702,7 +699,7 @@ Future<ExtraField?> showExtraFieldSheet(
                         decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
                       ),
                       AppDropdownFormField<String>(
-                        iosInterface: AppSelectInterface.alert,
+                        interface: AppSelectInterface.alert,
                         value: displayMode,
                         decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
                         items: [
@@ -780,6 +777,40 @@ Future<ExtraField?> showExtraFieldSheet(
                             ),
                           ),
                       ],
+                      // Ionic: the last `ion-item-group` of the sheet is one
+                      // `ion-item button detail="false"` with a coloured
+                      // label – "Alle zurücksetzen" (warning) in the edit
+                      // sheet, "Feld hinzufügen" (primary) in the add sheet;
+                      // the edit sheet applies its changes when it is closed.
+                      if (context.rdSkin == null) ...[
+                        if (isEdit && isPerson) ...[
+                          const SizedBox(height: AppDimensions.paddingM),
+                          IonInsetList(
+                            margin: EdgeInsets.zero,
+                            children: [
+                              IonItem(
+                                title: Text(context.l10n.extraFieldsResetAll),
+                                titleColor: AppColors.warning,
+                                onTap: resetValues,
+                              ),
+                            ],
+                          ),
+                        ],
+                        if (!isEdit) ...[
+                          const SizedBox(height: AppDimensions.paddingM),
+                          IonInsetList(
+                            margin: EdgeInsets.zero,
+                            children: [
+                              IonItem(
+                                title: Text(context.l10n.typeSettingsAddField),
+                                titleColor: AppColors.primary,
+                                onTap: submit,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ] else ...[
+                      // Beta design: its buttons as before.
                       if (isEdit && isPerson) ...[
                         const SizedBox(height: AppDimensions.paddingS),
                         TextButton(
@@ -788,8 +819,6 @@ Future<ExtraField?> showExtraFieldSheet(
                               style: const TextStyle(color: AppColors.warning)),
                         ),
                       ],
-                      // Ionic: only the add sheet has a button; the edit sheet
-                      // applies its changes when it is closed.
                       if (!isEdit) ...[
                         const SizedBox(height: AppDimensions.paddingM),
                         ElevatedButton(
@@ -797,15 +826,47 @@ Future<ExtraField?> showExtraFieldSheet(
                           child: Text(context.l10n.typeSettingsAddField),
                         ),
                       ],
+                      ],
                     ],
+                  );
+            if (classic) {
+              // Ionic: toolbar with the ion-title only (add) / plus the
+              // close ✕ in the end slot (edit).
+              return IonSheetScaffold(
+                title: isEdit ? context.l10n.typeSettingsEditField : context.l10n.extraFieldsAddNew,
+                showClose: isEdit,
+                onClose: () => Navigator.pop(sheetContext),
+                body: SafeArea(
+                  top: false,
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.all(AppDimensions.paddingM),
+                    child: form,
                   ),
+                ),
+              );
+            }
+            return Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(AppDimensions.paddingM),
+                  child: form,
                 ),
               ),
             );
           },
         ),
-      ),
-    );
+      );
+    final result = classic
+        // Ionic field modals: initialBreakpoint="1" [breakpoints]="[0, 1]".
+        ? await showIonSheet<ExtraField>(context, builder: sheet)
+        : await showModalBottomSheet<ExtraField>(
+            context: context,
+            useRootNavigator: true, // IOS_SHELL2: above the tab bar
+            isScrollControlled: true,
+            builder: (sheetContext) => sheet(sheetContext, null),
+          );
     // Edit sheet: every close applies the edited copy (sheet widgets and
     // their controllers are still alive while the exit animation runs).
     if (isEdit) return buildField(existing.id);

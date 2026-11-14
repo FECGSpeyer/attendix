@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +16,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/toast_helper.dart';
 import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive.dart';
-import '../layout/ion_modal_handle.dart';
 
 /// Shows the feedback bottom sheet.
 ///
@@ -51,6 +51,7 @@ void showFeedbackSheet(BuildContext context) {
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
+    clipBehavior: Clip.antiAlias,
     builder: (context) => const _FeedbackSheet(),
   );
 }
@@ -377,33 +378,24 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: AppDraggableSheet(
+        // Ionic: breakpoints [0, 1], the md toolbar with the title and the
+        // modal handle (shared sheet scaffold).
+        breakpoints: const [0, 1],
+        initialBreakpoint: 1,
         initialChildSize: 0.7,
         minChildSize: 0.5,
         maxChildSize: 0.9,
         expand: false,
         builder: (context, scrollController) {
           return Column(
+            // The header is painted last so that its md shadow lies over
+            // the content.
+            verticalDirection: VerticalDirection.up,
             children: [
-              // Handle bar
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.medium.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              // Title
-              Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Text(
-                  context.l10n.settingsHelpFeedback,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ),
+              Expanded(
+                child: Column(
+                  children: [
+              const SizedBox(height: AppDimensions.paddingM),
               // UX_SETTINGS: Ionic "Per Telegram kontaktieren" + "oder"
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
@@ -447,6 +439,10 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                   ],
                 ),
               ),
+                  ],
+                ),
+              ),
+              IonSheetHeader(title: context.l10n.settingsHelpFeedback),
             ],
           );
         },

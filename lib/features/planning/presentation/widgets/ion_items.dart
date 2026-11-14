@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
@@ -648,6 +650,7 @@ class IonSelect<T> extends StatelessWidget {
     required this.items,
     required this.onChanged,
     this.leading,
+    this.interface = AppSelectInterface.popover,
   });
 
   final String label;
@@ -655,6 +658,10 @@ class IonSelect<T> extends StatelessWidget {
   final List<DropdownMenuItem<T>> items;
   final ValueChanged<T?>? onChanged;
   final Widget? leading;
+
+  /// Ionic `ion-select interface` (the alert's header is [label]; the
+  /// modal has no title, like an `ion-select` without `interfaceOptions`).
+  final AppSelectInterface interface;
 
   @override
   Widget build(BuildContext context) {
@@ -668,6 +675,8 @@ class IonSelect<T> extends StatelessWidget {
           Expanded(
             child: DropdownButtonHideUnderline(
               child: AppDropdownButton<T>(
+                interface: interface,
+                header: interface == AppSelectInterface.modal ? null : label,
                 value: value,
                 isExpanded: true,
                 alignment: AlignmentDirectional.centerEnd,
@@ -695,29 +704,22 @@ class IonSelect<T> extends StatelessWidget {
 
 /// Ionic `ion-datetime-button`: grey rounded chip showing the date/time
 /// (no "Uhr" suffix). Without [onTap] it is read-only (disabled datetime).
+/// QUE-28: the shared [IonDatetimeButton] under its old name; [disabled]
+/// is Ionic's `[disabled]` on the button (40 % opacity).
 class IonDatetimeChip extends StatelessWidget {
-  const IonDatetimeChip({super.key, required this.text, this.onTap});
+  const IonDatetimeChip({super.key, required this.text, this.onTap, this.disabled = false});
 
   final String text;
-  final VoidCallback? onTap;
+  final FutureOr<void> Function()? onTap;
+  final bool disabled;
 
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final background = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFEDEEF0);
-    return Material(
-      color: background,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Text(text, style: Theme.of(context).textTheme.bodyLarge),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => IonDatetimeButton(
+        date: text,
+        onDateTap: onTap,
+        disabled: disabled,
+        betaStyle: Theme.of(context).textTheme.bodyLarge,
+      );
 }
 
 /// Ionic `ion-header collapse="condense"`: on iOS the page shows a large
@@ -807,25 +809,6 @@ class _IonCondenseScaffoldState extends State<IonCondenseScaffold> {
   }
 }
 
-/// Ionic `ion-popover` opened from a trigger button: a menu anchored below
-/// the widget of [anchorContext].
-Future<T?> showIonPopover<T>(
-  BuildContext anchorContext, {
-  required List<PopupMenuEntry<T>> items,
-  BoxConstraints? constraints,
-}) {
-  final box = anchorContext.findRenderObject() as RenderBox;
-  final overlay = Navigator.of(anchorContext).overlay!.context.findRenderObject() as RenderBox;
-  final topLeft = box.localToGlobal(Offset(0, box.size.height), ancestor: overlay);
-  final bottomRight = box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay);
-  return showMenu<T>(
-    context: anchorContext,
-    position: RelativeRect.fromRect(Rect.fromPoints(topLeft, bottomRight), Offset.zero & overlay.size),
-    constraints: constraints,
-    items: items,
-  );
-}
-
 /// Ionic `ion-chip` (filled tint or outline, 0.5 opacity when disabled).
 /// iOS (IOS27_SWEEP, core ios chip): coloured fill 8 %, outline border
 /// 32 %, 14.875pt (.875rem), disabled .4.
@@ -836,6 +819,7 @@ class IonChip extends StatelessWidget {
     required this.color,
     this.outline = false,
     this.disabled = false,
+    this.icon,
     this.onTap,
   });
 
@@ -843,7 +827,16 @@ class IonChip extends StatelessWidget {
   final Color color;
   final bool outline;
   final bool disabled;
+
+  /// `ion-icon` before the label (20 px, the chip's text colour).
+  final IconData? icon;
   final VoidCallback? onTap;
+
+  Widget _label(bool ios) => Text(label,
+      style: TextStyle(
+          fontSize: ios ? 0.875 * ios27.IonIos.rem : IonMd.chipFontSize,
+          height: ios ? null : 20 / 14,
+          color: ios ? color : IonMd.shade(color)));
 
   @override
   Widget build(BuildContext context) {
@@ -863,11 +856,17 @@ class IonChip extends StatelessWidget {
           onTap: disabled ? null : onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Text(label,
-                style: TextStyle(
-                    fontSize: ios ? 0.875 * ios27.IonIos.rem : IonMd.chipFontSize,
-                    height: ios ? null : 20 / 14,
-                    color: ios ? color : IonMd.shade(color))),
+            child: icon == null
+                ? _label(ios)
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // chip.scss: icon 20px, margin -4 / 8 / -4 / -4.
+                      Icon(icon, size: 20, color: ios ? color : IonMd.shade(color)),
+                      const SizedBox(width: 4),
+                      Flexible(child: _label(ios)),
+                    ],
+                  ),
           ),
         ),
       ),

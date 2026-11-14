@@ -27,6 +27,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/services/web_window.dart' show setUnloadWarning;
 
 /// German holiday regions (also used by the Beta page Allgemein)
@@ -350,6 +351,9 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       firstDate: first,
       lastDate: today,
       locale: Locale(currentLanguage()), // PARITY_R10: app language
+      // Ionic: `ion-modal.attDateModal`, `show-adjacent-days`.
+      overlay: IonDatetimeOverlay.dateModal,
+      showAdjacentDays: true,
     );
     if (picked != null) {
       // Fix double setState (Issue #13) - set both values in one setState
@@ -443,17 +447,20 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       // UX_SETTINGS: Ionic saves via FAB (save-outline)
       floatingActionButton: _isLoading
           ? null
-          : FloatingActionButton(
+          // IOS_SHELL: iOS → ion-fab in the tab bar row
+          : TabBarFab(child: FloatingActionButton(
               onPressed: _isSaving ? null : _saveSettings,
               tooltip: context.l10n.commonSave,
               child: _isSaving
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 22,
                       height: 22,
-                      child: AppSpinner(strokeWidth: 2, color: Colors.white),
+                      // The FAB's own icon colour (the iOS glass button is
+                      // light: a white spinner would be invisible).
+                      child: AppSpinner(strokeWidth: 2, color: fabSpinnerColor(context)),
                     )
                   : Icon(AppIcons.saveOutlined),
-            ),
+            )),
       body: _isLoading
           ? const Center(child: AppSpinner())
           : Form(
@@ -725,7 +732,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         IonStackedField(
                           label: context.l10n.generalSettingsHolidayState,
                           builder: (decoration) => AppDropdownFormField<String>(
-                            iosInterface: AppSelectInterface.alert,
+                            interface: AppSelectInterface.alert,
                           value: _selectedRegion,
                           decoration: decoration,
                           items: holidayRegions
@@ -811,11 +818,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     if (!mounted) return;
 
-    await showModalBottomSheet(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      builder: (ctx) => CriticalRuleSheet(
+    await showCriticalRuleSheet(
+      context,
         attendanceTypes: attendanceTypes,
         onSave: (rule) {
           setState(() {
@@ -824,7 +828,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           });
           ToastHelper.showSuccess(context, context.l10n.generalSettingsFlutterRuleAdded);
         },
-      ),
     );
   }
 
@@ -835,11 +838,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     if (!mounted) return;
 
-    await showModalBottomSheet(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      builder: (ctx) => CriticalRuleSheet(
+    await showCriticalRuleSheet(
+      context,
         rule: rule,
         attendanceTypes: attendanceTypes,
         onSave: (updatedRule) {
@@ -849,7 +849,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           });
           ToastHelper.showSuccess(context, context.l10n.generalSettingsFlutterRuleUpdated);
         },
-      ),
     );
   }
 

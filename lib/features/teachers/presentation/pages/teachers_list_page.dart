@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,6 +18,7 @@ import '../../../../data/repositories/teacher_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../people/presentation/widgets/ion/ion_widgets.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground;
@@ -67,22 +70,39 @@ Future<Teacher?> showAddTeacherSheet(
       .where((g) => g.maingroup != true)
       .toList();
   if (!context.mounted) return null;
-  final result = await showModalBottomSheet<Teacher>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    showDragHandle: true,
-    builder: (ctx) => Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-      child: _TeacherForm(
-        availableInstruments: groups,
-        initialInstruments: {
-          for (final id in initialInstruments)
-            if (groups.any((g) => g.id == id)) id,
-        },
-      ),
-    ),
-  );
+  final ticked = {
+    for (final id in initialInstruments)
+      if (groups.any((g) => g.id == id)) id,
+  };
+  final result = context.rdSkin == null
+      // Ionic teachers modal: [breakpoints]="[0, 0.7]" [initialBreakpoint]="0.7",
+      // ion-toolbar with the ion-title only.
+      ? await showIonSheet<Teacher>(
+          context,
+          breakpoints: const [0, 0.7],
+          initialBreakpoint: 0.7,
+          builder: (ctx, controller) => IonSheetScaffold(
+            title: ctx.l10n.teachersAdd,
+            body: _TeacherForm(
+              availableInstruments: groups,
+              initialInstruments: ticked,
+              scrollController: controller,
+            ),
+          ),
+        )
+      : await showModalBottomSheet<Teacher>(
+          context: context,
+          useRootNavigator: true, // IOS_SHELL2: above the tab bar
+          isScrollControlled: true,
+          showDragHandle: true,
+          builder: (ctx) => Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+            child: _TeacherForm(
+              availableInstruments: groups,
+              initialInstruments: ticked,
+            ),
+          ),
+        );
   if (result == null) return null;
   // Same tenant and account as when the sheet was opened (one repository
   // instance per tenant and account).
@@ -257,7 +277,12 @@ class _TeacherForm extends StatefulWidget {
     required this.availableInstruments,
     this.players = const [],
     this.initialInstruments = const {},
+    this.scrollController,
   });
+
+  /// Classic "Lehrer hinzufügen" sheet: the controller of the breakpoint
+  /// sheet; the title then sits in the sheet toolbar.
+  final ScrollController? scrollController;
 
   final Teacher? teacher;
   final List<Group> availableInstruments;
@@ -307,7 +332,17 @@ class _TeacherFormState extends State<_TeacherForm> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AppAlertDialog(
           title: Text(context.l10n.teachersInstruments),
-          content: SizedBox(
+          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
+          content: AppAlertCheckboxGroup<int>(
+            options: [
+              for (final g in widget.availableInstruments)
+                if (g.id != null) AppAlertOption(g.id!, g.name),
+            ],
+            values: selected,
+            onChanged: (id, checked) => setDialogState(() {
+              checked ? selected.add(id) : selected.remove(id);
+            }),
+            beta: SizedBox(
             width: double.maxFinite,
             child: ListView(
               shrinkWrap: true,
@@ -327,6 +362,7 @@ class _TeacherFormState extends State<_TeacherForm> {
                     ),
               ],
             ),
+          ),
           ),
           actions: [
             TextButton(
@@ -374,12 +410,13 @@ class _TeacherFormState extends State<_TeacherForm> {
         .map((g) => g.name)
         .join(', ');
     return SingleChildScrollView(
+      controller: widget.scrollController,
       padding: const EdgeInsets.all(AppDimensions.paddingM),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (_isNew) ...[
+          if (_isNew && widget.scrollController == null) ...[
             Text(context.l10n.teachersAdd,
                 style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: AppDimensions.paddingM),
@@ -417,15 +454,26 @@ class _TeacherFormState extends State<_TeacherForm> {
           ),
           if (widget.players.isNotEmpty) ...[
             const SizedBox(height: AppDimensions.paddingM),
-            ExpansionTile(
-              title: Text(context.l10n.teachersPlayers),
-              initiallyExpanded: true,
-              tilePadding: EdgeInsets.zero,
-              children: [
-                for (final p in widget.players)
-                  ListTile(contentPadding: EdgeInsets.zero, title: Text(p)),
-              ],
-            ),
+            if (context.rdSkin != null)
+              ExpansionTile(
+                title: Text(context.l10n.teachersPlayers),
+                initiallyExpanded: true,
+                tilePadding: EdgeInsets.zero,
+                children: [
+                  for (final p in widget.players)
+                    ListTile(contentPadding: EdgeInsets.zero, title: Text(p)),
+                ],
+              )
+            else
+              IonAccordionTile(
+                title: Text(context.l10n.teachersPlayers),
+                initiallyExpanded: true,
+                headerPadding: EdgeInsets.zero,
+                children: [
+                  for (final p in widget.players)
+                    ListTile(contentPadding: EdgeInsets.zero, title: Text(p)),
+                ],
+              ),
           ],
           const SizedBox(height: AppDimensions.paddingL),
           FilledButton(

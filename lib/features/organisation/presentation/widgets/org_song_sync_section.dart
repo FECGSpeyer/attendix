@@ -93,7 +93,7 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
                         child: AppSpinner(strokeWidth: 2),
                       )
                     : AppDropdownButton<int?>(
-                      iosInterface: AppSelectInterface.actionSheet,
+                      interface: AppSelectInterface.actionSheet,
                         value: widget.linkedTenants.any((t) => t.id == current) ||
                                 current == null
                             ? current

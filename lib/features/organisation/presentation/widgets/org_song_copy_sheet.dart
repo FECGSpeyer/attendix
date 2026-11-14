@@ -444,7 +444,7 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                         child: AppDropdownFormField<int>(
-                          iosInterface: AppSelectInterface.actionSheet,
+                          interface: AppSelectInterface.actionSheet,
                           value: _targetLibraryId,
                           decoration: InputDecoration(labelText: l10n.personTargetInstance),
                           isExpanded: true,
@@ -507,7 +507,8 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
                 ),
               ),
             ),
-            RadioListTile<_Mode>(
+            IonRadioItem<_Mode>(
+              labelEnd: true,
               value: _Mode.existing,
               groupValue: _mode,
               title: Text(l10n.orgSongsModeExisting),
@@ -517,7 +518,7 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 child: AppDropdownFormField<int>(
-                  iosInterface: AppSelectInterface.actionSheet,
+                  interface: AppSelectInterface.actionSheet,
                   value: _existingSongId,
                   decoration: InputDecoration(labelText: l10n.orgSongsExistingSong),
                   isExpanded: true,
@@ -533,7 +534,8 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
                       }),
                 ),
               ),
-            RadioListTile<_Mode>(
+            IonRadioItem<_Mode>(
+              labelEnd: true,
               value: _Mode.created,
               groupValue: _mode,
               title: Text(l10n.orgSongsModeNew),
@@ -667,7 +669,7 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
           Flexible(
             child: DropdownButtonHideUnderline(
               child: AppDropdownButton<int?>(
-                iosInterface: AppSelectInterface.actionSheet,
+                interface: AppSelectInterface.actionSheet,
                 isExpanded: true,
                 value: values.contains(option.instrumentId) ? option.instrumentId : null,
                 hint: Text(l10n.orgSongsTargetGroup),

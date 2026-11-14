@@ -11,6 +11,7 @@ import '../../../../core/providers/viewer_providers.dart';
 import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../data/repositories/user_registration_repository.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
@@ -205,12 +206,14 @@ class _AddUserDialogState extends State<_AddUserDialog> {
   Widget build(BuildContext context) {
     return AppAlertDialog(
       title: Text(context.l10n.settingsFlutterUserMgmtAdd),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
+      // Like the Ionic "Beobachter hinzufügen" alert: placeholder-only alert
+      // inputs (plus the role select of this page).
+      content: AppAlertInputGroup(
         children: [
-          TextField(
+          AppAlertInput(
             controller: _emailController,
-            decoration: InputDecoration(
+            placeholder: context.l10n.settingsEmailAddress,
+            betaDecoration: InputDecoration(
               labelText: context.l10n.settingsEmailAddress,
               hintText: context.l10n.settingsFlutterUserMgmtEmailPh,
             ),
@@ -219,7 +222,7 @@ class _AddUserDialogState extends State<_AddUserDialog> {
           ),
           const SizedBox(height: AppDimensions.paddingM),
           AppDropdownFormField<Role>(
-            iosInterface: AppSelectInterface.alert,
+            interface: AppSelectInterface.alert,
             value: _selectedRole,
             decoration: InputDecoration(labelText: context.l10n.personRole),
             items: [
@@ -236,16 +239,18 @@ class _AddUserDialogState extends State<_AddUserDialog> {
           // LOGIC_PEOPLE: viewers / parents need a name (Ionic createViewer /
           // createParent insert firstName + lastName).
           if (_needsName) ...[
-            const SizedBox(height: AppDimensions.paddingM),
-            TextField(
+            const AppAlertBetaGap(AppDimensions.paddingM),
+            AppAlertInput(
               controller: _firstNameController,
-              decoration: InputDecoration(labelText: context.l10n.peopleFirstName),
+              placeholder: context.l10n.peopleFirstName,
+              betaDecoration: InputDecoration(labelText: context.l10n.peopleFirstName),
               textCapitalization: TextCapitalization.words,
             ),
-            const SizedBox(height: AppDimensions.paddingS),
-            TextField(
+            const AppAlertBetaGap(AppDimensions.paddingS),
+            AppAlertInput(
               controller: _lastNameController,
-              decoration: InputDecoration(labelText: context.l10n.peopleLastName),
+              placeholder: context.l10n.peopleLastName,
+              betaDecoration: InputDecoration(labelText: context.l10n.peopleLastName),
               textCapitalization: TextCapitalization.words,
             ),
           ],
@@ -546,29 +551,54 @@ class _UserTile extends ConsumerWidget {
       ),
       title: Text(user.email ?? context.l10n.commonUnknown),
       subtitle: Text(_getRoleLabel(user.roleEnum)),
-      trailing: PopupMenuButton<Role>(
-        onSelected: (role) => _changeRole(context, ref, role),
-        itemBuilder: (context) {
-          // Only show assignable roles (Issue #12)
-          // Exclude: none, applicant, player, helper, voiceLeader, voiceLeaderHelper
-          const assignableRoles = [
-            Role.admin,
-            Role.responsible,
-            Role.viewer,
-            Role.parent,
-          ];
-          final tenant = ref.read(currentTenantProvider);
-          final showParent = tenant?.parents ?? false;
+      trailing: context.rdSkin != null
+          // Beta design: its Material menu as before.
+          ? PopupMenuButton<Role>(
+              onSelected: (role) => _changeRole(context, ref, role),
+              itemBuilder: (context) => _assignableRoles(ref)
+                  .map((role) => PopupMenuItem(
+                        value: role,
+                        child: Text(_getRoleLabel(role)),
+                      ))
+                  .toList(),
+              child: _roleChip(),
+            )
+          // Same popover as the other menus ([showAppPopoverMenu]).
+          : Builder(
+              builder: (chipContext) => InkWell(
+                borderRadius: BorderRadius.circular(4),
+                onTap: () async {
+                  final role = await showAppPopoverMenu<Role>(
+                    context: chipContext,
+                    items: [
+                      for (final role in _assignableRoles(ref))
+                        AppPopoverMenuItem(value: role, label: _getRoleLabel(role)),
+                    ],
+                  );
+                  if (role != null && context.mounted) _changeRole(context, ref, role);
+                },
+                child: _roleChip(),
+              ),
+            ),
+    );
+  }
 
-          return assignableRoles
-              .where((r) => r != Role.parent || showParent)
-              .map((role) => PopupMenuItem(
-                    value: role,
-                    child: Text(_getRoleLabel(role)),
-                  ))
-              .toList();
-        },
-        child: Container(
+  // Only show assignable roles (Issue #12)
+  // Exclude: none, applicant, player, helper, voiceLeader, voiceLeaderHelper
+  List<Role> _assignableRoles(WidgetRef ref) {
+    const assignableRoles = [
+      Role.admin,
+      Role.responsible,
+      Role.viewer,
+      Role.parent,
+    ];
+    final tenant = ref.read(currentTenantProvider);
+    final showParent = tenant?.parents ?? false;
+    return assignableRoles.where((r) => r != Role.parent || showParent).toList();
+  }
+
+  Widget _roleChip() {
+    return Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
             color: _getRoleColor(user.roleEnum).withAlpha(20),
@@ -593,9 +623,7 @@ class _UserTile extends ConsumerWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
+        );
   }
 
   Future<void> _changeRole(BuildContext context, WidgetRef ref, Role newRole) async {

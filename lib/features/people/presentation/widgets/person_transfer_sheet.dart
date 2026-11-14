@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -36,18 +36,21 @@ Future<bool> showPersonTransferSheet(
     final done = await showRdSheet<bool>(context, _PersonTransferSheet(person: person, copy: copy, beta: true));
     return done ?? false;
   }
-  final done = await showModalBottomSheet<bool>(
-    context: context,
-    useRootNavigator: true,
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (_) => _PersonTransferSheet(person: person, copy: copy),
+  // Ionic: [breakpoints]="[0, 0.5, 1]" [initialBreakpoint]="0.5".
+  final done = await showIonSheet<bool>(
+    context,
+    breakpoints: const [0, 0.5, 1],
+    initialBreakpoint: 0.5,
+    builder: (_, controller) => _PersonTransferSheet(person: person, copy: copy, scrollController: controller),
   );
   return done ?? false;
 }
 
 class _PersonTransferSheet extends ConsumerStatefulWidget {
-  const _PersonTransferSheet({required this.person, required this.copy, this.beta = false});
+  const _PersonTransferSheet({required this.person, required this.copy, this.beta = false, this.scrollController});
+
+  /// Classic design: the controller of the breakpoint sheet.
+  final ScrollController? scrollController;
 
   final Person person;
   final bool copy;
@@ -221,12 +224,16 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
     final name = '${widget.person.firstName} ${widget.person.lastName}';
     if (widget.beta) return _buildBeta(context, tenants, name.trim());
 
-    return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: MediaQuery.sizeOf(context).height * 0.5),
-      child: Padding(
+    // Ionic: ion-title + close ✕ in the end slot.
+    return IonSheetScaffold(
+      title: widget.copy ? l10n.personCopyFrom(name) : l10n.personTransferFrom(name),
+      showClose: true,
+      onClose: () => Navigator.pop(context, false),
+      body: SingleChildScrollView(
+        controller: widget.scrollController,
         padding: const EdgeInsets.fromLTRB(
           AppDimensions.paddingM,
-          AppDimensions.paddingS,
+          0,
           AppDimensions.paddingM,
           AppDimensions.paddingL,
         ),
@@ -234,29 +241,13 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                const SizedBox(width: 48),
-                Expanded(
-                  child: Text(
-                    widget.copy ? l10n.personCopyFrom(name) : l10n.personTransferFrom(name),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(AppIcons.close, semanticLabel: l10n.commonClose),
-                  onPressed: () => Navigator.pop(context, false),
-                ),
-              ],
-            ),
             const SizedBox(height: AppDimensions.paddingM),
             IonFormTheme(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AppDropdownFormField<int>(
-                    iosInterface: AppSelectInterface.alert,
+                    interface: AppSelectInterface.alert,
                     value: _tenantId,
                     isExpanded: true,
                     decoration: InputDecoration(labelText: l10n.personTargetInstance),
@@ -276,7 +267,7 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
                   if (_tenantId != null && _groups.isNotEmpty) ...[
                     const SizedBox(height: AppDimensions.paddingM),
                     AppDropdownFormField<int>(
-                      iosInterface: AppSelectInterface.alert,
+                      interface: AppSelectInterface.alert,
                       value: _groupId,
                       isExpanded: true,
                       decoration: InputDecoration(labelText: l10n.personTargetGroup),

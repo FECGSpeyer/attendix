@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:ionicons/ionicons.dart';
@@ -79,6 +80,27 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
     final available =
         MediaQuery.sizeOf(context).height - MediaQuery.paddingOf(context).top;
     final full = ios && available > 100 ? (available - 10) / available : 1.0;
+    if (!beta) {
+      // Classic: the shared Ionic sheet ([breakpoints]="[0, 0.75, 1]"
+      // [initialBreakpoint]="0.75"). The iOS header draws the handle itself.
+      final target = await showIonSheet<_BellTarget>(
+        context,
+        breakpoints: const [0, 0.75, 1],
+        initialBreakpoint: 0.75,
+        handle: !ios,
+        // ion-content color="light" behind the inset list
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        builder: (context, scrollController) => _NotificationCenter(
+          initialAllTenants: allTenants,
+          scrollController: scrollController,
+          beta: beta,
+        ),
+      );
+      if (target != null && context.mounted) {
+        await _navigate(context, ref, target.notification);
+      }
+      return;
+    }
     final target = await showModalBottomSheet<_BellTarget>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -751,26 +773,10 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
           _iosHeader(unread, list)
         else ...[
           // ion-toolbar: ion-title + end buttons (md mode)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Text(
-                      context.l10n.bellTitle,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                  ),
-                ),
-                ..._headerButtons(unread, list, false),
-              ],
-            ),
+          IonSheetHeader(
+            title: context.l10n.bellTitle,
+            end: _headerButtons(unread, list, false),
+            border: false,
           ),
           Padding(
             padding: const EdgeInsets.all(AppDimensions.paddingS),

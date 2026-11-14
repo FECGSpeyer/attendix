@@ -396,7 +396,12 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
       hour: int.tryParse(parts.isNotEmpty ? parts[0] : '8') ?? 8,
       minute: int.tryParse(parts.length > 1 ? parts[1] : '0') ?? 0,
     );
-    final time = await showAppTimePicker(context: context, initialTime: initialTime);
+    final time = await showAppTimePicker(
+      context: context,
+      initialTime: initialTime,
+      // Ionic minuteValues="0,5,10,…,55"; the Beta keeps its minute steps.
+      minuteInterval: context.rdSkin != null ? 1 : 5,
+    );
     if (time == null || !mounted || index >= _definitions.length) return;
     _updateSegment(
       index,
@@ -662,13 +667,20 @@ class _ShiftInstanceTileState extends State<_ShiftInstanceTile> {
         ),
         ListTile(
           title: Text(context.l10n.shiftsStartDate),
-          trailing: Opacity(
-            opacity: widget.isUsed ? 0.5 : 1,
-            child: IonDatetimeChip(
-              text: dateFormat.format(date),
-              onTap: widget.isUsed ? null : () => _selectDate(context, date),
-            ),
-          ),
+          // Ionic `<ion-datetime-button [disabled]="isUsed">` (40 %).
+          trailing: context.rdSkin != null
+              ? Opacity(
+                  opacity: widget.isUsed ? 0.5 : 1,
+                  child: IonDatetimeChip(
+                    text: dateFormat.format(date),
+                    onTap: widget.isUsed ? null : () => _selectDate(context, date),
+                  ),
+                )
+              : IonDatetimeChip(
+                  text: dateFormat.format(date),
+                  disabled: widget.isUsed,
+                  onTap: () => _selectDate(context, date),
+                ),
         ),
         ListTile(
           title: Text(context.l10n.shiftsExample, style: const TextStyle(color: AppColors.primary)),

@@ -273,9 +273,9 @@ class PersonDetailPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(error))),
               const SizedBox(height: AppDimensions.paddingM),
-              ElevatedButton(
+              IonButton(
                 onPressed: () => ref.refresh(personProvider(personId)),
-                child: IonButtonLabel(context.l10n.messagesRetry),
+                label: context.l10n.messagesRetry,
               ),
             ],
           ),
@@ -741,12 +741,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     // Validate required fields
     if (_draft.firstName.isEmpty || _draft.lastName.isEmpty) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personEnterNames),
-            backgroundColor: AppColors.danger,
-          ),
-        );
+        ToastHelper.showError(context, context.l10n.personEnterNames, beta: LegacySnackBar.danger);
       }
       return;
     }
@@ -754,12 +749,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final currentRole = ref.read(currentRoleProvider);
     if (!currentRole.canEdit) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterNoPermissionEdit),
-            backgroundColor: AppColors.danger,
-          ),
-        );
+        ToastHelper.showError(context, context.l10n.personFlutterNoPermissionEdit, beta: LegacySnackBar.danger);
       }
       return;
     }
@@ -780,12 +770,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final newEmail = _draft.email?.trim() ?? '';
     final emailValid = isValidPersonEmail(newEmail);
     if (newEmail.isNotEmpty && emailChanged && !emailValid) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.personInvalidEmail),
-          backgroundColor: AppColors.danger,
-        ),
-      );
+      ToastHelper.showError(context, context.l10n.personInvalidEmail, beta: LegacySnackBar.danger);
       return;
     }
 
@@ -929,11 +914,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personUpdateFailedWith(friendlyErrorMessage(e))),
-            backgroundColor: AppColors.danger,
-          ),
+        ToastHelper.showError(
+          context,
+          context.l10n.personUpdateFailedWith(friendlyErrorMessage(e)),
+          beta: LegacySnackBar.danger,
         );
       }
     } finally {
@@ -1028,11 +1012,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterRoleUpdateFailed(friendlyErrorMessage(e))),
-            backgroundColor: AppColors.warning,
-          ),
+        ToastHelper.showWarning(
+          context,
+          context.l10n.personFlutterRoleUpdateFailed(friendlyErrorMessage(e)),
+          beta: LegacySnackBar.warning,
         );
       }
     }
@@ -1081,12 +1064,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final groups = ref.read(groupsProvider).valueOrNull ?? const [];
     final group = groups.where((g) => g.name == chosen.groupName).firstOrNull;
     if (group?.id != null) _onFieldChanged('instrument', group!.id);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(context.l10n.personDataTaken),
-        backgroundColor: AppColors.success,
-      ),
-    );
+    ToastHelper.showSuccess(context, context.l10n.personDataTaken, beta: LegacySnackBar.success);
   }
 
   /// Ionic searchPerson(): find this person in a linked tenant, adopt the
@@ -1099,28 +1077,20 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         widget.person,
         firstName: _draft.firstName,
         lastName: _draft.lastName,
-        onNoMatch: () => ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personNoMatchOther),
-            backgroundColor: AppColors.danger,
-          ),
-        ),
+        onNoMatch: () => ToastHelper.showError(context, context.l10n.personNoMatchOther, beta: LegacySnackBar.danger),
       );
       if (!linked) return;
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personEmailUpdated),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        ToastHelper.showSuccess(context, context.l10n.personEmailUpdated, beta: LegacySnackBar.success);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
+        ToastHelper.showError(
+          context,
+          context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)),
+          beta: LegacySnackBar.danger,
         );
       }
     }
@@ -1144,18 +1114,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       ref.invalidate(realtimePlayersProvider);
       ref.invalidate(currentTenantUserProvider);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personUserAssigned),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        ToastHelper.showSuccess(context, context.l10n.personUserAssigned, beta: LegacySnackBar.success);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(friendlyErrorMessage(e)), backgroundColor: AppColors.danger),
-        );
+        ToastHelper.showError(context, friendlyErrorMessage(e), beta: LegacySnackBar.danger);
       }
     }
   }
@@ -1163,12 +1126,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   Future<void> _showPauseDialog() async {
     final currentRole = ref.read(currentRoleProvider);
     if (!currentRole.canEdit) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.personFlutterNoPermissionPause),
-          backgroundColor: AppColors.danger,
-        ),
-      );
+      ToastHelper.showError(context, context.l10n.personFlutterNoPermissionPause, beta: LegacySnackBar.danger);
       return;
     }
     // PEOPLE2: Ionic confirmPause incl. "Pausiert ab" and other instances
@@ -1185,12 +1143,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final currentRole = ref.read(currentRoleProvider);
     if (!currentRole.canEdit) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterNoPermissionReactivate),
-            backgroundColor: AppColors.danger,
-          ),
-        );
+        ToastHelper.showError(context, context.l10n.personFlutterNoPermissionReactivate, beta: LegacySnackBar.danger);
       }
       return;
     }
@@ -1208,8 +1161,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       _closePage();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
+        ToastHelper.showError(
+          context,
+          context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)),
+          beta: LegacySnackBar.danger,
         );
       }
     }
@@ -1227,12 +1182,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final currentRole = ref.read(currentRoleProvider);
     if (!currentRole.canEdit) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterNoPermissionArchive),
-            backgroundColor: AppColors.danger,
-          ),
-        );
+        ToastHelper.showError(context, context.l10n.personFlutterNoPermissionArchive, beta: LegacySnackBar.danger);
       }
       return;
     }
@@ -1247,15 +1197,15 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       ref.invalidate(realtimePlayersProvider);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.personArchived), backgroundColor: AppColors.success),
-        );
+        ToastHelper.showSuccess(context, context.l10n.personArchived, beta: LegacySnackBar.success);
         _close();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
+        ToastHelper.showError(
+          context,
+          context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)),
+          beta: LegacySnackBar.danger,
         );
       }
     }
@@ -1272,18 +1222,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       ref.invalidate(personAttendanceStatsProvider(widget.personId));
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personLateCounterReset),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        ToastHelper.showSuccess(context, context.l10n.personLateCounterReset, beta: LegacySnackBar.success);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.personResetFailed), backgroundColor: AppColors.danger),
-        );
+        ToastHelper.showError(context, context.l10n.personResetFailed, beta: LegacySnackBar.danger);
       }
     }
   }
@@ -1346,25 +1289,38 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           var missing = false;
           return StatefulBuilder(
             builder: (context, setDialogState) => AppAlertDialog(
-              title: Text(context.l10n.personDeclinePerson),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              title: AppAlertTitle(
+                context.l10n.personDeclinePerson,
+                subHeader: context.l10n.personGiveReasonShort,
+              ),
+              content: AppAlertInputGroup(
+                message: missing ? Text(context.l10n.signoutGiveReason) : null,
                 children: [
-                  Text(context.l10n.personGiveReasonShort),
-                  if (missing) ...[
-                    const SizedBox(height: AppDimensions.paddingS),
-                    Text(context.l10n.signoutGiveReason),
-                  ],
-                  const SizedBox(height: AppDimensions.paddingM),
-                  TextField(
+                  AppAlertInput(
                     controller: reasonController,
-                    decoration: const InputDecoration(border: OutlineInputBorder()),
-                    minLines: 2,
-                    maxLines: 4,
+                    textarea: true,
                     autofocus: true,
                   ),
                 ],
+                beta: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(context.l10n.personGiveReasonShort),
+                    if (missing) ...[
+                      const SizedBox(height: AppDimensions.paddingS),
+                      Text(context.l10n.signoutGiveReason),
+                    ],
+                    const SizedBox(height: AppDimensions.paddingM),
+                    TextField(
+                      controller: reasonController,
+                      decoration: const InputDecoration(border: OutlineInputBorder()),
+                      minLines: 2,
+                      maxLines: 4,
+                      autofocus: true,
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(
@@ -1565,12 +1521,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final currentUserRole = ref.read(currentRoleProvider);
     if (!currentUserRole.isConductor) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterNoPermissionRoles),
-            backgroundColor: AppColors.danger,
-          ),
-        );
+        ToastHelper.showError(context, context.l10n.personFlutterNoPermissionRoles, beta: LegacySnackBar.danger);
       }
       return;
     }
@@ -1585,17 +1536,14 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       if (mounted) {
         setState(() => _userRole = newRole);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personRoleUpdated),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        ToastHelper.showSuccess(context, context.l10n.personRoleUpdated, beta: LegacySnackBar.success);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
+        ToastHelper.showError(
+          context,
+          context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)),
+          beta: LegacySnackBar.danger,
         );
       }
     }
@@ -1626,12 +1574,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final currentUserRole = ref.read(currentRoleProvider);
     if (!currentUserRole.isConductor) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterNoPermissionUnlink),
-            backgroundColor: AppColors.danger,
-          ),
-        );
+        ToastHelper.showError(context, context.l10n.personFlutterNoPermissionUnlink, beta: LegacySnackBar.danger);
       }
       return;
     }
@@ -1674,11 +1617,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final currentRole = ref.read(currentRoleProvider);
     if (!currentRole.isConductor) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterNoPermissionCreateAccount),
-            backgroundColor: AppColors.danger,
-          ),
+        ToastHelper.showError(
+          context,
+          context.l10n.personFlutterNoPermissionCreateAccount,
+          beta: LegacySnackBar.danger,
         );
       }
       return;
@@ -1686,12 +1628,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
     if (person.email == null || person.email!.isEmpty) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterNoEmail),
-            backgroundColor: AppColors.danger,
-          ),
-        );
+        ToastHelper.showError(context, context.l10n.personFlutterNoEmail, beta: LegacySnackBar.danger);
       }
       return;
     }
@@ -1737,21 +1674,15 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       }
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterAccountCreatedMail),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        ToastHelper.showSuccess(context, context.l10n.personFlutterAccountCreatedMail, beta: LegacySnackBar.success);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterCreateAccountFailed(
-                '${person.firstName} ${person.lastName}', e)),
-            backgroundColor: AppColors.danger,
-          ),
+        ToastHelper.showError(
+          context,
+          context.l10n.personFlutterCreateAccountFailed(
+            '${person.firstName} ${person.lastName}', e),
+          beta: LegacySnackBar.danger,
         );
       }
     }

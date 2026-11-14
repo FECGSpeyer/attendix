@@ -95,10 +95,11 @@ Future<bool> declineDutyAction(
     context: context,
     builder: (ctx) => AppAlertDialog(
       title: Text(context.l10n.signoutCannot),
-      content: TextField(
+      content: AppAlertInput(
         controller: controller,
         maxLines: 3,
-        decoration: InputDecoration(hintText: context.l10n.dutyReasonOptional),
+        textarea: true,
+        placeholder: context.l10n.dutyReasonOptional,
         autofocus: true,
       ),
       actions: [

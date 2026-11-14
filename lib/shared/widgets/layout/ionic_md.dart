@@ -275,6 +275,17 @@ class IonMd {
   /// Toolbar icon-only button icon: 1.8em of the 14px button.
   static const double toolbarIconSize = 25.2;
 
+  /// `.header-md` box-shadow under an `ion-header`.
+  static const List<BoxShadow> headerShadow = [
+    BoxShadow(
+        color: Color(0x33000000),
+        offset: Offset(0, 2),
+        blurRadius: 4,
+        spreadRadius: -1),
+    BoxShadow(color: Color(0x24000000), offset: Offset(0, 4), blurRadius: 5),
+    BoxShadow(color: Color(0x1F000000), offset: Offset(0, 1), blurRadius: 10),
+  ];
+
   /// ion-button md: 36px min height, radius 4, .875rem medium,
   /// `letter-spacing: .06em`, padding 8 / 1.1em.
   static const double buttonMinHeight = 36;

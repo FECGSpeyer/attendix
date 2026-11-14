@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/locale_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_select.dart';
 import 'settings_list.dart';
@@ -56,14 +57,19 @@ class LanguagePickerTile extends ConsumerWidget {
                 // ion-select ios: `chevron-expand` toggle icon.
                 ios
                     ? const IonSelectIcon(key: Key('languagePickerChevron'))
-                    : Icon(AppIcons.arrowDropDown,
-                        color: AppColors.medium),
+                    // ion-select md: caret (13px, step-500).
+                    : (context.rdSkin == null
+                        ? const IonMdSelectIcon()
+                        : Icon(AppIcons.arrowDropDown, color: AppColors.medium)),
               ],
             );
           }),
         );
 
-    if (ios) {
+    // KP_SELECTS: one select in both looks – the shared `ion-select
+    // interface="popover"` (md: the md popover with the current option
+    // tinted `rgba(primary, .08)`, no radio circle).
+    if (ios || context.rdSkin == null) {
       return KeyedSubtree(
         key: const Key('languagePicker'),
         child: tile(
@@ -86,9 +92,7 @@ class LanguagePickerTile extends ConsumerWidget {
       );
     }
 
-    // PARITY_R3: Ionic md select popover marks the current option with
-    // `.item-radio-checked` – a primary 8 % row background (no grey
-    // Material "initial value" highlight, no radio circle).
+    // Beta design on Android / desktop: unchanged Material menu.
     final primary = Theme.of(context).colorScheme.primary;
     return PopupMenuButton<String>(
       key: const Key('languagePicker'),

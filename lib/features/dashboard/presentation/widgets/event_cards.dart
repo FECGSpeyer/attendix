@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -237,18 +239,13 @@ class NextEventCard extends ConsumerWidget {
   }
 
   void _showExcused(BuildContext context, NextEventSummary s) {
-    showModalBottomSheet<void>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (context) => AppDraggableSheet(
-        expand: false,
-        initialChildSize: 0.75,
-        minChildSize: 0.3,
-        maxChildSize: 1,
-        builder: (context, controller) => Column(
+    final classic = context.rdSkin == null;
+    Widget content(BuildContext context, ScrollController controller) => Column(
           children: [
+            if (classic)
+              // Ionic: ion-header > ion-toolbar > ion-title only.
+              IonSheetHeader(title: context.l10n.homeDashboardSignOuts)
+            else
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Text(context.l10n.homeDashboardSignOuts, style: Theme.of(context).textTheme.titleMedium),
@@ -283,7 +280,28 @@ class NextEventCard extends ConsumerWidget {
               ),
             ),
           ],
-        ),
+        );
+    if (classic) {
+      // Ionic: [initialBreakpoint]="0.75" [breakpoints]="[0, 0.5, 0.75, 1]".
+      showIonSheet<void>(
+        context,
+        breakpoints: const [0, 0.5, 0.75, 1],
+        initialBreakpoint: 0.75,
+        builder: content,
+      );
+      return;
+    }
+    showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => AppDraggableSheet(
+        expand: false,
+        initialChildSize: 0.75,
+        minChildSize: 0.3,
+        maxChildSize: 1,
+        builder: content,
       ),
     );
   }

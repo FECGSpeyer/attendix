@@ -507,7 +507,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     flush: true,
                     label: context.l10n.typeSettingsDefaultStatus,
                     builder: (decoration) => AppDropdownFormField<AttendanceStatus>(
-                      iosInterface: AppSelectInterface.alert,
+                      interface: AppSelectInterface.alert,
                       decoration: decoration,
                       value: _availableStatuses.contains(_defaultStatus)
                           ? _defaultStatus
@@ -590,15 +590,19 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                       subtitle: Text(
                         context.l10n.typeSettingsTimesHint,
                       ),
-                      trailing: Text(_formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
-                          style: Theme.of(context).textTheme.titleMedium),
+                      trailing: _timeValue(
+                        _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
+                        onTap: () => _pickTime(isStart: true),
+                      ),
                       onTap: () => _pickTime(isStart: true),
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(context.l10n.typeSettingsEnd),
-                      trailing: Text(_formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
-                          style: Theme.of(context).textTheme.titleMedium),
+                      trailing: _timeValue(
+                        _formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
+                        onTap: () => _pickTime(isStart: false),
+                      ),
                       onTap: () => _pickTime(isStart: false),
                     ),
                   ],
@@ -723,12 +727,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             // the colour at the end) opening a colour grid popover.
             _buildSection(
               title: context.l10n.typeSettingsAppearance,
-              child: ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(context.l10n.typeSettingsColor),
-                subtitle: Text(context.l10n.typeSettingsColorHint),
-                trailing: Icon(AppIcons.circle, color: ColorUtils.getColorForPicker(_color)),
-                onTap: _pickColor,
+              child: Builder(
+                builder: (rowContext) => ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(context.l10n.typeSettingsColor),
+                  subtitle: Text(context.l10n.typeSettingsColorHint),
+                  trailing: Icon(AppIcons.circle, color: ColorUtils.getColorForPicker(_color)),
+                  onTap: () => rowContext.rdSkin != null ? _pickColor() : _pickColorPopover(rowContext),
+                ),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingL),
@@ -784,6 +790,70 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   /// Ionic colour popover: a grid of ellipses, the selected one on a grey
   /// rounded background.
+  /// Ionic `ion-popover #colorPopover` (trigger = the colour item): an
+  /// `ion-grid` with three columns (`ion-col size="4"`, 1rem radius, the
+  /// current colour on `--ion-color-medium`) of 1.5rem ellipses.
+  Future<void> _pickColorPopover(BuildContext rowContext) async {
+    final box = rowContext.findRenderObject()! as RenderBox;
+    final picked = await showAppPopover<String>(
+      context: rowContext,
+      // The item is the trigger: below it (md: left edge, iOS: centred).
+      anchor: box.localToGlobal(Offset.zero) & box.size,
+      builder: (ctx) => Padding(
+        // ion-grid `--ion-grid-padding: 5px`; the popover list padding of
+        // the shared popover is not part of the Ionic grid popover.
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var i = 0; i < ColorUtils.availableColors.length; i += 3)
+              Row(
+                children: [
+                  for (var j = i; j < i + 3; j++)
+                    Expanded(
+                      child: j >= ColorUtils.availableColors.length
+                          ? const SizedBox.shrink()
+                          : _colorCell(ctx, ColorUtils.availableColors[j]),
+                    ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+    if (picked == null || !mounted) return;
+    setState(() {
+      _color = picked;
+      _hasChanges = true;
+    });
+  }
+
+  /// `ion-col` of the colour popover: padding 8 / 5 / 5 / 5, radius 1rem.
+  Widget _colorCell(BuildContext ctx, String colorName) {
+    final radius = BorderRadius.circular(16);
+    return InkWell(
+      borderRadius: radius,
+      onTap: () => Navigator.pop(ctx, colorName),
+      child: Semantics(
+        selected: _color == colorName,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(5, 8, 5, 5),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: _color == colorName ? AppColors.medium : null,
+            borderRadius: radius,
+          ),
+          child: Icon(
+            AppIcons.circle,
+            size: 24,
+            color: ColorUtils.getColorForPicker(colorName),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The colour dialog of the Beta design (also attendance_type_edit_page_beta).
   Future<void> _pickColor() async {
     final picked = await showAppDialog<String>(
       context: context,
@@ -833,7 +903,25 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(context.l10n.typeSettingsAvailableStatus),
           contentPadding: const EdgeInsets.symmetric(vertical: 8),
-          content: SingleChildScrollView(
+          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
+          content: AppAlertCheckboxGroup<AttendanceStatus>(
+            options: [
+              for (final status in _ionicStatusOptions)
+                AppAlertOption(
+                  status,
+                  _getStatusName(status),
+                  enabled: status != AttendanceStatus.present,
+                ),
+            ],
+            values: selected,
+            onChanged: (status, checked) => setLocal(() {
+              if (checked) {
+                selected.add(status);
+              } else if (selected.length > 1) {
+                selected.remove(status);
+              }
+            }),
+            beta: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -853,6 +941,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   ),
               ],
             ),
+          ),
           ),
           actions: [
             TextButton(
@@ -1160,7 +1249,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               label: context.l10n.typeSettingsExtraFilter,
               helper: context.l10n.typeSettingsExtraFilterHelper,
               builder: (decoration) => AppDropdownFormField<String?>(
-                iosInterface: AppSelectInterface.alert,
+                interface: AppSelectInterface.alert,
                 decoration: decoration,
                 value: selectedField?.id,
                 items: [
@@ -1186,7 +1275,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               flush: true,
               label: context.l10n.typeSettingsValue,
               builder: (decoration) => AppDropdownFormField<bool>(
-                iosInterface: AppSelectInterface.alert,
+                interface: AppSelectInterface.alert,
                 decoration: decoration,
                 value: rawOption is bool ? rawOption : null,
                 items: [
@@ -1206,7 +1295,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               flush: true,
               label: context.l10n.typeSettingsOption,
               builder: (decoration) => AppDropdownFormField<String>(
-                iosInterface: AppSelectInterface.alert,
+                interface: AppSelectInterface.alert,
                 decoration: decoration,
                 value: rawOption is String && selectedField.options!.contains(rawOption) ? rawOption : null,
                 items: [
@@ -1232,7 +1321,17 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(context.l10n.typeSettingsRelevantGroups),
           contentPadding: const EdgeInsets.symmetric(vertical: 8),
-          content: SingleChildScrollView(
+          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
+          content: AppAlertCheckboxGroup<int>(
+            options: [
+              for (final group in groups.where((g) => g.id != null))
+                AppAlertOption(group.id!, group.name),
+            ],
+            values: selected,
+            onChanged: (id, checked) => setLocal(() {
+              checked ? selected.add(id) : selected.remove(id);
+            }),
+            beta: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -1250,6 +1349,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   ),
               ],
             ),
+          ),
           ),
           actions: [
             TextButton(
@@ -1351,12 +1451,25 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   bool get _isGeneral => ref.read(currentTenantProvider)?.type == 'general';
 
+  /// QUE-28: the value of a time row – Ionic `ion-datetime-button` (a pill
+  /// without [onTap] stands in front of a disabled `ion-datetime`). The
+  /// Beta keeps its plain text.
+  Widget _timeValue(String text, {VoidCallback? onTap, Color? betaColor}) {
+    if (context.rdSkin != null) {
+      final style = Theme.of(context).textTheme.titleMedium;
+      return Text(text, style: betaColor == null ? style : style?.copyWith(color: betaColor));
+    }
+    return IonDatetimeButton(time: text, onTimeTap: onTap);
+  }
+
   Future<void> _pickTime({required bool isStart}) async {
     final time = await showAppTimePicker(
       context: context,
       initialTime: isStart
           ? (_startTime ?? const TimeOfDay(hour: 19, minute: 0))
           : (_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
+      // Ionic minuteValues="0,5,10,…,55"; the Beta keeps its minute steps.
+      minuteInterval: context.rdSkin != null ? 1 : 5,
     );
     if (time != null && mounted) {
       setState(() {
@@ -1519,11 +1632,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             contentPadding: EdgeInsets.zero,
             title: Text(l10n.typeSettingsStartShort),
             subtitle: _allDay ? Text(l10n.typeSettingsStartAllDay) : null,
-            trailing: Text(
+            trailing: _timeValue(
               start,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: _allDay ? null : AppColors.medium,
-                  ),
+              onTap: _allDay ? () => _pickTime(isStart: true) : null,
+              betaColor: _allDay ? null : AppColors.medium,
             ),
             onTap: _allDay ? () => _pickTime(isStart: true) : null,
           ),
@@ -1538,10 +1650,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(l10n.typeSettingsEnd),
-              trailing: Text(
-                _planEnd!,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppColors.medium),
-              ),
+              trailing: _timeValue(_planEnd!, betaColor: AppColors.medium),
             ),
         ],
       ),
@@ -1552,11 +1661,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   /// (not for general tenants), Tagesordnung Platzhalter (protocol types).
   Future<void> _showPlanAddMenu(BuildContext anchorContext) async {
     final l10n = context.l10n;
+    final String? action;
+    if (context.rdSkin != null) {
+      // Beta design: its Material menu as before.
     final box = anchorContext.findRenderObject() as RenderBox;
     final overlay = Navigator.of(anchorContext).overlay!.context.findRenderObject() as RenderBox;
     final topLeft = box.localToGlobal(Offset(0, box.size.height), ancestor: overlay);
     final bottomRight = box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay);
-    final action = await showMenu<String>(
+    action = await showMenu<String>(
       context: anchorContext,
       position: RelativeRect.fromRect(Rect.fromPoints(topLeft, bottomRight), Offset.zero & overlay.size),
       constraints: const BoxConstraints(minWidth: 250, maxWidth: 320),
@@ -1575,6 +1687,36 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           ),
       ],
     );
+    } else {
+      // Bare `ion-item`s with item lines; the last entry (Notizfeld for
+      // general tenants, else the placeholders) is `lines="none"`.
+      action = await showAppPopoverMenu<String>(
+        context: anchorContext,
+        lines: true,
+        items: [
+          AppPopoverMenuItem(value: 'field', label: l10n.typeSettingsAddField),
+          AppPopoverMenuItem(
+            value: 'note',
+            label: l10n.typeSettingsAddNoteField,
+            lines: !_isGeneral,
+          ),
+          if (!_isGeneral)
+            AppPopoverMenuItem(
+              value: 'song',
+              label: l10n.typeSettingsSongPlaceholder,
+              lines: false,
+            ),
+          if (_protocol.enableProtocol)
+            AppPopoverMenuItem(
+              value: 'agenda',
+              label: l10n.typeSettingsAgendaPlaceholder,
+              icon: AppIcons.commit,
+              iconColor: AppColors.medium,
+              lines: false,
+            ),
+        ],
+      );
+    }
     if (action == null || !mounted) return;
     switch (action) {
       case 'field':
@@ -1739,7 +1881,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             // the type (Ionic compares only the type).
             builder: (decoration) => Form(
               child: AppDropdownFormField<int?>(
-                iosInterface: AppSelectInterface.actionSheet,
+                interface: AppSelectInterface.actionSheet,
                 decoration: decoration.copyWith(hintText: l10n.typeSettingsNoDeadline),
                 value: _newTodoDeadline,
                 items: [

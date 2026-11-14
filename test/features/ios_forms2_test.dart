@@ -9,6 +9,7 @@ import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/features/attendance/presentation/pages/attendance_create_page.dart';
 import 'package:attendix/features/attendance/presentation/widgets/ion_glyph_icons.dart';
+import 'package:attendix/shared/widgets/adaptive/app_select.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -70,9 +71,11 @@ void main() {
       );
     });
 
-    testWidgets('Material keeps the dropdown', (tester) async {
+    testWidgets('md: the shared select (ion-select md), no Material dropdown', (tester) async {
       await pump(tester, TargetPlatform.android);
-      expect(find.byType(DropdownButton<AttendanceType>), findsOneWidget);
+      expect(find.byType(DropdownButton<AttendanceType>), findsNothing);
+      expect(find.byType(AppDropdownButton<AttendanceType>), findsOneWidget);
+      expect(find.byType(IonMdSelectIcon), findsOneWidget);
       expect(find.byType(IonChevronExpandIcon), findsNothing);
     });
   });

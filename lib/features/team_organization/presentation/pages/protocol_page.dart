@@ -594,16 +594,21 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       context: context,
       builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.protocolSpontaneous),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+        // Ionic alert: message + two placeholder inputs (protocol.page.ts).
+        content: AppAlertInputGroup(
+          message: Text(ctx.l10n.protocolSpontaneousHint),
           children: [
-            Text(ctx.l10n.protocolSpontaneousHint),
-            TextField(
-                controller: titleCtrl, decoration: InputDecoration(labelText: ctx.l10n.tasksTitle), autofocus: true),
-            TextField(
+            AppAlertInput(
+              controller: titleCtrl,
+              placeholder: ctx.l10n.tasksTitle,
+              betaDecoration: InputDecoration(labelText: ctx.l10n.tasksTitle),
+              autofocus: true,
+            ),
+            AppAlertInput(
               controller: durationCtrl,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: ctx.l10n.protocolDurationMinutes),
+              placeholder: ctx.l10n.protocolDurationMinutes,
+              betaDecoration: InputDecoration(labelText: ctx.l10n.protocolDurationMinutes),
             ),
           ],
         ),
@@ -1562,6 +1567,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             label: Text(outcomeLabels[o]!),
             selected: current == o,
             selectedColor: outcomeColor(o).withValues(alpha: 0.25),
+            // Classic: the selection is shown by colour only (no Material
+            // checkmark); Beta keeps the chip as it was.
+            showCheckmark: context.rdSkin != null,
             onSelected: (_) => _setOutcome(sectionId, o),
           ),
       ],

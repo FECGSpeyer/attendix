@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +20,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
+import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
@@ -35,6 +37,21 @@ class ParentsTenantTitle extends ConsumerWidget {
 
     if (tenants.length <= 1) return Text(name);
 
+    // KP_SELECTS (QUE-03): the shared tenant switcher (toolbar button +
+    // Ionic `ion-popover` `--width: 220px`) like on the other tab pages.
+    if (context.rdSkin == null) {
+      return Padding(
+        padding: EdgeInsets.only(
+          left: Theme.of(context).appBarTheme.titleSpacing ?? NavigationToolbar.kMiddleSpacing,
+        ),
+        child: TenantSwitcherTitle(
+          fallbackTitle: context.l10n.tabsEvents,
+          onSelected: (t) => _switchTenant(context, ref, t),
+        ),
+      );
+    }
+
+    // Beta design: unchanged Material menu.
     return PopupMenuButton<Tenant>(
       tooltip: context.l10n.settingsSwitchTenant,
       onSelected: (t) => _switchTenant(context, ref, t),
@@ -266,14 +283,14 @@ Future<void> showCurrentSongsSheet(
       ],
     );
   }
-  return showModalBottomSheet(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (sheetContext) => FractionallySizedBox(
-      // Ionic breakpoints: 0.8 (several Termine) / 0.6 (one Termin)
-      heightFactor: groups.length > 1 ? 0.8 : 0.6,
+  // Ionic breakpoints: 0.8 (several Termine) / 0.6 (one Termin)
+  final initial = groups.length > 1 ? 0.8 : 0.6;
+  return showIonSheet<void>(
+    context,
+    breakpoints: [0, initial, 1],
+    initialBreakpoint: initial,
+    builder: (sheetContext, scrollController) => Material(
+      type: MaterialType.transparency,
       child: Column(
         children: [
           // IOS_PAGES3: Ionic ion-toolbar – close (start) + title
@@ -291,6 +308,7 @@ Future<void> showCurrentSongsSheet(
             child: ColoredBox(
               color: Theme.of(sheetContext).scaffoldBackgroundColor,
               child: ListView(
+                controller: scrollController,
                 padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
                 children: [
                   for (final group in groups) ...[

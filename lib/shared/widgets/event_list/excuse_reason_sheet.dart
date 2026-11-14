@@ -9,6 +9,8 @@ import '../../../core/utils/quill_utils.dart';
 import '../../../data/models/attendance/attendance.dart';
 import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
+import '../dialogs/ion_sheet.dart';
 import '../layout/ionic_ios.dart';
 
 // Internal sentinel for the free-text option (never stored).
@@ -26,6 +28,20 @@ Future<String?> showExcuseReasonSheet(
   required List<String> absenceReasons,
   required List<String> lateReasons,
 }) {
+  if (context.rdSkin == null) {
+    // Ionic excuse-reason-picker: breakpoints [0, 0.6, 1]
+    return showIonSheet<String>(
+      context,
+      breakpoints: const [0, 0.6, 1],
+      initialBreakpoint: 0.6,
+      builder: (ctx, scrollController) => _ExcuseReasonSheet(
+        isLate: isLate,
+        reasons: isLate ? lateReasons : absenceReasons,
+        isToday: isToday,
+        scrollController: scrollController,
+      ),
+    );
+  }
   return showModalBottomSheet<String>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -44,11 +60,15 @@ class _ExcuseReasonSheet extends StatefulWidget {
     required this.isLate,
     required this.reasons,
     required this.isToday,
+    this.scrollController,
   });
 
   final bool isLate;
   final List<String> reasons;
   final bool isToday;
+
+  /// Classic design: the controller of the Ionic breakpoint sheet.
+  final ScrollController? scrollController;
 
   @override
   State<_ExcuseReasonSheet> createState() => _ExcuseReasonSheetState();
@@ -85,6 +105,42 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // UX_SONGS_SELF: Ionic excuse-reason-picker toolbar:
+    // close (start), title, checkmark (end, strong)
+    final title = widget.isLate ? context.l10n.excuseLate : context.l10n.excuseSignOut;
+    final start = <Widget>[
+      IconButton(
+        icon: Icon(AppIcons.close),
+        tooltip: context.l10n.commonCancel,
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+    ];
+    final end = <Widget>[
+      IconButton(
+        icon: Icon(AppIcons.check),
+        tooltip: context.l10n.commonConfirm,
+        onPressed: _confirmable ? _confirm : null,
+      ),
+    ];
+    final scrollController = widget.scrollController;
+    if (scrollController != null) {
+      return IonSheetScaffold(
+        title: title,
+        start: start,
+        end: end,
+        body: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            controller: scrollController,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: _rows(context),
+            ),
+          ),
+        ),
+      );
+    }
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SafeArea(
@@ -93,25 +149,16 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // UX_SONGS_SELF: Ionic excuse-reason-picker toolbar:
-              // close (start), title, checkmark (end, strong)
-              IonSheetHeader(
-                title: widget.isLate ? context.l10n.excuseLate : context.l10n.excuseSignOut,
-                start: [
-                  IconButton(
-                    icon: Icon(AppIcons.close),
-                    tooltip: context.l10n.commonCancel,
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-                end: [
-                  IconButton(
-                    icon: Icon(AppIcons.check),
-                    tooltip: context.l10n.commonConfirm,
-                    onPressed: _confirmable ? _confirm : null,
-                  ),
-                ],
-              ),
+              IonSheetHeader(title: title, start: start, end: end),
+              ..._rows(context),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _rows(BuildContext context) => [
               // Ionic ion-radio (justify start, label end, lines full); iOS
               // draws a checkmark for the selected reason.
               for (final reason in [...widget.reasons, _customReason])
@@ -152,12 +199,7 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                   child: IonButtonLabel(context.l10n.commonConfirm),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+      ];
 }
 
 class _IosRadioRow extends StatelessWidget {
@@ -252,6 +294,22 @@ Future<Map<String, dynamic>?> showRegistrationFieldsSheet(
           ? (existing[f.id] is List ? List<String>.from((existing[f.id] as List).map((e) => e.toString())) : existing[f.id])
           : registrationFieldDefault(f),
   };
+  if (context.rdSkin == null) {
+    // Ionic regFieldsModal: breakpoints [0, 0.85, 1], initial 0.85
+    return showIonSheet<Map<String, dynamic>>(
+      context,
+      breakpoints: const [0, 0.85, 1],
+      initialBreakpoint: 0.85,
+      backdropDismiss: editMode,
+      builder: (ctx, scrollController) => _RegistrationFieldsSheet(
+        fields: fields,
+        answers: answers,
+        editMode: editMode,
+        requireText: requireText,
+        scrollController: scrollController,
+      ),
+    );
+  }
   return showModalBottomSheet<Map<String, dynamic>>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -273,12 +331,16 @@ class _RegistrationFieldsSheet extends StatefulWidget {
     required this.answers,
     required this.editMode,
     required this.requireText,
+    this.scrollController,
   });
 
   final List<RegistrationField> fields;
   final Map<String, dynamic> answers;
   final bool editMode;
   final bool requireText;
+
+  /// Classic design: the controller of the Ionic breakpoint sheet.
+  final ScrollController? scrollController;
 
   @override
   State<_RegistrationFieldsSheet> createState() => _RegistrationFieldsSheetState();
@@ -327,7 +389,7 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: AppDropdownFormField<String>(
-            iosInterface: AppSelectInterface.alert,
+            interface: AppSelectInterface.alert,
             value: (field.options ?? []).contains(_answers[field.id]) ? _answers[field.id] as String : null,
             decoration: InputDecoration(labelText: field.label, border: const OutlineInputBorder()),
             items: [
@@ -381,6 +443,34 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // UX_SONGS_SELF: Ionic modal toolbar (title, cancel at end)
+    final title = widget.editMode
+        ? context.l10n.attendanceRegFields
+        : context.l10n.coreFlutterRegistration;
+    final end = <Widget>[
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: IonButtonLabel(context.l10n.commonCancel),
+      ),
+    ];
+    final scrollController = widget.scrollController;
+    if (scrollController != null) {
+      return IonSheetScaffold(
+        title: title,
+        end: end,
+        body: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            controller: scrollController,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: _rows(context),
+            ),
+          ),
+        ),
+      );
+    }
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SafeArea(
@@ -389,18 +479,16 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // UX_SONGS_SELF: Ionic modal toolbar (title, cancel at end)
-              IonSheetHeader(
-                title: widget.editMode
-                    ? context.l10n.attendanceRegFields
-                    : context.l10n.coreFlutterRegistration,
-                end: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: IonButtonLabel(context.l10n.commonCancel),
-                  ),
-                ],
-              ),
+              IonSheetHeader(title: title, end: end),
+              ..._rows(context),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _rows(BuildContext context) => [
               for (final f in widget.fields) _buildField(f),
               if (_error != null)
                 Padding(
@@ -417,12 +505,7 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
                       : context.l10n.signoutSignIn),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+      ];
 }
 
 /// Shows the description (HTML from the Ionic editor) of a Termin.
@@ -431,6 +514,23 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
 /// with breakpoints [0, 0.6, 1] (initial 0.6), toolbar "Beschreibung" + X and
 /// the formatted `quill-view` (bold, lists, tappable links).
 Future<void> showEventDescriptionSheet(BuildContext context, String description) {
+  if (context.rdSkin == null) {
+    return showIonSheet<void>(
+      context,
+      breakpoints: const [0, 0.6, 1],
+      initialBreakpoint: 0.6,
+      builder: (ctx, scrollController) => IonSheetScaffold(
+        title: ctx.l10n.signoutDescription,
+        showClose: true,
+        body: SingleChildScrollView(
+          controller: scrollController,
+          padding: EdgeInsets.fromLTRB(
+              16, 8, 16, 24 + MediaQuery.paddingOf(ctx).bottom),
+          child: EventDescriptionView(html: description),
+        ),
+      ),
+    );
+  }
   return showModalBottomSheet(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -538,13 +638,15 @@ Future<String?> showEventNoteDialog(
     context: context,
     builder: (ctx) => AppAlertDialog(
       title: Text(title),
-      content: TextField(
+      // Ionic alert input `type: 'textarea'` (overview.page.ts / signout.page.ts).
+      content: AppAlertInput(
         controller: controller,
         autofocus: true,
         maxLines: 4,
         minLines: 2,
+        textarea: true,
         textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(hintText: ctx.l10n.signoutEnterNote),
+        placeholder: ctx.l10n.signoutEnterNote,
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonCancel)),
@@ -633,26 +735,53 @@ class _RegistrationFieldAlertState extends State<_RegistrationFieldAlert> {
     final l10n = context.l10n;
     Widget content;
     switch (field.type) {
+      // Ionic alert inputs of the field type: `text`, `radio` (Ja/Nein,
+      // options) or `checkbox` (multi select) in the look's alert style;
+      // Beta keeps its rows.
       case RegistrationFieldType.text:
-        content = TextField(
+        content = AppAlertInput(
           controller: _text,
           autofocus: true,
-          decoration: const InputDecoration(hintText: '...'),
+          placeholder: '...',
         );
       case RegistrationFieldType.boolean:
-        content = Column(mainAxisSize: MainAxisSize.min, children: [
-          _choice(l10n.commonYes, _single == true, () => setState(() => _single = true)),
-          _choice(l10n.commonNo, _single == false, () => setState(() => _single = false)),
-        ]);
+        content = AppAlertRadioGroup<bool>(
+          options: [
+            AppAlertOption(true, l10n.commonYes),
+            AppAlertOption(false, l10n.commonNo),
+          ],
+          groupValue: _single is bool ? _single as bool : null,
+          onChanged: (v) => setState(() => _single = v),
+          beta: Column(mainAxisSize: MainAxisSize.min, children: [
+            _choice(l10n.commonYes, _single == true, () => setState(() => _single = true)),
+            _choice(l10n.commonNo, _single == false, () => setState(() => _single = false)),
+          ]),
+        );
       default:
         final multi = field.type == RegistrationFieldType.multiSelect;
-        content = Column(mainAxisSize: MainAxisSize.min, children: [
+        final options = [
+          for (final o in field.options ?? const <String>[]) AppAlertOption(o, o),
+        ];
+        final beta = Column(mainAxisSize: MainAxisSize.min, children: [
           for (final o in field.options ?? const <String>[])
             multi
                 ? _choice(o, _multi.contains(o), () => setState(() => _multi.contains(o) ? _multi.remove(o) : _multi.add(o)),
                     checkbox: true)
                 : _choice(o, _single == o, () => setState(() => _single = o)),
         ]);
+        content = multi
+            ? AppAlertCheckboxGroup<String>(
+                options: options,
+                values: _multi,
+                onChanged: (o, checked) => setState(() => checked ? _multi.add(o) : _multi.remove(o)),
+                beta: beta,
+              )
+            : AppAlertRadioGroup<String>(
+                options: options,
+                groupValue: _single is String ? _single as String : null,
+                onChanged: (o) => setState(() => _single = o),
+                beta: beta,
+              );
     }
     return AppAlertDialog(
       title: Text(field.label),

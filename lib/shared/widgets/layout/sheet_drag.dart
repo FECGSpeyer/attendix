@@ -1,6 +1,8 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/redesign/rd_theme.dart';
+import '../dialogs/ion_sheet.dart' show IonBreakpointSheet;
 
 /// A [DraggableScrollableSheet] that also follows drags outside its list.
 ///
@@ -13,9 +15,19 @@ import '../../../core/theme/redesign/rd_theme.dart';
 /// [DraggableScrollableSheet], so it is a drop-in replacement.
 ///
 /// The Beta design keeps the plain sheet behaviour.
+///
+/// With [breakpoints] the classic design renders the shared Ionic sheet
+/// ([IonBreakpointSheet]: these breakpoints 1:1, the Ionic modal handle,
+/// closes when dragged to 0) while the Beta design keeps the
+/// [DraggableScrollableSheet] sizes given here. This is the drop-in for
+/// sheets that both designs share; new classic sheets use `showIonSheet`.
 class AppDraggableSheet extends StatefulWidget {
   const AppDraggableSheet({
     super.key,
+    this.breakpoints,
+    this.initialBreakpoint,
+    this.ionHandle = true,
+    this.canDismiss = true,
     this.initialChildSize = 0.5,
     this.minChildSize = 0.25,
     this.maxChildSize = 1.0,
@@ -25,6 +37,19 @@ class AppDraggableSheet extends StatefulWidget {
     this.shouldCloseOnMinExtent = true,
     required this.builder,
   });
+
+  /// Classic design: the Ionic `breakpoints` (e.g. `[0, 0.6, 1]`).
+  final List<double>? breakpoints;
+
+  /// Classic design: the Ionic `initialBreakpoint`; defaults to the first
+  /// breakpoint above 0.
+  final double? initialBreakpoint;
+
+  /// Classic design with [breakpoints]: draw the Ionic modal handle.
+  final bool ionHandle;
+
+  /// Classic design with [breakpoints]: Ionic `canDismiss`.
+  final bool canDismiss;
 
   final double initialChildSize;
   final double minChildSize;
@@ -41,6 +66,9 @@ class AppDraggableSheet extends StatefulWidget {
 
 class _AppDraggableSheetState extends State<AppDraggableSheet> {
   final _controller = DraggableScrollableController();
+
+  /// How far above the minimum extent a drag stops (see [_dragUpdate]).
+  static const double _closeEpsilon = 0.002;
 
   @override
   void dispose() {
@@ -62,9 +90,15 @@ class _AppDraggableSheetState extends State<AppDraggableSheet> {
   void _dragUpdate(DragUpdateDetails details) {
     if (!_controller.isAttached) return;
     final pixels = _controller.pixels - details.delta.dy;
-    _controller.jumpTo(_controller
-        .pixelsToSize(pixels)
-        .clamp(widget.minChildSize, widget.maxChildSize));
+    // Never all the way to the minimum while the finger is down: at the
+    // minimum extent the Material BottomSheet pops the route by itself
+    // (past PopScope), and [_dragEnd] would then pop the page underneath
+    // as well. Closing is decided in [_dragEnd] only.
+    final floor = widget.shouldCloseOnMinExtent && context.rdSkin == null
+        ? math.min(widget.minChildSize + _closeEpsilon, widget.maxChildSize)
+        : widget.minChildSize;
+    _controller.jumpTo(
+        _controller.pixelsToSize(pixels).clamp(floor, widget.maxChildSize));
   }
 
   Future<void> _dragEnd(DragEndDetails details) async {
@@ -79,7 +113,7 @@ class _AppDraggableSheetState extends State<AppDraggableSheet> {
       target = stops.lastWhere((s) => s < size - 0.02, orElse: () => -1);
     } else if (velocity < -700) {
       target = stops.firstWhere((s) => s > size + 0.02, orElse: () => stops.last);
-    } else if (size <= widget.minChildSize + 0.001 ||
+    } else if (size <= widget.minChildSize + 2 * _closeEpsilon ||
         size < (widget.minChildSize + stops.first) / 2) {
       target = -1;
     } else {
@@ -88,7 +122,10 @@ class _AppDraggableSheetState extends State<AppDraggableSheet> {
     if (target < 0) {
       // Closed – unless the sheet may not close right now (busy, PopScope):
       // then it returns to its first stop.
+      // Only this sheet's own route: if it is already closing, a second
+      // pop would take the page underneath with it.
       final closed = widget.shouldCloseOnMinExtent &&
+          (ModalRoute.of(context)?.isCurrent ?? true) &&
           await Navigator.of(context).maybePop();
       if (closed || !mounted || !_controller.isAttached) return;
       target = stops.first;
@@ -105,6 +142,19 @@ class _AppDraggableSheetState extends State<AppDraggableSheet> {
   @override
   Widget build(BuildContext context) {
     final classic = context.rdSkin == null;
+    final breakpoints = widget.breakpoints;
+    if (classic && breakpoints != null) {
+      return IonBreakpointSheet(
+        breakpoints: breakpoints,
+        initialBreakpoint: widget.initialBreakpoint ??
+            breakpoints.firstWhere((b) => b > 0, orElse: () => 1),
+        handle: widget.ionHandle,
+        canDismiss: widget.canDismiss,
+        // The callers of this drop-in handle the keyboard as before.
+        avoidKeyboard: false,
+        builder: widget.builder,
+      );
+    }
     return DraggableScrollableSheet(
       controller: _controller,
       initialChildSize: widget.initialChildSize,

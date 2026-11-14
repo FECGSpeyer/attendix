@@ -8,7 +8,9 @@ import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../core/utils/date_helper.dart';
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
+import '../../../../../shared/widgets/adaptive/ion_datetime_button.dart';
 import 'attendance_accordion.dart';
 import '../../../../../shared/widgets/display/ion_badge_text.dart';
 import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
@@ -26,6 +28,8 @@ class GeneralInfoAccordion extends StatefulWidget {
     required this.onEndTimeSelect,
     required this.onDeadlineToggle,
     required this.onDeadlineSelect,
+    this.onDeadlineDateSelect,
+    this.onDeadlineTimeSelect,
     required this.onExportExcel,
     this.onDateSelect,
     this.onPlaceChanged,
@@ -44,6 +48,11 @@ class GeneralInfoAccordion extends StatefulWidget {
   final VoidCallback onEndTimeSelect;
   final void Function(bool) onDeadlineToggle;
   final VoidCallback onDeadlineSelect;
+
+  /// QUE-28: the date / time pill of the deadline's `ion-datetime-button`
+  /// (`presentation="date-time"`); default [onDeadlineSelect].
+  final VoidCallback? onDeadlineDateSelect;
+  final VoidCallback? onDeadlineTimeSelect;
   final VoidCallback onExportExcel;
 
   /// "Datum" – move the Termin to another day.
@@ -148,12 +157,22 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
     final isAllDay = widget.attendanceType?.allDay ?? false;
 
     String? formattedDeadline;
+    // QUE-28: ion-datetime-button of a date-time: "14. Nov. 2026" + "19:30".
+    String? deadlineDate;
+    String? deadlineTime;
     if (hasDeadline && widget.attendance.deadline != null) {
       final deadline = EventListUtils.deadlineLocal(widget.attendance.deadline);
       if (deadline != null) {
         formattedDeadline = DateFormat('${dateFmt()} HH:mm').format(deadline);
+        deadlineDate = DateFormat.yMMMd(currentIntlLocale()).format(deadline);
+        deadlineTime = DateFormat('HH:mm').format(deadline);
       }
     }
+    final beta = context.rdSkin != null;
+    final betaChipStyle = TextStyle(
+      fontSize: 17,
+      color: Theme.of(context).colorScheme.onSurface,
+    );
 
     // UX_ATT: element order and wording of the Ionic "Allgemein" accordion:
     // Typ, Datum, Info-Text, Notizen, Anmeldefrist setzen, Fristdatum,
@@ -250,11 +269,22 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           _item(
             context,
             label: context.l10n.attendanceDeadlineDate,
-            trailing: _DatetimeButton(
-              label: formattedDeadline ?? '',
-              onTap: _deadlineReadonly ? null : widget.onDeadlineSelect,
-            ),
-            onTap: _deadlineReadonly ? null : widget.onDeadlineSelect,
+            trailing: beta || deadlineDate == null
+                ? IonDatetimeButton(
+                    date: formattedDeadline ?? '',
+                    onDateTap: _deadlineReadonly ? null : widget.onDeadlineSelect,
+                    betaStyle: betaChipStyle,
+                  )
+                : IonDatetimeButton(
+                    date: deadlineDate,
+                    time: deadlineTime,
+                    onDateTap: widget.onDeadlineDateSelect ?? widget.onDeadlineSelect,
+                    onTimeTap: widget.onDeadlineTimeSelect ?? widget.onDeadlineSelect,
+                    disabled: _deadlineReadonly,
+                  ),
+            onTap: _deadlineReadonly
+                ? null
+                : (beta ? null : widget.onDeadlineDateSelect) ?? widget.onDeadlineSelect,
           ),
 
         // Beginn / Ende (or Dauer for all-day types)
@@ -262,9 +292,10 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           _item(
             context,
             label: context.l10n.attendanceStart,
-            trailing: _DatetimeButton(
-              label: _formatTime(widget.attendance.startTime),
-              onTap: widget.onStartTimeSelect,
+            trailing: IonDatetimeButton(
+              time: _formatTime(widget.attendance.startTime),
+              onTimeTap: widget.onStartTimeSelect,
+              betaStyle: betaChipStyle,
             ),
             onTap: widget.onStartTimeSelect,
             line: true,
@@ -272,9 +303,10 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           _item(
             context,
             label: context.l10n.attendanceEnd,
-            trailing: _DatetimeButton(
-              label: _formatTime(widget.attendance.endTime),
-              onTap: widget.onEndTimeSelect,
+            trailing: IonDatetimeButton(
+              time: _formatTime(widget.attendance.endTime),
+              onTimeTap: widget.onEndTimeSelect,
+              betaStyle: betaChipStyle,
             ),
             onTap: widget.onEndTimeSelect,
             line: true,
@@ -545,39 +577,6 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
   String _formatTime(String? value) {
     if (value == null || value.isEmpty) return '--:--';
     return DateHelper.hhmm(value);
-  }
-}
-
-/// UX_ATT: Ionic `ion-datetime-button`: grey rounded value button.
-class _DatetimeButton extends StatelessWidget {
-  const _DatetimeButton({required this.label, required this.onTap});
-
-  final String label;
-
-  /// null = disabled (Ionic `[disabled]="isDeadlineReadonly"`).
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    return Material(
-      color: dark ? const Color(0xFF2C2C2E) : const Color(0xFFEDEEF0),
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 17,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
 

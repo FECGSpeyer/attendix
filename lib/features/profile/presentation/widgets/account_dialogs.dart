@@ -102,42 +102,23 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
   Widget build(BuildContext context) {
     if (widget.beta) return _buildBeta(context);
     if (useIosLook(context)) return _buildIos(context);
-    // IOS_FORMS1 (md): Ionic md alert – underlined inputs without icons and
-    // the uppercase text buttons "ABBRECHEN  ÄNDERN" right-aligned.
-    InputDecoration underline(String hint) {
-      final theme = Theme.of(context);
-      final line = UnderlineInputBorder(
-        borderSide: BorderSide(color: theme.dividerColor),
-      );
-      return InputDecoration(
-        hintText: hint,
-        filled: false,
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(vertical: 13),
-        border: line,
-        enabledBorder: line,
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
-        ),
-      );
-    }
-
+    // IOS_FORMS1 (md): Ionic md alert – the shared underlined alert inputs
+    // without icons and the uppercase text buttons "ABBRECHEN  ÄNDERN"
+    // right-aligned.
     return AppAlertDialog(
       title: Text(context.l10n.settingsChangePassword),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
+      content: AppAlertInputGroup(
         children: [
-          TextField(
+          AppAlertInput(
             controller: _passwordController,
             obscureText: true,
             autofocus: true,
-            decoration: underline(context.l10n.settingsNewPasswordPh),
+            placeholder: context.l10n.settingsNewPasswordPh,
           ),
-          const SizedBox(height: 8),
-          TextField(
+          AppAlertInput(
             controller: _confirmController,
             obscureText: true,
-            decoration: underline(context.l10n.settingsRepeatPasswordPh),
+            placeholder: context.l10n.settingsRepeatPasswordPh,
             onSubmitted: (_) => _submit(),
           ),
         ],
@@ -230,7 +211,8 @@ extension on _ChangePasswordDialogState {
     final l10n = context.l10n;
     return IosAlertCard(
       title: Text(l10n.settingsChangePassword),
-      contentPadding: const EdgeInsets.fromLTRB(16, 0, 16, 21),
+      // ios27 `.alert-message:empty { padding: 0 0 12px }` above the inputs.
+      contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 21),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -324,19 +306,20 @@ class _ChangeEmailDialogState extends ConsumerState<ChangeEmailDialog> {
         ref.read(supabaseClientProvider).auth.currentUser?.email ?? '';
     return AppAlertDialog(
       title: Text(context.l10n.settingsFlutterChangeEmail),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      // Like an Ionic alert with a message and one `email` input.
+      content: AppAlertInputGroup(
+        betaCrossAxisAlignment: CrossAxisAlignment.start,
+        message: currentEmail.isEmpty
+            ? null
+            : Text(context.l10n.settingsFlutterCurrentEmail(currentEmail)),
         children: [
-          if (currentEmail.isNotEmpty) ...[
-            Text(context.l10n.settingsFlutterCurrentEmail(currentEmail)),
-            const SizedBox(height: 12),
-          ],
-          TextField(
+          if (currentEmail.isNotEmpty) const AppAlertBetaGap(12),
+          AppAlertInput(
             controller: _emailController,
             autofocus: true,
             keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
+            placeholder: context.l10n.settingsFlutterNewEmailPh,
+            betaDecoration: InputDecoration(
               hintText: context.l10n.settingsFlutterNewEmailPh,
               prefixIcon: Icon(AppIcons.emailOutlined),
             ),

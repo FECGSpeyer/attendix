@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -167,19 +168,30 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(ctx.l10n.teamOrgAcceptSuggestion),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(ctx.l10n.teamOrgWhichPriority),
+          // Ionic alert: message + `type: 'radio'` inputs
+          // (topics-tab.component.ts accept).
+          content: AppAlertRadioGroup<String>(
+            message: Text(ctx.l10n.teamOrgWhichPriority),
+            options: [
               for (final p in const ['high', 'medium', 'low'])
-                RadioListTile<String>(
-                  value: p,
-                  groupValue: priority,
-                  title: Text(priorityLabels[p]!),
-                  onChanged: (v) => setLocal(() => priority = v ?? 'medium'),
-                ),
+                AppAlertOption(p, priorityLabels[p]!),
             ],
+            groupValue: priority,
+            onChanged: (v) => setLocal(() => priority = v),
+            beta: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(ctx.l10n.teamOrgWhichPriority),
+                for (final p in const ['high', 'medium', 'low'])
+                  RadioListTile<String>(
+                    value: p,
+                    groupValue: priority,
+                    title: Text(priorityLabels[p]!),
+                    onChanged: (v) => setLocal(() => priority = v ?? 'medium'),
+                  ),
+              ],
+            ),
           ),
           actions: [
             TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(ctx.l10n.commonCancel)),
@@ -201,14 +213,15 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
       context: context,
       builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.teamOrgRejectSuggestion),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+        // Ionic alert: message + `type: 'textarea'` input.
+        content: AppAlertInputGroup(
+          message: Text(ctx.l10n.teamOrgPersonInformed(name)),
           children: [
-            Text(ctx.l10n.teamOrgPersonInformed(name)),
-            TextField(
+            AppAlertInput(
               controller: controller,
               maxLines: 3,
-              decoration: InputDecoration(hintText: ctx.l10n.teamOrgReasonOptional),
+              textarea: true,
+              placeholder: ctx.l10n.teamOrgReasonOptional,
             ),
           ],
         ),
@@ -256,11 +269,15 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
               AppBar(
                 toolbarHeight: ionModalToolbarHeight(context),
                 automaticallyImplyLeading: false,
-                leading: IconButton(
-                  icon: Icon(AppIcons.close),
-                  tooltip: ctx.l10n.commonClose,
-                  onPressed: () => Navigator.of(ctx).pop(),
-                ),
+                // Ionic: close ✕ in `ion-buttons slot="start"` (iOS glass circle).
+                leadingWidth: ctx.rdSkin == null && useIosLook(ctx) ? 68 : null,
+                leading: ctx.rdSkin == null
+                    ? IonCloseButton(onPressed: () => Navigator.of(ctx).pop())
+                    : IconButton(
+                        icon: Icon(AppIcons.close),
+                        tooltip: ctx.l10n.commonClose,
+                        onPressed: () => Navigator.of(ctx).pop(),
+                      ),
                 title: Text(ctx.l10n.teamOrgSuggestions),
               ),
               Expanded(

@@ -101,7 +101,8 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
     if (useIosLook(context)) {
       return IosAlertCard(
         title: Text(l10n.loginResetHeader),
-        contentPadding: const EdgeInsets.fromLTRB(16, 0, 16, 21),
+        // ios27 `.alert-message:empty { padding: 0 0 12px }` above the inputs.
+        contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 21),
         content: IosAlertInput(
           controller: _controller,
           placeholder: l10n.loginEmailPlaceholder,
@@ -133,29 +134,16 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
       );
     }
 
-    // md alert: underlined input like the "Passwort ändern" alert.
-    final theme = Theme.of(context);
-    final line = UnderlineInputBorder(
-      borderSide: BorderSide(color: theme.dividerColor),
-    );
+    // md alert: the shared underlined alert input, like the "Passwort
+    // ändern" alert.
     return AppAlertDialog(
       title: Text(l10n.loginResetHeader),
-      content: TextField(
+      content: AppAlertInput(
         controller: _controller,
         autofocus: true,
         keyboardType: TextInputType.emailAddress,
         onSubmitted: (_) => _confirm(),
-        decoration: InputDecoration(
-          hintText: l10n.loginEmailPlaceholder,
-          filled: false,
-          isDense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 13),
-          border: line,
-          enabledBorder: line,
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
-          ),
-        ),
+        placeholder: l10n.loginEmailPlaceholder,
       ),
       actions: [
         TextButton(

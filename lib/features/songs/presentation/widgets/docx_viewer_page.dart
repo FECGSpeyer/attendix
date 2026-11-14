@@ -162,7 +162,7 @@ class _DocxViewerPageState extends State<DocxViewerPage> {
               const SizedBox(height: AppDimensions.paddingS),
               Text(_error ?? '', style: const TextStyle(color: AppColors.medium), textAlign: TextAlign.center),
               const SizedBox(height: AppDimensions.paddingL),
-              ElevatedButton.icon(
+              IonButton(
                 onPressed: () {
                   setState(() {
                     _isLoading = true;
@@ -170,8 +170,8 @@ class _DocxViewerPageState extends State<DocxViewerPage> {
                   });
                   _load();
                 },
-                icon: Icon(AppIcons.refresh),
-                label: IonButtonLabel(l10n.messagesRetry),
+                icon: AppIcons.refresh,
+                label: l10n.messagesRetry,
               ),
               const SizedBox(height: AppDimensions.paddingS),
               TextButton.icon(

@@ -165,10 +165,12 @@ void main() {
       expect(find.text('Allgemein Treffen am 15.06.'), findsOneWidget);
     }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-    testWidgets('Android: Material header, no iOS grabber', (tester) async {
+    testWidgets('Android: md toolbar header with the Ionic modal handle', (tester) async {
       await openBell(tester);
 
-      expect(find.byType(IonModalHandle), findsNothing);
+      // Ionic md sheet modals draw the handle too (36 × 5).
+      expect(find.byType(IonModalHandle), findsOneWidget);
+      expect(tester.getSize(find.byType(IonModalHandle)), IonModalHandle.mdSize);
       expect(find.byType(ToolbarButtonGroup), findsNothing);
       // IOS_THEME2: Ionic md segment (tab style), not a Material box
       expect(find.byType(IonSegment<bool>), findsOneWidget);

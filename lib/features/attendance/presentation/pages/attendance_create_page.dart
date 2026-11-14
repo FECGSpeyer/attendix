@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,6 +34,36 @@ import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 Future<bool> showAttendanceCreateSheet(BuildContext context) async {
   // While saving, the sheet must not be dismissed (drag, barrier, back).
   final saving = ValueNotifier<bool>(false);
+  if (context.rdSkin == null) {
+    // Ionic addAttModal: [breakpoints]="[0, 0.8, 1]" [initialBreakpoint]="0.8",
+    // the modal handle over the toolbar.
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: false,
+      // The Ionic sheet handles its own drag (and honours canDismiss); the
+      // Material drag-to-close would pop past it while saving.
+      enableDrag: false,
+      clipBehavior: Clip.antiAlias,
+      builder: (context) => ValueListenableBuilder<bool>(
+        valueListenable: saving,
+        builder: (context, isSaving, _) => IonBreakpointSheet(
+          breakpoints: const [0, 0.8, 1],
+          initialBreakpoint: 0.8,
+          canDismiss: !isSaving,
+          builder: (context, scrollController) => AttendanceCreatePage(
+            asSheet: true,
+            scrollController: scrollController,
+            savingNotifier: saving,
+          ),
+        ),
+      ),
+    );
+    saving.dispose();
+    return result ?? false;
+  }
   final result = await showModalBottomSheet<bool>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -223,35 +255,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                       alignment: Alignment.centerRight,
                       child: Icon(AppIcons.errorOutline, color: AppColors.danger),
                     ),
-                    data: (types) => DropdownButtonHideUnderline(
-                      child: DropdownButton<AttendanceType>(
-                        isExpanded: true,
-                        value: types.contains(_selectedType) ? _selectedType : null,
-                        hint: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(context.l10n.attendanceFlutterNoEventTypes),
-                        ),
-                        alignment: AlignmentDirectional.centerEnd,
-                        selectedItemBuilder: (context) => [
-                          for (final type in types)
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                type.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                        ],
-                        items: [
-                          for (final type in types)
-                            DropdownMenuItem(value: type, child: Text(type.name)),
-                        ],
-                        onChanged: (value) {
-                          if (value != null) _onTypeChanged(value);
-                        },
-                      ),
-                    ),
+                    data: _mdTypeSelect,
                   ),
                 ),
               ],
@@ -504,7 +508,11 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               : AppColors.light,
           // UX_ATT: Ionic addAttModal toolbar has only the title (closed by
           // swiping the sheet down / tapping outside).
-          toolbarHeight: widget.asSheet ? 44 : null,
+          // Classic: the sheet toolbar of each look (iOS 64, md 56); the
+          // handle lies over it.
+          toolbarHeight: widget.asSheet
+              ? (context.rdSkin != null ? 44 : (ionModalToolbarHeight(context) ?? 56))
+              : null,
           shape: widget.asSheet ? const Border() : null,
         ),
         body: body,
@@ -610,7 +618,71 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     );
   }
 
+  /// md "Typ" value: Ionic `ion-select [label]` without `interface` – the
+  /// shared select with the md alert (radios, ABBRECHEN / OK). The Beta
+  /// design keeps its Material dropdown.
+  Widget _mdTypeSelect(List<AttendanceType> types) {
+    final value = types.contains(_selectedType) ? _selectedType : null;
+    final hint = Align(
+      alignment: Alignment.centerRight,
+      child: Text(context.l10n.attendanceFlutterNoEventTypes),
+    );
+    List<Widget> selectedItems(BuildContext context) => [
+      for (final type in types)
+        Align(
+          alignment: Alignment.centerRight,
+          child: Text(type.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
+    ];
+    final items = [
+      for (final type in types) DropdownMenuItem(value: type, child: Text(type.name)),
+    ];
+    void onChanged(AttendanceType? value) {
+      if (value != null) _onTypeChanged(value);
+    }
+
+    return DropdownButtonHideUnderline(
+      child: context.rdSkin != null
+          ? DropdownButton<AttendanceType>(
+              isExpanded: true,
+              value: value,
+              hint: hint,
+              alignment: AlignmentDirectional.centerEnd,
+              selectedItemBuilder: selectedItems,
+              items: items,
+              onChanged: onChanged,
+            )
+          : AppDropdownButton<AttendanceType>(
+              interface: AppSelectInterface.alert,
+              header: context.l10n.attListType,
+              isExpanded: true,
+              value: value,
+              hint: hint,
+              alignment: AlignmentDirectional.centerEnd,
+              selectedItemBuilder: selectedItems,
+              items: items,
+              onChanged: onChanged,
+            ),
+    );
+  }
+
+  /// Ionic `ion-select` without `interface`: the shared select alert.
   Future<void> _pickTypeIos(List<AttendanceType> types) async {
+    if (context.rdSkin != null) return _pickTypeBeta(types);
+    final result = await showAppSelect<AttendanceType>(
+      context: context,
+      interface: AppSelectInterface.alert,
+      header: context.l10n.attListType,
+      value: types.contains(_selectedType) ? _selectedType : null,
+      options: [
+        for (final type in types) AppSelectOption<AttendanceType>(value: type, label: type.name),
+      ],
+    );
+    if (result != null && mounted) _onTypeChanged(result.value);
+  }
+
+  /// The Beta design keeps its type dialog.
+  Future<void> _pickTypeBeta(List<AttendanceType> types) async {
     var picked = types.contains(_selectedType) ? _selectedType : null;
     final result = await showAppDialog<AttendanceType>(
       context: context,
@@ -734,23 +806,10 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         );
     final fmt = DateFormat(dateFmt());
 
-    showModalBottomSheet(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      useSafeArea: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      // Ionic breakpoints [0, 0.5, 1]: opens at half height, can go full.
-      builder: (context) => AppDraggableSheet(
-        initialChildSize: 0.5,
-        minChildSize: 0.3,
-        maxChildSize: 1,
-        expand: false,
-        // Watches the holidays so the sheet fills in once they are loaded
-        // (Ionic shows the type legend right away).
-        builder: (context, scrollController) => Consumer(builder: (context, ref, _) {
+    // Watches the holidays so the sheet fills in once they are loaded
+    // (Ionic shows the type legend right away).
+    Widget content(BuildContext context, ScrollController scrollController) =>
+        Consumer(builder: (context, ref, _) {
           final holidaysAsync = ref.watch(holidaysProvider);
           final holidays = holidaysAsync.valueOrNull;
           final hasHolidays = holidays != null &&
@@ -809,7 +868,33 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               ],
             ],
           );
-        }),
+        });
+    if (context.rdSkin == null) {
+      // Ionic: [breakpoints]="[0, 0.5, 1]" [initialBreakpoint]="0.5", no
+      // header, `ion-content color="light"`.
+      showIonSheet<void>(
+        context,
+        breakpoints: const [0, 0.5, 1],
+        initialBreakpoint: 0.5,
+        builder: content,
+      );
+      return;
+    }
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
+      isScrollControlled: true,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      // Ionic breakpoints [0, 0.5, 1]: opens at half height, can go full.
+      builder: (context) => AppDraggableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.3,
+        maxChildSize: 1,
+        expand: false,
+        builder: content,
       ),
     );
   }
@@ -833,9 +918,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     final writer = AttendanceCreateWriter(ref);
     final tenant = writer.tenant;
     if (_selectedType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.attendanceFlutterChooseType)),
-      );
+      ToastHelper.showError(context, context.l10n.attendanceFlutterChooseType, beta: LegacySnackBar.plain);
       return;
     }
 
@@ -910,8 +993,10 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)))),
+      ToastHelper.showError(
+        context,
+        context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)),
+        beta: LegacySnackBar.plain,
       );
     } finally {
       widget.savingNotifier?.value = false;

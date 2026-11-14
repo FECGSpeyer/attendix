@@ -19,6 +19,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/demo_guard.dart' show DemoModeException;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -45,6 +46,7 @@ import 'person_import_page.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 import '../../../../core/utils/helper_member.dart';
@@ -907,6 +909,35 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     }
     final today = DateUtils.dateOnly(DateTime.now());
     final current = notifier.state;
+    if (context.rdSkin == null) {
+      // QUE-27: Ionic has no range picker – two dates, "Von" then "Bis"
+      // (the second one not before the first).
+      final custom = current.period == RatePeriod.custom && current.from != null && current.to != null;
+      final from = await showAppDatePicker(
+        context: context,
+        initialDate: custom ? current.from! : DateTime(today.year, 1, 1),
+        firstDate: DateTime(2015),
+        lastDate: today,
+        locale: Locale(currentLanguage()),
+        helpText: '${context.l10n.peopleRateTitle}: ${context.l10n.dutyFrom}',
+        overlay: IonDatetimeOverlay.buttons,
+        showTitle: true,
+      );
+      if (from == null || !mounted) return;
+      final to = await showAppDatePicker(
+        context: context,
+        initialDate: custom && !current.to!.isBefore(from) ? current.to! : today,
+        firstDate: from,
+        lastDate: today,
+        locale: Locale(currentLanguage()),
+        helpText: '${context.l10n.peopleRateTitle}: ${context.l10n.dutyTo}',
+        overlay: IonDatetimeOverlay.buttons,
+        showTitle: true,
+      );
+      if (to == null || !mounted) return;
+      notifier.state = notifier.state.withPeriod(RatePeriod.custom, from: from, to: to);
+      return;
+    }
     final range = await showDateRangePicker(
       context: context,
       firstDate: DateTime(2015),
@@ -1076,15 +1107,18 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         context: context,
         builder: (ctx) => AppAlertDialog(
           title: Text(field.name),
-          content: TextField(
+          // Ionic alert input `type: 'number'`; "Abbrechen" has
+          // `role: 'destructive'` (list.page.ts onFilterChanged).
+          content: AppAlertInput(
             controller: controller,
             autofocus: true,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(hintText: context.l10n.peopleEnterValue),
+            placeholder: context.l10n.peopleEnterValue,
           ),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(ctx),
+                style: appAlertDestructiveStyle(ctx),
                 child: Text(context.l10n.commonCancel)),
             FilledButton(
                 onPressed: () => Navigator.pop(ctx, controller.text.trim()),
@@ -1122,6 +1156,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             ? (saved == 'false' ? 'false' : 'true')
             : null,
         confirmText: context.l10n.peopleFilter,
+        // Ionic: "Abbrechen" has `role: 'destructive'` (Beta unchanged).
+        cancelDestructive: context.rdSkin == null,
       );
       value = result?.value;
     }

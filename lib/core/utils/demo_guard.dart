@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../l10n/l10n.dart';
 import '../constants/app_constants.dart';
 import '../services/offline_queue_service.dart' show rootScaffoldMessengerKey;
+import 'toast_helper.dart';
 
 /// DEMO_GUARD: Ionic `db.demoRestricted` / `people.demoUnavailable`.
 String get kDemoRestrictedMessage => l10nWithoutContext.dbDemoRestricted;
@@ -93,25 +94,16 @@ class DemoGuard {
   /// Shows the Ionic warning toast without a BuildContext.
   static void showRestrictedToast() {
     _lastToastAt = DateTime.now();
-    final messenger = rootScaffoldMessengerKey.currentState;
-    if (messenger == null) return;
-    messenger.showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(AppIcons.warning, color: Colors.white),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                kDemoRestrictedMessage,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.orange,
-        behavior: SnackBarBehavior.floating,
+    final context = rootScaffoldMessengerKey.currentContext;
+    if (context == null) return;
+    ToastHelper.showWarning(
+      context,
+      kDemoRestrictedMessage,
+      beta: LegacySnackBar(
+        color: Colors.orange,
+        floating: true,
         duration: const Duration(seconds: 3),
+        icon: AppIcons.warning,
       ),
     );
   }

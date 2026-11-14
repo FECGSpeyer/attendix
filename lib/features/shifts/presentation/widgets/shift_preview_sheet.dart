@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:intl/intl.dart';
 
@@ -11,6 +13,18 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 /// Shows the Ionic "calculate shifts" modal (full height sheet, close button
 /// at the end, plain list "Berechnete Schichten").
 void showShiftPreviewSheet(BuildContext context, ShiftPlan plan, {ShiftInstance? startInstance}) {
+  if (context.rdSkin == null) {
+    // Ionic calculateModal: breakpoints [0, 1]
+    showIonSheet<void>(
+      context,
+      builder: (context, scrollController) => ShiftPreviewSheet(
+        plan: plan,
+        startInstance: startInstance,
+        scrollController: scrollController,
+      ),
+    );
+    return;
+  }
   showModalBottomSheet(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -96,7 +110,11 @@ class ShiftPreviewSheet extends StatelessWidget {
     super.key,
     required this.plan,
     this.startInstance,
+    this.scrollController,
   });
+
+  /// Classic design: the controller of the Ionic breakpoint sheet.
+  final ScrollController? scrollController;
 
   String _hours(double value) =>
       value == value.roundToDouble() ? value.toInt().toString() : value.toString();
@@ -113,15 +131,19 @@ class ShiftPreviewSheet extends StatelessWidget {
           automaticallyImplyLeading: false,
           primary: false,
           actions: [
-            IconButton(
-              icon: Icon(AppIcons.close),
-              tooltip: context.l10n.commonClose,
-              onPressed: () => Navigator.pop(context),
-            ),
+            if (context.rdSkin == null)
+              const IonCloseButton()
+            else
+              IconButton(
+                icon: Icon(AppIcons.close),
+                tooltip: context.l10n.commonClose,
+                onPressed: () => Navigator.pop(context),
+              ),
           ],
         ),
         Expanded(
           child: ListView.separated(
+            controller: scrollController,
             padding: const EdgeInsets.only(bottom: 16),
             itemCount: shifts.length + 1,
             separatorBuilder: (_, i) => i == 0 ? const SizedBox.shrink() : const Divider(height: 1, indent: 16),

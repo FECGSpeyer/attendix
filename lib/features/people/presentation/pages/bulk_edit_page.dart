@@ -572,6 +572,7 @@ class _ValueEditor extends StatelessWidget {
               firstDate: DateTime(1900),
               lastDate: DateTime(2100),
               locale: Locale(currentLanguage()),
+              overlay: IonDatetimeOverlay.buttons, // native date input in Ionic
             );
             if (picked != null) {
               onChanged(DateFormat('yyyy-MM-dd').format(picked));

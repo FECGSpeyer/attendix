@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:uuid/uuid.dart';
 
@@ -10,6 +12,38 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
+/// Opens the rule editor. Classic design: the Ionic sheet modal
+/// (`initialBreakpoint="1" [breakpoints]="[0, 1]"`, toolbar with the
+/// ion-title only); the Beta design keeps its sheet.
+Future<void> showCriticalRuleSheet(
+  BuildContext context, {
+  CriticalRule? rule,
+  required List<AttendanceType> attendanceTypes,
+  required void Function(CriticalRule rule) onSave,
+}) {
+  if (context.rdSkin == null) {
+    return showIonSheet<void>(
+      context,
+      builder: (ctx, controller) => CriticalRuleSheet(
+        rule: rule,
+        attendanceTypes: attendanceTypes,
+        onSave: onSave,
+        scrollController: controller,
+      ),
+    );
+  }
+  return showModalBottomSheet<void>(
+    context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
+    isScrollControlled: true,
+    builder: (ctx) => CriticalRuleSheet(
+      rule: rule,
+      attendanceTypes: attendanceTypes,
+      onSave: onSave,
+    ),
+  );
+}
+
 /// Bottom sheet for creating or editing a critical rule
 class CriticalRuleSheet extends StatefulWidget {
   const CriticalRuleSheet({
@@ -17,7 +51,12 @@ class CriticalRuleSheet extends StatefulWidget {
     this.rule,
     required this.attendanceTypes,
     required this.onSave,
+    this.scrollController,
   });
+
+  /// Classic design: the controller of the breakpoint sheet; the title is
+  /// then in the sheet toolbar.
+  final ScrollController? scrollController;
 
   /// The rule to edit, or null for creating a new rule
   final CriticalRule? rule;
@@ -126,24 +165,19 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: AppDimensions.paddingM,
-        right: AppDimensions.paddingM,
-        top: AppDimensions.paddingM,
-      ),
-      child: SingleChildScrollView(
-        child: Column(
+    final classic = widget.scrollController != null;
+    final title = _isEditing ? context.l10n.generalSettingsFlutterEditRule : context.l10n.generalSettingsNewRule;
+    final form = Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
+            if (!classic) ...[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _isEditing ? context.l10n.generalSettingsFlutterEditRule : context.l10n.generalSettingsNewRule,
+                  title,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 IconButton(
@@ -153,6 +187,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
               ],
             ),
             const SizedBox(height: AppDimensions.paddingM),
+            ],
 
             // Optional name
             TextField(
@@ -193,7 +228,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
               children: [
                 Expanded(
                   child: AppDropdownFormField<CriticalRuleThresholdType>(
-                    iosInterface: AppSelectInterface.alert,
+                    interface: AppSelectInterface.alert,
                     value: _thresholdType,
                     decoration: InputDecoration(
                       labelText: context.l10n.generalSettingsThresholdType,
@@ -233,7 +268,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
 
             // Period type
             AppDropdownFormField<CriticalRulePeriodType>(
-              iosInterface: AppSelectInterface.alert,
+              interface: AppSelectInterface.alert,
               value: _periodType,
               decoration: InputDecoration(
                 labelText: context.l10n.generalSettingsPeriodType,
@@ -320,7 +355,30 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
             ),
             const SizedBox(height: AppDimensions.paddingM),
           ],
+        );
+    if (classic) {
+      return IonSheetScaffold(
+        title: title,
+        body: SingleChildScrollView(
+          controller: widget.scrollController,
+          padding: const EdgeInsets.only(
+            left: AppDimensions.paddingM,
+            right: AppDimensions.paddingM,
+            top: AppDimensions.paddingM,
+          ),
+          child: form,
         ),
+      );
+    }
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        left: AppDimensions.paddingM,
+        right: AppDimensions.paddingM,
+        top: AppDimensions.paddingM,
+      ),
+      child: SingleChildScrollView(
+        child: form,
       ),
     );
   }

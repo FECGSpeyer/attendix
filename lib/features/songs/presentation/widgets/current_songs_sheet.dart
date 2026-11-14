@@ -79,8 +79,12 @@ class CurrentSongsSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final initial = data.currentSongs.length > 1 ? 0.8 : 0.5;
     return AppDraggableSheet(
-      initialChildSize: data.currentSongs.length > 1 ? 0.8 : 0.5,
+      // Ionic currentSongsModal: [0, 0.8, 1] / [0, 0.5, 1]
+      breakpoints: [0, initial, 1],
+      initialBreakpoint: initial,
+      initialChildSize: initial,
       minChildSize: 0.3,
       maxChildSize: 1,
       expand: false,
@@ -156,7 +160,16 @@ class _GroupChoiceDialogState extends State<_GroupChoiceDialog> {
   Widget build(BuildContext context) {
     return AppAlertDialog(
       title: Text(context.l10n.songsChooseGroup),
-      content: SizedBox(
+      // Ionic alert with `type: 'radio'` inputs (songs.page.ts printNotesForGroup).
+      content: AppAlertRadioGroup<int?>(
+        options: [
+          for (final g in widget.groups) AppAlertOption(g.id, g.name),
+        ],
+        groupValue: _selected?.id,
+        onChanged: (id) => setState(
+          () => _selected = widget.groups.firstWhere((g) => g.id == id),
+        ),
+        beta: SizedBox(
         width: double.maxFinite,
         child: ListView(
           shrinkWrap: true,
@@ -170,6 +183,7 @@ class _GroupChoiceDialogState extends State<_GroupChoiceDialog> {
               ),
           ],
         ),
+      ),
       ),
       actions: [
         TextButton(
@@ -247,6 +261,7 @@ Future<void> showCurrentSongsSheet(
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
+    clipBehavior: Clip.antiAlias,
     builder: (_) => CurrentSongsSheet(
       data: data,
       canPrint: canPrint,

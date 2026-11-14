@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -87,20 +87,21 @@ Future<void> showChurchOverviewSheet(
       builder: (ctx, _) => [RdChurchOverviewView(data: data, subtitle: label)],
     );
   }
-  return showModalBottomSheet<void>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    showDragHandle: true,
-    builder: (ctx) => AppDraggableSheet(
-      expand: false,
-      initialChildSize: 0.5,
-      minChildSize: 0.3,
-      maxChildSize: 0.95,
-      builder: (ctx, scrollController) => ChurchOverviewView(
+  // Ionic ChurchOverviewComponent: breakpoints [0, 0.5, 0.75, 1], initial
+  // 0.5; toolbar with the title and the close button at the end.
+  final label = subtitle ?? context.l10n.commonPeople;
+  return showIonSheet<void>(
+    context,
+    breakpoints: const [0, 0.5, 0.75, 1],
+    initialBreakpoint: 0.5,
+    builder: (ctx, scrollController) => IonSheetScaffold(
+      title: ctx.l10n.churchOverviewTitle,
+      showClose: true,
+      body: ChurchOverviewView(
         data: data,
-        subtitle: subtitle ?? context.l10n.commonPeople,
+        subtitle: label,
         scrollController: scrollController,
+        showTitle: false,
       ),
     ),
   );
@@ -113,11 +114,15 @@ class ChurchOverviewView extends StatelessWidget {
     required this.data,
     required this.subtitle,
     this.scrollController,
+    this.showTitle = true,
   });
 
   final ChurchOverviewData data;
   final String subtitle;
   final ScrollController? scrollController;
+
+  /// false when the sheet toolbar already shows the title.
+  final bool showTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -138,10 +143,11 @@ class ChurchOverviewView extends StatelessWidget {
       controller: scrollController,
       padding: const EdgeInsets.only(bottom: 24),
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(l10n.churchOverviewTitle, style: theme.textTheme.titleLarge),
-        ),
+        if (showTitle)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(l10n.churchOverviewTitle, style: theme.textTheme.titleLarge),
+          ),
         header(l10n.churchOverviewTotal),
         ListTile(
           leading: Icon(AppIcons.peopleOutline),

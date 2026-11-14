@@ -15,6 +15,8 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/org_song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import '../../../planning/presentation/widgets/ion_items.dart' show IonChip;
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 import '../widgets/org_song_copy_sheet.dart';
@@ -317,14 +319,32 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic 
             spacing: 4,
             runSpacing: 4,
             children: [
-              FilterChip(
-                avatar: Icon(AppIcons.attachFile, size: 16),
-                label: Text(context.l10n.orgSongsOnlyWithFiles),
-                selected: onlyWithFiles,
-                onSelected: (_) => toggleOnlyWithFiles(),
-              ),
-              for (final chip in chips)
-                FilterChip(label: Text(chip.name), selected: chip.selected, onSelected: (_) => toggleChip(chip)),
+              if (context.rdSkin != null) ...[
+                FilterChip(
+                  avatar: Icon(AppIcons.attachFile, size: 16),
+                  label: Text(context.l10n.orgSongsOnlyWithFiles),
+                  selected: onlyWithFiles,
+                  onSelected: (_) => toggleOnlyWithFiles(),
+                ),
+                for (final chip in chips)
+                  FilterChip(label: Text(chip.name), selected: chip.selected, onSelected: (_) => toggleChip(chip)),
+              ] else ...[
+                // ion-chip: outline medium, selected primary – no checkmark.
+                IonChip(
+                  icon: AppIcons.attachFile,
+                  label: context.l10n.orgSongsOnlyWithFiles,
+                  outline: !onlyWithFiles,
+                  color: onlyWithFiles ? AppColors.primary : AppColors.medium,
+                  onTap: toggleOnlyWithFiles,
+                ),
+                for (final chip in chips)
+                  IonChip(
+                    label: chip.name,
+                    outline: !chip.selected,
+                    color: chip.selected ? AppColors.primary : AppColors.medium,
+                    onTap: () => toggleChip(chip),
+                  ),
+              ],
             ],
           ),
         ),

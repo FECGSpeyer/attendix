@@ -144,20 +144,19 @@ class _TextInputDialogState extends State<_TextInputDialog> {
   Widget build(BuildContext context) {
     return AppAlertDialog(
       title: Text(widget.title),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      // Ionic `alertController.create({inputs: [{placeholder}]})`: the alert
+      // input of the look; a validation message is the alert message.
+      content: AppAlertInputGroup(
+        betaCrossAxisAlignment: CrossAxisAlignment.stretch,
+        message: _message == null ? null : Text(_message!),
         children: [
-          if (_message != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(_message!),
-            ),
-          TextField(
+          if (_message != null) const AppAlertBetaGap(8),
+          AppAlertInput(
             controller: _controller,
             maxLines: widget.maxLines,
+            textarea: widget.maxLines > 1,
             keyboardType: widget.keyboardType,
-            decoration: InputDecoration(hintText: widget.hint),
+            placeholder: widget.hint,
             autofocus: true,
           ),
         ],

@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -102,15 +104,18 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
     final currentTenant = ref.watch(currentTenantProvider);
     final sourceGroupsAsync = ref.watch(groupsProvider);
 
-    return AppDraggableSheet(
-      initialChildSize: 0.7,
-      minChildSize: 0.4,
-      maxChildSize: 0.95,
-      expand: false,
-      builder: (context, scrollController) {
+    final classic = context.rdSkin == null;
+    Widget content(BuildContext context, ScrollController scrollController) {
         return Column(
           children: [
             // Header
+            if (classic)
+              // The shared sheet toolbar: title + close ✕ in the end slot.
+              IonSheetHeader(
+                title: _stayInInstance ? context.l10n.peopleFlutterHandoverCopyTitle : context.l10n.peopleFlutterHandoverTransferTitle,
+                end: const [IonCloseButton()],
+              )
+            else
             AppBar(
               toolbarHeight: ionModalToolbarHeight(context),
               title: Text(
@@ -220,7 +225,22 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             ),
           ],
         );
-      },
+    }
+
+    if (classic) {
+      // Flutter-only sheet: opens at 70 %, can be pulled to full height.
+      return IonBreakpointSheet(
+        breakpoints: const [0, 0.7, 1],
+        initialBreakpoint: 0.7,
+        builder: content,
+      );
+    }
+    return AppDraggableSheet(
+      initialChildSize: 0.7,
+      minChildSize: 0.4,
+      maxChildSize: 0.95,
+      expand: false,
+      builder: content,
     );
   }
 
@@ -460,7 +480,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             ),
             const SizedBox(height: AppDimensions.paddingS),
             AppDropdownFormField<int>(
-              iosInterface: AppSelectInterface.alert,
+              interface: AppSelectInterface.alert,
               value: _targetTenantId,
               decoration: InputDecoration(
                 prefixIcon: Icon(AppIcons.business),
@@ -556,7 +576,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: AppDropdownFormField<int?>(
-                        iosInterface: AppSelectInterface.alert,
+                        interface: AppSelectInterface.alert,
                         value: _groupMapping[instrumentId],
                         decoration: const InputDecoration(
                           isDense: true,
@@ -669,11 +689,10 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
         debugPrint('Error loading target groups: $e');
       }
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.peopleFlutterGroupsLoadFailed),
-            backgroundColor: Colors.red,
-          ),
+        ToastHelper.showError(
+          context,
+          context.l10n.peopleFlutterGroupsLoadFailed,
+          beta: const LegacySnackBar(color: Colors.red),
         );
       }
     }

@@ -61,9 +61,9 @@ class ViewersPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
               const SizedBox(height: AppDimensions.paddingM),
-              ElevatedButton(
+              IonButton(
                 onPressed: () => ref.invalidate(viewersProvider),
-                child: IonButtonLabel(context.l10n.messagesRetry),
+                label: context.l10n.messagesRetry,
               ),
             ],
           ),
@@ -116,77 +116,113 @@ class ViewersPage extends ConsumerWidget {
     final lastNameController = TextEditingController();
     final formKey = GlobalKey<FormState>();
 
+    // Classic: Ionic `alert.message = …; return false` for invalid values.
+    String? invalid;
     final result = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(context.l10n.settingsAddViewer),
-        content: Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AppAlertDialog(
+          title: Text(context.l10n.settingsAddViewer),
+          // Ionic alert with three placeholder inputs (settings.page.ts).
+          content: AppAlertInputGroup(
+            message: invalid == null ? null : Text(invalid!),
             children: [
-              TextFormField(
+              AppAlertInput(
                 controller: emailController,
-                decoration: InputDecoration(
-                  labelText: context.l10n.settingsEmailAddress,
-                  prefixIcon: Icon(AppIcons.email),
-                ),
+                placeholder: context.l10n.settingsEmailAddress,
                 keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return context.l10n.settingsFlutterEmailRequired;
-                  }
-                  if (!value.contains('@')) {
-                    return context.l10n.registerModalInvalidEmail;
-                  }
-                  return null;
-                },
               ),
-              const SizedBox(height: AppDimensions.paddingM),
-              TextFormField(
+              AppAlertInput(
                 controller: firstNameController,
-                decoration: InputDecoration(
-                  labelText: context.l10n.peopleFirstName,
-                  prefixIcon: Icon(AppIcons.person),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return context.l10n.settingsFlutterFirstNameRequired;
-                  }
-                  return null;
-                },
+                placeholder: context.l10n.peopleFirstName,
               ),
-              const SizedBox(height: AppDimensions.paddingM),
-              TextFormField(
+              AppAlertInput(
                 controller: lastNameController,
-                decoration: InputDecoration(
-                  labelText: context.l10n.peopleLastName,
-                  prefixIcon: Icon(AppIcons.personOutline),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return context.l10n.settingsFlutterLastNameRequired;
-                  }
-                  return null;
-                },
+                placeholder: context.l10n.peopleLastName,
               ),
             ],
+            beta: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: context.l10n.settingsEmailAddress,
+                      prefixIcon: Icon(AppIcons.email),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return context.l10n.settingsFlutterEmailRequired;
+                      }
+                      if (!value.contains('@')) {
+                        return context.l10n.registerModalInvalidEmail;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: AppDimensions.paddingM),
+                  TextFormField(
+                    controller: firstNameController,
+                    decoration: InputDecoration(
+                      labelText: context.l10n.peopleFirstName,
+                      prefixIcon: Icon(AppIcons.person),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return context.l10n.settingsFlutterFirstNameRequired;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: AppDimensions.paddingM),
+                  TextFormField(
+                    controller: lastNameController,
+                    decoration: InputDecoration(
+                      labelText: context.l10n.peopleLastName,
+                      prefixIcon: Icon(AppIcons.personOutline),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return context.l10n.settingsFlutterLastNameRequired;
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(context.l10n.commonCancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (formKey.currentState?.validate() ?? false) {
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(context.l10n.commonCancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Beta: the form with its validators.
+                final form = formKey.currentState;
+                if (form != null) {
+                  if (form.validate()) Navigator.of(ctx).pop(true);
+                  return;
+                }
+                // Classic: the same rules, the message in the alert.
+                final email = emailController.text;
+                if (email.isEmpty ||
+                    !email.contains('@') ||
+                    firstNameController.text.isEmpty ||
+                    lastNameController.text.isEmpty) {
+                  setDialogState(() => invalid = context.l10n.adminInvalidValues);
+                  return;
+                }
                 Navigator.of(ctx).pop(true);
-              }
-            },
-            child: Text(context.l10n.settingsInvite),
-          ),
-        ],
+              },
+              child: Text(context.l10n.settingsInvite),
+            ),
+          ],
+        ),
       ),
     );
 

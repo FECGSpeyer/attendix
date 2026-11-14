@@ -64,6 +64,9 @@ class _GroupFilesSheetState extends ConsumerState<GroupFilesSheet> {
     final files = _files;
 
     return AppDraggableSheet(
+      // Ionic groupDirectoryModal
+      breakpoints: const [0, 0.9, 1],
+      initialBreakpoint: 0.9,
       initialChildSize: 0.9,
       minChildSize: 0.3,
       maxChildSize: 1,
@@ -152,6 +155,7 @@ Future<void> showGroupFilesSheet(
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
+    clipBehavior: Clip.antiAlias,
     builder: (_) => GroupFilesSheet(songs: songs, groups: groups),
   );
 }

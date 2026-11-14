@@ -902,7 +902,16 @@ class _MultiSelectTile<T> extends StatelessWidget {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(title),
-          content: SizedBox(
+          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
+          content: AppAlertCheckboxGroup<T>(
+            options: [
+              for (final o in options) AppAlertOption(o.$1, o.$2, enabled: !o.$3),
+            ],
+            values: selection.toSet(),
+            onChanged: (v, checked) => setLocal(() {
+              checked ? selection.add(v) : selection.remove(v);
+            }),
+            beta: SizedBox(
             width: double.maxFinite,
             child: ListView(
               shrinkWrap: true,
@@ -919,6 +928,7 @@ class _MultiSelectTile<T> extends StatelessWidget {
                   ),
               ],
             ),
+          ),
           ),
           actions: [
             TextButton(
@@ -1032,6 +1042,7 @@ class _CopyToOtherInstance extends ConsumerWidget {
             isScrollControlled: true,
             useSafeArea: true,
             enableDrag: false, // not closable while copying
+            clipBehavior: Clip.antiAlias,
             builder: (_) => CopyToTenantSheet(song: song, availableTenants: allowed),
           ),
         ),
@@ -1088,6 +1099,9 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
       isScrollControlled: true,
       useSafeArea: true,
       isDismissible: false,
+      // Classic: the breakpoint sheet inside moves and closes itself.
+      enableDrag: context.rdSkin != null,
+      clipBehavior: Clip.antiAlias,
       builder: (_) => FileUploadSheet(
         songId: song.id!,
         groups: data.instruments,
@@ -1118,6 +1132,9 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
+      // Classic: the breakpoint sheet inside moves and closes itself.
+      enableDrag: context.rdSkin != null,
+      clipBehavior: Clip.antiAlias,
       builder: (_) => SingleFileUploadSheet(
         songId: song.id!,
         file: file,
@@ -1171,6 +1188,17 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         groups: data.instruments,
       );
 
+  void _onFilesMenu(String v) {
+    switch (v) {
+      case 'print':
+        _printGroupPdfs();
+      case 'download':
+        _downloadAll();
+      case 'delete':
+        _deleteAll();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final sorted = SongUtils.sortedFiles(files, data.instruments);
@@ -1192,19 +1220,44 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
                 icon: Icon(AppIcons.cloudUploadOutlined),
                 onPressed: _busy ? null : () => _upload(),
               ),
-            if (!data.readOnly && files.isNotEmpty)
+            // Ionic `ion-popover #filesPopover` (trigger "files-button"):
+            // `ion-list` with item lines, icons in slot start.
+            if (!data.readOnly && files.isNotEmpty && context.rdSkin == null)
+              Builder(
+                builder: (buttonContext) => IconButton(
+                  icon: Icon(AppIcons.moreHoriz),
+                  tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                  onPressed: () async {
+                    final v = await showAppPopoverMenu<String>(
+                      context: buttonContext,
+                      lines: true,
+                      items: [
+                        AppPopoverMenuItem(
+                          value: 'print',
+                          icon: AppIcons.printOutlined,
+                          label: context.l10n.songsPrintGroupPdfs,
+                        ),
+                        AppPopoverMenuItem(
+                          value: 'download',
+                          icon: AppIcons.downloadOutlined,
+                          label: context.l10n.songsDownloadAll,
+                        ),
+                        AppPopoverMenuItem(
+                          value: 'delete',
+                          icon: AppIcons.deleteOutline,
+                          label: context.l10n.songsDeleteAll,
+                        ),
+                      ],
+                    );
+                    if (v != null && mounted) _onFilesMenu(v);
+                  },
+                ),
+              ),
+            // Beta design: its Material menu as before.
+            if (!data.readOnly && files.isNotEmpty && context.rdSkin != null)
               PopupMenuButton<String>(
                 icon: Icon(AppIcons.moreHoriz),
-                onSelected: (v) {
-                  switch (v) {
-                    case 'print':
-                      _printGroupPdfs();
-                    case 'download':
-                      _downloadAll();
-                    case 'delete':
-                      _deleteAll();
-                  }
-                },
+                onSelected: _onFilesMenu,
                 itemBuilder: (_) => [
                   PopupMenuItem(
                     value: 'print',
@@ -1506,10 +1559,9 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
         padding: const EdgeInsets.only(bottom: 16),
         children: [
           for (final o in options)
-            RadioListTile<int?>(
+            IonRadioItem<int?>(
               value: o.$1,
               groupValue: _id,
-              controlAffinity: ListTileControlAffinity.trailing,
               title: Text(o.$2),
               subtitle: o.$1 == kChoirAllOptionValue
                   ? Text(context.l10n.songsChoirAllHint)

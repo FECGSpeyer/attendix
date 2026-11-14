@@ -7,9 +7,11 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/duty_utils.dart';
 import 'duty_actions.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/ion_button.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// "Deine Dienste: bitte bestätigen" on the attendance list: own upcoming
@@ -58,6 +60,24 @@ class MyDutyRequestsSection extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  // Ionic: `size="small" fill="outline" color="medium"` and
+                  // `size="small" color="success"`.
+                  if (context.rdSkin == null) ...[
+                    IonButton(
+                      label: context.l10n.signoutCannot,
+                      fill: IonButtonFill.outline,
+                      color: AppColors.medium,
+                      small: true,
+                      onPressed: () => declineDutyAction(context, ref, r.pa.id!, r.termin.attendance.id!),
+                    ),
+                    const SizedBox(width: 6),
+                    IonButton(
+                      label: context.l10n.commonConfirm,
+                      color: AppColors.success,
+                      small: true,
+                      onPressed: () => confirmDutyAction(context, ref, r.pa.id!, r.termin.attendance.id!),
+                    ),
+                  ] else ...[
                   OutlinedButton(
                     onPressed: () => declineDutyAction(context, ref, r.pa.id!, r.termin.attendance.id!),
                     child: IonButtonLabel(context.l10n.signoutCannot),
@@ -68,6 +88,7 @@ class MyDutyRequestsSection extends ConsumerWidget {
                     onPressed: () => confirmDutyAction(context, ref, r.pa.id!, r.termin.attendance.id!),
                     child: IonButtonLabel(context.l10n.commonConfirm),
                   ),
+                  ],
                 ],
               ),
             ),

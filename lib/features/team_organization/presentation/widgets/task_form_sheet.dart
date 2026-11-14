@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -140,6 +141,8 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
       firstDate: DateTime(now.year - 2),
       lastDate: DateTime(now.year + 5),
       locale: Locale(currentLanguage()),
+      // Ionic: `[showDefaultButtons]="true"` (OK / Abbrechen).
+      overlay: IonDatetimeOverlay.buttons,
     );
     if (picked != null) setState(() => _dueDate = localToday(picked));
   }
@@ -209,11 +212,15 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
               toolbarHeight: ionModalToolbarHeight(context),
               automaticallyImplyLeading: false,
               primary: false,
-              leading: IconButton(
-                icon: Icon(AppIcons.close),
-                tooltip: l10n.commonClose,
-                onPressed: () => Navigator.of(context).pop(),
-              ),
+              // Ionic: close ✕ in `ion-buttons slot="start"` (iOS glass circle).
+              leadingWidth: context.rdSkin == null && useIosLook(context) ? 68 : null,
+              leading: context.rdSkin == null
+                  ? IonCloseButton(onPressed: () => Navigator.of(context).pop())
+                  : IconButton(
+                      icon: Icon(AppIcons.close),
+                      tooltip: l10n.commonClose,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
               title: Text(_isEdit ? l10n.tasksFlutterEditTask : l10n.tasksFlutterNewTask),
             ),
             Expanded(

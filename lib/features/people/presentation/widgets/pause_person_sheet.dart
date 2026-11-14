@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +18,7 @@ import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
 import 'ion/ion_widgets.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../redesign/presentation/widgets/members/rd_pause_sheets.dart';
 
@@ -54,19 +56,20 @@ Future<PauseInput?> showPauseSheet(BuildContext context, Person person) {
       hint: context.l10n.rdPeoplePauseHint,
     );
   }
-  return showModalBottomSheet<PauseInput>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (_) => _PauseSheet(person: person),
+  // Ionic pause modal: [breakpoints]="[0, 0.75, 1]" [initialBreakpoint]="0.75".
+  return showIonSheet<PauseInput>(
+    context,
+    breakpoints: const [0, 0.75, 1],
+    initialBreakpoint: 0.75,
+    builder: (_, controller) => _PauseSheet(person: person, scrollController: controller),
   );
 }
 
 class _PauseSheet extends StatefulWidget {
-  const _PauseSheet({required this.person});
+  const _PauseSheet({required this.person, this.scrollController});
 
   final Person person;
+  final ScrollController? scrollController;
 
   @override
   State<_PauseSheet> createState() => _PauseSheetState();
@@ -90,36 +93,21 @@ class _PauseSheetState extends State<_PauseSheet> {
     final p = widget.person;
     final hasReason = _reasonController.text.trim().isNotEmpty;
 
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: AppDimensions.paddingM,
-        right: AppDimensions.paddingM,
-        top: AppDimensions.paddingS,
-      ),
-      child: SingleChildScrollView(
+    // UX_PEOPLE: Ionic modal toolbar — ion-title, close ✕ in the end slot.
+    return IonSheetScaffold(
+      title: context.l10n.peoplePauseTitle('${p.firstName} ${p.lastName}'),
+      showClose: true,
+      body: SingleChildScrollView(
+        controller: widget.scrollController,
+        padding: const EdgeInsets.only(
+          left: AppDimensions.paddingM,
+          right: AppDimensions.paddingM,
+          top: AppDimensions.paddingM,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // UX_PEOPLE: Ionic modal toolbar — centered title, close at end
-            Row(
-              children: [
-                const SizedBox(width: 48),
-                Expanded(
-                  child: Text(
-                    context.l10n.peoplePauseTitle('${p.firstName} ${p.lastName}'),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
             // ion-item + stacked label + textarea
             IonFormTheme(
               child: TextField(
@@ -186,9 +174,13 @@ class _PauseSheetState extends State<_PauseSheet> {
                   : null,
               icon: Icon(AppIcons.pause),
               label: IonButtonLabel(context.l10n.peoplePause),
+              // Ionic `ion-button expand="block"` in the default primary
+              // colour (the theme's solid button); the Beta design keeps
+              // its warning button.
               style: FilledButton.styleFrom(
-                backgroundColor: AppColors.warning,
-                disabledBackgroundColor: AppColors.warning.withValues(alpha: 0.5),
+                backgroundColor: context.rdSkin != null ? AppColors.warning : null,
+                disabledBackgroundColor:
+                    context.rdSkin != null ? AppColors.warning.withValues(alpha: 0.5) : null,
                 padding:
                     const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
               ),
@@ -224,7 +216,8 @@ Future<bool> pausePersonFlow(
     return false;
   }
 
-  final messenger = ScaffoldMessenger.of(context);
+  // The root messenger outlives the sheet and this page.
+  final toastContext = ScaffoldMessenger.of(context).context;
   final text = buildPauseHistoryText(input.reason,
       from: input.from, until: input.until);
   final until = input.until != null ? DateHelper.isoDay(input.until!) : null;
@@ -233,18 +226,21 @@ Future<bool> pausePersonFlow(
   try {
     await repo.pausePlayer(person, until, text, pauseFrom: from);
   } catch (e) {
-    messenger.showSnackBar(
-      SnackBar(content: Text(l10nWithoutContext.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
-    );
+    if (toastContext.mounted) {
+      ToastHelper.showError(
+        toastContext,
+        l10nWithoutContext.peopleFlutterErrorWith(friendlyErrorMessage(e)),
+        beta: LegacySnackBar.danger,
+      );
+    }
     return false;
   }
 
-  if (showSuccessToast) {
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(l10nWithoutContext.peopleFlutterPausedToast(person.firstName)),
-        backgroundColor: AppColors.success,
-      ),
+  if (showSuccessToast && toastContext.mounted) {
+    ToastHelper.showSuccess(
+      toastContext,
+      l10nWithoutContext.peopleFlutterPausedToast(person.firstName),
+      beta: LegacySnackBar.success,
     );
   }
 
@@ -292,13 +288,14 @@ Future<bool> pausePersonFlow(
           pauseFrom: from,
         );
       } catch (e) {
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text(l10nWithoutContext.peopleErrorAt(
-                tenant.shortName.isNotEmpty ? tenant.shortName : tenant.name, e)),
-            backgroundColor: AppColors.danger,
-          ),
-        );
+        if (toastContext.mounted) {
+          ToastHelper.showError(
+            toastContext,
+            l10nWithoutContext.peopleErrorAt(
+                tenant.shortName.isNotEmpty ? tenant.shortName : tenant.name, e),
+            beta: LegacySnackBar.danger,
+          );
+        }
       }
     }
   } catch (_) {
@@ -325,7 +322,17 @@ Future<List<LinkedTenantRef>?> _askPauseInOtherTenants(
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AppAlertDialog(
         title: Text(context.l10n.peoplePauseOthers),
-        content: SingleChildScrollView(
+        // Ionic alert: message + `type: 'checkbox'` inputs (person.page.ts).
+        content: AppAlertCheckboxGroup<int>(
+          message: Text(
+            context.l10n.peoplePauseOthersMessage('${person.firstName} ${person.lastName}'),
+          ),
+          options: [for (final t in tenants) AppAlertOption(t.id, t.name)],
+          values: selected,
+          onChanged: (id, checked) => setState(() {
+            checked ? selected.add(id) : selected.remove(id);
+          }),
+          beta: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,6 +356,7 @@ Future<List<LinkedTenantRef>?> _askPauseInOtherTenants(
                 ),
             ],
           ),
+        ),
         ),
         actions: [
           TextButton(

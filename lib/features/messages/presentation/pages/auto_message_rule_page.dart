@@ -706,14 +706,11 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
               (false, l10n.autoMessagesExcuseAfterCheck),
               (true, l10n.autoMessagesExcuseInstant),
             ])
-              // ignore: deprecated_member_use
-              RadioListTile<bool>(
+              IonRadioItem<bool>(
                 value: instant,
-                // ignore: deprecated_member_use
                 groupValue: rule.instantExcuse,
-                controlAffinity: ListTileControlAffinity.leading,
+                labelEnd: true,
                 title: Text(label),
-                // ignore: deprecated_member_use
                 onChanged: (v) => _update(_rule.copyWith(instantExcuse: v)),
               ),
         ],

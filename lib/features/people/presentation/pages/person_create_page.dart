@@ -446,7 +446,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               data: (instruments) {
                 final label = groupLabel(tenant?.type);
                 return AppDropdownFormField<int>(
-                  iosInterface: AppSelectInterface.alert,
+                  interface: AppSelectInterface.alert,
                 value: _selectedInstrument,
                 decoration: InputDecoration(
                   labelText: label,
@@ -525,12 +525,20 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             // Extra Fields Section - as ExpansionTile like Ionic Accordion
             if (extraFields.isNotEmpty)
               ...ionBetaGroup(context, [
-                ExpansionTile(
-                  title: Text(context.l10n.peopleExtraFields),
-                  initiallyExpanded: true,
-                  tilePadding: EdgeInsets.zero,
-                  children: extraFields.map((field) => _buildExtraFieldInput(field)).toList(),
-                ),
+                if (rd != null)
+                  ExpansionTile(
+                    title: Text(context.l10n.peopleExtraFields),
+                    initiallyExpanded: true,
+                    tilePadding: EdgeInsets.zero,
+                    children: extraFields.map((field) => _buildExtraFieldInput(field)).toList(),
+                  )
+                else
+                  IonAccordionTile(
+                    title: Text(context.l10n.peopleExtraFields),
+                    initiallyExpanded: true,
+                    headerPadding: EdgeInsets.zero,
+                    children: extraFields.map((field) => _buildExtraFieldInput(field)).toList(),
+                  ),
               ]),
 
             const SizedBox(height: AppDimensions.paddingL),
@@ -629,7 +637,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: AppDropdownFormField<String>(
-            iosInterface: AppSelectInterface.alert,
+            interface: AppSelectInterface.alert,
             decoration: InputDecoration(labelText: field.name),
             value: _additionalFieldValues[field.id]?.toString(),
             items: options.map((opt) => DropdownMenuItem(value: opt, child: Text(opt))).toList(),
@@ -719,7 +727,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       ),
       if ((tenant?.parents ?? false) && !isMain)
         AppDropdownFormField<int?>(
-          iosInterface: AppSelectInterface.alert,
+          interface: AppSelectInterface.alert,
           value: _parentId,
           decoration: InputDecoration(
             labelText: context.l10n.personParents,
@@ -745,7 +753,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         ),
         if (_hasTeacher)
           AppDropdownFormField<int?>(
-            iosInterface: AppSelectInterface.alert,
+            interface: AppSelectInterface.alert,
             value: teachers.any((t) => t.id == _teacherId) ? _teacherId : null,
             decoration: InputDecoration(
               labelText: context.l10n.peopleTeacher,
@@ -816,7 +824,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       ],
       if (shifts.isNotEmpty) ...[
         AppDropdownFormField<String?>(
-          iosInterface: AppSelectInterface.alert,
+          interface: AppSelectInterface.alert,
           value: _shiftId,
           decoration: InputDecoration(
             labelText: context.l10n.personShiftPlan,
@@ -846,7 +854,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         ),
         if (shift != null && shift.hasNamedShifts)
           AppDropdownFormField<String?>(
-            iosInterface: AppSelectInterface.alert,
+            interface: AppSelectInterface.alert,
             value: _shiftName,
             decoration: InputDecoration(
               labelText: context.l10n.personShift,

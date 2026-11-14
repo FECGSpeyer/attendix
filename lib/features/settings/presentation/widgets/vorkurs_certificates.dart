@@ -90,7 +90,18 @@ class _GroupSelectDialogState extends State<_GroupSelectDialog> {
   Widget build(BuildContext context) {
     return AppAlertDialog(
       title: Text(context.l10n.settingsSelectGroups),
-      content: SizedBox(
+      // Ionic alert: message + `type: 'checkbox'` inputs.
+      content: AppAlertCheckboxGroup<int>(
+        message: Text(context.l10n.settingsCertificatesFor),
+        options: [
+          for (final g in widget.groups)
+            if (g.id != null) AppAlertOption(g.id!, g.name),
+        ],
+        values: _selected,
+        onChanged: (id, checked) => setState(() {
+          checked ? _selected.add(id) : _selected.remove(id);
+        }),
+        beta: SizedBox(
         width: double.maxFinite,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -122,6 +133,7 @@ class _GroupSelectDialogState extends State<_GroupSelectDialog> {
             ),
           ],
         ),
+      ),
       ),
       actions: [
         TextButton(
