@@ -366,7 +366,7 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
 
   void _toggle(Attribute a) => widget.controller.formatSelection(_isOn(a) ? Attribute.clone(a, null) : a);
 
-  Widget _slimButton(RdPalette p, IconData icon, String label, bool active, VoidCallback onTap) => Tooltip(
+  Widget _slimButton(RdPalette p, IconData icon, String label, bool active, VoidCallback onTap, double size) => Tooltip(
         message: label,
         child: Semantics(
           button: true,
@@ -375,7 +375,7 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
             onTap: onTap,
             borderRadius: BorderRadius.circular(10),
             child: Container(
-              width: 40,
+              width: size,
               height: 40,
               decoration: BoxDecoration(
                 color: active ? p.soft : null,
@@ -391,30 +391,34 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
   Widget _slimToolbar(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
-    Widget format(IconData icon, String label, Attribute a) =>
-        _slimButton(p, icon, label, _isOn(a), () => _toggle(a));
     Widget gap() => Container(width: 1, height: 22, margin: const EdgeInsets.symmetric(horizontal: 6), color: p.line);
-    final buttons = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        format(Icons.format_bold, l10n.editorBold, Attribute.bold),
-        format(Icons.format_italic, l10n.editorItalic, Attribute.italic),
-        gap(),
-        format(Icons.format_list_bulleted, l10n.editorBulletList, Attribute.ul),
-        format(Icons.format_list_numbered, l10n.editorOrderedList, Attribute.ol),
-        format(Icons.checklist, l10n.rdTypeChecklist, Attribute.unchecked),
-        gap(),
-        _slimButton(p, Icons.more_horiz, l10n.rdTeamProtocolMoreFormat, _more, () => setState(() => _more = !_more)),
-      ],
-    );
     return Material(
       type: MaterialType.transparency,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            // The hint only where it has room; on a very narrow phone the
-            // buttons scroll sideways instead of being cut off.
+            // Six buttons and two dividers (13 px each). On a narrow phone
+            // the buttons get slimmer so that "more" stays visible.
+            final size = ((constraints.maxWidth - 26) / 6).clamp(32.0, 40.0);
+            Widget format(IconData icon, String label, Attribute a) =>
+                _slimButton(p, icon, label, _isOn(a), () => _toggle(a), size);
+            final buttons = Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                format(Icons.format_bold, l10n.editorBold, Attribute.bold),
+                format(Icons.format_italic, l10n.editorItalic, Attribute.italic),
+                gap(),
+                format(Icons.format_list_bulleted, l10n.editorBulletList, Attribute.ul),
+                format(Icons.format_list_numbered, l10n.editorOrderedList, Attribute.ol),
+                format(Icons.checklist, l10n.rdTypeChecklist, Attribute.unchecked),
+                gap(),
+                _slimButton(p, Icons.more_horiz, l10n.rdTeamProtocolMoreFormat, _more,
+                    () => setState(() => _more = !_more), size),
+              ],
+            );
+            // The hint only where it has room. Should even the slim buttons
+            // not fit, they scroll sideways instead of being cut off.
             if (widget.hint == null || constraints.maxWidth < 520) {
               return Align(
                 alignment: AlignmentDirectional.centerStart,

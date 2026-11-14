@@ -1793,11 +1793,18 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                       child: StatefulBuilder(
                         builder: (sheetCtx, setSheet) {
                           final tasks = _tasksFor(protocolGeneralSectionId, _taskSectionMap);
+                          // The sheet lies above the pages: close it before
+                          // a task opens.
+                          void openTask(String id) {
+                            Navigator.of(ctx).pop();
+                            context.push('/settings/tasks/$id');
+                          }
+
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              _betaEditor(protocolGeneralSectionId, minHeight: 140),
+                              _betaEditor(protocolGeneralSectionId, minHeight: 140, onOpenTask: openTask),
                               Divider(height: 1, thickness: 1, color: ctx.rd.line),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
@@ -1805,7 +1812,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    if (tasks.isNotEmpty) _betaTaskList(tasks),
+                                    if (tasks.isNotEmpty)
+                                      _betaTaskList(tasks, onOpen: (t) {
+                                        if (t.id != null) openTask(t.id!);
+                                      }),
                                     _betaAddTask(protocolGeneralSectionId, after: () {
                                       if (sheetCtx.mounted) setSheet(() {});
                                     }),
@@ -2668,7 +2678,13 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         ]),
       );
 
-  Widget _betaEditor(String sectionId, {bool expands = false, bool wide = false, double minHeight = 96}) =>
+  Widget _betaEditor(
+    String sectionId, {
+    bool expands = false,
+    bool wide = false,
+    double minHeight = 96,
+    void Function(String taskId)? onOpenTask,
+  }) =>
       ProtocolEditor(
         key: ValueKey('beta-editor-$sectionId'),
         controller: _controllerFor(sectionId),
@@ -2682,7 +2698,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         taskStatuses: _taskStatuses,
         agendaItems: _openTopics,
         onCreateTask: () => _createTask(sectionId),
-        onOpenTask: (id) => context.push('/settings/tasks/$id'),
+        onOpenTask: onOpenTask ?? (id) => context.push('/settings/tasks/$id'),
         onOpenTopic: (id) => context.push('/settings/agenda-items/$id'),
       );
 
@@ -2904,7 +2920,6 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 )
               else
                 _betaTaskList(_tasks, labels: map),
-              _betaAddTask(protocolGeneralSectionId),
             ],
           ),
         ),

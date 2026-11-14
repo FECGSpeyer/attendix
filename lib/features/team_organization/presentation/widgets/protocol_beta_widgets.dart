@@ -10,11 +10,11 @@ import '../../team_org_utils.dart' show outcomeLabels;
 /// Tone of a result: the chip in the notes and the pill in the Ablaufplan
 /// share it, so the same result has the same colour in both places.
 RdTone? protocolOutcomeTone(String? outcome) => switch (outcome) {
-      'decided' => RdTone.present,
-      'postponed' => RdTone.late,
-      'discussed' => RdTone.primary,
-      _ => null,
-    };
+  'decided' => RdTone.present,
+  'postponed' => RdTone.late,
+  'discussed' => RdTone.primary,
+  _ => null,
+};
 
 /// Result of a point: "Besprochen", "Beschlossen", "Vertagt". The picked
 /// one is filled in its status colour with a check mark; a second tap takes
@@ -48,44 +48,42 @@ class ProtocolOutcomeChips extends StatelessWidget {
   List<Widget> _chips(BuildContext context) {
     final p = context.rd;
     return [
-        for (final o in const ['discussed', 'decided', 'postponed'])
-          Semantics(
-            button: true,
-            selected: value == o,
-            child: Material(
-              color: value == o ? p.toneSoft(protocolOutcomeTone(o)!) : Colors.transparent,
-              shape: StadiumBorder(
-                side: BorderSide(color: value == o ? Colors.transparent : p.offBorder, width: 1.5),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                onTap: () => onChanged(o),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: 40),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (value == o) ...[
-                          Icon(Icons.check, size: 18, color: p.toneColor(protocolOutcomeTone(o)!)),
-                          const SizedBox(width: 4),
-                        ],
-                        Text(
-                          outcomeLabels[o] ?? o,
-                          style: TextStyle(
-                            fontSize: 14.5,
-                            fontWeight: FontWeight.w600,
-                            color: value == o ? p.toneColor(protocolOutcomeTone(o)!) : p.text,
-                          ),
-                        ),
+      for (final o in const ['discussed', 'decided', 'postponed'])
+        Semantics(
+          button: true,
+          selected: value == o,
+          child: Material(
+            color: value == o ? p.toneSoft(protocolOutcomeTone(o)!) : Colors.transparent,
+            shape: StadiumBorder(side: BorderSide(color: value == o ? Colors.transparent : p.offBorder, width: 1.5)),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => onChanged(o),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 44),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (value == o) ...[
+                        Icon(Icons.check, size: 18, color: p.toneColor(protocolOutcomeTone(o)!)),
+                        const SizedBox(width: 4),
                       ],
-                    ),
+                      Text(
+                        outcomeLabels[o] ?? o,
+                        style: TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w600,
+                          color: value == o ? p.toneColor(protocolOutcomeTone(o)!) : p.text,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
+        ),
     ];
   }
 }
@@ -197,6 +195,8 @@ class ProtocolStripButton extends StatelessWidget {
     return Semantics(
       button: true,
       label: semanticLabel,
+      // The own label replaces the content, so the tap has to be named here.
+      onTap: semanticLabel != null ? onTap : null,
       excludeSemantics: semanticLabel != null,
       child: Material(
         color: p.surface,
@@ -246,44 +246,47 @@ class ProtocolTaskRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 48),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Row(
-            children: [
-              Icon(
-                done ? Icons.check_circle : Icons.radio_button_unchecked,
-                size: 22,
-                color: done ? p.present : p.text2,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: done ? p.text2 : p.text,
-                        decoration: done ? TextDecoration.lineThrough : null,
-                      ),
-                    ),
-                    if (meta != null && meta!.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
-                        child: Text(meta!, style: RdType.meta(p, size: 13)),
-                      ),
-                  ],
+    return Semantics(
+      button: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Row(
+              children: [
+                Icon(
+                  done ? Icons.check_circle : Icons.radio_button_unchecked,
+                  size: 22,
+                  color: done ? p.present : p.text2,
                 ),
-              ),
-            ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: done ? p.text2 : p.text,
+                          decoration: done ? TextDecoration.lineThrough : null,
+                        ),
+                      ),
+                      if (meta != null && meta!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text(meta!, style: RdType.meta(p, size: 13)),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -319,18 +322,21 @@ class ProtocolLiveCard extends StatelessWidget {
               ),
             ),
             if (nextLabel != null && onNext != null)
-              InkWell(
-                onTap: onNext,
-                borderRadius: BorderRadius.circular(10),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: 44),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Center(
-                      widthFactor: 1,
-                      child: Text(
-                        nextLabel!,
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: p.link),
+              Semantics(
+                button: true,
+                child: InkWell(
+                  onTap: onNext,
+                  borderRadius: BorderRadius.circular(10),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 44),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Center(
+                        widthFactor: 1,
+                        child: Text(
+                          nextLabel!,
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: p.link),
+                        ),
                       ),
                     ),
                   ),
@@ -357,6 +363,7 @@ class ProtocolNextButton extends StatelessWidget {
     return Semantics(
       button: true,
       label: label,
+      onTap: onPressed,
       excludeSemantics: true,
       child: Material(
         color: p.surface,
