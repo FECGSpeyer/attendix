@@ -24,7 +24,6 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../bell_logic.dart';
-import '../../../../shared/widgets/layout/ion_modal_handle.dart';
 import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 
 /// Notification bell for page app bars (port of Ionic `NotificationBellComponent`).
@@ -208,6 +207,13 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
       icon: Badge(
         isLabelVisible: unread > 0,
         backgroundColor: AppColors.danger,
+        // EIB-26: Ionic `.bell-badge` – 16px high, 10px text, 1 / 4 padding
+        // (classic only; the Beta keeps the Material badge).
+        largeSize: context.rdSkin == null ? 16 : null,
+        padding: context.rdSkin == null ? const EdgeInsets.symmetric(horizontal: 4) : null,
+        textStyle: context.rdSkin == null
+            ? const TextStyle(fontSize: 10, height: 1.4, fontWeight: FontWeight.w600)
+            : null,
         label: Text(unread > 99 ? '99+' : '$unread'),
         // ICONS: classic design uses the Ionic app's ionicon, Beta keeps Material.
         child: Icon(ref.watch(redesignEnabledProvider)
@@ -337,8 +343,8 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
         if (unread > 0)
           IconButton(
             tooltip: ios ? null : context.l10n.bellMarkAllRead,
-            // iOS: plain ion-button in the glass capsule → black icon.
-            color: ios ? null : AppColors.primary,
+            // Plain ion-button without color: toolbar text colour on both
+            // looks (EIB-26 – md was primary before).
             icon: Icon(
               AppIcons.doneAll,
               semanticLabel: ios ? context.l10n.bellMarkAllRead : null,
@@ -861,6 +867,15 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
       startActionPane: ActionPane(
         motion: const DrawerMotion(),
         extentRatio: 0.22,
+        // EIB-26: ion-item-option `expandable` – a full swipe triggers the
+        // action. The row springs back; the list update shows the result.
+        dismissible: DismissiblePane(
+          confirmDismiss: () async {
+            await _toggleRead(n);
+            return false;
+          },
+          onDismissed: () {},
+        ),
         children: [
           SlidableAction(
             onPressed: (_) => _toggleRead(n),
@@ -873,6 +888,13 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
         extentRatio: 0.22,
+        dismissible: DismissiblePane(
+          confirmDismiss: () async {
+            await _guard(() => _notifier.deleteOne(n));
+            return false;
+          },
+          onDismissed: () {},
+        ),
         children: [
           SlidableAction(
             onPressed: (_) => _guard(() => _notifier.deleteOne(n)),
