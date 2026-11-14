@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +20,7 @@ import '../../../../../core/providers/song_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/router/route_access.dart' show canOpenSongsTab;
+import '../../../../../core/services/error_reporter.dart';
 import '../../../../../core/services/offline_queue_service.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/attendance_logic_utils.dart' show showSongsForType;
@@ -29,8 +32,9 @@ import '../../../../../core/utils/plan_utils.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/person/person.dart';
-import '../../../../../data/models/plan/plan.dart' show PlanAttendance, PlanAttendanceType;
+import '../../../../../data/models/plan/plan.dart' show Plan, PlanAttendance, PlanAttendanceType;
 import '../../../../../data/models/song/song.dart';
+import '../../../../../data/repositories/attendance_repository.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../../shared/widgets/event_list/event_list_widgets.dart' show openEventNavigation;
@@ -207,6 +211,38 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     }
   }
 
+  /// Takes the Werke [songIds] out of the Ablauf of the Termin [id], read
+  /// anew just before (another device may have changed it). Returns the
+  /// Ablauf before and after, null when none of them was in it.
+  static Future<({Plan before, Plan after})?> _dropFromPlan(
+    ProviderContainer container,
+    AttendanceRepository repo,
+    int id,
+    Set<int> songIds,
+  ) async {
+    container.invalidate(attendanceDetailProvider(id));
+    final fresh = await container.read(attendanceDetailProvider(id).future);
+    final plan = fresh == null ? null : rdPlanOf(fresh);
+    if (plan == null || !plan.fields.any((f) => songIds.contains(f.songId))) return null;
+    final fields = PlanUtils.normalizeGroups([
+      for (final f in plan.fields)
+        if (!songIds.contains(f.songId)) f,
+    ]);
+    final after = plan.copyWith(fields: fields, end: PlanUtils.computeEndIso(plan.time, fields));
+    await repo.updateAttendance(id, {'plan': after.toJson()});
+    _planChanged(container, id);
+    return (before: plan, after: after);
+  }
+
+  /// The Ablauf of the Termin [id] was written here: the Termin page and
+  /// the Ablauf editor (which keeps its own copies) read it anew.
+  static void _planChanged(ProviderContainer container, int id) {
+    container
+      ..invalidate(attendanceDetailProvider(id))
+      ..invalidate(planAttendancesProvider)
+      ..invalidate(planAttendanceByIdProvider(id));
+  }
+
   /// Refreshes the Werke and waits for the new list: until then the shown
   /// list is the old one, and another change must not build on it.
   static Future<void> _reload(ProviderContainer container, int id) async {
@@ -285,7 +321,65 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     ];
     // Still the list of the Auftritt: it keeps following it.
     if (!own && _sameWorks(next, shown)) return;
-    await _save(next);
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    final container = ProviderScope.containerOf(context, listen: false);
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
+    final id = _id;
+    final date = widget.attendance.date;
+    if (!await _save(next) || !session.isCurrent()) return;
+    // A Werk that left the list also leaves the Ablauf, as with "Werk
+    // entfernen" (else the Ablauf would bring it back with its next save).
+    final kept = {for (final e in next) e.songId};
+    final gone = {
+      for (final e in shown)
+        if (!kept.contains(e.songId)) e.songId,
+    };
+    if (gone.isEmpty) return;
+    try {
+      final change = await _dropFromPlan(container, repo, id, gone);
+      if (change == null) return;
+      final count = change.before.fields.where((f) => gone.contains(f.songId)).length;
+      messenger?.showSnackBar(SnackBar(
+        content: Text(l10n.redesignEventWorksRemovedPlan(count)),
+        duration: const Duration(seconds: 5),
+        persist: false,
+        action: SnackBarAction(
+          label: l10n.redesignEventUndo,
+          onPressed: () => unawaited(_restore(container, repo, session, id, date, change, own ? shown : const [])),
+        ),
+      ));
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
+    }
+  }
+
+  /// "Rückgängig" after "Ändern" took Werke out of the Ablauf: the list as
+  /// it was ([entries]; empty: it follows the Auftritt again) and the
+  /// Ablauf, unless that was changed since.
+  Future<void> _restore(
+    ProviderContainer container,
+    AttendanceRepository repo,
+    OfflineWriteSession session,
+    int id,
+    String date,
+    ({Plan before, Plan after}) change,
+    List<SongHistoryEntry> entries,
+  ) async {
+    if (!session.isCurrent()) return;
+    try {
+      await syncAttendanceSongHistory(repo, id, date, entries);
+      container.invalidate(attendanceDetailProvider(id));
+      final fresh = await container.read(attendanceDetailProvider(id).future);
+      if (fresh != null && rdPlanOf(fresh) == change.after) {
+        await repo.updateAttendance(id, {'plan': change.before.toJson()});
+        _planChanged(container, id);
+      }
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'RdEventProgramSection._restore');
+    } finally {
+      await _reload(container, id);
+    }
   }
 
   static bool _sameWorks(List<SongHistoryEntry> a, List<SongHistoryEntry> b) {
@@ -451,21 +545,11 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
       if (at < 0) return; // already gone (other device)
       final rest = [...base]..removeAt(at);
       await syncAttendanceSongHistory(repo, id, date, rest);
-      // The Werk also leaves the Ablauf (unless it is still in the list).
-      if (!rest.any((e) => e.songId == entry.songId)) {
-        final fresh = await container.read(attendanceDetailProvider(id).future);
-        final plan = fresh == null ? null : rdPlanOf(fresh);
-        if (plan != null && plan.fields.any((f) => f.songId == entry.songId)) {
-          final fields = PlanUtils.normalizeGroups([
-            for (final f in plan.fields)
-              if (f.songId != entry.songId) f,
-          ]);
-          await repo.updateAttendance(id, {
-            'plan': plan.copyWith(fields: fields, end: PlanUtils.computeEndIso(plan.time, fields)).toJson(),
-          });
-          container.invalidate(attendanceDetailProvider(id));
-        }
-      }
+      // The Werk also leaves the Ablauf, unless the list still has it
+      // (twice in it, or the list follows the Auftritt again).
+      await _reload(container, id);
+      final shown = await container.read(rdEventWorksProvider(id).future);
+      if (!shown.entries.any((e) => e.songId == entry.songId)) await _dropFromPlan(container, repo, id, {entry.songId});
     } catch (e) {
       if (mounted) ToastHelper.showError(context, l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
     } finally {
@@ -593,7 +677,7 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     final caption = [
       if (!_auftritt && entries != null && inPlan > 0 && inPlan < entries.length)
         l10n.redesignEventWorksInPlan(inPlan, entries.length),
-      if (source != null) l10n.redesignEventWorksFollows,
+      if (source != null && canEdit) l10n.redesignEventWorksFollows,
     ].join(' ');
     // A Probe ticks its Werke from the coming Auftritte; without one (and
     // for an Auftritt) a Werk is added from the Werk list.
@@ -677,11 +761,13 @@ class RdEventPlanSection extends ConsumerStatefulWidget {
 class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
   bool? _share;
 
-  /// [start]: what the editor does first (see `PlanningPage.start`).
-  void _edit({String? start}) =>
-      context.push<bool>(
-        '/planning?attendanceId=${widget.attendance.id}${start == null ? '' : '&start=${Uri.encodeQueryComponent(start)}'}',
-      );
+  /// [start]: what the editor does first (see [rdPlanStartProvider]).
+  void _edit({String? start}) {
+    final id = widget.attendance.id;
+    if (id == null) return;
+    ref.read(rdPlanStartProvider.notifier).state = start == null ? null : (attendanceId: id, action: start);
+    context.push<bool>('/planning?attendanceId=$id');
+  }
 
   /// How a new Ablauf starts, besides "Leer beginnen" (the same choices
   /// as in the empty Ablauf editor): with the Werke of the Termin, from a

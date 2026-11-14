@@ -947,7 +947,7 @@ void main() {
       expect(find.text('19:45'), findsOneWidget);
       expect(find.text('Ändern'), findsOneWidget);
       expect(
-        find.text('1 von 2 stehen im Ablauf. Die Liste folgt dem Auftritt, bis du sie änderst.'),
+        find.text('1 von 2 steht im Ablauf. Die Liste folgt dem Auftritt, bis du sie änderst.'),
         findsOneWidget,
       );
 

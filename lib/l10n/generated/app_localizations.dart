@@ -23091,8 +23091,8 @@ abstract class AppLocalizations {
   /// redesign.event.worksInPlan
   ///
   /// In de, this message translates to:
-  /// **'{count} von {total} stehen im Ablauf.'**
-  String redesignEventWorksInPlan(Object count, Object total);
+  /// **'{count, plural, one {1 von {total} steht im Ablauf.} other {{count} von {total} stehen im Ablauf.}}'**
+  String redesignEventWorksInPlan(num count, Object total);
 
   /// redesign.event.worksLoadFailed
   ///
@@ -23123,6 +23123,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{kind, select, probe{Angehakt ist, was geprobt wird.} other{Angehakt ist, was drankommt.}}'**
   String redesignEventWorksOfThisHint(String kind);
+
+  /// redesign.event.worksRemovedPlan
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk auch aus dem Ablauf entfernt} other {{count} Werke auch aus dem Ablauf entfernt}}'**
+  String redesignEventWorksRemovedPlan(num count);
 
   /// redesign.event.worksTake
   ///

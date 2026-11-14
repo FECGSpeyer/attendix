@@ -1230,11 +1230,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               // SOL_FIX22: negative / invalid values are reset to null (first plan)
               final rawPlan = int.tryParse(state.uri.queryParameters['plan'] ?? '');
               final planIndex = rawPlan != null && rawPlan >= 0 ? rawPlan : null;
-              return PlanningPage(
-                attendanceId: attendanceId,
-                initialPlanIndex: planIndex,
-                start: state.uri.queryParameters['start'],
-              );
+              return PlanningPage(attendanceId: attendanceId, initialPlanIndex: planIndex);
             },
           ),
 

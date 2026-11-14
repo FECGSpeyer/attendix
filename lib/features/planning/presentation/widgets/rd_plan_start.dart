@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/plan_utils.dart';
@@ -12,6 +13,13 @@ import 'plan_song_helper.dart';
 // REDESIGN: how a new Ablauf starts ("Aus einer Vorlage", "Wie die Probe
 // vom …"), shared by the Termin page (Reiter Programm) and the Ablauf
 // editor.
+
+/// What the Ablauf editor does first for a Termin, chosen on the Termin
+/// page: "works" (the Werke of the Termin that are not in the Ablauf),
+/// "copy" (like the last Termin of the Terminart), `tpl:<id>` (a Vorlage,
+/// see [rdPlanTemplates]) or "empty". The editor takes it once; it is not
+/// part of the address, so a reload does not repeat it.
+final rdPlanStartProvider = StateProvider<({int attendanceId, String action})?>((ref) => null);
 
 /// One Vorlage for a new Ablauf. [block]: a saved Programmblock (a part,
 /// not a whole Ablauf).

@@ -1154,14 +1154,17 @@ extension _PlanningBeta on _PlanningPageState {
           content: Text(message),
           duration: const Duration(seconds: 5),
           persist: false,
-          action: SnackBarAction(
-            label: l10n.redesignPlanUndo,
-            onPressed: () {
-              // Only while nothing else changed the plan meanwhile.
-              if (!mounted || loadGen != _loadGen || editGen != _editGen) return;
-              _rdApply(before);
-            },
-          ),
+          // Not back to an empty Ablauf: that one cannot be stored.
+          action: before.isEmpty
+              ? null
+              : SnackBarAction(
+                  label: l10n.redesignPlanUndo,
+                  onPressed: () {
+                    // Only while nothing else changed the plan meanwhile.
+                    if (!mounted || loadGen != _loadGen || editGen != _editGen) return;
+                    _rdApply(before);
+                  },
+                ),
         ),
       );
   }
@@ -1397,12 +1400,15 @@ extension _PlanningBeta on _PlanningPageState {
     final loadGen = _loadGen;
     final tpl = _rdTemplates(att).where((t) => t.id == id).firstOrNull;
     if (tpl == null) return;
+    final empty = _fields.isEmpty;
     final open = await _rdOpenWorks();
     if (!_samePlan(loadGen)) return;
     if (tpl.block) {
       _rdApply([..._fields, ...PlanUtils.cloneBlock(tpl.fields)]);
       return;
     }
+    // A whole Vorlage replaces the rows: not over something added meanwhile.
+    if (empty && _fields.isNotEmpty) return;
     final conductors = {for (final w in open) w.song.id: w.conductor};
     final songs = [for (final w in open) w.song];
     final prefix = _songPrefix(_typeOf(att));
@@ -1413,7 +1419,7 @@ extension _PlanningBeta on _PlanningPageState {
     final plain = [
       for (final f in tpl.fields)
         if (f.id.startsWith('song-placeholder-') || PlanUtils.isAgendaPlaceholder(f))
-          f
+          f.copyWith(groupId: f.groupId == null ? null : fresh(f.groupId!))
         else
           f.copyWith(
             id: PlanUtils.isNote(f) ? 'noteFld ${fresh(f.id)}' : fresh(f.id),

@@ -1,13 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/utils/attendance_logic_utils.dart' show showSongsForType;
+import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../attendance/presentation/attendance_song_history.dart';
 import '../../../attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntry;
 import '../../../planning/presentation/widgets/plan_song_helper.dart';
+import '../rd_event_phase.dart';
 
 /// The Werke planned for one Termin, as a Probe can take them over
 /// ("Adventskonzert", its date, the Werke with their conductors).
@@ -18,22 +22,45 @@ typedef RdWorksSource = ({PlanAttendance att, String name, List<SongHistoryEntry
 /// [PlanSongHelper.eventWorks]). A Probe without Werke of its own shows
 /// those of the first one.
 ///
-/// Empty for an Auftritt itself, for a Termin of a past day, for groups of
-/// type "general" and when the Termin is not among the loaded ones. Every
-/// query behind it filters by the tenant.
+/// Only a Termin whose Terminart has Werke follows an Auftritt. Empty for
+/// an Auftritt itself, for a Termin that is over or archived and for groups
+/// of type "general". The Termin and the coming ones are read anew each
+/// time (a Termin created or moved since counts). Every query behind it
+/// filters by the tenant.
 final rdEventWorksSourcesProvider = FutureProvider.autoDispose.family<List<RdWorksSource>, int>((
   ref,
   attendanceId,
 ) async {
-  if (ref.watch(currentTenantProvider.select((t) => t?.type)) == 'general') return const [];
-  final attendances = await ref.watch(planAttendancesProvider.future);
-  final att = attendances.where((a) => a.id == attendanceId).firstOrNull;
-  if (att == null) return const [];
+  final tenantType = ref.watch(currentTenantProvider.select((t) => t?.type));
+  if (tenantType == 'general') return const [];
+  final own = await ref.watch(attendanceDetailProvider(attendanceId).future);
+  if (own?.id == null || own!.archived) return const [];
+  final type = await ref.watch(attendanceTypeForAttendanceProvider(attendanceId).future);
+  if (!showSongsForType(type, tenantType)) return const [];
   final types = await ref.watch(planAttendanceTypesProvider.future);
-  if (PlanSongHelper.isAuftritt(att, types)) return const [];
-  final day = DateTime.tryParse(att.date);
-  final now = DateTime.now();
-  if (day == null || day.isBefore(DateTime(now.year, now.month, now.day))) return const [];
+  final att = PlanAttendance(
+    id: own.id,
+    tenantId: own.tenantId,
+    date: own.date,
+    durationDays: own.durationDays,
+    typeId: own.typeId,
+    typeInfo: own.typeInfo,
+    type: own.type,
+    startTime: own.startTime,
+  );
+  if ((type?.highlight ?? false) || PlanSongHelper.isAuftritt(att, types)) return const [];
+  final span = rdEventSpan(
+    day: EventListUtils.parse(own.date),
+    startTime: own.startTime ?? type?.startTime,
+    endTime: own.endTime ?? type?.endTime,
+    durationDays: rdEffectiveDurationDays(
+      own.durationDays,
+      typeAllDay: type?.allDay ?? false,
+      typeDurationDays: type?.durationDays,
+    ),
+  );
+  if (span == null || rdEventPhase(span) == RdEventPhase.after) return const [];
+  final attendances = await ref.watch(comingPlanAttendancesProvider(own.date).future);
   final history = [for (final group in await ref.watch(currentSongsProvider.future)) ...group.history];
   final songs = await ref.watch(songsProvider.future);
   final sources = PlanSongHelper.eventWorks(
@@ -44,6 +71,7 @@ final rdEventWorksSourcesProvider = FutureProvider.autoDispose.family<List<RdWor
     songs: songs,
     limit: 4,
     distinct: false,
+    auftritteOnly: true,
   );
   return [
     for (final source in sources)

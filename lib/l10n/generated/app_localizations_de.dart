@@ -14746,8 +14746,14 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String redesignEventWorksInPlan(Object count, Object total) {
-    return '$count von $total stehen im Ablauf.';
+  String redesignEventWorksInPlan(num count, Object total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count von $total stehen im Ablauf.',
+      one: '1 von $total steht im Ablauf.',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -14801,6 +14807,17 @@ class AppLocalizationsDe extends AppLocalizations {
       'probe': 'Angehakt ist, was geprobt wird.',
       'other': 'Angehakt ist, was drankommt.',
     });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignEventWorksRemovedPlan(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke auch aus dem Ablauf entfernt',
+      one: '1 Werk auch aus dem Ablauf entfernt',
+    );
     return '$_temp0';
   }
 

@@ -2,6 +2,7 @@
 // of a Probe offers the Werke planned for the next Auftritt (and those of
 // the Termin itself), as a checklist with the nearest Termin ticked.
 import 'package:attendix/core/constants/enums.dart';
+import 'package:attendix/core/providers/attendance_detail_providers.dart';
 import 'package:attendix/core/providers/branding_providers.dart';
 import 'package:attendix/core/providers/conductor_providers.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
@@ -51,6 +52,23 @@ void main() {
     Song(id: 2, name: 'Tochter Zion', number: 31),
     Song(id: 3, name: 'Stille Nacht', number: 47),
   ];
+  // The Termin as the Termin page loads it, its Terminart (with Werke) and
+  // the Termine from its day on.
+  List<Override> termine() => [
+        attendanceDetailProvider.overrideWith((ref, id) async => TestFactories.createAttendance(
+              id: id,
+              tenantId: 1,
+              date: (id == 9 ? concert : probe).date,
+              typeId: id == 9 ? 'vortrag' : 'probe',
+              startTime: id == 9 ? null : '19:00',
+            )),
+        attendanceTypeForAttendanceProvider.overrideWith((ref, id) async => TestFactories.createAttendanceType(
+              id: id == 9 ? 'vortrag' : 'probe',
+              name: id == 9 ? 'Vortrag' : 'Probe',
+              tenantId: 1,
+            ).copyWith(manageSongs: true, highlight: id == 9)),
+        comingPlanAttendancesProvider.overrideWith((ref, from) async => [probe, nextProbe, concert, later]),
+      ];
   const history = [
     SongHistory(id: 5, songId: 2, attendanceId: 9, conductorName: 'Ben Kurz'),
     SongHistory(id: 4, songId: 1, attendanceId: 9, conductorName: 'Anna Meier'),
@@ -142,6 +160,7 @@ void main() {
         conductorsProvider.overrideWith((ref) async => const []),
         hasBrandingProvider.overrideWithValue(false),
         effectiveRoleProvider.overrideWithValue(Role.admin),
+        ...termine(),
       ],
     );
     addTearDown(container.dispose);
@@ -230,9 +249,12 @@ void main() {
         conductorsProvider.overrideWith((ref) async => const []),
         hasBrandingProvider.overrideWithValue(false),
         effectiveRoleProvider.overrideWithValue(Role.admin),
+        ...termine(),
       ],
     );
     addTearDown(container.dispose);
+    // Chosen in the Reiter Programm of the Termin page.
+    container.read(rdPlanStartProvider.notifier).state = (attendanceId: 9, action: 'tpl:builtin:gottesdienst');
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
@@ -241,7 +263,7 @@ void main() {
           locale: const Locale('de'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const PlanningPage(attendanceId: 9, start: 'tpl:builtin:gottesdienst'),
+          home: const PlanningPage(attendanceId: 9),
         ),
       ),
     );

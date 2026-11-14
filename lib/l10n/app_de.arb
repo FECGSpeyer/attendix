@@ -17978,11 +17978,13 @@
       "label": {}
     }
   },
-  "redesignEventWorksInPlan": "{count} von {total} stehen im Ablauf.",
+  "redesignEventWorksInPlan": "{count, plural, one {1 von {total} steht im Ablauf.} other {{count} von {total} stehen im Ablauf.}}",
   "@redesignEventWorksInPlan": {
     "description": "redesign.event.worksInPlan",
     "placeholders": {
-      "count": {},
+      "count": {
+        "type": "num"
+      },
       "total": {}
     }
   },
@@ -18016,6 +18018,15 @@
     "description": "redesign.event.worksOfThisHint",
     "placeholders": {
       "kind": {}
+    }
+  },
+  "redesignEventWorksRemovedPlan": "{count, plural, one {1 Werk auch aus dem Ablauf entfernt} other {{count} Werke auch aus dem Ablauf entfernt}}",
+  "@redesignEventWorksRemovedPlan": {
+    "description": "redesign.event.worksRemovedPlan",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
     }
   },
   "redesignEventWorksTake": "{count, plural, one {1 Werk übernehmen} other {{count} Werke übernehmen}}",

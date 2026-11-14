@@ -123,15 +123,9 @@ Future<bool?> openPlanningEditor(BuildContext context, {int? attendanceId, int? 
 /// block templates, org templates / default fields, share links and the
 /// org plan flag.
 class PlanningPage extends ConsumerStatefulWidget {
-  const PlanningPage({super.key, this.attendanceId, this.initialPlanIndex, this.start});
+  const PlanningPage({super.key, this.attendanceId, this.initialPlanIndex});
 
   final int? attendanceId;
-
-  /// REDESIGN: what the editor does once the Termin is loaded: "works" (the
-  /// Werke of the Termin that are not in the Ablauf yet go to its end),
-  /// "copy" (like the last Termin of the Terminart), `tpl:<id>` (a
-  /// Vorlage) or "empty". A new Ablauf then starts without rows.
-  final String? start;
 
   /// Plan to open first when the Termin has several. Null or out of range
   /// (SOL_FIX22: also negative) opens the first plan.
@@ -803,11 +797,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       }
       _started = true;
       _loadAttendance(att, planIndex: widget.initialPlanIndex);
-      final start = widget.start;
+      // What was chosen on the Termin page, taken once.
+      final pending = ref.read(rdPlanStartProvider);
+      if (pending != null) ref.read(rdPlanStartProvider.notifier).state = null;
+      final start = pending?.attendanceId == att.id ? pending?.action : null;
       if (start != null && ref.read(redesignEnabledProvider)) {
-        // A new Ablauf starts with what was chosen on the Termin page, not
-        // with the start field "Wort" or the Vorlage of the Terminart.
-        if (PlanUtils.allPlans(att).isEmpty) {
+        // A new Ablauf starts with that, not with the start field "Wort"
+        // or the Vorlage of the Terminart.
+        if (PlanUtils.allPlans(_att).isEmpty) {
           setState(() => _fields = []);
           _dirty = false;
         }

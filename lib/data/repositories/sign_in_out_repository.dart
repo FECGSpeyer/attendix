@@ -391,27 +391,32 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
   /// after the Termin [attendanceId], for a Probe that has none of its own
   /// ("Vom nächsten Auftritt"). Null when there is none with Werke.
   ///
-  /// Only for Termine of the current group: every query filters by
-  /// [currentTenantId]. Three flat queries (no embedded Termin rows).
+  /// Only a Termin whose Terminart has Werke and is no Auftritt itself
+  /// follows one (not a Besprechung). Only for Termine of the current
+  /// group: every query filters by [currentTenantId]. Flat queries (no
+  /// embedded Termin rows).
   Future<({List<Map<String, dynamic>> rows, String name, String date})?> getNextPerformanceProgram({
     required int attendanceId,
   }) async {
     try {
       final own = await supabase
           .from('attendance')
-          .select('date, start_time')
+          .select('date, start_time, type_id')
           .eq('id', attendanceId)
           .eq('tenantId', currentTenantId)
           .maybeSingle();
       final date = own?['date'] as String?;
-      if (date == null) return null;
-      final types = await supabase
-          .from('attendance_types')
-          .select('id, name')
-          .eq('tenant_id', currentTenantId)
-          .eq('highlight', true);
+      if (date == null || own?['type_id'] == null) return null;
+      final types = ((await supabase
+              .from('attendance_types')
+              .select('id, name, highlight, manage_songs')
+              .eq('tenant_id', currentTenantId)) as List)
+          .cast<Map<String, dynamic>>();
+      final ownType = types.where((t) => '${t['id']}' == '${own?['type_id']}').firstOrNull;
+      if (ownType == null || ownType['manage_songs'] != true || ownType['highlight'] == true) return null;
       final typeNames = {
-        for (final t in (types as List).cast<Map<String, dynamic>>()) '${t['id']}': (t['name'] as String?) ?? '',
+        for (final t in types)
+          if (t['highlight'] == true) '${t['id']}': (t['name'] as String?) ?? '',
       };
       if (typeNames.isEmpty) return null;
       final next = await supabase
