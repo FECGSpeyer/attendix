@@ -61,7 +61,18 @@
       "and": "und",
       "addAnd": "und außerdem …",
       "removeAnd": "Bedingung entfernen",
-      "andElsewhere": "Mit „und“ kombinieren geht in der Regel „{name}“."
+      "andElsewhere": "Mit „und“ kombinieren geht in der Regel „{name}“.",
+      "membersIntroLead": "Wer gerade nach einer Regel auffällt, mit dem Grund. Nach einem Gespräch hier eintragen, dann zählt die Person wieder von vorn.",
+      "talk": "Gespräch eintragen",
+      "talkFor": "Gespräch mit {name} eintragen",
+      "talkTitle": "Mit {name} gesprochen",
+      "talkNote": "Notiz (optional)",
+      "talkNoteHint": "Was wurde besprochen?",
+      "talkHint": "Ab heute zählt {name} wieder von vorn. Die Notiz steht im Verlauf.",
+      "talkSaved": "Gespräch mit {name} eingetragen",
+      "rulesEdit": "Regeln bearbeiten",
+      "alsoRule": "auch „{rule}“",
+      "noRuleNow": "Keine Regel trifft mehr zu"
     }
   },
   "en": {
@@ -126,7 +137,18 @@
       "and": "and",
       "addAnd": "and also …",
       "removeAnd": "Remove condition",
-      "andElsewhere": "Combining with “and” works in the rule “{name}”."
+      "andElsewhere": "Combining with “and” works in the rule “{name}”.",
+      "membersIntroLead": "Who currently matches a rule, with the reason. After a conversation, log it here and the person starts counting again from zero.",
+      "talk": "Log conversation",
+      "talkFor": "Log conversation with {name}",
+      "talkTitle": "Talked to {name}",
+      "talkNote": "Note (optional)",
+      "talkNoteHint": "What was discussed?",
+      "talkHint": "From today on, {name} starts counting again from zero. The note appears in the history.",
+      "talkSaved": "Conversation with {name} logged",
+      "rulesEdit": "Edit rules",
+      "alsoRule": "also “{rule}”",
+      "noRuleNow": "No rule matches any more"
     }
   }
 }

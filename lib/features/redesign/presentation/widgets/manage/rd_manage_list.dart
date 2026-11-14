@@ -42,6 +42,7 @@ class RdManageListItem {
     this.countWarn = false,
     this.icon,
     this.trailing,
+    this.footer,
     this.onTap,
   });
 
@@ -61,6 +62,9 @@ class RdManageListItem {
 
   /// Own widget on the right (e.g. a switch); replaces [count].
   final Widget? trailing;
+
+  /// Below the subtitle (e.g. "Gespräch eintragen" of a Problemfall).
+  final Widget? footer;
   final VoidCallback? onTap;
 }
 
@@ -400,6 +404,7 @@ class _ItemRow extends StatelessWidget {
       subtitle: item.subtitle,
       value: item.trailing != null || item.countWarn ? null : count,
       trailing: item.trailing ?? (item.countWarn && count != null ? RdPill(count, tone: RdTone.absent) : null),
+      footer: item.footer,
       onTap: item.onTap,
     );
   }

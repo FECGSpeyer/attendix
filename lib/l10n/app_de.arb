@@ -13569,6 +13569,13 @@
   "@rdCriticalAddAnd": {
     "description": "rdCritical.addAnd"
   },
+  "rdCriticalAlsoRule": "auch „{rule}“",
+  "@rdCriticalAlsoRule": {
+    "description": "rdCritical.alsoRule",
+    "placeholders": {
+      "rule": {}
+    }
+  },
   "rdCriticalAnd": "und",
   "@rdCriticalAnd": {
     "description": "rdCritical.and"
@@ -13635,6 +13642,10 @@
   "@rdCriticalMembersIntro": {
     "description": "rdCritical.membersIntro"
   },
+  "rdCriticalMembersIntroLead": "Wer gerade nach einer Regel auffällt, mit dem Grund. Nach einem Gespräch hier eintragen, dann zählt die Person wieder von vorn.",
+  "@rdCriticalMembersIntroLead": {
+    "description": "rdCritical.membersIntroLead"
+  },
   "rdCriticalMembersTitle": "Aktuelle Problemfälle",
   "@rdCriticalMembersTitle": {
     "description": "rdCritical.membersTitle"
@@ -13666,6 +13677,10 @@
       "names": {},
       "count": {}
     }
+  },
+  "rdCriticalNoRuleNow": "Keine Regel trifft mehr zu",
+  "@rdCriticalNoRuleNow": {
+    "description": "rdCritical.noRuleNow"
   },
   "rdCriticalOr": " oder ",
   "@rdCriticalOr": {
@@ -13778,6 +13793,10 @@
   "@rdCriticalRemoveAnd": {
     "description": "rdCritical.removeAnd"
   },
+  "rdCriticalRulesEdit": "Regeln bearbeiten",
+  "@rdCriticalRulesEdit": {
+    "description": "rdCritical.rulesEdit"
+  },
   "rdCriticalSentenceLead": "Problemfall ist, wer",
   "@rdCriticalSentenceLead": {
     "description": "rdCritical.sentenceLead"
@@ -13816,6 +13835,46 @@
       "threshold": {},
       "what": {},
       "period": {}
+    }
+  },
+  "rdCriticalTalk": "Gespräch eintragen",
+  "@rdCriticalTalk": {
+    "description": "rdCritical.talk"
+  },
+  "rdCriticalTalkFor": "Gespräch mit {name} eintragen",
+  "@rdCriticalTalkFor": {
+    "description": "rdCritical.talkFor",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdCriticalTalkHint": "Ab heute zählt {name} wieder von vorn. Die Notiz steht im Verlauf.",
+  "@rdCriticalTalkHint": {
+    "description": "rdCritical.talkHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdCriticalTalkNote": "Notiz (optional)",
+  "@rdCriticalTalkNote": {
+    "description": "rdCritical.talkNote"
+  },
+  "rdCriticalTalkNoteHint": "Was wurde besprochen?",
+  "@rdCriticalTalkNoteHint": {
+    "description": "rdCritical.talkNoteHint"
+  },
+  "rdCriticalTalkSaved": "Gespräch mit {name} eingetragen",
+  "@rdCriticalTalkSaved": {
+    "description": "rdCritical.talkSaved",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdCriticalTalkTitle": "Mit {name} gesprochen",
+  "@rdCriticalTalkTitle": {
+    "description": "rdCritical.talkTitle",
+    "placeholders": {
+      "name": {}
     }
   },
   "rdCriticalThresholdCount": "{count, plural, one {mindestens einmal} other {mindestens {count}-mal}}",

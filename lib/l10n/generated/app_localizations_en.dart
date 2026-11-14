@@ -10862,6 +10862,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdCriticalAddAnd => 'and also …';
 
   @override
+  String rdCriticalAlsoRule(Object rule) {
+    return 'also “$rule”';
+  }
+
+  @override
   String get rdCriticalAnd => 'and';
 
   @override
@@ -10921,6 +10926,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Who currently matches a rule, with the reason. Tap to open the person.';
 
   @override
+  String get rdCriticalMembersIntroLead =>
+      'Who currently matches a rule, with the reason. After a conversation, log it here and the person starts counting again from zero.';
+
+  @override
   String get rdCriticalMembersTitle => 'Current problem cases';
 
   @override
@@ -10942,6 +10951,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String rdCriticalNames(Object names, Object count) {
     return '$names and $count more';
   }
+
+  @override
+  String get rdCriticalNoRuleNow => 'No rule matches any more';
 
   @override
   String get rdCriticalOr => ' or ';
@@ -11046,6 +11058,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdCriticalRemoveAnd => 'Remove condition';
 
   @override
+  String get rdCriticalRulesEdit => 'Edit rules';
+
+  @override
   String get rdCriticalSentenceLead => 'A problem case is anyone who';
 
   @override
@@ -11071,6 +11086,35 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String rdCriticalSummary(Object threshold, Object what, Object period) {
     return '$what $threshold $period';
+  }
+
+  @override
+  String get rdCriticalTalk => 'Log conversation';
+
+  @override
+  String rdCriticalTalkFor(Object name) {
+    return 'Log conversation with $name';
+  }
+
+  @override
+  String rdCriticalTalkHint(Object name) {
+    return 'From today on, $name starts counting again from zero. The note appears in the history.';
+  }
+
+  @override
+  String get rdCriticalTalkNote => 'Note (optional)';
+
+  @override
+  String get rdCriticalTalkNoteHint => 'What was discussed?';
+
+  @override
+  String rdCriticalTalkSaved(Object name) {
+    return 'Conversation with $name logged';
+  }
+
+  @override
+  String rdCriticalTalkTitle(Object name) {
+    return 'Talked to $name';
   }
 
   @override

@@ -5,15 +5,18 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../data/models/tenant/tenant.dart' show CriticalRule, CriticalRuleOperator;
 import '../../../../l10n/l10n.dart';
 import '../../data/providers/rd_critical_providers.dart';
 import '../../data/rd_critical_logic.dart';
 import '../../data/rd_members_logic.dart' show rdCriticalMembers;
 import '../widgets/manage/rd_manage_list.dart';
+import '../widgets/members/rd_critical_talk.dart';
 import '../widgets/rd_split_view.dart' show RdSplitView, rdUseSplit;
-import '../widgets/rd_widgets.dart' show rdBack;
+import '../widgets/rd_widgets.dart' show RdGroupedList, RdListRow, RdRowIcon, rdBack;
 import 'rd_person_page.dart' show RdPersonPage;
 
 /// REDESIGN: the current Problemfälle as a page of their own (template
@@ -22,6 +25,10 @@ import 'rd_person_page.dart' show RdPersonPage;
 /// switched to the Mitglieder tab with a filter set. The same set as Heute
 /// and the Mitglieder filter (server flag `isCritical`, active members),
 /// each with why and the attendance in percent; a tap opens the person.
+/// Admins and Verantwortliche enter a conversation right in the row
+/// ("Gespräch eintragen"); the row then leaves the list. Grouped by the
+/// rule that hits (in the rules' order), with "Regeln bearbeiten" on top
+/// for those who may change the rules.
 ///
 /// Wide screens: the list on the left, the tapped person on the right (like
 /// the Mitglieder split), so the way back to this list stays visible.
@@ -38,6 +45,15 @@ class RdCriticalMembersPage extends ConsumerStatefulWidget {
 class _RdCriticalMembersPageState extends ConsumerState<RdCriticalMembersPage> {
   /// Person open on the right of the split.
   int? _selected;
+
+  /// Talked to just now: hidden at once, before the list has reloaded
+  /// (shown again when saving fails or is undone).
+  final _talked = <int>{};
+
+  void _setTalked(int id, bool talked) {
+    if (!mounted) return;
+    setState(() => talked ? _talked.add(id) : _talked.remove(id));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,16 +87,103 @@ class _RdCriticalMembersPageState extends ConsumerState<RdCriticalMembersPage> {
     final people = role.canSeePeopleTab ? rdLoadedValue(async) : const <Person>[];
     final percentages = ref.watch(playerAttendancePercentagesProvider).valueOrNull ?? const <int, int>{};
     final reasons = rdCriticalContextOf(ref);
+    final canTalk = rdCanRecordTalk(role);
 
-    final critical = people == null ? null : (rdCriticalMembers(people)..sort(_byName));
-    String? subtitle(Person x) {
-      final reason = reasons?.reasonOf(x);
+    final critical =
+        people == null
+            ? null
+            : (rdCriticalMembers(people).where((x) => !_talked.contains(x.id)).toList()..sort(_byName));
+    final rules = ref.watch(currentTenantProvider)?.criticalRules ?? const <CriticalRule>[];
+    final groups = rdCriticalRuleGroups(rules);
+    String ruleTitle(CriticalRule rule) {
+      final name = (rule.name ?? '').trim();
+      return name.isNotEmpty ? name : rdCriticalDefaultName(rule, l10n);
+    }
+
+    String? subtitle(Person x, List<RdCriticalReason> hits) {
       final parts = [
         if ((x.groupName ?? '').isNotEmpty) x.groupName!,
-        if (reason != null) rdCriticalHitText(reason.rule, reason.result, l10n),
+        if (hits.isNotEmpty) rdCriticalHitText(hits.first.rule, hits.first.result, l10n),
+        // Further "eine reicht" rules that hit too (the "und" parts are one rule).
+        for (final h in hits.skip(1))
+          if (h.rule.operator == CriticalRuleOperator.or) l10n.rdCriticalAlsoRule(ruleTitle(h.rule)),
       ];
       return parts.isEmpty ? null : parts.join(' · ');
     }
+
+    RdManageListItem item(Person x, List<RdCriticalReason> hits) => RdManageListItem(
+      id: x.id ?? x.fullName,
+      title: x.fullName,
+      subtitle: subtitle(x, hits),
+      count: x.id == null || percentages[x.id] == null ? null : l10n.redesignMembersPercent(percentages[x.id]!),
+      footer:
+          canTalk && x.id != null
+              ? RdTalkChip(
+                key: ValueKey('rd-critical-talk-${x.id}'),
+                name: x.fullName,
+                onTap:
+                    () => rdRecordTalk(
+                      context,
+                      ref,
+                      x,
+                      reason: hits.isEmpty ? null : hits.first,
+                      onHidden: (talked) => _setTalked(x.id!, talked),
+                    ),
+              )
+              : null,
+      onTap:
+          x.id == null
+              ? null
+              : split
+              ? () => setState(() => _selected = x.id)
+              : () => context.push(RedesignRoutes.person(x.id!)),
+    );
+
+    // One section per rule that hits first (named like in Verwaltung ›
+    // Problemfälle); flagged by the server but no rule hits any more (an
+    // absence excused since the morning check) last. Before the reasons
+    // are worked out: one plain list.
+    List<RdManageListSection> sections(List<Person> list) {
+      if (reasons == null || groups.isEmpty) {
+        return [
+          if (list.isNotEmpty) RdManageListSection(items: [for (final x in list) item(x, const [])]),
+        ];
+      }
+      final byGroup = <int, List<RdManageListItem>>{};
+      for (final x in list) {
+        final hits = reasons.hitsOf(x);
+        final at = hits.isEmpty ? -1 : groups.indexWhere((g) => g.any((r) => r.id == hits.first.rule.id));
+        (byGroup[at] ??= []).add(item(x, hits));
+      }
+      return [
+        for (var i = 0; i < groups.length; i++)
+          if (byGroup[i] case final items?)
+            RdManageListSection(key: groups[i].first.id, title: ruleTitle(groups[i].first), items: items),
+        if (byGroup[-1] case final items?)
+          RdManageListSection(key: 'none', title: l10n.rdCriticalNoRuleNow, items: items),
+      ];
+    }
+
+    // "Regeln bearbeiten": the rules in Verwaltung › Problemfälle (back
+    // there when this list was opened from them). The leads are the ones
+    // with a Verwaltung (`rdShowsManage`).
+    final rulesLink =
+        canTalk
+            ? RdGroupedList(
+              children: [
+                RdListRow(
+                  key: const Key('rd-critical-rules'),
+                  leading: const RdRowIcon(Icons.rule),
+                  title: l10n.rdCriticalRulesEdit,
+                  subtitle: groups.isEmpty ? null : groups.map((g) => ruleTitle(g.first)).join(' · '),
+                  onTap:
+                      widget.from == 'verwaltung'
+                          ? () => rdBack(context, RedesignRoutes.critical)
+                          : () => context.push(RedesignRoutes.critical),
+                ),
+              ],
+            )
+            : null;
 
     final (backLabel, backTo) = switch (widget.from) {
       'heute' => (l10n.redesignTabToday, RedesignRoutes.today),
@@ -90,37 +193,13 @@ class _RdCriticalMembersPageState extends ConsumerState<RdCriticalMembersPage> {
 
     return RdManageListPage(
       title: l10n.rdCriticalMembersTitle,
-      intro: l10n.rdCriticalMembersIntro,
+      intro: canTalk ? l10n.rdCriticalMembersIntroLead : l10n.rdCriticalMembersIntro,
       backLabel: backLabel,
       // Opened by its URL the parent /mitglieder lies beneath: go to the
       // named origin then, pop only when pushed.
       onBack: () => rdBack(context, backTo),
-      sections:
-          critical == null
-              ? null
-              : [
-                if (critical.isNotEmpty)
-                  RdManageListSection(
-                    items: [
-                      for (final x in critical)
-                        RdManageListItem(
-                          id: x.id ?? x.fullName,
-                          title: x.fullName,
-                          subtitle: subtitle(x),
-                          count:
-                              x.id == null || percentages[x.id] == null
-                                  ? null
-                                  : l10n.redesignMembersPercent(percentages[x.id]!),
-                          onTap:
-                              x.id == null
-                                  ? null
-                                  : split
-                                  ? () => setState(() => _selected = x.id)
-                                  : () => context.push(RedesignRoutes.person(x.id!)),
-                        ),
-                    ],
-                  ),
-              ],
+      header: rulesLink,
+      sections: critical == null ? null : sections(critical),
       loadFailed: async.hasError && !async.isLoading,
       onRetry: () => ref.invalidate(realtimePlayersProvider),
       emptyText: l10n.rdCriticalMembersEmpty,

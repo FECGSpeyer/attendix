@@ -32,6 +32,7 @@ import '../../../people/presentation/widgets/pause_person_sheet.dart' show pause
 import '../../../settings/presentation/pages/left_players_page.dart' show LeftPlayersPage;
 import '../../data/rd_members_logic.dart';
 import '../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
+import '../widgets/members/rd_critical_talk.dart' show RdCriticalTalkCard, rdCanRecordTalk;
 import '../widgets/members/rd_pause_sheets.dart' show showRdArchiveSheet;
 import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../widgets/event/rd_record_widgets.dart' show rdStatusLook;
@@ -41,8 +42,9 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import 'rd_members_page.dart' show rdPercentColor;
 import '../../../../core/utils/helper_member.dart';
 
-/// REDESIGN: a person (canvas "PersonDetail"): contact, attendance with
-/// the last ten Termine, birthday, absence, note, Pausieren / Archivieren.
+/// REDESIGN: a person (canvas "PersonDetail"): a Problemfall with
+/// "Gespräch eintragen", contact, attendance with the last ten Termine,
+/// birthday, absence, note, Pausieren / Archivieren.
 /// "Bearbeiten" opens the Beta "Person bearbeiten" page, "Prüfen und
 /// freigeben" (pending) the Beta "Anfrage prüfen" page, "Alle Termine
 /// ansehen" the Beta "Verlauf" page.
@@ -147,6 +149,12 @@ class RdPersonPage extends ConsumerWidget {
         // Pausieren/Archivieren), like the old read-only page of a person who left.
         if (left) ...[
           _LeftCard(person: person, canRestore: role.isAdmin || role.isResponsible),
+          const SizedBox(height: 12),
+        ],
+        // A Problemfall: why, and "Gespräch eintragen" right here (before
+        // only in Bearbeiten). Like Bearbeiten: Admins and Verantwortliche.
+        if (person.isCritical && !left && !person.pending && rdCanRecordTalk(role)) ...[
+          RdCriticalTalkCard(person: person),
           const SizedBox(height: 12),
         ],
         _ContactGrid(phone: person.phone, email: person.email, firstName: person.firstName),
