@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.147.2",
+      "date": "14.11.2026",
+      "changes": [
+        "🖥️ Mac-App: Das Fenster öffnet beim ersten Start in einer Rechner-Größe statt in 800 x 600 und merkt sich danach Größe und Position"
+      ]
+    },
+    {
       "version": "0.147.1",
       "date": "14.11.2026",
       "changes": [
