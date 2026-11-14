@@ -1660,11 +1660,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// to add them again when all are there; empty: nothing to add).
   Future<List<PlanField>> _currentSongFieldsOrAsk() async {
     final prefix = _songPrefix(_typeOf(_att));
+    // Beta: the Werk's own length or 5 minutes; classic 20 like Ionic.
+    final time = ref.read(redesignEnabledProvider) ? PlanSongHelper.betaTime : null;
     final all = PlanSongHelper.currentSongFields(
       const [],
       history: _history,
       songs: _songs,
       prefix: prefix,
+      time: time,
     );
     if (all.isEmpty) {
       ToastHelper.showWarning(context, context.l10n.planningNoCurrentSongs);
@@ -1675,6 +1678,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       history: _history,
       songs: _songs,
       prefix: prefix,
+      time: time,
     );
     if (added.isNotEmpty) return added;
     final loadGen = _loadGen;

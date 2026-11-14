@@ -27099,7 +27099,7 @@ abstract class AppLocalizations {
   /// redesign.plan.add
   ///
   /// In de, this message translates to:
-  /// **'Punkt hinzufügen'**
+  /// **'Hinzufügen'**
   String get redesignPlanAdd;
 
   /// redesign.plan.addAfter
@@ -27126,12 +27126,6 @@ abstract class AppLocalizations {
   /// **'Block'**
   String get redesignPlanAddBlock;
 
-  /// redesign.plan.addBlockHint
-  ///
-  /// In de, this message translates to:
-  /// **'Fasst mehrere Punkte zusammen'**
-  String get redesignPlanAddBlockHint;
-
   /// redesign.plan.addDefaultField
   ///
   /// In de, this message translates to:
@@ -27156,29 +27150,35 @@ abstract class AppLocalizations {
   /// **'Punkt'**
   String get redesignPlanAddItem;
 
-  /// redesign.plan.addItemHint
-  ///
-  /// In de, this message translates to:
-  /// **'Mit Dauer, z. B. „Einsingen“'**
-  String get redesignPlanAddItemHint;
-
   /// redesign.plan.addNote
   ///
   /// In de, this message translates to:
   /// **'Notiz'**
   String get redesignPlanAddNote;
 
-  /// redesign.plan.addNoteHint
-  ///
-  /// In de, this message translates to:
-  /// **'Ohne Dauer und Uhrzeit'**
-  String get redesignPlanAddNoteHint;
-
   /// redesign.plan.addPlan
   ///
   /// In de, this message translates to:
   /// **'Plan'**
   String get redesignPlanAddPlan;
+
+  /// redesign.plan.addPoint
+  ///
+  /// In de, this message translates to:
+  /// **'Programmpunkt'**
+  String get redesignPlanAddPoint;
+
+  /// redesign.plan.addPointHint
+  ///
+  /// In de, this message translates to:
+  /// **'Punkt, Notiz, Block oder Werke'**
+  String get redesignPlanAddPointHint;
+
+  /// redesign.plan.addPointHintNoWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Punkt, Notiz oder Block'**
+  String get redesignPlanAddPointHintNoWorks;
 
   /// redesign.plan.addTitle
   ///
@@ -27191,12 +27191,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werke'**
   String get redesignPlanAddWorks;
-
-  /// redesign.plan.addWorksHint
-  ///
-  /// In de, this message translates to:
-  /// **'Aktuelle Werke oder aus der Liste'**
-  String get redesignPlanAddWorksHint;
 
   /// redesign.plan.afterBlock
   ///
@@ -27401,6 +27395,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Keine'**
   String get redesignPlanEventWorksNone;
+
+  /// redesign.plan.eventWorksOther
+  ///
+  /// In de, this message translates to:
+  /// **'Anderes Werk'**
+  String get redesignPlanEventWorksOther;
+
+  /// redesign.plan.eventWorksOtherHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aus der Werkliste'**
+  String get redesignPlanEventWorksOtherHint;
 
   /// redesign.plan.eventWorksOwn
   ///
@@ -27819,7 +27825,7 @@ abstract class AppLocalizations {
   /// redesign.plan.registerShareHint
   ///
   /// In de, this message translates to:
-  /// **'PDF oder Telegram'**
+  /// **'PDF oder Bild'**
   String get redesignPlanRegisterShareHint;
 
   /// redesign.plan.registerShuffle
@@ -27882,17 +27888,77 @@ abstract class AppLocalizations {
   /// **'Teilen'**
   String get redesignPlanShare;
 
-  /// redesign.plan.shareExport
+  /// redesign.plan.shareBrandingHint
   ///
   /// In de, this message translates to:
-  /// **'Teilen & Export'**
-  String get redesignPlanShareExport;
+  /// **'Logo und Name im PDF und im Bild'**
+  String get redesignPlanShareBrandingHint;
 
   /// redesign.plan.shareHint
   ///
   /// In de, this message translates to:
   /// **'Mitglieder sehen den Ablauf im Termin'**
   String get redesignPlanShareHint;
+
+  /// redesign.plan.shareImage
+  ///
+  /// In de, this message translates to:
+  /// **'Als Bild exportieren'**
+  String get redesignPlanShareImage;
+
+  /// redesign.plan.shareImageHint
+  ///
+  /// In de, this message translates to:
+  /// **'Speichern oder weitergeben'**
+  String get redesignPlanShareImageHint;
+
+  /// redesign.plan.sharePdf2x
+  ///
+  /// In de, this message translates to:
+  /// **'2x A5'**
+  String get redesignPlanSharePdf2x;
+
+  /// redesign.plan.sharePdf2xHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zweimal nebeneinander auf einem Blatt'**
+  String get redesignPlanSharePdf2xHint;
+
+  /// redesign.plan.sharePdfAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Pläne'**
+  String get redesignPlanSharePdfAll;
+
+  /// redesign.plan.sharePdfAllHint
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Pläne dieses Termins in einem PDF'**
+  String get redesignPlanSharePdfAllHint;
+
+  /// redesign.plan.sharePdfHint
+  ///
+  /// In de, this message translates to:
+  /// **'Normal oder 2x A5'**
+  String get redesignPlanSharePdfHint;
+
+  /// redesign.plan.sharePdfHintAll
+  ///
+  /// In de, this message translates to:
+  /// **'Normal, 2x A5 oder alle Pläne'**
+  String get redesignPlanSharePdfHintAll;
+
+  /// redesign.plan.sharePdfNormal
+  ///
+  /// In de, this message translates to:
+  /// **'Normal'**
+  String get redesignPlanSharePdfNormal;
+
+  /// redesign.plan.sharePdfNormalHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ein Ablauf pro Seite'**
+  String get redesignPlanSharePdfNormalHint;
 
   /// redesign.plan.songInPlan
   ///
@@ -29801,6 +29867,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Nr. {number} hat schon „{name}“. Die Nummer wird so nicht gespeichert.'**
   String redesignWorkEditNumberTaken(Object number, Object name);
+
+  /// redesign.workEdit.planMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'Dauer im Ablauf'**
+  String get redesignWorkEditPlanMinutes;
+
+  /// redesign.workEdit.planMinutesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mit dieser Dauer kommt das Werk in den Ablauf eines Termins. Leer: {minutes} Minuten.'**
+  String redesignWorkEditPlanMinutesHint(Object minutes);
+
+  /// redesign.workEdit.planMinutesLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Minuten'**
+  String get redesignWorkEditPlanMinutesLabel;
 
   /// redesign.workEdit.prefix
   ///

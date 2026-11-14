@@ -822,14 +822,20 @@ class _RdSongPickerState extends State<_RdSongPicker> {
 /// One Werk planned for a Termin, with the conductor planned there.
 typedef PlanEventWork = ({Song song, String conductor});
 
+/// What was chosen in [showRdEventWorksSheet]: the ticked [works], or
+/// [other] for "Anderes Werk" (the Werk list).
+typedef PlanEventWorksChoice = ({List<PlanEventWork> works, bool other});
+
 /// Beta "Werke übernehmen": the Werke planned for the Termine in [groups]
 /// as a checklist. Those of the first Termin are ticked, except the ones
 /// already [inPlanIds]. Returns the ticked Werke in the listed order.
-Future<List<PlanEventWork>?> showRdEventWorksSheet(
+/// [offerOther]: a row "Anderes Werk" below them.
+Future<PlanEventWorksChoice?> showRdEventWorksSheet(
   BuildContext context, {
   required List<({String label, List<PlanEventWork> works})> groups,
   Set<int> inPlanIds = const {},
   String? subtitle,
+  bool offerOther = false,
 }) {
   final selected = ValueNotifier<Set<int>>({
     if (groups.isNotEmpty)
@@ -842,7 +848,7 @@ Future<List<PlanEventWork>?> showRdEventWorksSheet(
         if (selected.value.contains(w.song.id)) w,
   ];
 
-  return showRdPlanSheet<List<PlanEventWork>>(
+  return showRdPlanSheet<PlanEventWorksChoice>(
     context,
     title: context.l10n.redesignPlanEventWorksTitle,
     subtitle: subtitle,
@@ -852,6 +858,20 @@ Future<List<PlanEventWork>?> showRdEventWorksSheet(
             valueListenable: selected,
             builder: (ctx, value, _) => _RdEventWorksList(groups: groups, inPlanIds: inPlanIds, selected: selected),
           ),
+          if (offerOther) ...[
+            const SizedBox(height: 12),
+            RdGroupedList(
+              children: [
+                RdListRow(
+                  key: const Key('rd-plan-event-works-other'),
+                  leading: const RdRowIcon(Icons.search),
+                  title: ctx.l10n.redesignPlanEventWorksOther,
+                  subtitle: ctx.l10n.redesignPlanEventWorksOtherHint,
+                  onTap: () => pop((works: const [], other: true)),
+                ),
+              ],
+            ),
+          ],
         ],
     footer:
         (ctx, pop) => ValueListenableBuilder<Set<int>>(
@@ -860,7 +880,7 @@ Future<List<PlanEventWork>?> showRdEventWorksSheet(
               (ctx, value, _) => RdPrimaryButton(
                 key: const Key('rd-plan-event-works-add'),
                 label: ctx.l10n.redesignPlanEventWorksAdd(value.length),
-                onPressed: value.isEmpty ? null : () => pop(chosen()),
+                onPressed: value.isEmpty ? null : () => pop((works: chosen(), other: false)),
               ),
         ),
   ).whenComplete(selected.dispose);

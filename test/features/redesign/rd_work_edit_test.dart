@@ -179,6 +179,25 @@ void main() {
       expect(find.text('page works'), findsOneWidget); // "Fertig" closes the form
     });
 
+    testWidgets('Dauer im Ablauf is kept with the Zusatzfelder', (tester) async {
+      _phone(tester);
+      late _FakeSongRepo repo;
+      await tester.pumpWidget(_editApp((r) => repo = r));
+      await _settle(tester);
+
+      final minutes = find.byKey(const Key('rd-work-edit-minutes'));
+      await tester.scrollUntilVisible(minutes, 200, scrollable: find.byType(Scrollable).first);
+      await tester.enterText(minutes, '8');
+      await tester.tap(find.byKey(const Key('rd-work-edit-done')));
+      await _settle(tester);
+
+      expect(repo.updates, [
+        {
+          'additional_fields': {'planMinutes': 8},
+        },
+      ]);
+    });
+
     testWidgets('a number another Werk has is named and not saved', (tester) async {
       _phone(tester);
       late _FakeSongRepo repo;

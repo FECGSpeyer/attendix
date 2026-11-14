@@ -290,7 +290,10 @@ void main() {
       await pump(tester);
       await tester.tap(find.byKey(const Key('rd-plan-add')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Block'));
+      // "Programmpunkt", then the chip "Block": the sheet of a new block.
+      await tester.tap(find.byKey(const Key('rd-plan-add-field')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('rd-plan-quick-block')));
       await tester.pumpAndSettle();
       await tester.enterText(find.byKey(const Key('rd-plan-quick-block-name')), 'Lobpreis');
       await tester.enterText(find.byKey(const Key('rd-plan-field-name')), 'Lied 1');

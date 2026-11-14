@@ -40,13 +40,32 @@ class PlanSongHelper {
     );
   }
 
+  /// Beta: key of the Werk's own length in the Ablauf, kept with its
+  /// Zusatzfelder (`songs.additional_fields`; no tenant field has this id).
+  static const minutesKey = 'planMinutes';
+
+  /// Beta: minutes a Werk enters the Ablauf with unless it has its own.
+  static const betaMinutes = 5;
+
+  /// The Werk's own length in the Ablauf (null: none stored).
+  static int? ownMinutes(Song song) {
+    final value = song.additionalFields?[minutesKey];
+    final minutes = value is num ? value.round() : int.tryParse('${value ?? ''}');
+    return minutes == null || minutes <= 0 ? null : minutes;
+  }
+
+  /// Beta: `time` of a Werk that enters the Ablauf.
+  static String betaTime(Song song) => '${ownMinutes(song) ?? betaMinutes}';
+
   /// "Aktuelle Werke hinzufügen": all Werke of the current history that are
-  /// not yet part of the plan.
+  /// not yet part of the plan. [time]: the length of each (20 minutes
+  /// without it, like Ionic).
   static List<PlanField> currentSongFields(
     List<PlanField> fields, {
     required List<SongHistory> history,
     required List<Song> songs,
     required String Function(Song song) prefix,
+    String Function(Song song)? time,
     bool includeExisting = false,
   }) {
     // Ionic 4.17.25: [includeExisting] adds the current Werke again even when
@@ -61,7 +80,7 @@ class PlanSongHelper {
       final song = songs.where((s) => s.id == id).firstOrNull;
       if (song == null) continue;
       existing.add(id);
-      result.add(songField(song, history: history, prefix: prefix));
+      result.add(songField(song, history: history, prefix: prefix, time: time?.call(song) ?? '20'));
     }
     return result;
   }

@@ -150,10 +150,20 @@ void main() {
     expect([for (final f in stored) f['name']], ['12. Machet die Tore weit', '47. Stille Nacht']);
     expect([for (final f in stored) f['songId']], [1, 3]);
     expect(stored.first['conductor'], 'Anna Meier');
-    // Still offered under "Hinzufügen", now marked as in the Ablauf.
+    // A Werk enters the Ablauf with 5 minutes.
+    expect([for (final f in stored) f['time']], ['5', '5']);
+    // "Hinzufügen" > "Programmpunkt" > "+ Werke" offers them first, with
+    // "Anderes Werk" for the Werk list.
     await tester.tap(find.byKey(const Key('rd-plan-add')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('rd-plan-event-works')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('rd-plan-add-field')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('rd-plan-quick-works')));
+    // No pumpAndSettle: "Hinzufügen" behind the sheet shows its spinner.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.byKey(const ValueKey('rd-plan-event-work-0-2')), findsOneWidget);
+    expect(find.byKey(const Key('rd-plan-event-works-other')), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(milliseconds: 50));

@@ -17432,7 +17432,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPersonTomorrow => 'tomorrow';
 
   @override
-  String get redesignPlanAdd => 'Add item';
+  String get redesignPlanAdd => 'Add';
 
   @override
   String redesignPlanAddAfter(Object name) {
@@ -17450,9 +17450,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanAddBlock => 'Block';
 
   @override
-  String get redesignPlanAddBlockHint => 'Groups several items';
-
-  @override
   String get redesignPlanAddDefaultField => 'Add default field';
 
   @override
@@ -17467,25 +17464,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanAddItem => 'Item';
 
   @override
-  String get redesignPlanAddItemHint => 'With a duration, e.g. “Warm-up”';
-
-  @override
   String get redesignPlanAddNote => 'Note';
 
   @override
-  String get redesignPlanAddNoteHint => 'No duration or time';
+  String get redesignPlanAddPlan => 'Plan';
 
   @override
-  String get redesignPlanAddPlan => 'Plan';
+  String get redesignPlanAddPoint => 'Programme item';
+
+  @override
+  String get redesignPlanAddPointHint => 'Item, note, block or works';
+
+  @override
+  String get redesignPlanAddPointHintNoWorks => 'Item, note or block';
 
   @override
   String get redesignPlanAddTitle => 'Add';
 
   @override
   String get redesignPlanAddWorks => 'Works';
-
-  @override
-  String get redesignPlanAddWorksHint => 'Current works or from the list';
 
   @override
   String get redesignPlanAfterBlock => 'Insert item after the block';
@@ -17619,6 +17616,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignPlanEventWorksNone => 'None';
+
+  @override
+  String get redesignPlanEventWorksOther => 'Another work';
+
+  @override
+  String get redesignPlanEventWorksOtherHint => 'From the work list';
 
   @override
   String get redesignPlanEventWorksOwn => 'Works of this event';
@@ -17891,7 +17894,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanRegisterShare => 'Share as table';
 
   @override
-  String get redesignPlanRegisterShareHint => 'PDF or Telegram';
+  String get redesignPlanRegisterShareHint => 'PDF or image';
 
   @override
   String get redesignPlanRegisterShuffle => 'Shuffle again';
@@ -17928,10 +17931,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanShare => 'Share';
 
   @override
-  String get redesignPlanShareExport => 'Share & export';
+  String get redesignPlanShareBrandingHint =>
+      'Logo and name in the PDF and the image';
 
   @override
   String get redesignPlanShareHint => 'Members see the run sheet in the event';
+
+  @override
+  String get redesignPlanShareImage => 'Export as image';
+
+  @override
+  String get redesignPlanShareImageHint => 'Save or pass on';
+
+  @override
+  String get redesignPlanSharePdf2x => '2x A5';
+
+  @override
+  String get redesignPlanSharePdf2xHint => 'Twice side by side on one sheet';
+
+  @override
+  String get redesignPlanSharePdfAll => 'All plans';
+
+  @override
+  String get redesignPlanSharePdfAllHint =>
+      'All plans of this event in one PDF';
+
+  @override
+  String get redesignPlanSharePdfHint => 'Normal or 2x A5';
+
+  @override
+  String get redesignPlanSharePdfHintAll => 'Normal, 2x A5 or all plans';
+
+  @override
+  String get redesignPlanSharePdfNormal => 'Normal';
+
+  @override
+  String get redesignPlanSharePdfNormalHint => 'One schedule per page';
 
   @override
   String get redesignPlanSongInPlan => 'in plan';
@@ -19154,6 +19189,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String redesignWorkEditNumberTaken(Object number, Object name) {
     return 'No. $number already belongs to “$name”. The number is not saved like this.';
   }
+
+  @override
+  String get redesignWorkEditPlanMinutes => 'Length in the schedule';
+
+  @override
+  String redesignWorkEditPlanMinutesHint(Object minutes) {
+    return 'The work enters the schedule of an event with this length. Empty: $minutes minutes.';
+  }
+
+  @override
+  String get redesignWorkEditPlanMinutesLabel => 'Minutes';
 
   @override
   String get redesignWorkEditPrefix => 'Prefix';
