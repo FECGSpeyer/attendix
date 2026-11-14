@@ -6,7 +6,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive_platform.dart'
     show useIosLook;
 import '../../../../../shared/widgets/adaptive/ion_md_datetime.dart'
-    show IonMdCalendar;
+    show IonMdCalendar, IonMdDatetime;
 import 'ion_widgets.dart';
 
 /// PEO-04/05: Ionic `ion-accordion` whose header is an `ion-item
@@ -59,8 +59,9 @@ class _IonDateAccordionState extends State<IonDateAccordion> {
   @override
   Widget build(BuildContext context) {
     final ios = ionIsIos(context);
-    final initial =
-        _clamp(widget.value ?? widget.initialDate ?? DateTime.now());
+    final initial = _clamp(
+      widget.value ?? widget.initialDate ?? DateTime.now(),
+    );
     final chevron = AnimatedRotation(
       turns: _open ? 0.5 : 0,
       duration: const Duration(milliseconds: 300),
@@ -101,19 +102,25 @@ class _IonDateAccordionState extends State<IonDateAccordion> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           alignment: Alignment.topCenter,
-          child: !_open
-              ? const SizedBox(width: double.infinity)
-              : useIosLook(context)
+          child:
+              !_open
+                  ? const SizedBox(width: double.infinity)
+                  : useIosLook(context)
                   ? CalendarDatePicker(
-                      // Rebuild when the value is cleared / set outside.
-                      key: ValueKey(widget.value),
-                      initialDate: initial,
-                      firstDate: widget.firstDate,
-                      lastDate: widget.lastDate,
-                      onDateChanged: (d) => widget
-                          .onChanged(DateTime(d.year, d.month, d.day)),
-                    )
-                  : IonMdCalendar(
+                    // Rebuild when the value is cleared / set outside.
+                    key: ValueKey(widget.value),
+                    initialDate: initial,
+                    firstDate: widget.firstDate,
+                    lastDate: widget.lastDate,
+                    onDateChanged:
+                        (d) =>
+                            widget.onChanged(DateTime(d.year, d.month, d.day)),
+                  )
+                  // The md calendar fills its parent (Expanded grid):
+                  // give it the Ionic md grid height inside the scroll view.
+                  : SizedBox(
+                    height: IonMdDatetime.gridHeight,
+                    child: IonMdCalendar(
                       key: ValueKey(widget.value),
                       initialDate: initial,
                       firstDate: widget.firstDate,
@@ -124,6 +131,7 @@ class _IonDateAccordionState extends State<IonDateAccordion> {
                         }
                       },
                     ),
+                  ),
         ),
       ],
     );
