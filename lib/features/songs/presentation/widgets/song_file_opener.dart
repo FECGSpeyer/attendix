@@ -13,6 +13,9 @@ import 'pdf_viewer_page.dart';
 import 'pdf_viewer_sheet.dart';
 import '../../../../l10n/l10n.dart';
 
+/// Files the classic native app is currently handing to the system viewer.
+final _openingNatively = <String>{};
+
 /// Open a song file (Ionic `Utils.openFileNative`).
 ///
 /// Normal design: in the iOS / Android app the system viewer, like Ionic;
@@ -29,7 +32,14 @@ Future<void> openSongFile(BuildContext context, SongFile file) async {
   // (`Utils.openFileNative` → `FileViewer.openDocumentFromUrl`), not in an
   // own viewer. The web keeps the in-app viewers.
   if (!RedesignRoutes.active && isNativeApp) {
-    await openSongFileExternally(context, file);
+    // The file is downloaded first: a second tap meanwhile must not start
+    // another download.
+    if (!_openingNatively.add(file.url)) return;
+    try {
+      await openSongFileExternally(context, file);
+    } finally {
+      _openingNatively.remove(file.url);
+    }
     return;
   }
   if (SongUtils.isPdf(file)) {

@@ -248,15 +248,22 @@ class SongFilterMenu extends ConsumerWidget {
     return Builder(
       builder: (triggerContext) => builder(
         triggerContext,
-        () => showAppFilterPopover(
-          context: triggerContext,
-          rows: () => _rows(triggerContext, ref),
-        ),
+        () {
+          // The popover can outlive this widget: read through the
+          // container, not through the widget's ref.
+          final container = ProviderScope.containerOf(triggerContext);
+          showAppFilterPopover(
+            context: triggerContext,
+            rows: () => triggerContext.mounted
+                ? _rows(triggerContext, container)
+                : const [],
+          );
+        },
       ),
     );
   }
 
-  List<AppFilterRow> _rows(BuildContext context, WidgetRef ref) {
+  List<AppFilterRow> _rows(BuildContext context, ProviderContainer ref) {
     final filter = ref.read(songFilterProvider(data.tenantId));
     final notifier = ref.read(songFilterProvider(data.tenantId).notifier);
     final viewNotifier = ref.read(songViewOptionsProvider(data.tenantId).notifier);

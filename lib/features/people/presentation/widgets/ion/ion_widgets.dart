@@ -481,13 +481,15 @@ class IonFabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Beta-Skin: the themed FAB of the new design.
-    if (!ionIsIos(context) || context.rdSkin != null) {
+    // Beta-Skin: the themed FAB of the new design (its own shape). md: the
+    // round Ionic `ion-fab-button`.
+    final beta = context.rdSkin != null;
+    if (beta || !ionIsIos(context)) {
       return FloatingActionButton(
         heroTag: heroTag,
         tooltip: tooltip,
         onPressed: onPressed,
-        shape: const CircleBorder(),
+        shape: beta ? null : const CircleBorder(),
         child: Icon(icon ?? AppIcons.add),
       );
     }

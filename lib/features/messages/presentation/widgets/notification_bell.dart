@@ -747,12 +747,9 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
 
     return Column(
       children: [
-        // Ionic sheet modal: a swipe on the header moves the sheet too.
         if (ios)
-          SheetDragArea(child: _iosHeader(unread, list))
-        else
-          SheetDragArea(
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
+          _iosHeader(unread, list)
+        else ...[
           // ion-toolbar: ion-title + end buttons (md mode)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
@@ -779,8 +776,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
             padding: const EdgeInsets.all(AppDimensions.paddingS),
             child: _segment(false),
           ),
-            ]),
-          ),
+        ],
         Expanded(
           child: RefreshIndicator.adaptive(
             onRefresh: () async {

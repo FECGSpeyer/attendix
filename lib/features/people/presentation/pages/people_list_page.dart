@@ -956,6 +956,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   /// The rows of the options popover, built from the current state (the
   /// popover reads them again after every change).
   List<AppFilterRow> _optionsRows({required bool isAdmin}) {
+    // The popover can outlive the page (resize across the side-nav
+    // breakpoint, tenant switch).
+    if (!mounted) return const [];
     final tenant = ref.read(currentTenantProvider);
     final filterLabels = _filterOptionLabels(tenant);
     final sortLabels = _sortOptionLabels(tenant);
