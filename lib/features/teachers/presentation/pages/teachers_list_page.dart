@@ -146,6 +146,12 @@ class TeachersListPage extends ConsumerWidget {
     // plain ion-list with ion-items, glass FAB.
     return IonPage(
       title: context.l10n.teachersTitle,
+      // ROLLEN-B-63: `ion-back-button` – the themed glass chevron of the other
+      // classic pages instead of Cupertino's bare teal "‹".
+      leading: ionIsIos(context) &&
+              (ModalRoute.of(context)?.impliesAppBarDismissal ?? false)
+          ? const BackButton()
+          : null,
       onRefresh: refresh,
       slivers: [
         ...teachersAsync.when(
