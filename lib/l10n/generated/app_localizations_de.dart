@@ -14515,9 +14515,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventPlan => 'Ablauf ansehen';
 
   @override
-  String get redesignEventPlanCreate => 'Ablauf anlegen';
-
-  @override
   String get redesignEventPlanEdit => 'Ablauf bearbeiten';
 
   @override
@@ -14590,9 +14587,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignEventPresentOf(Object present, Object total, Object percent) {
     return '$present von $total · $percent %';
   }
-
-  @override
-  String get redesignEventProgram => 'Programm';
 
   @override
   String redesignEventProgramMore(Object names, Object count) {
@@ -14771,14 +14765,21 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp1 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
+      other: '$count Werke dieses Auftritts stehen noch nicht im Ablauf',
+      one: '1 Werk dieses Auftritts steht noch nicht im Ablauf',
+    );
+    String _temp2 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
       other: '$count Werke dieses Termins stehen noch nicht im Ablauf',
       one: '1 Werk dieses Termins steht noch nicht im Ablauf',
     );
-    String _temp2 = intl.Intl.selectLogic(kind, {
+    String _temp3 = intl.Intl.selectLogic(kind, {
       'probe': '$_temp0',
-      'other': '$_temp1',
+      'auftritt': '$_temp1',
+      'other': '$_temp2',
     });
-    return '$_temp2';
+    return '$_temp3';
   }
 
   @override
@@ -14788,6 +14789,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignEventWorksOfThis(String kind) {
     String _temp0 = intl.Intl.selectLogic(kind, {
       'probe': 'Werke dieser Probe',
+      'auftritt': 'Werke dieses Auftritts',
       'other': 'Werke dieses Termins',
     });
     return '$_temp0';
@@ -17807,9 +17809,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignPlanEmptyTemplate => 'Vorlage der Organisation';
-
-  @override
   String get redesignPlanEmptyTitle => 'Womit beginnen?';
 
   @override
@@ -17842,11 +17841,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String redesignPlanEventWorksFrom(Object date) {
-    return 'Werke vom $date';
-  }
-
-  @override
   String get redesignPlanEventWorksNone => 'Keine';
 
   @override
@@ -17854,9 +17848,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanEventWorksOtherHint => 'Aus der Werkliste';
-
-  @override
-  String get redesignPlanEventWorksOwn => 'Werke dieses Termins';
 
   @override
   String get redesignPlanEventWorksThis => 'Dieser Termin';
@@ -18210,6 +18201,44 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanStart => 'Beginn';
 
   @override
+  String get redesignPlanStartAsk => 'Womit möchtest du beginnen?';
+
+  @override
+  String get redesignPlanStartEmpty => 'Leer beginnen';
+
+  @override
+  String get redesignPlanStartNone => 'Noch kein Ablauf';
+
+  @override
+  String get redesignPlanStartTemplate => 'Aus einer Vorlage';
+
+  @override
+  String redesignPlanStartTemplateHint(Object name) {
+    return 'Zum Beispiel $name';
+  }
+
+  @override
+  String redesignPlanStartWorks(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'probe': 'Mit den Werken dieser Probe',
+      'auftritt': 'Mit den Werken dieses Auftritts',
+      'other': 'Mit den Werken dieses Termins',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanStartWorksHint(num count, Object minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke, je $minutes Min',
+      one: '1 Werk, $minutes Min',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignPlanTelegram => 'Per Telegram';
 
   @override
@@ -18217,6 +18246,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanTemplateHint => 'Vorlage · sofort gespeichert';
+
+  @override
+  String get redesignPlanTemplatePick => 'Vorlage wählen';
+
+  @override
+  String redesignPlanTemplateStarts(Object time) {
+    return 'Der Ablauf beginnt um $time, wie der Termin.';
+  }
 
   @override
   String redesignPlanTemplatesIntro(Object org) {
@@ -18253,6 +18290,17 @@ class AppLocalizationsDe extends AppLocalizations {
       locale: localeName,
       other: '$count Werke am Ende eingefügt',
       one: '1 Werk am Ende eingefügt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanWorksPlaced(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke eingesetzt',
+      one: '1 Werk eingesetzt',
     );
     return '$_temp0';
   }

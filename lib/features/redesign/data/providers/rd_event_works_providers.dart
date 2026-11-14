@@ -64,7 +64,7 @@ final rdEventWorksSourcesProvider = FutureProvider.autoDispose.family<List<RdWor
                   songId: work.song.id!,
                   songName: work.song.displayName,
                   conductorId: person,
-                  conductorName: person == null ? null : row?.conductorName,
+                  conductorName: other?.isNotEmpty == true ? null : row?.conductorName,
                   otherConductor: other?.isNotEmpty == true ? other : null,
                 );
               }(),

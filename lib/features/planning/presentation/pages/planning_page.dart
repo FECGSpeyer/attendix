@@ -37,6 +37,7 @@ import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_song_helper.dart';
 import '../widgets/plan_view_list.dart';
+import '../widgets/rd_plan_start.dart';
 import '../widgets/rd_plan_widgets.dart';
 import '../widgets/ion_items.dart';
 import '../widgets/register_plan_sheet.dart';
@@ -56,7 +57,7 @@ import '../../../../core/services/register_plan_service.dart';
 import '../../data/planning_write_sync.dart';
 import '../../../../core/providers/redesign_providers.dart' show redesignEnabledProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntryExtension;
+import '../../../attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntry, SongHistoryEntryExtension;
 import '../../../redesign/data/providers/rd_event_works_providers.dart';
 import '../../../redesign/data/rd_event_works_sync.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
@@ -126,8 +127,10 @@ class PlanningPage extends ConsumerStatefulWidget {
 
   final int? attendanceId;
 
-  /// REDESIGN: what the editor does once the Termin is loaded ("works": the
-  /// Werke of the Termin that are not in the Ablauf yet go to its end).
+  /// REDESIGN: what the editor does once the Termin is loaded: "works" (the
+  /// Werke of the Termin that are not in the Ablauf yet go to its end),
+  /// "copy" (like the last Termin of the Terminart), `tpl:<id>` (a
+  /// Vorlage) or "empty". A new Ablauf then starts without rows.
   final String? start;
 
   /// Plan to open first when the Termin has several. Null or out of range
@@ -800,7 +803,16 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       }
       _started = true;
       _loadAttendance(att, planIndex: widget.initialPlanIndex);
-      if (widget.start == 'works' && ref.read(redesignEnabledProvider)) unawaited(_rdStartWorks());
+      final start = widget.start;
+      if (start != null && ref.read(redesignEnabledProvider)) {
+        // A new Ablauf starts with what was chosen on the Termin page, not
+        // with the start field "Wort" or the Vorlage of the Terminart.
+        if (PlanUtils.allPlans(att).isEmpty) {
+          setState(() => _fields = []);
+          _dirty = false;
+        }
+        unawaited(_rdStart(start));
+      }
       return;
     }
     // No Termin requested: first upcoming Termin (list is sorted newest first).

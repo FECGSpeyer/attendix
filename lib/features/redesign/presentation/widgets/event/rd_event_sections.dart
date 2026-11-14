@@ -10,6 +10,8 @@ import '../../../../../core/providers/conductor_providers.dart';
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/debug_providers.dart';
 import '../../../../../core/providers/group_providers.dart';
+import '../../../../../core/providers/organisation_providers.dart';
+import '../../../../../core/providers/plan_providers.dart';
 import '../../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
 import '../../../../../core/providers/role_permission_providers.dart';
 import '../../../../../core/providers/song_providers.dart';
@@ -27,6 +29,7 @@ import '../../../../../core/utils/plan_utils.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/person/person.dart';
+import '../../../../../data/models/plan/plan.dart' show PlanAttendance, PlanAttendanceType;
 import '../../../../../data/models/song/song.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
@@ -37,6 +40,7 @@ import '../../../../attendance/presentation/widgets/attendance_detail/attendance
 import '../../../../attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart';
 import '../../../../attendance/presentation/widgets/songs_selection_sheet.dart';
 import '../../../../planning/presentation/attendance_plan_viewer.dart';
+import '../../../../planning/presentation/widgets/rd_plan_start.dart';
 import '../../../../planning/presentation/widgets/rd_plan_widgets.dart' show PlanEventWork, showRdEventWorksSheet;
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart' show openFilesFolderRoute;
 import '../../../../songs/presentation/utils/song_utils.dart';
@@ -673,10 +677,74 @@ class RdEventPlanSection extends ConsumerStatefulWidget {
 class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
   bool? _share;
 
-  /// [start]: what the editor does first ("works": the Werke of the
-  /// Termin that are not in the Ablauf yet go to its end).
+  /// [start]: what the editor does first (see `PlanningPage.start`).
   void _edit({String? start}) =>
-      context.push<bool>('/planning?attendanceId=${widget.attendance.id}${start == null ? '' : '&start=$start'}');
+      context.push<bool>(
+        '/planning?attendanceId=${widget.attendance.id}${start == null ? '' : '&start=${Uri.encodeQueryComponent(start)}'}',
+      );
+
+  /// How a new Ablauf starts, besides "Leer beginnen" (the same choices
+  /// as in the empty Ablauf editor): with the Werke of the Termin, from a
+  /// Vorlage, like the last Termin of the same Terminart. Each row shows
+  /// once its data is there.
+  List<Widget> _startRows() {
+    final l10n = context.l10n;
+    final att = widget.attendance;
+    final id = att.id;
+    if (id == null) return const [];
+    final tenantType = ref.watch(currentTenantProvider)?.type;
+    final works = rdShowsProgram(ref, widget.type) ? ref.watch(rdEventWorksProvider(id)).valueOrNull : null;
+    final songs = {for (final s in ref.watch(songsProvider).valueOrNull ?? const <Song>[]) s.id: s};
+    final open = [
+      for (final e in works?.entries ?? const <SongHistoryEntry>[])
+        if (songs[e.songId] case final song?) song,
+    ];
+    final types = ref.watch(planAttendanceTypesProvider).valueOrNull ?? const <PlanAttendanceType>[];
+    final attendances = ref.watch(planAttendancesProvider).valueOrNull ?? const <PlanAttendance>[];
+    final planAtt = attendances.where((a) => a.id == id).firstOrNull ??
+        PlanAttendance(id: id, date: att.date, typeId: att.typeId, type: att.type);
+    final templates = rdPlanTemplates(
+      type: types.where((t) => t.id == att.typeId).firstOrNull,
+      auftritt: widget.type?.highlight ?? false,
+      tenantType: tenantType,
+      orgTemplates: ref.watch(currentOrganisationProvider).valueOrNull?.planningTemplates ?? const [],
+      blockTemplates: ref.watch(planBlockTemplatesProvider).valueOrNull ?? const [],
+    );
+    final previous = rdPreviousPlan(planAtt, attendances);
+    final previousDay = previous == null ? null : EventListUtils.parse(previous.att.date);
+    return [
+      if (open.isNotEmpty)
+        RdListRow(
+          key: const Key('rd-plan-start-works'),
+          leading: const RdRowIcon(Icons.queue_music_outlined),
+          title: l10n.redesignPlanStartWorks(rdWorksKind(widget.type)),
+          subtitle: rdPlanStartWorksHint(l10n, open),
+          onTap: () => _edit(start: 'works'),
+        ),
+      if (templates.isNotEmpty)
+        RdListRow(
+          key: const Key('rd-plan-start-template'),
+          leading: const RdRowIcon(Icons.view_day_outlined),
+          title: l10n.redesignPlanStartTemplate,
+          subtitle: l10n.redesignPlanStartTemplateHint(templates.first.name),
+          onTap: () async {
+            final start = PlanUtils.formatTime(att.startTime ?? widget.type?.startTime);
+            final tpl = await showRdPlanTemplateSheet(context, templates, startTime: start);
+            if (tpl != null && mounted) _edit(start: 'tpl:$tpl');
+          },
+        ),
+      if (previous != null)
+        RdListRow(
+          key: const Key('rd-plan-copy-last'),
+          leading: const RdRowIcon(Icons.copy_all_outlined),
+          title: l10n.rdTextPlanCopyFrom(
+            previousDay == null ? previous.att.date : DateFormat(dateFmt()).format(previousDay),
+          ),
+          subtitle: l10n.rdTextPlanCopyCount(l10n.redesignPlanItemCount(previous.plan.fields.length)),
+          onTap: () => _edit(start: 'copy'),
+        ),
+    ];
+  }
 
   bool _sharing = false;
 
@@ -744,11 +812,24 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
         if (!hasPlan) ...[
           RdGroupLabel(heading),
           RdGroupedList(children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.redesignPlanStartNone, style: RdType.section(p)),
+                  const SizedBox(height: 2),
+                  Text(l10n.redesignPlanStartAsk, style: RdType.meta(p, size: 14)),
+                ],
+              ),
+            ),
+            ..._startRows(),
             RdListRow(
               key: const Key('rd-plan-create'),
-              leading: const RdRowIcon(Icons.view_timeline_outlined),
-              title: l10n.redesignEventPlanCreate,
-              onTap: () => _edit(),
+              leading: const RdRowIcon(Icons.add),
+              title: l10n.redesignPlanStartEmpty,
+              onTap: () => _edit(start: 'empty'),
             ),
           ]),
         ] else ...[

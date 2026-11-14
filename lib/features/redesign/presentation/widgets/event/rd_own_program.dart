@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../core/providers/debug_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
@@ -8,6 +9,7 @@ import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/router/route_access.dart' show canOpenSongsTab;
 import '../../../../../core/services/audio_player/audio_player_service.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/song/song.dart';
 import '../../../../../l10n/l10n.dart';
@@ -23,7 +25,8 @@ import 'rd_event_sections.dart' show RdProgramNumber;
 /// REDESIGN: the Programm (Werke) of an own Termin for Spieler and, read
 /// only, for parents (concept "Vortrag im Beta-Design", boards 5–7).
 ///
-/// * "Programm" for highlighted types (Vortrag), else "Werke".
+/// * Always called "Werke". A Probe without Werke of its own shows those
+///   of the next Auftritt ("Vom nächsten Auftritt: …").
 /// * Per Werk: number, title, conductor; "Du dirigierst" or "Keine Noten"
 ///   when the Spieler's group has no score (choir: "Chor (alle)" counts).
 /// * Tap: "Deine Noten öffnen", "Aufnahme anhören", "Zum Werk" (only in
@@ -60,7 +63,7 @@ class RdOwnProgramSection extends ConsumerWidget {
     final p = context.rd;
     final l10n = context.l10n;
     final async = ref.watch(rdOwnProgramProvider(_key));
-    final title = highlight ? l10n.redesignEventProgram : l10n.redesignEventWorks;
+    final title = l10n.redesignEventWorks;
     final program = async.valueOrNull;
 
     if (program == null) {
@@ -78,7 +81,10 @@ class RdOwnProgramSection extends ConsumerWidget {
       );
     }
     if (!program.usesWorks) return const SizedBox.shrink();
-    final items = program.items;
+    // A Probe without Werke of its own: those of the next Auftritt.
+    final follows = program.items.isEmpty && !highlight && !past;
+    final followed = follows ? ref.watch(rdOwnFollowedProgramProvider(_key)).valueOrNull : null;
+    final items = followed?.items ?? program.items;
     if (items.isEmpty) {
       if (!highlight || past) return const SizedBox.shrink();
       return _frame(
@@ -101,7 +107,26 @@ class RdOwnProgramSection extends ConsumerWidget {
     ];
     final withNotes = [for (var i = 0; i < items.length; i++) if (notes[i].isNotEmpty && items[i].song != null) i];
     final rows = <Widget>[
-      for (var i = 0; i < items.length; i++) _row(context, ref, program, items[i], i, notes[i]),
+      if (followed != null)
+        Container(
+          key: const Key('rd-own-program-source'),
+          width: double.infinity,
+          color: p.soft,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Row(
+            children: [
+              Icon(Icons.event_outlined, size: 18, color: p.softText),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  l10n.redesignEventWorksFrom(_sourceLabel(followed)),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: p.softText),
+                ),
+              ),
+            ],
+          ),
+        ),
+      for (var i = 0; i < items.length; i++) _row(context, ref, program, items[i], i, notes[i], numbered: followed == null),
     ];
     return _frame(
       l10n.redesignEventSectionCount(title, '${items.length}'),
@@ -127,6 +152,18 @@ class RdOwnProgramSection extends ConsumerWidget {
     );
   }
 
+  /// "Adventskonzert · So., 13. Dez."
+  String _sourceLabel(RdFollowedProgram source) {
+    final date = EventListUtils.parse(source.date);
+    String? day;
+    try {
+      day = date == null ? null : DateFormat('EEE, d. MMM', currentIntlLocale()).format(date);
+    } catch (_) {
+      // Locale data not loaded: the name alone.
+    }
+    return [if (source.name.isNotEmpty) source.name, if (day != null) day].join(' · ');
+  }
+
   Widget _frame(String label, Widget child) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -137,7 +174,7 @@ class RdOwnProgramSection extends ConsumerWidget {
       );
 
   Widget _row(BuildContext context, WidgetRef ref, RdOwnProgram program, RdProgramItem item, int index,
-      List<SongFile> notes) {
+      List<SongFile> notes, {bool numbered = true}) {
     final l10n = context.l10n;
     final song = item.song;
     final mine = personId != null && item.conductorPersonId == personId;
@@ -145,7 +182,7 @@ class RdOwnProgramSection extends ConsumerWidget {
     final missing = !readOnly && song != null && !mine && program.instrumentId != null && notes.isEmpty;
     return RdListRow(
       key: ValueKey('rd-own-program-$index'),
-      leading: RdProgramNumber(index + 1),
+      leading: numbered ? RdProgramNumber(index + 1) : const RdRowIcon(Icons.music_note),
       title: song == null
           ? l10n.historyFlutterUnknownSong
           : (song.fullNumber.isEmpty ? song.name : '${song.fullNumber}. ${song.name}'),
