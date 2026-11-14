@@ -5,6 +5,7 @@ import 'package:attendix/features/settings/presentation/widgets/calendar_subscri
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ion_modal_handle.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart';
 import 'package:attendix/shared/widgets/sheets/feedback_sheet.dart';
 import 'package:attendix/shared/widgets/sheets/version_history_sheet.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +107,8 @@ void main() {
     await tester.pump();
 
     expect(find.byType(IonModalHandle), findsOneWidget);
-    expect(find.byType(IonModalHeader), findsOneWidget);
+    // Shared classic sheet scaffold: the toolbar is the IonSheetHeader.
+    expect(find.byType(IonSheetHeader), findsOneWidget);
     expect(find.byIcon(Icons.close), findsNothing);
   }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 

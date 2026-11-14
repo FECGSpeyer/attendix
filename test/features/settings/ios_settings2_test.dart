@@ -161,7 +161,8 @@ void main() {
       expect(find.byType(DraggableScrollableSheet), findsOneWidget);
       final screen = tester.getSize(find.byType(MaterialApp));
       final sheet = tester.getRect(find.byType(IonModalHeader));
-      expect(sheet.top, closeTo(screen.height / 2, 1));
+      // Ionic: breakpoint 0.5 of the sheet height (100 % - 10px).
+      expect(sheet.top, closeTo(screen.height - 0.5 * (screen.height - 10), 1));
     });
   });
 }
