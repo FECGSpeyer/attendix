@@ -97,6 +97,8 @@ class IonStackedInputItem extends StatefulWidget {
     this.end,
     this.lines = true,
     this.obscureText = false,
+    this.focusNode,
+    this.onSubmitted,
   });
 
   final String label;
@@ -129,6 +131,10 @@ class IonStackedInputItem extends StatefulWidget {
   /// False = `lines="none"`.
   final bool lines;
   final bool obscureText;
+  final FocusNode? focusNode;
+
+  /// Enter / done on the keyboard.
+  final ValueChanged<String>? onSubmitted;
 
   @override
   State<IonStackedInputItem> createState() => _IonStackedInputItemState();
@@ -187,6 +193,8 @@ class _IonStackedInputItemState extends State<IonStackedInputItem> {
               readOnly: widget.readOnly,
               onTap: widget.onTap,
               onChanged: widget.onChanged,
+              onFieldSubmitted: widget.onSubmitted,
+              focusNode: widget.focusNode,
               validator: widget.validator,
               obscureText: widget.obscureText,
               keyboardType:
@@ -205,6 +213,8 @@ class _IonStackedInputItemState extends State<IonStackedInputItem> {
               readOnly: widget.readOnly,
               onTap: widget.onTap,
               onChanged: widget.onChanged,
+              onSubmitted: widget.onSubmitted,
+              focusNode: widget.focusNode,
               obscureText: widget.obscureText,
               keyboardType:
                   widget.keyboardType ??
