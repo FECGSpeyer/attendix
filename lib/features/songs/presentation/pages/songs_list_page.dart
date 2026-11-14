@@ -22,6 +22,7 @@ import '../../../../data/models/song/song_filter.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/loading/skeleton_list_tile.dart';
 import '../../data/song_print_service.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showPageModal;
 import '../utils/song_utils.dart';
 import '../widgets/add_song_sheet.dart';
 import '../widgets/current_songs_sheet.dart';
@@ -100,12 +101,21 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
   }
 
   Future<void> _openSongImport() async {
-    final imported = await Navigator.of(context, rootNavigator: true).push<bool>(
-      MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (_) => const SongImportPage(),
-      ),
-    );
+    // WER-15: Ionic `modalController.create({ component: SongImportPage,
+    // presentingElement, backdropDismiss: false })` – card modal on the
+    // iPhone, centred card from 768px, full screen on md phones.
+    final imported = context.rdSkin != null
+        ? await Navigator.of(context, rootNavigator: true).push<bool>(
+            MaterialPageRoute(
+              fullscreenDialog: true,
+              builder: (_) => const SongImportPage(),
+            ),
+          )
+        : await showPageModal<bool>(
+            context,
+            barrierDismissible: false,
+            builder: (_) => const SongImportPage(),
+          );
     if (imported == true) {
       ref.invalidate(songsProvider);
       ref.invalidate(songsListDataProvider);
