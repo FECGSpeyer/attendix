@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.144.4",
+      "date": "14.11.2026",
+      "changes": [
+        "🐛 Eltern-Seite (klassisches Design): Kinder unter einem anstehenden Termin stehen wieder linksbündig wie in der alten App"
+      ]
+    },
+    {
       "version": "0.144.3",
       "date": "14.11.2026",
       "changes": [
