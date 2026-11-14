@@ -88,6 +88,7 @@
         "partlyFailed": "{sent} gesendet, {failed} fehlgeschlagen",
         "failed": "Senden hat nicht geklappt.",
         "openLink": "{count} offen",
+        "someLink": "{count} erinnern",
         "copied": "Text kopiert"
       },
       "today": {
@@ -368,7 +369,8 @@
         "prepTitle": "Vorbereitung",
         "prepEmpty": "Was vor dem Termin erledigt sein muss, z. B. Raum aufschließen oder Noten kopieren. Abhaken kannst du direkt hier, sehen kann es nur die Leitung.",
         "prepTakeOver": "{count, plural, one {1 Aufgabe der Terminart übernehmen} other {{count} Aufgaben der Terminart übernehmen}}",
-        "planFree": "{count} Min frei bis Terminende"
+        "planEndsEarly": "Ablauf endet {time}, {count} Min vor Terminende",
+        "planMoved": "Ablauf mit verschoben: beginnt jetzt {time}"
       },
       "own": {
         "notFound": "Dieser Termin ist nicht mehr in deiner Liste.",
@@ -674,6 +676,7 @@
         "currentAllPdf": "Alle als PDF",
         "currentLast": "zuletzt {date}",
         "currentNoPart": "Keine Stimme",
+        "currentNoScore": "Keine Partitur",
         "currentBack": "Zurück blättern",
         "currentForward": "Weiter blättern",
         "foldersMenu": "Noten nach Stimme"
@@ -1796,6 +1799,7 @@
         "partlyFailed": "{sent} sent, {failed} failed",
         "failed": "Sending didn't work.",
         "openLink": "{count} open",
+        "someLink": "remind {count}",
         "copied": "Text copied"
       },
       "today": {
@@ -2076,7 +2080,8 @@
         "prepTitle": "Preparation",
         "prepEmpty": "What has to be done before the event, e.g. unlock the room or copy the sheet music. Tick it off right here; only leaders can see it.",
         "prepTakeOver": "{count, plural, one {Add 1 task of the event type} other {Add {count} tasks of the event type}}",
-        "planFree": "{count} min free until the event ends"
+        "planEndsEarly": "Schedule ends {time}, {count} min before the event ends",
+        "planMoved": "Schedule moved along: now starts at {time}"
       },
       "own": {
         "notFound": "This event is no longer in your list.",
@@ -2382,6 +2387,7 @@
         "currentAllPdf": "All as PDF",
         "currentLast": "last {date}",
         "currentNoPart": "No part",
+        "currentNoScore": "No score",
         "currentBack": "Scroll back",
         "currentForward": "Scroll forward",
         "foldersMenu": "Sheet music by part"

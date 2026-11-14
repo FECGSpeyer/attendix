@@ -805,7 +805,7 @@ void main() {
       final cards = find.byKey(const Key('rd-works-current'));
       // Only a missing part is named on a card.
       expect(find.descendant(of: cards, matching: find.text('Partitur')), findsNothing);
-      expect(find.descendant(of: cards, matching: find.text('Keine Stimme')), findsOneWidget);
+      expect(find.descendant(of: cards, matching: find.text('Keine Partitur')), findsOneWidget);
       expect(find.text('ohne Noten'), findsOneWidget);
       // A single missing part is normal: no pill in the list.
       expect(find.text('Klarinette fehlt'), findsNothing);

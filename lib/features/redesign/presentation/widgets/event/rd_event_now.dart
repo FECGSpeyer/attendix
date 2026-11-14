@@ -51,12 +51,30 @@ List<RdPlanSlot> rdPlanSlots(DateTime? day, Plan plan) {
   return slots;
 }
 
-/// "16:00–17:35" of [plan]; empty without a start time.
-String rdPlanRange(Plan plan) {
-  final start = PlanUtils.formatTime(plan.time);
-  if (start.isEmpty) return '';
-  final end = PlanUtils.computeEnd(plan.time, plan.fields);
-  return end.isEmpty || end == start ? start : '$start–$end';
+/// End of [plan] ("17:35"); empty without a start time.
+String rdPlanEnd(Plan plan) => PlanUtils.computeEnd(plan.time, plan.fields);
+
+/// The Ablauf [plan] (the Termin's stored `plan`) moved along with the
+/// Termin's Beginn from [oldStart] to [newStart] ('HH:mm'): only an Ablauf
+/// that began exactly at the old Beginn is tied to it; any other start was
+/// set on purpose (e.g. Einsingen before the Termin) and stays. Null when
+/// there is nothing to move.
+Map<String, dynamic>? rdPlanMovedWithStart(
+  Map<String, dynamic>? plan, {
+  required String? oldStart,
+  required String? newStart,
+}) {
+  final parsed = rdPlanFromJson(plan);
+  if (parsed == null) return null;
+  final from = PlanUtils.parseTimeToMinutes(oldStart);
+  final to = PlanUtils.parseTimeToMinutes(newStart);
+  if (from == null || to == null || from == to) return null;
+  if (PlanUtils.parseTimeToMinutes(parsed.time) != from) return null;
+  final hm = PlanUtils.formatMinutes(to);
+  // An ISO start keeps its day.
+  final stored = parsed.time.trim();
+  final time = stored.contains('T') ? '${stored.substring(0, stored.indexOf('T'))}T$hm' : hm;
+  return {...plan!, 'time': time, 'end': PlanUtils.computeEndIso(time, parsed.fields)};
 }
 
 /// Minutes the Ablauf leaves free before the end of a one-day Termin with

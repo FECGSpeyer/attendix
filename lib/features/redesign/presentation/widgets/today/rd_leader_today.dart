@@ -180,8 +180,10 @@ class _NextEventCard extends ConsumerWidget {
     final counts = id == null ? null : ref.watch(rdAttendanceCountsProvider(id)).valueOrNull;
     // The link counts exactly whom the remind sheet asks (duty Termine skip
     // stand-ins, a Helfer only the own group), not every open answer.
-    final toRemind = canRemind && id != null && (counts?.open ?? 0) > 0
-        ? ref.watch(rdOpenPersonsProvider(id)).valueOrNull?.length ?? 0
+    // Until the list is there (or when it failed) the open answers count.
+    final open = counts?.open ?? 0;
+    final toRemind = canRemind && id != null && open > 0
+        ? ref.watch(rdOpenPersonsProvider(id)).valueOrNull?.length ?? open
         : 0;
     final hasTime = (attendance.startTime ?? type?.startTime)?.isNotEmpty ?? false;
     final countdown = rdCountdown(l10n, info.start, hasTime: hasTime);
@@ -228,7 +230,12 @@ class _NextEventCard extends ConsumerWidget {
               Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Text('${_countsLine(l10n, counts, withOpen: false)} · ', style: RdType.meta(p, size: 13)),
+                  // "N offen" always counts the open answers; when fewer are
+                  // reminded (stand-ins, another group) the link says so.
+                  Text(
+                    '${_countsLine(l10n, counts, withOpen: toRemind != counts.open)} · ',
+                    style: RdType.meta(p, size: 13),
+                  ),
                   InkWell(
                     borderRadius: BorderRadius.circular(8),
                     onTap: () => showRdRemindOpenSheet(
@@ -243,7 +250,9 @@ class _NextEventCard extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            l10n.redesignRemindOpenLink(toRemind),
+                            toRemind == counts.open
+                                ? l10n.redesignRemindOpenLink(toRemind)
+                                : l10n.redesignRemindSomeLink(toRemind),
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,

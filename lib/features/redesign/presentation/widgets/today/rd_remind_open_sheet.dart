@@ -50,6 +50,9 @@ Future<void> showRdRemindOpenSheet(
   required String title,
   required String when,
 }) {
+  // The page behind keeps the list alive for its count: whom to remind is
+  // read again when the sheet opens (answers given since then are left out).
+  ProviderScope.containerOf(context, listen: false).invalidate(rdOpenPersonsProvider(attendanceId));
   return showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true,

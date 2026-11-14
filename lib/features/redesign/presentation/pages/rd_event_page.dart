@@ -755,7 +755,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       RdEventPlanSection(
         attendance: attendance,
         preview: plan == null ? null : RdPlanTimeline(day: EventListUtils.parse(attendance.date), plan: plan),
-        range: plan == null ? '' : rdPlanRange(plan),
+        end: plan == null ? '' : rdPlanEnd(plan),
         freeMinutes: plan == null ? null : rdPlanFreeMinutes(plan, _span(attendance, type)),
       ),
     ];
@@ -1459,8 +1459,10 @@ class _Overview extends ConsumerWidget {
     final notes = (attendance.notes ?? '').trim();
     final id = attendance.id;
     final hasPlan = attendanceHasPlan(attendance) && role != Role.viewer;
+    // Until the list is there (or when it failed) the open answers count:
+    // the sheet then says what went wrong.
     final toRemind = canMutate && !ended && counts.open > 0 && id != null
-        ? ref.watch(rdOpenPersonsProvider(id)).valueOrNull?.length ?? 0
+        ? ref.watch(rdOpenPersonsProvider(id)).valueOrNull?.length ?? counts.open
         : 0;
 
     // Before the start: answers; from the start on: who is there.

@@ -102,6 +102,9 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
 
   Role? _userRole;
   bool _loadingRole = false;
+
+  /// The account's role could not be read (shown as Mitglied then).
+  bool _roleUnknown = false;
   bool _canTransfer = false;
   bool _showMore = false;
   bool _problemSolved = false;
@@ -321,6 +324,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     // Also called while building (first load): the result rebuilds.
     _loadingRole = true;
     Role? role;
+    var failed = false;
     try {
       role = await repo.getTenantUserRole(appId);
       // LOGIC_PEOPLE: repair a half-approved account (like the person page).
@@ -330,9 +334,12 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         await repo.updateTenantUserRole(appId, promoted);
         role = promoted;
       }
-    } catch (_) {}
+    } catch (_) {
+      failed = true;
+    }
     if (mounted) {
       setState(() {
+        _roleUnknown = failed;
         _userRole = role ?? Role.player;
         _loadingRole = false;
       });
@@ -904,6 +911,13 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     }
     // Bind the tenant repository before the first await (tenant switch).
     final repo = ref.read(userRegistrationRepositoryWithTenantProvider);
+    // The role could not be read: no change on a guess (the checks for the
+    // own and the last admin need the real one). Loaded again for next time.
+    if (_roleUnknown) {
+      ToastHelper.showError(context, context.l10n.redesignTodayLoadFailed);
+      if (!_loadingRole) unawaited(_loadUserRole(person));
+      return;
+    }
     final current = _userRole ?? Role.player;
     // Mitglied, Verantwortlicher, Helfer; Stimmführer is the switch at the
     // person (a Zusatz): for them Mitglied and Helfer become the Stimmführer
@@ -930,7 +944,9 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
       }
       final List<TenantUser> users;
       try {
-        users = await ref.read(tenantUsersProvider.future);
+        // Read again: the cached list may be older than an admin change
+        // made elsewhere.
+        users = await ref.refresh(tenantUsersProvider.future);
       } catch (e) {
         if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
         return;
