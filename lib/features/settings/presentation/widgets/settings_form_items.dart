@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../shared/widgets/adaptive/app_select.dart' show IonSelectIcon, IonMdSelectIcon;
 import '../../../../shared/widgets/adaptive/ion_md_stacked_item.dart';
 import '../../../../shared/widgets/layout/ionic_md.dart';
 import 'settings_list.dart';
@@ -181,6 +182,98 @@ class SettingsNumberItem extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Ionic `ion-select [label]` (default label placement "start") in an
+/// `ion-item` (EIA-03 / EIA-23): label at the start, the value (or the grey
+/// placeholder) right-aligned at the end, then the select icon (iOS
+/// `chevron-expand`, md caret). [onTap] opens the alert / popover; use it
+/// for `multiple` selects ([showAppMultiSelect]). Classic design only.
+class SettingsSelectItem extends StatelessWidget {
+  const SettingsSelectItem({
+    super.key,
+    required this.label,
+    required this.value,
+    this.placeholder,
+    this.helper,
+    required this.onTap,
+  });
+
+  final String label;
+
+  /// Shown value; empty → [placeholder].
+  final String value;
+  final String? placeholder;
+
+  /// Ionic `helperText` under the row.
+  final String? helper;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ios = ionIsIos(context);
+    final b = Theme.of(context).brightness;
+    final text = ios ? IonIos.text(context) : IonMd.text(b);
+    final fontSize = ios ? IonIos.itemFontSize : IonMd.itemFontSize;
+    final empty = value.isEmpty;
+    return InkWell(
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: ios ? IonIos.itemMinHeight : IonMd.itemMinHeight,
+        ),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            ios ? IonIos.itemPaddingStart : IonMd.itemPaddingStart,
+            10,
+            ios ? IonIos.itemPaddingEnd : IonMd.itemPaddingEnd,
+            10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  Text(label,
+                      style: TextStyle(fontSize: fontSize, letterSpacing: 0, color: text)),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      empty ? (placeholder ?? '') : value,
+                      textAlign: TextAlign.end,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        letterSpacing: 0,
+                        color: empty
+                            ? text.withValues(alpha: 0.6)
+                            : (ios ? IonIos.note(context) : text),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: ios ? 6 : 4),
+                  ios ? const IonSelectIcon() : const IonMdSelectIcon(),
+                ],
+              ),
+              if (helper != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    helper!,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: ios ? IonStackedField.iosHelper : IonMd.step550(b),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

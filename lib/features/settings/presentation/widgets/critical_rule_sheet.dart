@@ -11,6 +11,8 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'settings_form_items.dart';
+import 'settings_list.dart';
 
 /// Opens the rule editor. Classic design: the Ionic sheet modal
 /// (`initialBreakpoint="1" [breakpoints]="[0, 1]"`, toolbar with the
@@ -357,16 +359,20 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
           ],
         );
     if (classic) {
+      final dark = Theme.of(context).brightness == Brightness.dark;
       return IonSheetScaffold(
         title: title,
+        // `ion-content color="light"`.
+        backgroundColor: dark ? null : AppColors.light,
         body: SingleChildScrollView(
           controller: widget.scrollController,
-          padding: const EdgeInsets.only(
-            left: AppDimensions.paddingM,
-            right: AppDimensions.paddingM,
-            top: AppDimensions.paddingM,
+          padding: EdgeInsets.fromLTRB(
+            ionListMargin(context),
+            AppDimensions.paddingM,
+            ionListMargin(context),
+            AppDimensions.paddingM + MediaQuery.paddingOf(context).bottom,
           ),
-          child: form,
+          child: _classicForm(context),
         ),
       );
     }
@@ -380,6 +386,189 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
       child: SingleChildScrollView(
         child: form,
       ),
+    );
+  }
+
+  /// Opens the Ionic select alert for a single-value `ion-select [label]`.
+  Future<void> _pickOne<T>(
+    BuildContext anchor, {
+    required String header,
+    required T value,
+    required Map<T, String> options,
+    required ValueChanged<T> onPicked,
+  }) async {
+    final picked = await showAppSelect<T>(
+      context: anchor,
+      interface: AppSelectInterface.alert,
+      header: header,
+      value: value,
+      options: [
+        for (final e in options.entries) AppSelectOption(value: e.key, label: e.value),
+      ],
+    );
+    if (picked == null || !mounted) return;
+    final v = picked.value;
+    setState(() => onPicked(v));
+  }
+
+  /// EIA-03: the Ionic form (general.page.html): one inset list with item
+  /// groups – stacked name input, `ion-select multiple` rows (label start,
+  /// value end), threshold type select + stacked number input, period
+  /// select (+ days), operator select, and the primary label item as
+  /// submit.
+  Widget _classicForm(BuildContext context) {
+    final l10n = context.l10n;
+    final typeNames = [
+      for (final type in widget.attendanceTypes)
+        if (type.id != null && _selectedTypeIds.contains(type.id)) type.name,
+    ];
+    final statusNames = [
+      for (final status in criticalRuleStatuses)
+        if (_selectedStatuses.contains(status.value)) criticalRuleStatusName(status.value, l10n),
+    ];
+    final thresholdTypes = {
+      CriticalRuleThresholdType.count: l10n.generalSettingsCount,
+      CriticalRuleThresholdType.percentage: l10n.generalSettingsPercent,
+    };
+    final periodTypes = {
+      CriticalRulePeriodType.days: l10n.generalSettingsLastXDays,
+      CriticalRulePeriodType.season: l10n.generalSettingsSinceSeason,
+      CriticalRulePeriodType.allTime: l10n.generalSettingsAllTime,
+    };
+    final operators = {
+      CriticalRuleOperator.or: l10n.generalSettingsOr,
+      CriticalRuleOperator.and: l10n.generalSettingsAnd,
+    };
+    final ios = ionIsIos(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SettingsListSection(icons: false, children: [
+          SettingsStackedField(
+            label: l10n.generalSettingsNameOptional,
+            hint: l10n.generalSettingsRulePh,
+            builder: (decoration) => TextField(
+              controller: _nameController,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: decoration,
+            ),
+          ),
+          SettingsSelectItem(
+            label: l10n.generalSettingsAttTypes,
+            value: typeNames.join(', '),
+            placeholder: l10n.generalSettingsAllTypes,
+            onTap: () async {
+              final result = await showAppMultiSelect<String>(
+                context: context,
+                header: l10n.generalSettingsAttTypes,
+                options: [
+                  for (final type in widget.attendanceTypes)
+                    if (type.id != null) AppSelectOption(value: type.id!, label: type.name),
+                ],
+                values: _selectedTypeIds,
+              );
+              if (result != null && mounted) setState(() => _selectedTypeIds = result);
+            },
+          ),
+          SettingsSelectItem(
+            label: l10n.agendaStatus,
+            value: statusNames.join(', '),
+            onTap: () async {
+              final result = await showAppMultiSelect<int>(
+                context: context,
+                header: l10n.agendaStatus,
+                options: [
+                  for (final status in criticalRuleStatuses)
+                    AppSelectOption(value: status.value, label: criticalRuleStatusName(status.value, l10n)),
+                ],
+                values: _selectedStatuses,
+              );
+              if (result != null && mounted) setState(() => _selectedStatuses = result);
+            },
+          ),
+        ]),
+        SettingsListSection(icons: false, children: [
+          Builder(
+            builder: (anchor) => SettingsSelectItem(
+              label: l10n.generalSettingsThresholdType,
+              value: thresholdTypes[_thresholdType] ?? '',
+              onTap: () => _pickOne<CriticalRuleThresholdType>(
+                anchor,
+                header: l10n.generalSettingsThresholdType,
+                value: _thresholdType,
+                options: thresholdTypes,
+                onPicked: (v) => _thresholdType = v,
+              ),
+            ),
+          ),
+          SettingsStackedField(
+            // Ionic general.page: label "Anzahl" / "Prozent".
+            label: _thresholdType == CriticalRuleThresholdType.percentage
+                ? l10n.generalSettingsPercent
+                : l10n.generalSettingsCount,
+            builder: (decoration) => TextField(
+              controller: _thresholdController,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: decoration,
+            ),
+          ),
+        ]),
+        SettingsListSection(icons: false, children: [
+          Builder(
+            builder: (anchor) => SettingsSelectItem(
+              label: l10n.generalSettingsPeriodType,
+              value: periodTypes[_periodType] ?? '',
+              helper: l10n.generalSettingsPeriodHelper,
+              onTap: () => _pickOne<CriticalRulePeriodType>(
+                anchor,
+                header: l10n.generalSettingsPeriodType,
+                value: _periodType,
+                options: periodTypes,
+                onPicked: (v) => _periodType = v,
+              ),
+            ),
+          ),
+          if (_periodType == CriticalRulePeriodType.days)
+            SettingsStackedField(
+              label: l10n.generalSettingsDays,
+              helper: l10n.generalSettingsDaysHelper,
+              builder: (decoration) => TextField(
+                controller: _periodDaysController,
+                keyboardType: TextInputType.number,
+                decoration: decoration,
+              ),
+            ),
+        ]),
+        SettingsListSection(icons: false, children: [
+          Builder(
+            builder: (anchor) => SettingsSelectItem(
+              label: l10n.generalSettingsCombine,
+              value: operators[_operator] ?? '',
+              helper: l10n.generalSettingsCombineHelper,
+              onTap: () => _pickOne<CriticalRuleOperator>(
+                anchor,
+                header: l10n.generalSettingsCombine,
+                value: _operator,
+                options: operators,
+                onPicked: (v) => _operator = v,
+              ),
+            ),
+          ),
+        ]),
+        SettingsListSection(icons: false, children: [
+          // `ion-item button detail="false"` with a primary label.
+          ListTile(
+            contentPadding: ios
+                ? null
+                : const EdgeInsets.symmetric(horizontal: 16),
+            title: Text(
+              _isEditing ? l10n.commonSave : l10n.generalSettingsAddRule,
+              style: const TextStyle(color: AppColors.primary),
+            ),
+            onTap: _save,
+          ),
+        ]),
+      ],
     );
   }
 }
