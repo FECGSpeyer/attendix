@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -704,7 +705,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   attendanceType, ref.watch(currentTenantProvider)?.type);
               final canAccessFiles = ref.watch(canAccessFilesProvider);
 
-              return CustomScrollView(
+              final scroll = CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
                     // UX_ATT: Ionic iOS inset list: 16 px between the groups
@@ -887,6 +888,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   SliverToBoxAdapter(child: SizedBox(height: bottomSpace)),
                 ],
               );
+              // TERMINE-21: like Ionic, opening a swipe row closes the one
+              // that was open before (classic design).
+              return context.rdSkin == null
+                  ? SlidableAutoCloseBehavior(child: scroll)
+                  : scroll;
             },
           ),
           // UX_ATT: no Flutter-only bottom summary bar (Ionic has none; the
