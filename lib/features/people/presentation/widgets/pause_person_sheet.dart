@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -54,19 +55,20 @@ Future<PauseInput?> showPauseSheet(BuildContext context, Person person) {
       hint: context.l10n.rdPeoplePauseHint,
     );
   }
-  return showModalBottomSheet<PauseInput>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (_) => _PauseSheet(person: person),
+  // Ionic pause modal: [breakpoints]="[0, 0.75, 1]" [initialBreakpoint]="0.75".
+  return showIonSheet<PauseInput>(
+    context,
+    breakpoints: const [0, 0.75, 1],
+    initialBreakpoint: 0.75,
+    builder: (_, controller) => _PauseSheet(person: person, scrollController: controller),
   );
 }
 
 class _PauseSheet extends StatefulWidget {
-  const _PauseSheet({required this.person});
+  const _PauseSheet({required this.person, this.scrollController});
 
   final Person person;
+  final ScrollController? scrollController;
 
   @override
   State<_PauseSheet> createState() => _PauseSheetState();
@@ -90,36 +92,21 @@ class _PauseSheetState extends State<_PauseSheet> {
     final p = widget.person;
     final hasReason = _reasonController.text.trim().isNotEmpty;
 
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: AppDimensions.paddingM,
-        right: AppDimensions.paddingM,
-        top: AppDimensions.paddingS,
-      ),
-      child: SingleChildScrollView(
+    // UX_PEOPLE: Ionic modal toolbar — ion-title, close ✕ in the end slot.
+    return IonSheetScaffold(
+      title: context.l10n.peoplePauseTitle('${p.firstName} ${p.lastName}'),
+      showClose: true,
+      body: SingleChildScrollView(
+        controller: widget.scrollController,
+        padding: const EdgeInsets.only(
+          left: AppDimensions.paddingM,
+          right: AppDimensions.paddingM,
+          top: AppDimensions.paddingM,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // UX_PEOPLE: Ionic modal toolbar — centered title, close at end
-            Row(
-              children: [
-                const SizedBox(width: 48),
-                Expanded(
-                  child: Text(
-                    context.l10n.peoplePauseTitle('${p.firstName} ${p.lastName}'),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
             // ion-item + stacked label + textarea
             IonFormTheme(
               child: TextField(

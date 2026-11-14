@@ -2,6 +2,8 @@ import 'dart:async' show unawaited;
 
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -539,13 +541,10 @@ Future<ExtraField?> showExtraFieldSheet(
       }
     }
 
-    final result = await showModalBottomSheet<ExtraField>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      // Controllers are disposed once the sheet is unmounted (after its
-      // exit animation), not as soon as its future completes.
-      builder: (sheetContext) => _DisposeOnUnmount(
+    final classic = context.rdSkin == null;
+    // Controllers are disposed once the sheet is unmounted (after its
+    // exit animation), not as soon as its future completes.
+    Widget sheet(BuildContext sheetContext, ScrollController? scrollController) => _DisposeOnUnmount(
         onDispose: disposeControllers,
         child: StatefulBuilder(
           builder: (ctx, setSheet) {
@@ -650,15 +649,11 @@ Future<ExtraField?> showExtraFieldSheet(
               Navigator.pop(sheetContext, buildField(id));
             }
 
-            return Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-              child: SafeArea(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  child: Column(
+            final form = Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (!classic) ...[
                       Row(
                         children: [
                           Expanded(
@@ -671,6 +666,7 @@ Future<ExtraField?> showExtraFieldSheet(
                         ],
                       ),
                       const SizedBox(height: AppDimensions.paddingS),
+                      ],
                       if (isEdit)
                         ListTile(
                           contentPadding: EdgeInsets.zero,
@@ -798,14 +794,45 @@ Future<ExtraField?> showExtraFieldSheet(
                         ),
                       ],
                     ],
+                  );
+            if (classic) {
+              // Ionic: toolbar with the ion-title only (add) / plus the
+              // close ✕ in the end slot (edit).
+              return IonSheetScaffold(
+                title: isEdit ? context.l10n.typeSettingsEditField : context.l10n.extraFieldsAddNew,
+                showClose: isEdit,
+                onClose: () => Navigator.pop(sheetContext),
+                body: SafeArea(
+                  top: false,
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.all(AppDimensions.paddingM),
+                    child: form,
                   ),
+                ),
+              );
+            }
+            return Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(AppDimensions.paddingM),
+                  child: form,
                 ),
               ),
             );
           },
         ),
-      ),
-    );
+      );
+    final result = classic
+        // Ionic field modals: initialBreakpoint="1" [breakpoints]="[0, 1]".
+        ? await showIonSheet<ExtraField>(context, builder: sheet)
+        : await showModalBottomSheet<ExtraField>(
+            context: context,
+            useRootNavigator: true, // IOS_SHELL2: above the tab bar
+            isScrollControlled: true,
+            builder: (sheetContext) => sheet(sheetContext, null),
+          );
     // Edit sheet: every close applies the edited copy (sheet widgets and
     // their controllers are still alive while the exit animation runs).
     if (isEdit) return buildField(existing.id);

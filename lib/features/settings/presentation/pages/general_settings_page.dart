@@ -811,11 +811,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     if (!mounted) return;
 
-    await showModalBottomSheet(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      builder: (ctx) => CriticalRuleSheet(
+    await showCriticalRuleSheet(
+      context,
         attendanceTypes: attendanceTypes,
         onSave: (rule) {
           setState(() {
@@ -824,7 +821,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           });
           ToastHelper.showSuccess(context, context.l10n.generalSettingsFlutterRuleAdded);
         },
-      ),
     );
   }
 
@@ -835,11 +831,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     if (!mounted) return;
 
-    await showModalBottomSheet(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      builder: (ctx) => CriticalRuleSheet(
+    await showCriticalRuleSheet(
+      context,
         rule: rule,
         attendanceTypes: attendanceTypes,
         onSave: (updatedRule) {
@@ -849,7 +842,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           });
           ToastHelper.showSuccess(context, context.l10n.generalSettingsFlutterRuleUpdated);
         },
-      ),
     );
   }
 

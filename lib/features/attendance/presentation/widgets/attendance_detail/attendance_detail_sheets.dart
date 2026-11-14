@@ -455,7 +455,6 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                 ],
               ),
             ),
-            const Divider(height: 1),
         ],
       ),
       body: SafeArea(

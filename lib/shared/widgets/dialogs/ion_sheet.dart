@@ -2,13 +2,16 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/redesign/rd_theme.dart';
 import '../adaptive/adaptive.dart';
 import '../layout/ion_modal_handle.dart';
 import '../layout/ionic_ios.dart';
+import '../layout/ionic_md.dart';
 import '../layout/sheet_drag.dart';
 import 'ion_modal.dart';
 
 export '../adaptive/app_toolbar.dart' show IonCloseButton, ToolbarButtonGroup;
+export '../layout/ion_modal_handle.dart' show IonModalHandle, IonModalHandleOverlay;
 export '../layout/ionic_ios.dart' show IonSheetHeader;
 
 /// Builds the content of an [IonBreakpointSheet]. Give [scrollController] to
@@ -240,7 +243,28 @@ class IonSheetScaffold extends StatelessWidget {
               ...end,
               if (showClose) IonCloseButton(onPressed: onClose),
             ],
+            border: bottom == null,
           );
+    // Further toolbar rows belong to the header: the line / shadow lies
+    // under the last one.
+    Widget? rows = bottom;
+    if (rows != null && context.rdSkin == null) {
+      final theme = Theme.of(context);
+      rows = useIosLook(context)
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [rows, const Divider(height: 0.5, thickness: 0.5)],
+            )
+          : DecoratedBox(
+              decoration: BoxDecoration(
+                color: theme.appBarTheme.backgroundColor ??
+                    theme.colorScheme.surface,
+                boxShadow: header == null ? null : IonMd.headerShadow,
+              ),
+              child: rows,
+            );
+    }
     final content = Column(
       children: [
         Expanded(child: body),
@@ -258,7 +282,7 @@ class IonSheetScaffold extends StatelessWidget {
         verticalDirection: VerticalDirection.up,
         children: [
           Expanded(child: content),
-          if (bottom != null) bottom!,
+          if (rows != null) rows,
           if (header != null) header,
         ],
       ),

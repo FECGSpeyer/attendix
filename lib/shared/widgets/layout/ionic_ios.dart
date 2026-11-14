@@ -1061,6 +1061,7 @@ class IonSheetHeader extends StatelessWidget {
     this.subtitle,
     this.start = const [],
     this.end = const [],
+    this.border = true,
   });
 
   final String title;
@@ -1071,11 +1072,21 @@ class IonSheetHeader extends StatelessWidget {
   final List<Widget> start;
   final List<Widget> end;
 
-  /// One `ion-buttons` slot: plain buttons share one [ToolbarButtonGroup]
-  /// (iOS: one glass capsule, md: a row); an [IonCloseButton] or a ready
-  /// [ToolbarButtonGroup] stays as it is.
-  static Widget? _slot(List<Widget> children) {
+  /// Classic design: the line under the header – the iOS hairline, the md
+  /// header shadow. False when further toolbar rows follow that draw it
+  /// (see `IonSheetScaffold.bottom`).
+  final bool border;
+
+  /// One `ion-buttons` slot: on iOS plain buttons share one
+  /// [ToolbarButtonGroup] (a glass capsule) while an [IonCloseButton] or a
+  /// ready [ToolbarButtonGroup] stays as it is; md is a plain row.
+  static Widget? _slot(List<Widget> children, {required bool ios}) {
     if (children.isEmpty) return null;
+    if (!ios) {
+      return children.length == 1
+          ? children.single
+          : Row(mainAxisSize: MainAxisSize.min, children: children);
+    }
     final parts = <Widget>[];
     var run = <Widget>[];
     void flush() {
@@ -1114,14 +1125,14 @@ class IonSheetHeader extends StatelessWidget {
                 top: Radius.circular(kIonModalSheetRadius)),
           ),
           child: NavigationToolbar(
-            leading: _slot(start),
+            leading: _slot(start, ios: true),
             middle: titleWidget,
-            trailing: _slot(end),
+            trailing: _slot(end, ios: true),
             centerMiddle: true,
             middleSpacing: 8,
           ),
         ),
-        const Divider(height: 0.5, thickness: 0.5),
+        if (border) const Divider(height: 0.5, thickness: 0.5),
       ],
     );
   }
@@ -1131,14 +1142,14 @@ class IonSheetHeader extends StatelessWidget {
   Widget _mdToolbar(BuildContext context, Widget titleWidget) {
     final theme = Theme.of(context);
     final color = IonMd.toolbarText(theme.brightness);
-    final leading = _slot(start);
-    final trailing = _slot(end);
+    final leading = _slot(start, ios: false);
+    final trailing = _slot(end, ios: false);
     return Container(
       height: 56,
       width: double.infinity,
       decoration: BoxDecoration(
         color: theme.appBarTheme.backgroundColor ?? theme.colorScheme.surface,
-        boxShadow: IonMd.headerShadow,
+        boxShadow: border ? IonMd.headerShadow : null,
       ),
       child: IconButtonTheme(
         data: IconButtonThemeData(
