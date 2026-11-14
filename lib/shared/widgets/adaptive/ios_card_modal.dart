@@ -90,6 +90,22 @@ class _PresentingSnapshot {
   }
 }
 
+/// Keeps what lies above [bottom] (the part of the presenting page the card
+/// does not cover).
+class _AboveCardClipper extends CustomClipper<Rect> {
+  const _AboveCardClipper(this.bottom);
+
+  final double bottom;
+
+  @override
+  Rect getClip(Size size) =>
+      Rect.fromLTRB(0, 0, size.width, bottom.clamp(0.0, size.height));
+
+  @override
+  bool shouldReclip(_AboveCardClipper oldClipper) =>
+      oldClipper.bottom != bottom;
+}
+
 class _IosCardModalRoute<T> extends PopupRoute<T> {
   _IosCardModalRoute({
     required this.builder,
@@ -183,6 +199,9 @@ class _IosCardModalFrame extends StatelessWidget {
     );
     final snapshot = route.snapshot;
     final theme = Theme.of(context);
+    final cardColor = route.backgroundColor ??
+        context.rdSkin?.bg ??
+        theme.colorScheme.surface;
 
     return Stack(
       children: [
@@ -192,14 +211,28 @@ class _IosCardModalFrame extends StatelessWidget {
             animation: curved,
             builder: (context, _) {
               final t = curved.value.clamp(0.0, 1.0);
+              // PERF: only the part the card does not cover is drawn. The
+              // shrunk page with its contrast layer was otherwise painted
+              // in full under the card on every frame (also while the
+              // card's content scrolls), although only the strip above
+              // the card shows.
+              Widget aboveCard(Widget page) => cardColor.a < 1
+                  ? page
+                  : ClipRect(
+                      clipper: _AboveCardClipper(cardTop +
+                          (1 - curved.value) * cardHeight +
+                          kIosCardModalRadius +
+                          1),
+                      child: page,
+                    );
               if (snapshot == null) {
-                return ColoredBox(
-                    color: Colors.black.withValues(alpha: 0.4 * t));
+                return aboveCard(ColoredBox(
+                    color: Colors.black.withValues(alpha: 0.4 * t)));
               }
               final scale = 1 - (1 - kIosCardModalPresentingScale) * t;
               final contrast = 1 - 0.15 * t;
               final offset = (1 - contrast) / 2 * 255;
-              return ColoredBox(
+              final page = ColoredBox(
                 color: Colors.black,
                 child: Stack(
                   children: [
@@ -237,6 +270,7 @@ class _IosCardModalFrame extends StatelessWidget {
                   ],
                 ),
               );
+              return aboveCard(page);
             },
           ),
         ),
@@ -277,7 +311,7 @@ class _IosCardModalFrame extends StatelessWidget {
                 ),
                 child: Material(
                   // Beta-Skin: the page colour of the new design.
-                  color: route.backgroundColor ?? context.rdSkin?.bg ?? theme.colorScheme.surface,
+                  color: cardColor,
                   child: MediaQuery.removePadding(
                     context: context,
                     removeTop: true,

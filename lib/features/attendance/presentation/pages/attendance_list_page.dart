@@ -55,6 +55,10 @@ class AttendanceListPage extends ConsumerStatefulWidget {
 
 class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   bool _showAllPast = false;
+
+  // Status counts of the past rows loaded so far (by Termin id).
+  final Map<int, AttendanceStatusCounts> _listCounts = {};
+
   // UX_ATT: iOS large title (Ionic ion-header collapse="condense")
   final _condense = CondenseHeaderController();
 
@@ -554,10 +558,17 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
 
           // UX_ATT: "{present} von {total} anwesend" of past rows
           // Hidden until the counts are loaded (no "0 von 0" flash).
-          final listCounts =
-              ref.watch(attendanceListStatusCountsProvider).valueOrNull;
+          // PERF: counts only for the rows shown. Loaded counts are kept, so
+          // a changed set of rows (filter, "Alle anzeigen", a deleted Termin)
+          // shows the known numbers while the new ones load.
+          final loadedCounts = ref
+              .watch(attendanceListStatusCountsProvider(
+                  attendanceStatusCountsKey(pastPreview)))
+              .valueOrNull;
+          if (loadedCounts != null) _listCounts.addAll(loadedCounts);
+          final listCounts = _listCounts;
           String? countText(Attendance att) {
-            final counts = listCounts?[att.id];
+            final counts = listCounts[att.id];
             if (counts == null) return null;
             final total = counts.total;
             final present = ((att.percentage ?? 0) / 100 * total).round();

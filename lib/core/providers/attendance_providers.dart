@@ -134,23 +134,29 @@ class AttendanceStatusCounts {
   final int total;
 }
 
-// UX_ATT: status counts of all Termine shown in the list, loaded with one
-// query (Ionic att-list getCountText "{present} von {total} anwesend").
-final attendanceListStatusCountsProvider =
-    FutureProvider.autoDispose<Map<int, AttendanceStatusCounts>>((ref) async {
-  // Refetch only when the Termine or their percentages change, not on every
-  // realtime event (e.g. notes edits).
-  final key = ref.watch(realtimeAttendanceListProvider.select((v) =>
-      (v.valueOrNull ?? const <Attendance>[])
-          .map((a) => '${a.id}:${a.percentage}')
-          .join(',')));
+/// Key of [attendanceListStatusCountsProvider]: the ids of the Termine a
+/// list shows, "id,id,…".
+String attendanceStatusCountsKey(Iterable<Attendance> shown) =>
+    shown.map((a) => a.id).whereType<int>().join(',');
+
+// UX_ATT: status counts of the Termine a list shows, loaded with one query
+// (Ionic att-list getCountText "{present} von {total} anwesend").
+// PERF: only the shown rows (the past preview), not every Termin since 2023 –
+// that was one person_attendances row per member and Termin on each visit
+// of the Termine tab.
+final attendanceListStatusCountsProvider = FutureProvider.autoDispose
+    .family<Map<int, AttendanceStatusCounts>, String>((ref, key) async {
   final ids = key.isEmpty
       ? const <int>[]
-      : key
-          .split(',')
-          .map((e) => int.tryParse(e.split(':').first))
-          .whereType<int>()
-          .toList();
+      : key.split(',').map(int.tryParse).whereType<int>().toList();
+  // Refetch only when the percentages of these Termine change, not on every
+  // realtime event (e.g. notes edits).
+  final shown = ids.toSet();
+  ref.watch(realtimeAttendanceListProvider.select((v) =>
+      (v.valueOrNull ?? const <Attendance>[])
+          .where((a) => shown.contains(a.id))
+          .map((a) => '${a.id}:${a.percentage}')
+          .join(',')));
   if (ids.isEmpty) return const {};
   final repo = ref.watch(attendanceRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return const {};
