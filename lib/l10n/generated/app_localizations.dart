@@ -27498,6 +27498,18 @@ abstract class AppLocalizations {
   /// **'Block'**
   String get redesignPlanAddBlock;
 
+  /// redesign.plan.addBlockRow
+  ///
+  /// In de, this message translates to:
+  /// **'Programmblock'**
+  String get redesignPlanAddBlockRow;
+
+  /// redesign.plan.addBlockRowHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mehrere Punkte unter einer Überschrift'**
+  String get redesignPlanAddBlockRowHint;
+
   /// redesign.plan.addDefaultField
   ///
   /// In de, this message translates to:
@@ -27543,13 +27555,13 @@ abstract class AppLocalizations {
   /// redesign.plan.addPointHint
   ///
   /// In de, this message translates to:
-  /// **'Punkt, Notiz, Block oder Werke'**
+  /// **'Punkt, Notiz oder Werke'**
   String get redesignPlanAddPointHint;
 
   /// redesign.plan.addPointHintNoWorks
   ///
   /// In de, this message translates to:
-  /// **'Punkt, Notiz oder Block'**
+  /// **'Punkt oder Notiz'**
   String get redesignPlanAddPointHintNoWorks;
 
   /// redesign.plan.addTitle
@@ -27581,12 +27593,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Termin'**
   String get redesignPlanBack;
-
-  /// redesign.plan.blockItems
-  ///
-  /// In de, this message translates to:
-  /// **'Punkte im Block'**
-  String get redesignPlanBlockItems;
 
   /// redesign.plan.blockName
   ///
@@ -27900,12 +27906,6 @@ abstract class AppLocalizations {
   /// **'Name (optional)'**
   String get redesignPlanNameHint;
 
-  /// redesign.plan.newBlock
-  ///
-  /// In de, this message translates to:
-  /// **'Neuer Block'**
-  String get redesignPlanNewBlock;
-
   /// redesign.plan.newPlan
   ///
   /// In de, this message translates to:
@@ -28014,11 +28014,17 @@ abstract class AppLocalizations {
   /// **'Geteilt · zum Ändern oder Beenden tippen'**
   String get redesignPlanPublicLinkShared;
 
-  /// redesign.plan.quickAddAdded
+  /// redesign.plan.quickAddBlockCreate
   ///
   /// In de, this message translates to:
-  /// **'Hinzugefügt'**
-  String get redesignPlanQuickAddAdded;
+  /// **'Block anlegen'**
+  String get redesignPlanQuickAddBlockCreate;
+
+  /// redesign.plan.quickAddBlockHint
+  ///
+  /// In de, this message translates to:
+  /// **'Danach kommen neue Punkte in diesen Block.'**
+  String get redesignPlanQuickAddBlockHint;
 
   /// redesign.plan.quickAddButton
   ///
@@ -28029,7 +28035,7 @@ abstract class AppLocalizations {
   /// redesign.plan.quickAddHint
   ///
   /// In de, this message translates to:
-  /// **'Enter fügt hinzu, danach geht es gleich mit dem nächsten weiter.'**
+  /// **'Das Blatt bleibt offen, bis du auf „Fertig“ tippst.'**
   String get redesignPlanQuickAddHint;
 
   /// redesign.plan.quickAddInBlock
@@ -28043,6 +28049,36 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Neue Punkte kommen ans Ende des Blocks'**
   String get redesignPlanQuickAddInBlockHint;
+
+  /// redesign.plan.quickAddMore
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, note {Weitere Notiz hinzufügen} other {Weiteren Punkt hinzufügen}}'**
+  String redesignPlanQuickAddMore(String kind);
+
+  /// redesign.plan.quickAddSummary
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Punkt hinzugefügt} other {{count} Punkte hinzugefügt}}'**
+  String redesignPlanQuickAddSummary(num count);
+
+  /// redesign.plan.quickAddTarget
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Punkte kommen'**
+  String get redesignPlanQuickAddTarget;
+
+  /// redesign.plan.quickAddTargetBehind
+  ///
+  /// In de, this message translates to:
+  /// **'hinter den Block'**
+  String get redesignPlanQuickAddTargetBehind;
+
+  /// redesign.plan.quickAddTargetIn
+  ///
+  /// In de, this message translates to:
+  /// **'in „{name}“'**
+  String redesignPlanQuickAddTargetIn(Object name);
 
   /// redesign.plan.register
   ///

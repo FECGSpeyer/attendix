@@ -258,7 +258,9 @@ void main() {
       await tester.enterText(find.byKey(const Key('rd-plan-field-name')), 'Duett');
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('rd-plan-quick-added-1')), findsOneWidget);
+      // One line instead of a list; the button says that more can follow.
+      expect(find.text('2 Punkte hinzugefügt · 10 Min'), findsOneWidget);
+      expect(find.text('Weiteren Punkt hinzufügen'), findsOneWidget);
       await tester.tap(find.byKey(const Key('rd-plan-quick-done')));
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -288,39 +290,47 @@ void main() {
       await close(tester);
     });
 
-    testWidgets('Neuer Block: renaming after the first entry sticks; Punkt/Notiz switch empties the entry', (tester) async {
+    testWidgets('Block: the sheet stays until "Fertig"; items go into the block, then behind it', (tester) async {
+      Future<void> add() async {
+        await tester.ensureVisible(find.byKey(const Key('rd-plan-quick-add')));
+        await tester.tap(find.byKey(const Key('rd-plan-quick-add')));
+        await tester.pumpAndSettle();
+      }
+
       await pump(tester);
       await tester.tap(find.byKey(const Key('rd-plan-add')));
       await tester.pumpAndSettle();
-      // "Programmpunkt", then the chip "Block": the sheet of a new block.
-      await tester.tap(find.byKey(const Key('rd-plan-add-field')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('rd-plan-quick-block')));
+      // "Programmblock": the same sheet, starting with the block's name.
+      await tester.tap(find.byKey(const Key('rd-plan-add-block')));
       await tester.pumpAndSettle();
       await tester.enterText(find.byKey(const Key('rd-plan-quick-block-name')), 'Lobpreis');
+      await add();
+      expect(find.byKey(const Key('rd-plan-quick-done')), findsOneWidget);
+      expect(find.byKey(const Key('rd-plan-quick-block-card')), findsOneWidget);
       await tester.enterText(find.byKey(const Key('rd-plan-field-name')), 'Lied 1');
-      await tester.tap(find.byKey(const Key('rd-plan-quick-add')));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byKey(const Key('rd-plan-quick-block-name')), 'Anbetung');
-      await tester.pumpAndSettle();
+      await add();
+      expect(find.byKey(const ValueKey('rd-plan-quick-block-row-0')), findsOneWidget);
       // Typed as Punkt, switched to Notiz: the form is empty, nothing is added.
       await tester.enterText(find.byKey(const Key('rd-plan-field-name')), 'Solo');
       await tester.tap(find.byKey(const Key('rd-plan-quick-kind-note')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('rd-plan-quick-add')));
-      await tester.pumpAndSettle();
+      await add();
       expect(find.text('Bitte eine Notiz eingeben.'), findsOneWidget);
+      // "hinter den Block": the next Punkt leaves the block.
+      await tester.tap(find.byKey(const Key('rd-plan-quick-kind-field')));
+      await tester.tap(find.byKey(const Key('rd-plan-quick-target-behind')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('rd-plan-field-name')), 'Segen');
+      await add();
       await tester.tap(find.byKey(const Key('rd-plan-quick-done')));
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
-      final f = (calls.last['plan'] as Map<String, dynamic>)['fields'] as List;
-      expect([for (final x in f) (x as Map<String, dynamic>)['name']], [
-        'Begrüßung',
-        'Predigt',
-        'Schlusslied',
-        'Anbetung',
-        'Lied 1',
-      ]);
+      final f = [
+        for (final x in (calls.last['plan'] as Map<String, dynamic>)['fields'] as List) x as Map<String, dynamic>,
+      ];
+      expect([for (final x in f) x['name']], ['Begrüßung', 'Predigt', 'Schlusslied', 'Lobpreis', 'Lied 1', 'Segen']);
+      expect(f[4]['groupId'], f[3]['id']);
+      expect(f[5]['groupId'], isNull);
       await close(tester);
     });
   });
