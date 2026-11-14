@@ -1158,9 +1158,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               // (tenant-register.page.ts login); the hint / a login error is
               // the alert message.
               content: AppAlertInputGroup(
-                message: Text(
-                  loginError.isNotEmpty ? loginError : context.l10n.tenantRegisterFlutterSignInExisting,
-                ),
+                // SEL-07: Ionic has no message; only a login error is shown.
+                message: loginError.isNotEmpty ? Text(loginError) : null,
                 children: [
                   AppAlertInput(
                     controller: emailController,
@@ -1207,7 +1206,9 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                   onPressed: () => Navigator.pop(context, false),
                   child: Text(context.l10n.commonCancel),
                 ),
-                ElevatedButton(
+                // SEL-07: classic = plain Ionic alert button (Beta keeps
+                // its raised button).
+                (context.rdSkin != null ? ElevatedButton.new : TextButton.new)(
                   onPressed: () async {
                     try {
                       await ref.read(authFlowServiceProvider).signInWithPassword(
