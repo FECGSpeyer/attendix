@@ -506,20 +506,19 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   Future<void> _chooseType(BuildContext context) async {
     final l10n = context.l10n;
     final options = TenantTypeTexts.byType(l10n);
-    // IOS_LOOK: Ionic action sheet (adaptive).
-    final selected = await showAppActionSheet<String>(
-      context,
-      title: l10n.registerGroupTypeQuestion,
-      actions: [
+    // SEL-16: Ionic `ion-select interface="action-sheet"` with the header
+    // question; the options are text only (the select marks the chosen one).
+    final picked = await showAppSelect<String>(
+      context: context,
+      interface: AppSelectInterface.actionSheet,
+      header: l10n.registerGroupTypeQuestion,
+      value: _selectedType,
+      options: [
         for (final entry in options.entries)
-          AppActionSheetAction(
-            value: entry.key,
-            label: entry.value.option,
-            icon: entry.value.icon,
-            color: entry.key == _selectedType ? AppColors.primary : null,
-          ),
+          AppSelectOption<String>(value: entry.key, label: entry.value.option),
       ],
     );
+    final selected = picked?.value;
     if (selected != null && mounted) {
       setState(() => _selectedType = selected);
     }
