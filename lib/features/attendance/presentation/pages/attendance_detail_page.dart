@@ -1327,7 +1327,18 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           return AppAlertDialog(
             title: Text(context.l10n.attendanceSorting),
             contentPadding: const EdgeInsets.symmetric(vertical: 12),
-            content: SizedBox(
+            // Ionic alert with `type: 'radio'` inputs (attendance.page.ts).
+            content: AppAlertRadioGroup<String>(
+              options: [
+                AppAlertOption('__default__', context.l10n.attendanceDefaultSortGroup),
+                for (final f in fields) ...[
+                  AppAlertOption('${f.id}__asc', '${f.name} ↑'),
+                  AppAlertOption('${f.id}__desc', '${f.name} ↓'),
+                ],
+              ],
+              groupValue: selected,
+              onChanged: (v) => setDialogState(() => selected = v),
+              beta: SizedBox(
               width: double.maxFinite,
               child: ListView(
                 shrinkWrap: true,
@@ -1339,6 +1350,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   ],
                 ],
               ),
+            ),
             ),
             actions: [
               TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
@@ -1632,20 +1644,20 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       context: context,
       builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.attendanceAddTodo),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+        // Ionic alert inputs `text` + `number` (attendance.page.ts addTodo).
+        content: AppAlertInputGroup(
           children: [
-            TextField(
+            AppAlertInput(
               controller: textController,
               autofocus: true,
               textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(hintText: context.l10n.attendanceTodoText),
+              placeholder: context.l10n.attendanceTodoText,
             ),
-            const SizedBox(height: 8),
-            TextField(
+            const AppAlertBetaGap(8),
+            AppAlertInput(
               controller: hoursController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(hintText: context.l10n.attendanceDeadlineHours),
+              placeholder: context.l10n.attendanceDeadlineHours,
             ),
           ],
         ),

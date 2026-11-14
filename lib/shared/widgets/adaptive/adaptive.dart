@@ -1,6 +1,7 @@
 // IOS_LOOK: adaptive widgets – Ionic iOS mode on iOS, Material elsewhere.
 export 'adaptive_platform.dart';
 export 'app_action_sheet.dart';
+export 'app_alert_inputs.dart';
 export 'app_dialog.dart';
 export 'app_filter_popover.dart';
 export 'app_multi_select.dart';

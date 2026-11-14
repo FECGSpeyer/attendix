@@ -109,7 +109,16 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(context.l10n.exportFields),
-          content: SizedBox(
+          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
+          content: AppAlertCheckboxGroup<String>(
+            options: [
+              for (final f in available) AppAlertOption(f, exportFieldLabel(f, context.l10n)),
+            ],
+            values: selection,
+            onChanged: (f, checked) => setLocal(() {
+              checked ? selection.add(f) : selection.remove(f);
+            }),
+            beta: SizedBox(
             width: double.maxFinite,
             child: ListView(
               shrinkWrap: true,
@@ -125,6 +134,7 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
                   ),
               ],
             ),
+          ),
           ),
           actions: [
             TextButton(
@@ -158,11 +168,12 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
       context: context,
       builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.exportAddField),
-        content: TextField(
+        // Ionic alert input without label or placeholder (export.page.ts).
+        content: AppAlertInput(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
-          decoration: InputDecoration(labelText: context.l10n.exportFlutterColumnName),
+          betaDecoration: InputDecoration(labelText: context.l10n.exportFlutterColumnName),
           onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
         ),
         actions: [

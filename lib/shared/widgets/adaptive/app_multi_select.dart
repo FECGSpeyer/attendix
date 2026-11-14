@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
+import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../l10n/l10n.dart';
 import 'adaptive_platform.dart';
+import 'app_alert_inputs.dart';
 import 'app_dialog.dart';
 import 'app_select.dart';
 
@@ -18,6 +20,21 @@ Future<List<T>?> showAppMultiSelect<T>({
   String? header,
 }) async {
   final selected = {...values};
+  if (context.rdSkin == null) {
+    // Classic: the Ionic `.alert-checkbox-group` (checkbox at the start).
+    final result = await showAppCheckboxAlert<T>(
+      context,
+      title: header,
+      options: [
+        for (final o in options)
+          AppAlertOption<T>(o.value, o.textOr(''), enabled: o.enabled),
+      ],
+      initialValues: values,
+    );
+    if (result == null) return null;
+    return [for (final o in options) if (result.contains(o.value)) o.value];
+  }
+  // Beta: unchanged.
   final result = await showAppDialog<Set<T>>(
     context: context,
     builder: (ctx) => StatefulBuilder(

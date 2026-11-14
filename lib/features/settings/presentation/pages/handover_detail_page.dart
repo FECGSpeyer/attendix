@@ -9,6 +9,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/handover_request.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -216,6 +217,21 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> with Ha
 
   Future<void> _changeGroup(Person person) async {
     final current = groupMapping[person.id];
+    if (context.rdSkin == null) {
+      // Ionic alert with `type: 'radio'` inputs, "Abbrechen"
+      // (`role: 'destructive'`) / "OK" (handover-detail.page.ts changeGroup).
+      final result = await showAppRadioAlert<int>(
+        context,
+        title: context.l10n.handoverSelectGroup,
+        options: [for (final g in targetGroups) (g.id!, g.name)],
+        initialValue: current,
+        cancelDestructive: true,
+      );
+      final value = result?.value;
+      if (value != null && mounted) setState(() => groupMapping[person.id!] = value);
+      return;
+    }
+    // Beta: unchanged.
     final picked = await showAppDialog<int>(
       context: context,
       builder: (context) => AppSimpleDialog(

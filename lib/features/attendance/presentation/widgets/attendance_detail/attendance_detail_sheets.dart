@@ -59,13 +59,15 @@ Future<String?> showPersonNoteSheet(
     context: context,
     builder: (ctx) => AppAlertDialog(
       title: Text(context.l10n.attendanceCustomNote),
-      content: TextField(
+      // Ionic alert input `type: 'textarea'` (attendance.page.ts).
+      content: AppAlertInput(
         controller: controller,
         autofocus: true,
         maxLines: 4,
         minLines: 2,
+        textarea: true,
         textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(hintText: context.l10n.attendanceEnterNote),
+        placeholder: context.l10n.attendanceEnterNote,
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
@@ -113,27 +115,15 @@ Future<ConductorChoice?> showConductorChangeDialog(
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AppAlertDialog(
         title: Text(context.l10n.attendanceChangeConductor),
-        contentPadding: const EdgeInsets.only(top: 12),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              for (final con in conductors)
-                RadioListTile<int>(
-                  value: con.id!,
-                  groupValue: selected,
-                  onChanged: (v) => setState(() => selected = v),
-                  title: Text(con.fullName),
-                ),
-              RadioListTile<int>(
-                value: otherValue,
-                groupValue: selected,
-                onChanged: (v) => setState(() => selected = v),
-                title: Text(context.l10n.attListOtherConductor),
-              ),
-            ],
-          ),
+        // Ionic alert with `type: 'radio'` inputs (attendance.page.ts
+        // changeConductor).
+        content: AppAlertRadioGroup<int>(
+          options: [
+            for (final con in conductors) AppAlertOption(con.id!, con.fullName),
+            AppAlertOption(otherValue, context.l10n.attListOtherConductor),
+          ],
+          groupValue: selected,
+          onChanged: (v) => setState(() => selected = v),
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
@@ -158,11 +148,11 @@ Future<ConductorChoice?> showConductorChangeDialog(
     context: context,
     builder: (ctx) => AppAlertDialog(
       title: Text(context.l10n.attListEnterConductor),
-      content: TextField(
+      content: AppAlertInput(
         controller: controller,
         autofocus: true,
         textCapitalization: TextCapitalization.words,
-        decoration: InputDecoration(hintText: context.l10n.attListConductor),
+        placeholder: context.l10n.attListConductor,
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),

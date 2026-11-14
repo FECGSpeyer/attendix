@@ -515,10 +515,12 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
         context: context,
         builder: (context) => AppAlertDialog(
           title: Text(context.l10n.attListEnterConductor),
-          content: TextField(
+          // Ionic alert input with a placeholder (history.page.ts).
+          content: AppAlertInput(
             controller: controller,
             textCapitalization: TextCapitalization.words,
-            decoration: InputDecoration(labelText: context.l10n.attListConductor),
+            placeholder: context.l10n.attListConductor,
+            betaDecoration: InputDecoration(labelText: context.l10n.attListConductor),
           ),
           actions: [
             TextButton(

@@ -693,11 +693,64 @@ class _SingleFieldDialogState extends State<_SingleFieldDialog> {
     }
   }
 
+  /// Classic: the Ionic alert inputs of the field type (`text`, `radio`,
+  /// `checkbox`) in the look's alert style; Beta keeps [_content].
+  Widget _alertContent() {
+    final field = widget.field;
+    final beta = SingleChildScrollView(child: _content());
+    switch (field.type) {
+      case RegistrationFieldType.boolean:
+        return AppAlertRadioGroup<bool>(
+          options: [
+            AppAlertOption(true, context.l10n.commonYes),
+            AppAlertOption(false, context.l10n.commonNo),
+          ],
+          groupValue: _value is bool ? _value as bool : null,
+          onChanged: (v) => setState(() => _value = v),
+          beta: beta,
+        );
+      case RegistrationFieldType.select:
+        return AppAlertRadioGroup<String>(
+          options: [
+            for (final opt in field.options ?? const <String>[]) AppAlertOption(opt, opt),
+          ],
+          groupValue: _value is String ? _value as String : null,
+          onChanged: (v) => setState(() => _value = v),
+          beta: beta,
+        );
+      case RegistrationFieldType.multiSelect:
+        final selected = _value as List<String>;
+        return AppAlertCheckboxGroup<String>(
+          options: [
+            for (final opt in field.options ?? const <String>[]) AppAlertOption(opt, opt),
+          ],
+          values: selected.toSet(),
+          onChanged: (opt, checked) => setState(() {
+            checked ? selected.add(opt) : selected.remove(opt);
+          }),
+          beta: beta,
+        );
+      default:
+        return AppAlertInputGroup(
+          beta: beta,
+          children: [
+            AppAlertInput(
+              controller: _text,
+              autofocus: true,
+              textCapitalization: TextCapitalization.sentences,
+              placeholder: '...',
+              onChanged: (v) => _value = v,
+            ),
+          ],
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppAlertDialog(
       title: Text(widget.field.label),
-      content: SingleChildScrollView(child: _content()),
+      content: _alertContent(),
       actions: [
         if (widget.editMode)
           TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonCancel)),

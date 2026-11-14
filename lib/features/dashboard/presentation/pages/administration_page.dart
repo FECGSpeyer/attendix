@@ -182,7 +182,15 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AppAlertDialog(
           title: Text(context.l10n.adminMergeWith(source.name)),
-          content: SizedBox(
+          // Ionic alert with `type: 'radio'` inputs (administration.page.ts);
+          // Beta keeps its list.
+          content: AppAlertRadioGroup<String>(
+            options: [
+              for (final c in targets) AppAlertOption(c.id!, c.name),
+            ],
+            groupValue: selected,
+            onChanged: (v) => setDialogState(() => selected = v),
+            beta: SizedBox(
             width: double.maxFinite,
             child: ListView(
               shrinkWrap: true,
@@ -196,6 +204,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                   ),
               ],
             ),
+          ),
           ),
           actions: [
             TextButton(

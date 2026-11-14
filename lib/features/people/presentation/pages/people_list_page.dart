@@ -19,6 +19,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/demo_guard.dart' show DemoModeException;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -1076,15 +1077,18 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         context: context,
         builder: (ctx) => AppAlertDialog(
           title: Text(field.name),
-          content: TextField(
+          // Ionic alert input `type: 'number'`; "Abbrechen" has
+          // `role: 'destructive'` (list.page.ts onFilterChanged).
+          content: AppAlertInput(
             controller: controller,
             autofocus: true,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(hintText: context.l10n.peopleEnterValue),
+            placeholder: context.l10n.peopleEnterValue,
           ),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(ctx),
+                style: appAlertDestructiveStyle(ctx),
                 child: Text(context.l10n.commonCancel)),
             FilledButton(
                 onPressed: () => Navigator.pop(ctx, controller.text.trim()),
@@ -1122,6 +1126,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             ? (saved == 'false' ? 'false' : 'true')
             : null,
         confirmText: context.l10n.peopleFilter,
+        // Ionic: "Abbrechen" has `role: 'destructive'` (Beta unchanged).
+        cancelDestructive: context.rdSkin == null,
       );
       value = result?.value;
     }

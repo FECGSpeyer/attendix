@@ -307,7 +307,17 @@ class _TeacherFormState extends State<_TeacherForm> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AppAlertDialog(
           title: Text(context.l10n.teachersInstruments),
-          content: SizedBox(
+          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
+          content: AppAlertCheckboxGroup<int>(
+            options: [
+              for (final g in widget.availableInstruments)
+                if (g.id != null) AppAlertOption(g.id!, g.name),
+            ],
+            values: selected,
+            onChanged: (id, checked) => setDialogState(() {
+              checked ? selected.add(id) : selected.remove(id);
+            }),
+            beta: SizedBox(
             width: double.maxFinite,
             child: ListView(
               shrinkWrap: true,
@@ -327,6 +337,7 @@ class _TeacherFormState extends State<_TeacherForm> {
                     ),
               ],
             ),
+          ),
           ),
           actions: [
             TextButton(

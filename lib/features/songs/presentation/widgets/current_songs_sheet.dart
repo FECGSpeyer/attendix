@@ -156,7 +156,16 @@ class _GroupChoiceDialogState extends State<_GroupChoiceDialog> {
   Widget build(BuildContext context) {
     return AppAlertDialog(
       title: Text(context.l10n.songsChooseGroup),
-      content: SizedBox(
+      // Ionic alert with `type: 'radio'` inputs (songs.page.ts printNotesForGroup).
+      content: AppAlertRadioGroup<int?>(
+        options: [
+          for (final g in widget.groups) AppAlertOption(g.id, g.name),
+        ],
+        groupValue: _selected?.id,
+        onChanged: (id) => setState(
+          () => _selected = widget.groups.firstWhere((g) => g.id == id),
+        ),
+        beta: SizedBox(
         width: double.maxFinite,
         child: ListView(
           shrinkWrap: true,
@@ -170,6 +179,7 @@ class _GroupChoiceDialogState extends State<_GroupChoiceDialog> {
               ),
           ],
         ),
+      ),
       ),
       actions: [
         TextButton(

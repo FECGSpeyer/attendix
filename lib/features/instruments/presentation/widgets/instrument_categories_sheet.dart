@@ -294,9 +294,12 @@ class _InstrumentCategoriesSheetState
       context: context,
       builder: (context) => AppAlertDialog(
         title: Text(context.l10n.instrumentsNewCategory),
-        content: TextField(
+        // Ionic alert input with a placeholder; "Abbrechen" has
+        // `role: 'destructive'` (instrument-list.page.ts).
+        content: AppAlertInput(
           controller: controller,
-          decoration: InputDecoration(
+          placeholder: context.l10n.instrumentsCategoryName,
+          betaDecoration: InputDecoration(
             labelText: context.l10n.instrumentsCategoryName,
           ),
           autofocus: true,
@@ -305,6 +308,7 @@ class _InstrumentCategoriesSheetState
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: appAlertDestructiveStyle(context),
             child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
@@ -340,9 +344,12 @@ class _InstrumentCategoriesSheetState
       context: context,
       builder: (context) => AppAlertDialog(
         title: Text(context.l10n.instrumentsEditCategory),
-        content: TextField(
+        // Ionic alert input with a placeholder; "Abbrechen" has
+        // `role: 'destructive'` (instrument-list.page.ts).
+        content: AppAlertInput(
           controller: controller,
-          decoration: InputDecoration(
+          placeholder: context.l10n.instrumentsCategoryName,
+          betaDecoration: InputDecoration(
             labelText: context.l10n.instrumentsCategoryName,
           ),
           autofocus: true,
@@ -351,6 +358,7 @@ class _InstrumentCategoriesSheetState
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: appAlertDestructiveStyle(context),
             child: Text(context.l10n.commonCancel),
           ),
           FilledButton(

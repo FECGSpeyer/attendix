@@ -310,15 +310,10 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
             Text(widget.subtitle!, style: Theme.of(context).textTheme.bodySmall),
         ],
       ),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+      // The Ionic `.alert-message` + `.alert-input-group` (scrolls itself).
+      content: AppAlertInputGroup(
+          message: widget.message == null ? null : Text(widget.message!),
           children: [
-            if (widget.message != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text(widget.message!),
-              ),
             // Ionic `alertController` inputs: no labels, only placeholders
             // (planning.page.ts addExtraField …), in the same look as every
             // other alert. While existing values are edited each field
@@ -362,7 +357,6 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
               ),
             if (widget.beamer != null) ..._beamerSection(context),
           ],
-        ),
       ),
       actions: [
         if (widget.onDelete != null)
@@ -415,11 +409,9 @@ Future<String?> showPlanTextPrompt(
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setDialogState) => AppAlertDialog(
         title: Text(title),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        content: AppAlertInputGroup(
+          message: shownMessage == null ? null : Text(shownMessage!),
           children: [
-            if (shownMessage != null) Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(shownMessage!)),
             AppAlertInput(
               controller: controller,
               autofocus: true,

@@ -167,19 +167,30 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(ctx.l10n.teamOrgAcceptSuggestion),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(ctx.l10n.teamOrgWhichPriority),
+          // Ionic alert: message + `type: 'radio'` inputs
+          // (topics-tab.component.ts accept).
+          content: AppAlertRadioGroup<String>(
+            message: Text(ctx.l10n.teamOrgWhichPriority),
+            options: [
               for (final p in const ['high', 'medium', 'low'])
-                RadioListTile<String>(
-                  value: p,
-                  groupValue: priority,
-                  title: Text(priorityLabels[p]!),
-                  onChanged: (v) => setLocal(() => priority = v ?? 'medium'),
-                ),
+                AppAlertOption(p, priorityLabels[p]!),
             ],
+            groupValue: priority,
+            onChanged: (v) => setLocal(() => priority = v),
+            beta: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(ctx.l10n.teamOrgWhichPriority),
+                for (final p in const ['high', 'medium', 'low'])
+                  RadioListTile<String>(
+                    value: p,
+                    groupValue: priority,
+                    title: Text(priorityLabels[p]!),
+                    onChanged: (v) => setLocal(() => priority = v ?? 'medium'),
+                  ),
+              ],
+            ),
           ),
           actions: [
             TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(ctx.l10n.commonCancel)),
@@ -201,14 +212,15 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
       context: context,
       builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.teamOrgRejectSuggestion),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+        // Ionic alert: message + `type: 'textarea'` input.
+        content: AppAlertInputGroup(
+          message: Text(ctx.l10n.teamOrgPersonInformed(name)),
           children: [
-            Text(ctx.l10n.teamOrgPersonInformed(name)),
-            TextField(
+            AppAlertInput(
               controller: controller,
               maxLines: 3,
-              decoration: InputDecoration(hintText: ctx.l10n.teamOrgReasonOptional),
+              textarea: true,
+              placeholder: ctx.l10n.teamOrgReasonOptional,
             ),
           ],
         ),

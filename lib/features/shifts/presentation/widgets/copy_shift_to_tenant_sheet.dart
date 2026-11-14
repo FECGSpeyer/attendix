@@ -176,7 +176,15 @@ class _TargetTenantAlertState extends State<_TargetTenantAlert> {
     return AppAlertDialog(
       title: Text(l10n.shiftsCopyToTenant),
       scrollable: true,
-      content: RadioGroup<int>(
+      // Classic: the shared Ionic radio group (message + radios).
+      content: AppAlertRadioGroup<int>(
+        message: Text(l10n.shiftsChooseTarget),
+        options: [
+          for (final t in widget.tenants) AppAlertOption(t.id!, t.longName),
+        ],
+        groupValue: _selected,
+        onChanged: (value) => setState(() => _selected = value),
+        beta: RadioGroup<int>(
         groupValue: _selected,
         onChanged: (value) => setState(() => _selected = value),
         child: Column(
@@ -210,6 +218,7 @@ class _TargetTenantAlertState extends State<_TargetTenantAlert> {
                 ),
           ],
         ),
+      ),
       ),
       actions: [
         TextButton(

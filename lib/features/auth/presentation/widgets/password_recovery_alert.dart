@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -166,7 +167,9 @@ class _PasswordRecoveryDialogState extends State<PasswordRecoveryDialog> {
     if (useIosLook(context)) {
       return IosAlertCard(
         title: Text(l10n.appNewPassword),
-        contentPadding: const EdgeInsets.fromLTRB(16, 0, 16, 21),
+        // ios27 `.alert-message:empty { padding: 0 0 12px }` above the inputs
+        // (Beta keeps its spacing).
+        contentPadding: EdgeInsets.fromLTRB(16, context.rdSkin == null ? 12 : 0, 16, 21),
         content: IosAlertInput(
           controller: _controller,
           placeholder: l10n.appMinSixPlaceholder,
@@ -198,18 +201,20 @@ class _PasswordRecoveryDialogState extends State<PasswordRecoveryDialog> {
       );
     }
 
-    // md alert: underlined input (like "Passwort zurücksetzen").
+    // md alert: the shared underlined alert input (like "Passwort
+    // zurücksetzen"); Beta keeps its field.
     final theme = Theme.of(context);
     final line = UnderlineInputBorder(borderSide: BorderSide(color: theme.dividerColor));
     return AppAlertDialog(
       title: Text(l10n.appNewPassword),
-      content: TextField(
+      content: AppAlertInput(
         controller: _controller,
         autofocus: true,
         obscureText: true,
         autofillHints: const [AutofillHints.newPassword],
         onSubmitted: (_) => _confirm(),
-        decoration: InputDecoration(
+        placeholder: l10n.appMinSixPlaceholder,
+        betaDecoration: InputDecoration(
           hintText: l10n.appMinSixPlaceholder,
           filled: false,
           isDense: true,

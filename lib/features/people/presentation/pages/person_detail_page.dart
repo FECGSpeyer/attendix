@@ -1346,25 +1346,38 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           var missing = false;
           return StatefulBuilder(
             builder: (context, setDialogState) => AppAlertDialog(
-              title: Text(context.l10n.personDeclinePerson),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              title: AppAlertTitle(
+                context.l10n.personDeclinePerson,
+                subHeader: context.l10n.personGiveReasonShort,
+              ),
+              content: AppAlertInputGroup(
+                message: missing ? Text(context.l10n.signoutGiveReason) : null,
                 children: [
-                  Text(context.l10n.personGiveReasonShort),
-                  if (missing) ...[
-                    const SizedBox(height: AppDimensions.paddingS),
-                    Text(context.l10n.signoutGiveReason),
-                  ],
-                  const SizedBox(height: AppDimensions.paddingM),
-                  TextField(
+                  AppAlertInput(
                     controller: reasonController,
-                    decoration: const InputDecoration(border: OutlineInputBorder()),
-                    minLines: 2,
-                    maxLines: 4,
+                    textarea: true,
                     autofocus: true,
                   ),
                 ],
+                beta: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(context.l10n.personGiveReasonShort),
+                    if (missing) ...[
+                      const SizedBox(height: AppDimensions.paddingS),
+                      Text(context.l10n.signoutGiveReason),
+                    ],
+                    const SizedBox(height: AppDimensions.paddingM),
+                    TextField(
+                      controller: reasonController,
+                      decoration: const InputDecoration(border: OutlineInputBorder()),
+                      minLines: 2,
+                      maxLines: 4,
+                      autofocus: true,
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(

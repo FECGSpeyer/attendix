@@ -390,17 +390,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       context: context,
       builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.loginNotConfirmedHeader),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        // Ionic alert: message + `type: 'email'` input (login.page.ts).
+        content: AppAlertInputGroup(
+          betaCrossAxisAlignment: CrossAxisAlignment.start,
+          message: Text(ctx.l10n.loginNotConfirmedMessage),
           children: [
-            Text(ctx.l10n.loginNotConfirmedMessage),
-            const SizedBox(height: AppDimensions.paddingM),
-            TextField(
+            const AppAlertBetaGap(AppDimensions.paddingM),
+            AppAlertInput(
               controller: controller,
               keyboardType: TextInputType.emailAddress,
-              decoration:
-                  InputDecoration(hintText: ctx.l10n.loginEmailPlaceholder),
+              placeholder: ctx.l10n.loginEmailPlaceholder,
             ),
           ],
         ),

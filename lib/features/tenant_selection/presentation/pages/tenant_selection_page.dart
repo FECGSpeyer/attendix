@@ -329,24 +329,23 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
               builder:
                   (dialogContext, setDialogState) => AppAlertDialog(
                     title: Text(beta ? dialogContext.l10n.redesignTenantsDeleteTitle : dialogContext.l10n.settingsDeleteTenant),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    // Ionic alert: message + text input, plain buttons
+                    // (settings.page.ts deleteInstance).
+                    content: AppAlertInputGroup(
+                      betaCrossAxisAlignment: CrossAxisAlignment.start,
+                      message: Text(
+                        error ??
+                            (beta
+                                ? dialogContext.l10n.redesignTenantsDeleteMessage(tenant.longName)
+                                : dialogContext.l10n
+                                    .settingsDeleteTenantMessage(tenant.longName)),
+                      ),
                       children: [
-                        Text(
-                          error ??
-                              (beta
-                                  ? dialogContext.l10n.redesignTenantsDeleteMessage(tenant.longName)
-                                  : dialogContext.l10n
-                                      .settingsDeleteTenantMessage(tenant.longName)),
-                        ),
-                        const SizedBox(height: 12),
-                        TextField(
+                        const AppAlertBetaGap(12),
+                        AppAlertInput(
                           controller: controller,
                           autofocus: true,
-                          decoration: InputDecoration(
-                            hintText: beta ? dialogContext.l10n.redesignTenantsDeleteNamePh : dialogContext.l10n.settingsTenantNamePh,
-                          ),
+                          placeholder: beta ? dialogContext.l10n.redesignTenantsDeleteNamePh : dialogContext.l10n.settingsTenantNamePh,
                         ),
                       ],
                     ),
@@ -356,9 +355,11 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                         child: Text(dialogContext.l10n.commonCancel),
                       ),
                       TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: AppColors.danger,
-                        ),
+                        style: beta
+                            ? TextButton.styleFrom(
+                                foregroundColor: AppColors.danger,
+                              )
+                            : null,
                         onPressed: () {
                           if (controller.text == tenant.longName) {
                             Navigator.of(dialogContext).pop(true);

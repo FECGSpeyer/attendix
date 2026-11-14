@@ -538,13 +538,15 @@ Future<String?> showEventNoteDialog(
     context: context,
     builder: (ctx) => AppAlertDialog(
       title: Text(title),
-      content: TextField(
+      // Ionic alert input `type: 'textarea'` (overview.page.ts / signout.page.ts).
+      content: AppAlertInput(
         controller: controller,
         autofocus: true,
         maxLines: 4,
         minLines: 2,
+        textarea: true,
         textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(hintText: ctx.l10n.signoutEnterNote),
+        placeholder: ctx.l10n.signoutEnterNote,
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonCancel)),
@@ -633,26 +635,53 @@ class _RegistrationFieldAlertState extends State<_RegistrationFieldAlert> {
     final l10n = context.l10n;
     Widget content;
     switch (field.type) {
+      // Ionic alert inputs of the field type: `text`, `radio` (Ja/Nein,
+      // options) or `checkbox` (multi select) in the look's alert style;
+      // Beta keeps its rows.
       case RegistrationFieldType.text:
-        content = TextField(
+        content = AppAlertInput(
           controller: _text,
           autofocus: true,
-          decoration: const InputDecoration(hintText: '...'),
+          placeholder: '...',
         );
       case RegistrationFieldType.boolean:
-        content = Column(mainAxisSize: MainAxisSize.min, children: [
-          _choice(l10n.commonYes, _single == true, () => setState(() => _single = true)),
-          _choice(l10n.commonNo, _single == false, () => setState(() => _single = false)),
-        ]);
+        content = AppAlertRadioGroup<bool>(
+          options: [
+            AppAlertOption(true, l10n.commonYes),
+            AppAlertOption(false, l10n.commonNo),
+          ],
+          groupValue: _single is bool ? _single as bool : null,
+          onChanged: (v) => setState(() => _single = v),
+          beta: Column(mainAxisSize: MainAxisSize.min, children: [
+            _choice(l10n.commonYes, _single == true, () => setState(() => _single = true)),
+            _choice(l10n.commonNo, _single == false, () => setState(() => _single = false)),
+          ]),
+        );
       default:
         final multi = field.type == RegistrationFieldType.multiSelect;
-        content = Column(mainAxisSize: MainAxisSize.min, children: [
+        final options = [
+          for (final o in field.options ?? const <String>[]) AppAlertOption(o, o),
+        ];
+        final beta = Column(mainAxisSize: MainAxisSize.min, children: [
           for (final o in field.options ?? const <String>[])
             multi
                 ? _choice(o, _multi.contains(o), () => setState(() => _multi.contains(o) ? _multi.remove(o) : _multi.add(o)),
                     checkbox: true)
                 : _choice(o, _single == o, () => setState(() => _single = o)),
         ]);
+        content = multi
+            ? AppAlertCheckboxGroup<String>(
+                options: options,
+                values: _multi,
+                onChanged: (o, checked) => setState(() => checked ? _multi.add(o) : _multi.remove(o)),
+                beta: beta,
+              )
+            : AppAlertRadioGroup<String>(
+                options: options,
+                groupValue: _single is String ? _single as String : null,
+                onChanged: (o) => setState(() => _single = o),
+                beta: beta,
+              );
     }
     return AppAlertDialog(
       title: Text(field.label),

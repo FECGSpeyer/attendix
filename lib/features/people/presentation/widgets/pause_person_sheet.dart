@@ -325,7 +325,17 @@ Future<List<LinkedTenantRef>?> _askPauseInOtherTenants(
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AppAlertDialog(
         title: Text(context.l10n.peoplePauseOthers),
-        content: SingleChildScrollView(
+        // Ionic alert: message + `type: 'checkbox'` inputs (person.page.ts).
+        content: AppAlertCheckboxGroup<int>(
+          message: Text(
+            context.l10n.peoplePauseOthersMessage('${person.firstName} ${person.lastName}'),
+          ),
+          options: [for (final t in tenants) AppAlertOption(t.id, t.name)],
+          values: selected,
+          onChanged: (id, checked) => setState(() {
+            checked ? selected.add(id) : selected.remove(id);
+          }),
+          beta: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,6 +359,7 @@ Future<List<LinkedTenantRef>?> _askPauseInOtherTenants(
                 ),
             ],
           ),
+        ),
         ),
         actions: [
           TextButton(

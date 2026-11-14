@@ -205,12 +205,14 @@ class _AddUserDialogState extends State<_AddUserDialog> {
   Widget build(BuildContext context) {
     return AppAlertDialog(
       title: Text(context.l10n.settingsFlutterUserMgmtAdd),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
+      // Like the Ionic "Beobachter hinzufügen" alert: placeholder-only alert
+      // inputs (plus the role select of this page).
+      content: AppAlertInputGroup(
         children: [
-          TextField(
+          AppAlertInput(
             controller: _emailController,
-            decoration: InputDecoration(
+            placeholder: context.l10n.settingsEmailAddress,
+            betaDecoration: InputDecoration(
               labelText: context.l10n.settingsEmailAddress,
               hintText: context.l10n.settingsFlutterUserMgmtEmailPh,
             ),
@@ -236,16 +238,18 @@ class _AddUserDialogState extends State<_AddUserDialog> {
           // LOGIC_PEOPLE: viewers / parents need a name (Ionic createViewer /
           // createParent insert firstName + lastName).
           if (_needsName) ...[
-            const SizedBox(height: AppDimensions.paddingM),
-            TextField(
+            const AppAlertBetaGap(AppDimensions.paddingM),
+            AppAlertInput(
               controller: _firstNameController,
-              decoration: InputDecoration(labelText: context.l10n.peopleFirstName),
+              placeholder: context.l10n.peopleFirstName,
+              betaDecoration: InputDecoration(labelText: context.l10n.peopleFirstName),
               textCapitalization: TextCapitalization.words,
             ),
-            const SizedBox(height: AppDimensions.paddingS),
-            TextField(
+            const AppAlertBetaGap(AppDimensions.paddingS),
+            AppAlertInput(
               controller: _lastNameController,
-              decoration: InputDecoration(labelText: context.l10n.peopleLastName),
+              placeholder: context.l10n.peopleLastName,
+              betaDecoration: InputDecoration(labelText: context.l10n.peopleLastName),
               textCapitalization: TextCapitalization.words,
             ),
           ],
