@@ -1194,6 +1194,15 @@ class _IonInputRowState extends State<IonInputRow> {
                         contentPadding:
                             const EdgeInsets.symmetric(vertical: 6),
                         hintText: widget.placeholder,
+                        // PERSONEN-78: Ionic `--placeholder-opacity: 0.6`
+                        // – the md theme's hint was as dark as real text.
+                        hintStyle: TextStyle(
+                          fontSize: ios ? 17 : 16,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6),
+                        ),
                       ),
                       onChanged: widget.onChanged,
                       onEditingComplete: widget.onEditingComplete,
