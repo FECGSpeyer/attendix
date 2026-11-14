@@ -221,7 +221,8 @@ Future<AppSelection<T>?> showAppSelect<T>({
     case AppSelectInterface.actionSheet:
       // md: Ionic adds the cancel button (`cancelText`, role cancel) after
       // the options; only the ios27 theme hides it.
-      return _showSelectActionSheet<T>(context, options, header, showCancel: !ios);
+      return _showSelectActionSheet<T>(context, options, header,
+          showCancel: !ios, value: value, markValue: true);
     case AppSelectInterface.modal:
       return showIonModal<AppSelection<T>>(
         context,
@@ -236,6 +237,8 @@ Future<AppSelection<T>?> _showSelectActionSheet<T>(
   List<AppSelectOption<T>> options,
   String? header, {
   bool showCancel = false,
+  T? value,
+  bool markValue = false,
 }) {
   return showAppActionSheet<AppSelection<T>>(
     context,
@@ -249,6 +252,8 @@ Future<AppSelection<T>?> _showSelectActionSheet<T>(
           value: AppSelection<T>(o.value),
           label: o.textOr('${o.value}'),
           enabled: o.enabled,
+          // F-EINST-32: Ionic marks the current value (classic only).
+          selected: markValue && o.value == value,
         ),
     ],
   );
