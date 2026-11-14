@@ -7,7 +7,10 @@ import 'package:intl/intl.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/date_helper.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
+import '../../../../people/presentation/widgets/ion/ion_widgets.dart' show IonText, ionLineColor;
+import '../ion_stacked_field.dart';
 
 /// Result of the "Erinnerung versenden" sheet.
 class AdHocReminderResult {
@@ -127,10 +130,138 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
 
   bool get _canSend => _title.text.trim().isNotEmpty || _message.text.trim().isNotEmpty;
 
+  void _send() => Navigator.of(context).pop(AdHocReminderResult(
+        title: _title.text,
+        message: _message.text,
+        neutralOnly: _neutralOnly,
+      ));
+
+  /// TER-04 / TER-17: Ionic AdHocReminderModal – toolbar title + close ✕,
+  /// `ion-padding` content: intro text, an `ion-list lines="full"` with two
+  /// stacked textareas and the toggle, the link item, the block button.
+  Widget _buildClassic(BuildContext context) {
+    final ios = useIosLook(context);
+    return IonSheetScaffold(
+      title: context.l10n.attendanceSendReminder,
+      showClose: true,
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          controller: widget.scrollController,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // `.intro p`: .9rem, line-height 1.4, medium-shade.
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  context.l10n.attendanceReminderInfo,
+                  style: TextStyle(
+                    fontSize: ios ? 15.3 : 14.4,
+                    height: 1.4,
+                    color: AppColors.medium,
+                  ),
+                ),
+              ),
+              IonStackedField(
+                label: context.l10n.attendanceSubject,
+                hintText: context.l10n.attendanceSubjectPlaceholder,
+                controller: _title,
+                minLines: 2,
+                maxLines: null,
+                lineInset: false,
+                onChanged: (_) => setState(() {}),
+              ),
+              IonStackedField(
+                label: context.l10n.attendanceMessage,
+                hintText: context.l10n.attendanceMessagePlaceholder,
+                controller: _message,
+                minLines: 3,
+                maxLines: null,
+                lineInset: false,
+                onChanged: (_) => setState(() {}),
+              ),
+              if (widget.hasNeutralPersons)
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: ionLineColor(context), width: ios ? 0.55 : 1),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                context.l10n.attendanceOnlyNeutral,
+                                style: TextStyle(fontSize: ios ? 17 : 16),
+                              ),
+                              Text(context.l10n.attendanceOnlyNeutralHint, style: IonText.p(context)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Switch.adaptive(
+                          value: _neutralOnly,
+                          onChanged: (v) => setState(() => _neutralOnly = v),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              if (widget.attendanceLink != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 10, 0, 0),
+                        child: Icon(AppIcons.link, color: AppColors.medium),
+                      ),
+                      SizedBox(width: ios ? 16 : 32),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(context.l10n.attendanceEmailLink, style: IonText.p(context)),
+                              SelectableText(
+                                widget.attendanceLink!,
+                                style: const TextStyle(fontSize: 13, color: AppColors.primary),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                onPressed: _canSend ? _send : null,
+                icon: Icon(AppIcons.notificationsOutlined),
+                label: IonButtonLabel(context.l10n.attendanceSend),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final classic = context.rdSkin == null;
+    if (classic) return _buildClassic(context);
     final form = Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
