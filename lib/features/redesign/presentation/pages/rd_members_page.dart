@@ -363,10 +363,9 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
         Row(
         children: [
           Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              clipBehavior: Clip.none,
-              child: Row(
+            // Clipped to its own space: on a narrow phone the chips slide
+            // under "Filter" instead of over it.
+            child: RdChipScroller(
                 children: [
                   if (rateChip != null) ...[
                     RdRemovableChip(
@@ -395,7 +394,6 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
                       onTap: () => ref.read(rdMembersCriticalOnlyProvider.notifier).state = true,
                     ),
                 ],
-              ),
             ),
           ),
           RdFilterLink(

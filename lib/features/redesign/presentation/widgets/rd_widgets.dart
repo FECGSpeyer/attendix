@@ -1556,6 +1556,68 @@ class RdRemovableChip extends StatelessWidget {
   }
 }
 
+/// Chips in one line beside a fixed neighbour (the "Filter" link): they
+/// scroll sideways inside their own space and never paint over the
+/// neighbour. A soft fade marks the side where more chips wait.
+class RdChipScroller extends StatefulWidget {
+  const RdChipScroller({super.key, required this.children});
+
+  /// The chips, with their own gaps.
+  final List<Widget> children;
+
+  @override
+  State<RdChipScroller> createState() => _RdChipScrollerState();
+}
+
+class _RdChipScrollerState extends State<RdChipScroller> {
+  static const _fade = 20.0;
+
+  bool _before = false;
+  bool _after = false;
+
+  bool _onMetrics(ScrollMetrics m) {
+    if (m.axis != Axis.horizontal) return false;
+    final before = m.extentBefore > 0.5;
+    final after = m.extentAfter > 0.5;
+    if (before != _before || after != _after) {
+      setState(() {
+        _before = before;
+        _after = after;
+      });
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const solid = Color(0xFF000000);
+    const clear = Color(0x00000000);
+    final direction = Directionality.of(context);
+    return NotificationListener<ScrollMetricsNotification>(
+      onNotification: (n) => _onMetrics(n.metrics),
+      child: NotificationListener<ScrollUpdateNotification>(
+        onNotification: (n) => _onMetrics(n.metrics),
+        child: ShaderMask(
+          blendMode: BlendMode.dstIn,
+          shaderCallback: (rect) {
+            final stop = rect.width <= 0 ? 0.0 : (_fade / rect.width).clamp(0.0, 0.5);
+            return LinearGradient(
+              begin: AlignmentDirectional.centerStart,
+              end: AlignmentDirectional.centerEnd,
+              colors: [_before ? clear : solid, solid, solid, _after ? clear : solid],
+              stops: [0, stop, 1 - stop, 1],
+            ).createShader(rect, textDirection: direction);
+          },
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(children: widget.children),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// "Filter" (with the number of active filters) above a list; opens the
 /// "Sortieren & Filtern" sheet.
 class RdFilterLink extends StatelessWidget {

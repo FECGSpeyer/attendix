@@ -474,6 +474,33 @@ void main() {
       expect(find.text('Anna Berg'), findsOneWidget);
     });
 
+    testWidgets('narrow phone: the chips stay in their own space beside "Filter"', (tester) async {
+      tester.view.physicalSize = const Size(320, 700);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(_membersApp(
+        Role.admin,
+        _repo(),
+        people: [_ben.copyWith(isCritical: true), _clara],
+      ));
+      await _settle(tester);
+      // A sort chip plus "Problemfälle · 1" is wider than the row.
+      ProviderScope.containerOf(tester.element(find.byType(RdMembersPage)))
+          .read(rdMembersListFilterProvider.notifier)
+          .state = const RdMembersListFilter(sort: RdMembersSort.nextBirthday);
+      await _settle(tester);
+
+      final chip = find.text('Problemfälle · 1');
+      final scroller = find.ancestor(of: chip, matching: find.byType(RdChipScroller));
+      final view = tester.widget<SingleChildScrollView>(
+        find.descendant(of: scroller, matching: find.byType(SingleChildScrollView)),
+      );
+      expect(view.clipBehavior, isNot(Clip.none));
+      final filterLeft = tester.getRect(find.byKey(const Key('rd-members-filter'))).left;
+      expect(tester.getRect(chip).right, greaterThan(filterLeft), reason: 'the chips do not fit');
+      expect(tester.getRect(scroller).right, lessThanOrEqualTo(filterLeft));
+    });
+
     testWidgets('"Problemfälle" from Heute stays on even when nobody active is critical', (tester) async {
       await tester.pumpWidget(_membersApp(Role.admin, _repo(), criticalOnly: true));
       await _settle(tester);
