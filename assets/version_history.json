@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.150.1",
+      "date": "14.11.2026",
+      "changes": [
+        "✨ Beta: einheitliche Wörter je Art der Gruppe – Instrument (Orchester), Stimme (Chor), Untergruppe (allgemein); „Register“ heißt im Orchester nur noch die Zusammenfassung wie Streicher oder Holzbläser",
+        "✨ Beta: im Chor wird keine Zusammenfassung der Stimmen mehr angeboten"
+      ]
+    },
+    {
       "version": "0.150.0",
       "date": "14.11.2026",
       "changes": [
