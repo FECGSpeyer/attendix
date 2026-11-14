@@ -35,6 +35,8 @@ import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../data/song_print_service.dart';
 import '../utils/song_utils.dart';
 import '../widgets/copy_to_tenant_sheet.dart';
+import '../widgets/song_form_items.dart';
+import '../../../people/presentation/widgets/ion/ion_widgets.dart' show IonItemDivider;
 import '../widgets/file_drop/file_drop_target.dart';
 import '../widgets/file_upload_sheet.dart';
 import '../widgets/group_pdf_print.dart';
@@ -568,7 +570,134 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
         child: child,
       );
 
+  /// WER-04/05/06: Ionic `ion-list [inset]` > `ion-item-group`: every field
+  /// its own `ion-item` (stacked inputs, the popover select, two toggles,
+  /// the modal multi-selects), lines from the label start to the card edge.
   Widget _buildEditForm(SongDetailData data) {
+    if (context.rdSkin != null) return _buildEditFormBeta(data);
+    final fileIds = _idsFromFiles(data);
+    final difficulties = <AppSelectOption<int?>>[
+      AppSelectOption(value: null, label: context.l10n.songsNotDefined),
+      AppSelectOption(value: 1, label: context.l10n.songsEasy),
+      AppSelectOption(value: 2, label: context.l10n.songsMedium),
+      AppSelectOption(value: 3, label: context.l10n.songsHard),
+    ];
+    final instrumentOptions = [
+      for (final g in data.instruments)
+        if (g.id != null)
+          AppSelectOption<int>(value: g.id!, label: g.name, enabled: !fileIds.contains(g.id)),
+    ];
+    final categoryOptions = [
+      for (final c in data.categories)
+        if (c.id != null) AppSelectOption<String>(value: c.id!, label: c.name),
+    ];
+    String names<T>(List<AppSelectOption<T>> options, List<T> values) => [
+          for (final o in options)
+            if (values.contains(o.value)) o.label!,
+        ].join(', ');
+    return IonInsetList(
+      // The items draw their own lines.
+      dividerIndent: 0,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _blurSaver(
+              data,
+              SongStackedInput(
+                controller: _prefix,
+                label: context.l10n.songsPrefixOptional,
+                helperText: context.l10n.songsPrefixHelper,
+              ),
+            ),
+            _blurSaver(
+              data,
+              SongStackedInput(
+                controller: _number,
+                label: context.l10n.songsNumber,
+                keyboardType: TextInputType.number,
+                // Ionic `type="number"`: digits only.
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+            ),
+            _blurSaver(
+              data,
+              SongStackedInput(controller: _name, label: context.l10n.songsName),
+            ),
+            Builder(
+              builder: (itemContext) => SongSelectItem(
+                label: context.l10n.songsDifficulty,
+                text: difficulties.firstWhere((o) => o.value == _difficulty, orElse: () => difficulties.first).label!,
+                onTap: () async {
+                  final picked = await showAppSelect<int?>(
+                    context: itemContext,
+                    options: difficulties,
+                    value: _difficulty,
+                    interface: AppSelectInterface.popover,
+                  );
+                  if (picked == null || !mounted) return;
+                  setState(() => _difficulty = picked.value);
+                  _update(data);
+                },
+              ),
+            ),
+            SongToggleItem(
+              label: context.l10n.songsChoirOrchestra,
+              value: _withChoir,
+              onChanged: (v) {
+                setState(() => _withChoir = v);
+                _update(data);
+              },
+            ),
+            SongToggleItem(
+              label: context.l10n.songsWithSoloSinging,
+              value: _withSolo,
+              onChanged: (v) {
+                setState(() => _withSolo = v);
+                _update(data);
+              },
+            ),
+            if (data.isOrchestra)
+              SongSelectItem(
+                label: context.l10n.songsInstrumentation,
+                text: names(instrumentOptions, _instrumentIds),
+                onTap: instrumentOptions.isEmpty
+                    ? null
+                    : () async {
+                        // `ion-select interface="modal" multiple`, saved on
+                        // `ionDismiss`.
+                        await showAppMultiSelectModal<int>(
+                          context: context,
+                          options: instrumentOptions,
+                          values: _instrumentIds,
+                          onChanged: (v) => setState(() => _instrumentIds = v),
+                        );
+                        if (mounted) _update(data);
+                      },
+              ),
+            SongSelectItem(
+              label: context.l10n.songsCategories,
+              text: names(categoryOptions, _categoryIds),
+              lines: false,
+              onTap: categoryOptions.isEmpty
+                  ? null
+                  : () async {
+                      await showAppMultiSelectModal<String>(
+                        context: context,
+                        options: categoryOptions,
+                        values: _categoryIds,
+                        onChanged: (v) => setState(() => _categoryIds = v),
+                      );
+                      if (mounted) _update(data);
+                    },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEditFormBeta(SongDetailData data) {
     final fileIds = _idsFromFiles(data);
     return IonInsetList(children: [
       Padding(
@@ -1564,7 +1693,6 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
   }
 
   Widget _buildSheet(BuildContext context, List<(int?, String)> options) {
-    final theme = Theme.of(context);
     return Scaffold(
       appBar: settingsSheetBar(
         context,
@@ -1580,23 +1708,31 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
         padding: const EdgeInsets.only(bottom: 16),
         children: [
           for (final o in options)
-            IonRadioItem<int?>(
-              value: o.$1,
-              groupValue: _id,
-              title: Text(o.$2),
-              subtitle: o.$1 == kChoirAllOptionValue
-                  ? Text(context.l10n.songsChoirAllHint)
-                  : null,
-              onChanged: (v) => setState(() => _id = v),
+            // `ion-list` items: the inset item line below every radio.
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                IonRadioItem<int?>(
+                value: o.$1,
+                groupValue: _id,
+                title: Text(o.$2),
+                subtitle: o.$1 == kChoirAllOptionValue
+                    ? Text(context.l10n.songsChoirAllHint)
+                    : null,
+                onChanged: (v) => setState(() => _id = v),
+                ),
+                Divider(
+                  height: songItemLine(context).width,
+                  thickness: songItemLine(context).width,
+                  indent: 16,
+                  color: songItemLine(context).color,
+                ),
+              ],
             ),
           if (_id == null) ...[
             // Ionic `ion-item-divider` + `ion-input clearInput`
-            Container(
-              color: theme.colorScheme.surfaceContainerHighest,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: Text(context.l10n.songsFreeText,
-                  style: theme.textTheme.bodySmall),
-            ),
+            IonItemDivider(text: context.l10n.songsFreeText),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ValueListenableBuilder<TextEditingValue>(
