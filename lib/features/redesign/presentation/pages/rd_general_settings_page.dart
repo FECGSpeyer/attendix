@@ -23,6 +23,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/pages/general_settings_page.dart'
     show holidayRegions, initialRegistrationFields, normalizeReasons, normalizeShowAllInfoText;
+import '../../data/rd_words.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart';
@@ -355,7 +356,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
       final groups = await _load(groupsProvider);
       if (groups == null || !mounted) return;
       if (!groups.any((g) => g.maingroup != true)) {
-        ToastHelper.showError(context, context.l10n.generalSettingsRegisterNoGroups);
+        ToastHelper.showError(context, context.l10n.rdWordsNoGroupsYet(ref.read(rdGroupKindProvider)));
         return;
       }
       final id = (t.registerId ?? '').isNotEmpty ? t.registerId! : const Uuid().v4();
@@ -386,10 +387,11 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
 
   Future<void> _editRegistrationFields(Tenant t) async {
     final l10n = context.l10n;
+    final kind = ref.read(rdGroupKindProvider);
     final options = <RdMultiOption>[
       (key: 'firstName', label: l10n.peopleFirstName, locked: true),
       (key: 'lastName', label: l10n.peopleLastName, locked: true),
-      (key: 'group', label: l10n.peopleGroup, locked: true),
+      (key: 'group', label: l10n.rdWordsGroup(kind), locked: true),
       (key: 'picture', label: l10n.settingsPassPhoto, locked: false),
       (key: 'birthDate', label: l10n.peopleBirthday, locked: false),
       (key: 'phone', label: l10n.settingsMobile, locked: false),
@@ -400,7 +402,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
       title: l10n.rdSettingsRegisterFields,
       options: options,
       selected: initialRegistrationFields(t.registrationFields),
-      hint: l10n.rdSettingsRegisterFieldsHint,
+      hint: l10n.rdSettingsRegisterFieldsHint(kind),
     );
     if (selected == null || !mounted) return;
     await _save(t.id, {'registration_fields': selected}, (c) => c.copyWith(registrationFields: selected));
@@ -411,7 +413,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
     final labels = {
       'firstName': l10n.peopleFirstName,
       'lastName': l10n.peopleLastName,
-      'group': l10n.peopleGroup,
+      'group': l10n.rdWordsGroup(ref.read(rdGroupKindProvider)),
       'picture': l10n.settingsPassPhoto,
       'birthDate': l10n.peopleBirthday,
       'phone': l10n.settingsMobile,
@@ -570,6 +572,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
   List<Widget> _section(RdTenantSettings s, Tenant t) {
     final p = context.rd;
     final l10n = context.l10n;
+    final kind = ref.watch(rdGroupKindProvider);
     final enabled = !_saving;
     void Function(bool)? on(Future<void> Function(bool v) f) => enabled ? (v) => f(v) : null;
     switch (s) {
@@ -632,7 +635,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
                 ),
               RdSwitchRow(
                 title: l10n.rdSettingsMembersList,
-                subtitle: l10n.rdSettingsMembersListHint,
+                subtitle: l10n.rdSettingsMembersListHint(kind),
                 value: t.showMembersList,
                 onChanged: on((v) => _save(t.id, {'showMembersList': v}, (c) => c.copyWith(showMembersList: v))),
               ),
@@ -704,7 +707,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
               ],
             ],
           ),
-          if (noGroups) RdListNote(l10n.generalSettingsNoGroupsYet),
+          if (noGroups) RdListNote(l10n.rdWordsNoGroupsYet(kind)),
         ];
       case RdTenantSettings.sharing:
         final sharing = (t.songSharingId ?? '').isNotEmpty;

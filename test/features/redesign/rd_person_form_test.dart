@@ -421,7 +421,7 @@ void main() {
     await tester.tap(find.text('Lehrer'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Für dieses Register gibt es noch keinen Lehrer.'), findsOneWidget);
+    expect(find.text('Für dieses Instrument gibt es noch keinen Lehrer.'), findsOneWidget);
     expect(find.text('Neuer Lehrer'), findsOneWidget);
   });
 }

@@ -290,11 +290,13 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
     );
   }
 
-  /// REDESIGN: "{Name} übertragen / kopieren" with "Zielgruppe" and
-  /// "Register" as choice rows, a note and the primary button.
+  /// REDESIGN: "{Name} übertragen / kopieren" with "Zielgruppe" and the
+  /// group there ("Instrument", "Stimme" … by the kind of the target) as
+  /// choice rows, a note and the primary button.
   Widget _buildBeta(BuildContext context, List<Tenant> tenants, String name) {
     final l10n = context.l10n;
     final target = tenants.where((t) => t.id == _tenantId).firstOrNull;
+    final kind = target?.type ?? '';
     final group = _groups.where((g) => g.id == _groupId).firstOrNull;
     final tenantOptions = [
       for (final t in tenants)
@@ -342,15 +344,15 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
                       ),
                       RdListRow(
                         key: const Key('rd-transfer-register'),
-                        title: l10n.rdPeopleTransferRegister,
+                        title: l10n.rdWordsGroup(kind),
                         value: group?.name ??
-                            (groupOptions.isEmpty ? l10n.rdPeopleTransferNoRegisters : l10n.rdPeopleTransferChoose),
+                            (groupOptions.isEmpty ? l10n.rdPeopleTransferNoGroups(kind) : l10n.rdPeopleTransferChoose),
                         onTap: _busy || groupOptions.isEmpty
                             ? null
                             : () async {
                                 final id = await showRdChoiceSheet<int>(
                                   context,
-                                  title: l10n.rdPeopleTransferRegister,
+                                  title: l10n.rdWordsGroup(kind),
                                   options: groupOptions,
                                   selected: _groupId,
                                 );

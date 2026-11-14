@@ -4,6 +4,7 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/choir_file_utils.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../data/rd_words.dart';
 import '../manage/rd_settings_sheets.dart';
 import '../rd_widgets.dart';
 
@@ -97,7 +98,7 @@ class _FileCategorySheetState extends State<_FileCategorySheet> {
               const SizedBox(height: 18),
             ],
             if (widget.instruments.isNotEmpty) ...[
-              RdGroupLabel(widget.isChoir ? l10n.coreFlutterVoices : l10n.planningGroups),
+              RdGroupLabel(l10n.rdWordsGroups(rdGroupKindOf(context))),
               RdGroupedList(children: [for (final g in widget.instruments) _row(g.id, g.name)]),
               const SizedBox(height: 18),
             ],

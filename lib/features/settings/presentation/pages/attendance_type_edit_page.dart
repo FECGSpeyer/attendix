@@ -45,6 +45,7 @@ import '../../../../core/services/web_window.dart' show setUnloadWarning;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/data/rd_manage_logic.dart' show RdManageEntry;
+import '../../../redesign/data/rd_words.dart';
 import '../../../redesign/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdValueBox;
 import '../../../redesign/presentation/widgets/rd_widgets.dart';

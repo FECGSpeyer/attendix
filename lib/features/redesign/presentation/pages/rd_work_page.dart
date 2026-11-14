@@ -25,6 +25,7 @@ import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../songs/presentation/widgets/file_drop/file_drop_target.dart' show isFileDropSupported;
 import '../../data/providers/rd_shared_library.dart';
 import '../../data/rd_collections_logic.dart';
+import '../../data/rd_words.dart';
 import '../../data/rd_work_files_controller.dart';
 import '../../data/rd_work_files_logic.dart';
 import '../../data/rd_works_logic.dart';
@@ -508,7 +509,7 @@ class RdWorkPage extends ConsumerWidget {
         RdListRow(
           title: l10n.redesignWorkInstrumentation,
           subtitle: l10n.redesignWorkInstrumentationHint(fileGroups.map((g) => g.name).join(', ')),
-          value: l10n.redesignWorkInstrumentationValue(fileGroups.length),
+          value: l10n.rdWordsGroupCount(ref.watch(rdGroupKindProvider), fileGroups.length),
           showChevron: false,
         ),
       if ((song.difficulty ?? 0) >= 1 && (song.difficulty ?? 0) <= 3)

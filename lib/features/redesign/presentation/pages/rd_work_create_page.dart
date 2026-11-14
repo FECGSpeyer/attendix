@@ -13,6 +13,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/rd_collections_logic.dart';
+import '../../data/rd_words.dart';
 import '../../data/rd_works_logic.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
@@ -304,7 +305,7 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
                         ),
                     ],
                   ),
-                  hint(l10n.redesignWorkCreateInstrumentationHint),
+                  hint(l10n.redesignWorkCreateInstrumentationHint(ref.watch(rdGroupKindProvider))),
                   hint(l10n.redesignWorkCreateLater),
                 ],
               ),

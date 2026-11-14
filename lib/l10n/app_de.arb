@@ -2452,10 +2452,6 @@
   "@attendanceNewPersonFirstName": {
     "description": "attendance.newPerson.firstName"
   },
-  "attendanceNewPersonGroup": "Register",
-  "@attendanceNewPersonGroup": {
-    "description": "attendance.newPerson.group"
-  },
   "attendanceNewPersonHint": "Die Person wird Mitglied der Gruppe und gleich zu diesem Termin hinzugefügt. Weitere Angaben ergänzt du später bei der Person.",
   "@attendanceNewPersonHint": {
     "description": "attendance.newPerson.hint"
@@ -4061,9 +4057,12 @@
       "name": {}
     }
   },
-  "collectionsGroupsNone": "Wähle mindestens eine Gruppe. Bis dahin sieht sie nur die Leitung.",
+  "collectionsGroupsNone": "{kind, select, orchestra{Wähle mindestens ein Instrument. Bis dahin sieht sie nur die Leitung.} choir{Wähle mindestens eine Stimme. Bis dahin sieht sie nur die Leitung.} other{Wähle mindestens eine Untergruppe. Bis dahin sieht sie nur die Leitung.}}",
   "@collectionsGroupsNone": {
-    "description": "collections.groupsNone"
+    "description": "collections.groupsNone",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "collectionsIntoRepertoire": "Ins Repertoire aufnehmen (Nr. {number})",
   "@collectionsIntoRepertoire": {
@@ -4217,9 +4216,12 @@
   "@collectionsVisAll": {
     "description": "collections.visAll"
   },
-  "collectionsVisGroups": "Bestimmte Gruppen",
+  "collectionsVisGroups": "Bestimmte {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}}",
   "@collectionsVisGroups": {
-    "description": "collections.visGroups"
+    "description": "collections.visGroups",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "collectionsVisLeads": "Nur Leitung",
   "@collectionsVisLeads": {
@@ -13257,9 +13259,12 @@
   "@rdAdminAreaMembers": {
     "description": "rdAdmin.areaMembers"
   },
-  "rdAdminBulkHint": "Register, Status und mehr für viele auf einmal",
+  "rdAdminBulkHint": "{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}, Status und mehr für viele auf einmal",
   "@rdAdminBulkHint": {
-    "description": "rdAdmin.bulkHint"
+    "description": "rdAdmin.bulkHint",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdAdminCertificates": "Urkunden",
   "@rdAdminCertificates": {
@@ -13321,13 +13326,12 @@
       "name": {}
     }
   },
-  "rdAdminGroups": "Register",
-  "@rdAdminGroups": {
-    "description": "rdAdmin.groups"
-  },
-  "rdAdminGroupsHint": "Instrumente und Stimmen, nach denen sortiert wird",
+  "rdAdminGroupsHint": "{kind, select, orchestra{Wonach Mitglieder und Noten eingeteilt sind, samt Registern} choir{Wonach Mitglieder und Noten eingeteilt sind} other{Wonach die Mitglieder eingeteilt sind}}",
   "@rdAdminGroupsHint": {
-    "description": "rdAdmin.groupsHint"
+    "description": "rdAdmin.groupsHint",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdAdminHeroMembers": "{count, plural, one {1 Mitglied} other {{count} Mitglieder}}",
   "@rdAdminHeroMembers": {
@@ -13378,9 +13382,12 @@
   "@rdAdminHomeWorksCategories": {
     "description": "rdAdmin.homeWorksCategories"
   },
-  "rdAdminManageGroups": "Register verwalten",
+  "rdAdminManageGroups": "{kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} verwalten",
   "@rdAdminManageGroups": {
-    "description": "rdAdmin.manageGroups"
+    "description": "rdAdmin.manageGroups",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdAdminManageTypes": "Terminarten verwalten",
   "@rdAdminManageTypes": {
@@ -13468,9 +13475,12 @@
   "@rdAdminRolesHint": {
     "description": "rdAdmin.rolesHint"
   },
-  "rdAdminSearch": "Suchen, z. B. Saison, Eltern, Register",
+  "rdAdminSearch": "Suchen, z. B. Saison, Eltern, {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}}",
   "@rdAdminSearch": {
-    "description": "rdAdmin.search"
+    "description": "rdAdmin.search",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdAdminSharing": "Werke öffentlich teilen",
   "@rdAdminSharing": {
@@ -13901,9 +13911,12 @@
       "count": {}
     }
   },
-  "rdDataCertificatesFor": "Für welche Gruppen sollen Urkunden erstellt werden?",
+  "rdDataCertificatesFor": "Für welche {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} sollen Urkunden erstellt werden?",
   "@rdDataCertificatesFor": {
-    "description": "rdData.certificatesFor"
+    "description": "rdData.certificatesFor",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdDataColumns": "Spalten",
   "@rdDataColumns": {
@@ -14221,9 +14234,12 @@
       "count": {}
     }
   },
-  "rdOrgStep2Title": "Gruppen im Ziel",
+  "rdOrgStep2Title": "{kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} im Ziel",
   "@rdOrgStep2Title": {
-    "description": "rdOrg.step2Title"
+    "description": "rdOrg.step2Title",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdOrgTakeOver": "Übernehmen",
   "@rdOrgTakeOver": {
@@ -14367,9 +14383,12 @@
   "@rdPeopleTeacherAdd": {
     "description": "rdPeople.teacherAdd"
   },
-  "rdPeopleTeacherNone": "Für dieses Register gibt es noch keinen Lehrer.",
+  "rdPeopleTeacherNone": "Für {kind, select, orchestra{dieses Instrument} choir{diese Stimme} other{diese Untergruppe}} gibt es noch keinen Lehrer.",
   "@rdPeopleTeacherNone": {
-    "description": "rdPeople.teacherNone"
+    "description": "rdPeople.teacherNone",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdPeopleTransferChoose": "Auswählen",
   "@rdPeopleTransferChoose": {
@@ -14379,17 +14398,16 @@
   "@rdPeopleTransferHint": {
     "description": "rdPeople.transferHint"
   },
-  "rdPeopleTransferNoRegisters": "Keine Register",
-  "@rdPeopleTransferNoRegisters": {
-    "description": "rdPeople.transferNoRegisters"
+  "rdPeopleTransferNoGroups": "{kind, select, orchestra{Keine Instrumente} choir{Keine Stimmen} other{Keine Untergruppen}}",
+  "@rdPeopleTransferNoGroups": {
+    "description": "rdPeople.transferNoGroups",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdPeopleTransferNoTargets": "Es gibt keine anderen Gruppen in deiner Organisation.",
   "@rdPeopleTransferNoTargets": {
     "description": "rdPeople.transferNoTargets"
-  },
-  "rdPeopleTransferRegister": "Register",
-  "@rdPeopleTransferRegister": {
-    "description": "rdPeople.transferRegister"
   },
   "rdPeopleTransferTarget": "Zielgruppe",
   "@rdPeopleTransferTarget": {
@@ -14510,9 +14528,12 @@
   "@rdSettingsMembersList": {
     "description": "rdSettings.membersList"
   },
-  "rdSettingsMembersListHint": "Auch Mitglieder, Helfer und Stimmführer sehen, wer in welchem Register ist",
+  "rdSettingsMembersListHint": "{kind, select, orchestra{Auch Mitglieder, Helfer und Stimmführer sehen, wer welches Instrument spielt} choir{Auch Mitglieder, Helfer und Stimmführer sehen, wer in welcher Stimme singt} other{Auch Mitglieder, Helfer und Stimmführer sehen, wer in welcher Untergruppe ist}}",
   "@rdSettingsMembersListHint": {
-    "description": "rdSettings.membersListHint"
+    "description": "rdSettings.membersListHint",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdSettingsName": "Name",
   "@rdSettingsName": {
@@ -14534,13 +14555,19 @@
   "@rdSettingsPermAbsenceHint": {
     "description": "rdSettings.perm.absenceHint"
   },
-  "rdSettingsPermAllGroups": "Alle Register eintragen",
+  "rdSettingsPermAllGroups": "Alle {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} eintragen",
   "@rdSettingsPermAllGroups": {
-    "description": "rdSettings.perm.allGroups"
+    "description": "rdSettings.perm.allGroups",
+    "placeholders": {
+      "kind": {}
+    }
   },
-  "rdSettingsPermAllGroupsHint": "Aus: nur die Anwesenheit des eigenen Registers",
+  "rdSettingsPermAllGroupsHint": "Aus: nur die Anwesenheit {kind, select, orchestra{des eigenen Instruments} choir{der eigenen Stimme} other{der eigenen Untergruppe}}",
   "@rdSettingsPermAllGroupsHint": {
-    "description": "rdSettings.perm.allGroupsHint"
+    "description": "rdSettings.perm.allGroupsHint",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdSettingsPermChecklist": "Checkliste im Termin sehen",
   "@rdSettingsPermChecklist": {
@@ -14610,9 +14637,12 @@
   "@rdSettingsRegisterFields": {
     "description": "rdSettings.registerFields"
   },
-  "rdSettingsRegisterFieldsHint": "Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.",
+  "rdSettingsRegisterFieldsHint": "Alle gewählten Felder sind Pflicht. Vorname, Nachname und {kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}} sind immer dabei.",
   "@rdSettingsRegisterFieldsHint": {
-    "description": "rdSettings.registerFieldsHint"
+    "description": "rdSettings.registerFieldsHint",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdSettingsRegisterOffConfirm": "Ausschalten",
   "@rdSettingsRegisterOffConfirm": {
@@ -14770,9 +14800,12 @@
   "@rdStatsAge": {
     "description": "rdStats.age"
   },
-  "rdStatsAgeAvgGroup": "Ø Alter je Register",
+  "rdStatsAgeAvgGroup": "Ø Alter je {kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}",
   "@rdStatsAgeAvgGroup": {
-    "description": "rdStats.ageAvgGroup"
+    "description": "rdStats.ageAvgGroup",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdStatsAgeBucket": "{from}–{to} Jahre",
   "@rdStatsAgeBucket": {
@@ -14862,10 +14895,6 @@
   "rdStatsColQuote": "Quote",
   "@rdStatsColQuote": {
     "description": "rdStats.colQuote"
-  },
-  "rdStatsColRegister": "Register",
-  "@rdStatsColRegister": {
-    "description": "rdStats.colRegister"
   },
   "rdStatsCountAbsent": "{count} abwesend",
   "@rdStatsCountAbsent": {
@@ -14984,10 +15013,6 @@
   "@rdStatsFieldsPaused": {
     "description": "rdStats.fieldsPaused"
   },
-  "rdStatsFilterGroups": "Register",
-  "@rdStatsFilterGroups": {
-    "description": "rdStats.filterGroups"
-  },
   "rdStatsFilterRemove": "Filter „{label}“ entfernen",
   "@rdStatsFilterRemove": {
     "description": "rdStats.filterRemove",
@@ -15011,6 +15036,13 @@
   "rdStatsFilterTypesHint": "Gilt nur für diese Ansicht. Vorausgewählt sind die Arten, die zur Anwesenheitsquote zählen.",
   "@rdStatsFilterTypesHint": {
     "description": "rdStats.filterTypesHint"
+  },
+  "rdStatsGroupHint": "Kurve: Quote je Monat. Antippen zeigt die Personen {kind, select, orchestra{des Instruments} choir{der Stimme} other{der Untergruppe}}.",
+  "@rdStatsGroupHint": {
+    "description": "rdStats.groupHint",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdStatsMembers": "Mitglieder",
   "@rdStatsMembers": {
@@ -15055,10 +15087,11 @@
       "before": {}
     }
   },
-  "rdStatsNotableWeakGroup": "Schwächstes Register: {name}",
+  "rdStatsNotableWeakGroup": "{kind, select, orchestra{Schwächstes Instrument} choir{Schwächste Stimme} other{Schwächste Untergruppe}}: {name}",
   "@rdStatsNotableWeakGroup": {
     "description": "rdStats.notableWeakGroup",
     "placeholders": {
+      "kind": {},
       "name": {}
     }
   },
@@ -15166,10 +15199,6 @@
   "@rdStatsRangeTo": {
     "description": "rdStats.rangeTo"
   },
-  "rdStatsRegisterHint": "Kurve: Quote je Monat. Antippen zeigt die Personen des Registers.",
-  "@rdStatsRegisterHint": {
-    "description": "rdStats.registerHint"
-  },
   "rdStatsSortBest": "Beste zuerst",
   "@rdStatsSortBest": {
     "description": "rdStats.sortBest"
@@ -15209,10 +15238,6 @@
   "@rdStatsTabPeople": {
     "description": "rdStats.tabPeople"
   },
-  "rdStatsTabRegister": "Register",
-  "@rdStatsTabRegister": {
-    "description": "rdStats.tabRegister"
-  },
   "rdStatsTabsLabel": "Ansicht der Auswertung",
   "@rdStatsTabsLabel": {
     "description": "rdStats.tabsLabel"
@@ -15244,9 +15269,12 @@
   "@rdTeacherNewNameShort": {
     "description": "rdTeacherNew.nameShort"
   },
-  "rdTeacherNewNoGroups": "Es gibt noch keine Register, die du auswählen kannst.",
+  "rdTeacherNewNoGroups": "Es gibt noch {kind, select, orchestra{keine Instrumente} choir{keine Stimmen} other{keine Untergruppen}}, die du auswählen kannst.",
   "@rdTeacherNewNoGroups": {
-    "description": "rdTeacherNew.noGroups"
+    "description": "rdTeacherNew.noGroups",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "rdTeacherNewNoInstrument": "Wähle mindestens ein Instrument.",
   "@rdTeacherNewNoInstrument": {
@@ -15302,10 +15330,6 @@
   "rdTeamCircleEveryone": "Alle Mitglieder",
   "@rdTeamCircleEveryone": {
     "description": "rdTeam.circleEveryone"
-  },
-  "rdTeamCircleGroups": "Gruppen",
-  "@rdTeamCircleGroups": {
-    "description": "rdTeam.circleGroups"
   },
   "rdTeamCircleLeadersHint": "Die Leitung ist immer dabei.",
   "@rdTeamCircleLeadersHint": {
@@ -15616,10 +15640,6 @@
       "date": {}
     }
   },
-  "rdTextGroupNewTitle": "Neues Register",
-  "@rdTextGroupNewTitle": {
-    "description": "rdText.groupNewTitle"
-  },
   "rdTextGroupsManageShort": "Verwalten",
   "@rdTextGroupsManageShort": {
     "description": "rdText.groupsManageShort"
@@ -15889,15 +15909,6 @@
   "@rdTypeInvitedHint": {
     "description": "rdType.invitedHint"
   },
-  "rdTypeInvitedSome": "{count, plural, one {1 Register} other {{count} Register}}",
-  "@rdTypeInvitedSome": {
-    "description": "rdType.invitedSome",
-    "placeholders": {
-      "count": {
-        "type": "num"
-      }
-    }
-  },
   "rdTypeLook": "Aussehen",
   "@rdTypeLook": {
     "description": "rdType.look"
@@ -16128,6 +16139,122 @@
       "count": {
         "type": "num"
       }
+    }
+  },
+  "rdWordsCategories": "{kind, select, orchestra{Register} choir{Kategorien} other{Kategorien}}",
+  "@rdWordsCategories": {
+    "description": "rdWords.categories",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsCategory": "{kind, select, orchestra{Register} choir{Kategorie} other{Kategorie}}",
+  "@rdWordsCategory": {
+    "description": "rdWords.category",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsCopyVoiceLeaders": "{kind, select, orchestra{Stimmführer (nur ihr Instrument)} choir{Stimmführer (nur ihre Stimme)} other{Stimmführer (nur ihre Untergruppe)}}",
+  "@rdWordsCopyVoiceLeaders": {
+    "description": "rdWords.copyVoiceLeaders",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsGroup": "{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}",
+  "@rdWordsGroup": {
+    "description": "rdWords.group",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsGroupCount": "{kind, select, orchestra{{count, plural, one {1 Instrument} other {{count} Instrumente}}} choir{{count, plural, one {1 Stimme} other {{count} Stimmen}}} other{{count, plural, one {1 Untergruppe} other {{count} Untergruppen}}}}",
+  "@rdWordsGroupCount": {
+    "description": "rdWords.groupCount",
+    "placeholders": {
+      "kind": {},
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdWordsGroupFilter": "{kind, select, orchestra{Spielt das Instrument...} choir{Singt in der Stimme...} other{Ist in der Untergruppe...}}",
+  "@rdWordsGroupFilter": {
+    "description": "rdWords.groupFilter",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsGroups": "{kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}}",
+  "@rdWordsGroups": {
+    "description": "rdWords.groups",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsGroupsAll": "Nichts ausgewählt: gilt für alle {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}}.",
+  "@rdWordsGroupsAll": {
+    "description": "rdWords.groupsAll",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsGroupsSome": "Gilt nur für Personen aus den ausgewählten {kind, select, orchestra{Instrumenten} choir{Stimmen} other{Untergruppen}}.",
+  "@rdWordsGroupsSome": {
+    "description": "rdWords.groupsSome",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsNewGroup": "{kind, select, orchestra{Neues Instrument} choir{Neue Stimme} other{Neue Untergruppe}}",
+  "@rdWordsNewGroup": {
+    "description": "rdWords.newGroup",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsNewGroupFailed": "{kind, select, orchestra{Das Instrument „{name}“ konnte nicht angelegt werden} choir{Die Stimme „{name}“ konnte nicht angelegt werden} other{Die Untergruppe „{name}“ konnte nicht angelegt werden}}",
+  "@rdWordsNewGroupFailed": {
+    "description": "rdWords.newGroupFailed",
+    "placeholders": {
+      "kind": {},
+      "name": {}
+    }
+  },
+  "rdWordsNoCategory": "{kind, select, orchestra{Kein Register} choir{Keine Kategorie} other{Keine Kategorie}}",
+  "@rdWordsNoCategory": {
+    "description": "rdWords.noCategory",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsNoGroup": "{kind, select, orchestra{Ohne Instrument} choir{Ohne Stimme} other{Ohne Untergruppe}}",
+  "@rdWordsNoGroup": {
+    "description": "rdWords.noGroup",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsNoGroupsYet": "{kind, select, orchestra{Es gibt noch keine Instrumente. Lege zuerst mindestens ein Instrument an, bevor du die Anmeldung einschaltest.} choir{Es gibt noch keine Stimmen. Lege zuerst mindestens eine Stimme an, bevor du die Anmeldung einschaltest.} other{Es gibt noch keine Untergruppen. Lege zuerst mindestens eine Untergruppe an, bevor du die Anmeldung einschaltest.}}",
+  "@rdWordsNoGroupsYet": {
+    "description": "rdWords.noGroupsYet",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsPrintGroupPdfs": "{kind, select, orchestra{PDFs je Instrument drucken} choir{PDFs je Stimme drucken} other{PDFs je Untergruppe drucken}}",
+  "@rdWordsPrintGroupPdfs": {
+    "description": "rdWords.printGroupPdfs",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdWordsSeveralGroups": "{kind, select, orchestra{Geht an jedes dieser Instrumente} choir{Geht an jede dieser Stimmen} other{Geht an jede dieser Untergruppen}}",
+  "@rdWordsSeveralGroups": {
+    "description": "rdWords.severalGroups",
+    "placeholders": {
+      "kind": {}
     }
   },
   "redesignAbsenceAffects": "{count, plural, =0 {In diesem Zeitraum hast du keine Termine.} one {Das betrifft 1 Termin} other {Das betrifft {count} Termine}}",
@@ -16571,10 +16698,6 @@
   "@redesignBulkActionField": {
     "description": "redesign.bulk.actionField"
   },
-  "redesignBulkActionGroup": "Register",
-  "@redesignBulkActionGroup": {
-    "description": "redesign.bulk.actionGroup"
-  },
   "redesignBulkActionPause": "Pausieren",
   "@redesignBulkActionPause": {
     "description": "redesign.bulk.actionPause"
@@ -16647,10 +16770,6 @@
   "@redesignBulkHint": {
     "description": "redesign.bulk.hint"
   },
-  "redesignBulkNoGroup": "Ohne Register",
-  "@redesignBulkNoGroup": {
-    "description": "redesign.bulk.noGroup"
-  },
   "redesignBulkPauseReason": "Grund der Pause",
   "@redesignBulkPauseReason": {
     "description": "redesign.bulk.pauseReason"
@@ -16658,10 +16777,6 @@
   "redesignBulkPickField": "Feld setzen",
   "@redesignBulkPickField": {
     "description": "redesign.bulk.pickField"
-  },
-  "redesignBulkPickGroup": "Neues Register",
-  "@redesignBulkPickGroup": {
-    "description": "redesign.bulk.pickGroup"
   },
   "redesignBulkSearch": "Mitglied suchen",
   "@redesignBulkSearch": {
@@ -16715,9 +16830,12 @@
   "@redesignComposeBody": {
     "description": "redesign.compose.body"
   },
-  "redesignComposeGroups": "Register wählen",
+  "redesignComposeGroups": "{kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} wählen",
   "@redesignComposeGroups": {
-    "description": "redesign.compose.groups"
+    "description": "redesign.compose.groups",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignComposeHint": "Die Mitteilung erscheint bei allen Empfängern unter Mitteilungen.",
   "@redesignComposeHint": {
@@ -16727,9 +16845,12 @@
   "@redesignComposeMissing": {
     "description": "redesign.compose.missing"
   },
-  "redesignComposeNoRecipients": "Die Auswahl erreicht noch niemanden. Wähle andere Gruppen oder Versandwege.",
+  "redesignComposeNoRecipients": "Die Auswahl erreicht noch niemanden. Wähle andere {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} oder Versandwege.",
   "@redesignComposeNoRecipients": {
-    "description": "redesign.compose.noRecipients"
+    "description": "redesign.compose.noRecipients",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignComposeSend": "Senden",
   "@redesignComposeSend": {
@@ -17250,10 +17371,6 @@
   "redesignEventBusyLeave": "Bitte warte, bis alles gespeichert ist.",
   "@redesignEventBusyLeave": {
     "description": "redesign.event.busyLeave"
-  },
-  "redesignEventByGroup": "Nach Stimme",
-  "@redesignEventByGroup": {
-    "description": "redesign.event.byGroup"
   },
   "redesignEventChangeConductorHint": "Aus der Gruppe oder Gastdirigent",
   "@redesignEventChangeConductorHint": {
@@ -17781,10 +17898,6 @@
   "redesignEventStatus": "Status",
   "@redesignEventStatus": {
     "description": "redesign.event.status"
-  },
-  "redesignEventStatusOverviewHint": "Alle Antworten nach Stimme und Status",
-  "@redesignEventStatusOverviewHint": {
-    "description": "redesign.event.statusOverviewHint"
   },
   "redesignEventTabOverview": "Überblick",
   "@redesignEventTabOverview": {
@@ -18544,24 +18657,61 @@
   "@redesignFolderTitleLeads": {
     "description": "redesign.folder.titleLeads"
   },
-  "redesignGroupCategoriesBack": "Register",
-  "@redesignGroupCategoriesBack": {
-    "description": "redesign.groupCategories.back"
-  },
-  "redesignGroupCategoriesCount": "{count} Register",
-  "@redesignGroupCategoriesCount": {
-    "description": "redesign.groupCategories.count",
+  "redesignGroupCategoriesDeleteConfirm": "{kind, select, orchestra{Register wirklich löschen? Die Instrumente darin gehören danach zu keinem Register mehr.} choir{Kategorie wirklich löschen? Die Stimmen darin gehören danach zu keiner Kategorie mehr.} other{Kategorie wirklich löschen? Die Untergruppen darin gehören danach zu keiner Kategorie mehr.}}",
+  "@redesignGroupCategoriesDeleteConfirm": {
+    "description": "redesign.groupCategories.deleteConfirm",
     "placeholders": {
-      "count": {}
+      "kind": {}
     }
   },
-  "redesignGroupCategoriesIntro": "Kategorien fassen Register zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Register.",
-  "@redesignGroupCategoriesIntro": {
-    "description": "redesign.groupCategories.intro"
+  "redesignGroupCategoriesDeleteFailed": "{kind, select, orchestra{Das Register} choir{Die Kategorie} other{Die Kategorie}} konnte nicht gelöscht werden.",
+  "@redesignGroupCategoriesDeleteFailed": {
+    "description": "redesign.groupCategories.deleteFailed",
+    "placeholders": {
+      "kind": {}
+    }
   },
-  "redesignGroupEditCategory": "Kategorie",
-  "@redesignGroupEditCategory": {
-    "description": "redesign.groupEdit.category"
+  "redesignGroupCategoriesEdit": "{kind, select, orchestra{Register} choir{Kategorie} other{Kategorie}} bearbeiten",
+  "@redesignGroupCategoriesEdit": {
+    "description": "redesign.groupCategories.edit",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignGroupCategoriesEmpty": "{kind, select, orchestra{Keine Register} choir{Keine Kategorien} other{Keine Kategorien}}",
+  "@redesignGroupCategoriesEmpty": {
+    "description": "redesign.groupCategories.empty",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignGroupCategoriesIntro": "{kind, select, orchestra{Register fassen Instrumente zusammen, etwa Streicher oder Blechbläser. Ihre Reihenfolge gilt auch für die Instrumente.} choir{Kategorien fassen Stimmen zusammen, etwa Frauen- und Männerstimmen. Ihre Reihenfolge gilt auch für die Stimmen.} other{Kategorien fassen Untergruppen zusammen. Ihre Reihenfolge gilt auch für die Untergruppen.}}",
+  "@redesignGroupCategoriesIntro": {
+    "description": "redesign.groupCategories.intro",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignGroupCategoriesName": "Name {kind, select, orchestra{des Registers} choir{der Kategorie} other{der Kategorie}}",
+  "@redesignGroupCategoriesName": {
+    "description": "redesign.groupCategories.name",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignGroupCategoriesNew": "{kind, select, orchestra{Neues Register} choir{Neue Kategorie} other{Neue Kategorie}}",
+  "@redesignGroupCategoriesNew": {
+    "description": "redesign.groupCategories.new",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignGroupCategoriesSaveFailed": "{kind, select, orchestra{Das Register} choir{Die Kategorie} other{Die Kategorie}} konnte nicht gespeichert werden.",
+  "@redesignGroupCategoriesSaveFailed": {
+    "description": "redesign.groupCategories.saveFailed",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignGroupEditCategoryNone": "Keine",
   "@redesignGroupEditCategoryNone": {
@@ -18575,29 +18725,37 @@
   "@redesignGroupEditClefsHint": {
     "description": "redesign.groupEdit.clefsHint"
   },
-  "redesignGroupEditDelete": "Register löschen",
+  "redesignGroupEditDelete": "{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}} löschen",
   "@redesignGroupEditDelete": {
-    "description": "redesign.groupEdit.delete"
+    "description": "redesign.groupEdit.delete",
+    "placeholders": {
+      "kind": {}
+    }
   },
-  "redesignGroupEditDeleteConfirm": "Register „{name}“ wirklich löschen?",
+  "redesignGroupEditDeleteConfirm": "{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}} „{name}“ wirklich löschen?",
   "@redesignGroupEditDeleteConfirm": {
     "description": "redesign.groupEdit.deleteConfirm",
     "placeholders": {
+      "kind": {},
       "name": {}
     }
   },
-  "redesignGroupEditDeleteFailed": "Das Register konnte nicht gelöscht werden.",
+  "redesignGroupEditDeleteFailed": "{kind, select, orchestra{Das Instrument} choir{Die Stimme} other{Die Untergruppe}} konnte nicht gelöscht werden.",
   "@redesignGroupEditDeleteFailed": {
-    "description": "redesign.groupEdit.deleteFailed"
+    "description": "redesign.groupEdit.deleteFailed",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignGroupEditDeleteMain": "Die Hauptgruppe lässt sich nicht löschen.",
   "@redesignGroupEditDeleteMain": {
     "description": "redesign.groupEdit.deleteMain"
   },
-  "redesignGroupEditDeleteMembers": "{count, plural, one {Im Register ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.} other {Im Register sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.}}",
+  "redesignGroupEditDeleteMembers": "{kind, select, orchestra{{count, plural, one {Zu diesem Instrument gehört oder gehörte noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst zu einem anderen Instrument.} other {Zu diesem Instrument gehören oder gehörten noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst zu einem anderen Instrument.}}} choir{{count, plural, one {Zu dieser Stimme gehört oder gehörte noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Stimme.} other {Zu dieser Stimme gehören oder gehörten noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Stimme.}}} other{{count, plural, one {Zu dieser Untergruppe gehört oder gehörte noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Untergruppe.} other {Zu dieser Untergruppe gehören oder gehörten noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Untergruppe.}}}}",
   "@redesignGroupEditDeleteMembers": {
     "description": "redesign.groupEdit.deleteMembers",
     "placeholders": {
+      "kind": {},
       "count": {
         "type": "num"
       }
@@ -18619,9 +18777,12 @@
   "@redesignGroupEditMainGroupHint": {
     "description": "redesign.groupEdit.mainGroupHint"
   },
-  "redesignGroupEditManageCategories": "Kategorien verwalten",
+  "redesignGroupEditManageCategories": "{kind, select, orchestra{Register} choir{Kategorien} other{Kategorien}} verwalten",
   "@redesignGroupEditManageCategories": {
-    "description": "redesign.groupEdit.manageCategories"
+    "description": "redesign.groupEdit.manageCategories",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignGroupEditName": "Name",
   "@redesignGroupEditName": {
@@ -18631,9 +18792,12 @@
   "@redesignGroupEditNameEmpty": {
     "description": "redesign.groupEdit.nameEmpty"
   },
-  "redesignGroupEditNotFound": "Dieses Register gibt es nicht mehr.",
+  "redesignGroupEditNotFound": "{kind, select, orchestra{Dieses Instrument} choir{Diese Stimme} other{Diese Untergruppe}} gibt es nicht mehr.",
   "@redesignGroupEditNotFound": {
-    "description": "redesign.groupEdit.notFound"
+    "description": "redesign.groupEdit.notFound",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignGroupEditNotes": "Notizen",
   "@redesignGroupEditNotes": {
@@ -18647,41 +18811,59 @@
   "@redesignGroupEditSynonyms": {
     "description": "redesign.groupEdit.synonyms"
   },
-  "redesignGroupEditSynonymsHint": "Über die Synonyme ordnet die App hochgeladene Noten automatisch diesem Register zu.",
+  "redesignGroupEditSynonymsHint": "Über die Synonyme ordnet die App hochgeladene Noten automatisch {kind, select, orchestra{diesem Instrument} choir{dieser Stimme} other{dieser Untergruppe}} zu.",
   "@redesignGroupEditSynonymsHint": {
-    "description": "redesign.groupEdit.synonymsHint"
+    "description": "redesign.groupEdit.synonymsHint",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignGroupEditSynonymsLabel": "Andere Namen, mit Komma getrennt",
   "@redesignGroupEditSynonymsLabel": {
     "description": "redesign.groupEdit.synonymsLabel"
   },
-  "redesignGroupEditTitle": "Register bearbeiten",
+  "redesignGroupEditTitle": "{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}} bearbeiten",
   "@redesignGroupEditTitle": {
-    "description": "redesign.groupEdit.title"
+    "description": "redesign.groupEdit.title",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignGroupEditTuning": "Stimmung",
   "@redesignGroupEditTuning": {
     "description": "redesign.groupEdit.tuning"
   },
-  "redesignGroupsListAdd": "Register hinzufügen",
+  "redesignGroupsListAdd": "{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}} hinzufügen",
   "@redesignGroupsListAdd": {
-    "description": "redesign.groupsList.add"
+    "description": "redesign.groupsList.add",
+    "placeholders": {
+      "kind": {}
+    }
   },
-  "redesignGroupsListEmpty": "Noch keine Register angelegt.",
+  "redesignGroupsListEmpty": "Noch {kind, select, orchestra{keine Instrumente} choir{keine Stimmen} other{keine Untergruppen}} angelegt.",
   "@redesignGroupsListEmpty": {
-    "description": "redesign.groupsList.empty"
+    "description": "redesign.groupsList.empty",
+    "placeholders": {
+      "kind": {}
+    }
   },
-  "redesignGroupsListIntro": "Register ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.",
+  "redesignGroupsListIntro": "{kind, select, orchestra{Instrumente ordnen die Mitglieder. Ihre Reihenfolge gilt auch für Listen und Noten.} choir{Stimmen ordnen die Mitglieder. Ihre Reihenfolge gilt auch für Listen und Noten.} other{Untergruppen ordnen die Mitglieder. Ihre Reihenfolge gilt auch für Listen.}}",
   "@redesignGroupsListIntro": {
-    "description": "redesign.groupsList.intro"
+    "description": "redesign.groupsList.intro",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignGroupsListMainGroup": "Hauptgruppe",
   "@redesignGroupsListMainGroup": {
     "description": "redesign.groupsList.mainGroup"
   },
-  "redesignGroupsListManageCategories": "Kategorien verwalten",
+  "redesignGroupsListManageCategories": "{kind, select, orchestra{Register} choir{Kategorien} other{Kategorien}} verwalten",
   "@redesignGroupsListManageCategories": {
-    "description": "redesign.groupsList.manageCategories"
+    "description": "redesign.groupsList.manageCategories",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignGroupsLoadFailed": "Deine Gruppen konnten nicht geladen werden.",
   "@redesignGroupsLoadFailed": {
@@ -18839,10 +19021,11 @@
   "@redesignImportAnswerFromPage": {
     "description": "redesign.import.answerFromPage"
   },
-  "redesignImportAnswerNewGroup": "Neue Gruppe „{name}“",
+  "redesignImportAnswerNewGroup": "{kind, select, orchestra{Neues Instrument} choir{Neue Stimme} other{Neue Untergruppe}} „{name}“",
   "@redesignImportAnswerNewGroup": {
     "description": "redesign.import.answerNewGroup",
     "placeholders": {
+      "kind": {},
       "name": {}
     }
   },
@@ -18906,10 +19089,11 @@
   "@redesignImportCategoryLabel": {
     "description": "redesign.import.categoryLabel"
   },
-  "redesignImportCategoryNewGroup": "Neue Gruppe: {name}",
+  "redesignImportCategoryNewGroup": "{kind, select, orchestra{Neues Instrument} choir{Neue Stimme} other{Neue Untergruppe}}: {name}",
   "@redesignImportCategoryNewGroup": {
     "description": "redesign.import.categoryNewGroup",
     "placeholders": {
+      "kind": {},
       "name": {}
     }
   },
@@ -19033,9 +19217,12 @@
   "@redesignImportDoneLearned": {
     "description": "redesign.import.doneLearned"
   },
-  "redesignImportDoneNewGroups": "Neue Gruppen",
+  "redesignImportDoneNewGroups": "{kind, select, orchestra{Neue Instrumente} choir{Neue Stimmen} other{Neue Untergruppen}}",
   "@redesignImportDoneNewGroups": {
-    "description": "redesign.import.doneNewGroups"
+    "description": "redesign.import.doneNewGroups",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignImportDoneNewWorks": "Neue Werke",
   "@redesignImportDoneNewWorks": {
@@ -19399,13 +19586,19 @@
   "@redesignImportMenuHint": {
     "description": "redesign.import.menuHint"
   },
-  "redesignImportNewGroupMessage": "Attendix legt die Gruppe erst beim Hochladen an.",
+  "redesignImportNewGroupMessage": "Attendix legt {kind, select, orchestra{das Instrument} choir{die Stimme} other{die Untergruppe}} erst beim Hochladen an.",
   "@redesignImportNewGroupMessage": {
-    "description": "redesign.import.newGroupMessage"
+    "description": "redesign.import.newGroupMessage",
+    "placeholders": {
+      "kind": {}
+    }
   },
-  "redesignImportNewGroupTitle": "Neue Gruppe anlegen",
+  "redesignImportNewGroupTitle": "{kind, select, orchestra{Neues Instrument} choir{Neue Stimme} other{Neue Untergruppe}} anlegen",
   "@redesignImportNewGroupTitle": {
-    "description": "redesign.import.newGroupTitle"
+    "description": "redesign.import.newGroupTitle",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignImportNumberCollection": "In der Sammlung werden neue Werke fortlaufend nummeriert, die Nummer aus dem Ordner zählt hier nicht.",
   "@redesignImportNumberCollection": {
@@ -20130,9 +20323,12 @@
   "@redesignMeAdmin": {
     "description": "redesign.me.admin"
   },
-  "redesignMeAdminHint": "Register, Rechte, Terminarten, Auswertung und mehr",
+  "redesignMeAdminHint": "{kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}}, Rechte, Terminarten, Auswertung und mehr",
   "@redesignMeAdminHint": {
-    "description": "redesign.me.adminHint"
+    "description": "redesign.me.adminHint",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignMeAllSettings": "Alle Einstellungen",
   "@redesignMeAllSettings": {
@@ -20289,9 +20485,12 @@
   "@redesignMembersBirthdayTomorrow": {
     "description": "redesign.members.birthdayTomorrow"
   },
-  "redesignMembersByRegisterChip": "Nach Register",
-  "@redesignMembersByRegisterChip": {
-    "description": "redesign.members.byRegisterChip"
+  "redesignMembersByGroupChip": "Nach {kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}",
+  "@redesignMembersByGroupChip": {
+    "description": "redesign.members.byGroupChip",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignMembersCritical": "Problemfälle · {count}",
   "@redesignMembersCritical": {
@@ -20323,10 +20522,6 @@
       "name": {},
       "value": {}
     }
-  },
-  "redesignMembersFilterGroups": "Gruppen",
-  "@redesignMembersFilterGroups": {
-    "description": "redesign.members.filterGroups"
   },
   "redesignMembersFilterNoAccount": "Ohne Konto",
   "@redesignMembersFilterNoAccount": {
@@ -20411,17 +20606,16 @@
       "percent": {}
     }
   },
-  "redesignMembersSearch": "Name, Instrument, Register",
+  "redesignMembersSearch": "{kind, select, orchestra{Name, Instrument, Register} choir{Name oder Stimme} other{Name oder Untergruppe}}",
   "@redesignMembersSearch": {
-    "description": "redesign.members.search"
+    "description": "redesign.members.search",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignMembersSearchLabel": "Mitglieder suchen",
   "@redesignMembersSearchLabel": {
     "description": "redesign.members.searchLabel"
-  },
-  "redesignMembersSearchRead": "Name oder Register",
-  "@redesignMembersSearchRead": {
-    "description": "redesign.members.searchRead"
   },
   "redesignMembersSection": "{title} · {count}",
   "@redesignMembersSection": {
@@ -20434,14 +20628,6 @@
   "redesignMembersSplitBy": "Gliedern nach",
   "@redesignMembersSplitBy": {
     "description": "redesign.members.splitBy"
-  },
-  "redesignMembersSplitCategory": "Kategorie",
-  "@redesignMembersSplitCategory": {
-    "description": "redesign.members.splitCategory"
-  },
-  "redesignMembersSplitRegister": "Register",
-  "@redesignMembersSplitRegister": {
-    "description": "redesign.members.splitRegister"
   },
   "redesignMembersStats": "Auswertung",
   "@redesignMembersStats": {
@@ -22097,9 +22283,12 @@
       "count": {}
     }
   },
-  "redesignStatsPerGroup": "Je Register",
+  "redesignStatsPerGroup": "Je {kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}",
   "@redesignStatsPerGroup": {
-    "description": "redesign.stats.perGroup"
+    "description": "redesign.stats.perGroup",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignStatsRange12m": "12 Monate",
   "@redesignStatsRange12m": {
@@ -22337,9 +22526,12 @@
   "@redesignTenantsNewMain": {
     "description": "redesign.tenants.newMain"
   },
-  "redesignTenantsNewMainHint": "Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. Weitere Gruppen wie Sopran oder Geigen legst du später in der Verwaltung an.",
+  "redesignTenantsNewMainHint": "Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. {kind, select, orchestra{Instrumente wie Violine oder Trompete} choir{Stimmen wie Sopran oder Alt} other{Untergruppen}} legst du später in der Verwaltung an.",
   "@redesignTenantsNewMainHint": {
-    "description": "redesign.tenants.newMainHint"
+    "description": "redesign.tenants.newMainHint",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignTenantsNewMainName": "Name der Hauptgruppe",
   "@redesignTenantsNewMainName": {
@@ -22820,10 +23012,6 @@
   "@redesignTypeWhoBelongs": {
     "description": "redesign.type.whoBelongs"
   },
-  "redesignTypeWhoBelongsHint": "Gruppen und Filter nach eigenen Feldern",
-  "@redesignTypeWhoBelongsHint": {
-    "description": "redesign.type.whoBelongsHint"
-  },
   "redesignTypesListAdd": "Anwesenheits-Typ hinzufügen",
   "@redesignTypesListAdd": {
     "description": "redesign.typesList.add"
@@ -23001,9 +23189,12 @@
   "@redesignWorkCreateCreateAndAdd": {
     "description": "redesign.workCreate.createAndAdd"
   },
-  "redesignWorkCreateInstrumentationHint": "Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.",
+  "redesignWorkCreateInstrumentationHint": "{kind, select, orchestra{Welche Instrumente mitspielen, erkennt die App an den Noten, die du gleich hochlädst.} choir{Welche Stimmen mitsingen, erkennt die App an den Noten, die du gleich hochlädst.} other{Welche Untergruppen dabei sind, erkennt die App an den Noten, die du gleich hochlädst.}}",
   "@redesignWorkCreateInstrumentationHint": {
-    "description": "redesign.workCreate.instrumentationHint"
+    "description": "redesign.workCreate.instrumentationHint",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignWorkCreateLater": "Link, Schwierigkeit und eigene Felder später in „Bearbeiten“.",
   "@redesignWorkCreateLater": {
@@ -23068,9 +23259,12 @@
   "@redesignWorkEditInstrumentation": {
     "description": "redesign.workEdit.instrumentation"
   },
-  "redesignWorkEditInstrumentationHint": "Welche Gruppen mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.",
+  "redesignWorkEditInstrumentationHint": "{kind, select, orchestra{Welche Instrumente mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.} choir{Welche Stimmen mitsingen, ergibt sich aus den hochgeladenen Noten. Fehlt eine, lädst du sie auf der Werk-Seite hoch.} other{Welche Untergruppen dabei sind, ergibt sich aus den hochgeladenen Noten. Fehlt eine, lädst du die Noten auf der Werk-Seite hoch.}}",
   "@redesignWorkEditInstrumentationHint": {
-    "description": "redesign.workEdit.instrumentationHint"
+    "description": "redesign.workEdit.instrumentationHint",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignWorkEditLink": "Link",
   "@redesignWorkEditLink": {
@@ -23206,15 +23400,6 @@
     "description": "redesign.work.instrumentationHint",
     "placeholders": {
       "names": {}
-    }
-  },
-  "redesignWorkInstrumentationValue": "{count, plural, one {1 Gruppe} other {{count} Gruppen}}",
-  "@redesignWorkInstrumentationValue": {
-    "description": "redesign.work.instrumentationValue",
-    "placeholders": {
-      "count": {
-        "type": "num"
-      }
     }
   },
   "redesignWorkLastPlayed": "Zuletzt gespielt",
@@ -23547,9 +23732,12 @@
   "@redesignWorksFoldersMenu": {
     "description": "redesign.works.foldersMenu"
   },
-  "redesignWorksForGroup": "Für Gruppe",
+  "redesignWorksForGroup": "Für {kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}",
   "@redesignWorksForGroup": {
-    "description": "redesign.works.forGroup"
+    "description": "redesign.works.forGroup",
+    "placeholders": {
+      "kind": {}
+    }
   },
   "redesignWorksForGroupAll": "Alle",
   "@redesignWorksForGroupAll": {

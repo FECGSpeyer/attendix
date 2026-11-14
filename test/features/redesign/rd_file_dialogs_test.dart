@@ -2,9 +2,11 @@ import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/utils/choir_file_utils.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
+import 'package:attendix/features/redesign/data/rd_words.dart';
 import 'package:attendix/features/redesign/presentation/widgets/work/rd_file_category_sheet.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// REDESIGN: "Für wen ist die Datei?" as a Beta sheet.
@@ -15,28 +17,31 @@ void main() {
     addTearDown(tester.view.reset);
     final results = <({int? instrumentId, String? note})?>[];
     await tester.pumpWidget(
-      MaterialApp(
-        locale: const Locale('de'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
-        home: Builder(
-          builder:
-              (context) => TextButton(
-                onPressed: () async {
-                  results.add(
-                    await showRdFileCategorySheet(
-                      context,
-                      title: 'Sopran 1.pdf',
-                      instruments: const [Group(id: 10, name: 'Sopran'), Group(id: 11, name: 'Alt')],
-                      isChoir: true,
-                      initialInstrumentId: kChoirAllOptionValue,
-                      initialNote: '',
-                    ),
-                  );
-                },
-                child: const Text('open'),
-              ),
+      ProviderScope(
+        overrides: [rdGroupKindProvider.overrideWithValue('choir')],
+        child: MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+          home: Builder(
+            builder:
+                (context) => TextButton(
+                  onPressed: () async {
+                    results.add(
+                      await showRdFileCategorySheet(
+                        context,
+                        title: 'Sopran 1.pdf',
+                        instruments: const [Group(id: 10, name: 'Sopran'), Group(id: 11, name: 'Alt')],
+                        isChoir: true,
+                        initialInstrumentId: kChoirAllOptionValue,
+                        initialNote: '',
+                      ),
+                    );
+                  },
+                  child: const Text('open'),
+                ),
+          ),
         ),
       ),
     );

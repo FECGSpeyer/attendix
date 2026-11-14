@@ -24,6 +24,7 @@ import 'package:attendix/data/models/song/song_filter.dart';
 import 'package:attendix/data/repositories/song_repository.dart' show SongTenantSettings;
 import 'package:attendix/features/redesign/data/providers/rd_shared_library.dart';
 import 'package:attendix/features/redesign/data/rd_dates.dart';
+import 'package:attendix/features/redesign/data/rd_words.dart';
 import 'package:attendix/features/redesign/data/rd_works_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_folder_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';
@@ -195,6 +196,7 @@ List<Override> _common(Role role, {List<SongCollection>? collections}) => [
       ),
       effectiveRoleProvider.overrideWithValue(role),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+      rdGroupKindProvider.overrideWithValue('orchestra'),
       // Own Werke (the group shows no other group's).
       songTenantSettingsProvider.overrideWith((ref) async => const SongTenantSettings()),
       // Without Sammlungen in the database (null) the Werke tab as before.
@@ -1056,7 +1058,7 @@ void main() {
       await tester.tap(find.bySemanticsLabel('Mehr zum Werk'));
       await _settle(tester);
       // Players get no Gruppen-PDFs; the link is no longer in the "•••".
-      expect(find.text('Gruppen-PDFs drucken'), findsNothing);
+      expect(find.text('PDFs je Instrument drucken'), findsNothing);
       expect(find.text('Link zum Werk teilen'), findsNothing);
       expect(find.text('Alle Dateien herunterladen'), findsOneWidget);
       await tester.tap(find.text('Abbrechen'));
@@ -1197,7 +1199,7 @@ void main() {
       await _settle(tester);
       await tester.tap(find.bySemanticsLabel('Mehr zum Werk'));
       await _settle(tester);
-      await tester.tap(find.text('Gruppen-PDFs drucken'));
+      await tester.tap(find.text('PDFs je Instrument drucken'));
       await _settle(tester);
       expect(find.text('Druckoptionen'), findsOneWidget);
       expect(find.text('Wie viele Ausdrucke pro Gruppe?'), findsOneWidget);
@@ -1275,7 +1277,7 @@ void main() {
       expect(find.text('Klarinette fehlt noch'), findsOneWidget);
       expect(find.text('Hochladen'), findsOneWidget);
       await tester.scrollUntilVisible(find.text('Besetzung'), 200);
-      expect(find.text('1 Gruppe'), findsOneWidget);
+      expect(find.text('1 Instrument'), findsOneWidget);
       expect(find.text('aus den Noten: Flöte'), findsOneWidget);
     });
 

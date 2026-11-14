@@ -132,6 +132,7 @@ extension _RuleBeta on _AutoMessageRulePageState {
   List<Widget> _ruleBeta() {
     final p = context.rd;
     final l10n = context.l10n;
+    final kind = ref.watch(rdGroupKindProvider);
     final types = (ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
         .where((t) => t.visible)
         .toList();
@@ -250,7 +251,7 @@ extension _RuleBeta on _AutoMessageRulePageState {
         hint: (rule.typeIds?.isNotEmpty ?? false) ? l10n.autoMessagesTypesSome : l10n.autoMessagesTypesAll,
       ),
       _section(
-        l10n.autoMessagesGroups,
+        l10n.rdWordsGroups(kind),
         [
           Wrap(
             spacing: 8,
@@ -269,7 +270,7 @@ extension _RuleBeta on _AutoMessageRulePageState {
             ],
           ),
         ],
-        hint: (rule.groupIds?.isNotEmpty ?? false) ? l10n.autoMessagesGroupsSome : l10n.autoMessagesGroupsAll,
+        hint: (rule.groupIds?.isNotEmpty ?? false) ? l10n.rdWordsGroupsSome(kind) : l10n.rdWordsGroupsAll(kind),
       ),
       _section(
         null,
@@ -428,7 +429,7 @@ extension _RuleBeta on _AutoMessageRulePageState {
                 () => _update(_rule.copyWith(copyResponsibles: !rule.copyResponsibles)),
               ),
               _checkRow(
-                l10n.autoMessagesCopyVoiceLeaders,
+                l10n.rdWordsCopyVoiceLeaders(kind),
                 rule.copyVoiceLeaders,
                 () => _update(_rule.copyWith(copyVoiceLeaders: !rule.copyVoiceLeaders)),
               ),

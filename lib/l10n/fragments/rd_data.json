@@ -16,7 +16,7 @@
       "ownEmpty": "Eigene Spalte, bleibt leer",
       "columnsHint": "Ziehen zum Sortieren. Eigene Spalten bleiben leer, etwa zum Ausfüllen auf Papier.",
       "certificates": "Urkunden",
-      "certificatesFor": "Für welche Gruppen sollen Urkunden erstellt werden?",
+      "certificatesFor": "Für welche {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} sollen Urkunden erstellt werden?",
       "certificatesCreate": "Urkunden für {count} Personen erstellen",
       "groupCount": "{count} Personen"
     }
@@ -38,7 +38,7 @@
       "ownEmpty": "Own column, stays empty",
       "columnsHint": "Drag to sort. Own columns stay empty, e.g. to fill in on paper.",
       "certificates": "Certificates",
-      "certificatesFor": "For which groups should certificates be created?",
+      "certificatesFor": "For which {kind, select, orchestra{instruments} choir{voices} other{subgroups}} should certificates be created?",
       "certificatesCreate": "Create certificates for {count} people",
       "groupCount": "{count} people"
     }

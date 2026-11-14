@@ -265,7 +265,7 @@ void main() {
       expect(find.text('Attendix Test'), findsOneWidget);
       expect(find.text('Orchester · 42 Mitglieder · ATTX'), findsOneWidget);
       expect(find.text('MITGLIEDER'), findsOneWidget);
-      expect(find.text('Register'), findsOneWidget);
+      expect(find.text('Instrumente'), findsOneWidget);
       expect(find.text('Archiv'), findsOneWidget);
       expect(find.text('4'), findsOneWidget);
       expect(find.text('Anmeldung per Link'), findsOneWidget);
@@ -296,7 +296,7 @@ void main() {
 
       await tester.enterText(find.byType(TextField), 'gruppen');
       await _settle(tester);
-      expect(find.text('Register'), findsOneWidget);
+      expect(find.text('Instrumente'), findsOneWidget);
 
       // A switch of the old "Allgemein" leads to its new place.
       await tester.enterText(find.byType(TextField), 'saisonbeginn');
@@ -364,7 +364,7 @@ void main() {
       // The first page keeps the search of the overview's list.
       await tester.enterText(find.byType(TextField), 'regist');
       await _settle(tester);
-      await tester.tap(find.text('Register'));
+      await tester.tap(find.text('Instrumente'));
       await _settle(tester);
       expect(find.text('page groups'), findsOneWidget);
       expect(find.text('Attendix Test'), findsNothing);
@@ -413,7 +413,7 @@ void main() {
       expect(find.text('Zugänge und Rechte'), findsOneWidget);
       expect(find.text('Rollen und Rechte'), findsOneWidget);
       expect(find.text('Admins'), findsOneWidget);
-      expect(find.text('Register'), findsNothing);
+      expect(find.text('Instrumente'), findsNothing);
 
       await tester.pumpWidget(_app(_admin, initial: '/ich/verwaltung/gibtsnicht'));
       await _settle(tester);

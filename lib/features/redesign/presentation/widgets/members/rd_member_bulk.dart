@@ -25,6 +25,7 @@ import '../../../../people/presentation/pages/person_detail_page.dart' show pers
 import '../../../../people/presentation/widgets/church_picker_sheet.dart';
 import '../../../../people/presentation/widgets/pause_person_sheet.dart' show buildPauseHistoryText;
 import '../../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
+import '../../../data/rd_words.dart';
 import '../manage/rd_settings_sheets.dart' show showRdChoiceSheet, showRdTextSheet;
 
 /// Runs [change] for every person and counts successes and failures, so
@@ -126,7 +127,7 @@ mixin RdMemberBulkActions<T extends ConsumerStatefulWidget> on ConsumerState<T> 
     final general = ref.read(currentTenantProvider)?.type == 'general';
     final groupId = await showRdChoiceSheet<int>(
       context,
-      title: l10n.redesignBulkPickGroup,
+      title: l10n.rdWordsNewGroup(ref.read(rdGroupKindProvider)),
       options: [for (final g in groups) if (g.id != null) (g.id!, g.name)],
     );
     if (groupId == null || !mounted) return;

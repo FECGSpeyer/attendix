@@ -10,6 +10,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../data/rd_words.dart';
 import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
 
@@ -48,7 +49,12 @@ class _RdGroupCategoriesPageState extends ConsumerState<RdGroupCategoriesPage> {
   /// Old sheet: an empty name shows "Bitte gib einem Namen an".
   Future<String?> _askName({required String title, String initial = ''}) async {
     final l10n = context.l10n;
-    final name = await showRdTextSheet(context, title: title, initial: initial, hint: l10n.instrumentsCategoryName);
+    final name = await showRdTextSheet(
+      context,
+      title: title,
+      initial: initial,
+      hint: l10n.redesignGroupCategoriesName(ref.read(rdGroupKindProvider)),
+    );
     if (name == null || !mounted) return null;
     if (name.trim().isEmpty) {
       ToastHelper.showError(context, l10n.instrumentsEnterName);
@@ -59,44 +65,46 @@ class _RdGroupCategoriesPageState extends ConsumerState<RdGroupCategoriesPage> {
 
   Future<void> _add() async {
     final l10n = context.l10n;
+    final kind = ref.read(rdGroupKindProvider);
     final tenantId = ref.read(currentTenantIdProvider);
-    final name = await _askName(title: l10n.instrumentsNewCategory);
+    final name = await _askName(title: l10n.redesignGroupCategoriesNew(kind));
     if (name == null || !_stillIn(tenantId)) return;
     final created = await ref.read(groupNotifierProvider.notifier).createGroupCategory(name);
-    if (created == null && mounted) ToastHelper.showError(context, l10n.svcAddCategoryFailed);
+    if (created == null && mounted) ToastHelper.showError(context, l10n.redesignGroupCategoriesSaveFailed(kind));
   }
 
   Future<void> _actions(GroupCategory category) async {
     final l10n = context.l10n;
+    final kind = ref.read(rdGroupKindProvider);
     final tenantId = ref.read(currentTenantIdProvider);
     final id = category.id;
     final action = await showAppActionSheet<String>(
       context,
       title: category.name,
       actions: [
-        AppActionSheetAction(value: 'rename', label: l10n.instrumentsEditCategory, icon: Icons.edit_outlined),
+        AppActionSheetAction(value: 'rename', label: l10n.redesignGroupCategoriesEdit(kind), icon: Icons.edit_outlined),
         AppActionSheetAction(value: 'delete', label: l10n.commonDelete, icon: Icons.delete_outline, destructive: true),
       ],
     );
     if (action == null || id == null || !_stillIn(tenantId)) return;
     final notifier = ref.read(groupNotifierProvider.notifier);
     if (action == 'rename') {
-      final name = await _askName(title: l10n.instrumentsEditCategory, initial: category.name);
+      final name = await _askName(title: l10n.redesignGroupCategoriesEdit(kind), initial: category.name);
       if (name == null || !_stillIn(tenantId)) return;
       final updated = await notifier.updateGroupCategory(id, {'name': name});
-      if (updated == null && mounted) ToastHelper.showError(context, l10n.svcUpdateCategoryFailed);
+      if (updated == null && mounted) ToastHelper.showError(context, l10n.redesignGroupCategoriesSaveFailed(kind));
     } else {
       final confirmed = await showAppConfirm(
         context,
         title: l10n.commonConfirm,
-        message: l10n.instrumentsDeleteCategory,
+        message: l10n.redesignGroupCategoriesDeleteConfirm(kind),
         confirmText: l10n.commonDelete,
         destructive: true,
       );
       if (!confirmed || !_stillIn(tenantId)) return;
       await notifier.deleteGroupCategory(id);
       if (mounted && ref.read(groupNotifierProvider).hasError) {
-        ToastHelper.showError(context, l10n.svcDeleteCategoryFailed);
+        ToastHelper.showError(context, l10n.redesignGroupCategoriesDeleteFailed(kind));
       }
     }
   }
@@ -146,6 +154,7 @@ class _RdGroupCategoriesPageState extends ConsumerState<RdGroupCategoriesPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final kind = ref.watch(rdGroupKindProvider);
     // Keys the list so a sort started in one group is dropped on a switch.
     final tenantId = ref.watch(currentTenantIdProvider);
     final async = ref.watch(groupCategoriesProvider);
@@ -156,9 +165,9 @@ class _RdGroupCategoriesPageState extends ConsumerState<RdGroupCategoriesPage> {
 
     return RdManageListPage(
       key: ValueKey(tenantId),
-      title: l10n.instrumentsCategories,
-      intro: l10n.redesignGroupCategoriesIntro,
-      backLabel: l10n.redesignGroupCategoriesBack,
+      title: l10n.rdWordsCategories(kind),
+      intro: l10n.redesignGroupCategoriesIntro(kind),
+      backLabel: l10n.rdWordsGroups(kind),
       onBack: _back,
       sections:
           categories == null
@@ -170,7 +179,7 @@ class _RdGroupCategoriesPageState extends ConsumerState<RdGroupCategoriesPage> {
                       RdManageListItem(
                         id: c.id == null ? 'unsaved-$i' : '${c.id}',
                         title: c.name,
-                        count: count(c.id) == null ? null : l10n.redesignGroupCategoriesCount(count(c.id)!),
+                        count: count(c.id) == null ? null : l10n.rdWordsGroupCount(kind, count(c.id)!),
                         onTap: c.id == null ? null : () => _actions(c),
                       ),
                   ],
@@ -178,9 +187,9 @@ class _RdGroupCategoriesPageState extends ConsumerState<RdGroupCategoriesPage> {
               ],
       loadFailed: async.hasError && !async.isLoading,
       onRetry: () => ref.invalidate(groupCategoriesProvider),
-      emptyText: l10n.instrumentsFlutterNoCategories,
+      emptyText: l10n.redesignGroupCategoriesEmpty(kind),
       emptyIcon: Icons.sell_outlined,
-      addLabel: l10n.instrumentsNewCategory,
+      addLabel: l10n.redesignGroupCategoriesNew(kind),
       onAdd: _add,
       // Only with the groups loaded: the new order renumbers them too.
       onReorder:

@@ -1985,9 +1985,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceNewPersonFirstName => 'Vorname';
 
   @override
-  String get attendanceNewPersonGroup => 'Register';
-
-  @override
   String get attendanceNewPersonHint =>
       'Die Person wird Mitglied der Gruppe und gleich zu diesem Termin hinzugefügt. Weitere Angaben ergänzt du später bei der Person.';
 
@@ -3336,8 +3333,17 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get collectionsGroupsNone =>
-      'Wähle mindestens eine Gruppe. Bis dahin sieht sie nur die Leitung.';
+  String collectionsGroupsNone(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra':
+          'Wähle mindestens ein Instrument. Bis dahin sieht sie nur die Leitung.',
+      'choir':
+          'Wähle mindestens eine Stimme. Bis dahin sieht sie nur die Leitung.',
+      'other':
+          'Wähle mindestens eine Untergruppe. Bis dahin sieht sie nur die Leitung.',
+    });
+    return '$_temp0';
+  }
 
   @override
   String collectionsIntoRepertoire(Object number) {
@@ -3461,7 +3467,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get collectionsVisAll => 'Alle';
 
   @override
-  String get collectionsVisGroups => 'Bestimmte Gruppen';
+  String collectionsVisGroups(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumente',
+      'choir': 'Stimmen',
+      'other': 'Untergruppen',
+    });
+    return 'Bestimmte $_temp0';
+  }
 
   @override
   String get collectionsVisLeads => 'Nur Leitung';
@@ -10685,8 +10698,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminAreaMembers => 'Mitglieder';
 
   @override
-  String get rdAdminBulkHint =>
-      'Register, Status und mehr für viele auf einmal';
+  String rdAdminBulkHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrument',
+      'choir': 'Stimme',
+      'other': 'Untergruppe',
+    });
+    return '$_temp0, Status und mehr für viele auf einmal';
+  }
 
   @override
   String get rdAdminCertificates => 'Urkunden';
@@ -10740,11 +10759,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get rdAdminGroups => 'Register';
-
-  @override
-  String get rdAdminGroupsHint =>
-      'Instrumente und Stimmen, nach denen sortiert wird';
+  String rdAdminGroupsHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra':
+          'Wonach Mitglieder und Noten eingeteilt sind, samt Registern',
+      'choir': 'Wonach Mitglieder und Noten eingeteilt sind',
+      'other': 'Wonach die Mitglieder eingeteilt sind',
+    });
+    return '$_temp0';
+  }
 
   @override
   String rdAdminHeroMembers(num count) {
@@ -10789,7 +10812,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminHomeWorksCategories => 'Im Werke-Tab unter •••';
 
   @override
-  String get rdAdminManageGroups => 'Register verwalten';
+  String rdAdminManageGroups(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumente',
+      'choir': 'Stimmen',
+      'other': 'Untergruppen',
+    });
+    return '$_temp0 verwalten';
+  }
 
   @override
   String get rdAdminManageTypes => 'Terminarten verwalten';
@@ -10870,7 +10900,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminRolesHint => 'Was Helfer und Mitglieder dürfen und sehen';
 
   @override
-  String get rdAdminSearch => 'Suchen, z. B. Saison, Eltern, Register';
+  String rdAdminSearch(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumente',
+      'choir': 'Stimmen',
+      'other': 'Untergruppen',
+    });
+    return 'Suchen, z. B. Saison, Eltern, $_temp0';
+  }
 
   @override
   String get rdAdminSharing => 'Werke öffentlich teilen';
@@ -11231,8 +11268,14 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get rdDataCertificatesFor =>
-      'Für welche Gruppen sollen Urkunden erstellt werden?';
+  String rdDataCertificatesFor(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumente',
+      'choir': 'Stimmen',
+      'other': 'Untergruppen',
+    });
+    return 'Für welche $_temp0 sollen Urkunden erstellt werden?';
+  }
 
   @override
   String get rdDataColumns => 'Spalten';
@@ -11479,7 +11522,14 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get rdOrgStep2Title => 'Gruppen im Ziel';
+  String rdOrgStep2Title(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumente',
+      'choir': 'Stimmen',
+      'other': 'Untergruppen',
+    });
+    return '$_temp0 im Ziel';
+  }
 
   @override
   String get rdOrgTakeOver => 'Übernehmen';
@@ -11595,8 +11645,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdPeopleTeacherAdd => 'Neuer Lehrer';
 
   @override
-  String get rdPeopleTeacherNone =>
-      'Für dieses Register gibt es noch keinen Lehrer.';
+  String rdPeopleTeacherNone(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'dieses Instrument',
+      'choir': 'diese Stimme',
+      'other': 'diese Untergruppe',
+    });
+    return 'Für $_temp0 gibt es noch keinen Lehrer.';
+  }
 
   @override
   String get rdPeopleTransferChoose => 'Auswählen';
@@ -11606,14 +11662,18 @@ class AppLocalizationsDe extends AppLocalizations {
       'Die Person wird in der Zielgruppe angelegt und hier archiviert.';
 
   @override
-  String get rdPeopleTransferNoRegisters => 'Keine Register';
+  String rdPeopleTransferNoGroups(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Keine Instrumente',
+      'choir': 'Keine Stimmen',
+      'other': 'Keine Untergruppen',
+    });
+    return '$_temp0';
+  }
 
   @override
   String get rdPeopleTransferNoTargets =>
       'Es gibt keine anderen Gruppen in deiner Organisation.';
-
-  @override
-  String get rdPeopleTransferRegister => 'Register';
 
   @override
   String get rdPeopleTransferTarget => 'Zielgruppe';
@@ -11713,8 +11773,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdSettingsMembersList => 'Mitglieder-Tab für alle';
 
   @override
-  String get rdSettingsMembersListHint =>
-      'Auch Mitglieder, Helfer und Stimmführer sehen, wer in welchem Register ist';
+  String rdSettingsMembersListHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra':
+          'Auch Mitglieder, Helfer und Stimmführer sehen, wer welches Instrument spielt',
+      'choir':
+          'Auch Mitglieder, Helfer und Stimmführer sehen, wer in welcher Stimme singt',
+      'other':
+          'Auch Mitglieder, Helfer und Stimmführer sehen, wer in welcher Untergruppe ist',
+    });
+    return '$_temp0';
+  }
 
   @override
   String get rdSettingsName => 'Name';
@@ -11734,11 +11803,24 @@ class AppLocalizationsDe extends AppLocalizations {
       'Sich für einen Zeitraum abmelden, z. B. für den Urlaub';
 
   @override
-  String get rdSettingsPermAllGroups => 'Alle Register eintragen';
+  String rdSettingsPermAllGroups(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumente',
+      'choir': 'Stimmen',
+      'other': 'Untergruppen',
+    });
+    return 'Alle $_temp0 eintragen';
+  }
 
   @override
-  String get rdSettingsPermAllGroupsHint =>
-      'Aus: nur die Anwesenheit des eigenen Registers';
+  String rdSettingsPermAllGroupsHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'des eigenen Instruments',
+      'choir': 'der eigenen Stimme',
+      'other': 'der eigenen Untergruppe',
+    });
+    return 'Aus: nur die Anwesenheit $_temp0';
+  }
 
   @override
   String get rdSettingsPermChecklist => 'Checkliste im Termin sehen';
@@ -11799,8 +11881,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdSettingsRegisterFields => 'Felder bei der Anmeldung';
 
   @override
-  String get rdSettingsRegisterFieldsHint =>
-      'Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.';
+  String rdSettingsRegisterFieldsHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrument',
+      'choir': 'Stimme',
+      'other': 'Untergruppe',
+    });
+    return 'Alle gewählten Felder sind Pflicht. Vorname, Nachname und $_temp0 sind immer dabei.';
+  }
 
   @override
   String get rdSettingsRegisterOffConfirm => 'Ausschalten';
@@ -11935,7 +12023,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdStatsAge => 'Alter';
 
   @override
-  String get rdStatsAgeAvgGroup => 'Ø Alter je Register';
+  String rdStatsAgeAvgGroup(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrument',
+      'choir': 'Stimme',
+      'other': 'Untergruppe',
+    });
+    return 'Ø Alter je $_temp0';
+  }
 
   @override
   String rdStatsAgeBucket(Object from, Object to) {
@@ -12005,9 +12100,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdStatsColQuote => 'Quote';
-
-  @override
-  String get rdStatsColRegister => 'Register';
 
   @override
   String rdStatsCountAbsent(Object count) {
@@ -12100,9 +12192,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdStatsFieldsPaused => 'Pausierte mitzählen';
 
   @override
-  String get rdStatsFilterGroups => 'Register';
-
-  @override
   String rdStatsFilterRemove(Object label) {
     return 'Filter „$label“ entfernen';
   }
@@ -12125,6 +12214,16 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get rdStatsFilterTypesHint =>
       'Gilt nur für diese Ansicht. Vorausgewählt sind die Arten, die zur Anwesenheitsquote zählen.';
+
+  @override
+  String rdStatsGroupHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'des Instruments',
+      'choir': 'der Stimme',
+      'other': 'der Untergruppe',
+    });
+    return 'Kurve: Quote je Monat. Antippen zeigt die Personen $_temp0.';
+  }
 
   @override
   String get rdStatsMembers => 'Mitglieder';
@@ -12158,8 +12257,13 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String rdStatsNotableWeakGroup(Object name) {
-    return 'Schwächstes Register: $name';
+  String rdStatsNotableWeakGroup(String kind, Object name) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Schwächstes Instrument',
+      'choir': 'Schwächste Stimme',
+      'other': 'Schwächste Untergruppe',
+    });
+    return '$_temp0: $name';
   }
 
   @override
@@ -12248,10 +12352,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdStatsRangeTo => 'Bis';
 
   @override
-  String get rdStatsRegisterHint =>
-      'Kurve: Quote je Monat. Antippen zeigt die Personen des Registers.';
-
-  @override
   String get rdStatsSortBest => 'Beste zuerst';
 
   @override
@@ -12281,9 +12381,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdStatsTabPeople => 'Personen';
 
   @override
-  String get rdStatsTabRegister => 'Register';
-
-  @override
   String get rdStatsTabsLabel => 'Ansicht der Auswertung';
 
   @override
@@ -12309,8 +12406,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Bitte gib einen Namen mit mindestens 3 Zeichen ein.';
 
   @override
-  String get rdTeacherNewNoGroups =>
-      'Es gibt noch keine Register, die du auswählen kannst.';
+  String rdTeacherNewNoGroups(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'keine Instrumente',
+      'choir': 'keine Stimmen',
+      'other': 'keine Untergruppen',
+    });
+    return 'Es gibt noch $_temp0, die du auswählen kannst.';
+  }
 
   @override
   String get rdTeacherNewNoInstrument => 'Wähle mindestens ein Instrument.';
@@ -12354,9 +12457,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdTeamCircleEveryone => 'Alle Mitglieder';
-
-  @override
-  String get rdTeamCircleGroups => 'Gruppen';
 
   @override
   String get rdTeamCircleLeadersHint => 'Die Leitung ist immer dabei.';
@@ -12612,9 +12712,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get rdTextGroupNewTitle => 'Neues Register';
-
-  @override
   String get rdTextGroupsManageShort => 'Verwalten';
 
   @override
@@ -12837,17 +12934,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdTypeInvitedHint => 'Wer zu diesen Terminen gehört';
 
   @override
-  String rdTypeInvitedSome(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Register',
-      one: '1 Register',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get rdTypeLook => 'Aussehen';
 
   @override
@@ -13046,6 +13132,187 @@ class AppLocalizationsDe extends AppLocalizations {
       other: '$count Werke',
       one: '$count Werk',
     );
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsCategories(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Register',
+      'choir': 'Kategorien',
+      'other': 'Kategorien',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsCategory(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Register',
+      'choir': 'Kategorie',
+      'other': 'Kategorie',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsCopyVoiceLeaders(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Stimmführer (nur ihr Instrument)',
+      'choir': 'Stimmführer (nur ihre Stimme)',
+      'other': 'Stimmführer (nur ihre Untergruppe)',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsGroup(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrument',
+      'choir': 'Stimme',
+      'other': 'Untergruppe',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsGroupCount(String kind, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Instrumente',
+      one: '1 Instrument',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Stimmen',
+      one: '1 Stimme',
+    );
+    String _temp2 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Untergruppen',
+      one: '1 Untergruppe',
+    );
+    String _temp3 = intl.Intl.selectLogic(kind, {
+      'orchestra': '$_temp0',
+      'choir': '$_temp1',
+      'other': '$_temp2',
+    });
+    return '$_temp3';
+  }
+
+  @override
+  String rdWordsGroupFilter(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Spielt das Instrument...',
+      'choir': 'Singt in der Stimme...',
+      'other': 'Ist in der Untergruppe...',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsGroups(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumente',
+      'choir': 'Stimmen',
+      'other': 'Untergruppen',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsGroupsAll(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumente',
+      'choir': 'Stimmen',
+      'other': 'Untergruppen',
+    });
+    return 'Nichts ausgewählt: gilt für alle $_temp0.';
+  }
+
+  @override
+  String rdWordsGroupsSome(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumenten',
+      'choir': 'Stimmen',
+      'other': 'Untergruppen',
+    });
+    return 'Gilt nur für Personen aus den ausgewählten $_temp0.';
+  }
+
+  @override
+  String rdWordsNewGroup(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Neues Instrument',
+      'choir': 'Neue Stimme',
+      'other': 'Neue Untergruppe',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsNewGroupFailed(String kind, Object name) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Das Instrument „$name“ konnte nicht angelegt werden',
+      'choir': 'Die Stimme „$name“ konnte nicht angelegt werden',
+      'other': 'Die Untergruppe „$name“ konnte nicht angelegt werden',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsNoCategory(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Kein Register',
+      'choir': 'Keine Kategorie',
+      'other': 'Keine Kategorie',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsNoGroup(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Ohne Instrument',
+      'choir': 'Ohne Stimme',
+      'other': 'Ohne Untergruppe',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsNoGroupsYet(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra':
+          'Es gibt noch keine Instrumente. Lege zuerst mindestens ein Instrument an, bevor du die Anmeldung einschaltest.',
+      'choir':
+          'Es gibt noch keine Stimmen. Lege zuerst mindestens eine Stimme an, bevor du die Anmeldung einschaltest.',
+      'other':
+          'Es gibt noch keine Untergruppen. Lege zuerst mindestens eine Untergruppe an, bevor du die Anmeldung einschaltest.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsPrintGroupPdfs(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'PDFs je Instrument drucken',
+      'choir': 'PDFs je Stimme drucken',
+      'other': 'PDFs je Untergruppe drucken',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String rdWordsSeveralGroups(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Geht an jedes dieser Instrumente',
+      'choir': 'Geht an jede dieser Stimmen',
+      'other': 'Geht an jede dieser Untergruppen',
+    });
     return '$_temp0';
   }
 
@@ -13412,9 +13679,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignBulkActionField => 'Feld';
 
   @override
-  String get redesignBulkActionGroup => 'Register';
-
-  @override
   String get redesignBulkActionPause => 'Pausieren';
 
   @override
@@ -13487,16 +13751,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Mitglieder antippen, dann unten eine Aktion wählen.';
 
   @override
-  String get redesignBulkNoGroup => 'Ohne Register';
-
-  @override
   String get redesignBulkPauseReason => 'Grund der Pause';
 
   @override
   String get redesignBulkPickField => 'Feld setzen';
-
-  @override
-  String get redesignBulkPickGroup => 'Neues Register';
 
   @override
   String get redesignBulkSearch => 'Mitglied suchen';
@@ -13543,7 +13801,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignComposeBody => 'Text';
 
   @override
-  String get redesignComposeGroups => 'Register wählen';
+  String redesignComposeGroups(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumente',
+      'choir': 'Stimmen',
+      'other': 'Untergruppen',
+    });
+    return '$_temp0 wählen';
+  }
 
   @override
   String get redesignComposeHint =>
@@ -13554,8 +13819,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Betreff, Text und mindestens ein Versandweg fehlen noch.';
 
   @override
-  String get redesignComposeNoRecipients =>
-      'Die Auswahl erreicht noch niemanden. Wähle andere Gruppen oder Versandwege.';
+  String redesignComposeNoRecipients(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumente',
+      'choir': 'Stimmen',
+      'other': 'Untergruppen',
+    });
+    return 'Die Auswahl erreicht noch niemanden. Wähle andere $_temp0 oder Versandwege.';
+  }
 
   @override
   String get redesignComposeSend => 'Senden';
@@ -14000,9 +14271,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Bitte warte, bis alles gespeichert ist.';
 
   @override
-  String get redesignEventByGroup => 'Nach Stimme';
-
-  @override
   String get redesignEventChangeConductorHint =>
       'Aus der Gruppe oder Gastdirigent';
 
@@ -14418,10 +14686,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignEventStatus => 'Status';
-
-  @override
-  String get redesignEventStatusOverviewHint =>
-      'Alle Antworten nach Stimme und Status';
 
   @override
   String get redesignEventTabOverview => 'Überblick';
@@ -15031,19 +15295,90 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignFolderTitleLeads => 'Nach Stimme';
 
   @override
-  String get redesignGroupCategoriesBack => 'Register';
-
-  @override
-  String redesignGroupCategoriesCount(num count) {
-    return '$count Register';
+  String redesignGroupCategoriesDeleteConfirm(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra':
+          'Register wirklich löschen? Die Instrumente darin gehören danach zu keinem Register mehr.',
+      'choir':
+          'Kategorie wirklich löschen? Die Stimmen darin gehören danach zu keiner Kategorie mehr.',
+      'other':
+          'Kategorie wirklich löschen? Die Untergruppen darin gehören danach zu keiner Kategorie mehr.',
+    });
+    return '$_temp0';
   }
 
   @override
-  String get redesignGroupCategoriesIntro =>
-      'Kategorien fassen Register zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Register.';
+  String redesignGroupCategoriesDeleteFailed(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Das Register',
+      'choir': 'Die Kategorie',
+      'other': 'Die Kategorie',
+    });
+    return '$_temp0 konnte nicht gelöscht werden.';
+  }
 
   @override
-  String get redesignGroupEditCategory => 'Kategorie';
+  String redesignGroupCategoriesEdit(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Register',
+      'choir': 'Kategorie',
+      'other': 'Kategorie',
+    });
+    return '$_temp0 bearbeiten';
+  }
+
+  @override
+  String redesignGroupCategoriesEmpty(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Keine Register',
+      'choir': 'Keine Kategorien',
+      'other': 'Keine Kategorien',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignGroupCategoriesIntro(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra':
+          'Register fassen Instrumente zusammen, etwa Streicher oder Blechbläser. Ihre Reihenfolge gilt auch für die Instrumente.',
+      'choir':
+          'Kategorien fassen Stimmen zusammen, etwa Frauen- und Männerstimmen. Ihre Reihenfolge gilt auch für die Stimmen.',
+      'other':
+          'Kategorien fassen Untergruppen zusammen. Ihre Reihenfolge gilt auch für die Untergruppen.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignGroupCategoriesName(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'des Registers',
+      'choir': 'der Kategorie',
+      'other': 'der Kategorie',
+    });
+    return 'Name $_temp0';
+  }
+
+  @override
+  String redesignGroupCategoriesNew(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Neues Register',
+      'choir': 'Neue Kategorie',
+      'other': 'Neue Kategorie',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignGroupCategoriesSaveFailed(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Das Register',
+      'choir': 'Die Kategorie',
+      'other': 'Die Kategorie',
+    });
+    return '$_temp0 konnte nicht gespeichert werden.';
+  }
 
   @override
   String get redesignGroupEditCategoryNone => 'Keine';
@@ -15056,32 +15391,71 @@ class AppLocalizationsDe extends AppLocalizations {
       'Mindestens ein Notenschlüssel bleibt ausgewählt.';
 
   @override
-  String get redesignGroupEditDelete => 'Register löschen';
-
-  @override
-  String redesignGroupEditDeleteConfirm(Object name) {
-    return 'Register „$name“ wirklich löschen?';
+  String redesignGroupEditDelete(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrument',
+      'choir': 'Stimme',
+      'other': 'Untergruppe',
+    });
+    return '$_temp0 löschen';
   }
 
   @override
-  String get redesignGroupEditDeleteFailed =>
-      'Das Register konnte nicht gelöscht werden.';
+  String redesignGroupEditDeleteConfirm(String kind, Object name) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrument',
+      'choir': 'Stimme',
+      'other': 'Untergruppe',
+    });
+    return '$_temp0 „$name“ wirklich löschen?';
+  }
+
+  @override
+  String redesignGroupEditDeleteFailed(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Das Instrument',
+      'choir': 'Die Stimme',
+      'other': 'Die Untergruppe',
+    });
+    return '$_temp0 konnte nicht gelöscht werden.';
+  }
 
   @override
   String get redesignGroupEditDeleteMain =>
       'Die Hauptgruppe lässt sich nicht löschen.';
 
   @override
-  String redesignGroupEditDeleteMembers(num count) {
+  String redesignGroupEditDeleteMembers(String kind, num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
       other:
-          'Im Register sind oder waren noch $count Personen (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.',
+          'Zu diesem Instrument gehören oder gehörten noch $count Personen (archivierte zählen mit). Verschiebe sie zuerst zu einem anderen Instrument.',
       one:
-          'Im Register ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.',
+          'Zu diesem Instrument gehört oder gehörte noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst zu einem anderen Instrument.',
     );
-    return '$_temp0';
+    String _temp1 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Zu dieser Stimme gehören oder gehörten noch $count Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Stimme.',
+      one:
+          'Zu dieser Stimme gehört oder gehörte noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Stimme.',
+    );
+    String _temp2 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Zu dieser Untergruppe gehören oder gehörten noch $count Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Untergruppe.',
+      one:
+          'Zu dieser Untergruppe gehört oder gehörte noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Untergruppe.',
+    );
+    String _temp3 = intl.Intl.selectLogic(kind, {
+      'orchestra': '$_temp0',
+      'choir': '$_temp1',
+      'other': '$_temp2',
+    });
+    return '$_temp3';
   }
 
   @override
@@ -15098,7 +15472,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Das ist die Hauptgruppe (die Leitung). Stimmung, Notenschlüssel und Synonyme gibt es für sie nicht, löschen lässt sie sich nicht.';
 
   @override
-  String get redesignGroupEditManageCategories => 'Kategorien verwalten';
+  String redesignGroupEditManageCategories(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Register',
+      'choir': 'Kategorien',
+      'other': 'Kategorien',
+    });
+    return '$_temp0 verwalten';
+  }
 
   @override
   String get redesignGroupEditName => 'Name';
@@ -15108,7 +15489,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Ein leerer Name wird nicht gespeichert.';
 
   @override
-  String get redesignGroupEditNotFound => 'Dieses Register gibt es nicht mehr.';
+  String redesignGroupEditNotFound(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Dieses Instrument',
+      'choir': 'Diese Stimme',
+      'other': 'Diese Untergruppe',
+    });
+    return '$_temp0 gibt es nicht mehr.';
+  }
 
   @override
   String get redesignGroupEditNotes => 'Notizen';
@@ -15120,34 +15508,77 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignGroupEditSynonyms => 'Synonyme';
 
   @override
-  String get redesignGroupEditSynonymsHint =>
-      'Über die Synonyme ordnet die App hochgeladene Noten automatisch diesem Register zu.';
+  String redesignGroupEditSynonymsHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'diesem Instrument',
+      'choir': 'dieser Stimme',
+      'other': 'dieser Untergruppe',
+    });
+    return 'Über die Synonyme ordnet die App hochgeladene Noten automatisch $_temp0 zu.';
+  }
 
   @override
   String get redesignGroupEditSynonymsLabel =>
       'Andere Namen, mit Komma getrennt';
 
   @override
-  String get redesignGroupEditTitle => 'Register bearbeiten';
+  String redesignGroupEditTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrument',
+      'choir': 'Stimme',
+      'other': 'Untergruppe',
+    });
+    return '$_temp0 bearbeiten';
+  }
 
   @override
   String get redesignGroupEditTuning => 'Stimmung';
 
   @override
-  String get redesignGroupsListAdd => 'Register hinzufügen';
+  String redesignGroupsListAdd(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrument',
+      'choir': 'Stimme',
+      'other': 'Untergruppe',
+    });
+    return '$_temp0 hinzufügen';
+  }
 
   @override
-  String get redesignGroupsListEmpty => 'Noch keine Register angelegt.';
+  String redesignGroupsListEmpty(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'keine Instrumente',
+      'choir': 'keine Stimmen',
+      'other': 'keine Untergruppen',
+    });
+    return 'Noch $_temp0 angelegt.';
+  }
 
   @override
-  String get redesignGroupsListIntro =>
-      'Register ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.';
+  String redesignGroupsListIntro(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra':
+          'Instrumente ordnen die Mitglieder. Ihre Reihenfolge gilt auch für Listen und Noten.',
+      'choir':
+          'Stimmen ordnen die Mitglieder. Ihre Reihenfolge gilt auch für Listen und Noten.',
+      'other':
+          'Untergruppen ordnen die Mitglieder. Ihre Reihenfolge gilt auch für Listen.',
+    });
+    return '$_temp0';
+  }
 
   @override
   String get redesignGroupsListMainGroup => 'Hauptgruppe';
 
   @override
-  String get redesignGroupsListManageCategories => 'Kategorien verwalten';
+  String redesignGroupsListManageCategories(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Register',
+      'choir': 'Kategorien',
+      'other': 'Kategorien',
+    });
+    return '$_temp0 verwalten';
+  }
 
   @override
   String get redesignGroupsLoadFailed =>
@@ -15288,8 +15719,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportAnswerFromPage => 'Von Seite 1 lesen';
 
   @override
-  String redesignImportAnswerNewGroup(Object name) {
-    return 'Neue Gruppe „$name“';
+  String redesignImportAnswerNewGroup(String kind, Object name) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Neues Instrument',
+      'choir': 'Neue Stimme',
+      'other': 'Neue Untergruppe',
+    });
+    return '$_temp0 „$name“';
   }
 
   @override
@@ -15345,8 +15781,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportCategoryLabel => 'Stimme ändern';
 
   @override
-  String redesignImportCategoryNewGroup(Object name) {
-    return 'Neue Gruppe: $name';
+  String redesignImportCategoryNewGroup(String kind, Object name) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Neues Instrument',
+      'choir': 'Neue Stimme',
+      'other': 'Neue Untergruppe',
+    });
+    return '$_temp0: $name';
   }
 
   @override
@@ -15464,7 +15905,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportDoneLearned => 'Stimmnamen gemerkt';
 
   @override
-  String get redesignImportDoneNewGroups => 'Neue Gruppen';
+  String redesignImportDoneNewGroups(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Neue Instrumente',
+      'choir': 'Neue Stimmen',
+      'other': 'Neue Untergruppen',
+    });
+    return '$_temp0';
+  }
 
   @override
   String get redesignImportDoneNewWorks => 'Neue Werke';
@@ -15798,11 +16246,24 @@ class AppLocalizationsDe extends AppLocalizations {
       'Ordner aus Google Drive, Dropbox oder vom Rechner';
 
   @override
-  String get redesignImportNewGroupMessage =>
-      'Attendix legt die Gruppe erst beim Hochladen an.';
+  String redesignImportNewGroupMessage(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'das Instrument',
+      'choir': 'die Stimme',
+      'other': 'die Untergruppe',
+    });
+    return 'Attendix legt $_temp0 erst beim Hochladen an.';
+  }
 
   @override
-  String get redesignImportNewGroupTitle => 'Neue Gruppe anlegen';
+  String redesignImportNewGroupTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Neues Instrument',
+      'choir': 'Neue Stimme',
+      'other': 'Neue Untergruppe',
+    });
+    return '$_temp0 anlegen';
+  }
 
   @override
   String get redesignImportNumberCollection =>
@@ -16415,8 +16876,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMeAdmin => 'Verwaltung';
 
   @override
-  String get redesignMeAdminHint =>
-      'Register, Rechte, Terminarten, Auswertung und mehr';
+  String redesignMeAdminHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumente',
+      'choir': 'Stimmen',
+      'other': 'Untergruppen',
+    });
+    return '$_temp0, Rechte, Terminarten, Auswertung und mehr';
+  }
 
   @override
   String get redesignMeAllSettings => 'Alle Einstellungen';
@@ -16540,7 +17007,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMembersBirthdayTomorrow => 'Geburtstag morgen';
 
   @override
-  String get redesignMembersByRegisterChip => 'Nach Register';
+  String redesignMembersByGroupChip(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrument',
+      'choir': 'Stimme',
+      'other': 'Untergruppe',
+    });
+    return 'Nach $_temp0';
+  }
 
   @override
   String redesignMembersCritical(Object count) {
@@ -16563,9 +17037,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignMembersFilterField(Object name, Object value) {
     return '$name: $value';
   }
-
-  @override
-  String get redesignMembersFilterGroups => 'Gruppen';
 
   @override
   String get redesignMembersFilterNoAccount => 'Ohne Konto';
@@ -16635,13 +17106,17 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignMembersSearch => 'Name, Instrument, Register';
+  String redesignMembersSearch(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Name, Instrument, Register',
+      'choir': 'Name oder Stimme',
+      'other': 'Name oder Untergruppe',
+    });
+    return '$_temp0';
+  }
 
   @override
   String get redesignMembersSearchLabel => 'Mitglieder suchen';
-
-  @override
-  String get redesignMembersSearchRead => 'Name oder Register';
 
   @override
   String redesignMembersSection(Object title, Object count) {
@@ -16650,12 +17125,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignMembersSplitBy => 'Gliedern nach';
-
-  @override
-  String get redesignMembersSplitCategory => 'Kategorie';
-
-  @override
-  String get redesignMembersSplitRegister => 'Register';
 
   @override
   String get redesignMembersStats => 'Auswertung';
@@ -17992,7 +18461,14 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignStatsPerGroup => 'Je Register';
+  String redesignStatsPerGroup(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrument',
+      'choir': 'Stimme',
+      'other': 'Untergruppe',
+    });
+    return 'Je $_temp0';
+  }
 
   @override
   String get redesignStatsRange12m => '12 Monate';
@@ -18179,8 +18655,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTenantsNewMain => 'Hauptgruppe';
 
   @override
-  String get redesignTenantsNewMainHint =>
-      'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. Weitere Gruppen wie Sopran oder Geigen legst du später in der Verwaltung an.';
+  String redesignTenantsNewMainHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrumente wie Violine oder Trompete',
+      'choir': 'Stimmen wie Sopran oder Alt',
+      'other': 'Untergruppen',
+    });
+    return 'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. $_temp0 legst du später in der Verwaltung an.';
+  }
 
   @override
   String get redesignTenantsNewMainName => 'Name der Hauptgruppe';
@@ -18581,10 +19063,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTypeWhoBelongs => 'Wer gehört dazu';
 
   @override
-  String get redesignTypeWhoBelongsHint =>
-      'Gruppen und Filter nach eigenen Feldern';
-
-  @override
   String get redesignTypesListAdd => 'Anwesenheits-Typ hinzufügen';
 
   @override
@@ -18729,8 +19207,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkCreateCreateAndAdd => 'Anlegen und Noten hinzufügen';
 
   @override
-  String get redesignWorkCreateInstrumentationHint =>
-      'Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.';
+  String redesignWorkCreateInstrumentationHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra':
+          'Welche Instrumente mitspielen, erkennt die App an den Noten, die du gleich hochlädst.',
+      'choir':
+          'Welche Stimmen mitsingen, erkennt die App an den Noten, die du gleich hochlädst.',
+      'other':
+          'Welche Untergruppen dabei sind, erkennt die App an den Noten, die du gleich hochlädst.',
+    });
+    return '$_temp0';
+  }
 
   @override
   String get redesignWorkCreateLater =>
@@ -18783,8 +19270,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkEditInstrumentation => 'Besetzung';
 
   @override
-  String get redesignWorkEditInstrumentationHint =>
-      'Welche Gruppen mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.';
+  String redesignWorkEditInstrumentationHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra':
+          'Welche Instrumente mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.',
+      'choir':
+          'Welche Stimmen mitsingen, ergibt sich aus den hochgeladenen Noten. Fehlt eine, lädst du sie auf der Werk-Seite hoch.',
+      'other':
+          'Welche Untergruppen dabei sind, ergibt sich aus den hochgeladenen Noten. Fehlt eine, lädst du die Noten auf der Werk-Seite hoch.',
+    });
+    return '$_temp0';
+  }
 
   @override
   String get redesignWorkEditLink => 'Link';
@@ -18895,17 +19391,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String redesignWorkInstrumentationHint(Object names) {
     return 'aus den Noten: $names';
-  }
-
-  @override
-  String redesignWorkInstrumentationValue(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Gruppen',
-      one: '1 Gruppe',
-    );
-    return '$_temp0';
   }
 
   @override
@@ -19173,7 +19658,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorksFoldersMenu => 'Noten nach Stimme';
 
   @override
-  String get redesignWorksForGroup => 'Für Gruppe';
+  String redesignWorksForGroup(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Instrument',
+      'choir': 'Stimme',
+      'other': 'Untergruppe',
+    });
+    return 'Für $_temp0';
+  }
 
   @override
   String get redesignWorksForGroupAll => 'Alle';

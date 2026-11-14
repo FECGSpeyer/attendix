@@ -36,6 +36,7 @@ import '../../../members/data/providers/members_providers.dart' show membersEint
 import '../../../people/people_list_utils.dart' show withExtraFieldDefaults;
 import '../../../people/rate_filter_labels.dart' show rateFilterChip;
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
+import '../../data/rd_words.dart';
 import '../widgets/members/rd_invite_sheet.dart';
 import '../widgets/members/rd_member_bulk.dart';
 import '../widgets/members/rd_members_filter_sheet.dart';
@@ -223,7 +224,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
         [...allPeople, ...allPending],
         groups: groups,
         percentages: const {},
-        noGroupLabel: l10n.attendanceNoGroup,
+        noGroupLabel: l10n.rdWordsNoGroup(ref.watch(rdGroupKindProvider)),
       ))
         for (final x in s.people) x.id: s.title,
     };
@@ -235,7 +236,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
             shown,
             groups: groups,
             percentages: percentages,
-            noGroupLabel: l10n.attendanceNoGroup,
+            noGroupLabel: l10n.rdWordsNoGroup(ref.watch(rdGroupKindProvider)),
             byCategory: byCategory,
           )
         : [
@@ -379,7 +380,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
                   for (final chip in _activeChips(
                     context,
                     listFilter: listFilter,
-                    byRegister: hasCategories && !byCategory,
+                    byGroup: hasCategories && !byCategory,
                     criticalOnly: criticalOnly,
                     groups: groups,
                     fields: fields,
@@ -594,7 +595,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
                   label: l10n.redesignBulkSelected(selection.length),
                   busy: bulkBusy,
                   actions: [
-                    (Icons.swap_horiz, l10n.redesignBulkActionGroup, () => bulkMoveToGroup(selection), false),
+                    (Icons.swap_horiz, l10n.rdWordsGroup(ref.watch(rdGroupKindProvider)), () => bulkMoveToGroup(selection), false),
                     if (selection.any((x) => !x.paused))
                       (Icons.pause_circle_outline, l10n.redesignBulkActionPause, () => bulkPause(selection), false),
                     (Icons.edit_note, l10n.redesignBulkActionField, () => bulkSetField(selection), false),
@@ -612,7 +613,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
   List<Widget> _activeChips(
     BuildContext context, {
     required RdMembersListFilter listFilter,
-    required bool byRegister,
+    required bool byGroup,
     required bool criticalOnly,
     required List<Group> groups,
     required List<ExtraField> fields,
@@ -620,6 +621,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
     required List<Tenant> linkedTenants,
   }) {
     final l10n = context.l10n;
+    final kind = ref.watch(rdGroupKindProvider);
     void set(RdMembersListFilter f) => ref.read(rdMembersListFilterProvider.notifier).state = f;
     Widget chip(String label, VoidCallback onRemove) => RdRemovableChip(
           label: label,
@@ -629,16 +631,16 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
     return [
       if (listFilter.sort != RdMembersSort.group)
         RdRemovableChip(
-          label: rdMembersSortLabel(l10n, listFilter.sort),
-          semanticLabel: l10n.redesignWorksSortRemove(rdMembersSortLabel(l10n, listFilter.sort)),
+          label: rdMembersSortLabel(l10n, listFilter.sort, kind),
+          semanticLabel: l10n.redesignWorksSortRemove(rdMembersSortLabel(l10n, listFilter.sort, kind)),
           onRemove: () => set(listFilter.copyWith(sort: RdMembersSort.group)),
         ),
-      // Split by register instead of category (a view, so not counted).
-      if (byRegister && listFilter.sort == RdMembersSort.group)
+      // Split by group instead of category (a view, so not counted).
+      if (byGroup && listFilter.sort == RdMembersSort.group)
         RdRemovableChip(
           key: const Key('rd-members-by-register-chip'),
-          label: l10n.redesignMembersByRegisterChip,
-          semanticLabel: l10n.redesignWorksSortRemove(l10n.redesignMembersByRegisterChip),
+          label: l10n.redesignMembersByGroupChip(kind),
+          semanticLabel: l10n.redesignWorksSortRemove(l10n.redesignMembersByGroupChip(kind)),
           onRemove: () => ref.read(rdMembersByCategoryProvider.notifier).set(true),
         ),
       if (criticalOnly)
@@ -692,7 +694,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
           RdManageEntry.archive,
           RdManageEntry.export,
         ])
-          AppActionSheetAction(value: e, icon: rdManageIcon(e), label: rdManageTitle(l10n, e)),
+          AppActionSheetAction(value: e, icon: rdManageIcon(e), label: rdManageTitle(l10n, e, kind: ref.read(rdGroupKindProvider))),
       ],
     );
     if (entry == null || !mounted) return;
@@ -743,7 +745,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
         onChanged: (v) => setState(() => _query = v),
         textInputAction: TextInputAction.search,
         decoration: InputDecoration(
-          hintText: l10n.redesignMembersSearch,
+          hintText: l10n.redesignMembersSearch(ref.watch(rdGroupKindProvider)),
           prefixIcon: Icon(Icons.search, color: p.text2),
           suffixIcon: _query.isEmpty
               ? null
@@ -786,7 +788,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
     final values = ['', ...options];
 
     final shown = einteilung.isEmpty ? people : people.where((x) => rdEinteilungOf(x) == einteilung).toList();
-    final sections = rdMemberSections(shown, groups: groups, percentages: const {}, noGroupLabel: l10n.attendanceNoGroup);
+    final sections = rdMemberSections(shown, groups: groups, percentages: const {}, noGroupLabel: l10n.rdWordsNoGroup(ref.watch(rdGroupKindProvider)));
     final filtered = [
       for (final s in sections)
         if (s.people.any((x) => rdPersonMatches(x, _query, register: s.title)))

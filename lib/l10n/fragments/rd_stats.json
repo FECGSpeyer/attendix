@@ -11,7 +11,6 @@
       "split": "Statusverteilung",
       "filterTypes": "Terminarten",
       "filterTypesHint": "Gilt nur für diese Ansicht. Vorausgewählt sind die Arten, die zur Anwesenheitsquote zählen.",
-      "filterGroups": "Register",
       "filterShow": "{count, plural, =0 {Keine Termine} one {1 Termin zeigen} other {{count} Termine zeigen}}",
       "filterRemove": "Filter „{label}“ entfernen",
       "eventGroup": "{label} ({count})",
@@ -34,7 +33,7 @@
       "notable": "Fällt auf",
       "notableDrop": "{name} lässt nach",
       "notableDropDetail": "{now} statt {before} im Zeitraum davor",
-      "notableWeakGroup": "Schwächstes Register: {name}",
+      "notableWeakGroup": "{kind, select, orchestra{Schwächstes Instrument} choir{Schwächste Stimme} other{Schwächste Untergruppe}}: {name}",
       "notableWeakest": "Schwächster Termin",
       "notableBest": "Bester Termin",
       "byType": "Termine je Art",
@@ -49,9 +48,7 @@
       "countLate": "{count} verspätet",
       "countOpen": "{count} neutral",
       "allThere": "Alle da",
-      "tabRegister": "Register",
       "tabPeople": "Personen",
-      "registerHint": "Kurve: Quote je Monat. Antippen zeigt die Personen des Registers.",
       "personSortFewest": "Wenigste zuerst",
       "personSortMost": "Meiste zuerst",
       "personSortAbsent": "Oft abwesend",
@@ -64,7 +61,6 @@
       "personOpen": "Person öffnen",
       "personDots": "{count, plural, one {1 Termin, ältester links} other {{count} Termine, ältester links}}",
       "colName": "Name",
-      "colRegister": "Register",
       "colQuote": "Quote",
       "colPresent": "Anw.",
       "colLate": "Versp.",
@@ -82,7 +78,7 @@
       "age": "Alter",
       "ageHint": "Aktive Mitglieder mit Geburtsdatum",
       "ageBucket": "{from}–{to} Jahre",
-      "ageAvgGroup": "Ø Alter je Register",
+      "ageAvgGroup": "Ø Alter je {kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}",
       "ageYears": "{years} J.",
       "ageNone": "Bei den aktiven Mitgliedern ist kein Geburtsdatum eingetragen.",
       "fields": "Eigene Felder",
@@ -90,7 +86,8 @@
       "orgGroups": "Gruppen",
       "orgGroupsAll": "Alle ({count})",
       "orgGroupsHint": "Zählt nur die Personen der gewählten Gruppen. Dieselbe Person in mehreren Gruppen zählt einmal.",
-      "orgPeople": "Personen in allen Gruppen"
+      "orgPeople": "Personen in allen Gruppen",
+      "groupHint": "Kurve: Quote je Monat. Antippen zeigt die Personen {kind, select, orchestra{des Instruments} choir{der Stimme} other{der Untergruppe}}."
     }
   },
   "en": {
@@ -105,7 +102,6 @@
       "split": "Status split",
       "filterTypes": "Event types",
       "filterTypesHint": "Only for this view. Preselected are the types that count towards the attendance rate.",
-      "filterGroups": "Sections",
       "filterShow": "{count, plural, =0 {No events} one {Show 1 event} other {Show {count} events}}",
       "filterRemove": "Remove filter “{label}”",
       "eventGroup": "{label} ({count})",
@@ -128,7 +124,7 @@
       "notable": "Worth a look",
       "notableDrop": "{name} is slipping",
       "notableDropDetail": "{now} instead of {before} in the period before",
-      "notableWeakGroup": "Weakest section: {name}",
+      "notableWeakGroup": "Weakest {kind, select, orchestra{instrument} choir{voice} other{subgroup}}: {name}",
       "notableWeakest": "Weakest event",
       "notableBest": "Best event",
       "byType": "Events by type",
@@ -143,9 +139,7 @@
       "countLate": "{count} late",
       "countOpen": "{count} neutral",
       "allThere": "All there",
-      "tabRegister": "Sections",
       "tabPeople": "People",
-      "registerHint": "Curve: rate per month. Tap to see the people of the section.",
       "personSortFewest": "Fewest first",
       "personSortMost": "Most first",
       "personSortAbsent": "Often absent",
@@ -158,7 +152,6 @@
       "personOpen": "Open person",
       "personDots": "{count, plural, one {1 event, oldest left} other {{count} events, oldest left}}",
       "colName": "Name",
-      "colRegister": "Section",
       "colQuote": "Rate",
       "colPresent": "Pres.",
       "colLate": "Late",
@@ -176,7 +169,7 @@
       "age": "Age",
       "ageHint": "Active members with a birthday",
       "ageBucket": "{from}–{to} years",
-      "ageAvgGroup": "Average age per section",
+      "ageAvgGroup": "Average age per {kind, select, orchestra{instrument} choir{voice} other{subgroup}}",
       "ageYears": "{years} y",
       "ageNone": "None of the active members has a birthday entered.",
       "fields": "Custom fields",
@@ -184,7 +177,8 @@
       "orgGroups": "Groups",
       "orgGroupsAll": "All ({count})",
       "orgGroupsHint": "Counts only the people of the chosen groups. The same person in several groups counts once.",
-      "orgPeople": "People in all groups"
+      "orgPeople": "People in all groups",
+      "groupHint": "Curve: rate per month. Tap to see the people of the {kind, select, orchestra{instrument} choir{voice} other{subgroup}}."
     }
   }
 }

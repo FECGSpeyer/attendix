@@ -22,6 +22,7 @@ import '../../../messages/presentation/pages/message_compose_page.dart' show Mes
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../messages/presentation/widgets/message_editor_toolbar.dart';
+import '../../data/rd_words.dart';
 import '../widgets/rd_widgets.dart';
 
 /// Tiptap document of a plain text (one paragraph per line), the format
@@ -203,7 +204,7 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
       if (!_complete) {
         ToastHelper.showError(context, context.l10n.redesignComposeMissing);
       } else if (!_sending && _counts != null && !_countsFailed) {
-        ToastHelper.showError(context, context.l10n.redesignComposeNoRecipients);
+        ToastHelper.showError(context, context.l10n.redesignComposeNoRecipients(ref.read(rdGroupKindProvider)));
       }
       return;
     }
@@ -359,7 +360,7 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
               onTap: () => _change(() => _onlyGroups = false),
             ),
             RdChoiceChip(
-              label: l10n.redesignComposeGroups,
+              label: l10n.redesignComposeGroups(ref.watch(rdGroupKindProvider)),
               selected: _onlyGroups,
               onTap: () => _change(() => _onlyGroups = true),
             ),

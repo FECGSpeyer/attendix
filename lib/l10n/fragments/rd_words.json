@@ -1,0 +1,42 @@
+{
+  "de": {
+    "rdWords": {
+      "group": "{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}",
+      "groupCount": "{kind, select, orchestra{{count, plural, one {1 Instrument} other {{count} Instrumente}}} choir{{count, plural, one {1 Stimme} other {{count} Stimmen}}} other{{count, plural, one {1 Untergruppe} other {{count} Untergruppen}}}}",
+      "groups": "{kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}}",
+      "category": "{kind, select, orchestra{Register} choir{Kategorie} other{Kategorie}}",
+      "categories": "{kind, select, orchestra{Register} choir{Kategorien} other{Kategorien}}",
+      "noGroup": "{kind, select, orchestra{Ohne Instrument} choir{Ohne Stimme} other{Ohne Untergruppe}}",
+      "noCategory": "{kind, select, orchestra{Kein Register} choir{Keine Kategorie} other{Keine Kategorie}}",
+      "newGroup": "{kind, select, orchestra{Neues Instrument} choir{Neue Stimme} other{Neue Untergruppe}}",
+      "groupsAll": "Nichts ausgewählt: gilt für alle {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}}.",
+      "groupsSome": "Gilt nur für Personen aus den ausgewählten {kind, select, orchestra{Instrumenten} choir{Stimmen} other{Untergruppen}}.",
+      "copyVoiceLeaders": "{kind, select, orchestra{Stimmführer (nur ihr Instrument)} choir{Stimmführer (nur ihre Stimme)} other{Stimmführer (nur ihre Untergruppe)}}",
+      "noGroupsYet": "{kind, select, orchestra{Es gibt noch keine Instrumente. Lege zuerst mindestens ein Instrument an, bevor du die Anmeldung einschaltest.} choir{Es gibt noch keine Stimmen. Lege zuerst mindestens eine Stimme an, bevor du die Anmeldung einschaltest.} other{Es gibt noch keine Untergruppen. Lege zuerst mindestens eine Untergruppe an, bevor du die Anmeldung einschaltest.}}",
+      "groupFilter": "{kind, select, orchestra{Spielt das Instrument...} choir{Singt in der Stimme...} other{Ist in der Untergruppe...}}",
+      "newGroupFailed": "{kind, select, orchestra{Das Instrument „{name}“ konnte nicht angelegt werden} choir{Die Stimme „{name}“ konnte nicht angelegt werden} other{Die Untergruppe „{name}“ konnte nicht angelegt werden}}",
+      "severalGroups": "{kind, select, orchestra{Geht an jedes dieser Instrumente} choir{Geht an jede dieser Stimmen} other{Geht an jede dieser Untergruppen}}",
+      "printGroupPdfs": "{kind, select, orchestra{PDFs je Instrument drucken} choir{PDFs je Stimme drucken} other{PDFs je Untergruppe drucken}}"
+    }
+  },
+  "en": {
+    "rdWords": {
+      "group": "{kind, select, orchestra{Instrument} choir{Voice} other{Subgroup}}",
+      "groupCount": "{kind, select, orchestra{{count, plural, one {1 instrument} other {{count} instruments}}} choir{{count, plural, one {1 voice} other {{count} voices}}} other{{count, plural, one {1 subgroup} other {{count} subgroups}}}}",
+      "groups": "{kind, select, orchestra{Instruments} choir{Voices} other{Subgroups}}",
+      "category": "{kind, select, orchestra{Section} choir{Category} other{Category}}",
+      "categories": "{kind, select, orchestra{Sections} choir{Categories} other{Categories}}",
+      "noGroup": "{kind, select, orchestra{No instrument} choir{No voice} other{No subgroup}}",
+      "noCategory": "{kind, select, orchestra{No section} choir{No category} other{No category}}",
+      "newGroup": "New {kind, select, orchestra{instrument} choir{voice} other{subgroup}}",
+      "groupsAll": "Nothing selected: applies to all {kind, select, orchestra{instruments} choir{voices} other{subgroups}}.",
+      "groupsSome": "Applies only to people from the selected {kind, select, orchestra{instruments} choir{voices} other{subgroups}}.",
+      "copyVoiceLeaders": "Section leaders (only their {kind, select, orchestra{instrument} choir{voice} other{subgroup}})",
+      "noGroupsYet": "There are no {kind, select, orchestra{instruments} choir{voices} other{subgroups}} yet. Add at least one before you turn on sign-up.",
+      "groupFilter": "{kind, select, orchestra{Plays the instrument...} choir{Sings in the voice...} other{Is in the subgroup...}}",
+      "newGroupFailed": "The {kind, select, orchestra{instrument} choir{voice} other{subgroup}} \"{name}\" could not be created",
+      "severalGroups": "Goes to each of these {kind, select, orchestra{instruments} choir{voices} other{subgroups}}",
+      "printGroupPdfs": "Print PDFs per {kind, select, orchestra{instrument} choir{voice} other{subgroup}}"
+    }
+  }
+}

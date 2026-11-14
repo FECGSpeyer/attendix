@@ -18,6 +18,7 @@ class RdPultView extends StatelessWidget {
   const RdPultView({
     super.key,
     required this.title,
+    required this.noGroupLabel,
     required this.members,
     required this.available,
     required this.showNote,
@@ -31,6 +32,9 @@ class RdPultView extends StatelessWidget {
 
   /// Name of the Termin ("Gesamtprobe").
   final String title;
+
+  /// Heading for members without a group ("Ohne Instrument").
+  final String noGroupLabel;
   final List<RdMember> members;
   final Set<AttendanceStatus> available;
 
@@ -59,10 +63,10 @@ class RdPultView extends StatelessWidget {
     final counts = RdStatusCounts.fromStatuses(members.map((m) => m.status));
     final canPresent = available.contains(AttendanceStatus.present);
 
-    // Registers in the page's order ("Holz", "Blech" …).
+    // Groups in the page's order ("Violine", "Trompete" …).
     final groups = <({String name, List<RdMember> members})>[];
     for (final m in members) {
-      final name = m.groupName ?? l10n.attendanceNoGroup;
+      final name = m.groupName ?? noGroupLabel;
       if (groups.isEmpty || groups.last.name != name) {
         groups.add((name: name, members: [m]));
       } else {

@@ -10,6 +10,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../export/export_fields.dart';
 import '../../../export/presentation/pages/export_page.dart';
+import '../../data/rd_words.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_handover_page.dart' show RdStepButton;
@@ -41,9 +42,10 @@ class _RdExportPageState extends ConsumerState<RdExportPage> with ExportLogic {
 
   Future<void> _editColumns(List<String> available) async {
     final tenantId = ref.read(currentTenantIdProvider);
+    final kind = ref.read(rdGroupKindProvider);
     final result = await showRdSettingsSheet<List<String>>(
       context,
-      (_) => _ColumnsSheet(selected: selectedFields, available: available),
+      (_) => _ColumnsSheet(selected: selectedFields, available: available, kind: kind),
     );
     if (result != null && _stillIn(tenantId)) setState(() => selectedFields = result);
   }
@@ -55,7 +57,7 @@ class _RdExportPageState extends ConsumerState<RdExportPage> with ExportLogic {
       context,
       title: l10n.rdDataSort,
       selected: sortField,
-      options: [for (final o in options) (o.value, o.label)],
+      options: [for (final o in options) (o.value, _sortLabel(o, l10n, ref.read(rdGroupKindProvider)))],
     );
     if (picked != null && _stillIn(tenantId)) setState(() => sortField = picked);
   }
@@ -88,8 +90,10 @@ class _RdExportPageState extends ConsumerState<RdExportPage> with ExportLogic {
     final available = availableExportFields(contentType, extraFields);
     final sortOptions = exportSortOptions(contentType, extraFields);
     if (!sortOptions.any((o) => o.value == sortField)) sortField = 'gruppe';
-    final sortLabel = sortOptions.where((o) => o.value == sortField).map((o) => o.label).firstOrNull ?? '';
-    final columns = selectedFields.map((f) => rdExportFieldLabel(f, l10n)).join(', ');
+    final kind = ref.watch(rdGroupKindProvider);
+    final sortLabel =
+        sortOptions.where((o) => o.value == sortField).map((o) => _sortLabel(o, l10n, kind)).firstOrNull ?? '';
+    final columns = selectedFields.map((f) => rdExportFieldLabel(f, l10n, kind)).join(', ');
 
     return RdPage(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 110),
@@ -148,10 +152,13 @@ class _RdExportPageState extends ConsumerState<RdExportPage> with ExportLogic {
 /// Columns of the export: chosen ones to sort or remove, the others to add,
 /// plus an own (empty) column.
 class _ColumnsSheet extends StatefulWidget {
-  const _ColumnsSheet({required this.selected, required this.available});
+  const _ColumnsSheet({required this.selected, required this.available, required this.kind});
 
   final List<String> selected;
   final List<String> available;
+
+  /// Kind of the group, for the name of the "Gruppe" column.
+  final String kind;
 
   @override
   State<_ColumnsSheet> createState() => _ColumnsSheetState();
@@ -206,7 +213,7 @@ class _ColumnsSheetState extends State<_ColumnsSheet> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(rdExportFieldLabel(_cols[i], l10n), style: RdType.body(p)),
+                              Text(rdExportFieldLabel(_cols[i], l10n, widget.kind), style: RdType.body(p)),
                               if (!widget.available.contains(_cols[i]))
                                 Text(l10n.rdDataOwnEmpty, style: RdType.meta(p)),
                             ],
@@ -229,7 +236,7 @@ class _ColumnsSheetState extends State<_ColumnsSheet> {
               for (final f in rest)
                 RdListRow(
                   leading: Icon(Icons.add_circle_outline, color: p.primary),
-                  title: rdExportFieldLabel(f, l10n),
+                  title: rdExportFieldLabel(f, l10n, widget.kind),
                   showChevron: false,
                   onTap: () => setState(() => _cols.add(f)),
                 ),
@@ -243,7 +250,12 @@ class _ColumnsSheetState extends State<_ColumnsSheet> {
   }
 }
 
-/// Column names of the export page: "Register" like the rest of the new
-/// design, where the classic export says "Gruppe".
-String rdExportFieldLabel(String field, AppLocalizations l10n) =>
-    field == 'Gruppe' ? l10n.rdAdminGroups : exportFieldLabel(field, l10n);
+/// Sort options of the export page: "Gruppe" with the word of the new design.
+String _sortLabel(ExportSortOption option, AppLocalizations l10n, String kind) =>
+    option.value == 'gruppe' ? l10n.rdWordsGroup(kind) : option.label;
+
+/// Column names of the export page: the word of the new design for the
+/// group ("Instrument", "Stimme", "Untergruppe" by [kind]), where the
+/// classic export says "Gruppe".
+String rdExportFieldLabel(String field, AppLocalizations l10n, String kind) =>
+    field == 'Gruppe' ? l10n.rdWordsGroup(kind) : exportFieldLabel(field, l10n);

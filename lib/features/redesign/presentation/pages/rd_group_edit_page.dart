@@ -19,6 +19,7 @@ import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../../../instruments/presentation/pages/instruments_list_page.dart'
     show groupClefLabel, groupClefOptions, groupTuningOptions;
 import '../../../instruments/presentation/widgets/instrument_categories_sheet.dart';
+import '../../data/rd_words.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
@@ -195,7 +196,7 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     final l10n = context.l10n;
     final choice = await showAppActionSheet<int>(
       context,
-      title: l10n.redesignGroupEditCategory,
+      title: l10n.rdWordsCategory(ref.read(rdGroupKindProvider)),
       actions: [
         AppActionSheetAction(value: -1, label: l10n.redesignGroupEditCategoryNone),
         for (final c in categories)
@@ -262,6 +263,7 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
   Future<void> _delete(Group group) async {
     if (_deleting) return;
     final l10n = context.l10n;
+    final kind = ref.read(rdGroupKindProvider);
     setState(() => _deleting = true);
     try {
       int count;
@@ -269,19 +271,19 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
         count = await ref.read(groupRepositoryWithTenantProvider).getPlayerCountInGroup(_groupId, includeArchived: true);
       } catch (_) {
         // Unknown member count: never delete a group that may still have people.
-        if (mounted) ToastHelper.showError(context, l10n.redesignGroupEditDeleteFailed);
+        if (mounted) ToastHelper.showError(context, l10n.redesignGroupEditDeleteFailed(kind));
         return;
       }
       if (!mounted) return;
       if (count > 0) {
         ref.invalidate(rdGroupMemberCountProvider(_groupId));
-        ToastHelper.showError(context, l10n.redesignGroupEditDeleteMembers(count));
+        ToastHelper.showError(context, l10n.redesignGroupEditDeleteMembers(kind, count));
         return;
       }
       final confirmed = await DialogHelper.showConfirmation(
         context,
-        title: l10n.redesignGroupEditDelete,
-        message: l10n.redesignGroupEditDeleteConfirm(_name.text.trim().isEmpty ? group.name : _name.text.trim()),
+        title: l10n.redesignGroupEditDelete(kind),
+        message: l10n.redesignGroupEditDeleteConfirm(kind, _name.text.trim().isEmpty ? group.name : _name.text.trim()),
         confirmText: l10n.commonDelete,
         isDestructive: true,
       );
@@ -296,7 +298,7 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
       if (!mounted) return;
       if (ref.read(groupNotifierProvider).hasError) {
         _deleted = false;
-        ToastHelper.showError(context, l10n.redesignGroupEditDeleteFailed);
+        ToastHelper.showError(context, l10n.redesignGroupEditDeleteFailed(kind));
         return;
       }
       ref.invalidate(playerCountsForGroupsProvider);
@@ -314,6 +316,7 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
+    final kind = ref.watch(rdGroupKindProvider);
     final async = ref.watch(groupsProvider);
     final group = async.valueOrNull?.where((g) => g.id == _groupId).firstOrNull;
 
@@ -324,7 +327,7 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
           async.isLoading || _deleted
               ? RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
               : RdInfoCard(
-                text: async.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignGroupEditNotFound,
+                text: async.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignGroupEditNotFound(kind),
                 icon: Icons.error_outline,
                 action: RdOutlineButton(
                   label: l10n.redesignCommonRetry,
@@ -345,7 +348,7 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
         bottom: false,
         child: Column(
           children: [
-            RdEditTopBar(title: l10n.redesignGroupEditTitle, doneKey: const Key('rd-group-edit-done'), onDone: _done),
+            RdEditTopBar(title: l10n.redesignGroupEditTitle(kind), doneKey: const Key('rd-group-edit-done'), onDone: _done),
             Expanded(child: body),
           ],
         ),
@@ -357,7 +360,10 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     final p = context.rd;
     final l10n = context.l10n;
     final tenantType = ref.watch(currentTenantProvider)?.type;
+    final kind = ref.watch(rdGroupKindProvider);
     final categories = ref.watch(groupCategoriesProvider).valueOrNull ?? const <GroupCategory>[];
+    // A choir has no level above its Stimmen (see [rdOffersCategories]).
+    final withCategory = rdOffersCategories(kind, categories);
     final isMain = group.maingroup == true;
     final isGeneral = tenantType == 'general';
     // Like the old page: the music fields only for orchestras, never for
@@ -391,7 +397,7 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
         isMain
             ? l10n.redesignGroupEditDeleteMain
             : (memberCount ?? 0) > 0
-            ? l10n.redesignGroupEditDeleteMembers(memberCount!)
+            ? l10n.redesignGroupEditDeleteMembers(kind, memberCount!)
             : null;
 
     return RdFormBody(
@@ -403,22 +409,24 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
         RdGroupedList(
           children: [
             RdFieldRow(label: l10n.redesignGroupEditName, child: textField('name', _name, _nameFocus)),
-            RdListRow(
-              key: const Key('rd-group-edit-category'),
-              title: l10n.redesignGroupEditCategory,
-              value: category?.name ?? l10n.redesignGroupEditCategoryNone,
-              onTap: () => _pickCategory(categories),
-            ),
+            if (withCategory)
+              RdListRow(
+                key: const Key('rd-group-edit-category'),
+                title: l10n.rdWordsCategory(kind),
+                value: category?.name ?? l10n.redesignGroupEditCategoryNone,
+                onTap: () => _pickCategory(categories),
+              ),
           ],
         ),
         if (_name.text.trim().isEmpty) hint(l10n.redesignGroupEditNameEmpty, color: p.absent),
-        Align(
-          alignment: AlignmentDirectional.centerEnd,
-          child: RdTextLink(
-            label: l10n.redesignGroupEditManageCategories,
-            onTap: () => showInstrumentCategoriesSheet(context),
+        if (withCategory)
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: RdTextLink(
+              label: l10n.redesignGroupEditManageCategories(kind),
+              onTap: () => showInstrumentCategoriesSheet(context),
+            ),
           ),
-        ),
         if (showMusic) ...[
           const SizedBox(height: 12),
           RdGroupLabel(l10n.redesignGroupEditTuning),
@@ -489,7 +497,7 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
               ),
             ],
           ),
-          hint(l10n.redesignGroupEditSynonymsHint),
+          hint(l10n.redesignGroupEditSynonymsHint(kind)),
         ],
         const SizedBox(height: 20),
         RdGroupedList(
@@ -509,7 +517,7 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
           children: [
             RdListRow(
               key: const Key('rd-group-edit-delete'),
-              title: l10n.redesignGroupEditDelete,
+              title: l10n.redesignGroupEditDelete(kind),
               titleColor: deleteBlocked == null ? p.absent : p.text2,
               leading: Icon(Icons.delete_outline, color: deleteBlocked == null ? p.absent : p.text2),
               showChevron: false,

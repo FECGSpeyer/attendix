@@ -25,6 +25,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../people/person_write.dart' show personUtcMidnightIso;
 import '../../../../people/presentation/widgets/church_picker_sheet.dart';
+import '../../../data/rd_words.dart';
 import '../manage/rd_teacher_create_sheet.dart' show showRdAddTeacherSheet;
 import '../../../../people/presentation/widgets/person_detail/allgemein_accordion.dart'
     show otherOrchestraOptions, personExtraFields;
@@ -217,7 +218,7 @@ class RdPersonGroupChips extends ConsumerWidget {
       children: [
         chips,
         const SizedBox(height: 4),
-        RdTextLink(label: context.l10n.rdAdminManageGroups, onTap: onManage!),
+        RdTextLink(label: context.l10n.rdAdminManageGroups(ref.watch(rdGroupKindProvider)), onTap: onManage!),
       ],
     );
   }
@@ -326,7 +327,7 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
     final v = await showAppActionSheet<int>(
       context,
       title: l10n.peopleTeacher,
-      message: options.isEmpty ? l10n.rdPeopleTeacherNone : null,
+      message: options.isEmpty ? l10n.rdPeopleTeacherNone(ref.read(rdGroupKindProvider)) : null,
       actions: [
         for (final o in options) AppActionSheetAction<int>(value: o.$1, label: o.$2),
         if (canAdd)

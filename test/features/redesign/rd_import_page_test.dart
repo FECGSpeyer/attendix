@@ -19,6 +19,7 @@ import 'package:attendix/features/redesign/data/import/rd_import_controller.dart
 import 'package:attendix/features/redesign/data/import/rd_import_drive.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_logic.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_source.dart';
+import 'package:attendix/features/redesign/data/rd_words.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_import_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show RdChoiceChip, RdPrimaryButton;
 import 'package:attendix/features/redesign/presentation/widgets/import/rd_import_widgets.dart' show RdImportQuestionPreview;
@@ -187,6 +188,7 @@ List<Override> _overrides(_FakeFiles files, _FakeSongs songs, _FakeGroupNotifier
       initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings(enabled: true, world: RdFarbwelt.petrol)),
       effectiveRoleProvider.overrideWithValue(Role.admin),
       currentTenantIdProvider.overrideWithValue(7),
+      rdGroupKindProvider.overrideWithValue('orchestra'),
       readySongFileServiceProvider.overrideWith((ref) async => files),
       songFileServiceProvider.overrideWithValue(files),
       songRepositoryWithTenantProvider.overrideWithValue(songs),
@@ -1015,22 +1017,22 @@ void main() {
     expect(find.text('Schritt 2 von 4 · Stimmen'), findsOneWidget);
     expect(find.text('„Kazoo“ gehört zu …'), findsOneWidget);
     // The proposed name is taken as it is; another one under "Andere …".
-    await tester.tap(find.text('Neue Gruppe „Kazoo“'));
+    await tester.tap(find.text('Neues Instrument „Kazoo“'));
     await tester.pumpAndSettle();
     expect(find.byType(TextField), findsNothing);
     await tester.tap(find.text('Andere …'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Neue Gruppe anlegen …'));
+    await tester.tap(find.text('Neues Instrument anlegen …'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Saxophon');
-    await tester.tap(find.text('Neue Gruppe anlegen').last);
+    await tester.tap(find.text('Neues Instrument anlegen').last);
     await tester.pumpAndSettle();
-    expect(find.text('Neue Gruppe „Saxophon“'), findsOneWidget);
+    expect(find.text('Neues Instrument „Saxophon“'), findsOneWidget);
     // A tap on the question shows the first page of its files above the choices.
     await tester.tap(find.text('„Kazoo“ gehört zu …'));
     await tester.pumpAndSettle();
     expect(find.byType(RdImportQuestionPreview), findsOneWidget);
-    await tester.tap(find.text('Neue Gruppe „Saxophon“').last);
+    await tester.tap(find.text('Neues Instrument „Saxophon“').last);
     await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('Zur Prüfung'));
@@ -1138,7 +1140,7 @@ void main() {
     }
 
     RdChoiceChip chip() =>
-        tester.widget<RdChoiceChip>(find.ancestor(of: find.text('Neue Gruppe „Oboe“'), matching: find.byType(RdChoiceChip)));
+        tester.widget<RdChoiceChip>(find.ancestor(of: find.text('Neues Instrument „Oboe“'), matching: find.byType(RdChoiceChip)));
 
     // The KI says the same as the known instrument: still its answer (✦).
     var container = await open(RdImportAi((_) async => {
@@ -1155,7 +1157,7 @@ void main() {
     container = await open(_noAi);
     expect(chip().selected, isTrue);
     expect(chip().icon, isNull);
-    await tester.tap(find.text('Neue Gruppe „Oboe“'));
+    await tester.tap(find.text('Neues Instrument „Oboe“'));
     await tester.pumpAndSettle();
     expect(find.byType(TextField), findsNothing);
     expect(container.read(rdImportProvider).decisions.answers['oboe'], const RdImportCategory(newGroup: 'Oboe'));
@@ -1188,18 +1190,18 @@ void main() {
     });
     await tester.pump();
     expect(find.text('Die KI hat 1 Antwort ausgefüllt (✦), bitte kurz prüfen.'), findsOneWidget);
-    final chip = find.ancestor(of: find.text('Neue Gruppe „Saxophon“'), matching: find.byType(RdChoiceChip));
+    final chip = find.ancestor(of: find.text('Neues Instrument „Saxophon“'), matching: find.byType(RdChoiceChip));
     expect(tester.widget<RdChoiceChip>(chip).selected, isTrue);
     expect(tester.widget<RdChoiceChip>(chip).icon, Icons.auto_awesome);
 
     // The ✦ is read out, and the chip can still be tapped with a screen
     // reader.
-    expect(tester.widget<RdChoiceChip>(chip).semanticLabel, 'Neue Gruppe „Saxophon“, Vorschlag der KI');
+    expect(tester.widget<RdChoiceChip>(chip).semanticLabel, 'Neues Instrument „Saxophon“, Vorschlag der KI');
     final semantics = tester.ensureSemantics();
     await tester.pump();
     expect(
-      tester.getSemantics(find.bySemanticsLabel('Neue Gruppe „Saxophon“, Vorschlag der KI')),
-      containsSemantics(label: 'Neue Gruppe „Saxophon“, Vorschlag der KI', isButton: true, isSelected: true, hasTapAction: true),
+      tester.getSemantics(find.bySemanticsLabel('Neues Instrument „Saxophon“, Vorschlag der KI')),
+      containsSemantics(label: 'Neues Instrument „Saxophon“, Vorschlag der KI', isButton: true, isSelected: true, hasTapAction: true),
     );
     semantics.dispose();
 
@@ -1218,8 +1220,8 @@ void main() {
     await tester.tap(find.text('Vorschläge der KI'));
     await tester.pump();
     expect(find.text('Die KI hat 1 Antwort ausgefüllt (✦), bitte kurz prüfen.'), findsNothing);
-    expect(find.text('Neue Gruppe „Saxophon“'), findsNothing);
-    expect(find.text('Neue Gruppe „Kazoo“'), findsOneWidget);
+    expect(find.text('Neues Instrument „Saxophon“'), findsNothing);
+    expect(find.text('Neues Instrument „Kazoo“'), findsOneWidget);
     expect(container.read(rdImportProvider).decisions.answers, isEmpty);
 
     // Tapping the KI's answer takes it as it is: still chosen, no name

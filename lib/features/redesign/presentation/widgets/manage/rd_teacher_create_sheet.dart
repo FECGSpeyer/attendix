@@ -10,6 +10,7 @@ import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/repositories/teacher_repository.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../teachers/presentation/pages/teachers_list_page.dart' show isTeacherFormValid, loadTeacherGroups;
+import '../../../data/rd_words.dart';
 import '../event/rd_form_widgets.dart' show rdInputDecoration;
 import '../rd_widgets.dart';
 import 'rd_settings_sheets.dart';
@@ -199,7 +200,7 @@ class _RdAddTeacherSheetState extends State<RdAddTeacherSheet> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child:
                     widget.groups.isEmpty
-                        ? Text(l10n.rdTeacherNewNoGroups, style: RdType.meta(p, size: 13))
+                        ? Text(l10n.rdTeacherNewNoGroups(rdGroupKindOf(context)), style: RdType.meta(p, size: 13))
                         : Wrap(
                           spacing: 8,
                           runSpacing: 8,

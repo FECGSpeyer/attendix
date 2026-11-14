@@ -23,6 +23,7 @@ import '../../data/import/rd_import_controller.dart';
 import '../../data/import/rd_import_drive.dart';
 import '../../data/import/rd_import_logic.dart';
 import '../../data/rd_collections_logic.dart';
+import '../../data/rd_words.dart';
 import '../widgets/import/rd_import_widgets.dart';
 import '../widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;
 import '../widgets/rd_widgets.dart';
@@ -811,6 +812,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   Widget _questions(BuildContext context, RdImportState state) {
     final p = context.rd;
     final l10n = context.l10n;
+    final kind = ref.watch(rdGroupKindProvider);
     final plan = state.plan!;
     final d = state.decisions;
     final existing = plan.works.where((w) => w.match.songId != null).length;
@@ -933,7 +935,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                 final title = g.category == null
                     ? l10n.redesignImportGroupUnclear
                     : g.category!.newGroup != null
-                        ? l10n.redesignImportAnswerNewGroup(g.category!.newGroup!)
+                        ? l10n.redesignImportAnswerNewGroup(kind, g.category!.newGroup!)
                         : rdImportCategoryLabel(context, plan, g.category!);
                 final open = _groupOpen[title] ?? g.category == null;
                 return Column(
@@ -1198,6 +1200,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   Widget _upload(BuildContext context, RdImportState state) {
     final p = context.rd;
     final l10n = context.l10n;
+    final kind = ref.watch(rdGroupKindProvider);
     final upload = state.upload;
     final plan = state.plan;
     if (upload == null || plan == null) return _source(context);
@@ -1304,7 +1307,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
         RdGroupedList(
           children: [
             RdListRow(title: l10n.redesignImportDoneNewWorks, value: '${upload.newWorks}', showChevron: false),
-            if (upload.newGroups > 0) RdListRow(title: l10n.redesignImportDoneNewGroups, value: '${upload.newGroups}', showChevron: false),
+            if (upload.newGroups > 0) RdListRow(title: l10n.redesignImportDoneNewGroups(kind), value: '${upload.newGroups}', showChevron: false),
             RdListRow(title: l10n.redesignImportDoneLearned, value: '${upload.learned}', showChevron: false),
             RdListRow(title: l10n.redesignImportDoneSkipped, value: '${summary.skip}', showChevron: false),
             if (summary.open > 0) RdListRow(title: l10n.redesignImportDoneOpen, value: '${summary.open}', showChevron: false),
@@ -1659,14 +1662,14 @@ class _QuestionCard extends StatelessWidget {
             children: [
               if (suggestion != null) chip(suggestion, rdImportCategoryLabel(context, plan, suggestion)),
               if (aiChip)
-                chip(ai, ai.newGroup != null ? l10n.redesignImportAnswerNewGroup(ai.newGroup!) : rdImportCategoryLabel(context, plan, ai)),
+                chip(ai, ai.newGroup != null ? l10n.redesignImportAnswerNewGroup(rdGroupKindOf(context), ai.newGroup!) : rdImportCategoryLabel(context, plan, ai)),
               for (final c in partChoices)
-                chip(c, c.newGroup != null ? l10n.redesignImportAnswerNewGroup(c.newGroup!) : rdImportCategoryLabel(context, plan, c)),
+                chip(c, c.newGroup != null ? l10n.redesignImportAnswerNewGroup(rdGroupKindOf(context), c.newGroup!) : rdImportCategoryLabel(context, plan, c)),
               if (picked != null)
                 RdChoiceChip(label: rdImportCategoryLabel(context, plan, picked), selected: true, onTap: pickOther),
               // Taken as it is (Leon, 07.11.2026); another name under
               // "Andere …" › "Neue Gruppe anlegen …".
-              if (!split && newName.isNotEmpty) chip(newGroup, l10n.redesignImportAnswerNewGroup(newGroup.newGroup!)),
+              if (!split && newName.isNotEmpty) chip(newGroup, l10n.redesignImportAnswerNewGroup(rdGroupKindOf(context), newGroup.newGroup!)),
               // Each file as its first page says ("Solo": Tenor here,
               // Sopran there).
               if (pageChip) chip(fromPage, l10n.redesignImportAnswerFromPage),

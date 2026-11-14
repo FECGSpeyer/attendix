@@ -13,6 +13,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../instruments/presentation/pages/instruments_list_page.dart' show groupClefLabel;
 import '../../../instruments/presentation/widgets/instrument_categories_sheet.dart';
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
+import '../../data/rd_words.dart';
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;
@@ -64,14 +65,14 @@ class _RdGroupsPageState extends ConsumerState<RdGroupsPage> {
     return ok;
   }
 
-  /// "+": the name in a Beta sheet, then straight to "Register bearbeiten"
+  /// "+": the name in a Beta sheet, then straight to its edit page
   /// (category, Stimmung, Schlüssel), like a new Terminart. The old sheet
-  /// left the new Register somewhere in the list.
+  /// left the new group somewhere in the list.
   Future<void> _add() async {
     final l10n = context.l10n;
     final name = await showRdTextSheet(
       context,
-      title: l10n.rdTextGroupNewTitle,
+      title: l10n.rdWordsNewGroup(ref.read(rdGroupKindProvider)),
       hint: l10n.instrumentsGroupPh,
       required: true,
     );
@@ -96,11 +97,12 @@ class _RdGroupsPageState extends ConsumerState<RdGroupsPage> {
     final categories = ref.watch(groupCategoriesProvider).valueOrNull ?? const <GroupCategory>[];
     final counts = ref.watch(playerCountsForGroupsProvider).valueOrNull;
     final tenantType = ref.watch(currentTenantProvider)?.type;
+    final kind = ref.watch(rdGroupKindProvider);
     final groups = groupsAsync.valueOrNull;
 
     return RdManageListPage(
-      title: rdManageTitle(l10n, RdManageEntry.groups),
-      intro: l10n.redesignGroupsListIntro,
+      title: rdManageTitle(l10n, RdManageEntry.groups, kind: kind),
+      intro: l10n.redesignGroupsListIntro(kind),
       sections:
           groups == null
               ? null
@@ -114,14 +116,16 @@ class _RdGroupsPageState extends ConsumerState<RdGroupsPage> {
               ),
       loadFailed: groupsAsync.hasError && !groupsAsync.isLoading,
       onRetry: () => ref.invalidate(groupsProvider),
-      emptyText: l10n.redesignGroupsListEmpty,
+      emptyText: l10n.redesignGroupsListEmpty(kind),
       emptyIcon: Icons.groups_outlined,
-      addLabel: l10n.redesignGroupsListAdd,
+      addLabel: l10n.redesignGroupsListAdd(kind),
       onAdd: isAdmin ? _add : null,
       actions: [
-        if (isAdmin)
+        // A choir has no level above its Stimmen: only offered there while
+        // categories from before still exist.
+        if (isAdmin && rdOffersCategories(kind, categories))
           RdManageListAction(
-            label: l10n.redesignGroupsListManageCategories,
+            label: l10n.redesignGroupsListManageCategories(kind),
             icon: Icons.sell_outlined,
             onSelected: () => showInstrumentCategoriesSheet(context),
           ),
@@ -160,7 +164,7 @@ List<RdManageListSection> rdGroupSections(
   final sections =
       categories.isEmpty
           ? [InstrumentCategorySection(categoryId: null, name: '', sortOrder: null, groups: sortGroupsBySortOrder(groups))]
-          : groupInstrumentsByCategory(groups, categories, noCategoryLabel: l10n.instrumentsNoCategory);
+          : groupInstrumentsByCategory(groups, categories, noCategoryLabel: l10n.rdWordsNoCategory(tenantType ?? ''));
   return [
     for (final s in sections)
       RdManageListSection(
@@ -172,7 +176,7 @@ List<RdManageListSection> rdGroupSections(
               id: g.id ?? g.name,
               title: g.name,
               subtitle: subtitle(g),
-              // An empty Register is no error: a quiet "–" instead of a red
+              // An empty group is no error: a quiet "–" instead of a red
               // "0 Personen".
               count: counts == null ? null : ((counts[g.id] ?? 0) == 0 ? '–' : l10n.commonPersons(counts[g.id] ?? 0)),
               onTap: onTap == null || g.id == null ? null : () => onTap(g.id!),
