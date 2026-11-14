@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.150.2",
+      "date": "14.11.2026",
+      "changes": [
+        "🐛 Synonyme generieren behält vorhandene Synonyme und ergänzt nur neue",
+        "✨ Bessere Synonym-Vorschläge: Abkürzungen und Namen, wie sie in Noten-Dateinamen stehen, ohne Überschneidung mit anderen Registern"
+      ]
+    },
+    {
       "version": "0.150.1",
       "date": "14.11.2026",
       "changes": [
