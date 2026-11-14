@@ -10803,6 +10803,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminHomeOrganisation => 'In Organisation';
 
   @override
+  String get rdAdminHomeRoles => 'In „Rollen und Rechte“';
+
+  @override
   String get rdAdminHomeStats => 'In der Auswertung';
 
   @override
@@ -10897,7 +10900,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminRoles => 'Rollen und Rechte';
 
   @override
-  String get rdAdminRolesHint => 'Was Helfer und Mitglieder dürfen und sehen';
+  String get rdAdminRolesHint => 'Was jede Rolle darf und sieht';
 
   @override
   String rdAdminSearch(String kind) {
@@ -11728,6 +11731,166 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get rdRolesAdjustable => 'Einstellbar';
+
+  @override
+  String get rdRolesAlways => 'Darf immer';
+
+  @override
+  String get rdRolesAssignNote =>
+      'Die Rolle einer Person änderst du bei der Person unter „Rolle“.';
+
+  @override
+  String rdRolesCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen',
+      one: '1 Person',
+      zero: 'Noch niemand',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdRolesFixedAll => 'Alles in dieser Gruppe';
+
+  @override
+  String get rdRolesFixedAllHint => 'Auch Admins hinzufügen und entfernen';
+
+  @override
+  String get rdRolesFixedAttendance => 'Anwesenheit im Termin eintragen';
+
+  @override
+  String get rdRolesFixedManage => 'Mitglieder und Termine verwalten';
+
+  @override
+  String get rdRolesFixedManageWorks => 'Werke und Noten verwalten';
+
+  @override
+  String get rdRolesFixedMyVoice => '„Meine Stimme“ sehen';
+
+  @override
+  String rdRolesFixedMyVoiceHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'des eigenen Instruments',
+      'choir': 'der eigenen Stimme',
+      'other': 'der eigenen Untergruppe',
+    });
+    return 'Kontakt und Abwesenheiten $_temp0';
+  }
+
+  @override
+  String get rdRolesFixedOwnRole => 'Alles, was die eigene Rolle darf';
+
+  @override
+  String get rdRolesFixedOwnRoleHint => 'Mitglied oder Helfer';
+
+  @override
+  String get rdRolesFixedSettings => 'Einstellungen und Rollen ändern';
+
+  @override
+  String get rdRolesFixedSignup => 'Sich zu Terminen an- und abmelden';
+
+  @override
+  String get rdRolesFixedWorks => 'Werke und Noten sehen';
+
+  @override
+  String get rdRolesForAll => 'Für alle in der Gruppe';
+
+  @override
+  String get rdRolesHelperHint => 'Tragen die Anwesenheit ein';
+
+  @override
+  String get rdRolesIntro => 'Wähle eine Rolle und sieh, was sie darf.';
+
+  @override
+  String get rdRolesLeaderAddOn => 'Ein Zusatz zu Mitglied oder Helfer.';
+
+  @override
+  String get rdRolesLeaderHint => 'Sehen „Meine Stimme“';
+
+  @override
+  String get rdRolesLeaderNote =>
+      'Wer Stimmführer ist, legst du bei der Person fest.';
+
+  @override
+  String rdRolesLeaderOwnAlready(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'des eigenen Instruments',
+      'choir': 'der eigenen Stimme',
+      'other': 'der eigenen Untergruppe',
+    });
+    return 'Helfer tragen schon nur die Anwesenheit $_temp0 ein. Das gilt auch für Stimmführer.';
+  }
+
+  @override
+  String get rdRolesLeads => 'Leitung';
+
+  @override
+  String get rdRolesMemberHint => 'Melden sich an und ab';
+
+  @override
+  String get rdRolesMembersHelpers => 'Mitglieder und Helfer';
+
+  @override
+  String get rdRolesNever => 'Darf nie';
+
+  @override
+  String get rdRolesNeverAdmins => 'Admins hinzufügen oder entfernen';
+
+  @override
+  String get rdRolesNeverAdminsHint => 'Nur Admins';
+
+  @override
+  String get rdRolesNeverAttendance => 'Anwesenheit anderer eintragen';
+
+  @override
+  String get rdRolesNeverAttendanceHint =>
+      'Nur Helfer, Admins und Verantwortliche';
+
+  @override
+  String get rdRolesNeverLead => 'Mitglieder verwalten, Einstellungen ändern';
+
+  @override
+  String get rdRolesNeverLeadHint => 'Nur Admins und Verantwortliche';
+
+  @override
+  String get rdRolesNoPeople => 'Noch niemand mit dieser Rolle.';
+
+  @override
+  String get rdRolesOff => 'Aus';
+
+  @override
+  String rdRolesOtherAccounts(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count weitere Zugänge',
+      one: '1 weiterer Zugang',
+    );
+    return '$_temp0 ohne Person in dieser Gruppe.';
+  }
+
+  @override
+  String get rdRolesOthers => 'Weitere Zugänge';
+
+  @override
+  String get rdRolesPeople => 'Personen';
+
+  @override
+  String get rdRolesResponsible => 'Verantwortliche';
+
+  @override
+  String get rdRolesResponsibleHint => 'Leiten die Gruppe';
+
+  @override
+  String get rdRolesSavedHint => 'Jeder Schalter wird sofort gespeichert.';
+
+  @override
+  String get rdRolesSees => 'Sieht';
+
+  @override
   String get rdSettingsAddRule => 'Regel hinzufügen';
 
   @override
@@ -11881,9 +12044,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Aus: können keine neuen Termine anlegen';
 
   @override
-  String get rdSettingsPermHelperLabel => 'Was Helfer dürfen';
-
-  @override
   String get rdSettingsPermHelperNote =>
       'Gilt auch für Helfer, die Stimmführer sind. Sie sehen Notizen und Checkliste immer.';
 
@@ -11897,9 +12057,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get rdSettingsPermLeaderOwnOnlyHint =>
       'Helfer, die Stimmführer sind, tragen nur die Anwesenheit ihrer eigenen Stimme ein';
-
-  @override
-  String get rdSettingsPermMemberLabel => 'Was Mitglieder dürfen';
 
   @override
   String get rdSettingsPermMemberNote =>
@@ -18322,10 +18479,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignRemindTitle(Object count) {
     return '$count noch offen';
   }
-
-  @override
-  String get redesignRolePermIntro =>
-      'Lege fest, was Mitglieder und Helfer in dieser Gruppe sehen und dürfen. Jeder Schalter wird sofort gespeichert.';
 
   @override
   String redesignShiftFrom(Object time) {

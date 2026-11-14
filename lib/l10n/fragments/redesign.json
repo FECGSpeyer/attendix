@@ -874,9 +874,6 @@
         "deleteFailed": "{kind, select, orchestra{Das Instrument} choir{Die Stimme} other{Die Untergruppe}} konnte nicht gelöscht werden.",
         "notFound": "{kind, select, orchestra{Dieses Instrument} choir{Diese Stimme} other{Diese Untergruppe}} gibt es nicht mehr."
       },
-      "rolePerm": {
-        "intro": "Lege fest, was Mitglieder und Helfer in dieser Gruppe sehen und dürfen. Jeder Schalter wird sofort gespeichert."
-      },
       "typesList": {
         "intro": "Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.",
         "empty": "Noch keine Anwesenheits-Typen angelegt.",
@@ -2609,9 +2606,6 @@
         "deleteConfirm": "Really delete the {kind, select, orchestra{instrument} choir{voice} other{subgroup}} “{name}”?",
         "deleteFailed": "The {kind, select, orchestra{instrument} choir{voice} other{subgroup}} could not be deleted.",
         "notFound": "This {kind, select, orchestra{instrument} choir{voice} other{subgroup}} no longer exists."
-      },
-      "rolePerm": {
-        "intro": "Choose what members and helpers see and may do in this group. Each switch is saved right away."
       },
       "typesList": {
         "intro": "Attendance types set the name, time, default status and other defaults of new events.",

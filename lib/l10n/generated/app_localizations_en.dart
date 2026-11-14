@@ -10684,6 +10684,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdAdminHomeOrganisation => 'In Organisation';
 
   @override
+  String get rdAdminHomeRoles => 'In “Roles and rights”';
+
+  @override
   String get rdAdminHomeStats => 'In Statistics';
 
   @override
@@ -10777,7 +10780,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdAdminRoles => 'Roles and permissions';
 
   @override
-  String get rdAdminRolesHint => 'What helpers and members may do and see';
+  String get rdAdminRolesHint => 'What each role may do and see';
 
   @override
   String rdAdminSearch(String kind) {
@@ -11608,6 +11611,166 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rdRolesAdjustable => 'Adjustable';
+
+  @override
+  String get rdRolesAlways => 'May always';
+
+  @override
+  String get rdRolesAssignNote =>
+      'You change a person’s role at the person under “Role”.';
+
+  @override
+  String rdRolesCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people',
+      one: '1 person',
+      zero: 'Nobody yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdRolesFixedAll => 'Everything in this group';
+
+  @override
+  String get rdRolesFixedAllHint => 'Also add and remove admins';
+
+  @override
+  String get rdRolesFixedAttendance => 'Record the attendance of an event';
+
+  @override
+  String get rdRolesFixedManage => 'Manage members and events';
+
+  @override
+  String get rdRolesFixedManageWorks => 'Manage works and sheet music';
+
+  @override
+  String get rdRolesFixedMyVoice => 'See “My section”';
+
+  @override
+  String rdRolesFixedMyVoiceHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'the own instrument',
+      'choir': 'the own voice',
+      'other': 'the own subgroup',
+    });
+    return 'Contact and absences of $_temp0';
+  }
+
+  @override
+  String get rdRolesFixedOwnRole => 'Everything the own role may do';
+
+  @override
+  String get rdRolesFixedOwnRoleHint => 'Member or helper';
+
+  @override
+  String get rdRolesFixedSettings => 'Change settings and roles';
+
+  @override
+  String get rdRolesFixedSignup => 'Sign in and out of events';
+
+  @override
+  String get rdRolesFixedWorks => 'See works and sheet music';
+
+  @override
+  String get rdRolesForAll => 'For everyone in the group';
+
+  @override
+  String get rdRolesHelperHint => 'Record the attendance';
+
+  @override
+  String get rdRolesIntro => 'Choose a role to see what it may do.';
+
+  @override
+  String get rdRolesLeaderAddOn => 'An add-on to member or helper.';
+
+  @override
+  String get rdRolesLeaderHint => 'See “My section”';
+
+  @override
+  String get rdRolesLeaderNote =>
+      'Who is a section leader is set at the person.';
+
+  @override
+  String rdRolesLeaderOwnAlready(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'their own instrument',
+      'choir': 'their own voice',
+      'other': 'their own subgroup',
+    });
+    return 'Helpers already record only the attendance of $_temp0. That also applies to section leaders.';
+  }
+
+  @override
+  String get rdRolesLeads => 'Leadership';
+
+  @override
+  String get rdRolesMemberHint => 'Sign in and out';
+
+  @override
+  String get rdRolesMembersHelpers => 'Members and helpers';
+
+  @override
+  String get rdRolesNever => 'May never';
+
+  @override
+  String get rdRolesNeverAdmins => 'Add or remove admins';
+
+  @override
+  String get rdRolesNeverAdminsHint => 'Admins only';
+
+  @override
+  String get rdRolesNeverAttendance => 'Record the attendance of others';
+
+  @override
+  String get rdRolesNeverAttendanceHint =>
+      'Helpers, admins and persons in charge only';
+
+  @override
+  String get rdRolesNeverLead => 'Manage members, change settings';
+
+  @override
+  String get rdRolesNeverLeadHint => 'Admins and persons in charge only';
+
+  @override
+  String get rdRolesNoPeople => 'Nobody has this role yet.';
+
+  @override
+  String get rdRolesOff => 'Off';
+
+  @override
+  String rdRolesOtherAccounts(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more accounts',
+      one: '1 more account',
+    );
+    return '$_temp0 without a person in this group.';
+  }
+
+  @override
+  String get rdRolesOthers => 'Other access';
+
+  @override
+  String get rdRolesPeople => 'People';
+
+  @override
+  String get rdRolesResponsible => 'Persons in charge';
+
+  @override
+  String get rdRolesResponsibleHint => 'Lead the group';
+
+  @override
+  String get rdRolesSavedHint => 'Every switch is saved right away.';
+
+  @override
+  String get rdRolesSees => 'Sees';
+
+  @override
   String get rdSettingsAddRule => 'Add rule';
 
   @override
@@ -11759,9 +11922,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdSettingsPermCreateHint => 'Off: cannot create new events';
 
   @override
-  String get rdSettingsPermHelperLabel => 'What helpers may do';
-
-  @override
   String get rdSettingsPermHelperNote =>
       'Also applies to helpers who are section leaders. They always see notes and the checklist.';
 
@@ -11776,9 +11936,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get rdSettingsPermLeaderOwnOnlyHint =>
       'Helpers who are section leaders only record the attendance of their own section';
-
-  @override
-  String get rdSettingsPermMemberLabel => 'What members may do';
 
   @override
   String get rdSettingsPermMemberNote =>
@@ -18166,10 +18323,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String redesignRemindTitle(Object count) {
     return '$count still open';
   }
-
-  @override
-  String get redesignRolePermIntro =>
-      'Choose what members and helpers see and may do in this group. Each switch is saved right away.';
 
   @override
   String redesignShiftFrom(Object time) {
