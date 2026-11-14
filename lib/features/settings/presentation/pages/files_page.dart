@@ -1487,10 +1487,19 @@ class _FilesPageState extends ConsumerState<FilesPage> {
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium)),
           if (max != null && max > 0) ...[
             const SizedBox(height: 4),
-            LinearProgressIndicator(
-              value: (used / max).clamp(0.0, 1.0),
-              color: used >= max * 0.9 ? AppColors.danger : AppColors.primary,
-            ),
+            Builder(builder: (context) {
+              final color = used >= max * 0.9 ? AppColors.danger : AppColors.primary;
+              // NB-W01: Ionic `ion-progress-bar` – 4px, the track in the bar
+              // colour at 30 % (an empty store no longer looks full).
+              final classic = context.rdSkin == null;
+              return LinearProgressIndicator(
+                value: (used / max).clamp(0.0, 1.0),
+                color: color,
+                backgroundColor: classic ? color.withValues(alpha: 0.3) : null,
+                minHeight: classic ? 4 : null,
+                borderRadius: classic ? BorderRadius.zero : null,
+              );
+            }),
           ],
           if (_isStorageAlmostFull)
             TextButton.icon(
