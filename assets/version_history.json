@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.147.3",
+      "date": "14.11.2026",
+      "changes": [
+        "🐛 iPhone/Android: Wird ein Suchfeld (oder anderes Textfeld) aus der Liste gescrollt, schließt sich die Tastatur; die blaue Textmarkierung bleibt nicht mehr über der Liste stehen"
+      ]
+    },
+    {
       "version": "0.147.2",
       "date": "14.11.2026",
       "changes": [
