@@ -2,6 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- MAC_SKIA: Flutter 3.47 draws the Mac app with Impeller by default. Up
+	     to 3.47.9 Impeller on macOS can reuse a GPU staging buffer too early,
+	     so single letters (or all text) turn into pixel noise until the app
+	     restarts (flutter/flutter#193927, fixed by #188965 in 3.50). Skia has
+	     no such fault. Remove this key once the project builds with Flutter
+	     3.50 or newer. -->
+	<key>FLTEnableImpeller</key>
+	<false/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Attendix nutzt das Mikrofon nur für die Spracheingabe im Chat-Assistenten, solange du das Mikrofon antippst.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
