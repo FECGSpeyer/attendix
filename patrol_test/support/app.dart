@@ -33,7 +33,9 @@ Future<void> signIn(
 }) async {
   await $(TextFormField).at(0).enterText(email);
   await $(TextFormField).at(1).enterText(password);
-  await $(label('Anmelden')).tap();
+  // Do not wait for the app to come to rest: the answer (a toast or the next
+  // page) is what the flow checks next, and a toast is gone after 3 seconds.
+  await $(label('Anmelden')).tap(settlePolicy: SettlePolicy.noSettle);
 }
 
 /// Finds a text in both designs: the classic design writes button labels in

@@ -7,18 +7,21 @@ import 'support/app.dart';
 // there, these flows stay on the sign-in page: the app asks the local
 // Supabase, gets the refusal and shows it. Flows behind the sign-in follow
 // with the schema.
+/// Start of the toast for a refused sign-in.
+final _refused = RegExp('E-Mail oder Passwort falsch');
+
 void main() {
   patrolTest('Falsches Passwort wird abgelehnt (Beta)', ($) async {
     await startApp($);
     await signIn($, email: 'admin@attendix.test', password: 'falsch-falsch');
-    await $('Ungültige Anmeldedaten').waitUntilVisible(timeout: const Duration(seconds: 20));
+    await $(_refused).waitUntilVisible(timeout: const Duration(seconds: 20));
     await waitForPage($, LoginPage);
   });
 
   patrolTest('Falsches Passwort wird abgelehnt (klassisch)', ($) async {
     await startApp($, beta: false);
     await signIn($, email: 'admin@attendix.test', password: 'falsch-falsch');
-    await $('Ungültige Anmeldedaten').waitUntilVisible(timeout: const Duration(seconds: 20));
+    await $(_refused).waitUntilVisible(timeout: const Duration(seconds: 20));
     await waitForPage($, LoginPage);
   });
 }
