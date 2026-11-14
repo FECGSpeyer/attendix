@@ -129,6 +129,8 @@ dev_dependencies:
   # App Icon Generation
   flutter_launcher_icons: ^0.14.3
   patrol: ^4.11.0
+  # Type of the stand-in realtime socket in test/golden/support.
+  web_socket_channel: ^3.0.3
 
 flutter:
   uses-material-design: true

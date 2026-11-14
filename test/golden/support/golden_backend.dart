@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 const goldenUserId = '00000000-0000-4000-8000-000000000001';
 const goldenUserEmail = 'anna@example.org';
@@ -20,7 +21,19 @@ Future<SupabaseClient> goldenBackend({Map<String, List<Map<String, dynamic>>> ta
     authOptions: const AuthClientOptions(autoRefreshToken: false, authFlowType: AuthFlowType.implicit),
   );
   await client.auth.recoverSession(jsonEncode(_session()));
+  // Realtime thinks it already has a socket, so it never opens a real one
+  // (a real connection attempt leaves timers behind that fail the test on
+  // machines where localhost has two addresses, like the CI runners).
+  client.realtime.conn = _NoSocket();
   return client;
+}
+
+/// Stands in for the realtime socket. Nothing may use it: subscriptions
+/// stay "joining" forever, which is what an offline page looks like.
+class _NoSocket implements WebSocketChannel {
+  @override
+  dynamic noSuchMethod(Invocation invocation) =>
+      throw StateError('The golden backend has no realtime socket (${invocation.memberName}).');
 }
 
 http.Response _answer(http.Request request, Map<String, List<Map<String, dynamic>>> tables) {
