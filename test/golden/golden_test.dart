@@ -9,55 +9,25 @@
 library;
 
 import 'package:attendix/core/constants/enums.dart';
-import 'package:attendix/core/services/teams/teams_service.dart';
-import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart';
 import 'package:attendix/features/auth/presentation/pages/login_page.dart';
-import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/common/empty_state.dart';
 import 'package:attendix/shared/widgets/common/error_state_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../factories/test_factories.dart';
+import 'support/golden_harness.dart';
 
-const _phone = Size(390, 844);
-
-final _modes = {
-  'ios': TargetPlatform.iOS,
-  'md': TargetPlatform.android,
-};
-
-Widget _app(Widget home, TargetPlatform platform) => ProviderScope(
-      overrides: [isInTeamsProvider.overrideWithValue(false)],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        locale: const Locale('de'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        theme: AppTheme.light.copyWith(platform: platform),
-        home: home,
-      ),
-    );
-
-Future<void> _pump(WidgetTester tester, Widget home, TargetPlatform platform) async {
-  tester.view.physicalSize = _phone;
-  tester.view.devicePixelRatio = 1;
-  addTearDown(tester.view.reset);
-  await tester.pumpWidget(_app(home, platform));
-  // Bounded: spinners and pulse animations never settle.
-  for (var i = 0; i < 20; i++) {
-    await tester.pump(const Duration(milliseconds: 100));
-  }
-}
+const _looks = [GoldenLook.classicIos, GoldenLook.classicMd];
 
 void main() {
-  for (final mode in _modes.entries) {
-    group(mode.key, () {
+  for (final look in _looks) {
+    group(look.prefix, () {
       testWidgets('Login', (tester) async {
-        await _pump(tester, const LoginPage(), mode.value);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/${mode.key}_login.png'));
+        // The photo in the background: single resolution keeps the file small.
+        await pumpGolden(tester, const LoginPage(), look: look, pixelRatio: 1);
+        await expectGolden(tester, look, 'login');
       });
 
       testWidgets('Anwesenheit: Personen in allen Status', (tester) async {
@@ -70,7 +40,7 @@ void main() {
           AttendanceStatus.lateExcused,
           AttendanceStatus.neutral,
         ];
-        await _pump(
+        await pumpGolden(
           tester,
           Scaffold(
             body: ListView(
@@ -89,14 +59,13 @@ void main() {
               ],
             ),
           ),
-          mode.value,
+          look: look,
         );
-        await expectLater(
-            find.byType(MaterialApp), matchesGoldenFile('goldens/${mode.key}_attendance_tiles.png'));
+        await expectGolden(tester, look, 'attendance_tiles');
       });
 
       testWidgets('Leer- und Fehlerzustand', (tester) async {
-        await _pump(
+        await pumpGolden(
           tester,
           Scaffold(
             body: Column(
@@ -114,9 +83,9 @@ void main() {
               ],
             ),
           ),
-          mode.value,
+          look: look,
         );
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/${mode.key}_states.png'));
+        await expectGolden(tester, look, 'states');
       });
     });
   }
