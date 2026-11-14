@@ -164,12 +164,15 @@ String rdCollectionPrefixSuggestion(String name, {Iterable<String?> taken = cons
   final startsWithLetter = letters.isNotEmpty && letters.first.toUpperCase() == first;
   for (var length = startsWithLetter ? 2 : 1; length <= letters.length; length++) {
     final part = letters.sublist(0, length).join();
+    // Never a digit at the end: "E2" + number 1 would read like E's 21st.
+    if (RegExp(r'\p{N}$', unicode: true).hasMatch(part)) continue;
     final candidate = part.substring(0, 1).toUpperCase() + part.substring(1).toLowerCase();
     if (!used.contains(candidate.toLowerCase())) return candidate;
   }
-  // Every start of the name is taken: count on ("E2", "E3" …).
-  for (var n = 2; n < 1000; n++) {
-    if (!used.contains('${first.toLowerCase()}$n')) return '$first$n';
+  // Every start of the name is taken: repeat the first letter ("EE").
+  for (var n = 2; n <= 4; n++) {
+    final candidate = first * n;
+    if (!used.contains(candidate.toLowerCase())) return candidate;
   }
   return first;
 }
