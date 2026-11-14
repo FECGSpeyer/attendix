@@ -538,13 +538,15 @@ Future<String?> showEventNoteDialog(
     context: context,
     builder: (ctx) => AppAlertDialog(
       title: Text(title),
-      content: TextField(
+      // Ionic alert input `type: 'textarea'` (overview.page.ts / signout.page.ts).
+      content: AppAlertInput(
         controller: controller,
         autofocus: true,
         maxLines: 4,
         minLines: 2,
+        textarea: true,
         textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(hintText: ctx.l10n.signoutEnterNote),
+        placeholder: ctx.l10n.signoutEnterNote,
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonCancel)),
