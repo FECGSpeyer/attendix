@@ -18,6 +18,7 @@ import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTransluce
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/widgets/ion_condense.dart';
 import '../../../settings/presentation/widgets/settings_list.dart';
+import '../../../planning/presentation/widgets/ion_items.dart' as pl;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Types of an org extra field with their names (old add sheet).
@@ -193,7 +194,9 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
       )),
       body: _fields == null
           ? const Center(child: AppSpinner())
-          : ios
+          // ABL-07: the inset lists of the iOS look in md too (Beta md
+          // keeps its previous layout).
+          : ios || context.rdSkin == null
               ? ListView(
                   padding: EdgeInsets.fromLTRB(16, 0, 16, scrollEndPadding(context, base: 24)),
                   children: [
@@ -208,7 +211,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
                           title: context.l10n.orgFieldsIntro,
                           titleWidget: Text(
                             context.l10n.orgFieldsIntro,
-                            style: TextStyle(fontSize: 14, color: IonIos.labelP(context)),
+                            style: TextStyle(fontSize: 14, color: ios ? IonIos.labelP(context) : AppColors.medium),
                           ),
                         ),
                       ],
@@ -259,20 +262,43 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
     return ListTile(
       key: ValueKey(f.id),
       title: Text(f.name),
-      subtitle: Text([
-        l10n.extraFieldsTypeLine(orgFieldTypeName(l10n, f.type)),
-        l10n.extraFieldsDisplayLine(mode),
-        if (f.visibleToPlayers) '${l10n.extraFieldsVisible}${f.editableByPlayers ? l10n.extraFieldsEditableSuffix : ''}',
-      ].join('\n')),
+      subtitle: context.rdSkin != null
+          ? Text([
+              l10n.extraFieldsTypeLine(orgFieldTypeName(l10n, f.type)),
+              l10n.extraFieldsDisplayLine(mode),
+              if (f.visibleToPlayers) '${l10n.extraFieldsVisible}${f.editableByPlayers ? l10n.extraFieldsEditableSuffix : ''}',
+            ].join('\n'))
+          // ABL-28: Ionic h3 lines, the last one with the eye-outline icon.
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.extraFieldsTypeLine(orgFieldTypeName(l10n, f.type))),
+                Text(l10n.extraFieldsDisplayLine(mode)),
+                if (f.visibleToPlayers)
+                  Row(children: [
+                    Icon(AppIcons.visibilityOutlined, size: 14, color: AppColors.medium),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                          '${l10n.extraFieldsVisible}${f.editableByPlayers ? l10n.extraFieldsEditableSuffix : ''}'),
+                    ),
+                  ]),
+              ],
+            ),
       isThreeLine: true,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // ABL-28: small clear buttons (Ionic `size="small"`).
           IconButton(
+            visualDensity: context.rdSkin == null ? VisualDensity.compact : null,
+            iconSize: context.rdSkin == null ? 20 : null,
             icon: Icon(AppIcons.editOutlined, color: AppColors.primary, semanticLabel: context.l10n.commonEdit),
             onPressed: isSuperAdmin ? () => _edit(i) : null,
           ),
           IconButton(
+            visualDensity: context.rdSkin == null ? VisualDensity.compact : null,
+            iconSize: context.rdSkin == null ? 20 : null,
             icon: Icon(AppIcons.deleteOutline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
             onPressed: isSuperAdmin ? () => _remove(i) : null,
           ),
@@ -419,6 +445,139 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
     );
   }
 
+  /// ABL-06: Ionic add / edit modal content – one `ion-list [inset]` with
+  /// item groups: type / name / display / toggles, options (list header
+  /// with "+") or the default value, and the submit item in primary.
+  List<Widget> _classicGroups(BuildContext context) {
+    final l10n = context.l10n;
+    return [
+      pl.IonInsetList(
+        children: [
+          if (_isEdit)
+            ListTile(
+              title: Text(l10n.typeSettingsType),
+              trailing: pl.IonNote(orgFieldTypeName(l10n, _type)),
+            )
+          else
+            pl.IonSelect<String>(
+              label: l10n.typeSettingsType,
+              interface: AppSelectInterface.alert,
+              value: _type,
+              items: [
+                for (final e in orgFieldTypes(l10n).entries) DropdownMenuItem(value: e.key, child: Text(e.value)),
+              ],
+              onChanged: (v) => _onTypeChanged(v ?? 'text'),
+            ),
+          pl.IonStackedInput(controller: _name, label: l10n.typeSettingsName),
+          pl.IonSelect<String>(
+            label: l10n.extraFieldsDisplay,
+            interface: AppSelectInterface.alert,
+            value: _displayMode,
+            items: [
+              DropdownMenuItem(value: 'chip', child: Text(l10n.extraFieldsAsChip)),
+              DropdownMenuItem(value: 'underneath', child: Text(l10n.extraFieldsUnderName)),
+            ],
+            onChanged: (v) => setState(() => _displayMode = v ?? 'chip'),
+          ),
+          IonToggleItem(
+            title: l10n.extraFieldsVisible,
+            helper: l10n.extraFieldsVisibleHelper,
+            value: _visible,
+            onChanged: (v) => setState(() => _visible = v),
+          ),
+          if (_visible)
+            IonToggleItem(
+              title: l10n.extraFieldsEditable,
+              helper: l10n.extraFieldsEditableHelper,
+              value: _editable,
+              onChanged: (v) => setState(() => _editable = v),
+            ),
+        ],
+      ),
+      if (_type == 'select')
+        pl.IonInsetList(
+          header: l10n.typeSettingsOptions,
+          headerTrailing: IconButton(
+            color: AppColors.primary,
+            icon: Icon(AppIcons.add, semanticLabel: l10n.a11yAdd),
+            onPressed: () => setState(() => _options.add(TextEditingController())),
+          ),
+          children: [
+            if (_options.isEmpty)
+              ListTile(title: Text(_isEdit ? l10n.extraFieldsNoOptions : l10n.extraFieldsNoOptionsSelected)),
+            for (var i = 0; i < _options.length; i++)
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 4),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _options[i],
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: pl.ionStackedInputDecoration(label: '', hint: l10n.extraFieldsValuePh).copyWith(
+                          labelText: null,
+                          helperText: i == 0 ? l10n.orgFieldsFlutterFirstOptionDefault : null,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(AppIcons.deleteOutline, color: AppColors.danger, semanticLabel: l10n.commonDelete),
+                      onPressed: () => setState(() => _options.removeAt(i).dispose()),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        )
+      else
+        pl.IonInsetList(
+          children: [
+            if (_type == 'boolean')
+              SwitchListTile.adaptive(
+                title: Text(l10n.extraFieldsDefaultValue),
+                value: _boolDefault,
+                onChanged: (v) => setState(() => _boolDefault = v),
+              )
+            else if (_type == 'date')
+              // Ionic `ion-input type="date"` with a stacked label.
+              ListTile(
+                title: Text(_isEdit ? l10n.extraFieldsDefaultValue : l10n.extraFieldsDefaultOptional),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(_dateLabel()),
+                    if (_dateLabel().isNotEmpty)
+                      IconButton(
+                        icon: Icon(AppIcons.close),
+                        tooltip: l10n.orgFieldsFlutterClearDefault,
+                        onPressed: () => setState(() => _defaultValue = ''),
+                      ),
+                  ],
+                ),
+                onTap: _pickDate,
+              )
+            else
+              pl.IonStackedInput(
+                controller: _default,
+                label: _isEdit ? l10n.extraFieldsDefaultValue : l10n.extraFieldsDefaultOptional,
+                keyboardType: _type == 'number' ? TextInputType.number : TextInputType.text,
+              ),
+          ],
+        ),
+      pl.IonInsetList(
+        children: [
+          ListTile(
+            key: const ValueKey('org-field-submit'),
+            title: Text(_isEdit ? l10n.orgFieldsApplyChanges : l10n.typeSettingsAddField,
+                style: const TextStyle(color: AppColors.primary)),
+            onTap: _submit,
+          ),
+        ],
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final classic = widget.scrollController != null;
@@ -549,17 +708,16 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
           );
     if (classic) {
       // Ionic: toolbar with the ion-title; the edit modal also has the
-      // close ✕ in the end slot.
+      // close ✕ in the end slot. ABL-06: `ion-content color="light"` with
+      // the inset list of item groups.
       return IonSheetScaffold(
         title: title,
         showClose: _isEdit,
-        body: SafeArea(
-          top: false,
-          child: SingleChildScrollView(
-            controller: widget.scrollController,
-            padding: const EdgeInsets.all(16),
-            child: form,
-          ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: ListView(
+          controller: widget.scrollController,
+          padding: EdgeInsets.only(bottom: 16 + MediaQuery.paddingOf(context).bottom),
+          children: _classicGroups(context),
         ),
       );
     }
