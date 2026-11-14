@@ -11862,6 +11862,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdRolesOff => 'Aus';
 
   @override
+  String rdRolesOtherAccounts(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count weitere Zugänge',
+      one: '1 weiterer Zugang',
+    );
+    return '$_temp0 ohne Person in dieser Gruppe.';
+  }
+
+  @override
   String get rdRolesOthers => 'Weitere Zugänge';
 
   @override

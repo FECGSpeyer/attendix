@@ -3145,6 +3145,7 @@
   "rdRolesNeverLeadHint": "Admins and persons in charge only",
   "rdRolesNoPeople": "Nobody has this role yet.",
   "rdRolesOff": "Off",
+  "rdRolesOtherAccounts": "{count, plural, one{1 more account} other{{count} more accounts}} without a person in this group.",
   "rdRolesOthers": "Other access",
   "rdRolesPeople": "People",
   "rdRolesResponsible": "Persons in charge",

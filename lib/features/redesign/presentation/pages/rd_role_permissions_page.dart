@@ -79,6 +79,23 @@ Role? rdLeaderVariant(Role base) => switch (base) {
   _ => null,
 };
 
+/// The confirmed rights of one group, shared by the list and the pages of
+/// its roles: a role is written by more than one page (a Stimmführer-Helfer
+/// by Helfer and Stimmführer), each write is a whole row. So the saves of
+/// all pages run in one queue and build their rows on one confirmed state.
+class _RdRoleSaves {
+  Map<Role, TenantRolePermission> saved = {};
+  List<TenantRolePermission>? loadedFrom;
+  int pending = 0;
+  Future<void> queue = Future.value();
+}
+
+/// One per group and account (a switch gives a new repository).
+final _rdRoleSavesProvider = Provider<_RdRoleSaves>((ref) {
+  ref.watch(rolePermissionRepositoryWithTenantProvider);
+  return _RdRoleSaves();
+});
+
 class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
   /// What the switches show (may hold changes still being saved).
   final Map<Role, TenantRolePermission> _permissions = {};
@@ -113,19 +130,27 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
   /// touch what the page shows.
   int _generation = 0;
 
-  /// Saves run one after another, so the last switch always wins.
-  Future<void> _queue = Future.value();
+  /// The queue and confirmed state shared with the other role pages of the
+  /// group: saves run one after another, so the last switch always wins.
+  _RdRoleSaves _saves = _RdRoleSaves();
 
   void _initFrom(List<TenantRolePermission> permissions, RolePermissionRepository repo) {
     _initialized = true;
     _repo = repo;
     _loadedFrom = permissions;
     _edits.clear();
-    _saved = {};
-    for (final (role, _) in rdConfigurableRoles(context.l10n)) {
-      final p = permissions.where((p) => p.role == role.value).firstOrNull;
-      if (p != null) _permissions[role] = _saved[role] = p;
+    final saves = _saves = ref.read(_rdRoleSavesProvider);
+    // While a save of another role page waits, or when this is the load
+    // that page started from, its confirmed state is the newer one.
+    if (saves.pending == 0 && !identical(saves.loadedFrom, permissions)) {
+      saves.loadedFrom = permissions;
+      saves.saved = {
+        for (final (role, _) in rdConfigurableRoles(context.l10n))
+          if (permissions.where((p) => p.role == role.value).firstOrNull case final p?) role: p,
+      };
     }
+    _saved = saves.saved;
+    _permissions.addAll(_saved);
     final tenant = ref.read(currentTenantProvider);
     _filesShared = _savedFilesShared = tenant?.id == repo.currentTenantId && (tenant?.filesShared ?? false);
   }
@@ -154,8 +179,10 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     final account = container.read(currentAuthUserIdProvider);
     bool sameAccount() => container.read(currentAuthUserIdProvider) == account;
     final generation = _generation;
+    final saves = _saves;
     _pending++;
-    _queue = _queue.then((_) async {
+    saves.pending++;
+    saves.queue = saves.queue.then((_) async {
       try {
         if (!sameAccount()) return;
         bool ok;
@@ -168,6 +195,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
         done(ok);
       } finally {
         _pending--;
+        saves.pending--;
         if (mounted) setState(() {});
       }
     });
@@ -289,13 +317,17 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
 
   /// "Personen": the accounts with this role, each opens its person.
   /// Nothing while the accounts load (the switches do not wait for them).
-  List<Widget> _people({String? note, bool baseRole = false}) {
+  /// [personsOnly]: accounts without a person in the group are counted, not
+  /// named (their e-mail is for those who manage the accounts).
+  List<Widget> _people({String? note, bool baseRole = false, bool personsOnly = false}) {
     final l10n = context.l10n;
     final accounts = ref.watch(rdRoleAccountsProvider);
     if (accounts == null) return [if (note != null) RdListNote(note)];
     final players = playersOfCurrentTenant(ref.watch(playersProvider), ref.watch(currentTenantIdProvider));
     final groups = {for (final g in ref.watch(groupsProvider).valueOrNull ?? const []) g.id: g.name};
-    final people = rdRolePeople(rdRoleAccounts(accounts, widget.view), players);
+    final all = rdRolePeople(rdRoleAccounts(accounts, widget.view), players);
+    final people = personsOnly ? [for (final r in all) if (r.person != null) r] : all;
+    final hidden = all.length - people.length;
     String? subtitle(RdRolePerson r) {
       final parts = [
         if (groups[r.person?.instrument] case final String name when name.isNotEmpty) name,
@@ -308,7 +340,10 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     return [
       RdGroupLabel(l10n.rdRolesPeople),
       if (people.isEmpty)
-        RdInfoCard(text: l10n.rdRolesNoPeople, icon: Icons.person_outline)
+        RdInfoCard(
+          text: hidden > 0 ? l10n.rdRolesOtherAccounts(hidden) : l10n.rdRolesNoPeople,
+          icon: Icons.person_outline,
+        )
       else
         RdGroupedList(
           children: [
@@ -322,6 +357,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
               ),
           ],
         ),
+      if (people.isNotEmpty && hidden > 0) RdListNote(l10n.rdRolesOtherAccounts(hidden)),
       if (note != null) RdListNote(note),
     ];
   }
@@ -468,7 +504,8 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     if (widget.view == RdRoleView.admin) {
       return [
         ..._group(l10n.rdRolesAlways, [_fixed(l10n.rdRolesFixedAll, hint: l10n.rdRolesFixedAllHint)]),
-        ..._people(),
+        // Who reads this page does not manage the Admins.
+        ..._people(personsOnly: true),
       ];
     }
     return [

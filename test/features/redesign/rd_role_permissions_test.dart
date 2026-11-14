@@ -90,7 +90,11 @@ Widget _app(
         routes: [
           GoRoute(
             path: ':role',
-            builder: (_, state) => RdRolePermissionsPage(view: RdRoleView.fromKey(state.pathParameters['role'])!),
+            // Keyed like in the app's router: every role is a page of its own.
+            builder: (_, state) {
+              final view = RdRoleView.fromKey(state.pathParameters['role'])!;
+              return RdRolePermissionsPage(key: ValueKey(view), view: view);
+            },
           ),
         ],
       ),
@@ -208,6 +212,32 @@ void main() {
       await _settle(tester);
       expect(saves.single.single.role, Role.voiceLeaderHelper.value);
       expect(saves.single.single.attendanceAllGroups, isFalse);
+    });
+
+    testWidgets('a save of another role page is not overwritten', (tester) async {
+      tester.view.physicalSize = const Size(393, 4000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final saves = <List<TenantRolePermission>>[];
+      await tester.pumpWidget(_app(saves, view: RdRoleView.helper));
+      await _settle(tester);
+
+      // Helfer page: writes Helfer and Stimmführer-Helfer. Before that is
+      // saved, the Stimmführer page writes the Stimmführer-Helfer too.
+      await tester.tap(find.text('Termine anlegen'));
+      await tester.pump();
+      GoRouter.of(tester.element(find.text('Termine anlegen'))).go(RedesignRoutes.role(RdRoleView.leader.key));
+      await tester.pump();
+      await tester.pump();
+      await tester.tap(find.text('Stimmführer nur ihre Stimme'));
+      await _settle(tester);
+
+      final last = saves.last.single;
+      expect(last.role, Role.voiceLeaderHelper.value);
+      expect(last.attendanceAllGroups, isFalse);
+      // "Termine anlegen" is on by default: the row keeps it switched off.
+      expect(saves.first.single.attendanceCreate, isFalse);
+      expect(last.attendanceCreate, isFalse);
     });
 
     testWidgets('failed saves put the switch back to the saved value', (tester) async {

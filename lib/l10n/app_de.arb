@@ -14634,6 +14634,15 @@
   "@rdRolesOff": {
     "description": "rdRoles.off"
   },
+  "rdRolesOtherAccounts": "{count, plural, one{1 weiterer Zugang} other{{count} weitere Zugänge}} ohne Person in dieser Gruppe.",
+  "@rdRolesOtherAccounts": {
+    "description": "rdRoles.otherAccounts",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "rdRolesOthers": "Weitere Zugänge",
   "@rdRolesOthers": {
     "description": "rdRoles.others"

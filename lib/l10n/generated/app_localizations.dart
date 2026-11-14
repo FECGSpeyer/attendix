@@ -19009,6 +19009,12 @@ abstract class AppLocalizations {
   /// **'Aus'**
   String get rdRolesOff;
 
+  /// rdRoles.otherAccounts
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one{1 weiterer Zugang} other{{count} weitere Zugänge}} ohne Person in dieser Gruppe.'**
+  String rdRolesOtherAccounts(num count);
+
   /// rdRoles.others
   ///
   /// In de, this message translates to:
