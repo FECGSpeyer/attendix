@@ -528,6 +528,11 @@ class _IonMdToastState extends State<IonMdToast>
                 position: Tween<Offset>(
                         begin: const Offset(0, -0.5), end: Offset.zero)
                     .animate(curved),
+                // `.toast-wrapper { left: var(--start); right: var(--end);
+                // width: auto }`: as wide as the screen allows (up to
+                // max-width), not as narrow as the text. Beta: as before.
+                child: SizedBox(
+                width: widget.beta ? null : double.infinity,
                 child: glass
                     // ion-toast glass overlay (rgba(glass, .67), dark
                     // .52; 0.5pt rgba(text, .18) rim, .06 shadow).
@@ -540,7 +545,13 @@ class _IonMdToastState extends State<IonMdToast>
                         // a toast does not dim the page
                         scrim: Colors.transparent,
                         color: base?.withValues(alpha: 0.87),
-                        child: content,
+                        // The overlay has no Material above it: without
+                        // this the text would inherit the app's error
+                        // style (fallback font, yellow underline).
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: content,
+                        ),
                       )
                     : Material(
                         color: background,
@@ -549,6 +560,7 @@ class _IonMdToastState extends State<IonMdToast>
                         borderRadius: BorderRadius.circular(ios ? 14 : 4),
                         child: content,
                       ),
+                ),
               ),
               ),
             ),
@@ -583,13 +595,13 @@ class _ToastButton extends StatelessWidget {
         minimumSize: Size(0, ios ? 44 : 40),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        textStyle: ios
-            ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w500)
-            : const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.84,
-              ),
+        // based on the theme style: keeps the app's font family
+        textStyle: (Theme.of(context).textTheme.labelLarge ?? const TextStyle())
+            .copyWith(
+          fontSize: ios ? 17 : 14,
+          fontWeight: FontWeight.w500,
+          letterSpacing: ios ? 0 : 0.84,
+        ),
       ),
       child: Text(
           ios ? label : label.toUpperCase().replaceAll('ß', 'SS')),
