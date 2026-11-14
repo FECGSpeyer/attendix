@@ -1833,6 +1833,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                       onPressed: onFab,
                       icon: Icon(fabAction.$2),
                     ),
+            // PEO-10: Ionic modal close (iOS glass circle); md keeps the
+            // white icon on the danger toolbar.
+            if (!person.isCritical || useIosLook(context))
+              IonCloseButton(onPressed: () => Navigator.of(context).maybePop())
+            else
             IconButton(
               tooltip: context.l10n.commonClose,
               icon: Icon(

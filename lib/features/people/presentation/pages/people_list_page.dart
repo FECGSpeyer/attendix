@@ -20,6 +20,7 @@ import '../../../../core/providers/profile_providers.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showPageModal;
 import '../../../../core/utils/demo_guard.dart' show DemoModeException;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -1395,7 +1396,16 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     // PARITY_B (I3): bulk edit works on hydrated values (Ionic list players)
     final people = _listPeople();
     final players = _sortPeople(_filterPeople(people));
-    final updated = await Navigator.of(context, rootNavigator: true).push<bool>(
+    // PEO-12: Ionic `modalController.create({ backdropDismiss: false })` –
+    // iOS card modal / centred modal on desktop (Beta: full-screen route).
+    final updated = context.rdSkin == null
+        ? await showPageModal<bool>(
+            context,
+            barrierDismissible: false,
+            iosBackgroundColor: ionLightColor(context),
+            builder: (_) => BulkEditPage(players: players),
+          )
+        : await Navigator.of(context, rootNavigator: true).push<bool>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => BulkEditPage(players: players),
@@ -1408,7 +1418,15 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
   // PEOPLE_IMPORT: open the person import
   Future<void> _openImport() async {
-    final imported = await Navigator.of(context, rootNavigator: true).push<bool>(
+    // PEO-12: Ionic modal (see _openBulkEdit).
+    final imported = context.rdSkin == null
+        ? await showPageModal<bool>(
+            context,
+            barrierDismissible: false,
+            iosBackgroundColor: ionLightColor(context),
+            builder: (_) => const PersonImportPage(),
+          )
+        : await Navigator.of(context, rootNavigator: true).push<bool>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => const PersonImportPage(),

@@ -273,9 +273,9 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
         title: Text(context.l10n.peopleBulkEdit),
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-            icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
-            onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+          // PEO-10: Ionic modal close (iOS glass circle).
+          IonCloseButton(
+            onPressed: _isSaving ? () {} : () => Navigator.of(context).pop(),
           ),
         ],
       ),

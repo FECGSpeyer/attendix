@@ -72,11 +72,8 @@ class _ArchivePersonModalState extends State<_ArchivePersonModal> {
         automaticallyImplyLeading: false,
         title: Text(l10n.peopleArchiveTitle(widget.name)),
         actions: [
-          IconButton(
-            tooltip: l10n.commonClose,
-            icon: Icon(AppIcons.close),
-            onPressed: () => Navigator.pop(context),
-          ),
+          // PEO-10: Ionic modal close (iOS glass circle).
+          IonCloseButton(onPressed: () => Navigator.pop(context)),
         ],
       ),
       floatingActionButton: IonFabButton(

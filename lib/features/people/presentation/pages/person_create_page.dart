@@ -350,11 +350,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               onPressed: _isLoading || !_canEdit ? null : _save,
               child: Text(context.l10n.commonSave),
             ),
-          IconButton(
-            tooltip: context.l10n.commonClose,
-            icon: Icon(AppIcons.close),
-            onPressed: _close,
-          ),
+          // PEO-10: Ionic modal close (iOS glass circle).
+          IonCloseButton(onPressed: _close),
         ],
       ),
       // IOS_SHELL2: iOS → ion-fab in the tab bar row

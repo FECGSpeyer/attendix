@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -290,9 +289,9 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         title: Text(context.l10n.peopleImportPeople),
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-            icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
-            onPressed: _busy ? null : () => Navigator.of(context).pop(),
+          // PEO-10: Ionic modal close (iOS glass circle).
+          IonCloseButton(
+            onPressed: _busy ? () {} : () => Navigator.of(context).pop(),
           ),
         ],
       ),
