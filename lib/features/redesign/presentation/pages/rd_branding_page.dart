@@ -126,9 +126,16 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     if (!confirmed || !mounted) return;
     await _run(() async {
       if (container.read(currentTenantIdProvider) != tenantId) return;
-      await repo.removeLogo();
+      // Clear the link first: a failed save then keeps the logo working
+      // (deleting the file first left a link to nothing).
       final ok = await _store(container, repo, tenantId: tenantId, logoUrl: '', text: org.brandingText ?? '');
-      if (ok && mounted) ToastHelper.showSuccess(context, l10n.rdSettingsBrandingLogoRemoved);
+      if (!ok) return;
+      try {
+        await repo.removeLogo();
+      } catch (_) {
+        // The logo is no longer used; a leftover file does no harm.
+      }
+      if (mounted) ToastHelper.showSuccess(context, l10n.rdSettingsBrandingLogoRemoved);
     });
   }
 

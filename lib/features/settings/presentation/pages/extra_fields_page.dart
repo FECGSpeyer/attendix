@@ -442,14 +442,33 @@ Future<void> saveExtraFieldDefinitions(
   final songSettings = await read(songRepositoryForTenantProvider((tenantId: tenantId, songSourceTenantId: null)))
       .getSongTenantSettings();
   final songTenantId = songSettings.songSourceTenantId ?? tenantId;
+  // H1/Z1: the definitions before this save (local state of that same
+  // tenant), so only values of removed fields are dropped and values of a
+  // renamed option move along.
+  final before = read(currentTenantProvider);
+  final previous = before?.id == tenantId ? before : null;
+  final previousPersons = previous?.additionalFields;
+  final previousSongs = previous?.songAdditionalFields;
   await repo.saveFields(personFields: personFields, songFields: songFields);
-  await repo.sanitizeValues(table: 'player', definitions: personFields, churchIds: churchIds);
+  await repo.sanitizeValues(
+    table: 'player',
+    definitions: personFields,
+    churchIds: churchIds,
+    previousIds: previousPersons?.map((f) => f.id).toSet(),
+    renamedOptions: previousPersons == null ? null : renamedExtraFieldOptions(previousPersons, personFields),
+  );
   // Deliberate deviation from Ionic (backfillSongAdditionalFields on
   // db.getSongs()): a synced library belongs to the source instance and
   // its field definitions. Cleaning it with this instance's song fields
   // would delete the source's values, so only the own library is cleaned.
   if (songTenantId == tenantId) {
-    await repo.sanitizeValues(table: 'songs', definitions: songFields, songTenantId: tenantId);
+    await repo.sanitizeValues(
+      table: 'songs',
+      definitions: songFields,
+      songTenantId: tenantId,
+      previousIds: previousSongs?.map((f) => f.id).toSet(),
+      renamedOptions: previousSongs == null ? null : renamedExtraFieldOptions(previousSongs, songFields),
+    );
   }
 
   // SOL_FIX19: only into the local state of that same tenant.

@@ -29,7 +29,10 @@
       "transferHint": "Die Person wird in der Zielgruppe angelegt und hier archiviert.",
       "copyHint": "Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv.",
       "teacherAdd": "Neuer Lehrer",
-      "teacherNone": "Für dieses Register gibt es noch keinen Lehrer."
+      "teacherNone": "Für dieses Register gibt es noch keinen Lehrer.",
+      "archiveTitle": "{name} archivieren",
+      "ruleHintOther": "Neue Termine an diesen Tagen werden automatisch als entschuldigt eingetragen. Bei Diensten wird die Person dann nicht eingeteilt.",
+      "roleOwnAdmin": "Du kannst deine eigene Admin-Rolle nicht entfernen. Bitte lass das einen anderen Admin machen."
     },
     "rdHelper": {
       "title": "Aushilfe",
@@ -70,7 +73,10 @@
       "transferHint": "The person is created in the target group and archived here.",
       "copyHint": "The person is created in the target group and stays active here.",
       "teacherAdd": "New teacher",
-      "teacherNone": "There is no teacher for this section yet."
+      "teacherNone": "There is no teacher for this section yet.",
+      "archiveTitle": "Archive {name}",
+      "ruleHintOther": "New events on these days are automatically marked as excused. This person will not be assigned to duties then.",
+      "roleOwnAdmin": "You cannot remove your own admin role. Please ask another admin to do it."
     },
     "rdHelper": {
       "title": "Helper",

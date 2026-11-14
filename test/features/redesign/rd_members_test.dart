@@ -74,7 +74,7 @@ Person _person(int id, String first, String last, int group,
       birthday: birthday ?? '1990-01-01',
       pending: pending,
       email: '${first.toLowerCase()}@example.org',
-    ).copyWith(groupName: group == 1 ? 'Violine' : 'Flöte');
+    ).copyWith(groupName: group == 1 ? 'Violine' : 'Flöte', correctBirthday: true);
 
 final _anna = _person(1, 'Anna', 'Berg', 1, leader: true, birthday: _birthdayToday());
 final _ben = _person(2, 'Ben', 'Clas', 1);
@@ -738,7 +738,7 @@ void main() {
       await _settle(tester);
       await _tapVisible(tester, find.text('Archivieren'));
       await _settle(tester);
-      expect(find.text('Anna Berg Archivieren'), findsOneWidget);
+      expect(find.text('Anna Berg archivieren'), findsOneWidget);
       await tester.enterText(find.descendant(of: find.byType(AlertDialog), matching: find.byType(TextField)), 'Umzug');
       await tester.tap(find.descendant(of: find.byType(AlertDialog), matching: find.text('Archivieren')));
       await _settle(tester);

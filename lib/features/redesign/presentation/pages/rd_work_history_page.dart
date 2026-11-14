@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/conductor_providers.dart';
 import '../../../../core/providers/history_providers.dart';
+import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -87,6 +88,8 @@ class _RdWorkHistoryPageState extends ConsumerState<RdWorkHistoryPage> {
     try {
       await repo.deleteHistoryEntry(entry.id!);
       container.invalidate(performanceHistoryProvider);
+      // "Zuletzt gespielt" on the Werk page comes from the enriched list.
+      container.invalidate(songsProvider);
       if (mounted) ToastHelper.showSuccess(context, l10n.historyFlutterEntryDeleted);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
@@ -134,6 +137,8 @@ class _RdWorkHistoryPageState extends ConsumerState<RdWorkHistoryPage> {
           },
       ]);
       container.invalidate(performanceHistoryProvider);
+      // "Zuletzt gespielt" on the Werk page comes from the enriched list.
+      container.invalidate(songsProvider);
       if (mounted) ToastHelper.showSuccess(context, l10n.historyFlutterSongsAdded(result.songIds.length));
     } catch (e) {
       if (mounted) ToastHelper.showError(context, l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
@@ -394,7 +399,7 @@ class _SongPickSheetState extends State<_SongPickSheet> {
                   s.id != null &&
                   (q.isEmpty ||
                       s.name.toLowerCase().contains(q) ||
-                      (s.number?.toString().toLowerCase().contains(q) ?? false)),
+                      (s.number != null && s.fullNumber.toLowerCase().contains(q))),
             )
             .toList();
     return Column(
@@ -430,7 +435,7 @@ class _SongPickSheetState extends State<_SongPickSheet> {
                         _selected.contains(s.id) ? Icons.check_circle : Icons.radio_button_unchecked,
                         color: _selected.contains(s.id) ? p.primary : p.text2,
                       ),
-                      title: [if (s.number != null) '${s.number}', s.name].join(' '),
+                      title: [if (s.number != null) s.fullNumber, s.name].join(' '),
                       showChevron: false,
                       onTap:
                           () => setState(() {

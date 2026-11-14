@@ -85,6 +85,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     ref.invalidate(songsProvider);
     ref.invalidate(currentSongsProvider);
     ref.invalidate(songCategoriesProvider);
+    ref.invalidate(songCollectionsProvider);
     await ref.read(songsListDataProvider(null).future).catchError((_) => null);
   }
 

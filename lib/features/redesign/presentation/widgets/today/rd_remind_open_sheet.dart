@@ -9,7 +9,6 @@ import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_today_providers.dart';
 import '../../rd_actions.dart' show rdShareLink;
-import '../manage/rd_settings_sheets.dart' show RdSheetHead;
 import '../rd_widgets.dart';
 import 'rd_today_common.dart';
 
@@ -222,7 +221,7 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
             // Head with "Abbrechen", like the other sheets. Fixed above the
             // list; scrolls along when there is hardly any room (small
             // screen in landscape with the keyboard open).
-            final head = RdSheetHead(title: open == null ? widget.title : l10n.redesignRemindTitle(open.length));
+            final head = _RemindHead(title: open == null ? widget.title : l10n.redesignRemindTitle(open.length));
             final fixedHead = box.maxHeight >= 200;
             return Column(
               mainAxisSize: MainAxisSize.min,
@@ -242,6 +241,67 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+/// "Abbrechen" · title. Own head (not RdSheetHead): "Abbrechen" never wraps
+/// at 390 px (it broke into "Abbreche n" and the first tap missed), wide
+/// sides with the whole side as tap area, scaled down instead of wrapped.
+class _RemindHead extends StatelessWidget {
+  const _RemindHead({required this.title});
+
+  final String title;
+
+  static const double _side = 104;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
+      child: Row(
+        children: [
+          SizedBox(
+            width: _side,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('rd-remind-cancel'),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  minimumSize: const Size(_side, 44),
+                  alignment: Alignment.centerLeft,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    l10n.redesignCommonCancel,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: TextStyle(color: p.link, fontSize: 16),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Semantics(
+              header: true,
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: RdType.section(p),
+              ),
+            ),
+          ),
+          const SizedBox(width: _side),
+        ],
       ),
     );
   }

@@ -9,6 +9,7 @@ import '../../../../l10n/l10n.dart';
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
+import '../widgets/rd_widgets.dart' show rdBack;
 
 /// REDESIGN: Verwaltung › Freigaben in the template "Verwaltungsliste"
 /// (replaces the old pending sheet while the Beta is on; leads only). The
@@ -17,7 +18,10 @@ import '../widgets/manage/rd_manage_list.dart';
 /// approve / decline). Once the last person is done the page goes back to
 /// the Verwaltung.
 class RdPendingPage extends ConsumerStatefulWidget {
-  const RdPendingPage({super.key});
+  const RdPendingPage({super.key, this.from});
+
+  /// The page below ('heute'), for the back link; null: the Verwaltung.
+  final String? from;
 
   @override
   ConsumerState<RdPendingPage> createState() => _RdPendingPageState();
@@ -49,9 +53,11 @@ class _RdPendingPageState extends ConsumerState<RdPendingPage> {
     if (route != null && navigator.canPop()) {
       navigator.pop();
     } else {
-      GoRouter.of(context).go(RedesignRoutes.manage);
+      GoRouter.of(context).go(_fromToday ? RedesignRoutes.today : RedesignRoutes.manage);
     }
   }
+
+  bool get _fromToday => widget.from == 'heute';
 
   Future<void> _open(int id) async {
     await context.push(RedesignRoutes.approvalReview(id));
@@ -79,6 +85,9 @@ class _RdPendingPageState extends ConsumerState<RdPendingPage> {
 
     return RdManageListPage(
       title: rdManageTitle(l10n, RdManageEntry.approvals),
+      // Pushed from "Heute": "‹ Heute", like the Problemfälle.
+      backLabel: _fromToday ? l10n.redesignTabToday : null,
+      onBack: _fromToday ? () => rdBack(context, RedesignRoutes.today) : null,
       intro: l10n.redesignPendingListIntro,
       sections: persons == null
           ? null

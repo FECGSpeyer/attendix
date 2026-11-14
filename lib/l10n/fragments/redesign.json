@@ -267,7 +267,7 @@
         "countAbsent": "{count} fehlt",
         "countOpen": "{count} offen",
         "allOpenPresent": "Alle Offenen als anwesend",
-        "allDone": "{count, plural, one {1 Person als anwesend} other {{count} Personen als anwesend}}",
+        "allDone": "{count, plural, one {1 Person als anwesend markiert} other {{count} Personen als anwesend markiert}}",
         "undo": "Rückgängig",
         "undone": "Rückgängig gemacht",
         "toastSet": "{name}: {status}",
@@ -520,7 +520,8 @@
         "keepEditing": "Weiter bearbeiten",
         "noPermission": "Du darfst keine Termine anlegen.",
         "noTypes": "Es gibt noch keine Termin-Art. Lege zuerst eine in den Einstellungen an.",
-        "endBeforeStart": "Das Ende kann nicht vor dem Beginn liegen."
+        "endBeforeStart": "Das Ende kann nicht vor dem Beginn liegen.",
+        "deadlinePassed": "„Antwort bis“ wäre für {date} schon vorbei. Wähle eine kürzere Frist oder „Keiner“."
       },
       "members": {
         "stats": "Auswertung",
@@ -1085,7 +1086,8 @@
         "subject": "Betreff",
         "body": "Text",
         "hint": "Die Mitteilung erscheint bei allen Empfängern unter Mitteilungen.",
-        "missing": "Betreff, Text und mindestens ein Versandweg fehlen noch."
+        "missing": "Betreff, Text und mindestens ein Versandweg fehlen noch.",
+        "noRecipients": "Die Auswahl erreicht noch niemanden. Wähle andere Gruppen oder Versandwege."
       },
       "notif": {
         "how": "Wie",
@@ -2226,7 +2228,8 @@
         "keepEditing": "Keep editing",
         "noPermission": "You may not create events.",
         "noTypes": "There is no event type yet. Create one in the settings first.",
-        "endBeforeStart": "The end cannot be before the start."
+        "endBeforeStart": "The end cannot be before the start.",
+        "deadlinePassed": "“Reply by” would already be over for {date}. Pick a shorter deadline or “None”."
       },
       "members": {
         "stats": "Statistics",
@@ -2791,7 +2794,8 @@
         "subject": "Subject",
         "body": "Text",
         "hint": "The message appears for all recipients under Messages.",
-        "missing": "Subject, text and at least one channel are still missing."
+        "missing": "Subject, text and at least one channel are still missing.",
+        "noRecipients": "This selection reaches nobody yet. Choose other groups or channels."
       },
       "notif": {
         "how": "How",

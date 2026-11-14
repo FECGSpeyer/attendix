@@ -11389,6 +11389,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Only admins and leads of a group in an organisation can search works across the organisation.';
 
   @override
+  String rdPeopleArchiveTitle(Object name) {
+    return 'Archive $name';
+  }
+
+  @override
   String get rdPeopleCopyHint =>
       'The person is created in the target group and stays active here.';
 
@@ -11460,6 +11465,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdPeopleReviewTitle => 'Review request';
+
+  @override
+  String get rdPeopleRoleOwnAdmin =>
+      'You cannot remove your own admin role. Please ask another admin to do it.';
+
+  @override
+  String get rdPeopleRuleHintOther =>
+      'New events on these days are automatically marked as excused. This person will not be assigned to duties then.';
 
   @override
   String get rdPeopleTeacherAdd => 'New teacher';
@@ -13204,6 +13217,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Subject, text and at least one channel are still missing.';
 
   @override
+  String get redesignComposeNoRecipients =>
+      'This selection reaches nobody yet. Choose other groups or channels.';
+
+  @override
   String get redesignComposeSend => 'Send';
 
   @override
@@ -13247,6 +13264,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignCreateDeadlineNone => 'None';
+
+  @override
+  String redesignCreateDeadlinePassed(Object date) {
+    return '“Reply by” would already be over for $date. Pick a shorter deadline or “None”.';
+  }
 
   @override
   String get redesignCreateDeadlineWeek => '1 week before';

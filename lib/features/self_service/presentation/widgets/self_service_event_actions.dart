@@ -153,12 +153,15 @@ class SelfServiceEventActions {
   }
 
   /// Quick actions of the current card; null when not applicable.
-  QuickActions? quickActions(CrossTenantPersonAttendance att) {
+  /// [anyLate]: the Beta also counts "Verspätet" (status 3, e.g. set by the
+  /// leads) as "kommt später", like the leads' lists show it; the classic
+  /// page keeps Ionic's check for "Verspätet (entschuldigt)" only.
+  QuickActions? quickActions(CrossTenantPersonAttendance att, {bool anyLate = false}) {
     if (!isOwn(att) || att.id == null) return null;
     return QuickActions(
       present: att.text == 'X',
       canSignin: att.text != 'X' && EventListUtils.isSigninOpen(att.deadline),
-      late: att.status == AttendanceStatus.lateExcused,
+      late: anyLate ? att.status.isLate : att.status == AttendanceStatus.lateExcused,
       excused: att.status == AttendanceStatus.excused,
       blocked: att.isExcusedStatus || att.text == 'A',
       allowLate: _allows(att, AttendanceStatus.late),

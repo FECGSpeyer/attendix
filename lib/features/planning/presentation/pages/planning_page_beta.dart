@@ -285,7 +285,12 @@ extension _PlanningBeta on _PlanningPageState {
     final p = context.rd;
     final l10n = context.l10n;
     final Widget content;
-    if (!_hasPendingChanges) {
+    final att = _att;
+    if (!_hasPendingChanges && !_hasUserEdits && att != null && PlanUtils.allPlans(att).isEmpty) {
+      // The untouched start plan of a Termin without Ablauf is not stored:
+      // no "Gespeichert" for it.
+      return const SizedBox(height: 18);
+    } else if (!_hasPendingChanges) {
       content = Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -2014,7 +2019,9 @@ extension _PlanningBeta on _PlanningPageState {
     // action, so here and not on the Termin).
     // Waits for the Terminarten on a direct entry (not loaded yet).
     var types = const <AttendanceType>[];
-    if (ref.read(effectiveRoleProvider).isAdmin) {
+    // Ionic isAdmin: Admin and Verantwortliche (both edit Terminarten).
+    final role = ref.read(effectiveRoleProvider);
+    if (role.isAdmin || role.isResponsible) {
       try {
         types = await ref.read(attendanceTypesProvider.future);
       } catch (_) {}

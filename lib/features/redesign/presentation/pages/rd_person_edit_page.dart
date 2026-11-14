@@ -51,6 +51,7 @@ import '../../../people/presentation/widgets/person_detail/late_warning_card.dar
 import '../../../people/presentation/widgets/person_detail/person_photo_actions.dart';
 import '../../../people/presentation/widgets/person_match_suggestions.dart' show showEmailTakenDialog;
 import '../../../people/presentation/widgets/person_transfer_sheet.dart' show showPersonTransferSheet;
+import '../../../settings/presentation/pages/user_management_page.dart' show TenantUser, tenantUsersProvider;
 import '../../../people/presentation/widgets/planned_absences.dart'
     show addPlannedAbsenceFlow, deletePlannedAbsenceFlow;
 import '../widgets/event/rd_form_widgets.dart';
@@ -920,8 +921,29 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     final role = leader ? (rdLeaderRoleFor(picked) ?? picked) : picked;
     if (role == current) return;
     if (person.appId == null || !repo.hasTenantId) return;
+    // Like the user management: the own admin role cannot be removed here
+    // and the last admin cannot be downgraded.
+    if (current == Role.admin && role != Role.admin) {
+      if (person.appId == ref.read(currentAuthUserIdProvider)) {
+        ToastHelper.showError(context, context.l10n.rdPeopleRoleOwnAdmin);
+        return;
+      }
+      final List<TenantUser> users;
+      try {
+        users = await ref.read(tenantUsersProvider.future);
+      } catch (e) {
+        if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
+        return;
+      }
+      if (!mounted) return;
+      if (users.where((u) => u.roleEnum == Role.admin).length <= 1) {
+        ToastHelper.showError(context, context.l10n.settingsFlutterUserMgmtLastAdmin);
+        return;
+      }
+    }
     try {
       await repo.updateTenantUserRole(person.appId!, role);
+      _container.invalidate(tenantUsersProvider);
       if (!mounted) return;
       setState(() => _userRole = role);
       ToastHelper.showSuccess(context, context.l10n.personRoleUpdated);

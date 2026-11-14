@@ -149,6 +149,10 @@ class RedesignRoutes {
   /// pending sheet).
   static const String approvals = '$manage/freigaben';
 
+  /// [approvals] pushed from another page: [from] names it for the back
+  /// link ('heute').
+  static String approvalsFrom(String from) => '$approvals?von=$from';
+
   /// Freigaben › "Anfrage prüfen" of a person (replaces the old review
   /// page `/people/:id` in the Beta; leads only like [approvals]).
   static String approvalReview(int id) => '$approvals/$id';
@@ -208,8 +212,8 @@ class RedesignRoutes {
   /// the new design is on: the old Termin page, "Meine Termine", the Termin
   /// list and the people list become their pages of the new design (the
   /// role checks of [roleRedirect] stay). Other locations and every location
-  /// without the Beta stay as they are. "Alle Details" still pushes
-  /// `/attendance/:id` directly, so this is no router redirect.
+  /// without the Beta stay as they are. The router applies it too (via
+  /// [legacyTarget]), so the old Termin page is not reachable in the Beta.
   /// Query and fragment (e.g. a push's `tenantId`) are kept.
   static String betaTarget(String location) {
     if (!active) return location;
@@ -228,6 +232,18 @@ class RedesignRoutes {
       return location;
     }
     return uri.replace(path: target).toString();
+  }
+
+  /// Old locations that have a page of the new design while it is on:
+  /// `/attendance/:id`, `/attendance`, `/signout`, `/people` (via
+  /// [betaTarget]) and the old settings start page `/settings` (→ Ich).
+  /// Null for every other location (sub pages like `/people/:id` or
+  /// `/settings/…` stay, the new design still opens some of them).
+  static String? legacyTarget(String location) {
+    if (!active) return null;
+    if (location == '/settings') return me;
+    final target = betaTarget(location);
+    return target == location ? null : target;
   }
 
   /// The old song page while the new design is on: `/settings/songs/:id`

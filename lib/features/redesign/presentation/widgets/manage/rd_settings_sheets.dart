@@ -55,6 +55,11 @@ class RdSheetHead extends StatelessWidget {
   final VoidCallback? onDone;
   final String? doneLabel;
 
+  /// Both sides equally wide so the title stays centred; wide enough for
+  /// "Abbrechen" on one line (it wrapped to "Abbreche/n" at 96).
+  static const double _sideWidth = 104;
+  static final ButtonStyle _sideButtonStyle = TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 8));
+
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
@@ -64,14 +69,22 @@ class RdSheetHead extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            width: 96,
+            width: _sideWidth,
             child: Align(
               alignment: Alignment.centerLeft,
               child: !cancel
                   ? null
                   : TextButton(
+                      style: _sideButtonStyle,
                       onPressed: () => Navigator.of(context).pop(),
-                      child: Text(l10n.redesignCommonCancel, style: TextStyle(color: p.link, fontSize: 16)),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          l10n.redesignCommonCancel,
+                          maxLines: 1,
+                          style: TextStyle(color: p.link, fontSize: 16),
+                        ),
+                      ),
                     ),
             ),
           ),
@@ -88,17 +101,22 @@ class RdSheetHead extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 96,
+            width: _sideWidth,
             child: Align(
               alignment: Alignment.centerRight,
               child:
                   onDone == null
                       ? null
                       : TextButton(
+                        style: _sideButtonStyle,
                         onPressed: onDone,
-                        child: Text(
-                          doneLabel ?? l10n.redesignCommonDone,
-                          style: TextStyle(color: p.link, fontSize: 16, fontWeight: FontWeight.w600),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            doneLabel ?? l10n.redesignCommonDone,
+                            maxLines: 1,
+                            style: TextStyle(color: p.link, fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
                         ),
                       ),
             ),

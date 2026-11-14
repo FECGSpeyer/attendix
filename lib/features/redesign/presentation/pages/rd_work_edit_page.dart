@@ -177,8 +177,6 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     }
   }
 
-  void _write(Map<String, dynamic> updates) => _enqueue(() => _store(updates));
-
   // Text saves compare with what is stored when they run, so the last typed
   // value always wins; a value is marked as stored only once written, so a
   // failed save is tried again.
@@ -260,9 +258,24 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
   Song? _numberTakenBy(String prefix, int? number) =>
       rdNumberTakenBy(_container.read(songsProvider).valueOrNull ?? const [], _songId, prefix, number);
 
+  /// Applies a switch/chip change at once and writes it; a failed save puts
+  /// the control back, so it never shows a value that is not stored.
   void _set(void Function() change, Map<String, dynamic> Function() updates) {
+    final before = (_difficulty, _withChoir, _withSolo, _categoryIds);
     setState(change);
-    _write(updates());
+    final after = (_difficulty, _withChoir, _withSolo, _categoryIds);
+    final values = updates();
+    _enqueue(() async {
+      if (await _store(values) || !mounted) return;
+      // Undo only the controls this change touched, and only when nothing
+      // changed them again in the meantime.
+      setState(() {
+        if (before.$1 != after.$1 && _difficulty == after.$1) _difficulty = before.$1;
+        if (before.$2 != after.$2 && _withChoir == after.$2) _withChoir = before.$2;
+        if (before.$3 != after.$3 && _withSolo == after.$3) _withSolo = before.$3;
+        if (!identical(before.$4, after.$4) && identical(_categoryIds, after.$4)) _categoryIds = before.$4;
+      });
+    });
   }
 
   void _done() {

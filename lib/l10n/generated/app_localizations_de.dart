@@ -11506,6 +11506,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.';
 
   @override
+  String rdPeopleArchiveTitle(Object name) {
+    return '$name archivieren';
+  }
+
+  @override
   String get rdPeopleCopyHint =>
       'Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv.';
 
@@ -11577,6 +11582,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdPeopleReviewTitle => 'Anfrage prüfen';
+
+  @override
+  String get rdPeopleRoleOwnAdmin =>
+      'Du kannst deine eigene Admin-Rolle nicht entfernen. Bitte lass das einen anderen Admin machen.';
+
+  @override
+  String get rdPeopleRuleHintOther =>
+      'Neue Termine an diesen Tagen werden automatisch als entschuldigt eingetragen. Bei Diensten wird die Person dann nicht eingeteilt.';
 
   @override
   String get rdPeopleTeacherAdd => 'Neuer Lehrer';
@@ -13329,6 +13342,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Betreff, Text und mindestens ein Versandweg fehlen noch.';
 
   @override
+  String get redesignComposeNoRecipients =>
+      'Die Auswahl erreicht noch niemanden. Wähle andere Gruppen oder Versandwege.';
+
+  @override
   String get redesignComposeSend => 'Senden';
 
   @override
@@ -13372,6 +13389,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignCreateDeadlineNone => 'Keiner';
+
+  @override
+  String redesignCreateDeadlinePassed(Object date) {
+    return '„Antwort bis“ wäre für $date schon vorbei. Wähle eine kürzere Frist oder „Keiner“.';
+  }
 
   @override
   String get redesignCreateDeadlineWeek => '1 Woche vorher';
@@ -13688,8 +13710,8 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Personen als anwesend',
-      one: '1 Person als anwesend',
+      other: '$count Personen als anwesend markiert',
+      one: '1 Person als anwesend markiert',
     );
     return '$_temp0';
   }

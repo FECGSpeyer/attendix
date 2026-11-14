@@ -184,8 +184,9 @@ List<Person> rdSortMembers(
       list.sort((a, b) => byDate(a.birthday, b.birthday, desc: true));
     case RdMembersSort.nextBirthday:
       list.sort((a, b) {
-        final x = nextBirthday(a.birthday);
-        final y = nextBirthday(b.birthday);
+        // A placeholder birthday (not confirmed) has no next birthday.
+        final x = a.correctBirthday ? nextBirthday(a.birthday) : null;
+        final y = b.correctBirthday ? nextBirthday(b.birthday) : null;
         if (x == null && y == null) return 0;
         if (x == null) return 1;
         if (y == null) return -1;

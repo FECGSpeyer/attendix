@@ -537,6 +537,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
         ? rawPeople.where((x) => x.id != null && bulkSelected.contains(x.id)).toList()
         : const <Person>[];
 
+    final showFab = (role.canEdit || canApprove) && !inSplit && !selecting;
     final page = RdPage(
       onRefresh: () async {
         ref.invalidate(realtimePlayersProvider);
@@ -546,11 +547,14 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
         if (canApprove) ref.invalidate(realtimePendingPlayersProvider);
       },
       // Room for the action bar of "Auswählen".
-      padding: selecting ? const EdgeInsets.fromLTRB(20, 12, 20, 160) : const EdgeInsets.fromLTRB(20, 12, 20, 32),
+      // Room for the "+" button, so it does not cover the last row.
+      padding: selecting
+          ? const EdgeInsets.fromLTRB(20, 12, 20, 160)
+          : EdgeInsets.fromLTRB(20, 12, 20, showFab ? 96 : 32),
       // One "+" per screen: anlegen and einladen (UX D1) both sit behind
       // it, on the phone as the button below, on desktop in the header.
       // While selecting, the action bar is the only action at the bottom.
-      floatingActionButton: (role.canEdit || canApprove) && !inSplit && !selecting
+      floatingActionButton: showFab
           ? Builder(
               builder: (button) => FloatingActionButton(
                 key: const Key('rd-members-fab'),
@@ -655,7 +659,8 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
   /// Birthday or joining date in the row while the list is sorted by it.
   String? _sortHint(Person person, RdMembersSort sort) {
     final date = switch (sort) {
-      RdMembersSort.birthdayAsc || RdMembersSort.birthdayDesc || RdMembersSort.nextBirthday => person.birthday,
+      RdMembersSort.birthdayAsc || RdMembersSort.birthdayDesc => person.birthday,
+      RdMembersSort.nextBirthday => person.correctBirthday ? person.birthday : null,
       RdMembersSort.joinedAsc || RdMembersSort.joinedDesc => person.joined,
       _ => null,
     };
@@ -962,7 +967,9 @@ class _MemberRow extends StatelessWidget {
       if (einteilung != null) einteilung!,
       if (sortHint != null) sortHint!,
     ];
-    final birthdayIn = readOnly ? null : rdDaysToBirthday(person.birthday);
+    // A placeholder birthday (correctBirthday false, e.g. "today" of a new
+    // person) is no birthday.
+    final birthdayIn = readOnly || !person.correctBirthday ? null : rdDaysToBirthday(person.birthday);
     if (birthdayIn != null && birthdayIn <= 7) {
       hints.add(switch (birthdayIn) {
         0 => l10n.redesignMembersBirthdayToday,

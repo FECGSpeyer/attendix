@@ -18553,6 +18553,12 @@ abstract class AppLocalizations {
   /// **'Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.'**
   String get rdOrgWorksNoPermission;
 
+  /// rdPeople.archiveTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{name} archivieren'**
+  String rdPeopleArchiveTitle(Object name);
+
   /// rdPeople.copyHint
   ///
   /// In de, this message translates to:
@@ -18672,6 +18678,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Anfrage prüfen'**
   String get rdPeopleReviewTitle;
+
+  /// rdPeople.roleOwnAdmin
+  ///
+  /// In de, this message translates to:
+  /// **'Du kannst deine eigene Admin-Rolle nicht entfernen. Bitte lass das einen anderen Admin machen.'**
+  String get rdPeopleRoleOwnAdmin;
+
+  /// rdPeople.ruleHintOther
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Termine an diesen Tagen werden automatisch als entschuldigt eingetragen. Bei Diensten wird die Person dann nicht eingeteilt.'**
+  String get rdPeopleRuleHintOther;
 
   /// rdPeople.teacherAdd
   ///
@@ -21396,6 +21414,12 @@ abstract class AppLocalizations {
   /// **'Betreff, Text und mindestens ein Versandweg fehlen noch.'**
   String get redesignComposeMissing;
 
+  /// redesign.compose.noRecipients
+  ///
+  /// In de, this message translates to:
+  /// **'Die Auswahl erreicht noch niemanden. Wähle andere Gruppen oder Versandwege.'**
+  String get redesignComposeNoRecipients;
+
   /// redesign.compose.send
   ///
   /// In de, this message translates to:
@@ -21467,6 +21491,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Keiner'**
   String get redesignCreateDeadlineNone;
+
+  /// redesign.create.deadlinePassed
+  ///
+  /// In de, this message translates to:
+  /// **'„Antwort bis“ wäre für {date} schon vorbei. Wähle eine kürzere Frist oder „Keiner“.'**
+  String redesignCreateDeadlinePassed(Object date);
 
   /// redesign.create.deadlineWeek
   ///
@@ -21909,7 +21939,7 @@ abstract class AppLocalizations {
   /// redesign.event.allDone
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, one {1 Person als anwesend} other {{count} Personen als anwesend}}'**
+  /// **'{count, plural, one {1 Person als anwesend markiert} other {{count} Personen als anwesend markiert}}'**
   String redesignEventAllDone(num count);
 
   /// redesign.event.allOpenPresent

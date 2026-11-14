@@ -263,12 +263,14 @@ void main() {
     expect(find.textContaining('tab=anwesenheit'), findsOneWidget);
   });
 
-  testWidgets('Dirigent: "5 offen" lists who is open and reminds personally (UX D2)', (tester) async {
+  testWidgets('Dirigent: "2 offen" lists who is open and reminds personally (UX D2)', (tester) async {
     _size(tester, const Size(393, 852));
     await tester.pumpWidget(_app(Role.admin));
     await _settle(tester);
 
-    await tester.tap(find.text('5 offen'));
+    // The link counts whom the sheet reminds (rdOpenPersonsProvider), not
+    // every open answer (5).
+    await tester.tap(find.text('2 offen'));
     await _settle(tester);
     expect(find.text('2 noch offen'), findsOneWidget);
     expect(find.text('TROMPETE'), findsOneWidget);

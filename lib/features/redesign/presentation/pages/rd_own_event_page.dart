@@ -62,7 +62,7 @@ bool rdIsPastOwnEvent(SignoutData data, CrossTenantPersonAttendance att) =>
     SelfServiceActionType.signOut,
     SelfServiceActionType.enterLate,
   };
-  final hasCard = !past && actions.quickActions(att) != null;
+  final hasCard = !past && actions.quickActions(att, anyLate: true) != null;
   final shown = hasCard ? (onCard ?? cardTypes) : const <SelfServiceActionType>{};
   final canAnswer = !past || att.isExcusedStatus;
   final all = actions.buildActions(att).map((a) => a.type).toList();
@@ -142,7 +142,7 @@ class RdOwnEventPage extends ConsumerWidget {
     // already counts it as past.
     final ended = !running && (rdIsPastOwnEvent(data!, att) || phase == RdEventPhase.after);
     final own = actions.isOwn(att);
-    final qa = actions.quickActions(att);
+    final qa = actions.quickActions(att, anyLate: true);
     final plan = !ended && att.hasPlan ? rdPlanFromJson(att.plan) : null;
     final nowSlot = plan != null && running ? rdCurrentPlanSlot(day, plan, now: now) : null;
     final canLate = qa != null && qa.allowLate && !qa.blocked;

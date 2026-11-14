@@ -146,7 +146,7 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> with 
   Future<void> _togglePush(NotificationConfig config, bool enabled) async {
     setState(() => _config = config.copyWith(pushEnabled: enabled));
     try {
-      await ref.read(pushServiceProvider).togglePush(enabled);
+      await ref.read(pushServiceProvider).togglePush(enabled, rethrowErrors: true);
       // Turning push on may have just shown (and been refused at) the
       // system prompt.
       if (mounted) await _checkBlocked();

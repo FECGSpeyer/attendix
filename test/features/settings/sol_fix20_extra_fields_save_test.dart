@@ -49,6 +49,8 @@ class _DelayedExtraFieldsRepository extends ExtraFieldsRepository {
     required List<ExtraField> definitions,
     List<Object>? churchIds,
     int? songTenantId,
+    Set<String>? previousIds,
+    Map<String, Map<String, String>>? renamedOptions,
   }) async {
     if (table == 'songs') this.songTenantId = songTenantId;
     sanitized[table] = definitions.map((f) => f.id).toList();

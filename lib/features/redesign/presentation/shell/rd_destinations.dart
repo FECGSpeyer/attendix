@@ -123,6 +123,7 @@ RdTab rdTabForLocation(String location) {
 /// "Ich" stays selected there, not "Verwaltung").
 const _mePages = [
   '/settings/notifications',
+  '/settings/assistant',
   '/settings/help',
   '/settings/voice-leader',
   '/settings/team-organization',

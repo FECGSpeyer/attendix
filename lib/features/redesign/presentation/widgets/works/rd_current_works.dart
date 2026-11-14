@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../core/utils/error_message.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/song/song.dart';
@@ -71,6 +72,8 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
       } else if (result.skipped > 0) {
         ToastHelper.showWarning(context, l10n.songsFlutterFilesSkipped(result.skipped));
       }
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, l10n.songsFlutterPrintFailed(friendlyErrorMessage(e)));
     } finally {
       if (mounted) setState(() => _printing = false);
     }

@@ -40,4 +40,16 @@ void main() {
       expect(RedesignRoutes.betaTarget(l), l);
     }
   });
+
+  test('legacyTarget: old start pages open the new ones, sub pages stay', () {
+    RedesignRoutes.active = false;
+    expect(RedesignRoutes.legacyTarget('/people'), isNull);
+    RedesignRoutes.active = true;
+    expect(RedesignRoutes.legacyTarget('/attendance/5'), RedesignRoutes.event(5));
+    expect(RedesignRoutes.legacyTarget('/signout'), RedesignRoutes.events);
+    expect(RedesignRoutes.legacyTarget('/people'), RedesignRoutes.members);
+    expect(RedesignRoutes.legacyTarget('/settings'), RedesignRoutes.me);
+    expect(RedesignRoutes.legacyTarget('/settings/notifications'), isNull);
+    expect(RedesignRoutes.legacyTarget('/people/3'), isNull);
+  });
 }

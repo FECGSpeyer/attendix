@@ -14256,6 +14256,13 @@
   "@rdOrgWorksNoPermission": {
     "description": "rdOrg.worksNoPermission"
   },
+  "rdPeopleArchiveTitle": "{name} archivieren",
+  "@rdPeopleArchiveTitle": {
+    "description": "rdPeople.archiveTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "rdPeopleCopyHint": "Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv.",
   "@rdPeopleCopyHint": {
     "description": "rdPeople.copyHint"
@@ -14347,6 +14354,14 @@
   "rdPeopleReviewTitle": "Anfrage prüfen",
   "@rdPeopleReviewTitle": {
     "description": "rdPeople.reviewTitle"
+  },
+  "rdPeopleRoleOwnAdmin": "Du kannst deine eigene Admin-Rolle nicht entfernen. Bitte lass das einen anderen Admin machen.",
+  "@rdPeopleRoleOwnAdmin": {
+    "description": "rdPeople.roleOwnAdmin"
+  },
+  "rdPeopleRuleHintOther": "Neue Termine an diesen Tagen werden automatisch als entschuldigt eingetragen. Bei Diensten wird die Person dann nicht eingeteilt.",
+  "@rdPeopleRuleHintOther": {
+    "description": "rdPeople.ruleHintOther"
   },
   "rdPeopleTeacherAdd": "Neuer Lehrer",
   "@rdPeopleTeacherAdd": {
@@ -16440,6 +16455,10 @@
   "@redesignComposeMissing": {
     "description": "redesign.compose.missing"
   },
+  "redesignComposeNoRecipients": "Die Auswahl erreicht noch niemanden. Wähle andere Gruppen oder Versandwege.",
+  "@redesignComposeNoRecipients": {
+    "description": "redesign.compose.noRecipients"
+  },
   "redesignComposeSend": "Senden",
   "@redesignComposeSend": {
     "description": "redesign.compose.send"
@@ -16492,6 +16511,13 @@
   "redesignCreateDeadlineNone": "Keiner",
   "@redesignCreateDeadlineNone": {
     "description": "redesign.create.deadlineNone"
+  },
+  "redesignCreateDeadlinePassed": "„Antwort bis“ wäre für {date} schon vorbei. Wähle eine kürzere Frist oder „Keiner“.",
+  "@redesignCreateDeadlinePassed": {
+    "description": "redesign.create.deadlinePassed",
+    "placeholders": {
+      "date": {}
+    }
   },
   "redesignCreateDeadlineWeek": "1 Woche vorher",
   "@redesignCreateDeadlineWeek": {
@@ -16862,7 +16888,7 @@
       }
     }
   },
-  "redesignEventAllDone": "{count, plural, one {1 Person als anwesend} other {{count} Personen als anwesend}}",
+  "redesignEventAllDone": "{count, plural, one {1 Person als anwesend markiert} other {{count} Personen als anwesend markiert}}",
   "@redesignEventAllDone": {
     "description": "redesign.event.allDone",
     "placeholders": {

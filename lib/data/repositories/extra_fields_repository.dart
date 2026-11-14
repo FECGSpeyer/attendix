@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/utils/helper_member.dart';
 import '../../core/utils/paged_query.dart';
 import '../models/tenant/tenant.dart';
 import 'base_repository.dart';
@@ -46,6 +47,75 @@ Map<String, dynamic> extraFieldToJson(ExtraField f) => {
       'editableByPlayers': f.editableByPlayers ?? false,
       'displayMode': f.displayMode ?? 'chip',
     };
+
+/// Whether [key] of `additional_fields` is an internal key of the app (e.g.
+/// [helperUntilKey], `_handover_request`) and not the value of a Zusatzfeld.
+bool isInternalExtraFieldKey(String key) => key.startsWith('_') || key == helperUntilKey;
+
+/// The cleaned values of one row, null when nothing changes: values of
+/// deleted fields are removed, missing values get the default, an invalid
+/// selection value gets the default. Internal keys
+/// ([isInternalExtraFieldKey]) are kept; with [previousIds] (the field ids
+/// before the save) only values of those fields are removed, so keys the
+/// definitions never had stay untouched. [renamedOptions] (field id → old
+/// option → new option) moves the values of a renamed option along.
+Map<String, dynamic>? sanitizeExtraFieldValues(
+  Map<String, dynamic> values,
+  List<ExtraField> definitions, {
+  List<Object>? churchIds,
+  Set<String>? previousIds,
+  Map<String, Map<String, String>>? renamedOptions,
+}) {
+  final fields = Map<String, dynamic>.from(values);
+  final validIds = definitions.map((f) => f.id).toSet();
+  var changed = false;
+
+  for (final key in fields.keys.toList()) {
+    if (validIds.contains(key) || isInternalExtraFieldKey(key)) continue;
+    if (previousIds != null && !previousIds.contains(key)) continue;
+    fields.remove(key);
+    changed = true;
+  }
+
+  for (final def in definitions) {
+    final cur = fields[def.id];
+    if (cur == null) {
+      fields[def.id] = extraFieldDefaultValue(def.type,
+          defaultValue: def.defaultValue, options: def.options, churchIds: churchIds);
+      changed = true;
+    } else if (def.type == 'select' && def.options != null && !def.options!.contains(cur)) {
+      final renamed = renamedOptions?[def.id]?[cur];
+      fields[def.id] = renamed != null && def.options!.contains(renamed)
+          ? renamed
+          : extraFieldDefaultValue(def.type, defaultValue: def.defaultValue, options: def.options);
+      changed = true;
+    }
+  }
+  return changed ? fields : null;
+}
+
+/// Options of select fields renamed between [before] and [after] (field id →
+/// old option → new option): with the same number of options, an old
+/// option no longer present maps to the new one at its position, if that
+/// one is new too.
+Map<String, Map<String, String>> renamedExtraFieldOptions(List<ExtraField> before, List<ExtraField> after) {
+  final result = <String, Map<String, String>>{};
+  for (final next in after) {
+    if (next.type != 'select') continue;
+    final prev = before.where((f) => f.id == next.id && f.type == 'select').firstOrNull;
+    final oldOptions = prev?.options ?? const <String>[];
+    final newOptions = next.options ?? const <String>[];
+    if (oldOptions.length != newOptions.length) continue;
+    final map = <String, String>{};
+    for (var i = 0; i < oldOptions.length; i++) {
+      if (!newOptions.contains(oldOptions[i]) && !oldOptions.contains(newOptions[i])) {
+        map[oldOptions[i]] = newOptions[i];
+      }
+    }
+    if (map.isNotEmpty) result[next.id] = map;
+  }
+  return result;
+}
 
 /// Repository für Zusatzfelder (tenants.additional_fields / song_additional_fields)
 /// und das Bereinigen der Werte in player/songs.
@@ -118,7 +188,8 @@ class ExtraFieldsRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Entfernt Werte gelöschter Felder, ergänzt fehlende Standardwerte und
-  /// korrigiert ungültige Auswahlwerte (player bzw. songs).
+  /// korrigiert ungültige Auswahlwerte (player bzw. songs), siehe
+  /// [sanitizeExtraFieldValues].
   /// Personen: nur aktive, nicht ausstehende (Ionic db.getPlayers()).
   /// Werke: [songTenantId] = effektive Werk-Instanz (Ionic db.getSongs()).
   Future<void> sanitizeValues({
@@ -126,36 +197,22 @@ class ExtraFieldsRepository extends BaseRepository with TenantAwareRepository {
     required List<ExtraField> definitions,
     List<Object>? churchIds,
     int? songTenantId,
+    Set<String>? previousIds,
+    Map<String, Map<String, String>>? renamedOptions,
   }) async {
     final isPlayer = table == 'player';
     final rowTenantId = isPlayer ? null : songTenantId;
     try {
       final rows = await _loadRows(table, rowTenantId: rowTenantId, activeOnly: isPlayer);
-      final validIds = definitions.map((f) => f.id).toSet();
       for (final row in rows) {
-        final fields = Map<String, dynamic>.from((row['additional_fields'] as Map?) ?? {});
-        var changed = false;
-
-        for (final key in fields.keys.toList()) {
-          if (!validIds.contains(key)) {
-            fields.remove(key);
-            changed = true;
-          }
-        }
-
-        for (final def in definitions) {
-          final cur = fields[def.id];
-          if (cur == null) {
-            fields[def.id] = extraFieldDefaultValue(def.type,
-                defaultValue: def.defaultValue, options: def.options, churchIds: churchIds);
-            changed = true;
-          } else if (def.type == 'select' && def.options != null && !def.options!.contains(cur)) {
-            fields[def.id] = extraFieldDefaultValue(def.type, defaultValue: def.defaultValue, options: def.options);
-            changed = true;
-          }
-        }
-
-        if (changed) {
+        final fields = sanitizeExtraFieldValues(
+          (row['additional_fields'] as Map?)?.cast<String, dynamic>() ?? const {},
+          definitions,
+          churchIds: churchIds,
+          previousIds: previousIds,
+          renamedOptions: renamedOptions,
+        );
+        if (fields != null) {
           await _updateRow(table, row['id'] as int, fields, rowTenantId: rowTenantId);
         }
       }

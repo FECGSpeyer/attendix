@@ -331,6 +331,15 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     }
     final deadline = _deadline;
     final start = _start ?? type.startTime;
+    // A deadline that is already over would be dropped silently: say so.
+    final passed = rdDeadlinePassedOn(deadline, dates, start);
+    if (passed != null) {
+      ToastHelper.showError(
+        context,
+        l10n.redesignCreateDeadlinePassed(DateFormat.MEd(currentIntlLocale()).format(passed)),
+      );
+      return;
+    }
     final title = _title.text.trim();
     final place = _place.text.trim();
     // Ort and Werke work for every Art: switch them on at the Art when used.
