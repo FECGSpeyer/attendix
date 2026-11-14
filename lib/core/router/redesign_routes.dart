@@ -212,8 +212,8 @@ class RedesignRoutes {
   /// the new design is on: the old Termin page, "Meine Termine", the Termin
   /// list and the people list become their pages of the new design (the
   /// role checks of [roleRedirect] stay). Other locations and every location
-  /// without the Beta stay as they are. "Alle Details" still pushes
-  /// `/attendance/:id` directly, so this is no router redirect.
+  /// without the Beta stay as they are. The router applies it too (via
+  /// [legacyTarget]), so the old Termin page is not reachable in the Beta.
   /// Query and fragment (e.g. a push's `tenantId`) are kept.
   static String betaTarget(String location) {
     if (!active) return location;

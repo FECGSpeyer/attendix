@@ -267,13 +267,13 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     final values = updates();
     _enqueue(() async {
       if (await _store(values) || !mounted) return;
-      // Only undo when nothing changed the controls in the meantime.
-      if ((_difficulty, _withChoir, _withSolo, _categoryIds) != after) return;
+      // Undo only the controls this change touched, and only when nothing
+      // changed them again in the meantime.
       setState(() {
-        _difficulty = before.$1;
-        _withChoir = before.$2;
-        _withSolo = before.$3;
-        _categoryIds = before.$4;
+        if (before.$1 != after.$1 && _difficulty == after.$1) _difficulty = before.$1;
+        if (before.$2 != after.$2 && _withChoir == after.$2) _withChoir = before.$2;
+        if (before.$3 != after.$3 && _withSolo == after.$3) _withSolo = before.$3;
+        if (!identical(before.$4, after.$4) && identical(_categoryIds, after.$4)) _categoryIds = before.$4;
       });
     });
   }
