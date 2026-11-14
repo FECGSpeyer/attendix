@@ -774,6 +774,17 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   }
 
   Future<void> _pickDates() async {
+    if (context.rdSkin == null) {
+      // TER-02: Ionic `ion-modal.dateModal` – the choice applies live.
+      await showIonMultiDateCard(
+        context,
+        initialDates: _selectedDates,
+        onChanged: (dates) {
+          if (mounted) setState(() => _selectedDates = dates);
+        },
+      );
+      return;
+    }
     final result = await MultiDateCalendarDialog.show(
       context,
       initialDates: _selectedDates,
