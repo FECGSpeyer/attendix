@@ -42,6 +42,14 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // E2E flows (patrol_test/, docs/testing.md). Only the androidTest
+        // APK uses this; the app itself and store builds are unchanged.
+        testInstrumentationRunner = "pl.leancode.patrol.PatrolJUnitRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
+    }
+
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
     // Play upload key: android/key.properties (gitignored, never committed)
@@ -88,4 +96,5 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
     implementation("com.google.firebase:firebase-messaging")
+    androidTestUtil("androidx.test:orchestrator:1.5.1")
 }
