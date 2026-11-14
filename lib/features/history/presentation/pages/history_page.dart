@@ -11,6 +11,7 @@ import '../../../../core/providers/history_providers.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -676,6 +677,21 @@ class _HistoryGroupState extends State<_HistoryGroup> {
     // UX_ATT: accordion header is an `ion-item color="light"` (grey row)
     final dark = Theme.of(context).brightness == Brightness.dark;
     final headerColor = dark ? const Color(0xFF222428) : AppColors.light;
+    if (!isIosLook(context) && context.rdSkin == null) {
+      // md: ion-accordion with an `ion-item color="light"` header that
+      // stays light when open; the rows sit on the page surface.
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5)),
+        ),
+        child: IonAccordionTile(
+          headerColor: headerColor,
+          title: Text(widget.date, style: const TextStyle(fontSize: 17)),
+          children: _entryRows(),
+        ),
+      );
+    }
     if (!isIosLook(context)) {
       return ExpansionTile(
         backgroundColor: Theme.of(context).colorScheme.surface,

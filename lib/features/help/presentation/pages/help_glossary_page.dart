@@ -11,6 +11,7 @@ import '../../../../l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../settings/presentation/widgets/settings_list.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import 'package:attendix/shared/widgets/adaptive/ion_accordion_tile.dart';
 
 /// Alphabetical glossary with search.
 ///
@@ -74,27 +75,17 @@ class _HelpGlossaryPageState extends ConsumerState<HelpGlossaryPage> {
               if (terms.isEmpty)
                 ListTile(title: Text(context.l10n.helpNoTerms)),
               for (final g in terms)
-                ExpansionTile(
+                IonAccordionTile(
                   key: PageStorageKey('glossary-${g.id}'),
                   title: Text(g.term),
-                  shape: const Border(),
-                  collapsedShape: const Border(),
-                  tilePadding: ios
-                      ? const EdgeInsets.only(
-                          left: IonIos.itemPaddingStart,
-                          right: IonIos.itemPaddingEnd,
-                        )
-                      : null,
-                  iconColor: ios ? IonIos.text(context).withValues(alpha: 0.5) : null,
-                  collapsedIconColor:
-                      ios ? IonIos.text(context).withValues(alpha: 0.5) : null,
+                  chevronColor: ios ? IonIos.text(context).withValues(alpha: 0.5) : null,
                   childrenPadding: const EdgeInsets.fromLTRB(
                     AppDimensions.paddingM,
                     0,
                     AppDimensions.paddingM,
                     AppDimensions.paddingM,
                   ),
-                  expandedAlignment: Alignment.centerLeft,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [HelpMarkdown(data: g.definition)],
                 ),
             ],

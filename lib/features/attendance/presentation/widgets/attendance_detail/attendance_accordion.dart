@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
+import '../../../../../shared/widgets/adaptive/ion_accordion_tile.dart';
 import '../../../../../shared/widgets/adaptive/ion_icons.dart';
 import '../../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../../shared/widgets/layout/ionic_md.dart';
@@ -51,9 +52,17 @@ class _AttendanceAccordionState extends State<AttendanceAccordion> {
   Widget build(BuildContext context) {
     final ios = useIosLook(context);
     final scheme = Theme.of(context).colorScheme;
+    // ion-accordion: 300 ms cubic-bezier(.25, .8, .5, 1) for content and
+    // chevron (the Beta card below keeps its own 200 ms).
+    const ionAnimation = AnimationStyle(
+      duration: IonAccordionTile.duration,
+      curve: IonAccordionTile.curve,
+      reverseCurve: IonAccordionTile.curve,
+    );
     final toggle = AnimatedRotation(
       turns: _expanded ? 0.5 : 0,
-      duration: const Duration(milliseconds: 200),
+      duration: IonAccordionTile.duration,
+      curve: IonAccordionTile.curve,
       child: ios
           ? IonChevronDownIcon(
               size: 20,
@@ -138,6 +147,7 @@ class _AttendanceAccordionState extends State<AttendanceAccordion> {
                 controller: widget.controller,
                 initiallyExpanded: widget.initiallyExpanded,
                 onExpansionChanged: onChanged,
+                expansionAnimationStyle: ionAnimation,
                 shape: const Border(),
                 collapsedShape: const Border(),
                 minTileHeight: 52,
@@ -157,6 +167,7 @@ class _AttendanceAccordionState extends State<AttendanceAccordion> {
                 controller: widget.controller,
                 initiallyExpanded: widget.initiallyExpanded,
                 onExpansionChanged: onChanged,
+                expansionAnimationStyle: ionAnimation,
                 shape: const Border(),
                 collapsedShape: const Border(),
                 trailing: toggle,

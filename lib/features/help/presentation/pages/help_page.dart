@@ -12,6 +12,7 @@ import '../../../../l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../settings/presentation/widgets/settings_list.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import 'package:attendix/shared/widgets/adaptive/ion_accordion_tile.dart';
 
 /// Help center overview: search, glossary entry and topic accordions.
 ///
@@ -144,23 +145,13 @@ class _HelpPageState extends ConsumerState<HelpPage> {
             for (final category in categories)
               // IOS_FORMS1: ion-accordion header item – start icon and the
               // toggle chevron inherit the black item text colour (iOS).
-              ExpansionTile(
+              IonAccordionTile(
                 leading: Icon(
                   helpCategoryIcon(category.icon),
                   color: ios ? IonIos.text(context) : null,
                   size: ios ? IonIos.itemIconSize : null,
                 ),
                 title: Text(category.label),
-                shape: const Border(),
-                collapsedShape: const Border(),
-                tilePadding: ios
-                    ? const EdgeInsets.only(
-                        left: IonIos.itemPaddingStart,
-                        right: IonIos.itemPaddingEnd,
-                      )
-                    : null,
-                iconColor: ios ? IonIos.text(context) : null,
-                collapsedIconColor: ios ? IonIos.text(context) : null,
                 children: [
                   for (final article
                       in service.getArticlesByCategory(category.id))

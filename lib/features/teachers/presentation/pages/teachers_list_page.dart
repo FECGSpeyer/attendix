@@ -16,6 +16,7 @@ import '../../../../data/repositories/teacher_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../people/presentation/widgets/ion/ion_widgets.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground;
@@ -417,15 +418,26 @@ class _TeacherFormState extends State<_TeacherForm> {
           ),
           if (widget.players.isNotEmpty) ...[
             const SizedBox(height: AppDimensions.paddingM),
-            ExpansionTile(
-              title: Text(context.l10n.teachersPlayers),
-              initiallyExpanded: true,
-              tilePadding: EdgeInsets.zero,
-              children: [
-                for (final p in widget.players)
-                  ListTile(contentPadding: EdgeInsets.zero, title: Text(p)),
-              ],
-            ),
+            if (context.rdSkin != null)
+              ExpansionTile(
+                title: Text(context.l10n.teachersPlayers),
+                initiallyExpanded: true,
+                tilePadding: EdgeInsets.zero,
+                children: [
+                  for (final p in widget.players)
+                    ListTile(contentPadding: EdgeInsets.zero, title: Text(p)),
+                ],
+              )
+            else
+              IonAccordionTile(
+                title: Text(context.l10n.teachersPlayers),
+                initiallyExpanded: true,
+                headerPadding: EdgeInsets.zero,
+                children: [
+                  for (final p in widget.players)
+                    ListTile(contentPadding: EdgeInsets.zero, title: Text(p)),
+                ],
+              ),
           ],
           const SizedBox(height: AppDimensions.paddingL),
           FilledButton(

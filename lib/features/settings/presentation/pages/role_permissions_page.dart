@@ -9,6 +9,7 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/role_permission/tenant_role_permission.dart';
 import '../../../../l10n/l10n.dart';
@@ -276,9 +277,19 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
               onChanged: (v) => _update(role, (p) => p.copyWith(playerPlannedAbsence: v)),
             ),
     ];
-    if (ionIsIos(context)) {
+    final beta = context.rdSkin != null;
+    if (ionIsIos(context) && !beta) {
       // ion-accordion: header ion-item color="light" (page background),
       // content = inset list with the toggles.
+      return IonAccordionTile(
+        headerPadding: const EdgeInsets.only(right: 2),
+        chevronColor: IonIos.text(context).withValues(alpha: 0.4),
+        title: Text(label, style: TextStyle(fontSize: 16, color: IonIos.text(context))),
+        childrenPadding: const EdgeInsets.only(top: 8, bottom: 16),
+        children: [IonInsetGroup(children: toggles)],
+      );
+    }
+    if (ionIsIos(context)) {
       return ExpansionTile(
         tilePadding: const EdgeInsets.only(right: 2),
         shape: const Border(),
@@ -291,10 +302,15 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
       );
     }
     return Card(
-      child: ExpansionTile(
-        title: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-        children: toggles,
-      ),
+      child: beta
+          ? ExpansionTile(
+              title: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+              children: toggles,
+            )
+          : IonAccordionTile(
+              title: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+              children: toggles,
+            ),
     );
   }
 }
