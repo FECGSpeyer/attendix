@@ -21,6 +21,7 @@ import 'quick_create_attendance.dart';
 import 'tasks_tab.dart' show TeamOrgBadge, TeamOrgListSkeleton, priorityColor;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
 
 /// Tab "Themen": leadership reviews suggestions, plans the next Termin and
 /// keeps the Themenspeicher; members suggest topics and see their suggestions.
@@ -78,8 +79,10 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
         for (final att in upcoming.take(8))
           AppActionSheetAction(
             value: att.id,
-            icon: att.id == current?.id ? AppIcons.check : null,
-            label: _attendanceTitle(att, types),
+            // Ionic: the current Termin carries the text suffix " ✓".
+            icon: att.id == current?.id && context.rdSkin != null ? AppIcons.check : null,
+            label: _attendanceTitle(att, types) +
+                (att.id == current?.id && context.rdSkin == null ? ' ✓' : ''),
           ),
         if (current != null)
           AppActionSheetAction(
@@ -252,106 +255,122 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
     }
   }
 
+  /// "Vorschläge prüfen" – Ionic sheet modal `[breakpoints]="[0, 1]"`
+  /// `[initialBreakpoint]="1"`, close ✕ in `slot="start"`,
+  /// `ion-content color="light"`.
   Future<void> _openReview() async {
+    Widget list(BuildContext ctx, ScrollController? controller) => Consumer(builder: (ctx, ref, _) {
+          final items = ref.watch(agendaItemsProvider).valueOrNull ?? const <AgendaItem>[];
+          final pending = splitTopics(items).pending;
+          return ListView(
+            controller: controller,
+            padding: const EdgeInsets.only(bottom: 24),
+            children: [
+              // Ionic `.sheet-hint`
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                child: Text(pending.isEmpty ? ctx.l10n.teamOrgAllDecided : ctx.l10n.teamOrgSuggestionsHint,
+                    style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+              ),
+              for (final item in pending)
+                IonInsetList(
+                  dividerIndent: null,
+                  children: [
+                    ListTile(
+                      leading: CircleAvatar(
+                        radius: 18,
+                        backgroundColor: AppColors.primaryDark,
+                        child: Text(
+                          item.proposer.initials.isNotEmpty ? item.proposer.initials : '?',
+                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white),
+                        ),
+                      ),
+                      title: Text(
+                        item.proposer.fullName.isNotEmpty ? item.proposer.fullName : ctx.l10n.teamOrgFlutterMember,
+                        style: const TextStyle(fontSize: 15),
+                      ),
+                      subtitle: Text(relativeDay(item.createdAt), style: const TextStyle(color: AppColors.medium)),
+                    ),
+                    ListTile(
+                      title: Text(item.title, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      subtitle: item.description?.isNotEmpty == true
+                          ? Text(item.description!, style: const TextStyle(color: AppColors.medium))
+                          : null,
+                    ),
+                    // Ionic `.proposal-actions`: two equal buttons.
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppColors.medium,
+                                side: const BorderSide(color: AppColors.medium),
+                              ),
+                              onPressed: _deciding.contains(item.id) ? null : () => _reject(item),
+                              child: IonButtonLabel(ctx.l10n.teamOrgReject),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: FilledButton(
+                              onPressed: _deciding.contains(item.id) ? null : () => _accept(item),
+                              child: IonButtonLabel(ctx.l10n.commonApply),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          );
+        });
+
+    if (context.rdSkin == null) {
+      await showIonSheet<void>(
+        context,
+        breakpoints: const [0, 1],
+        initialBreakpoint: 1,
+        builder: (ctx, controller) => IonSheetScaffold(
+          title: ctx.l10n.teamOrgSuggestions,
+          start: [IonCloseButton(onPressed: () => Navigator.of(ctx).pop())],
+          backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
+          body: list(ctx, controller),
+        ),
+      );
+      return;
+    }
     await showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      builder: (ctx) => Consumer(builder: (ctx, ref, _) {
-        final items = ref.watch(agendaItemsProvider).valueOrNull ?? const <AgendaItem>[];
-        final pending = splitTopics(items).pending;
-        return SizedBox(
-          height: MediaQuery.of(ctx).size.height * 0.85,
-          child: Column(
-            children: [
-              AppBar(
-                toolbarHeight: ionModalToolbarHeight(context),
-                automaticallyImplyLeading: false,
-                // Ionic: close ✕ in `ion-buttons slot="start"` (iOS glass circle).
-                leadingWidth: ctx.rdSkin == null && useIosLook(ctx) ? 68 : null,
-                leading: ctx.rdSkin == null
-                    ? IonCloseButton(onPressed: () => Navigator.of(ctx).pop())
-                    : IconButton(
-                        icon: Icon(AppIcons.close),
-                        tooltip: ctx.l10n.commonClose,
-                        onPressed: () => Navigator.of(ctx).pop(),
-                      ),
-                title: Text(ctx.l10n.teamOrgSuggestions),
+      builder: (ctx) => SizedBox(
+        height: MediaQuery.of(ctx).size.height * 0.85,
+        child: Column(
+          children: [
+            AppBar(
+              toolbarHeight: ionModalToolbarHeight(context),
+              automaticallyImplyLeading: false,
+              leading: IconButton(
+                icon: Icon(AppIcons.close),
+                tooltip: ctx.l10n.commonClose,
+                onPressed: () => Navigator.of(ctx).pop(),
               ),
-              Expanded(
-                child: ColoredBox(
-                  color: Theme.of(ctx).scaffoldBackgroundColor,
-                  child: ListView(
-                    padding: const EdgeInsets.only(bottom: 24),
-                    children: [
-                      // Ionic `.sheet-hint`
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-                        child: Text(pending.isEmpty ? ctx.l10n.teamOrgAllDecided : ctx.l10n.teamOrgSuggestionsHint,
-                            style: const TextStyle(fontSize: 13, color: AppColors.medium)),
-                      ),
-                      for (final item in pending)
-                        IonInsetList(
-                          dividerIndent: null,
-                          children: [
-                            ListTile(
-                              leading: CircleAvatar(
-                                radius: 18,
-                                backgroundColor: AppColors.primaryDark,
-                                child: Text(
-                                  item.proposer.initials.isNotEmpty ? item.proposer.initials : '?',
-                                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white),
-                                ),
-                              ),
-                              title: Text(
-                                item.proposer.fullName.isNotEmpty ? item.proposer.fullName : ctx.l10n.teamOrgFlutterMember,
-                                style: const TextStyle(fontSize: 15),
-                              ),
-                              subtitle: Text(relativeDay(item.createdAt), style: const TextStyle(color: AppColors.medium)),
-                            ),
-                            ListTile(
-                              title: Text(item.title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                              subtitle: item.description?.isNotEmpty == true
-                                  ? Text(item.description!, style: const TextStyle(color: AppColors.medium))
-                                  : null,
-                            ),
-                            // Ionic `.proposal-actions`: two equal buttons.
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: OutlinedButton(
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor: AppColors.medium,
-                                        side: const BorderSide(color: AppColors.medium),
-                                      ),
-                                      onPressed: _deciding.contains(item.id) ? null : () => _reject(item),
-                                      child: IonButtonLabel(ctx.l10n.teamOrgReject),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: FilledButton(
-                                      onPressed: _deciding.contains(item.id) ? null : () => _accept(item),
-                                      child: IonButtonLabel(ctx.l10n.commonApply),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-                ),
+              title: Text(ctx.l10n.teamOrgSuggestions),
+            ),
+            Expanded(
+              child: ColoredBox(
+                color: Theme.of(ctx).scaffoldBackgroundColor,
+                child: list(ctx, null),
               ),
-            ],
-          ),
-        );
-      }),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -574,14 +593,26 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
 
 /// "Thema vorschlagen": the member's suggestion sheet.
 Future<void> showSuggestTopicSheet(BuildContext context) async {
-  final result = await showModalBottomSheet<bool>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    useSafeArea: true,
-    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    builder: (_) => const _SuggestSheet(),
-  );
+  final bool? result;
+  if (context.rdSkin == null) {
+    // Ionic: sheet modal `[breakpoints]="[0, 1]"` `[initialBreakpoint]="1"`,
+    // "Abbrechen" in `slot="start"`, `ion-content color="light"`.
+    result = await showIonSheet<bool>(
+      context,
+      breakpoints: const [0, 1],
+      initialBreakpoint: 1,
+      builder: (_, controller) => _SuggestSheet(scrollController: controller),
+    );
+  } else {
+    result = await showModalBottomSheet<bool>(
+      context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (_) => const _SuggestSheet(),
+    );
+  }
   if (result == true && context.mounted) ToastHelper.showSuccess(context, context.l10n.teamOrgSuggestionSent);
 }
 
@@ -683,7 +714,10 @@ class _MemberTopics extends ConsumerWidget {
 }
 
 class _SuggestSheet extends ConsumerStatefulWidget {
-  const _SuggestSheet();
+  const _SuggestSheet({this.scrollController});
+
+  /// Set in the classic design ([showIonSheet]).
+  final ScrollController? scrollController;
 
   @override
   ConsumerState<_SuggestSheet> createState() => _SuggestSheetState();
@@ -729,6 +763,51 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    // Ionic: sheet hint, inset list with stacked title/description, block button.
+    final hint = Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: Text(l10n.teamOrgSuggestHint, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+    );
+    final fields = IonInsetList(
+      children: [
+        IonStackedInput(
+          controller: _title,
+          label: l10n.tasksTitle,
+          hint: l10n.teamOrgTitlePlaceholder,
+        ),
+        IonStackedInput(
+          controller: _description,
+          label: l10n.tasksDescription,
+          hint: l10n.teamOrgDescPlaceholder,
+          minLines: 4,
+          maxLines: 8,
+        ),
+      ],
+    );
+    final button = FilledButton(
+      onPressed: _title.text.trim().isEmpty || _sending ? null : _send,
+      child: IonButtonLabel(l10n.teamOrgSendSuggestion),
+    );
+    if (widget.scrollController != null) {
+      // Classic: the block button sits in the content (`ion-padding-horizontal`).
+      return IonSheetScaffold(
+        title: l10n.teamOrgSuggestTopic,
+        start: [TextButton(onPressed: () => Navigator.of(context).pop(), child: IonButtonLabel(l10n.commonCancel))],
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: ListView(
+          controller: widget.scrollController,
+          padding: const EdgeInsets.only(bottom: 24),
+          children: [
+            hint,
+            fields,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: SizedBox(width: double.infinity, child: button),
+            ),
+          ],
+        ),
+      );
+    }
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Column(
@@ -741,38 +820,13 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
             leadingWidth: 100,
             title: Text(l10n.teamOrgSuggestTopic),
           ),
-          // Ionic: sheet hint, inset list with stacked title/description, block button.
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-            child: Text(l10n.teamOrgSuggestHint, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
-          ),
-          IonInsetList(
-            children: [
-              IonStackedInput(
-                controller: _title,
-                label: l10n.tasksTitle,
-                hint: l10n.teamOrgTitlePlaceholder,
-              ),
-              IonStackedInput(
-                controller: _description,
-                label: l10n.tasksDescription,
-                hint: l10n.teamOrgDescPlaceholder,
-                minLines: 4,
-                maxLines: 8,
-              ),
-            ],
-          ),
+          hint,
+          fields,
           SafeArea(
             top: false,
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: _title.text.trim().isEmpty || _sending ? null : _send,
-                  child: IonButtonLabel(l10n.teamOrgSendSuggestion),
-                ),
-              ),
+              child: SizedBox(width: double.infinity, child: button),
             ),
           ),
         ],

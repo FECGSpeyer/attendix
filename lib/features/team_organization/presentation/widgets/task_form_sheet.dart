@@ -14,6 +14,7 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
 
 /// Opens "Neue Aufgabe" / "Aufgabe bearbeiten" as a sheet (leadership only).
 /// Resolves with the created/updated task, or null when closed without saving.
@@ -27,6 +28,25 @@ Future<TeamTask?> showTaskFormSheet(
   int? presetPersonId,
   String? contextLabel,
 }) {
+  if (context.rdSkin == null) {
+    // Ionic `openTaskForm`: sheet modal `breakpoints: [0, 1]`,
+    // `initialBreakpoint: 1`, `ion-content color="light"`.
+    return showIonSheet<TeamTask>(
+      context,
+      breakpoints: const [0, 1],
+      initialBreakpoint: 1,
+      builder: (_, controller) => TaskFormSheet(
+        task: task,
+        attendanceId: attendanceId,
+        protocolId: protocolId,
+        agendaItemId: agendaItemId,
+        presetTitle: presetTitle,
+        presetPersonId: presetPersonId,
+        contextLabel: contextLabel,
+        scrollController: controller,
+      ),
+    );
+  }
   return showModalBottomSheet<TeamTask>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -56,7 +76,11 @@ class TaskFormSheet extends ConsumerStatefulWidget {
     this.presetTitle,
     this.presetPersonId,
     this.contextLabel,
+    this.scrollController,
   });
+
+  /// Set when the form is shown as a classic sheet ([showIonSheet]).
+  final ScrollController? scrollController;
 
   final TeamTask? task;
   final int? attendanceId;
@@ -123,6 +147,18 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
   }
 
   Future<void> _pickPerson(List<Person> persons) async {
+    if (context.rdSkin == null) {
+      // Ionic: `[initialBreakpoint]="0.75" [breakpoints]="[0, 0.75, 1]"`.
+      final result = await showIonSheet<({int? id})>(
+        context,
+        breakpoints: const [0, 0.75, 1],
+        initialBreakpoint: 0.75,
+        builder: (_, controller) =>
+            _PersonPicker(persons: persons, selectedId: _personId, scrollController: controller),
+      );
+      if (result != null && mounted) setState(() => _personId = result.id);
+      return;
+    }
     final result = await showModalBottomSheet<({int? id})>(
       context: context,
       isScrollControlled: true,
@@ -202,6 +238,23 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
     final l10n = context.l10n;
 
     final hasPerson = _personId != null && personName.isNotEmpty;
+    final classic = widget.scrollController != null;
+    final title = _isEdit ? l10n.tasksFlutterEditTask : l10n.tasksFlutterNewTask;
+    final rows = _formRows(context, persons, personName, hasPerson);
+    final footer = _footer(context);
+    if (classic) {
+      return IonSheetScaffold(
+        title: title,
+        start: [IonCloseButton(onPressed: () => Navigator.of(context).pop())],
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: ListView(
+          controller: widget.scrollController,
+          padding: const EdgeInsets.only(bottom: 16),
+          children: rows,
+        ),
+        footer: footer,
+      );
+    }
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SizedBox(
@@ -221,12 +274,25 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                       tooltip: l10n.commonClose,
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-              title: Text(_isEdit ? l10n.tasksFlutterEditTask : l10n.tasksFlutterNewTask),
+              title: Text(title),
             ),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.only(bottom: 16),
-                children: [
+                children: rows,
+              ),
+            ),
+            footer,
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _formRows(BuildContext context, List<Person> persons, String personName, bool hasPerson) {
+    final theme = Theme.of(context);
+    final l10n = context.l10n;
+    return [
                   // Ionic `.task-form-context`
                   if (widget.contextLabel != null && widget.contextLabel!.isNotEmpty)
                     Padding(
@@ -370,11 +436,13 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                         ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            // Ionic `.task-form-footer`: round primary-shade button, 50px.
-            SafeArea(
+    ];
+  }
+
+  Widget _footer(BuildContext context) {
+    final l10n = context.l10n;
+    // Ionic `.task-form-footer`: round primary-shade button, 50px.
+    return SafeArea(
               top: false,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -392,11 +460,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
+            );
   }
 
   String _initialsOf(List<Person> persons) {
@@ -415,9 +479,12 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
 }
 
 class _PersonPicker extends StatefulWidget {
-  const _PersonPicker({required this.persons, required this.selectedId});
+  const _PersonPicker({required this.persons, required this.selectedId, this.scrollController});
   final List<Person> persons;
   final int? selectedId;
+
+  /// Set in the classic design ([showIonSheet]).
+  final ScrollController? scrollController;
 
   @override
   State<_PersonPicker> createState() => _PersonPickerState();
@@ -433,25 +500,7 @@ class _PersonPickerState extends State<_PersonPicker> {
     final filtered = q.isEmpty
         ? widget.persons
         : widget.persons.where((p) => p.fullName.toLowerCase().contains(q)).toList();
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.75,
-      child: Column(
-        children: [
-          AppBar(
-            toolbarHeight: ionModalToolbarHeight(context),
-            automaticallyImplyLeading: false,
-            primary: false,
-            title: Text(l10n.tasksResponsible),
-            actions: [
-              TextButton(onPressed: () => Navigator.of(context).pop(), child: IonButtonLabel(l10n.personDone)),
-            ],
-          ),
-          IonSearchbar(
-            placeholder: l10n.tasksSearchPerson,
-            onChanged: (v) => setState(() => _search = v),
-          ),
-          Expanded(
-            child: ListView.separated(
+    final list = ListView.separated(
               itemCount: (q.isEmpty ? 1 : 0) + (filtered.isEmpty ? 1 : filtered.length),
               separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
               itemBuilder: (context, i) {
@@ -476,8 +525,38 @@ class _PersonPickerState extends State<_PersonPicker> {
                   onTap: () => Navigator.of(context).pop((id: p.id)),
                 );
               },
-            ),
+            );
+    if (widget.scrollController != null) {
+      // Ionic: title + "Fertig" in `slot="end"`, searchbar in a second
+      // toolbar, plain `ion-list`.
+      return IonSheetScaffold(
+        title: l10n.tasksResponsible,
+        end: [TextButton(onPressed: () => Navigator.of(context).pop(), child: IonButtonLabel(l10n.personDone))],
+        bottom: IonSearchbar(
+          placeholder: l10n.tasksSearchPerson,
+          onChanged: (v) => setState(() => _search = v),
+        ),
+        body: list,
+      );
+    }
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.75,
+      child: Column(
+        children: [
+          AppBar(
+            toolbarHeight: ionModalToolbarHeight(context),
+            automaticallyImplyLeading: false,
+            primary: false,
+            title: Text(l10n.tasksResponsible),
+            actions: [
+              TextButton(onPressed: () => Navigator.of(context).pop(), child: IonButtonLabel(l10n.personDone)),
+            ],
           ),
+          IonSearchbar(
+            placeholder: l10n.tasksSearchPerson,
+            onChanged: (v) => setState(() => _search = v),
+          ),
+          Expanded(child: list),
         ],
       ),
     );

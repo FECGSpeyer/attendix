@@ -90,7 +90,13 @@ class _ClassicTeamPageState extends ConsumerState<_ClassicTeamPage>
           labels: [context.l10n.teamOrgTabTasks, context.l10n.teamOrgTabTopics, context.l10n.teamOrgTabProtocols],
         ),
       ),
-      body: TabBarView(controller: _controller, children: const [TasksTab(), TopicsTab(), ProtocolsTab()]),
+      // DAS-32: Ionic switches the tabs only via the ion-segment, not by a
+      // horizontal swipe.
+      body: TabBarView(
+        controller: _controller,
+        physics: const NeverScrollableScrollPhysics(),
+        children: const [TasksTab(), TopicsTab(), ProtocolsTab()],
+      ),
     );
   }
 }
