@@ -25,7 +25,6 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppDatePicker;
 import '../../../people/person_write.dart' show organisationPersonKey;
 import '../../../people/presentation/pages/person_detail_page.dart'
     show personProvider, personAttendanceStatsProvider, personHistoryProvider;
@@ -33,6 +32,8 @@ import '../../../people/presentation/widgets/pause_person_sheet.dart' show pause
 import '../../../settings/presentation/pages/left_players_page.dart' show LeftPlayersPage;
 import '../../data/rd_members_logic.dart';
 import '../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
+import '../widgets/members/rd_pause_sheets.dart' show showRdArchiveSheet;
+import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../widgets/event/rd_record_widgets.dart' show rdStatusLook;
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
@@ -156,7 +157,7 @@ class RdPersonPage extends ConsumerWidget {
             action: role.isAdmin || role.isResponsible
                 ? RdPrimaryButton(
                     label: l10n.redesignPersonReview,
-                    onPressed: () => context.push(RedesignRoutes.approvalReview(personId)),
+                    onPressed: () => context.push(RedesignRoutes.membersReview(personId)),
                   )
                 : null,
           ),
@@ -607,8 +608,8 @@ class _InfoList extends ConsumerWidget {
     if (helperUntil(person) case final until?) {
       rows.add(RdListRow(
         title: l10n.rdHelperTitle,
-        subtitle: l10n.rdHelperPersonHint,
-        value: l10n.rdHelperUntil(long.format(DateTime.parse(until))),
+        // "Aushilfe · bis 30. Nov. 2026"; what it means stands below the list.
+        value: l10n.rdTextHelperUntil(long.format(DateTime.parse(until))),
         showChevron: false,
       ));
     }
@@ -654,7 +655,11 @@ class _InfoList extends ConsumerWidget {
       ));
     }
     if (rows.isEmpty) return const SizedBox.shrink();
-    return RdGroupedList(children: rows);
+    if (helperUntil(person) == null) return RdGroupedList(children: rows);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [RdGroupedList(children: rows), RdListNote(l10n.rdHelperPersonHint)],
+    );
   }
 }
 
@@ -700,10 +705,7 @@ class _Actions extends ConsumerWidget {
     if (DemoGuard.blocked()) return; // DEMO_GUARD
     final repo = ref.read(playerRepositoryWithTenantProvider);
     final l10n = context.l10n;
-    final result = await showDialog<({DateTime date, String note})>(
-      context: context,
-      builder: (_) => _ArchiveDialog(name: '${person.firstName} ${person.lastName}'.trim()),
-    );
+    final result = await showRdArchiveSheet(context, name: '${person.firstName} ${person.lastName}'.trim());
     if (result == null || !context.mounted) return;
     try {
       await repo.archivePlayer(
@@ -740,72 +742,6 @@ class _Actions extends ConsumerWidget {
             color: p.absent,
             onPressed: () => _archive(context, ref),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ArchiveDialog extends StatefulWidget {
-  const _ArchiveDialog({required this.name});
-
-  final String name;
-
-  @override
-  State<_ArchiveDialog> createState() => _ArchiveDialogState();
-}
-
-class _ArchiveDialogState extends State<_ArchiveDialog> {
-  DateTime _date = DateTime.now();
-  final _note = TextEditingController();
-
-  @override
-  void dispose() {
-    _note.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    final l10n = context.l10n;
-    return AlertDialog(
-      title: Text(l10n.rdPeopleArchiveTitle(widget.name)),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(l10n.peopleLeaveDate),
-            subtitle: Text(DateFormat.yMMMd(currentIntlLocale()).format(_date)),
-            trailing: const Icon(Icons.calendar_today_outlined),
-            onTap: () async {
-              final picked = await showAppDatePicker(
-                context: context,
-                initialDate: _date,
-                firstDate: DateTime(2000),
-                lastDate: DateTime.now(),
-              );
-              if (picked != null && mounted) setState(() => _date = picked);
-            },
-          ),
-          TextField(
-            controller: _note,
-            maxLines: 2,
-            decoration: InputDecoration(
-              labelText: l10n.dutyReasonOptional,
-              hintText: l10n.personFlutterArchiveReasonHint,
-            ),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
-        TextButton(
-          style: TextButton.styleFrom(foregroundColor: p.absent),
-          onPressed: () => Navigator.of(context).pop((date: _date, note: _note.text)),
-          child: Text(l10n.peopleArchive),
         ),
       ],
     );

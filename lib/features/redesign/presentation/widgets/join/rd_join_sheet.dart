@@ -60,7 +60,12 @@ class _JoinSheetState extends ConsumerState<_JoinSheet> {
 
     Widget? status;
     if (text.isNotEmpty && id == null) {
-      status = Text(l10n.redesignJoinInvalid, style: RdType.meta(p, size: 14).copyWith(color: p.absent));
+      // A link that is cut off looks right but has no whole id.
+      final cut = RegExp(r'register/[A-Za-z0-9-]{0,19}$').hasMatch(text);
+      status = Text(
+        cut ? l10n.rdTextJoinIncomplete : l10n.redesignJoinInvalid,
+        style: RdType.meta(p, size: 14).copyWith(color: p.absent),
+      );
     } else if (lookup != null && lookup.isLoading) {
       status = const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2));
     } else if (lookup != null && (lookup.hasError || tenant == null)) {

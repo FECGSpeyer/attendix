@@ -580,6 +580,9 @@ void main() {
         expect(RedesignRoutes.roleRedirect('/werke/import', role), '/werke', reason: role.name);
       }
       expect(RedesignRoutes.roleRedirect('/werke/import', Role.parent), '/heute');
+      // "Werkliste importieren" the same way.
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.workListImport, Role.admin), isNull);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.workListImport, Role.helper), '/werke');
       expect(RedesignRoutes.isRedesignRoute('/werke/import'), isTrue);
     });
   });

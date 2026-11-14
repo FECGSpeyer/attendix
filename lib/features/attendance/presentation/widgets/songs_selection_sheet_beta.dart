@@ -214,7 +214,8 @@ class _RdConductorPill extends StatelessWidget {
   }
 }
 
-/// Beta "Werke auswählen": search plus a multi-select list, "Übernehmen" at the end.
+/// Beta "Werke auswählen": search plus a multi-select list, "Weiter" at the
+/// top right.
 class _RdSongMultiPicker extends ConsumerStatefulWidget {
   const _RdSongMultiPicker({required this.initialSelection});
 
@@ -254,11 +255,28 @@ class _RdSongMultiPickerState extends ConsumerState<_RdSongMultiPicker> {
         Row(
           children: [
             Expanded(child: RdBackLink(label: l10n.commonCancel, onTap: () => Navigator.of(context).pop())),
-            RdCircleButton(
-              key: const Key('rd-songs-picker-apply'),
-              icon: Icons.check,
-              label: l10n.commonApply,
-              onPressed: () => Navigator.of(context).pop(_selected),
+            // The only action of the sheet (the step after it asks for the
+            // Dirigent): "Weiter" at the top right like in the forms.
+            Semantics(
+              button: true,
+              child: InkWell(
+                key: const Key('rd-songs-picker-apply'),
+                onTap: () => Navigator.of(context).pop(_selected),
+                borderRadius: BorderRadius.circular(10),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Center(
+                      widthFactor: 1,
+                      child: Text(
+                        l10n.commonNext,
+                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.link),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -266,7 +284,15 @@ class _RdSongMultiPickerState extends ConsumerState<_RdSongMultiPicker> {
         Semantics(header: true, child: Text(l10n.attListChooseSongs, style: RdType.title(p))),
         if (_selected.isNotEmpty) ...[
           const SizedBox(height: 4),
-          Text(l10n.attListSongsSelected(_selected.length), style: RdType.meta(p, size: 15)),
+          Text(
+            switch (_selected.length == 1 ? allSongs.where((s) => s.id == _selected.first).firstOrNull?.name : null) {
+              final name? => l10n.rdTextWorksSelectedOne(name),
+              null => l10n.rdTextWorksSelected(_selected.length),
+            },
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: RdType.meta(p, size: 15),
+          ),
         ],
         const SizedBox(height: 16),
         RdCard(
@@ -317,7 +343,6 @@ class _RdSongMultiPickerState extends ConsumerState<_RdSongMultiPicker> {
             ],
           ),
         const SizedBox(height: 20),
-        RdPrimaryButton(label: l10n.commonApply, onPressed: () => Navigator.of(context).pop(_selected)),
       ],
     );
   }

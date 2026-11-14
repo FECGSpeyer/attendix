@@ -129,7 +129,7 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
           children: [
             for (final (icon, item) in [
               (Icons.person_outline, l10n.deleteAccountProfile),
-              (Icons.groups_outlined, l10n.deleteAccountMemberships),
+              (Icons.groups_outlined, l10n.rdTextDeleteAccountMemberships),
               (Icons.event_available_outlined, l10n.deleteAccountAttendance),
               (Icons.lock_outline, l10n.deleteAccountAccess),
             ])

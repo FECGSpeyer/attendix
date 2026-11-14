@@ -324,6 +324,9 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     _writeFields();
   }
 
+  /// The stored name (not what is typed just now) for the delete question.
+  String get _deleteName => (_storedName ?? _name.text).trim();
+
   Future<void> _delete() async {
     final l10n = context.l10n;
     List<String> names;
@@ -335,8 +338,8 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     if (!mounted) return;
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: l10n.songsDeleteSong,
-      message: names.isNotEmpty ? l10n.songsDeleteSyncedMessage(names.join(', ')) : l10n.songsDeleteConfirm,
+      title: l10n.rdTextWorkDeleteTitle(_deleteName),
+      message: names.isNotEmpty ? l10n.rdTextWorkDeleteSyncedMessage(names.join(', ')) : l10n.rdTextWorkDeleteMessage,
       confirmText: l10n.commonDelete,
       isDestructive: true,
     );

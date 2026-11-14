@@ -267,6 +267,13 @@ class _AddHistorySheetState extends State<_AddHistorySheet> {
   static const _other = -1;
 
   late final Set<int> _songIds = {if (widget.songs.first.id != null) widget.songs.first.id!};
+
+  /// "1 Werk ausgewählt: Ode an die Freude" or "3 Werke ausgewählt".
+  String _selectedLabel(AppLocalizations l10n) {
+    if (_songIds.length != 1) return l10n.rdTextWorksSelected(_songIds.length);
+    final name = widget.songs.where((s) => s.id == _songIds.first).firstOrNull?.name;
+    return name == null ? l10n.rdTextWorksSelected(1) : l10n.rdTextWorksSelectedOne(name);
+  }
   late int? _conductorId = defaultHistoryConductorId(widget.conductors);
   String? _otherConductor;
   DateTime _date = DateTime.now();
@@ -358,7 +365,7 @@ class _AddHistorySheetState extends State<_AddHistorySheet> {
           children: [
             RdListRow(
               title: l10n.historySongs,
-              value: _songIds.isEmpty ? l10n.historyNoneSelected : l10n.historySelectedCount(_songIds.length),
+              value: _songIds.isEmpty ? l10n.historyNoneSelected : _selectedLabel(l10n),
               onTap: _pickSongs,
             ),
             RdListRow(title: l10n.attListConductor, value: _conductorLabel(l10n), onTap: _pickConductor),

@@ -298,7 +298,7 @@ class _RdManageListPageState extends State<RdManageListPage> {
         ],
         for (var s = 0; s < shown.length; s++)
           if (shown[s].items.isNotEmpty) ...[
-            if (shown[s].title != null) RdSectionHeader(shown[s].title!, trailing: '${shown[s].items.length}'),
+            if (shown[s].title != null) RdSectionHeader('${shown[s].title!} · ${shown[s].items.length}'),
             sorting != null
                 ? RdGroupedList(children: [IgnorePointer(ignoring: _saving, child: _sortList(context, s, shown[s]))])
                 : RdGroupedList(

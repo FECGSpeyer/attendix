@@ -35,7 +35,7 @@ import '../../../profile/presentation/widgets/profile_helpers.dart';
 import '../../../self_service/presentation/widgets/self_service_absences.dart';
 import '../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
 import '../../../assistant/presentation/widgets/assistant_entry_card.dart';
-import '../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider;
+import '../../data/providers/rd_today_providers.dart' show rdOwnSeasonRateProvider, rdSignoutDataProvider;
 import '../../data/rd_manage_logic.dart';
 import '../rd_actions.dart';
 import '../widgets/manage/rd_manage_entries.dart';
@@ -44,7 +44,7 @@ import '../widgets/event/rd_absence_sheet.dart';
 import '../widgets/rd_group_switch.dart';
 import '../widgets/rd_logo.dart';
 import '../widgets/rd_widgets.dart';
-import '../widgets/work/rd_work_files.dart' show showRdWorkFilesShortcuts;
+import '../widgets/work/rd_work_files.dart' show rdWorkFilesMinWidth, showRdWorkFilesShortcuts;
 import 'rd_appearance_page.dart' show rdModeName, rdWorldName;
 
 /// REDESIGN: tab "Ich" (canvas E1): own profile, things for me, the app,
@@ -139,7 +139,7 @@ class RdMePage extends ConsumerWidget {
               RdListRow(
                 leading: const RdRowIcon(Icons.people_outline),
                 title: l10n.settingsMyVoice,
-                onTap: () => context.push('/settings/voice-leader'),
+                onTap: () => context.push('/settings/voice-leader?from=ich'),
               ),
             if (access.showTeam)
               RdListRow(
@@ -220,7 +220,8 @@ class RdMePage extends ConsumerWidget {
             // Keys of the Werk file table: editors on devices with a
             // keyboard (desktop, web); the table shows once the Werk column
             // is wide enough. Kept here, off the main UI.
-            if (isLead && _hasKeyboard)
+            // Not in a phone's browser: the table never shows there.
+            if (isLead && _hasKeyboard && MediaQuery.sizeOf(context).width >= rdWorkFilesMinWidth)
               RdListRow(
                 leading: const RdRowIcon(Icons.keyboard_outlined),
                 title: l10n.redesignFilesShortcuts,
@@ -403,7 +404,10 @@ class _ProfileCard extends ConsumerWidget {
     final name = person == null ? '' : '${person.firstName} ${person.lastName}'.trim();
     // Own attendance (UX S1): until now only in the label of "Vergangen".
     final signout = role.canSeeSelfServiceTab ? ref.watch(rdSignoutDataProvider).valueOrNull : null;
-    final showAttendance = person != null && signout != null && signout.past.isNotEmpty;
+    // The season's rate as the leads see it (person page, list), not the
+    // separate count of "Meine Termine".
+    final rate = role.canSeeSelfServiceTab ? ref.watch(rdOwnSeasonRateProvider).valueOrNull : null;
+    final showAttendance = person != null && rate != null;
     // ACCOUNT_SWITCH: name, role and group for the account switcher (no-op
     // when unchanged or when the account is not saved).
     // Only a loaded profile of THIS account (the old account's profile can
@@ -477,7 +481,7 @@ class _ProfileCard extends ConsumerWidget {
               children: [
                 header,
                 const SizedBox(height: 16),
-                _OwnAttendance(percent: signout.percentage, lateCount: signout.lateCount),
+                _OwnAttendance(percent: rate, lateCount: signout?.lateCount ?? 0),
               ],
             ),
     );
@@ -496,7 +500,7 @@ class _OwnAttendance extends StatelessWidget {
     final p = context.rd;
     final l10n = context.l10n;
     final color = percent >= 75 ? p.present : (percent >= 50 ? p.late : p.absent);
-    final hint = [l10n.redesignMeAttendance, if (lateCount > 0) l10n.redesignMeAttendanceLate(lateCount)].join(' · ');
+    final hint = [l10n.rdTextMeAttendanceSeason, if (lateCount > 0) l10n.redesignMeAttendanceLate(lateCount)].join(' · ');
     return Semantics(
       label: '$hint: $percent %',
       excludeSemantics: true,

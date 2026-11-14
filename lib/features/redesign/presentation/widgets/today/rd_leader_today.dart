@@ -16,6 +16,7 @@ import '../../../../../core/utils/dashboard_utils.dart' show BirthdayEntry;
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/person/person.dart';
+import '../../../../../data/repositories/sign_in_out_repository.dart' show CrossTenantPersonAttendance;
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurationDays, rdSortStartOf, rdUnrecordedProvider;
 import '../../../data/providers/rd_today_providers.dart';
@@ -74,6 +75,27 @@ class RdLeaderToday extends ConsumerWidget {
     final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
     final upcoming = upcomingOf(all, types: types);
     final next = upcoming.firstOrNull;
+    // Who helps and plays: the own answer for the next Termin is a line of
+    // its card, not a second card with the same head. Only when that Termin
+    // is also the one "Deine Zusage" would show.
+    final ownAsync = role.canSeeSelfServiceTab ? ref.watch(rdSignoutDataProvider) : null;
+    final ownData = ownAsync?.valueOrNull;
+    // Until the own Termine are there nobody knows which of the two it
+    // will be: no card that disappears again.
+    final ownPending =
+        next != null && role.canAddAttendance && ownAsync != null && ownData == null && !ownAsync.hasError;
+    final ownFocus = ownData == null ? null : rdTodayFocus(ownData);
+    final ownNext =
+        next != null &&
+                role.canAddAttendance &&
+                ownFocus != null &&
+                ownFocus.isMember &&
+                ownFocus.id != null &&
+                !ownFocus.isDutyRequested &&
+                ownFocus.attendanceId == next.id &&
+                ownFocus.tenantId == next.tenantId
+            ? ownFocus
+            : null;
 
     final nextCard = <Widget>[
       // UX V1: Beobachter cannot open Termine (Ionic); say so once
@@ -92,12 +114,15 @@ class RdLeaderToday extends ConsumerWidget {
           ),
         )
       else
-        _NextEventCard(attendance: next, canOpen: role.canAddAttendance, canRemind: isLead),
+        _NextEventCard(attendance: next, canOpen: role.canAddAttendance, canRemind: isLead, own: ownNext),
     ];
     final own = <Widget>[
       if (role.canSeeSelfServiceTab) ...[
-        const SizedBox(height: 24),
-        const RdOwnAnswerSection(),
+        // The own answer for the Termin above sits in its card ("Du").
+        if (ownNext == null && !ownPending) ...[
+          const SizedBox(height: 24),
+          const RdOwnAnswerSection(),
+        ],
         const RdDutySection(),
       ],
     ];
@@ -160,7 +185,11 @@ class RdLeaderToday extends ConsumerWidget {
 }
 
 class _NextEventCard extends ConsumerWidget {
-  const _NextEventCard({required this.attendance, required this.canOpen, this.canRemind = false});
+  const _NextEventCard({required this.attendance, required this.canOpen, this.canRemind = false, this.own});
+
+  /// The viewer's own entry for this Termin (helpers and leads who play):
+  /// shown as the line "Du" instead of a second card.
+  final CrossTenantPersonAttendance? own;
 
   final Attendance attendance;
 
@@ -177,7 +206,9 @@ class _NextEventCard extends ConsumerWidget {
     final type = ref.watch(rdAttendanceTypeProvider(attendance.typeId));
     final info = rdEventInfo(attendance, type);
     final id = attendance.id;
-    final counts = id == null ? null : ref.watch(rdAttendanceCountsProvider(id)).valueOrNull;
+    final countsAsync = id == null ? null : ref.watch(rdAttendanceCountsProvider(id));
+    final counts = countsAsync?.valueOrNull;
+    final countsFailed = countsAsync != null && countsAsync.hasError && !countsAsync.isLoading;
     // The link counts exactly whom the remind sheet asks (duty Termine skip
     // stand-ins, a Helfer only the own group), not every open answer.
     // Until the list is there (or when it failed) the open answers count.
@@ -214,20 +245,30 @@ class _NextEventCard extends ConsumerWidget {
             Text(meta, style: RdType.meta(p, size: 15)),
           ],
           const SizedBox(height: 16),
-          if (counts != null) ...[
+          // The counts arrive after the card: bar and line keep their place
+          // meanwhile, so nothing below moves under the finger.
+          if (id != null) ...[
             RdStatusBar(
-              total: counts.total,
-              segments: [
-                RdBarSegment(counts.present, p.present),
-                RdBarSegment(counts.lateAnnounced, p.late),
-                RdBarSegment(counts.excused, p.excused),
-                RdBarSegment(counts.absent, p.absent),
-              ],
-              semanticLabel: _countsLine(l10n, counts),
+              total: counts?.total ?? 0,
+              segments: counts == null
+                  ? const []
+                  : [
+                      RdBarSegment(counts.present, p.present),
+                      RdBarSegment(counts.lateAnnounced, p.late),
+                      RdBarSegment(counts.excused, p.excused),
+                      RdBarSegment(counts.absent, p.absent),
+                    ],
+              semanticLabel: counts == null ? l10n.redesignTodayLoading : _countsLine(l10n, counts),
             ),
             const SizedBox(height: 8),
-            if (id != null && toRemind > 0)
-              Wrap(
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 32),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: counts == null
+                    ? Text(countsFailed ? '' : l10n.redesignTodayLoading, style: RdType.meta(p, size: 13))
+                    : toRemind > 0
+                    ? Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   // "N offen" always counts the open answers; when fewer are
@@ -268,9 +309,14 @@ class _NextEventCard extends ConsumerWidget {
                   ),
                 ],
               )
-            else
-              Text(_countsLine(l10n, counts), style: RdType.meta(p, size: 13)),
+                    : Text(_countsLine(l10n, counts), style: RdType.meta(p, size: 13)),
+              ),
+            ),
             const SizedBox(height: 16),
+          ],
+          if (own != null) ...[
+            RdOwnAnswerRow(attendance: own!),
+            const SizedBox(height: 12),
           ],
           if (id != null && canOpen)
             SizedBox(

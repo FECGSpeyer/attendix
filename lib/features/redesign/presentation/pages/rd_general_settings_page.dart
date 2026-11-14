@@ -441,7 +441,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
       context,
       title: l10n.rdSettingsRegion,
       selected: t.region ?? '',
-      options: [for (final r in holidayRegions) (r.$1, r.$1.isEmpty ? l10n.generalSettingsFlutterNoHolidays : r.$2)],
+      options: [for (final r in holidayRegions) (r.$1, r.$1.isEmpty ? l10n.rdTextNoRegion : r.$2)],
     );
     if (region == null || !mounted) return;
     final value = region.isEmpty ? null : region;
@@ -450,7 +450,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
 
   String _regionLabel(Tenant t) {
     final region = t.region ?? '';
-    if (region.isEmpty) return context.l10n.generalSettingsFlutterNoHolidays;
+    if (region.isEmpty) return context.l10n.rdTextNoRegion;
     return holidayRegions.where((r) => r.$1 == region).map((r) => r.$2).firstOrNull ?? region;
   }
 
@@ -763,7 +763,14 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
                 title: l10n.rdSettingsHolidays,
                 subtitle: l10n.rdSettingsHolidaysHint,
                 value: t.showHolidays,
-                onChanged: on((v) => _save(t.id, {'showHolidays': v}, (c) => c.copyWith(showHolidays: v))),
+                onChanged: on((v) async {
+                  final saved = await _save(t.id, {'showHolidays': v}, (c) => c.copyWith(showHolidays: v));
+                  // Without a Bundesland nothing gets highlighted: ask for
+                  // it right away.
+                  if (!saved || !v || !mounted || (t.region ?? '').isNotEmpty) return;
+                  final now = ref.read(currentTenantProvider);
+                  if (now != null && now.id == t.id) await _pickRegion(now);
+                }),
               ),
               if (t.showHolidays)
                 RdListRow(

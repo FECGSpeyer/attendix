@@ -162,7 +162,6 @@ class RdWorkPage extends ConsumerWidget {
     final songs = ref.watch(songsProvider).valueOrNull;
     final intoRepertoire =
         collection != null && songs != null ? rdMoveNumbering(song, null, collections!, songs) : null;
-    final difficulty = (song.difficulty ?? 0) >= 1 && (song.difficulty ?? 0) <= 3;
 
     void more(BuildContext button, SongFile file) => rdShowWorkFileActions(button, ref, data, file, groups);
     // Cards above the file list: no "Stimme ändern" (only in Noten & Dateien).
@@ -236,10 +235,6 @@ class RdWorkPage extends ConsumerWidget {
         Semantics(header: true, child: Text(song.name, style: RdType.title(p).copyWith(fontSize: 28))),
         if ((song.composer ?? '').isNotEmpty)
           Padding(padding: const EdgeInsets.only(top: 2), child: Text(song.composer!, style: RdType.meta(p, size: 15))),
-        if (difficulty) ...[
-          const SizedBox(height: 10),
-          Wrap(spacing: 6, runSpacing: 6, children: [RdPill(SongUtils.difficultyLabel(song.difficulty))]),
-        ],
         if (banner != null) ...[
           const SizedBox(height: 14),
           RdInfoCard(
@@ -519,7 +514,12 @@ class RdWorkPage extends ConsumerWidget {
       if ((song.difficulty ?? 0) >= 1 && (song.difficulty ?? 0) <= 3)
         RdListRow(
           title: l10n.redesignWorkDifficulty,
-          value: SongUtils.difficultyLabel(song.difficulty),
+          // Without the classic number ("2 - Mittel").
+          value: switch (song.difficulty) {
+            1 => l10n.redesignWorkEditEasy,
+            2 => l10n.redesignWorkEditMedium,
+            _ => l10n.redesignWorkEditHard,
+          },
           showChevron: false,
         ),
       if (song.withChoir)
@@ -833,7 +833,8 @@ class _AddFilesCard extends StatelessWidget {
             height: 44,
             onPressed: onPick,
           ),
-          if (isFileDropSupported) ...[
+          // "Am Computer": not on a phone-sized browser window.
+          if (isFileDropSupported && MediaQuery.sizeOf(context).width >= 600) ...[
             const SizedBox(height: 8),
             Text(l10n.redesignWorkAddDrop, textAlign: TextAlign.center, style: RdType.meta(p, size: 13)),
           ],

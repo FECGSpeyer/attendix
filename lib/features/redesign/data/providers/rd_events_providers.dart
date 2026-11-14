@@ -138,20 +138,26 @@ double? rdAveragePercentage(List<Attendance> past) {
   return values.reduce((a, b) => a + b) / values.length;
 }
 
-/// Section of the Termin list: "Diese Woche" or one month.
+/// Section of the Termin list: "Diese Woche", "Nächste Woche" or one month.
 @immutable
 class RdEventSection<T> {
-  const RdEventSection({required this.thisWeek, this.month, required this.items});
+  const RdEventSection({required this.thisWeek, this.nextWeek = false, this.month, required this.items});
 
-  /// "Diese Woche" (upcoming: the coming 7 days; past: the last 7 days).
+  /// "Diese Woche" (upcoming: until Sunday of the calendar week; past: the
+  /// last 7 days).
   final bool thisWeek;
 
-  /// First day of the month of this section (null for [thisWeek]).
+  /// "Nächste Woche" (upcoming only: Monday to Sunday after this week).
+  final bool nextWeek;
+
+  /// First day of the month of this section (null for the week sections).
   final DateTime? month;
   final List<T> items;
 }
 
-/// Groups [items] (already sorted) into "Diese Woche" and months.
+/// Groups [items] (already sorted) into "Diese Woche", "Nächste Woche"
+/// (upcoming) and months. The weeks are calendar weeks (Monday to Sunday):
+/// on a Saturday "Diese Woche" no longer holds next Thursday.
 List<RdEventSection<T>> rdGroupEvents<T>(
   List<T> items,
   String? Function(T) dateOf, {
@@ -162,6 +168,9 @@ List<RdEventSection<T>> rdGroupEvents<T>(
   final today = DateTime(current.year, current.month, current.day);
   final sections = <RdEventSection<T>>[];
   final week = <T>[];
+  final nextWeek = <T>[];
+  // Days until Sunday of this week.
+  final toSunday = DateTime.sunday - today.weekday;
   final byMonth = <DateTime, List<T>>{};
   final monthOrder = <DateTime>[];
   for (final item in items) {
@@ -171,9 +180,13 @@ List<RdEventSection<T>> rdGroupEvents<T>(
     final diff = rdDaysBetween(today, day);
     // Upcoming: running multi-day Termine that started earlier count as
     // this week too.
-    final inWeek = past ? (diff >= -7 && diff <= 0) : diff < 7;
+    final inWeek = past ? (diff >= -7 && diff <= 0) : diff <= toSunday;
     if (inWeek) {
       week.add(item);
+      continue;
+    }
+    if (!past && diff <= toSunday + 7) {
+      nextWeek.add(item);
       continue;
     }
     final month = DateTime(d.year, d.month);
@@ -181,6 +194,7 @@ List<RdEventSection<T>> rdGroupEvents<T>(
     byMonth.putIfAbsent(month, () => []).add(item);
   }
   if (week.isNotEmpty) sections.add(RdEventSection(thisWeek: true, items: week));
+  if (nextWeek.isNotEmpty) sections.add(RdEventSection(thisWeek: false, nextWeek: true, items: nextWeek));
   for (final m in monthOrder) {
     sections.add(RdEventSection(thisWeek: false, month: m, items: byMonth[m]!));
   }

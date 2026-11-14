@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/attendance_type_providers.dart' show attendanceTypesProvider;
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
@@ -33,6 +34,7 @@ import '../../../attendance/presentation/widgets/attendance_detail/attendance_gr
     show mainGroupIdOf, sortPersonsByGroup;
 import '../../../attendance/presentation/widgets/attendance_detail/status_chip.dart'
     show ionicStatusLabel;
+import '../../data/providers/rd_events_providers.dart' show rdUpcomingCountsProvider;
 import '../../data/providers/rd_today_providers.dart';
 import '../../data/rd_event_logic.dart';
 import '../../data/providers/rd_phase_tick_provider.dart';
@@ -50,6 +52,7 @@ import '../../../team_organization/presentation/widgets/attendance_protocol_sect
 import '../widgets/event/rd_event_answers.dart';
 import '../widgets/event/rd_event_sections.dart';
 import '../widgets/event/rd_pult_view.dart';
+import '../widgets/today/rd_player_today.dart' show RdOwnAnswerRow, rdOwnEntryFor;
 import '../widgets/today/rd_remind_open_sheet.dart';
 import '../widgets/event/rd_record_widgets.dart';
 import '../widgets/rd_desktop.dart';
@@ -788,6 +791,26 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     );
   }
 
+  /// This Termin as the Termine list holds it (null when the list is not
+  /// loaded, e.g. after a link straight to the Termin). Read only when the
+  /// list is alive: the page never starts the list's subscription.
+  Attendance? _listed() {
+    if (!ref.exists(realtimeAttendanceListProvider)) return null;
+    final tenantId = ref.read(currentTenantProvider)?.id;
+    final list = ref.read(realtimeAttendanceListProvider).valueOrNull ?? const <Attendance>[];
+    return list.where((a) => a.id == _id && a.tenantId == tenantId).firstOrNull;
+  }
+
+  /// The answers the list or Heute counted for this Termin, if any.
+  RdStatusCounts? _listedCounts() {
+    if (ref.exists(rdUpcomingCountsProvider)) {
+      final counts = ref.read(rdUpcomingCountsProvider).valueOrNull?[_id];
+      if (counts != null) return counts;
+    }
+    if (ref.exists(rdAttendanceCountsProvider(_id))) return ref.read(rdAttendanceCountsProvider(_id)).valueOrNull;
+    return null;
+  }
+
   void _back() {
     if (context.canPop()) {
       context.pop();
@@ -843,6 +866,20 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     ];
 
     if (attendance == null) {
+      // While the Termin loads: its head (and the answers already counted)
+      // from the list the user came from, the rest keeps its place.
+      final listed = attendanceAsync.isLoading ? _listed() : null;
+      if (listed != null) {
+        final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+        final type = types.where((t) => t.id == listed.typeId).firstOrNull;
+        children.addAll([
+          const SizedBox(height: 4),
+          _head(listed, type),
+          const SizedBox(height: 16),
+          _LoadingAnswers(counts: _listedCounts()),
+        ]);
+        return RdPage(children: children);
+      }
       children.add(attendanceAsync.isLoading
           ? RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
           : RdInfoCard(
@@ -870,10 +907,20 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     // Anwesenheit on the right instead of three tabs.
     final wide = members != null && members.isNotEmpty && rdEventSideBySide(context);
     _sideBySide = wide;
+    // Who leads or helps and is part of the Termin: the own answer on this
+    // page too ("Ändern" opens the own Termin page), not on a second page
+    // only.
+    final ownEntry = ref.watch(effectiveRoleProvider).canSeeSelfServiceTab
+        ? rdOwnEntryFor(ref.watch(rdSignoutDataProvider).valueOrNull, _id, attendance.tenantId)
+        : null;
     children.addAll([
       const SizedBox(height: 4),
       _head(attendance, type),
       const SizedBox(height: 16),
+      if (ownEntry != null) ...[
+        RdOwnAnswerRow(attendance: ownEntry, label: l10n.rdTextYourAnswer),
+        const SizedBox(height: 16),
+      ],
       if (!wide) ...[
         ValueListenableBuilder<double?>(
           valueListenable: _swipePos,
@@ -938,7 +985,8 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       if (tab == RdEventTab.program) {
         content.addAll(_programChildren(attendance, type));
       } else if (members == null) {
-        content.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
+        // The persons load last: the answers the list counted show meanwhile.
+        content.add(_LoadingAnswers(counts: _listedCounts()));
       } else if (members.isEmpty) {
         final canMutate = canMutateAttendanceDetail(ref.watch(effectiveRoleProvider));
         content.add(RdInfoCard(
@@ -1760,6 +1808,71 @@ class _GapNote extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Placeholder of the answers card while the Termin loads: the title, the
+/// counts the list already had and a fixed height, so the page does not
+/// jump when the data arrives.
+class _LoadingAnswers extends StatelessWidget {
+  const _LoadingAnswers({required this.counts});
+
+  final RdStatusCounts? counts;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final c = counts;
+    return RdCard(
+      key: const Key('rd-event-loading'),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 92),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(child: Text(l10n.redesignEventAnswers, style: RdType.section(p))),
+                if (c != null) Text(l10n.redesignEventInvited(c.total), style: RdType.meta(p, size: 13)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            RdStatusBar(
+              total: c?.total ?? 0,
+              segments: c == null
+                  ? const []
+                  : [
+                      RdBarSegment(c.present, p.present),
+                      RdBarSegment(c.lateAnnounced, p.late),
+                      RdBarSegment(c.excused, p.excused),
+                      RdBarSegment(c.absent, p.absent),
+                    ],
+              semanticLabel: l10n.redesignTodayLoading,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                SizedBox.square(
+                  dimension: 14,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: p.text2),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.redesignTodayLoading,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: RdType.meta(p, size: 13),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

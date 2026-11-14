@@ -143,7 +143,45 @@ List<Group> rdCollectionGroups(SongCollection collection, List<Group> groups) =>
 ];
 
 /// A prefix suggestion for a new Sammlung: its first letter, upper case.
-String rdCollectionPrefixSuggestion(String name) {
-  final letter = name.trim().runes.isEmpty ? '' : String.fromCharCode(name.trim().runes.first);
-  return letter.toUpperCase();
+/// When [taken] (the Kürzel of the other Sammlungen and of the Werke)
+/// already holds it, the first two, three … letters ("E" taken: "Ei" for
+/// "Einspielen"), so the numbers of two Sammlungen never look alike.
+String rdCollectionPrefixSuggestion(String name, {Iterable<String?> taken = const []}) {
+  final runes = name.trim().runes.toList();
+  if (runes.isEmpty) return '';
+  final first = String.fromCharCode(runes.first).toUpperCase();
+  final used = {
+    for (final t in taken)
+      if ((t ?? '').trim().isNotEmpty) t!.trim().toLowerCase(),
+  };
+  if (!used.contains(first.toLowerCase())) return first;
+  // Letters and digits of the name only ("Ei", "Ein" …), no spaces.
+  final letters = [
+    for (final r in runes)
+      if (RegExp(r'[\p{L}\p{N}]', unicode: true).hasMatch(String.fromCharCode(r))) String.fromCharCode(r),
+  ];
+  // A name like "(Alt)" starts with a sign: then its first letter comes first.
+  final startsWithLetter = letters.isNotEmpty && letters.first.toUpperCase() == first;
+  for (var length = startsWithLetter ? 2 : 1; length <= letters.length; length++) {
+    final part = letters.sublist(0, length).join();
+    // Never a digit at the end: "E2" + number 1 would read like E's 21st.
+    if (RegExp(r'\p{N}$', unicode: true).hasMatch(part)) continue;
+    final candidate = part.substring(0, 1).toUpperCase() + part.substring(1).toLowerCase();
+    if (!used.contains(candidate.toLowerCase())) return candidate;
+  }
+  // Every start of the name is taken: repeat the first letter ("EE").
+  for (var n = 2; n <= 4; n++) {
+    final candidate = first * n;
+    if (!used.contains(candidate.toLowerCase())) return candidate;
+  }
+  return first;
 }
+
+/// The Kürzel a new Sammlung must not repeat: those of the Sammlungen and
+/// of the Werke.
+Set<String> rdTakenPrefixes(List<SongCollection> collections, List<Song> songs) => {
+  for (final c in collections)
+    if (c.prefix.trim().isNotEmpty) c.prefix.trim(),
+  for (final s in songs)
+    if ((s.prefix ?? '').trim().isNotEmpty) s.prefix!.trim(),
+};

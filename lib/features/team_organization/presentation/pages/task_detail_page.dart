@@ -306,14 +306,8 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
             ],
           ),
         ],
-        if (canChange && task.status != 'completed') ...[
-          const SizedBox(height: 18),
-          RdPrimaryButton(
-            key: const ValueKey('rd-task-done'),
-            label: l10n.tasksMarkDone,
-            onPressed: _savingStatus ? null : () => _setStatus(task, 'completed'),
-          ),
-        ],
+        // The status is set with the three fields above only (no extra
+        // "Als erledigt markieren").
         if (isLeader) ...[
           const SizedBox(height: 18),
           RdGroupedList(

@@ -116,15 +116,15 @@ void main() {
     // "Stay": still the old group, the sheet can be used again.
     expect(asked, 1);
     expect(saved, isEmpty);
-    expect(find.text('Gruppe wechseln'), findsOneWidget);
+    expect(find.text('Meine Gruppen'), findsOneWidget);
     expect(find.text('page heute'), findsNothing);
 
     // "Gruppen verwalten" asks the same way.
-    await tester.tap(find.text('Gruppen verwalten'));
+    await tester.tap(find.text('Verwalten'));
     await _settle(tester);
     expect(asked, 2);
     expect(find.text('page tenants'), findsNothing);
-    expect(find.text('Gruppe wechseln'), findsOneWidget);
+    expect(find.text('Meine Gruppen'), findsOneWidget);
     asked = 1;
 
     answer = true;
@@ -172,7 +172,7 @@ void main() {
     await _settle(tester);
     await tester.tap(find.text('open sheet'));
     await _settle(tester);
-    expect(find.text('Gruppe wechseln'), findsOneWidget);
+    expect(find.text('Meine Gruppen'), findsOneWidget);
 
     await tester.tap(find.text('Jugendchor'));
     await _settle(tester);
@@ -180,23 +180,23 @@ void main() {
     // Barrier and "Fertig" do not close it while the switch runs.
     await tester.tapAt(const Offset(20, 20));
     await _settle(tester);
-    expect(find.text('Gruppe wechseln'), findsOneWidget);
+    expect(find.text('Meine Gruppen'), findsOneWidget);
     await tester.tap(find.text('Fertig'));
     await _settle(tester);
-    expect(find.text('Gruppe wechseln'), findsOneWidget);
+    expect(find.text('Meine Gruppen'), findsOneWidget);
 
     // Dragged closed anyway and the role arrives while the sheet still
     // animates out: the switch finishes, nothing below the sheet is popped.
     pops.pages.clear();
-    await tester.fling(find.text('Gruppe wechseln'), const Offset(0, 60), 1500);
+    await tester.fling(find.text('Meine Gruppen'), const Offset(0, 60), 1500);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 16));
-    expect(find.text('Gruppe wechseln'), findsOneWidget, reason: 'still animating out');
+    expect(find.text('Meine Gruppen'), findsOneWidget, reason: 'still animating out');
     expect(saved, isEmpty);
 
     role.complete(null);
     await _settle(tester);
-    expect(find.text('Gruppe wechseln'), findsNothing);
+    expect(find.text('Meine Gruppen'), findsNothing);
     expect(pops.pages, isEmpty);
     expect(find.text('page heute'), findsOneWidget);
     expect(saved, [8]);

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/constants/enums.dart';
+import '../../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
 import '../../../../../core/providers/self_service_providers.dart';
 import '../../../../../core/providers/signout_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
@@ -86,12 +87,89 @@ class RdPlayerToday extends ConsumerWidget {
                 leading: RdRowIcon(Icons.groups_2_outlined),
                 title: l10n.redesignTodayMySection,
                 subtitle: l10n.redesignTodayMySectionHint,
-                onTap: () => context.push('/settings/voice-leader'),
+                onTap: () => context.push('/settings/voice-leader?from=heute'),
               ),
             ],
           ),
         ],
       ],
+    );
+  }
+}
+
+/// The own Termin row for [attendanceId] in [data]: the viewer is part of
+/// that Termin of the group [tenantId] (helpers and leads who also play).
+CrossTenantPersonAttendance? rdOwnEntryFor(SignoutData? data, int? attendanceId, int? tenantId) {
+  if (data == null || attendanceId == null) return null;
+  for (final a in data.allUpcoming) {
+    if (a.isMember && a.id != null && a.attendanceId == attendanceId && a.tenantId == tenantId) return a;
+  }
+  return null;
+}
+
+/// One line with the own answer on a card or page that shows the whole
+/// Termin (Heute of helpers, the leads' Termin page): "Du · Du bist dabei"
+/// and "Ändern", which opens the own Termin page with the answer buttons.
+class RdOwnAnswerRow extends StatelessWidget {
+  const RdOwnAnswerRow({super.key, required this.attendance, this.label});
+
+  final CrossTenantPersonAttendance attendance;
+
+  /// Word in front of the answer; default "Du".
+  final String? label;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final status = attendance.status;
+    final (String text, Color color) = switch (status) {
+      AttendanceStatus.present => (l10n.redesignTodayYouAreIn, p.present),
+      AttendanceStatus.late || AttendanceStatus.lateExcused => (l10n.redesignOwnComingLater, p.late),
+      AttendanceStatus.excused => (l10n.redesignTodayYouAreOut, p.excused),
+      AttendanceStatus.absent => (l10n.redesignStatusAbsent, p.absent),
+      _ => (l10n.rdTextYouNoAnswer, p.text2),
+    };
+    final open = status == AttendanceStatus.neutral;
+    final action = open ? l10n.rdTextYouAnswer : l10n.redesignTodayChangeAnswer;
+    return Semantics(
+      button: true,
+      label: '${label ?? l10n.rdTeamTaskYou}: $text. $action',
+      excludeSemantics: true,
+      child: Material(
+        color: p.soft,
+        borderRadius: BorderRadius.circular(p.buttonRadius),
+        child: InkWell(
+          key: const Key('rd-own-answer-row'),
+          borderRadius: BorderRadius.circular(p.buttonRadius),
+          onTap: () => context.push(RedesignRoutes.ownEvent(attendance.id!)),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              child: Row(
+                children: [
+                  Text(
+                    label ?? l10n.rdTeamTaskYou,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: p.text),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      text,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: color),
+                    ),
+                  ),
+                  Text(action, style: TextStyle(fontSize: 15, color: p.link)),
+                  Icon(Icons.chevron_right, size: 18, color: p.link),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -305,9 +383,21 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
               alignment: Alignment.centerLeft,
               child: RdLinkButton(
                 label: l10n.redesignTodayMore,
-                onPressed: () => att.id != null
-                    ? context.push(RedesignRoutes.ownEvent(att.id!))
-                    : actions.presentActions(context, att, hideQuickActions: qa != null),
+                onPressed: () {
+                  // Who may open the Termin of the group (helpers, leads)
+                  // gets its one page: all answers, with the own one on top.
+                  final leads =
+                      att.attendanceId != null &&
+                      att.tenantId == ref.read(currentTenantProvider)?.id &&
+                      ref.read(effectiveRoleProvider).canAddAttendance;
+                  if (leads) {
+                    context.push(RedesignRoutes.event(att.attendanceId!));
+                  } else if (att.id != null) {
+                    context.push(RedesignRoutes.ownEvent(att.id!));
+                  } else {
+                    actions.presentActions(context, att, hideQuickActions: qa != null);
+                  }
+                },
               ),
             ),
           ],

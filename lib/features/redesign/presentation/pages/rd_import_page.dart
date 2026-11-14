@@ -13,7 +13,6 @@ import '../../../../core/providers/song_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
@@ -25,6 +24,7 @@ import '../../data/import/rd_import_drive.dart';
 import '../../data/import/rd_import_logic.dart';
 import '../../data/rd_collections_logic.dart';
 import '../widgets/import/rd_import_widgets.dart';
+import '../widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;
 import '../widgets/rd_widgets.dart';
 import '../widgets/works/rd_collections_ui.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
@@ -195,7 +195,8 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   void _linkChanged(String text) {
     if (rdParseDriveLink(text) != null) {
       _checkLink(text);
-    } else if (_checked.isNotEmpty || _error != null) {
+    } else {
+      // Always rebuilt: the hint "kein Drive-Link" follows the text.
       setState(() {
         _checked = '';
         _checking = false;
@@ -495,18 +496,28 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   Future<void> _addCollection() async {
     if (_addingCollection) return;
     final l10n = context.l10n;
-    final name = await DialogHelper.showTextInput(
+    // A sheet like "Neue Kategorie" (was a dialog with a wrapping button).
+    final name = await showRdTextSheet(
       context,
       title: l10n.collectionsAddTitle,
       hint: l10n.collectionsAddHint,
-      confirmText: l10n.collectionsAdd,
+      required: true,
     );
     final trimmed = name?.trim() ?? '';
     if (trimmed.isEmpty || !mounted) return;
+    // A Kürzel no other Sammlung and no Werk uses yet.
+    final first = rdCollectionPrefixSuggestion(trimmed);
+    final prefix = rdCollectionPrefixSuggestion(
+      trimmed,
+      taken: rdTakenPrefixes(
+        ref.read(songCollectionsProvider).valueOrNull ?? const [],
+        ref.read(songsProvider).valueOrNull ?? const [],
+      ),
+    );
     setState(() => _addingCollection = true);
     final created = await ref
         .read(songCollectionNotifierProvider.notifier)
-        .add(SongCollection(name: trimmed, prefix: rdCollectionPrefixSuggestion(trimmed)));
+        .add(SongCollection(name: trimmed, prefix: prefix));
     if (!mounted) return;
     // Its Kürzel counts for the new Werke: chosen only once the list has it.
     final loaded = created?.id == null
@@ -521,6 +532,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       ToastHelper.showError(context, l10n.collectionsAddFailed);
       return;
     }
+    if (prefix != first) ToastHelper.showInfo(context, l10n.rdTextCollectionPrefixWhy(prefix, first));
     if (loaded == null || !loaded.any((c) => c.id == created!.id)) {
       ToastHelper.showError(context, l10n.redesignImportCollectionNotLoaded);
       return;
@@ -668,6 +680,9 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
           )
         else if (error != null)
           _errorCard(context, error)
+        else if (_link.text.trim().isNotEmpty && rdParseDriveLink(_link.text) == null)
+          // Why "Einlesen starten" stays grey.
+          Text(l10n.rdTextImportNotDrive, style: RdType.meta(p, size: 14).copyWith(color: p.absent))
         else if (check?.folder != null)
           Container(
             padding: const EdgeInsets.all(12),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/import_providers.dart';
@@ -15,6 +16,9 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
 enum _Step { file, mapping, preview }
 
@@ -22,7 +26,11 @@ enum _Step { file, mapping, preview }
 ///
 /// Returns `true` via Navigator.pop when at least one song was imported.
 class SongImportPage extends ConsumerStatefulWidget {
-  const SongImportPage({super.key});
+  const SongImportPage({super.key, this.beta = false});
+
+  /// Beta "Werkliste importieren": the same steps as a page of the Werke
+  /// tab ("‹ Werke", one button per step) instead of the full-screen modal.
+  final bool beta;
 
   @override
   ConsumerState<SongImportPage> createState() => _SongImportPageState();
@@ -183,12 +191,151 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
 
     if (imported > 0) {
       ref.invalidate(songsProvider);
-      if (mounted) Navigator.of(context).pop(true);
+      if (mounted) _leave(true);
     }
+  }
+
+  void _leave(bool imported) {
+    if (!widget.beta) return Navigator.of(context).pop(imported ? true : null);
+    context.canPop() ? context.pop(imported ? true : null) : context.go(RedesignRoutes.works);
+  }
+
+  Widget _busyOverlay() => Positioned.fill(
+        child: ColoredBox(
+          color: Colors.black26,
+          child: Center(
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(AppDimensions.paddingL),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const AppSpinner(),
+                    if (_progress.isNotEmpty) ...[
+                      const SizedBox(height: AppDimensions.paddingM),
+                      Text(_progress),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+  /// Beta: step 1 as a Beta page (template as a row, one button), steps 2
+  /// and 3 keep the shared mapping and preview with one button below.
+  Widget _buildBeta(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final title = Semantics(header: true, child: Text(l10n.redesignWorksAddImport, style: RdType.title(p)));
+    if (_step == _Step.file) {
+      return Stack(
+        children: [
+          RdPage(
+            children: [
+              RdBackLink(
+                label: l10n.redesignTabWorks,
+                onTap: () {
+                  if (!_busy) _leave(false);
+                },
+              ),
+              const SizedBox(height: 4),
+              title,
+              const SizedBox(height: 6),
+              Text(l10n.rdTextWorkListIntro, style: RdType.meta(p, size: 15)),
+              const SizedBox(height: 18),
+              RdGroupedList(
+                children: [
+                  RdListRow(
+                    key: const Key('rd-worklist-template'),
+                    leading: const RdRowIcon(Icons.download_outlined),
+                    title: l10n.peopleDownloadTemplate,
+                    showChevron: false,
+                    onTap: _downloadTemplate,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              RdPrimaryButton(
+                key: const Key('rd-worklist-pick'),
+                label: l10n.peopleChooseFile,
+                icon: Icons.upload_file_outlined,
+                onPressed: _busy ? null : _pickFile,
+              ),
+            ],
+          ),
+          if (_busy) _busyOverlay(),
+        ],
+      );
+    }
+    final mapping = _step == _Step.mapping;
+    return Scaffold(
+      backgroundColor: p.bg,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 720),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RdBackLink(
+                            label: l10n.commonBack,
+                            onTap: () => setState(() => _step = mapping ? _Step.file : _Step.mapping),
+                          ),
+                          const SizedBox(height: 4),
+                          title,
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: mapping
+                          ? ImportMappingStep(
+                              fileName: _fileName,
+                              rowCount: _rawRows.length,
+                              intro: l10n.songsMappingIntro,
+                              headers: _headers,
+                              mapping: _mapping,
+                              options: _options,
+                              onChanged: (header, key) => setState(() => _mapping[header] = key),
+                              missingHint: l10n.songsMapNumberName,
+                              canProceed: mappingSongHasRequired(_mapping),
+                            )
+                          : _buildPreview(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+                      child: RdPrimaryButton(
+                        key: const Key('rd-worklist-next'),
+                        label: mapping ? l10n.commonNext : l10n.peopleImportCount(_importable.length),
+                        onPressed: _busy
+                            ? null
+                            : mapping
+                            ? (mappingSongHasRequired(_mapping) ? _proceedToPreview : null)
+                            : (_importable.isEmpty ? null : _startImport),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if (_busy) _busyOverlay(),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.beta) return _buildBeta(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.songsImportSongs),
@@ -224,29 +371,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
               ),
             _Step.preview => _buildPreview(),
           },
-          if (_busy)
-            Positioned.fill(
-              child: ColoredBox(
-                color: Colors.black26,
-                child: Center(
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppDimensions.paddingL),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const AppSpinner(),
-                          if (_progress.isNotEmpty) ...[
-                            const SizedBox(height: AppDimensions.paddingM),
-                            Text(_progress),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          if (_busy) _busyOverlay(),
         ],
       ),
       bottomNavigationBar: switch (_step) {

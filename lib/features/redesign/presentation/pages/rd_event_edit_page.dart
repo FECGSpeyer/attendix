@@ -378,6 +378,9 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       if (!mounted) return;
     }
     var adopt = false;
+    // "Offen" like everywhere in the new design, not the classic "Neutral".
+    String statusLabel(AttendanceStatus s) =>
+        s == AttendanceStatus.neutral ? l10n.redesignStatusOpen : ionicStatusLabel(s);
     if (count > 0) {
       final choice = await showAppDialog<String>(
         context: context,
@@ -385,8 +388,8 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
           title: Text(l10n.redesignEventEditTypeStatusTitle),
           content: Text(l10n.redesignEventEditTypeStatusMessage(
             count,
-            ionicStatusLabel(oldDefault!),
-            ionicStatusLabel(picked.defaultStatus),
+            statusLabel(oldDefault!),
+            statusLabel(picked.defaultStatus),
           )),
           actions: [
             TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.commonCancel)),

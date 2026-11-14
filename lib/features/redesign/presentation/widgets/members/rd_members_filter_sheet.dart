@@ -19,7 +19,7 @@ import '../stats/rd_stats_widgets.dart' show showRdStatsRangeSheet;
 
 /// Label of a sort order of the Mitglieder tab.
 String rdMembersSortLabel(AppLocalizations l10n, RdMembersSort sort) => switch (sort) {
-  RdMembersSort.group => l10n.peopleGroup,
+  RdMembersSort.group => l10n.rdAdminGroups,
   RdMembersSort.firstName => l10n.peopleFirstName,
   RdMembersSort.lastName => l10n.peopleLastName,
   RdMembersSort.attendanceAsc => l10n.peopleAttendanceAsc,

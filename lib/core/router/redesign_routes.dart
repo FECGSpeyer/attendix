@@ -62,6 +62,10 @@ class RedesignRoutes {
   /// entry in the Werke list).
   static const String worksImport = '$works/import';
 
+  /// Werke › + › "Werkliste importieren" (Excel/CSV) as a page of the tab
+  /// (was the classic full-screen modal); leads only like [worksImport].
+  static const String workListImport = '$works/werkliste';
+
   /// "Werk bearbeiten" of the new design (replaces the old song page).
   static String workEdit(int id) => '$works/$id/bearbeiten';
 
@@ -157,6 +161,14 @@ class RedesignRoutes {
   /// page `/people/:id` in the Beta; leads only like [approvals]).
   static String approvalReview(int id) => '$approvals/$id';
 
+  /// [archive] opened from the Mitglieder tab (•••): the same page inside
+  /// that tab with "‹ Mitglieder" (leads only).
+  static const String membersArchive = '$members/archiv';
+
+  /// [approvalReview] opened from the Mitglieder tab or a person: the same
+  /// page inside that tab with "‹ Mitglieder" (leads only).
+  static String membersReview(int id) => '$members/anfrage/$id';
+
   /// Verwaltung › Lehrer (replaces `/settings/teachers` in the Beta).
   static const String teachers = '$manage/lehrer';
 
@@ -184,6 +196,10 @@ class RedesignRoutes {
 
   /// Ich › Benachrichtigungen.
   static const String notifications = '$me/benachrichtigungen';
+
+  /// "Meine Gruppen" inside the tab "Ich" (the list of `/tenants`, which
+  /// stays the entry without a group and right after the sign-in).
+  static const String myGroups = '$me/gruppen';
 
   /// Pages for super admins only (the old admins sheet: `role.isAdmin`).
   static const _adminOnly = {admins};
@@ -292,13 +308,17 @@ class RedesignRoutes {
       // Admins and Verantwortliche.
       final lead = role.isAdmin || role.isResponsible;
       if (location == personNew && !lead) return members;
+      // Archiv and "Anfrage prüfen" like in the Verwaltung: leads only.
+      if ((location == membersArchive || location.startsWith('$members/anfrage/')) && !lead) return members;
       final edit = RegExp('^$members/(\\d+)/bearbeiten\$').firstMatch(location);
       if (edit != null && !lead) return person(int.parse(edit.group(1)!));
       return null;
     }
     if (location == works || location.startsWith('$works/')) {
       if (!canOpenSongsTab(role)) return today;
-      if (location == worksImport && !(role.isAdmin || role.isResponsible)) return works;
+      if ((location == worksImport || location == workListImport) && !(role.isAdmin || role.isResponsible)) {
+        return works;
+      }
       // "Neues Werk" and "Werk bearbeiten" like the old song form: Admins
       // and Verantwortliche.
       if (location == newWork && !(role.isAdmin || role.isResponsible)) return works;

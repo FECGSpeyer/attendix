@@ -9,6 +9,7 @@ import '../../data/models/attendance/attendance.dart';
 import '../../data/repositories/repositories.dart';
 import 'attendance_type_providers.dart';
 import 'realtime_providers.dart';
+import 'redesign_providers.dart';
 import 'tenant_providers.dart';
 import 'role_permission_providers.dart';
 import '../../l10n/l10n.dart';
@@ -307,7 +308,11 @@ Future<Map<int, int>> loadAttendancePercentages(
 
   // Ionic getModifiedPlayersForList: Termine with date before now + 1 day
   // count (dates are stored at 12:00 → today always, tomorrow from noon).
-  final tomorrowAt = DateTime.now().add(const Duration(days: 1));
+  // Beta: one rate everywhere. The list counts like the person page
+  // (`computePersonAttendanceStats`: only Termine before now), so a Termin
+  // of tomorrow no longer lowers the number in the list alone.
+  final tomorrowAt =
+      ref.watch(redesignEnabledProvider) ? DateTime.now() : DateTime.now().add(const Duration(days: 1));
   // A range ending earlier: everything before the day after its end.
   final endDay = to == null ? null : DateTime(to.year, to.month, to.day + 1);
   final until = (endDay != null && endDay.isBefore(tomorrowAt) ? endDay : tomorrowAt).toUtc().toIso8601String();

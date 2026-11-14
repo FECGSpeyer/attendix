@@ -66,7 +66,7 @@ class _RdExportPageState extends ConsumerState<RdExportPage> with ExportLogic {
     final date = DateFormat(dateFmt()).format(DateTime.now());
     // Same names as [ExportLogic.runExport] saves.
     final base =
-        contentType == 'player' ? l10n.exportPlayerListFile(name, date) : l10n.exportAttendanceFileAsOf(name, date);
+        contentType == 'player' ? l10n.rdTextExportMembersFile(name, date) : l10n.exportAttendanceFileAsOf(name, date);
     return '$base.${exportType == 'pdf' ? 'pdf' : 'xlsx'}';
   }
 
@@ -89,7 +89,7 @@ class _RdExportPageState extends ConsumerState<RdExportPage> with ExportLogic {
     final sortOptions = exportSortOptions(contentType, extraFields);
     if (!sortOptions.any((o) => o.value == sortField)) sortField = 'gruppe';
     final sortLabel = sortOptions.where((o) => o.value == sortField).map((o) => o.label).firstOrNull ?? '';
-    final columns = selectedFields.map((f) => exportFieldLabel(f, l10n)).join(', ');
+    final columns = selectedFields.map((f) => rdExportFieldLabel(f, l10n)).join(', ');
 
     return RdPage(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 110),
@@ -206,7 +206,7 @@ class _ColumnsSheetState extends State<_ColumnsSheet> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(exportFieldLabel(_cols[i], l10n), style: RdType.body(p)),
+                              Text(rdExportFieldLabel(_cols[i], l10n), style: RdType.body(p)),
                               if (!widget.available.contains(_cols[i]))
                                 Text(l10n.rdDataOwnEmpty, style: RdType.meta(p)),
                             ],
@@ -229,7 +229,7 @@ class _ColumnsSheetState extends State<_ColumnsSheet> {
               for (final f in rest)
                 RdListRow(
                   leading: Icon(Icons.add_circle_outline, color: p.primary),
-                  title: exportFieldLabel(f, l10n),
+                  title: rdExportFieldLabel(f, l10n),
                   showChevron: false,
                   onTap: () => setState(() => _cols.add(f)),
                 ),
@@ -242,3 +242,8 @@ class _ColumnsSheetState extends State<_ColumnsSheet> {
     );
   }
 }
+
+/// Column names of the export page: "Register" like the rest of the new
+/// design, where the classic export says "Gruppe".
+String rdExportFieldLabel(String field, AppLocalizations l10n) =>
+    field == 'Gruppe' ? l10n.rdAdminGroups : exportFieldLabel(field, l10n);

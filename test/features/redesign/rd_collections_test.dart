@@ -33,6 +33,18 @@ void main() {
     expect(rdWorksIn(songs, null).map((s) => s.id), [1]);
   });
 
+  test('a new Kürzel avoids the ones already in use', () {
+    expect(rdCollectionPrefixSuggestion('Einspielen'), 'E');
+    expect(rdCollectionPrefixSuggestion('Einspielen', taken: ['e']), 'Ei');
+    expect(rdCollectionPrefixSuggestion('Einspielen', taken: ['E', 'Ei', null, '']), 'Ein');
+    // A sign in front: the first letter comes next.
+    expect(rdCollectionPrefixSuggestion('(Alt)', taken: ['(']), 'A');
+    // No digit at the end ("E2" + 1 would read like E's 21st).
+    expect(rdCollectionPrefixSuggestion('E2E beta', taken: ['E']), 'E2e');
+    // Every start is taken: the first letter twice.
+    expect(rdCollectionPrefixSuggestion('Ab', taken: ['A', 'Ab']), 'AA');
+  });
+
   test('a move takes the prefix and next number of the Sammlung, back drops it', () {
     const songs = [
       Song(id: 1, name: 'A', number: 12),

@@ -115,7 +115,7 @@ void main() {
       expect(find.text('Lehrer'), findsOneWidget);
       expect(find.text('Anna Berg'), findsOneWidget);
       expect(find.text('Violine'), findsOneWidget);
-      expect(find.text('2 Spieler'), findsOneWidget);
+      expect(find.text('2 Schüler'), findsOneWidget);
       // Old page: no "+" and no tap for Beobachter.
       expect(find.byKey(const Key('rd-manage-list-add')), findsNothing);
       await tester.tap(find.text('Anna Berg'));

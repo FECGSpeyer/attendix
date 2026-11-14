@@ -10,18 +10,18 @@ import '../../../../core/utils/instrument_sort.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../instruments/presentation/pages/instruments_list_page.dart'
-    show groupClefLabel, showAddGroupSheet;
+import '../../../instruments/presentation/pages/instruments_list_page.dart' show groupClefLabel;
 import '../../../instruments/presentation/widgets/instrument_categories_sheet.dart';
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
+import '../widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;
 
 /// REDESIGN: Verwaltung › Gruppen in the template "Verwaltungsliste"
 /// (replaces `/settings/instruments` while the Beta is on). The groups by
 /// category as sections, the main group or tuning and clefs as subtitle, the
 /// number of persons on the right. "Reihenfolge ändern" and "Kategorien
-/// verwalten" sit behind "•••", "+" adds a group (the old sheet), a tap opens
+/// verwalten" sit behind "•••", "+" adds a group (name sheet, then its page), a tap opens
 /// "Gruppe bearbeiten". Loading, saving and rights as on the old page.
 class RdGroupsPage extends ConsumerStatefulWidget {
   const RdGroupsPage({super.key});
@@ -64,6 +64,28 @@ class _RdGroupsPageState extends ConsumerState<RdGroupsPage> {
     return ok;
   }
 
+  /// "+": the name in a Beta sheet, then straight to "Register bearbeiten"
+  /// (category, Stimmung, Schlüssel), like a new Terminart. The old sheet
+  /// left the new Register somewhere in the list.
+  Future<void> _add() async {
+    final l10n = context.l10n;
+    final name = await showRdTextSheet(
+      context,
+      title: l10n.rdTextGroupNewTitle,
+      hint: l10n.instrumentsGroupPh,
+      required: true,
+    );
+    if (name == null || name.isEmpty || !mounted) return;
+    final created = await ref.read(groupNotifierProvider.notifier).createGroup({'name': name, 'maingroup': false});
+    if (!mounted) return;
+    if (created?.id == null) {
+      ToastHelper.showError(context, l10n.instrumentsFlutterAddFailed);
+      return;
+    }
+    ref.invalidate(playerCountsForGroupsProvider);
+    await context.push(RedesignRoutes.groupEdit(created!.id!));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -95,7 +117,7 @@ class _RdGroupsPageState extends ConsumerState<RdGroupsPage> {
       emptyText: l10n.redesignGroupsListEmpty,
       emptyIcon: Icons.groups_outlined,
       addLabel: l10n.redesignGroupsListAdd,
-      onAdd: isAdmin ? () => showAddGroupSheet(context, ref, categories) : null,
+      onAdd: isAdmin ? _add : null,
       actions: [
         if (isAdmin)
           RdManageListAction(
@@ -150,8 +172,9 @@ List<RdManageListSection> rdGroupSections(
               id: g.id ?? g.name,
               title: g.name,
               subtitle: subtitle(g),
-              count: counts == null ? null : l10n.commonPersons(counts[g.id] ?? 0),
-              countWarn: counts != null && (counts[g.id] ?? 0) == 0,
+              // An empty Register is no error: a quiet "–" instead of a red
+              // "0 Personen".
+              count: counts == null ? null : ((counts[g.id] ?? 0) == 0 ? '–' : l10n.commonPersons(counts[g.id] ?? 0)),
               onTap: onTap == null || g.id == null ? null : () => onTap(g.id!),
             ),
         ],

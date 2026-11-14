@@ -191,6 +191,110 @@ class _RdPauseSheetState extends ConsumerState<_RdPauseSheet> {
   }
 }
 
+/// REDESIGN: "{Name} archivieren" as a sheet like [showRdPauseSheet] (was
+/// a Material dialog): Austrittsdatum (default today), an optional reason,
+/// a hint and one red button. Returns what the old dialog returned; null
+/// when closed.
+Future<({DateTime date, String note})?> showRdArchiveSheet(BuildContext context, {required String name}) {
+  return showRdSheet<({DateTime date, String note})>(context, _RdArchiveSheet(name: name));
+}
+
+class _RdArchiveSheet extends StatefulWidget {
+  const _RdArchiveSheet({required this.name});
+
+  final String name;
+
+  @override
+  State<_RdArchiveSheet> createState() => _RdArchiveSheetState();
+}
+
+class _RdArchiveSheetState extends State<_RdArchiveSheet> {
+  DateTime _date = DateTime.now();
+  final _note = TextEditingController();
+
+  @override
+  void dispose() {
+    _note.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickDate() async {
+    final picked = await showAppDatePicker(
+      context: context,
+      initialDate: _date,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && mounted) setState(() => _date = picked);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            RdSheetTitle(l10n.rdPeopleArchiveTitle(widget.name)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  RdGroupLabel(l10n.dutyReasonOptional),
+                  TextField(
+                    key: const Key('rd-archive-reason'),
+                    controller: _note,
+                    textCapitalization: TextCapitalization.sentences,
+                    minLines: 1,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      hintText: l10n.personFlutterArchiveReasonHint,
+                      filled: true,
+                      fillColor: p.surface,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(p.buttonRadius),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  RdGroupedList(
+                    children: [
+                      RdListRow(
+                        key: const Key('rd-archive-date'),
+                        title: l10n.peopleLeaveDate,
+                        value: DateFormat.yMMMd(currentIntlLocale()).format(_date),
+                        onTap: _pickDate,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  RdHintBox(l10n.rdTextArchiveHint),
+                  const SizedBox(height: 18),
+                  RdPrimaryButton(
+                    key: const Key('rd-archive-submit'),
+                    label: l10n.peopleArchive,
+                    icon: Icons.archive_outlined,
+                    color: p.absent,
+                    foreground: p.onStatus,
+                    onPressed: () => Navigator.of(context).pop((date: _date, note: _note.text)),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// REDESIGN: follow-up sheet "Auch in anderen Gruppen pausieren?" (old
 /// dialog "Auch in anderen Instanzen pausieren?"): one round check per
 /// group, "Überspringen" / "Pausieren". Returns the chosen groups, null

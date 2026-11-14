@@ -143,7 +143,7 @@ Widget _membersApp(Role role, MockPlayerRepository repo, {List<Person>? people, 
         builder: (_, state) => Scaffold(body: Text('page old ${state.pathParameters['id']}')),
       ),
       GoRoute(
-        path: '/ich/verwaltung/freigaben/:id',
+        path: '/mitglieder/anfrage/:id',
         builder: (_, state) => Scaffold(body: Text('page review ${state.pathParameters['id']}')),
       ),
       GoRoute(path: '/statistics', builder: (_, __) => const Scaffold(body: Text('page stats'))),
@@ -195,7 +195,7 @@ Widget _personApp(Role role, MockPlayerRepository repo, {Person? person, int id 
         builder: (_, state) => Scaffold(body: Text('page old ${state.pathParameters['id']}')),
       ),
       GoRoute(
-        path: '/ich/verwaltung/freigaben/:id',
+        path: '/mitglieder/anfrage/:id',
         builder: (_, state) => Scaffold(body: Text('page review ${state.pathParameters['id']}')),
       ),
     ],
@@ -421,7 +421,12 @@ void main() {
         expect(RedesignRoutes.roleRedirect(RedesignRoutes.personNew, role), '/mitglieder', reason: role.name);
         expect(RedesignRoutes.roleRedirect(RedesignRoutes.personEdit(3), role), '/mitglieder/3', reason: role.name);
         expect(RedesignRoutes.roleRedirect(RedesignRoutes.personHistory(3), role), isNull, reason: role.name);
+        // Archiv and "Anfrage prüfen" under Mitglieder: leads only.
+        expect(RedesignRoutes.roleRedirect(RedesignRoutes.membersArchive, role), '/mitglieder', reason: role.name);
+        expect(RedesignRoutes.roleRedirect(RedesignRoutes.membersReview(3), role), '/mitglieder', reason: role.name);
       }
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.membersArchive, Role.admin), isNull);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.membersReview(3), Role.responsible), isNull);
     });
   });
 
@@ -750,8 +755,8 @@ void main() {
       await _tapVisible(tester, find.text('Archivieren'));
       await _settle(tester);
       expect(find.text('Anna Berg archivieren'), findsOneWidget);
-      await tester.enterText(find.descendant(of: find.byType(AlertDialog), matching: find.byType(TextField)), 'Umzug');
-      await tester.tap(find.descendant(of: find.byType(AlertDialog), matching: find.text('Archivieren')));
+      await tester.enterText(find.byKey(const Key('rd-archive-reason')), 'Umzug');
+      await tester.tap(find.byKey(const Key('rd-archive-submit')));
       await _settle(tester);
       final captured = verify(() => repo.archivePlayer(anna, captureAny(), 'Umzug')).captured;
       expect((captured.single as String).substring(0, 10), _day(0));
@@ -807,8 +812,9 @@ void main() {
   });
 
   group('split view (tablet, desktop)', () {
-    test('from 1100 pt wide', () {
-      expect(rdSplitBreakpoint, 1100);
+    test('from 1024 pt wide (iPad landscape), with a narrower list below 1100', () {
+      expect(rdSplitBreakpoint, 1024);
+      expect(rdSplitListWidthFor(1024), lessThan(rdSplitListWidthFor(1100)));
     });
 
     testWidgets('list stays, the person opens on the right and replaces the last one', (tester) async {

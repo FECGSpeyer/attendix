@@ -314,9 +314,10 @@ class _RdPersonHistoryPageState extends ConsumerState<RdPersonHistoryPage> {
     if (action != true || !mounted) return;
     final confirmed = await showAppConfirm(
       context,
-      // Ionic removeHis alert: header only, buttons Abbrechen / Ja.
+      // Ionic removeHis alert: header only; the Beta names the action
+      // instead of "Ja".
       title: l10n.personRemoveEntry,
-      confirmText: l10n.commonYes,
+      confirmText: l10n.commonRemove,
       destructive: true,
     );
     if (!confirmed || !mounted) return;

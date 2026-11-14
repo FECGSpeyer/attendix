@@ -44,7 +44,11 @@ Future<void> showTenantsSheet(BuildContext context) => showSettingsSheet<void>(
 
 /// Tenant selection page
 class TenantSelectionPage extends ConsumerStatefulWidget {
-  const TenantSelectionPage({super.key, this.sheet = false});
+  const TenantSelectionPage({super.key, this.sheet = false, this.inTab = false});
+
+  /// Beta "Meine Gruppen" inside the tab "Ich": opened by the user, so no
+  /// auto navigation.
+  final bool inTab;
 
   /// IOS_SETTINGS2: shown as the Ionic instances sheet from the settings
   /// page (no auto navigation, header "+" / title / cog only).
@@ -63,7 +67,15 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
   void initState() {
     super.initState();
     // Try auto-navigation after the first frame
-    if (widget.sheet) return; // IOS_SETTINGS2: opened by the user
+    if (widget.sheet || widget.inTab) return; // opened by the user
+    // Beta: right after a sign-in the group opens by itself. Decide that
+    // before the first frame, so the list "Gruppen" does not flash up for a
+    // moment before the loading screen (same condition as
+    // [_tryAutoNavigation]).
+    if (ref.read(redesignEnabledProvider) &&
+        (InstanceSelectionGate.wanted(ref.read(userPreferencesProvider)) || ref.read(currentTenantProvider) == null)) {
+      _isAutoNavigating = true;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _tryAutoNavigation();
     });
@@ -85,7 +97,11 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
 
     // If tenant is already set, user navigated here to switch - show selection
     final currentTenant = ref.read(currentTenantProvider);
-    if (!ask && currentTenant != null) return;
+    if (!ask && currentTenant != null) {
+      // Set since initState (restore): show the list as before.
+      if (_isAutoNavigating && mounted) setState(() => _isAutoNavigating = false);
+      return;
+    }
 
     setState(() => _isAutoNavigating = true);
 
@@ -449,7 +465,10 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
   Widget build(BuildContext context) {
     // Show loading while auto-navigating
     if (_isAutoNavigating) {
-      return const Scaffold(body: Center(child: AppSpinner()));
+      return Scaffold(
+        backgroundColor: context.rdSkin != null ? context.rd.bg : null,
+        body: const Center(child: AppSpinner()),
+      );
     }
 
     final tenantsAsync = ref.watch(userTenantsProvider);

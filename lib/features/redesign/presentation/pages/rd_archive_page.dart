@@ -19,7 +19,11 @@ import '../widgets/manage/rd_manage_list.dart';
 /// person page), the button on the right restores the person (old
 /// confirmation).
 class RdArchivePage extends ConsumerWidget {
-  const RdArchivePage({super.key});
+  const RdArchivePage({super.key, this.fromMembers = false});
+
+  /// Opened from the Mitglieder tab (•••): the page lives in that tab and
+  /// leads back to it.
+  final bool fromMembers;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,6 +39,9 @@ class RdArchivePage extends ConsumerWidget {
       onRetry: () => ref.invalidate(leftPlayersProvider),
       emptyText: l10n.redesignArchiveListEmpty,
       emptyIcon: Icons.archive_outlined,
+      backLabel: fromMembers ? l10n.redesignTabMembers : null,
+      onBack:
+          fromMembers ? () => context.canPop() ? context.pop() : context.go(RedesignRoutes.members) : null,
       onRefresh: () async {
         ref.invalidate(leftPlayersProvider);
         await ref.read(leftPlayersProvider.future).catchError((_) => const <Person>[]);

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import 'rd_desktop.dart' show rdSidebarBreakpoint;
 import 'rd_widgets.dart' show RdBackLink, RdPage, rdIsPushed;
 import 'today/rd_today_common.dart' show RdInfoCard;
 
@@ -9,11 +11,22 @@ import 'today/rd_today_common.dart' show RdInfoCard;
 /// "Desktop", "DesktopMitglieder"): Termine and Mitglieder keep their list
 /// on the left while a Termin or a person opens on the right.
 
-/// Window width from which the split is used (iPad landscape, desktop).
-const double rdSplitBreakpoint = 1100;
+/// Window width from which the split is used (iPad landscape at 1024,
+/// desktop).
+const double rdSplitBreakpoint = 1024;
 
-/// Width of the list column.
+/// Width of the list column from [rdSplitWideBreakpoint] on.
 const double rdSplitListWidth = 400;
+
+/// Below this window width the list column is narrower
+/// ([rdSplitNarrowListWidth]), so the detail keeps a phone's width next to
+/// sidebar and list.
+const double rdSplitWideBreakpoint = 1100;
+const double rdSplitNarrowListWidth = 340;
+
+/// Width of the list column in a window [windowWidth] wide.
+double rdSplitListWidthFor(double windowWidth) =>
+    windowWidth >= rdSplitWideBreakpoint ? rdSplitListWidth : rdSplitNarrowListWidth;
 
 bool rdUseSplit(BuildContext context) => MediaQuery.sizeOf(context).width >= rdSplitBreakpoint;
 
@@ -82,7 +95,7 @@ class RdSplitView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SizedBox(
-            width: rdSplitListWidth,
+            width: rdSplitListWidthFor(MediaQuery.sizeOf(context).width),
             child: RdSplitScope(isDetail: false, selectedId: selectedId, child: list),
           ),
           VerticalDivider(width: 1, thickness: 1, color: p.line),
@@ -111,8 +124,20 @@ class RdManageBackLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (RdSplitScope.of(context)?.isDetail ?? false) return const SizedBox(height: 44);
+    if (rdIsSidebarEntry(context)) return const SizedBox(height: 44);
     return RdBackLink(label: label, onTap: onTap);
   }
+}
+
+/// Whether the page on top is one the desktop sidebar leads to directly
+/// (Auswertung, Mitteilungen) and the sidebar is on screen: a back link
+/// "‹ Verwaltung" would lead somewhere the user never was.
+bool rdIsSidebarEntry(BuildContext context) {
+  if (MediaQuery.sizeOf(context).width < rdSidebarBreakpoint) return false;
+  final config = GoRouter.maybeOf(context)?.routerDelegate.currentConfiguration;
+  if (config == null || config.lastOrNull is ImperativeRouteMatch) return false;
+  final path = config.uri.path;
+  return path == RedesignRoutes.stats || path == RedesignRoutes.messages;
 }
 
 /// Opens a page of the Verwaltung from its list on wide screens: it takes

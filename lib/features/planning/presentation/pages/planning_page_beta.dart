@@ -2136,11 +2136,9 @@ extension _PlanningBeta on _PlanningPageState {
         RdListRow(
           key: const Key('rd-plan-copy-last'),
           leading: const RdRowIcon(Icons.copy_all_outlined),
-          title: l10n.redesignPlanEmptyCopy,
-          subtitle: l10n.redesignPlanEmptyCopyHint(
-            _rdDate(previous.att),
-            l10n.redesignPlanItemCount(previous.plan.fields.length),
-          ),
+          // Not "letzter Termin": the newest one with an Ablauf can lie ahead.
+          title: l10n.rdTextPlanCopyFrom(_rdDate(previous.att)),
+          subtitle: l10n.rdTextPlanCopyCount(l10n.redesignPlanItemCount(previous.plan.fields.length)),
           onTap: () => _rdCopyPrevious(previous.att, previous.plan),
         ),
       for (var i = 0; i < orgTemplates.length; i++)

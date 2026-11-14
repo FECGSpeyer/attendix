@@ -25,7 +25,6 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../../../history/presentation/pages/history_page.dart' show showHistoryModal;
 import '../../../songs/data/song_print_service.dart';
-import '../../../songs/presentation/pages/song_import_page.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../data/import/rd_import_controller.dart' show rdImportOwnLibraryProvider;
@@ -219,10 +218,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           collection == null ? RedesignRoutes.newWork : '${RedesignRoutes.newWork}?sammlung=$collection',
         );
       case 'import':
-        final imported = await Navigator.of(
-          context,
-          rootNavigator: true,
-        ).push<bool>(MaterialPageRoute(fullscreenDialog: true, builder: (_) => const SongImportPage()));
+        // A page of this tab ("‹ Werke"), the sidebar stays on the desktop.
+        final imported = await context.push<bool>(RedesignRoutes.workListImport);
         if (imported == true && mounted) {
           ref.invalidate(songsProvider);
           ref.invalidate(songsListDataProvider);
@@ -231,7 +228,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         // "Noten importieren": its controller refreshes the Werke.
         await context.push(RedesignRoutes.worksImport);
       case 'org':
-        await context.push('/settings/org-settings/songs');
+        await context.push('/settings/org-settings/songs?from=werke');
     }
   }
 
@@ -563,7 +560,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
                     ? l10n.redesignWorksEmpty
                     : listData.songs.isEmpty && !searching
                     ? l10n.collectionsEmptyIn(rdCollectionName(l10n, visibleCollections, chosenCollection))
-                    : l10n.redesignWorksNoMatch,
+                    : (!searching && filterCount > 0 ? l10n.rdTextWorksNoFilterMatch : l10n.redesignWorksNoMatch),
             action:
                 filterCount > 0
                     ? RdOutlineButton(

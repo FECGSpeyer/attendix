@@ -92,8 +92,8 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
     } else {
       final confirmed = await showAppConfirm(
         context,
-        title: l10n.songsDeleteCategory,
-        message: l10n.songsDeleteCategoryMessage,
+        title: l10n.rdTextCategoryDeleteTitle(category.name),
+        message: l10n.rdTextCategoryDeleteMessage,
         confirmText: l10n.commonDelete,
         destructive: true,
       );

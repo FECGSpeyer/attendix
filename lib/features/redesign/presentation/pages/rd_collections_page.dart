@@ -6,7 +6,6 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
-import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
@@ -14,6 +13,7 @@ import '../../../../l10n/l10n.dart';
 import '../../data/providers/rd_shared_library.dart';
 import '../../data/rd_collections_logic.dart';
 import '../widgets/manage/rd_manage_list.dart';
+import '../widgets/manage/rd_settings_sheets.dart' show showRdTextSheet;
 import '../widgets/works/rd_collections_ui.dart';
 
 /// REDESIGN: Werke › "Sammlungen verwalten" in the template
@@ -41,24 +41,37 @@ class _RdCollectionsPageState extends ConsumerState<RdCollectionsPage> {
   Future<void> _add() async {
     if (_adding) return;
     final l10n = context.l10n;
-    final name = await DialogHelper.showTextInput(
+    // A sheet like "Neue Kategorie" (was a dialog with a wrapping button).
+    final name = await showRdTextSheet(
       context,
       title: l10n.collectionsAddTitle,
       hint: l10n.collectionsAddHint,
-      confirmText: l10n.collectionsAdd,
+      required: true,
     );
     final trimmed = name?.trim() ?? '';
     if (trimmed.isEmpty || !mounted) return;
+    // A Kürzel no other Sammlung and no Werk uses yet.
+    final first = rdCollectionPrefixSuggestion(trimmed);
+    final prefix = rdCollectionPrefixSuggestion(
+      trimmed,
+      taken: rdTakenPrefixes(
+        ref.read(songCollectionsProvider).valueOrNull ?? const [],
+        ref.read(songsProvider).valueOrNull ?? const [],
+      ),
+    );
     setState(() => _adding = true);
     final created = await ref
         .read(songCollectionNotifierProvider.notifier)
-        .add(SongCollection(name: trimmed, prefix: rdCollectionPrefixSuggestion(trimmed)));
+        .add(SongCollection(name: trimmed, prefix: prefix));
     if (!mounted) return;
     setState(() => _adding = false);
     if (created?.id == null) {
       ToastHelper.showError(context, l10n.collectionsAddFailed);
       return;
     }
+    // Say why the Kürzel is not the first letter (it can be changed on the
+    // page that opens).
+    if (prefix != first) ToastHelper.showInfo(context, l10n.rdTextCollectionPrefixWhy(prefix, first));
     context.push(RedesignRoutes.collection(created!.id!));
   }
 

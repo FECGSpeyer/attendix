@@ -43,7 +43,7 @@ import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_manage_entries.dart'
-    show rdManageIcon, rdManageTitle, rdMissingAccountsProvider, rdOpenManageEntry;
+    show rdManageIcon, rdManageRecentProvider, rdManageTitle, rdMissingAccountsProvider, rdOpenManageEntry;
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../../../settings/presentation/pages/settings_page.dart' show createMissingAccounts;
 import '../../../../core/utils/helper_member.dart';
@@ -523,7 +523,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
                   : selecting
                       ? () => _toggle(person.id!)
                       : () => filter == RdMembersFilter.pending
-                          ? context.push(RedesignRoutes.approvalReview(person.id!))
+                          ? context.push(RedesignRoutes.membersReview(person.id!))
                           : RdSplitScope.open(context, RedesignRoutes.person(person.id!)),
             ),
         ]));
@@ -700,6 +700,10 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
     if (entry == null || !mounted) return;
     if (entry == RdManageEntry.bulkMembers) {
       _setSelecting(true);
+    } else if (entry == RdManageEntry.archive) {
+      // Stays in this tab ("‹ Mitglieder"), not in Ich › Verwaltung.
+      ref.read(rdManageRecentProvider.notifier).push(entry);
+      await context.push(RedesignRoutes.membersArchive);
     } else {
       rdOpenManageEntry(context, ref, entry);
     }
@@ -715,9 +719,9 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
       await showRdInviteSheet(context);
       return;
     }
+    // No title: it only repeated the first entry.
     final action = await showAppActionSheet<String>(
       context,
-      title: l10n.redesignMembersAdd,
       anchor: anchor,
       actions: [
         AppActionSheetAction(value: 'new', icon: Icons.person_add_alt_1_outlined, label: l10n.redesignMembersAdd),

@@ -21,6 +21,12 @@ class RdNoGroupPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final p = context.rd;
     final l10n = context.l10n;
+    Widget small(String label, VoidCallback onPressed, {Key? key}) => TextButton(
+      key: key,
+      onPressed: onPressed,
+      style: TextButton.styleFrom(foregroundColor: p.text2, minimumSize: const Size(44, 44)),
+      child: Text(label, style: const TextStyle(fontSize: 13, decoration: TextDecoration.underline)),
+    );
     return RdPage(
       children: [
         const SizedBox(height: 24),
@@ -38,32 +44,36 @@ class RdNoGroupPage extends ConsumerWidget {
             onPressed: () => showRdJoinSheet(context),
           ),
         ),
-        const SizedBox(height: 12),
-        _Choice(
-          icon: Icons.add_business_outlined,
-          title: l10n.redesignJoinCreate,
-          hint: l10n.redesignJoinCreateHint,
-          button: RdOutlineButton(label: l10n.redesignJoinCreateButton, onPressed: () => context.push('/tenants/new')),
+        // One main action (joining is the usual case): founding a group is
+        // a link, "Ausloggen" and "Konto löschen" sit small at the very end.
+        const SizedBox(height: 8),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: RdTextLink(
+            key: const Key('rd-no-group-create'),
+            label: l10n.redesignJoinCreate,
+            onTap: () => context.push('/tenants/new'),
+          ),
         ),
-        const SizedBox(height: 24),
-        RdOutlineButton(
-          label: l10n.redesignMeLogout,
-          icon: Icons.logout,
-          color: p.absent,
-          onPressed: () => rdLogout(context, ref),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(l10n.redesignJoinCreateHint, style: RdType.meta(p, size: 13)),
         ),
+        const SizedBox(height: 40),
         // Like the old "Neue Instanz" page (and required by the App Store):
         // the account can be deleted without being in a group.
-        const SizedBox(height: 8),
-        Center(
-          child: TextButton(
-            onPressed: () => confirmDeleteAccountWithoutGroup(context, ref),
-            style: TextButton.styleFrom(foregroundColor: p.text2),
-            child: Text(
+        Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            small(l10n.redesignMeLogout, () => rdLogout(context, ref), key: const Key('rd-no-group-logout')),
+            Text('·', style: RdType.meta(p, size: 13)),
+            small(
               l10n.redesignTenantsDeleteAccount,
-              style: const TextStyle(fontSize: 13, decoration: TextDecoration.underline),
+              () => confirmDeleteAccountWithoutGroup(context, ref),
+              key: const Key('rd-no-group-delete'),
             ),
-          ),
+          ],
         ),
       ],
     );

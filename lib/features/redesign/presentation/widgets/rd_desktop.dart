@@ -19,9 +19,10 @@ const double rdSidebarBreakpoint = 840;
 /// Width of a page's content area: the window minus sidebar and, in the
 /// split's detail column, the list.
 double rdContentWidth(BuildContext context) {
-  var width = MediaQuery.sizeOf(context).width;
+  final window = MediaQuery.sizeOf(context).width;
+  var width = window;
   if (width >= rdSidebarBreakpoint) width -= rdSidebarWidth;
-  if (RdSplitScope.of(context)?.isDetail ?? false) width -= rdSplitListWidth + 1;
+  if (RdSplitScope.of(context)?.isDetail ?? false) width -= rdSplitListWidthFor(window) + 1;
   return width;
 }
 

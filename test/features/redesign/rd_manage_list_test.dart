@@ -68,11 +68,9 @@ void main() {
       expect(find.text('Verwaltung'), findsOneWidget);
       expect(find.text('Gruppen'), findsOneWidget);
       expect(find.text('Gruppen ordnen die Mitglieder.'), findsOneWidget);
-      // Sections with the number of entries on the right.
-      expect(find.text('Streicher'), findsOneWidget);
-      expect(find.text('Bläser'), findsOneWidget);
-      expect(find.text('2'), findsOneWidget);
-      expect(find.text('1'), findsOneWidget);
+      // Sections with the number of entries behind the name.
+      expect(find.text('Streicher · 2'), findsOneWidget);
+      expect(find.text('Bläser · 1'), findsOneWidget);
       // Entries: initials, title, subtitle, count; no drag handles.
       expect(find.text('VI'), findsOneWidget);
       expect(find.text('Violinschlüssel'), findsOneWidget);
@@ -224,7 +222,8 @@ void main() {
       expect(sections.first.items.map((i) => i.title), ['Bratsche', 'Violine']);
       expect(sections.first.items.last.subtitle, 'Stimmung C · Violinschlüssel');
       expect(sections.first.items.last.count, '5 Personen');
-      expect(sections.first.items.first.countWarn, isTrue);
+      expect(sections.first.items.first.count, '–');
+      expect(sections.first.items.first.countWarn, isFalse);
       expect(sections.last.items.single.subtitle, 'Hauptgruppe');
 
       // Choir: no music subtitle; without categories no headings.
