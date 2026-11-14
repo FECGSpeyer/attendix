@@ -23,7 +23,7 @@ enum RdManageArea {
 }
 
 /// Where an entry that left the Verwaltung lives now (search hint).
-enum RdManageHome { members, works, worksCategories, event, stats, organisation, me }
+enum RdManageHome { members, works, worksCategories, event, stats, organisation, me, roles }
 
 /// One entry of the Verwaltung. Entries with an [area] are rows of the page;
 /// the others moved to their [home] and only show up in the search.
@@ -36,11 +36,9 @@ enum RdManageEntry {
   teachers(RdManageArea.members),
   missingAccounts(RdManageArea.members),
   archive(RdManageArea.members),
-  // Zugänge und Rechte
+  // Zugänge und Rechte: one row, the list of roles. Admins, Eltern and
+  // Beobachter are rows of that list (below, "moved").
   rolesPermissions(RdManageArea.access),
-  admins(RdManageArea.access),
-  parents(RdManageArea.access),
-  viewers(RdManageArea.access),
   // Termine
   attendanceTypes(RdManageArea.events),
   reasons(RdManageArea.events),
@@ -54,6 +52,9 @@ enum RdManageEntry {
   general(RdManageArea.group),
   organisation(RdManageArea.group),
   // Moved to where they are used.
+  admins(null, RdManageHome.roles),
+  parents(null, RdManageHome.roles),
+  viewers(null, RdManageHome.roles),
   approvals(null, RdManageHome.members),
   bulkMembers(null, RdManageHome.members),
   workHistory(null, RdManageHome.works),

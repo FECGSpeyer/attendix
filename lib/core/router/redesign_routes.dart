@@ -137,6 +137,9 @@ class RedesignRoutes {
   /// Verwaltung › Rollen und Rechte (replaces `/settings/role-permissions`).
   static const String rolePermissions = '$manage/rollen';
 
+  /// One role of Rollen und Rechte (`RdRoleView.key`).
+  static String role(String key) => '$rolePermissions/$key';
+
   /// Verwaltung › Admins (replaces the old admins sheet; super admins only).
   static const String admins = '$manage/admins';
 

@@ -144,7 +144,7 @@ extension _PlanningBeta on _PlanningPageState {
       const SizedBox(height: 16),
       _rdSummary(att, start, total),
       const SizedBox(height: 12),
-      if (_fields.isEmpty) ..._rdEmpty(att, blockTemplates) else _rdTimeline(start, showBeamer: showBeamer),
+      if (_fields.isEmpty) ..._rdEmpty(att) else _rdTimeline(start, showBeamer: showBeamer),
       const SizedBox(height: 12),
       RdPrimaryButton(
         key: const Key('rd-plan-add'),
@@ -665,15 +665,7 @@ extension _PlanningBeta on _PlanningPageState {
         sub.add(Text(field.info!, style: RdType.meta(p, size: 13).copyWith(fontStyle: FontStyle.italic)));
       }
     }
-    final warning = isHead || isNote ? null : _missingGroups(field);
-    if (warning != null && warning.isNotEmpty) {
-      sub.add(
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Align(alignment: Alignment.centerLeft, child: RdPill(warning, tone: RdTone.late)),
-        ),
-      );
-    }
+    // "Ohne Tenor" stands at the Werke of the Termin (Überblick), not here.
     if (showBeamer && !isHead && !isNote && !isAgenda && PlanBeamer.needsBeamer(field)) {
       final file = _beamerFileOf(field);
       sub.add(
@@ -809,6 +801,7 @@ extension _PlanningBeta on _PlanningPageState {
               value: field.time,
               start: at,
               onChanged: (v) => _rdSetMinutes(index, v),
+              onDone: () => _rdSet(() => _rdDurationIndex = null),
             ),
           if (divider) Divider(height: 1, thickness: 1, color: p.line),
         ],
@@ -1143,7 +1136,11 @@ extension _PlanningBeta on _PlanningPageState {
   /// Same row; the Gemeinde App uid a write may add meanwhile does not count.
   static bool _rdSame(PlanField a, PlanField b) => a.copyWith(uid: null) == b.copyWith(uid: null);
 
-  void _rdRemove(List<PlanField> next, String name) {
+  void _rdRemove(List<PlanField> next, String name) =>
+      _rdApplyWithUndo(next, context.l10n.redesignPlanRemoved(name));
+
+  /// Applies [next] and offers "Rückgängig" next to [message].
+  void _rdApplyWithUndo(List<PlanField> next, String message) {
     final before = _fields;
     final loadGen = _loadGen;
     _rdApply(next);
@@ -1155,17 +1152,20 @@ extension _PlanningBeta on _PlanningPageState {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(l10n.redesignPlanRemoved(name)),
+          content: Text(message),
           duration: const Duration(seconds: 5),
           persist: false,
-          action: SnackBarAction(
-            label: l10n.redesignPlanUndo,
-            onPressed: () {
-              // Only while nothing else changed the plan meanwhile.
-              if (!mounted || loadGen != _loadGen || editGen != _editGen) return;
-              _rdApply(before);
-            },
-          ),
+          // Not back to an empty Ablauf: that one cannot be stored.
+          action: before.isEmpty
+              ? null
+              : SnackBarAction(
+                  label: l10n.redesignPlanUndo,
+                  onPressed: () {
+                    // Only while nothing else changed the plan meanwhile.
+                    if (!mounted || loadGen != _loadGen || editGen != _editGen) return;
+                    _rdApply(before);
+                  },
+                ),
         ),
       );
   }
@@ -1195,10 +1195,10 @@ extension _PlanningBeta on _PlanningPageState {
       after = null;
     }
     if (group != null && !before.any((f) => f.id == group)) group = null;
-    // Programmpunkt (Punkt, Notiz, Block, Werke): one sheet that stays open
-    // for several entries.
-    if (action == 'field') {
-      await _rdQuickAdd(group: group, after: after == null ? null : before[after]);
+    // Programmpunkt (Punkt, Notiz, Werke) and Programmblock: one sheet that
+    // stays open for several entries; the block starts with its name.
+    if (action == 'field' || action == 'block') {
+      await _rdQuickAdd(group: group, after: after == null ? null : before[after], block: action == 'block');
       return;
     }
     if (action == 'register') {
@@ -1280,22 +1280,6 @@ extension _PlanningBeta on _PlanningPageState {
   /// "Adventskonzert": the Termin's own title, else its Terminart.
   String _rdAttName(PlanAttendance a) => (a.typeInfo?.isNotEmpty ?? false) ? a.typeInfo! : (_typeOf(a)?.name ?? '');
 
-  /// The entry "Werke vom 14.12.2026" / "Adventskonzert · 6 Werke" for the
-  /// nearest of [sources] (empty state and "Hinzufügen").
-  Widget _rdEventWorksRow(List<PlanEventWorks> sources, VoidCallback onTap, {required bool chevron}) {
-    final l10n = context.l10n;
-    final first = sources.first;
-    final name = first.own ? '' : _rdAttName(first.att);
-    return RdListRow(
-      key: const Key('rd-plan-event-works'),
-      leading: const RdRowIcon(Icons.queue_music_outlined),
-      title: first.own ? l10n.redesignPlanEventWorksOwn : l10n.redesignPlanEventWorksFrom(_rdDate(first.att)),
-      subtitle: [if (name.isNotEmpty) name, l10n.redesignPlanEventWorksCount(first.works.length)].join(' · '),
-      showChevron: chevron,
-      onTap: onTap,
-    );
-  }
-
   /// "Werke übernehmen": the Werke of the Termine as a checklist (the
   /// nearest one ticked); the rows of the chosen ones, each with the
   /// conductor planned there (empty: nothing chosen).
@@ -1339,12 +1323,145 @@ extension _PlanningBeta on _PlanningPageState {
     ];
   }
 
-  /// Empty Ablauf: the chosen Werke are its first rows.
-  Future<void> _rdTakeEventWorks() async {
+  /// The Werke of the Termin (its own, else those of the next Auftritt)
+  /// that are not in the Ablauf yet, as Werk and conductor.
+  Future<List<({Song song, String conductor})>> _rdOpenWorks() async {
+    final id = _att?.id;
+    if (id == null || ref.read(currentTenantProvider)?.type == 'general') return const [];
+    final RdEventWorks works;
+    final List<Song> songs;
+    try {
+      works = await _container.read(rdEventWorksProvider(id).future);
+      songs = await _container.read(planSongsProvider.future);
+    } catch (_) {
+      return const []; // the Ablauf opens as it is
+    }
+    final inPlan = _fields.map((f) => f.songId).whereType<int>().toSet();
+    return [
+      for (final e in works.entries)
+        if (inPlan.add(e.songId))
+          if (songs.where((s) => s.id == e.songId).firstOrNull case final song?)
+            (song: song, conductor: e.otherConductor != null || e.conductorName != null ? e.displayConductor : ''),
+    ];
+  }
+
+  /// The row of [song] in the Ablauf, [time] minutes long.
+  PlanField _rdWorkRow(Song song, String conductor, String time) => PlanSongHelper.songField(
+        song,
+        history: [SongHistory(songId: song.id, conductorName: conductor.isEmpty ? null : conductor)],
+        prefix: _songPrefix(_typeOf(_att)),
+        time: time,
+      );
+
+  /// "Mit den Werken dieser Probe" / "Einfügen" (Termin › Programm): the
+  /// Werke of the Termin that are not in the Ablauf yet go to its end,
+  /// with "Rückgängig".
+  Future<void> _rdStartWorks() async {
+    final l10n = context.l10n;
     final loadGen = _loadGen;
-    final rows = await _rdPickEventWorksFields(null);
-    if (rows.isEmpty || !_samePlan(loadGen)) return;
-    _rdApply([..._fields, ...rows]);
+    final open = await _rdOpenWorks();
+    if (open.isEmpty || !_samePlan(loadGen)) return;
+    final rows = [for (final w in open) _rdWorkRow(w.song, w.conductor, PlanSongHelper.betaTime(w.song))];
+    _rdApplyWithUndo([..._fields, ...rows], l10n.redesignPlanWorksInserted(rows.length));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Start of a new Ablauf: Vorlage, copy of the last Termin
+  // ---------------------------------------------------------------------------
+
+  /// The Vorlagen for the open Termin (see [rdPlanTemplates]).
+  List<RdPlanTemplate> _rdTemplates(PlanAttendance att) => rdPlanTemplates(
+        type: _typeOf(att),
+        auftritt: PlanSongHelper.isAuftritt(att, _types),
+        tenantType: ref.read(currentTenantProvider)?.type,
+        orgTemplates: ref.read(currentOrganisationProvider).valueOrNull?.planningTemplates ?? const [],
+        blockTemplates: ref.read(planBlockTemplatesProvider).valueOrNull ?? const [],
+      );
+
+  /// "Aus einer Vorlage": the Vorlagen in a sheet, the chosen one becomes
+  /// the Ablauf.
+  Future<void> _rdPickTemplate() async {
+    final att = _att;
+    if (att == null) return;
+    final loadGen = _loadGen;
+    final id = await showRdPlanTemplateSheet(context, _rdTemplates(att), startTime: _time);
+    if (id == null || !_samePlan(loadGen)) return;
+    await _rdApplyTemplate(id);
+  }
+
+  /// The Vorlage [id] as the rows of the Ablauf (it begins when the Termin
+  /// begins). The Werke of the Termin take the places for Werke: the Werk
+  /// placeholders of a saved Vorlage, then rows like "Chor/Orchester" or
+  /// "Werk 1" (see [rdFillWorkSlots]); "Rückgängig" leaves those as they
+  /// were.
+  Future<void> _rdApplyTemplate(String id) async {
+    final att = _att;
+    if (att == null) return;
+    final l10n = context.l10n;
+    final loadGen = _loadGen;
+    final tpl = _rdTemplates(att).where((t) => t.id == id).firstOrNull;
+    if (tpl == null) return;
+    final empty = _fields.isEmpty;
+    final open = await _rdOpenWorks();
+    if (!_samePlan(loadGen)) return;
+    if (tpl.block) {
+      _rdApply([..._fields, ...PlanUtils.cloneBlock(tpl.fields)]);
+      return;
+    }
+    // A whole Vorlage replaces the rows: not over something added meanwhile.
+    if (empty && _fields.isNotEmpty) return;
+    final conductors = {for (final w in open) w.song.id: w.conductor};
+    final songs = [for (final w in open) w.song];
+    final prefix = _songPrefix(_typeOf(att));
+    // Fresh ids: a Vorlage can be applied to many Termine.
+    final stamp = DateTime.now().microsecondsSinceEpoch;
+    final ids = <String, String>{};
+    String fresh(String id) => ids.putIfAbsent(id, () => '$stamp-${ids.length}');
+    final plain = [
+      for (final f in tpl.fields)
+        if (f.id.startsWith('song-placeholder-') || PlanUtils.isAgendaPlaceholder(f))
+          f.copyWith(groupId: f.groupId == null ? null : fresh(f.groupId!))
+        else
+          f.copyWith(
+            id: PlanUtils.isNote(f) ? 'noteFld ${fresh(f.id)}' : fresh(f.id),
+            groupId: f.groupId == null ? null : fresh(f.groupId!),
+            uid: null,
+            beamerFile: null,
+          ),
+    ];
+    // Without the Werke: the Vorlage as it is (Werk placeholders drop out).
+    final bare = PlanSongHelper.resolvePlaceholders(plain, history: const [], songs: const [], prefix: prefix);
+    final resolved = PlanSongHelper.resolvePlaceholders(
+      plain,
+      history: [for (final w in open) SongHistory(songId: w.song.id, conductorName: w.conductor.isEmpty ? null : w.conductor)],
+      songs: songs,
+      prefix: prefix,
+    );
+    final used = resolved.map((f) => f.songId).whereType<int>().toSet();
+    final filled = rdFillWorkSlots(
+      resolved,
+      [for (final s in songs) if (!used.contains(s.id)) s],
+      row: (song, time) => _rdWorkRow(song, conductors[song.id] ?? '', time),
+    );
+    final placed = used.length + filled.placed;
+    _rdApply(bare);
+    if (placed > 0) _rdApplyWithUndo(filled.fields, l10n.redesignPlanWorksPlaced(placed));
+  }
+
+  /// What the editor does once the Termin is loaded ([PlanningPage.start]):
+  /// "works", "copy", `tpl:<id>` or "empty".
+  Future<void> _rdStart(String start) async {
+    final att = _att;
+    if (att == null) return;
+    switch (start) {
+      case 'works':
+        await _rdStartWorks();
+      case 'copy':
+        final previous = rdPreviousPlan(att, _attendances);
+        if (previous != null && _fields.isEmpty) _rdCopyPrevious(previous.att, previous.plan);
+      case _ when start.startsWith('tpl:'):
+        if (_fields.isEmpty || start.startsWith('tpl:block:')) await _rdApplyTemplate(start.substring(4));
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -1485,17 +1602,16 @@ extension _PlanningBeta on _PlanningPageState {
     );
   }
 
-  /// Adds several entries in a row: Punkt or Notiz (form), "+ Werke" (the
-  /// Werke of the Termin or the next Auftritt, else the Werk list) and
-  /// "Block" (leaves for the sheet of a new block). [group]: into that
-  /// block (at its end, or behind [after] when it is inside); [kind]
-  /// `group`: a new block, its name at the top and its Unterpunkte right
-  /// below. Every entry is stored at once (autosave), the sheet stays open
-  /// until "Fertig".
-  Future<void> _rdQuickAdd({String kind = 'field', String? group, PlanField? after}) async {
+  /// Adds several entries in a row in ONE sheet that stays open until
+  /// "Fertig": Punkt or Notiz (form), "+ Werke" (the Werke of the Termin or
+  /// the next Auftritt, else the Werk list) and "Block" (only its name; the
+  /// next entries go into it, or behind it again). [group]: into that block
+  /// (at its end, or behind [after] when it is inside); [block]: starts
+  /// with the name of a new block ("Programmblock"). Every entry is stored
+  /// at once (autosave).
+  Future<void> _rdQuickAdd({String? group, PlanField? after, bool block = false}) async {
     final l10n = context.l10n;
     final loadGen = _loadGen;
-    final newBlock = kind == 'group';
     var join = group;
     // Where the next entry goes: behind this row. A position, not the row
     // itself: autosave may replace rows by copies (UIDs of the Gemeinde-App)
@@ -1503,13 +1619,11 @@ extension _PlanningBeta on _PlanningPageState {
     int? lastAt;
     if (after != null) {
       final i = _fields.indexWhere((f) => identical(f, after));
-      if (i >= 0) {
-        lastAt = i;
-        // A new block never sits inside another one: behind the whole block.
-        final block = PlanUtils.isGroupHead(after) ? after.id : after.groupId;
-        if (newBlock && block != null) lastAt = PlanUtils.lastIndexOfGroup(_fields, block);
-      }
+      if (i >= 0) lastAt = i;
     }
+    // The block made in this sheet, and the last entry added behind it.
+    String? headId;
+    int? behindAt;
     // A block of its own: still there after the plan changed meanwhile.
     bool alive() => mounted && loadGen == _loadGen && (join == null || _fields.any((f) => f.id == join));
 
@@ -1530,36 +1644,33 @@ extension _PlanningBeta on _PlanningPageState {
       if (join != null) _rdCollapsed.remove(join);
       _rdApply(PlanUtils.normalizeGroups([..._fields]..insertAll(at, placed)));
       lastAt = (at + placed.length - 1).clamp(0, _fields.length - 1);
-    }
-
-    String blockName = '';
-    String? headId;
-    // The block itself is created with its first entry (or on "Fertig").
-    bool ensureBlock() {
-      if (!newBlock || headId != null) return true;
-      if (blockName.trim().isEmpty) return false;
-      final h = PlanUtils.newGroupHead(blockName.trim());
-      join = null;
-      insert([h]);
-      headId = h.id;
-      join = h.id;
-      return true;
+      if (headId == null) return;
+      if (join == headId) {
+        if (behindAt != null) behindAt = behindAt! + placed.length;
+      } else {
+        behindAt = lastAt;
+      }
     }
 
     String? headTitle() => join == null ? null : _fields.where((f) => f.id == join).firstOrNull?.name;
+    // Not from "+ Punkt in …" (the sheet of that block): a block never sits
+    // inside another one.
+    final withBlock = !(join != null && after == null);
     final title =
-        newBlock ? l10n.redesignPlanNewBlock : (headTitle() != null ? l10n.redesignPlanQuickAddInBlock(headTitle()!) : l10n.redesignPlanAddPoint);
+        block && withBlock
+            ? l10n.redesignPlanAddBlockRow
+            : headTitle() != null
+            ? l10n.redesignPlanQuickAddInBlock(headTitle()!)
+            : l10n.redesignPlanAddPoint;
     final subtitle =
-        newBlock
-            ? null
-            : join != null && after == null
+        join != null && after == null
             ? l10n.redesignPlanQuickAddInBlockHint
             : after != null
             ? l10n.redesignPlanAddAfter(after.name)
             : l10n.redesignPlanAddEnd;
     final isGeneral = ref.read(currentTenantProvider)?.type == 'general';
 
-    final next = await _rdSheet<String>(
+    await _rdSheet<String>(
       title: title,
       subtitle: subtitle,
       action: Builder(
@@ -1573,24 +1684,48 @@ extension _PlanningBeta on _PlanningPageState {
       builder:
           (ctx, pop) => [
             _RdQuickAddBody(
-              newBlock: newBlock,
-              initialMinutes: join != null || newBlock ? 5 : 20,
+              initialMinutes: join != null ? 5 : 20,
               withWorks: !isGeneral && _songs.isNotEmpty,
-              // Not from "+ Punkt in …" (the sheet of that block): a block
-              // never sits inside another one.
-              onBlock: newBlock || (join != null && after == null) ? null : () => pop('group'),
-              onBlockName: (v) {
-                blockName = v;
-                final id = headId;
-                if (id == null || !alive() || v.trim().isEmpty) return;
-                // By the block's id: every change copies the head.
-                final i = _fields.indexWhere((f) => f.id == id);
-                if (i < 0) return;
-                _rdApply([..._fields]..[i] = _fields[i].copyWith(name: v.trim()));
+              withBlock: withBlock,
+              startWithBlock: block && withBlock,
+              duration: _rdDuration,
+              block: () {
+                final head = _fields.where((f) => f.id == headId).firstOrNull;
+                if (head == null) return null;
+                return (name: head.name, rows: [for (final f in _fields) if (f.groupId == head.id) f]);
+              },
+              onNewBlock: (name) {
+                if (!alive()) return false;
+                // A block never sits inside another one: behind the whole
+                // block, and behind what was added after the last new one.
+                final at = lastAt;
+                if (headId != null && _fields.any((f) => f.id == headId)) {
+                  lastAt = behindAt ?? PlanUtils.lastIndexOfGroup(_fields, headId!);
+                } else if (at != null && at < _fields.length) {
+                  final row = _fields[at];
+                  final block = PlanUtils.isGroupHead(row) ? row.id : row.groupId;
+                  if (block != null) lastAt = PlanUtils.lastIndexOfGroup(_fields, block);
+                } else if (join != null) {
+                  lastAt = PlanUtils.lastIndexOfGroup(_fields, join!);
+                }
+                final head = PlanUtils.newGroupHead(name);
+                join = null;
+                headId = null;
+                insert([head]);
+                headId = head.id;
+                join = head.id;
+                behindAt = null;
+                return true;
+              },
+              onTarget: (inBlock) {
+                final head = headId;
+                if (head == null || !_fields.any((f) => f.id == head)) return;
+                final end = PlanUtils.lastIndexOfGroup(_fields, head);
+                join = inBlock ? head : null;
+                lastAt = inBlock ? end : (behindAt ?? end);
               },
               onAdd: (kind, input) async {
                 if (!alive()) return null;
-                if (!ensureBlock()) return null;
                 final PlanField row;
                 if (kind == 'note') {
                   row = PlanField(id: 'noteFld ${input.name}', name: input.name, conductor: '', time: '0');
@@ -1604,25 +1739,18 @@ extension _PlanningBeta on _PlanningPageState {
                   );
                 }
                 insert([row]);
-                return [row.name];
+                return [row];
               },
               onWorks: () async {
                 if (!alive()) return null;
                 final rows = await _rdPickAnyWorksFields();
-                if (rows.isEmpty || !alive() || !ensureBlock()) return null;
+                if (rows.isEmpty || !alive()) return null;
                 insert(rows);
-                return [for (final r in rows) r.name];
+                return rows;
               },
             ),
           ],
     );
-    // "Fertig" with a name and nothing in it yet: the block on its own.
-    if (newBlock && headId == null && alive()) ensureBlock();
-    // "Block": the sheet for a new block, behind what was added here.
-    if (next == 'group' && mounted && loadGen == _loadGen) {
-      final at = lastAt;
-      await _rdQuickAdd(kind: 'group', after: at != null && at < _fields.length ? _fields[at] : null);
-    }
   }
 
   /// "Block: …" in the item sheet: the block it belongs to, from a list.
@@ -1702,6 +1830,13 @@ extension _PlanningBeta on _PlanningPageState {
                   title: l10n.redesignPlanAddPoint,
                   subtitle: withWorks ? l10n.redesignPlanAddPointHint : l10n.redesignPlanAddPointHintNoWorks,
                   onTap: () => pop('field'),
+                ),
+                RdListRow(
+                  key: const Key('rd-plan-add-block'),
+                  leading: const RdRowIcon(Icons.view_agenda_outlined),
+                  title: l10n.redesignPlanAddBlockRow,
+                  subtitle: l10n.redesignPlanAddBlockRowHint,
+                  onTap: () => pop('block'),
                 ),
                 if (canRegister)
                   RdListRow(
@@ -2271,17 +2406,44 @@ extension _PlanningBeta on _PlanningPageState {
   // Empty plan, Termin choice, flags
   // ---------------------------------------------------------------------------
 
-  /// No items: offer templates and the plan of the last Termin of the same
-  /// type instead of only an empty card.
-  List<Widget> _rdEmpty(PlanAttendance att, List<PlanBlockTemplate> blockTemplates) {
+  /// No items: how to start (the same choices as in the Reiter Programm of
+  /// the Termin): with the Werke of the Termin, from a Vorlage, or like
+  /// the last Termin of the same Terminart.
+  List<Widget> _rdEmpty(PlanAttendance att) {
     final l10n = context.l10n;
-    final org = ref.watch(currentOrganisationProvider).valueOrNull;
-    final orgTemplates = org?.planningTemplates ?? const <Plan>[];
-    final previous = _rdPreviousPlan(att);
-    final eventWorks = _rdEventWorks();
+    // Rebuilds when Vorlagen or Werke arrive.
+    ref.watch(currentOrganisationProvider);
+    ref.watch(planBlockTemplatesProvider);
+    final id = att.id;
+    final general = ref.watch(currentTenantProvider)?.type == 'general';
+    final works = id == null || general ? null : ref.watch(rdEventWorksProvider(id)).valueOrNull;
+    final songs = {for (final s in _songs) s.id: s};
+    final open = [
+      for (final e in works?.entries ?? const <SongHistoryEntry>[])
+        if (songs[e.songId] case final song?) song,
+    ];
+    final templates = _rdTemplates(att);
+    final previous = rdPreviousPlan(att, _attendances);
+    final type = _typeOf(att);
     final rows = <Widget>[
-      // The Werke of the next Auftritt: what a Probe mostly starts with.
-      if (eventWorks.isNotEmpty) _rdEventWorksRow(eventWorks, _rdTakeEventWorks, chevron: true),
+      if (open.isNotEmpty)
+        RdListRow(
+          key: const Key('rd-plan-start-works'),
+          leading: const RdRowIcon(Icons.queue_music_outlined),
+          title: l10n.redesignPlanStartWorks(
+            rdPlanWorksKind(typeName: type?.name, highlight: PlanSongHelper.isAuftritt(att, _types)),
+          ),
+          subtitle: rdPlanStartWorksHint(l10n, open),
+          onTap: _rdStartWorks,
+        ),
+      if (templates.isNotEmpty)
+        RdListRow(
+          key: const Key('rd-plan-start-template'),
+          leading: const RdRowIcon(Icons.view_day_outlined),
+          title: l10n.redesignPlanStartTemplate,
+          subtitle: l10n.redesignPlanStartTemplateHint(templates.first.name),
+          onTap: _rdPickTemplate,
+        ),
       if (previous != null)
         RdListRow(
           key: const Key('rd-plan-copy-last'),
@@ -2291,38 +2453,9 @@ extension _PlanningBeta on _PlanningPageState {
           subtitle: l10n.rdTextPlanCopyCount(l10n.redesignPlanItemCount(previous.plan.fields.length)),
           onTap: () => _rdCopyPrevious(previous.att, previous.plan),
         ),
-      for (var i = 0; i < orgTemplates.length; i++)
-        RdListRow(
-          leading: const RdRowIcon(Icons.account_balance_outlined),
-          title: orgTemplates[i].title ?? '',
-          subtitle: l10n.redesignPlanEmptyTemplate,
-          onTap: () => _runAddAction('tpl:$i'),
-        ),
-      for (final tpl in blockTemplates)
-        RdListRow(
-          leading: const RdRowIcon(Icons.view_agenda_outlined),
-          title: tpl.name,
-          subtitle: l10n.redesignPlanBlockTemplateHint(PlanUtils.templateMinutes(tpl)),
-          onTap: () => _runAddAction('block:${tpl.id}'),
-        ),
     ];
     if (rows.isEmpty) return const [];
     return [RdGroupLabel(l10n.redesignPlanEmptyTitle), RdGroupedList(children: rows)];
-  }
-
-  /// Main plan of the newest earlier Termin of the same type with items.
-  ({PlanAttendance att, Plan plan})? _rdPreviousPlan(PlanAttendance att) {
-    final date = DateTime.tryParse(att.date);
-    if (date == null) return null;
-    for (final a in _attendances) {
-      final d = DateTime.tryParse(a.date);
-      if (a.id == att.id || d == null || !d.isBefore(date) || a.typeId != att.typeId) continue;
-      final plan = a.plan;
-      if (plan != null && plan.fields.any((f) => f.agendaItemId == null && !PlanUtils.isAgendaPlaceholder(f))) {
-        return (att: a, plan: plan);
-      }
-    }
-    return null;
   }
 
   void _rdCopyPrevious(PlanAttendance from, Plan plan) {
@@ -2533,9 +2666,16 @@ class _RdDurationPill extends StatelessWidget {
 
 /// Inline duration field under a row (concept board 12): typical
 /// durations as chips, a number field for anything else, −/+ in steps of
-/// five and "bis HH:MM".
+/// five and "bis HH:MM". A tap on a chip (or "Fertig" on the keyboard)
+/// is the choice: the field closes ([onDone]); −/+ and typing leave it open.
 class _RdDurationEditor extends StatefulWidget {
-  const _RdDurationEditor({super.key, required this.value, required this.start, required this.onChanged});
+  const _RdDurationEditor({
+    super.key,
+    required this.value,
+    required this.start,
+    required this.onChanged,
+    required this.onDone,
+  });
 
   /// Stored minutes ("20"; may be empty while typing).
   final String value;
@@ -2543,6 +2683,9 @@ class _RdDurationEditor extends StatefulWidget {
   /// Start of the item (minutes of the day), for "bis HH:MM".
   final int? start;
   final ValueChanged<String> onChanged;
+
+  /// The duration is chosen: the field closes.
+  final VoidCallback onDone;
 
   @override
   State<_RdDurationEditor> createState() => _RdDurationEditorState();
@@ -2610,7 +2753,10 @@ class _RdDurationEditorState extends State<_RdDurationEditor> {
                   key: ValueKey('rd-plan-preset-$v'),
                   label: '$v',
                   selected: v == m && widget.value.trim().isNotEmpty,
-                  onTap: () => _set(v),
+                  onTap: () {
+                    _set(v);
+                    widget.onDone();
+                  },
                 ),
             ],
           ),
@@ -2635,7 +2781,9 @@ class _RdDurationEditorState extends State<_RdDurationEditor> {
                     suffixText: l10n.redesignPlanMinUnit,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
+                  textInputAction: TextInputAction.done,
                   onChanged: widget.onChanged,
+                  onSubmitted: (_) => widget.onDone(),
                 ),
               ),
               const SizedBox(width: 8),
@@ -2731,40 +2879,57 @@ class _RdBlockFramePainter extends CustomPainter {
 }
 
 /// Content of the "Hinzufügen" sheet that stays open (see `_rdQuickAdd`):
-/// optional block name, what was added so far, the kind (Punkt, Notiz,
-/// Block, Werke), the form and one "Hinzufügen".
+/// one line on what was added so far, the block made here with what is in
+/// it, the kind (Punkt, Notiz, Block, Werke), the form and one button.
 class _RdQuickAddBody extends StatefulWidget {
   const _RdQuickAddBody({
-    required this.newBlock,
     required this.initialMinutes,
     required this.withWorks,
-    required this.onBlock,
-    required this.onBlockName,
+    required this.withBlock,
+    required this.startWithBlock,
+    required this.duration,
+    required this.block,
+    required this.onNewBlock,
+    required this.onTarget,
     required this.onAdd,
     required this.onWorks,
   });
 
-  final bool newBlock;
   final int initialMinutes;
   final bool withWorks;
 
-  /// "Block": leaves this sheet for the one of a new block (null: no chip).
-  final VoidCallback? onBlock;
-  final ValueChanged<String> onBlockName;
+  /// The chip "Block" (not inside the sheet of an existing block).
+  final bool withBlock;
 
-  /// The names of what was added; null when nothing was.
-  final Future<List<String>?> Function(String kind, PlanFieldInput input) onAdd;
-  final Future<List<String>?> Function() onWorks;
+  /// Opens with the name of a new block instead of the Punkt form.
+  final bool startWithBlock;
+  final String Function(int minutes) duration;
+
+  /// The block made in this sheet with its Unterpunkte (null: none).
+  final ({String name, List<PlanField> rows})? Function() block;
+
+  /// A new block behind what was added; false when nothing was made.
+  final bool Function(String name) onNewBlock;
+
+  /// Where the next entries go: into the block made here, or behind it.
+  final void Function(bool inBlock) onTarget;
+
+  /// The rows that were added; null when nothing was.
+  final Future<List<PlanField>?> Function(String kind, PlanFieldInput input) onAdd;
+  final Future<List<PlanField>?> Function() onWorks;
 
   @override
   State<_RdQuickAddBody> createState() => _RdQuickAddBodyState();
 }
 
 class _RdQuickAddBodyState extends State<_RdQuickAddBody> {
-  String _kind = 'field';
+  /// `field`, `note` or `block` (the form of a new block's name).
+  late String _kind = widget.startWithBlock ? 'block' : 'field';
   late int _minutes = widget.initialMinutes;
-  final _name = TextEditingController();
-  final _added = <String>[];
+  final _blockName = TextEditingController();
+  int _count = 0;
+  int _sum = 0;
+  bool _inBlock = true;
   PlanFieldInput? _input;
   String? _error;
   int _gen = 0;
@@ -2772,18 +2937,20 @@ class _RdQuickAddBodyState extends State<_RdQuickAddBody> {
 
   @override
   void dispose() {
-    _name.dispose();
+    _blockName.dispose();
     super.dispose();
   }
 
-  bool _nameMissing() {
-    if (!widget.newBlock || _name.text.trim().isNotEmpty) return false;
-    setState(() => _error = context.l10n.planningEnterNamePlease);
-    return true;
-  }
+  void _setKind(String kind) => setState(() {
+    if (_kind == kind) return;
+    // A new form: the old entry is gone with it.
+    _kind = kind;
+    _input = null;
+    _error = null;
+  });
 
   Future<void> _submit() async {
-    if (_nameMissing()) return;
+    if (_kind == 'block') return _makeBlock();
     final input = _input;
     if (input == null || input.name.isEmpty) {
       setState(
@@ -2794,18 +2961,38 @@ class _RdQuickAddBodyState extends State<_RdQuickAddBody> {
     await _run(() => widget.onAdd(_kind, input), minutes: input.minutes);
   }
 
-  Future<void> _run(Future<List<String>?> Function() add, {int? minutes}) async {
-    if (_busy || _nameMissing()) return;
+  void _makeBlock() {
+    final name = _blockName.text.trim();
+    if (name.isEmpty) {
+      setState(() => _error = context.l10n.planningEnterNamePlease);
+      return;
+    }
+    if (!widget.onNewBlock(name)) return;
+    setState(() {
+      _blockName.clear();
+      _kind = 'field';
+      _inBlock = true;
+      // Unterpunkte are short.
+      _minutes = 5;
+      _input = null;
+      _error = null;
+      _gen++;
+    });
+  }
+
+  Future<void> _run(Future<List<PlanField>?> Function() add, {int? minutes}) async {
+    if (_busy) return;
     setState(() {
       _busy = true;
       _error = null;
     });
-    final labels = await add();
+    final rows = await add();
     if (!mounted) return;
     setState(() {
       _busy = false;
-      if (labels == null) return;
-      _added.addAll(labels);
+      if (rows == null) return;
+      _count += rows.length;
+      _sum += rows.fold(0, (a, r) => a + PlanUtils.fieldMinutes(r));
       // The next Punkt starts with the same length.
       if (minutes != null) _minutes = minutes;
       _input = null;
@@ -2818,38 +3005,73 @@ class _RdQuickAddBodyState extends State<_RdQuickAddBody> {
     final p = context.rd;
     final l10n = context.l10n;
     final note = _kind == 'note';
+    final newBlock = _kind == 'block';
+    final block = widget.block();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (widget.newBlock) ...[
-          RdGroupedList(
+        if (_count > 0) ...[
+          Row(
+            key: const Key('rd-plan-quick-summary'),
             children: [
-              RdFieldRow(
-                label: l10n.redesignPlanBlockName,
-                child: TextField(
-                  key: const Key('rd-plan-quick-block-name'),
-                  controller: _name,
-                  autofocus: true,
-                  textCapitalization: TextCapitalization.sentences,
-                  style: TextStyle(fontSize: 17, color: p.text),
-                  decoration: rdInputDecoration(p, l10n.planningBlockNamePlaceholder),
-                  onChanged: widget.onBlockName,
+              Icon(Icons.check, size: 20, color: p.softText),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  [l10n.redesignPlanQuickAddSummary(_count), if (_sum > 0) widget.duration(_sum)].join(' · '),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.softText),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          RdGroupLabel(l10n.redesignPlanBlockItems),
-        ] else if (_added.isNotEmpty)
-          RdGroupLabel(l10n.redesignPlanQuickAddAdded),
-        if (_added.isNotEmpty) ...[
-          RdGroupedList(
+          const SizedBox(height: 16),
+        ],
+        if (block != null) ...[
+          RdGroupLabel(l10n.redesignPlanQuickAddTarget),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              for (final (i, label) in _added.indexed)
+              RdChoiceChip(
+                key: const Key('rd-plan-quick-target-in'),
+                label: l10n.redesignPlanQuickAddTargetIn(block.name),
+                selected: _inBlock,
+                onTap: () {
+                  widget.onTarget(true);
+                  setState(() => _inBlock = true);
+                },
+              ),
+              RdChoiceChip(
+                key: const Key('rd-plan-quick-target-behind'),
+                label: l10n.redesignPlanQuickAddTargetBehind,
+                selected: !_inBlock,
+                onTap: () {
+                  widget.onTarget(false);
+                  setState(() => _inBlock = false);
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          RdGroupedList(
+            key: const Key('rd-plan-quick-block-card'),
+            children: [
+              RdListRow(
+                leading: const RdRowIcon(Icons.view_agenda_outlined),
+                title: block.name,
+                subtitle: [
+                  l10n.redesignPlanItemCount(block.rows.length),
+                  if (block.rows.isNotEmpty)
+                    widget.duration(block.rows.fold(0, (a, r) => a + PlanUtils.fieldMinutes(r))),
+                ].join(' · '),
+                showChevron: false,
+              ),
+              for (final (i, row) in block.rows.indexed)
                 RdListRow(
-                  key: ValueKey('rd-plan-quick-added-$i'),
-                  leading: RdRowIcon(Icons.check, color: p.present, background: p.presentSoft),
-                  title: label,
+                  key: ValueKey('rd-plan-quick-block-row-$i'),
+                  title: row.name,
+                  trailing:
+                      PlanUtils.fieldMinutes(row) > 0 ? RdPill(widget.duration(PlanUtils.fieldMinutes(row))) : null,
                   showChevron: false,
                 ),
             ],
@@ -2863,32 +3085,21 @@ class _RdQuickAddBodyState extends State<_RdQuickAddBody> {
             RdChoiceChip(
               key: const Key('rd-plan-quick-kind-field'),
               label: l10n.redesignPlanAddItem,
-              selected: !note,
-              onTap: () => setState(() {
-                if (_kind == 'field') return;
-                // A new form: the old entry is gone with it.
-                _kind = 'field';
-                _input = null;
-                _error = null;
-              }),
+              selected: _kind == 'field',
+              onTap: () => _setKind('field'),
             ),
             RdChoiceChip(
               key: const Key('rd-plan-quick-kind-note'),
               label: l10n.redesignPlanAddNote,
               selected: note,
-              onTap: () => setState(() {
-                if (_kind == 'note') return;
-                _kind = 'note';
-                _input = null;
-                _error = null;
-              }),
+              onTap: () => _setKind('note'),
             ),
-            if (widget.onBlock != null)
+            if (widget.withBlock)
               RdChoiceChip(
                 key: const Key('rd-plan-quick-block'),
                 label: l10n.redesignPlanAddBlock,
-                selected: false,
-                onTap: widget.onBlock!,
+                selected: newBlock,
+                onTap: () => _setKind('block'),
               ),
             if (widget.withWorks)
               RdChoiceChip(
@@ -2901,23 +3112,40 @@ class _RdQuickAddBodyState extends State<_RdQuickAddBody> {
           ],
         ),
         const SizedBox(height: 12),
-        RdPlanFieldForm(
-          key: ValueKey('rd-plan-quick-form-$_kind-$_gen'),
-          labels:
-              note
-                  ? RdPlanFieldLabels(name: l10n.planningNote, nameHint: l10n.planningEnterNote)
-                  : RdPlanFieldLabels(infoHint: l10n.planningInfoOptionalEllipsis),
-          initialMinutes: note ? null : _minutes,
-          withConductor: !note,
-          withInfo: !note,
-          withMinutes: !note,
-          // A new block starts in its name; afterwards the cursor waits in
-          // the next item's name.
-          autofocus: !widget.newBlock || _gen > 0,
-          singleLineName: true,
-          onChanged: (v) => _input = v,
-          onSubmitted: _submit,
-        ),
+        if (newBlock)
+          RdGroupedList(
+            children: [
+              RdFieldRow(
+                label: l10n.redesignPlanBlockName,
+                child: TextField(
+                  key: const Key('rd-plan-quick-block-name'),
+                  controller: _blockName,
+                  autofocus: true,
+                  textCapitalization: TextCapitalization.sentences,
+                  textInputAction: TextInputAction.done,
+                  style: TextStyle(fontSize: 17, color: p.text),
+                  decoration: rdInputDecoration(p, l10n.planningBlockNamePlaceholder),
+                  onSubmitted: (_) => _makeBlock(),
+                ),
+              ),
+            ],
+          )
+        else
+          RdPlanFieldForm(
+            key: ValueKey('rd-plan-quick-form-$_kind-$_gen'),
+            labels:
+                note
+                    ? RdPlanFieldLabels(name: l10n.planningNote, nameHint: l10n.planningEnterNote)
+                    : RdPlanFieldLabels(infoHint: l10n.planningInfoOptionalEllipsis),
+            initialMinutes: note ? null : _minutes,
+            withConductor: !note,
+            withInfo: !note,
+            withMinutes: !note,
+            autofocus: true,
+            singleLineName: true,
+            onChanged: (v) => _input = v,
+            onSubmitted: _submit,
+          ),
         if (_error != null) ...[
           const SizedBox(height: 8),
           Text(_error!, style: TextStyle(fontSize: 14, color: p.absent)),
@@ -2926,12 +3154,21 @@ class _RdQuickAddBodyState extends State<_RdQuickAddBody> {
         RdPrimaryButton(
           key: const Key('rd-plan-quick-add'),
           icon: Icons.add,
-          label: l10n.redesignPlanQuickAddButton,
+          label:
+              newBlock
+                  ? l10n.redesignPlanQuickAddBlockCreate
+                  : _count > 0
+                  ? l10n.redesignPlanQuickAddMore(_kind)
+                  : l10n.redesignPlanQuickAddButton,
           loading: _busy,
           onPressed: _submit,
         ),
         const SizedBox(height: 8),
-        Text(l10n.redesignPlanQuickAddHint, textAlign: TextAlign.center, style: RdType.meta(p, size: 13)),
+        Text(
+          newBlock ? l10n.redesignPlanQuickAddBlockHint : l10n.redesignPlanQuickAddHint,
+          textAlign: TextAlign.center,
+          style: RdType.meta(p, size: 13),
+        ),
       ],
     );
   }

@@ -152,6 +152,7 @@ String rdManageHomeName(AppLocalizations l10n, RdManageHome home) => switch (hom
       RdManageHome.stats => l10n.rdAdminHomeStats,
       RdManageHome.organisation => l10n.rdAdminHomeOrganisation,
       RdManageHome.me => l10n.rdAdminHomeMe,
+      RdManageHome.roles => l10n.rdAdminHomeRoles,
     };
 
 /// Title of [entry]; the pages it opens use the same title. [kind] is the
@@ -250,6 +251,12 @@ List<String> rdManageKeywords(AppLocalizations l10n, RdManageEntry entry) => swi
         ],
       RdManageEntry.rolesPermissions => [
           l10n.redesignManageGeneralTitle,
+          l10n.commonRolesAdmin,
+          l10n.rdRolesResponsible,
+          l10n.commonRolesHelper,
+          l10n.rolesVoiceLeader,
+          l10n.commonRolesMember,
+          l10n.assistantSettingsToggle,
           l10n.rdSettingsAllEvents,
           l10n.rdSettingsInfoText,
           l10n.rdSettingsMembersList,

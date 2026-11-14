@@ -109,6 +109,7 @@ class RdManageListPage extends StatefulWidget {
     this.onRefresh,
     this.backLabel,
     this.onBack,
+    this.backInSplit = false,
   });
 
   final String title;
@@ -150,6 +151,10 @@ class RdManageListPage extends StatefulWidget {
   /// Back link; default "‹ Verwaltung" (pop, else Ich › Verwaltung).
   final String? backLabel;
   final VoidCallback? onBack;
+
+  /// Keeps the back link on wide screens, for a page that is opened from
+  /// another page in the right column (not from the Verwaltung list).
+  final bool backInSplit;
 
   @override
   State<RdManageListPage> createState() => _RdManageListPageState();
@@ -250,7 +255,11 @@ class _RdManageListPageState extends State<RdManageListPage> {
         if (sorting != null)
           RdTextLink(key: const Key('rd-manage-list-cancel'), label: l10n.redesignCommonCancel, onTap: _cancelSorting)
         else
-          Expanded(child: RdManageBackLink(label: widget.backLabel ?? l10n.redesignMeAdmin, onTap: _back)),
+          Expanded(
+            child: widget.backInSplit
+                ? RdBackLink(label: widget.backLabel ?? l10n.redesignMeAdmin, onTap: _back)
+                : RdManageBackLink(label: widget.backLabel ?? l10n.redesignMeAdmin, onTap: _back),
+          ),
         if (sorting != null) ...[
           const Spacer(),
           if (_saving)

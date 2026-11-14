@@ -1,6 +1,41 @@
 {
   "versions": [
     {
+      "version": "0.155.0",
+      "date": "15.11.2026",
+      "changes": [
+        "✨ Beta-Ablauf: Beim Hinzufügen bleibt das Blatt offen, bis du auf „Fertig“ tippst, auch nach einem neuen Block",
+        "✨ Beta-Ablauf: Der Knopf heißt nach dem ersten Punkt „Weiteren Punkt hinzufügen“, darüber steht, wie viele Punkte und Minuten schon dazugekommen sind",
+        "✨ Beta-Ablauf: „Programmblock“ steht als eigene Zeile unter „Hinzufügen“"
+      ]
+    },
+    {
+      "version": "0.154.1",
+      "date": "14.11.2026",
+      "changes": [
+        "✨ Beta-Ablauf: Die Minuten-Auswahl schließt sich, sobald du eine Zahl antippst"
+      ]
+    },
+    {
+      "version": "0.154.0",
+      "date": "14.11.2026",
+      "changes": [
+        "✨ Beta-Termin: Die Werke stehen im Überblick unter der Vorbereitung. Eine Probe zeigt die Werke des nächsten Auftritts, bis du die Liste änderst",
+        "✨ Beta-Termin: Der Reiter „Programm“ zeigt nur noch den Ablauf und weist auf Werke hin, die noch nicht im Ablauf stehen",
+        "✨ Beta-Termin: Ein neuer Ablauf beginnt mit den Werken des Termins, aus einer Vorlage, wie beim letzten Termin oder leer. Die Vorlage „Gottesdienst“ setzt die Werke gleich bei „Chor/Orchester“ ein",
+        "✨ Beta-Ablauf: Ein Werk im Ablauf gehört automatisch zu den Werken des Termins. Der Hinweis „Ohne …“ steht nur noch bei den Werken im Überblick",
+        "✨ Beta: Mitglieder sehen bei einer Probe die Werke des nächsten Auftritts, solange die Probe keine eigenen hat"
+      ]
+    },
+    {
+      "version": "0.153.0",
+      "date": "14.11.2026",
+      "changes": [
+        "✨ Beta: „Rollen und Rechte“ ist jetzt eine Liste der Rollen. Jede Rolle hat eine eigene Seite mit dem, was sie immer darf, ihren Schaltern und den Personen mit dieser Rolle",
+        "✨ Beta: Admins, Eltern und Beobachter stehen in der Rollenliste statt als eigene Einträge in der Verwaltung"
+      ]
+    },
+    {
       "version": "0.152.1",
       "date": "14.11.2026",
       "changes": [

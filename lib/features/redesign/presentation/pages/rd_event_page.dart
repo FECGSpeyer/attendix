@@ -741,23 +741,22 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   // Build
   // ---------------------------------------------------------------------------
 
-  /// Whether the Reiter Programm has something: Werke (types that manage
-  /// them) or the Ablauf (everyone but Beobachter; editors can create one).
-  bool _hasProgramTab(Attendance attendance, AttendanceType? type) {
-    if (rdShowsProgram(ref, type) && attendance.id != null) return true;
+  /// Whether the Reiter Programm has something: the Ablauf (everyone but
+  /// Beobachter; editors can create one). The Werke are in the Überblick.
+  bool _hasProgramTab(Attendance attendance) {
     final role = ref.watch(effectiveRoleProvider);
     if (role == Role.viewer) return false;
     return attendanceHasPlan(attendance) || role.canEdit;
   }
 
-  /// Reiter Programm (concept L2): the Werke, then the Ablauf as a list with
-  /// "Ablauf ansehen", "Bearbeiten" and "Für Mitglieder sichtbar".
+  /// Reiter Programm: the Ablauf as a list with "Bearbeiten", the hint
+  /// about Werke that are not in it yet and "Für Mitglieder sichtbar".
   List<Widget> _programChildren(Attendance attendance, AttendanceType? type) {
     final plan = rdPlanOf(attendance);
     return [
-      if (rdShowsProgram(ref, type) && attendance.id != null) RdEventProgramSection(attendance: attendance, type: type),
       RdEventPlanSection(
         attendance: attendance,
+        type: type,
         preview: plan == null ? null : RdPlanTimeline(day: EventListUtils.parse(attendance.date), plan: plan),
         end: plan == null ? '' : rdPlanEnd(plan),
         freeMinutes: plan == null ? null : rdPlanFreeMinutes(plan, _span(attendance, type)),
@@ -896,8 +895,8 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     if (pultMembers != null && pultMembers.isNotEmpty) {
       return _pultPage(attendance, pultMembers, type);
     }
-    // Reiter Programm: Werke and Ablauf (not for roles that see neither).
-    final hasProgram = _hasProgramTab(attendance, type);
+    // Reiter Programm: the Ablauf (not for roles that do not see it).
+    final hasProgram = _hasProgramTab(attendance);
     final tabs = [
       RdEventTab.overview,
       if (hasProgram) RdEventTab.program,
@@ -1012,6 +1011,9 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
             const SizedBox(height: 24),
             RdEventChecklistSection(attendance: attendance, type: type, canEdit: canMutate),
           ]);
+        }
+        if (tab == RdEventTab.overview && rdShowsProgram(ref, type) && attendance.id != null) {
+          content.add(RdEventProgramSection(attendance: attendance, type: type, ended: over));
         }
       } else if (tab == RdEventTab.overview) {
         content.add(overview(members));
@@ -1704,6 +1706,8 @@ class _Overview extends ConsumerWidget {
           const SizedBox(height: 24),
           RdEventChecklistSection(attendance: attendance, type: type, canEdit: canMutate),
         ],
+        // "Werke": what is rehearsed or performed (below the Vorbereitung).
+        if (rdShowsProgram(ref, type) && id != null) RdEventProgramSection(attendance: attendance, type: type, ended: over),
         RdEventInfoSection(attendance: attendance, title: l10n.redesignEventForMembers, ended: over),
         if (notes.isNotEmpty) ...[
           const SizedBox(height: 24),

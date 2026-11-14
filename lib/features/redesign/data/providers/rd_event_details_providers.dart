@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/auto_message_providers.dart';
+import '../../../../core/providers/signout_providers.dart' show signInOutRepositoryWithTenantProvider;
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../data/models/auto_message/auto_message.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
@@ -41,6 +42,24 @@ final rdOwnProgramProvider =
     instrumentId: result.instrumentId,
     tenantType: result.tenantType,
   );
+});
+
+/// The Werke a Probe without Werke of its own shows to its members: those
+/// of the next Auftritt ([name], on [date]). Null when there is none.
+typedef RdFollowedProgram = ({List<RdProgramItem> items, String name, String date});
+
+final rdOwnFollowedProgramProvider =
+    FutureProvider.autoDispose.family<RdFollowedProgram?, RdOwnProgramKey>((ref, key) async {
+  ref.watch(currentAuthUserIdProvider);
+  // Only in the current group (a Termin of another group shows its own
+  // Werke only): the repository filters by the current tenant.
+  if (ref.watch(currentTenantIdProvider) != key.tenantId) return null;
+  final repo = ref.watch(signInOutRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return null;
+  final next = await repo.getNextPerformanceProgram(attendanceId: key.attendanceId);
+  if (next == null) return null;
+  final items = rdProgramItems(next.rows);
+  return items.isEmpty ? null : (items: items, name: next.name, date: next.date);
 });
 
 /// Own row of a Termin in a group of the user.

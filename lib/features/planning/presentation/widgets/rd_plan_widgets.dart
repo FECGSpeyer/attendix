@@ -822,26 +822,38 @@ class _RdSongPickerState extends State<_RdSongPicker> {
 /// One Werk planned for a Termin, with the conductor planned there.
 typedef PlanEventWork = ({Song song, String conductor});
 
-/// What was chosen in [showRdEventWorksSheet]: the ticked [works], or
-/// [other] for "Anderes Werk" (the Werk list).
-typedef PlanEventWorksChoice = ({List<PlanEventWork> works, bool other});
+/// What was chosen in [showRdEventWorksSheet]: the ticked [works], [other]
+/// for "Anderes Werk" (the Werk list), or [follow] for "Wieder dem
+/// Auftritt folgen".
+typedef PlanEventWorksChoice = ({List<PlanEventWork> works, bool other, bool follow});
 
 /// Beta "Werke übernehmen": the Werke planned for the Termine in [groups]
 /// as a checklist. Those of the first Termin are ticked, except the ones
 /// already [inPlanIds]. Returns the ticked Werke in the listed order.
 /// [offerOther]: a row "Anderes Werk" below them.
+///
+/// The Werke of a Termin (Überblick, "Ändern") use the same sheet with
+/// their own [title], the ticks in [initial], [confirmLabel] ("6 Werke
+/// übernehmen") and [followLabel] for a row "Wieder dem Auftritt folgen".
 Future<PlanEventWorksChoice?> showRdEventWorksSheet(
   BuildContext context, {
   required List<({String label, List<PlanEventWork> works})> groups,
   Set<int> inPlanIds = const {},
+  String? title,
   String? subtitle,
+  Set<int>? initial,
   bool offerOther = false,
+  String Function(int count)? confirmLabel,
+  String? followLabel,
 }) {
-  final selected = ValueNotifier<Set<int>>({
-    if (groups.isNotEmpty)
-      for (final w in groups.first.works)
-        if (!inPlanIds.contains(w.song.id)) w.song.id!,
-  });
+  final selected = ValueNotifier<Set<int>>(
+    initial ??
+        {
+          if (groups.isNotEmpty)
+            for (final w in groups.first.works)
+              if (!inPlanIds.contains(w.song.id)) w.song.id!,
+        },
+  );
   List<PlanEventWork> chosen() => [
     for (final g in groups)
       for (final w in g.works)
@@ -850,7 +862,7 @@ Future<PlanEventWorksChoice?> showRdEventWorksSheet(
 
   return showRdPlanSheet<PlanEventWorksChoice>(
     context,
-    title: context.l10n.redesignPlanEventWorksTitle,
+    title: title ?? context.l10n.redesignPlanEventWorksTitle,
     subtitle: subtitle,
     builder:
         (ctx, pop) => [
@@ -867,7 +879,21 @@ Future<PlanEventWorksChoice?> showRdEventWorksSheet(
                   leading: const RdRowIcon(Icons.search),
                   title: ctx.l10n.redesignPlanEventWorksOther,
                   subtitle: ctx.l10n.redesignPlanEventWorksOtherHint,
-                  onTap: () => pop((works: const [], other: true)),
+                  onTap: () => pop((works: const [], other: true, follow: false)),
+                ),
+              ],
+            ),
+          ],
+          if (followLabel != null) ...[
+            const SizedBox(height: 12),
+            RdGroupedList(
+              children: [
+                RdListRow(
+                  key: const Key('rd-plan-event-works-follow'),
+                  leading: const RdRowIcon(Icons.event_repeat_outlined),
+                  title: followLabel,
+                  showChevron: false,
+                  onTap: () => pop((works: const [], other: false, follow: true)),
                 ),
               ],
             ),
@@ -879,8 +905,8 @@ Future<PlanEventWorksChoice?> showRdEventWorksSheet(
           builder:
               (ctx, value, _) => RdPrimaryButton(
                 key: const Key('rd-plan-event-works-add'),
-                label: ctx.l10n.redesignPlanEventWorksAdd(value.length),
-                onPressed: value.isEmpty ? null : () => pop((works: chosen(), other: false)),
+                label: confirmLabel?.call(value.length) ?? ctx.l10n.redesignPlanEventWorksAdd(value.length),
+                onPressed: value.isEmpty ? null : () => pop((works: chosen(), other: false, follow: false)),
               ),
         ),
   ).whenComplete(selected.dispose);

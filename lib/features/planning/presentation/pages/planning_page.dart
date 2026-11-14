@@ -37,6 +37,7 @@ import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_song_helper.dart';
 import '../widgets/plan_view_list.dart';
+import '../widgets/rd_plan_start.dart';
 import '../widgets/rd_plan_widgets.dart';
 import '../widgets/ion_items.dart';
 import '../widgets/register_plan_sheet.dart';
@@ -56,6 +57,9 @@ import '../../../../core/services/register_plan_service.dart';
 import '../../data/planning_write_sync.dart';
 import '../../../../core/providers/redesign_providers.dart' show redesignEnabledProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntry, SongHistoryEntryExtension;
+import '../../../redesign/data/providers/rd_event_works_providers.dart';
+import '../../../redesign/data/rd_event_works_sync.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
 import '../../../redesign/presentation/widgets/event/rd_plan_take_over.dart';
@@ -793,6 +797,19 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       }
       _started = true;
       _loadAttendance(att, planIndex: widget.initialPlanIndex);
+      // What was chosen on the Termin page, taken once.
+      final pending = ref.read(rdPlanStartProvider);
+      if (pending != null) ref.read(rdPlanStartProvider.notifier).state = null;
+      final start = pending?.attendanceId == att.id ? pending?.action : null;
+      if (start != null && ref.read(redesignEnabledProvider)) {
+        // A new Ablauf starts with that, not with the start field "Wort"
+        // or the Vorlage of the Terminart.
+        if (PlanUtils.allPlans(_att).isEmpty) {
+          setState(() => _fields = []);
+          _dirty = false;
+        }
+        unawaited(_rdStart(start));
+      }
       return;
     }
     // No Termin requested: first upcoming Termin (list is sorted newest first).
@@ -1276,6 +1293,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       _container.invalidate(orgPlansProvider);
       // SOL_FIX29: rows loaded from the caches from now on hold every commit.
       PlanningWriteSync.markCachesRefreshed();
+      // REDESIGN: a Werk in the Ablauf belongs to the Werke of its Termin.
+      if (_container.read(redesignEnabledProvider)) {
+        for (final id in ids) {
+          unawaited(rdSyncPlanWorks(_container, id));
+        }
+      }
     } catch (_) {
       // Container already disposed (app closed): nothing to refresh.
     }

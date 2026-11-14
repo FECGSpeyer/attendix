@@ -13370,6 +13370,10 @@
   "@rdAdminHomeOrganisation": {
     "description": "rdAdmin.homeOrganisation"
   },
+  "rdAdminHomeRoles": "In „Rollen und Rechte“",
+  "@rdAdminHomeRoles": {
+    "description": "rdAdmin.homeRoles"
+  },
   "rdAdminHomeStats": "In der Auswertung",
   "@rdAdminHomeStats": {
     "description": "rdAdmin.homeStats"
@@ -13471,7 +13475,7 @@
   "@rdAdminRoles": {
     "description": "rdAdmin.roles"
   },
-  "rdAdminRolesHint": "Was Helfer und Mitglieder dürfen und sehen",
+  "rdAdminRolesHint": "Was jede Rolle darf und sieht",
   "@rdAdminRolesHint": {
     "description": "rdAdmin.rolesHint"
   },
@@ -14479,6 +14483,190 @@
       "name": {}
     }
   },
+  "rdRolesAdjustable": "Einstellbar",
+  "@rdRolesAdjustable": {
+    "description": "rdRoles.adjustable"
+  },
+  "rdRolesAlways": "Darf immer",
+  "@rdRolesAlways": {
+    "description": "rdRoles.always"
+  },
+  "rdRolesAssignNote": "Die Rolle einer Person änderst du bei der Person unter „Rolle“.",
+  "@rdRolesAssignNote": {
+    "description": "rdRoles.assignNote"
+  },
+  "rdRolesCount": "{count, plural, =0{Noch niemand} one{1 Person} other{{count} Personen}}",
+  "@rdRolesCount": {
+    "description": "rdRoles.count",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdRolesFixedAll": "Alles in dieser Gruppe",
+  "@rdRolesFixedAll": {
+    "description": "rdRoles.fixedAll"
+  },
+  "rdRolesFixedAllHint": "Auch Admins hinzufügen und entfernen",
+  "@rdRolesFixedAllHint": {
+    "description": "rdRoles.fixedAllHint"
+  },
+  "rdRolesFixedAttendance": "Anwesenheit im Termin eintragen",
+  "@rdRolesFixedAttendance": {
+    "description": "rdRoles.fixedAttendance"
+  },
+  "rdRolesFixedManage": "Mitglieder und Termine verwalten",
+  "@rdRolesFixedManage": {
+    "description": "rdRoles.fixedManage"
+  },
+  "rdRolesFixedManageWorks": "Werke und Noten verwalten",
+  "@rdRolesFixedManageWorks": {
+    "description": "rdRoles.fixedManageWorks"
+  },
+  "rdRolesFixedMyVoice": "„Meine Stimme“ sehen",
+  "@rdRolesFixedMyVoice": {
+    "description": "rdRoles.fixedMyVoice"
+  },
+  "rdRolesFixedMyVoiceHint": "Kontakt und Abwesenheiten {kind, select, orchestra{des eigenen Instruments} choir{der eigenen Stimme} other{der eigenen Untergruppe}}",
+  "@rdRolesFixedMyVoiceHint": {
+    "description": "rdRoles.fixedMyVoiceHint",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdRolesFixedOwnRole": "Alles, was die eigene Rolle darf",
+  "@rdRolesFixedOwnRole": {
+    "description": "rdRoles.fixedOwnRole"
+  },
+  "rdRolesFixedOwnRoleHint": "Mitglied oder Helfer",
+  "@rdRolesFixedOwnRoleHint": {
+    "description": "rdRoles.fixedOwnRoleHint"
+  },
+  "rdRolesFixedSettings": "Einstellungen und Rollen ändern",
+  "@rdRolesFixedSettings": {
+    "description": "rdRoles.fixedSettings"
+  },
+  "rdRolesFixedSignup": "Sich zu Terminen an- und abmelden",
+  "@rdRolesFixedSignup": {
+    "description": "rdRoles.fixedSignup"
+  },
+  "rdRolesFixedWorks": "Werke und Noten sehen",
+  "@rdRolesFixedWorks": {
+    "description": "rdRoles.fixedWorks"
+  },
+  "rdRolesForAll": "Für alle in der Gruppe",
+  "@rdRolesForAll": {
+    "description": "rdRoles.forAll"
+  },
+  "rdRolesHelperHint": "Tragen die Anwesenheit ein",
+  "@rdRolesHelperHint": {
+    "description": "rdRoles.helperHint"
+  },
+  "rdRolesIntro": "Wähle eine Rolle und sieh, was sie darf.",
+  "@rdRolesIntro": {
+    "description": "rdRoles.intro"
+  },
+  "rdRolesLeaderAddOn": "Ein Zusatz zu Mitglied oder Helfer.",
+  "@rdRolesLeaderAddOn": {
+    "description": "rdRoles.leaderAddOn"
+  },
+  "rdRolesLeaderHint": "Sehen „Meine Stimme“",
+  "@rdRolesLeaderHint": {
+    "description": "rdRoles.leaderHint"
+  },
+  "rdRolesLeaderNote": "Wer Stimmführer ist, legst du bei der Person fest.",
+  "@rdRolesLeaderNote": {
+    "description": "rdRoles.leaderNote"
+  },
+  "rdRolesLeaderOwnAlready": "Helfer tragen schon nur die Anwesenheit {kind, select, orchestra{des eigenen Instruments} choir{der eigenen Stimme} other{der eigenen Untergruppe}} ein. Das gilt auch für Stimmführer.",
+  "@rdRolesLeaderOwnAlready": {
+    "description": "rdRoles.leaderOwnAlready",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdRolesLeads": "Leitung",
+  "@rdRolesLeads": {
+    "description": "rdRoles.leads"
+  },
+  "rdRolesMemberHint": "Melden sich an und ab",
+  "@rdRolesMemberHint": {
+    "description": "rdRoles.memberHint"
+  },
+  "rdRolesMembersHelpers": "Mitglieder und Helfer",
+  "@rdRolesMembersHelpers": {
+    "description": "rdRoles.membersHelpers"
+  },
+  "rdRolesNever": "Darf nie",
+  "@rdRolesNever": {
+    "description": "rdRoles.never"
+  },
+  "rdRolesNeverAdmins": "Admins hinzufügen oder entfernen",
+  "@rdRolesNeverAdmins": {
+    "description": "rdRoles.neverAdmins"
+  },
+  "rdRolesNeverAdminsHint": "Nur Admins",
+  "@rdRolesNeverAdminsHint": {
+    "description": "rdRoles.neverAdminsHint"
+  },
+  "rdRolesNeverAttendance": "Anwesenheit anderer eintragen",
+  "@rdRolesNeverAttendance": {
+    "description": "rdRoles.neverAttendance"
+  },
+  "rdRolesNeverAttendanceHint": "Nur Helfer, Admins und Verantwortliche",
+  "@rdRolesNeverAttendanceHint": {
+    "description": "rdRoles.neverAttendanceHint"
+  },
+  "rdRolesNeverLead": "Mitglieder verwalten, Einstellungen ändern",
+  "@rdRolesNeverLead": {
+    "description": "rdRoles.neverLead"
+  },
+  "rdRolesNeverLeadHint": "Nur Admins und Verantwortliche",
+  "@rdRolesNeverLeadHint": {
+    "description": "rdRoles.neverLeadHint"
+  },
+  "rdRolesNoPeople": "Noch niemand mit dieser Rolle.",
+  "@rdRolesNoPeople": {
+    "description": "rdRoles.noPeople"
+  },
+  "rdRolesOff": "Aus",
+  "@rdRolesOff": {
+    "description": "rdRoles.off"
+  },
+  "rdRolesOtherAccounts": "{count, plural, one{1 weiterer Zugang} other{{count} weitere Zugänge}} ohne Person in dieser Gruppe.",
+  "@rdRolesOtherAccounts": {
+    "description": "rdRoles.otherAccounts",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdRolesOthers": "Weitere Zugänge",
+  "@rdRolesOthers": {
+    "description": "rdRoles.others"
+  },
+  "rdRolesPeople": "Personen",
+  "@rdRolesPeople": {
+    "description": "rdRoles.people"
+  },
+  "rdRolesResponsible": "Verantwortliche",
+  "@rdRolesResponsible": {
+    "description": "rdRoles.responsible"
+  },
+  "rdRolesResponsibleHint": "Leiten die Gruppe",
+  "@rdRolesResponsibleHint": {
+    "description": "rdRoles.responsibleHint"
+  },
+  "rdRolesSavedHint": "Jeder Schalter wird sofort gespeichert.",
+  "@rdRolesSavedHint": {
+    "description": "rdRoles.savedHint"
+  },
+  "rdRolesSees": "Sieht",
+  "@rdRolesSees": {
+    "description": "rdRoles.sees"
+  },
   "rdSettingsAddRule": "Regel hinzufügen",
   "@rdSettingsAddRule": {
     "description": "rdSettings.addRule"
@@ -14644,10 +14832,6 @@
   "@rdSettingsPermCreateHint": {
     "description": "rdSettings.perm.createHint"
   },
-  "rdSettingsPermHelperLabel": "Was Helfer dürfen",
-  "@rdSettingsPermHelperLabel": {
-    "description": "rdSettings.perm.helperLabel"
-  },
   "rdSettingsPermHelperNote": "Gilt auch für Helfer, die Stimmführer sind. Sie sehen Notizen und Checkliste immer.",
   "@rdSettingsPermHelperNote": {
     "description": "rdSettings.perm.helperNote"
@@ -14663,10 +14847,6 @@
   "rdSettingsPermLeaderOwnOnlyHint": "Helfer, die Stimmführer sind, tragen nur die Anwesenheit ihrer eigenen Stimme ein",
   "@rdSettingsPermLeaderOwnOnlyHint": {
     "description": "rdSettings.perm.leaderOwnOnlyHint"
-  },
-  "rdSettingsPermMemberLabel": "Was Mitglieder dürfen",
-  "@rdSettingsPermMemberLabel": {
-    "description": "rdSettings.perm.memberLabel"
   },
   "rdSettingsPermMemberNote": "Gilt auch für Mitglieder, die Stimmführer sind.",
   "@rdSettingsPermMemberNote": {
@@ -17734,10 +17914,6 @@
   "@redesignEventPlan": {
     "description": "redesign.event.plan"
   },
-  "redesignEventPlanCreate": "Ablauf anlegen",
-  "@redesignEventPlanCreate": {
-    "description": "redesign.event.planCreate"
-  },
   "redesignEventPlanEdit": "Ablauf bearbeiten",
   "@redesignEventPlanEdit": {
     "description": "redesign.event.planEdit"
@@ -17833,10 +18009,6 @@
       "total": {},
       "percent": {}
     }
-  },
-  "redesignEventProgram": "Programm",
-  "@redesignEventProgram": {
-    "description": "redesign.event.program"
   },
   "redesignEventProgramMore": "{names} und {count} weitere",
   "@redesignEventProgramMore": {
@@ -18015,13 +18187,95 @@
       "name": {}
     }
   },
+  "redesignEventWorkRemovedPlan": "{name} entfernt, auch aus dem Ablauf",
+  "@redesignEventWorkRemovedPlan": {
+    "description": "redesign.event.workRemovedPlan",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignEventWorks": "Werke",
   "@redesignEventWorks": {
     "description": "redesign.event.works"
   },
+  "redesignEventWorksChange": "Ändern",
+  "@redesignEventWorksChange": {
+    "description": "redesign.event.worksChange"
+  },
+  "redesignEventWorksFollowAgain": "Wieder dem Auftritt folgen",
+  "@redesignEventWorksFollowAgain": {
+    "description": "redesign.event.worksFollowAgain"
+  },
+  "redesignEventWorksFollows": "Die Liste folgt dem Auftritt, bis du sie änderst.",
+  "@redesignEventWorksFollows": {
+    "description": "redesign.event.worksFollows"
+  },
+  "redesignEventWorksFrom": "Vom nächsten Auftritt: {label}",
+  "@redesignEventWorksFrom": {
+    "description": "redesign.event.worksFrom",
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "redesignEventWorksInPlan": "{count, plural, one {1 von {total} steht im Ablauf.} other {{count} von {total} stehen im Ablauf.}}",
+  "@redesignEventWorksInPlan": {
+    "description": "redesign.event.worksInPlan",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "total": {}
+    }
+  },
   "redesignEventWorksLoadFailed": "Die Werke konnten nicht geladen werden.",
   "@redesignEventWorksLoadFailed": {
     "description": "redesign.event.worksLoadFailed"
+  },
+  "redesignEventWorksMissing": "{kind, select, probe{{count, plural, one {1 Werk dieser Probe steht noch nicht im Ablauf} other {{count} Werke dieser Probe stehen noch nicht im Ablauf}}} auftritt{{count, plural, one {1 Werk dieses Auftritts steht noch nicht im Ablauf} other {{count} Werke dieses Auftritts stehen noch nicht im Ablauf}}} other{{count, plural, one {1 Werk dieses Termins steht noch nicht im Ablauf} other {{count} Werke dieses Termins stehen noch nicht im Ablauf}}}}",
+  "@redesignEventWorksMissing": {
+    "description": "redesign.event.worksMissing",
+    "placeholders": {
+      "kind": {},
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventWorksMissingInsert": "Einfügen",
+  "@redesignEventWorksMissingInsert": {
+    "description": "redesign.event.worksMissingInsert"
+  },
+  "redesignEventWorksOfThis": "{kind, select, probe{Werke dieser Probe} auftritt{Werke dieses Auftritts} other{Werke dieses Termins}}",
+  "@redesignEventWorksOfThis": {
+    "description": "redesign.event.worksOfThis",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignEventWorksOfThisHint": "{kind, select, probe{Angehakt ist, was geprobt wird.} other{Angehakt ist, was drankommt.}}",
+  "@redesignEventWorksOfThisHint": {
+    "description": "redesign.event.worksOfThisHint",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignEventWorksRemovedPlan": "{count, plural, one {1 Werk auch aus dem Ablauf entfernt} other {{count} Werke auch aus dem Ablauf entfernt}}",
+  "@redesignEventWorksRemovedPlan": {
+    "description": "redesign.event.worksRemovedPlan",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventWorksTake": "{count, plural, one {1 Werk übernehmen} other {{count} Werke übernehmen}}",
+  "@redesignEventWorksTake": {
+    "description": "redesign.event.worksTake",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignEventYesterday": "gestern",
   "@redesignEventYesterday": {
@@ -21279,6 +21533,14 @@
   "@redesignPlanAddBlock": {
     "description": "redesign.plan.addBlock"
   },
+  "redesignPlanAddBlockRow": "Programmblock",
+  "@redesignPlanAddBlockRow": {
+    "description": "redesign.plan.addBlockRow"
+  },
+  "redesignPlanAddBlockRowHint": "Mehrere Punkte unter einer Überschrift",
+  "@redesignPlanAddBlockRowHint": {
+    "description": "redesign.plan.addBlockRowHint"
+  },
   "redesignPlanAddDefaultField": "Standardfeld hinzufügen",
   "@redesignPlanAddDefaultField": {
     "description": "redesign.plan.addDefaultField"
@@ -21310,11 +21572,11 @@
   "@redesignPlanAddPoint": {
     "description": "redesign.plan.addPoint"
   },
-  "redesignPlanAddPointHint": "Punkt, Notiz, Block oder Werke",
+  "redesignPlanAddPointHint": "Punkt, Notiz oder Werke",
   "@redesignPlanAddPointHint": {
     "description": "redesign.plan.addPointHint"
   },
-  "redesignPlanAddPointHintNoWorks": "Punkt, Notiz oder Block",
+  "redesignPlanAddPointHintNoWorks": "Punkt oder Notiz",
   "@redesignPlanAddPointHintNoWorks": {
     "description": "redesign.plan.addPointHintNoWorks"
   },
@@ -21337,10 +21599,6 @@
   "redesignPlanBack": "Termin",
   "@redesignPlanBack": {
     "description": "redesign.plan.back"
-  },
-  "redesignPlanBlockItems": "Punkte im Block",
-  "@redesignPlanBlockItems": {
-    "description": "redesign.plan.blockItems"
   },
   "redesignPlanBlockName": "Name des Blocks",
   "@redesignPlanBlockName": {
@@ -21450,10 +21708,6 @@
       "count": {}
     }
   },
-  "redesignPlanEmptyTemplate": "Vorlage der Organisation",
-  "@redesignPlanEmptyTemplate": {
-    "description": "redesign.plan.emptyTemplate"
-  },
   "redesignPlanEmptyTitle": "Womit beginnen?",
   "@redesignPlanEmptyTitle": {
     "description": "redesign.plan.emptyTitle"
@@ -21484,13 +21738,6 @@
       }
     }
   },
-  "redesignPlanEventWorksFrom": "Werke vom {date}",
-  "@redesignPlanEventWorksFrom": {
-    "description": "redesign.plan.eventWorksFrom",
-    "placeholders": {
-      "date": {}
-    }
-  },
   "redesignPlanEventWorksNone": "Keine",
   "@redesignPlanEventWorksNone": {
     "description": "redesign.plan.eventWorksNone"
@@ -21502,10 +21749,6 @@
   "redesignPlanEventWorksOtherHint": "Aus der Werkliste",
   "@redesignPlanEventWorksOtherHint": {
     "description": "redesign.plan.eventWorksOtherHint"
-  },
-  "redesignPlanEventWorksOwn": "Werke dieses Termins",
-  "@redesignPlanEventWorksOwn": {
-    "description": "redesign.plan.eventWorksOwn"
   },
   "redesignPlanEventWorksThis": "Dieser Termin",
   "@redesignPlanEventWorksThis": {
@@ -21613,10 +21856,6 @@
   "@redesignPlanNameHint": {
     "description": "redesign.plan.nameHint"
   },
-  "redesignPlanNewBlock": "Neuer Block",
-  "@redesignPlanNewBlock": {
-    "description": "redesign.plan.newBlock"
-  },
   "redesignPlanNewPlan": "Neuer Plan",
   "@redesignPlanNewPlan": {
     "description": "redesign.plan.newPlan"
@@ -21698,15 +21937,19 @@
   "@redesignPlanPublicLinkShared": {
     "description": "redesign.plan.publicLinkShared"
   },
-  "redesignPlanQuickAddAdded": "Hinzugefügt",
-  "@redesignPlanQuickAddAdded": {
-    "description": "redesign.plan.quickAddAdded"
+  "redesignPlanQuickAddBlockCreate": "Block anlegen",
+  "@redesignPlanQuickAddBlockCreate": {
+    "description": "redesign.plan.quickAddBlockCreate"
+  },
+  "redesignPlanQuickAddBlockHint": "Danach kommen neue Punkte in diesen Block.",
+  "@redesignPlanQuickAddBlockHint": {
+    "description": "redesign.plan.quickAddBlockHint"
   },
   "redesignPlanQuickAddButton": "Hinzufügen",
   "@redesignPlanQuickAddButton": {
     "description": "redesign.plan.quickAddButton"
   },
-  "redesignPlanQuickAddHint": "Enter fügt hinzu, danach geht es gleich mit dem nächsten weiter.",
+  "redesignPlanQuickAddHint": "Das Blatt bleibt offen, bis du auf „Fertig“ tippst.",
   "@redesignPlanQuickAddHint": {
     "description": "redesign.plan.quickAddHint"
   },
@@ -21720,6 +21963,37 @@
   "redesignPlanQuickAddInBlockHint": "Neue Punkte kommen ans Ende des Blocks",
   "@redesignPlanQuickAddInBlockHint": {
     "description": "redesign.plan.quickAddInBlockHint"
+  },
+  "redesignPlanQuickAddMore": "{kind, select, note {Weitere Notiz hinzufügen} other {Weiteren Punkt hinzufügen}}",
+  "@redesignPlanQuickAddMore": {
+    "description": "redesign.plan.quickAddMore",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignPlanQuickAddSummary": "{count, plural, one {1 Punkt hinzugefügt} other {{count} Punkte hinzugefügt}}",
+  "@redesignPlanQuickAddSummary": {
+    "description": "redesign.plan.quickAddSummary",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignPlanQuickAddTarget": "Neue Punkte kommen",
+  "@redesignPlanQuickAddTarget": {
+    "description": "redesign.plan.quickAddTarget"
+  },
+  "redesignPlanQuickAddTargetBehind": "hinter den Block",
+  "@redesignPlanQuickAddTargetBehind": {
+    "description": "redesign.plan.quickAddTargetBehind"
+  },
+  "redesignPlanQuickAddTargetIn": "in „{name}“",
+  "@redesignPlanQuickAddTargetIn": {
+    "description": "redesign.plan.quickAddTargetIn",
+    "placeholders": {
+      "name": {}
+    }
   },
   "redesignPlanRegister": "Registerprobe",
   "@redesignPlanRegister": {
@@ -21939,6 +22213,46 @@
   "@redesignPlanStart": {
     "description": "redesign.plan.start"
   },
+  "redesignPlanStartAsk": "Womit möchtest du beginnen?",
+  "@redesignPlanStartAsk": {
+    "description": "redesign.plan.startAsk"
+  },
+  "redesignPlanStartEmpty": "Leer beginnen",
+  "@redesignPlanStartEmpty": {
+    "description": "redesign.plan.startEmpty"
+  },
+  "redesignPlanStartNone": "Noch kein Ablauf",
+  "@redesignPlanStartNone": {
+    "description": "redesign.plan.startNone"
+  },
+  "redesignPlanStartTemplate": "Aus einer Vorlage",
+  "@redesignPlanStartTemplate": {
+    "description": "redesign.plan.startTemplate"
+  },
+  "redesignPlanStartTemplateHint": "Zum Beispiel {name}",
+  "@redesignPlanStartTemplateHint": {
+    "description": "redesign.plan.startTemplateHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanStartWorks": "{kind, select, probe{Mit den Werken dieser Probe} auftritt{Mit den Werken dieses Auftritts} other{Mit den Werken dieses Termins}}",
+  "@redesignPlanStartWorks": {
+    "description": "redesign.plan.startWorks",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignPlanStartWorksHint": "{count, plural, one {1 Werk, {minutes} Min} other {{count} Werke, je {minutes} Min}}",
+  "@redesignPlanStartWorksHint": {
+    "description": "redesign.plan.startWorksHint",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "minutes": {}
+    }
+  },
   "redesignPlanTelegram": "Per Telegram",
   "@redesignPlanTelegram": {
     "description": "redesign.plan.telegram"
@@ -21950,6 +22264,17 @@
   "redesignPlanTemplateHint": "Vorlage · sofort gespeichert",
   "@redesignPlanTemplateHint": {
     "description": "redesign.plan.templateHint"
+  },
+  "redesignPlanTemplatePick": "Vorlage wählen",
+  "@redesignPlanTemplatePick": {
+    "description": "redesign.plan.templatePick"
+  },
+  "redesignPlanTemplateStarts": "Der Ablauf beginnt um {time}, wie der Termin.",
+  "@redesignPlanTemplateStarts": {
+    "description": "redesign.plan.templateStarts",
+    "placeholders": {
+      "time": {}
+    }
   },
   "redesignPlanTemplatesIntro": "Gelten für alle Gruppen der Organisation „{org}“.",
   "@redesignPlanTemplatesIntro": {
@@ -21988,6 +22313,24 @@
   "redesignPlanViewWhole": "Ganzer Ablauf",
   "@redesignPlanViewWhole": {
     "description": "redesign.plan.viewWhole"
+  },
+  "redesignPlanWorksInserted": "{count, plural, one {1 Werk am Ende eingefügt} other {{count} Werke am Ende eingefügt}}",
+  "@redesignPlanWorksInserted": {
+    "description": "redesign.plan.worksInserted",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignPlanWorksPlaced": "{count, plural, one {1 Werk eingesetzt} other {{count} Werke eingesetzt}}",
+  "@redesignPlanWorksPlaced": {
+    "description": "redesign.plan.worksPlaced",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignPultAllOpen": "Alle Offenen da",
   "@redesignPultAllOpen": {
@@ -22126,10 +22469,6 @@
     "placeholders": {
       "count": {}
     }
-  },
-  "redesignRolePermIntro": "Lege fest, was Mitglieder und Helfer in dieser Gruppe sehen und dürfen. Jeder Schalter wird sofort gespeichert.",
-  "@redesignRolePermIntro": {
-    "description": "redesign.rolePerm.intro"
   },
   "redesignShiftFrom": "ab {time}",
   "@redesignShiftFrom": {

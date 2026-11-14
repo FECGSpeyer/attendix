@@ -1,5 +1,8 @@
 # Attendix Migration Status
 
+> **Veraltet.** Diese Datei zeigt den Stand vom Februar 2026 und wird nicht mehr
+> gepflegt. Die aktuelle Dokumentation steht unter [docs/](docs/README.md).
+
 > **Quellprojekt:** `/Users/I576226/repositories/attendance` (Ionic/Angular)  
 > **Zielprojekt:** `/Users/I576226/repositories/attendix` (Flutter)  
 > **Letzte Aktualisierung:** 2026-02-17

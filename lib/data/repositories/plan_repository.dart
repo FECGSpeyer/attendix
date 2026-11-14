@@ -74,6 +74,27 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// The Termine from [from] on (a stored `date`), nearest first, without
+  /// their plans and without archived ones: for "the next Auftritt". One
+  /// flat query on tenant and date.
+  Future<List<PlanAttendance>> getComingPlanAttendances({required String from, int limit = 60}) async {
+    try {
+      final response = await supabase
+          .from('attendance')
+          .select('id, tenantId, date, duration_days, type_id, typeInfo, type, start_time')
+          .eq('tenantId', currentTenantId)
+          .gte('date', from)
+          .not('archived', 'is', true)
+          .order('date', ascending: true)
+          .order('id', ascending: true)
+          .limit(limit);
+      return (response as List).map((e) => PlanAttendance.fromJson(e as Map<String, dynamic>)).toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'getComingPlanAttendances');
+      rethrow;
+    }
+  }
+
   /// One Termin with its plans ([includeArchived] as in [getPlanAttendances]).
   Future<PlanAttendance?> getPlanAttendanceById(int id, {bool includeArchived = true}) async {
     try {

@@ -4,14 +4,15 @@ import '../../../data/models/attendance/attendance.dart';
 import '../../../data/models/song/song.dart';
 import '../../songs/presentation/utils/song_utils.dart';
 import '../../../l10n/l10n.dart';
+import '../../planning/presentation/widgets/rd_plan_start.dart' show rdPlanWorksKind;
 import '../../../core/utils/choir_file_utils.dart';
 
 /// REDESIGN: pure logic of the Termin details (Überblick sections, Termin
 /// bearbeiten, the Programm of Spieler).
 
-/// "Programm" for highlighted types (Vortrag, Konzert), "Werke" otherwise.
-String rdProgramTitle(AppLocalizations l10n, AttendanceType? type) =>
-    (type?.highlight ?? false) ? l10n.redesignEventProgram : l10n.redesignEventWorks;
+/// How texts name the Termin whose Werke they mean ("Werke dieser Probe",
+/// "… dieses Auftritts", "… dieses Termins"), see [rdPlanWorksKind].
+String rdWorksKind(AttendanceType? type) => rdPlanWorksKind(typeName: type?.name, highlight: type?.highlight ?? false);
 
 /// Start of the Termin for checklist due dates (start time or 19:00, like
 /// the Termin page).

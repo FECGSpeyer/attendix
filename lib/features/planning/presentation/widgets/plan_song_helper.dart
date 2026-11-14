@@ -108,6 +108,7 @@ class PlanSongHelper {
     required List<Song> songs,
     int limit = 3,
     bool distinct = true,
+    bool auftritteOnly = false,
   }) {
     DateTime? dayOf(PlanAttendance a) {
       final d = DateTime.tryParse(a.date);
@@ -129,7 +130,7 @@ class PlanSongHelper {
         if (d.isBefore(day)) continue;
         final s = startOf(a);
         if (d == day && start != null && s != null && s < start) continue;
-        if (!highlighted(a) && a.typeId == att.typeId) continue;
+        if (!highlighted(a) && (auftritteOnly || a.typeId == att.typeId)) continue;
       }
       // In the order they were planned (the Programm has no other order).
       final entries = history.where((h) => h.attendanceId == a.id && h.songId != null).toList()

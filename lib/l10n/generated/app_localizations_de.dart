@@ -10803,6 +10803,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminHomeOrganisation => 'In Organisation';
 
   @override
+  String get rdAdminHomeRoles => 'In „Rollen und Rechte“';
+
+  @override
   String get rdAdminHomeStats => 'In der Auswertung';
 
   @override
@@ -10897,7 +10900,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminRoles => 'Rollen und Rechte';
 
   @override
-  String get rdAdminRolesHint => 'Was Helfer und Mitglieder dürfen und sehen';
+  String get rdAdminRolesHint => 'Was jede Rolle darf und sieht';
 
   @override
   String rdAdminSearch(String kind) {
@@ -11728,6 +11731,166 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get rdRolesAdjustable => 'Einstellbar';
+
+  @override
+  String get rdRolesAlways => 'Darf immer';
+
+  @override
+  String get rdRolesAssignNote =>
+      'Die Rolle einer Person änderst du bei der Person unter „Rolle“.';
+
+  @override
+  String rdRolesCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen',
+      one: '1 Person',
+      zero: 'Noch niemand',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdRolesFixedAll => 'Alles in dieser Gruppe';
+
+  @override
+  String get rdRolesFixedAllHint => 'Auch Admins hinzufügen und entfernen';
+
+  @override
+  String get rdRolesFixedAttendance => 'Anwesenheit im Termin eintragen';
+
+  @override
+  String get rdRolesFixedManage => 'Mitglieder und Termine verwalten';
+
+  @override
+  String get rdRolesFixedManageWorks => 'Werke und Noten verwalten';
+
+  @override
+  String get rdRolesFixedMyVoice => '„Meine Stimme“ sehen';
+
+  @override
+  String rdRolesFixedMyVoiceHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'des eigenen Instruments',
+      'choir': 'der eigenen Stimme',
+      'other': 'der eigenen Untergruppe',
+    });
+    return 'Kontakt und Abwesenheiten $_temp0';
+  }
+
+  @override
+  String get rdRolesFixedOwnRole => 'Alles, was die eigene Rolle darf';
+
+  @override
+  String get rdRolesFixedOwnRoleHint => 'Mitglied oder Helfer';
+
+  @override
+  String get rdRolesFixedSettings => 'Einstellungen und Rollen ändern';
+
+  @override
+  String get rdRolesFixedSignup => 'Sich zu Terminen an- und abmelden';
+
+  @override
+  String get rdRolesFixedWorks => 'Werke und Noten sehen';
+
+  @override
+  String get rdRolesForAll => 'Für alle in der Gruppe';
+
+  @override
+  String get rdRolesHelperHint => 'Tragen die Anwesenheit ein';
+
+  @override
+  String get rdRolesIntro => 'Wähle eine Rolle und sieh, was sie darf.';
+
+  @override
+  String get rdRolesLeaderAddOn => 'Ein Zusatz zu Mitglied oder Helfer.';
+
+  @override
+  String get rdRolesLeaderHint => 'Sehen „Meine Stimme“';
+
+  @override
+  String get rdRolesLeaderNote =>
+      'Wer Stimmführer ist, legst du bei der Person fest.';
+
+  @override
+  String rdRolesLeaderOwnAlready(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'des eigenen Instruments',
+      'choir': 'der eigenen Stimme',
+      'other': 'der eigenen Untergruppe',
+    });
+    return 'Helfer tragen schon nur die Anwesenheit $_temp0 ein. Das gilt auch für Stimmführer.';
+  }
+
+  @override
+  String get rdRolesLeads => 'Leitung';
+
+  @override
+  String get rdRolesMemberHint => 'Melden sich an und ab';
+
+  @override
+  String get rdRolesMembersHelpers => 'Mitglieder und Helfer';
+
+  @override
+  String get rdRolesNever => 'Darf nie';
+
+  @override
+  String get rdRolesNeverAdmins => 'Admins hinzufügen oder entfernen';
+
+  @override
+  String get rdRolesNeverAdminsHint => 'Nur Admins';
+
+  @override
+  String get rdRolesNeverAttendance => 'Anwesenheit anderer eintragen';
+
+  @override
+  String get rdRolesNeverAttendanceHint =>
+      'Nur Helfer, Admins und Verantwortliche';
+
+  @override
+  String get rdRolesNeverLead => 'Mitglieder verwalten, Einstellungen ändern';
+
+  @override
+  String get rdRolesNeverLeadHint => 'Nur Admins und Verantwortliche';
+
+  @override
+  String get rdRolesNoPeople => 'Noch niemand mit dieser Rolle.';
+
+  @override
+  String get rdRolesOff => 'Aus';
+
+  @override
+  String rdRolesOtherAccounts(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count weitere Zugänge',
+      one: '1 weiterer Zugang',
+    );
+    return '$_temp0 ohne Person in dieser Gruppe.';
+  }
+
+  @override
+  String get rdRolesOthers => 'Weitere Zugänge';
+
+  @override
+  String get rdRolesPeople => 'Personen';
+
+  @override
+  String get rdRolesResponsible => 'Verantwortliche';
+
+  @override
+  String get rdRolesResponsibleHint => 'Leiten die Gruppe';
+
+  @override
+  String get rdRolesSavedHint => 'Jeder Schalter wird sofort gespeichert.';
+
+  @override
+  String get rdRolesSees => 'Sieht';
+
+  @override
   String get rdSettingsAddRule => 'Regel hinzufügen';
 
   @override
@@ -11881,9 +12044,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Aus: können keine neuen Termine anlegen';
 
   @override
-  String get rdSettingsPermHelperLabel => 'Was Helfer dürfen';
-
-  @override
   String get rdSettingsPermHelperNote =>
       'Gilt auch für Helfer, die Stimmführer sind. Sie sehen Notizen und Checkliste immer.';
 
@@ -11897,9 +12057,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get rdSettingsPermLeaderOwnOnlyHint =>
       'Helfer, die Stimmführer sind, tragen nur die Anwesenheit ihrer eigenen Stimme ein';
-
-  @override
-  String get rdSettingsPermMemberLabel => 'Was Mitglieder dürfen';
 
   @override
   String get rdSettingsPermMemberNote =>
@@ -14559,9 +14716,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventPlan => 'Ablauf ansehen';
 
   @override
-  String get redesignEventPlanCreate => 'Ablauf anlegen';
-
-  @override
   String get redesignEventPlanEdit => 'Ablauf bearbeiten';
 
   @override
@@ -14634,9 +14788,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignEventPresentOf(Object present, Object total, Object percent) {
     return '$present von $total · $percent %';
   }
-
-  @override
-  String get redesignEventProgram => 'Programm';
 
   @override
   String redesignEventProgramMore(Object names, Object count) {
@@ -14773,11 +14924,114 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String redesignEventWorkRemovedPlan(Object name) {
+    return '$name entfernt, auch aus dem Ablauf';
+  }
+
+  @override
   String get redesignEventWorks => 'Werke';
+
+  @override
+  String get redesignEventWorksChange => 'Ändern';
+
+  @override
+  String get redesignEventWorksFollowAgain => 'Wieder dem Auftritt folgen';
+
+  @override
+  String get redesignEventWorksFollows =>
+      'Die Liste folgt dem Auftritt, bis du sie änderst.';
+
+  @override
+  String redesignEventWorksFrom(Object label) {
+    return 'Vom nächsten Auftritt: $label';
+  }
+
+  @override
+  String redesignEventWorksInPlan(num count, Object total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count von $total stehen im Ablauf.',
+      one: '1 von $total steht im Ablauf.',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignEventWorksLoadFailed =>
       'Die Werke konnten nicht geladen werden.';
+
+  @override
+  String redesignEventWorksMissing(String kind, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke dieser Probe stehen noch nicht im Ablauf',
+      one: '1 Werk dieser Probe steht noch nicht im Ablauf',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke dieses Auftritts stehen noch nicht im Ablauf',
+      one: '1 Werk dieses Auftritts steht noch nicht im Ablauf',
+    );
+    String _temp2 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke dieses Termins stehen noch nicht im Ablauf',
+      one: '1 Werk dieses Termins steht noch nicht im Ablauf',
+    );
+    String _temp3 = intl.Intl.selectLogic(kind, {
+      'probe': '$_temp0',
+      'auftritt': '$_temp1',
+      'other': '$_temp2',
+    });
+    return '$_temp3';
+  }
+
+  @override
+  String get redesignEventWorksMissingInsert => 'Einfügen';
+
+  @override
+  String redesignEventWorksOfThis(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'probe': 'Werke dieser Probe',
+      'auftritt': 'Werke dieses Auftritts',
+      'other': 'Werke dieses Termins',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignEventWorksOfThisHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'probe': 'Angehakt ist, was geprobt wird.',
+      'other': 'Angehakt ist, was drankommt.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignEventWorksRemovedPlan(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke auch aus dem Ablauf entfernt',
+      one: '1 Werk auch aus dem Ablauf entfernt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignEventWorksTake(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke übernehmen',
+      one: '1 Werk übernehmen',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignEventYesterday => 'gestern';
@@ -17647,6 +17901,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanAddBlock => 'Block';
 
   @override
+  String get redesignPlanAddBlockRow => 'Programmblock';
+
+  @override
+  String get redesignPlanAddBlockRowHint =>
+      'Mehrere Punkte unter einer Überschrift';
+
+  @override
   String get redesignPlanAddDefaultField => 'Standardfeld hinzufügen';
 
   @override
@@ -17670,10 +17931,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanAddPoint => 'Programmpunkt';
 
   @override
-  String get redesignPlanAddPointHint => 'Punkt, Notiz, Block oder Werke';
+  String get redesignPlanAddPointHint => 'Punkt, Notiz oder Werke';
 
   @override
-  String get redesignPlanAddPointHintNoWorks => 'Punkt, Notiz oder Block';
+  String get redesignPlanAddPointHintNoWorks => 'Punkt oder Notiz';
 
   @override
   String get redesignPlanAddTitle => 'Hinzufügen';
@@ -17689,9 +17950,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanBack => 'Termin';
-
-  @override
-  String get redesignPlanBlockItems => 'Punkte im Block';
 
   @override
   String get redesignPlanBlockName => 'Name des Blocks';
@@ -17773,9 +18031,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignPlanEmptyTemplate => 'Vorlage der Organisation';
-
-  @override
   String get redesignPlanEmptyTitle => 'Womit beginnen?';
 
   @override
@@ -17808,11 +18063,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String redesignPlanEventWorksFrom(Object date) {
-    return 'Werke vom $date';
-  }
-
-  @override
   String get redesignPlanEventWorksNone => 'Keine';
 
   @override
@@ -17820,9 +18070,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanEventWorksOtherHint => 'Aus der Werkliste';
-
-  @override
-  String get redesignPlanEventWorksOwn => 'Werke dieses Termins';
 
   @override
   String get redesignPlanEventWorksThis => 'Dieser Termin';
@@ -17909,9 +18156,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanNameHint => 'Name (optional)';
 
   @override
-  String get redesignPlanNewBlock => 'Neuer Block';
-
-  @override
   String get redesignPlanNewPlan => 'Neuer Plan';
 
   @override
@@ -17974,14 +18218,18 @@ class AppLocalizationsDe extends AppLocalizations {
       'Geteilt · zum Ändern oder Beenden tippen';
 
   @override
-  String get redesignPlanQuickAddAdded => 'Hinzugefügt';
+  String get redesignPlanQuickAddBlockCreate => 'Block anlegen';
+
+  @override
+  String get redesignPlanQuickAddBlockHint =>
+      'Danach kommen neue Punkte in diesen Block.';
 
   @override
   String get redesignPlanQuickAddButton => 'Hinzufügen';
 
   @override
   String get redesignPlanQuickAddHint =>
-      'Enter fügt hinzu, danach geht es gleich mit dem nächsten weiter.';
+      'Das Blatt bleibt offen, bis du auf „Fertig“ tippst.';
 
   @override
   String redesignPlanQuickAddInBlock(Object name) {
@@ -17991,6 +18239,37 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get redesignPlanQuickAddInBlockHint =>
       'Neue Punkte kommen ans Ende des Blocks';
+
+  @override
+  String redesignPlanQuickAddMore(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'note': 'Weitere Notiz hinzufügen',
+      'other': 'Weiteren Punkt hinzufügen',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanQuickAddSummary(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Punkte hinzugefügt',
+      one: '1 Punkt hinzugefügt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignPlanQuickAddTarget => 'Neue Punkte kommen';
+
+  @override
+  String get redesignPlanQuickAddTargetBehind => 'hinter den Block';
+
+  @override
+  String redesignPlanQuickAddTargetIn(Object name) {
+    return 'in „$name“';
+  }
 
   @override
   String get redesignPlanRegister => 'Registerprobe';
@@ -18176,6 +18455,44 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanStart => 'Beginn';
 
   @override
+  String get redesignPlanStartAsk => 'Womit möchtest du beginnen?';
+
+  @override
+  String get redesignPlanStartEmpty => 'Leer beginnen';
+
+  @override
+  String get redesignPlanStartNone => 'Noch kein Ablauf';
+
+  @override
+  String get redesignPlanStartTemplate => 'Aus einer Vorlage';
+
+  @override
+  String redesignPlanStartTemplateHint(Object name) {
+    return 'Zum Beispiel $name';
+  }
+
+  @override
+  String redesignPlanStartWorks(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'probe': 'Mit den Werken dieser Probe',
+      'auftritt': 'Mit den Werken dieses Auftritts',
+      'other': 'Mit den Werken dieses Termins',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanStartWorksHint(num count, Object minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke, je $minutes Min',
+      one: '1 Werk, $minutes Min',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignPlanTelegram => 'Per Telegram';
 
   @override
@@ -18183,6 +18500,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanTemplateHint => 'Vorlage · sofort gespeichert';
+
+  @override
+  String get redesignPlanTemplatePick => 'Vorlage wählen';
+
+  @override
+  String redesignPlanTemplateStarts(Object time) {
+    return 'Der Ablauf beginnt um $time, wie der Termin.';
+  }
 
   @override
   String redesignPlanTemplatesIntro(Object org) {
@@ -18211,6 +18536,28 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanViewWhole => 'Ganzer Ablauf';
+
+  @override
+  String redesignPlanWorksInserted(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke am Ende eingefügt',
+      one: '1 Werk am Ende eingefügt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanWorksPlaced(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke eingesetzt',
+      one: '1 Werk eingesetzt',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignPultAllOpen => 'Alle Offenen da';
@@ -18322,10 +18669,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignRemindTitle(Object count) {
     return '$count noch offen';
   }
-
-  @override
-  String get redesignRolePermIntro =>
-      'Lege fest, was Mitglieder und Helfer in dieser Gruppe sehen und dürfen. Jeder Schalter wird sofort gespeichert.';
 
   @override
   String redesignShiftFrom(Object time) {

@@ -46,9 +46,12 @@ enum RdTenantSettings {
   /// Saisonbeginn, schichtbedingt zählt als anwesend (Auswertung).
   counting,
 
-  /// Alle Termine, Hinweistext, Dienstplan, Mitgliederliste (Rollen und
-  /// Rechte › Was Mitglieder sehen).
+  /// Alle Termine, Hinweistext, Mitgliederliste (Rollen und Rechte ›
+  /// Mitglied › Sieht).
   visibility,
+
+  /// Chat-Assistent (Rollen und Rechte › Für alle in der Gruppe).
+  assistant,
 
   /// Abwesenheits- und Verspätungsgründe (Verwaltung › Termine).
   reasons,
@@ -168,6 +171,7 @@ String rdTenantSettingsTitle(AppLocalizations l10n, RdTenantSettings s) => switc
       RdTenantSettings.holidays => l10n.rdAdminHolidays,
       RdTenantSettings.counting => l10n.rdAdminCounting,
       RdTenantSettings.visibility => l10n.rdAdminVisibility,
+      RdTenantSettings.assistant => l10n.assistantSettingsToggle,
       RdTenantSettings.sharing => l10n.rdAdminSharing,
       RdTenantSettings.teachers => l10n.rdSettingsTeachers,
       RdTenantSettings.parents => l10n.rdSettingsParents,
@@ -639,6 +643,13 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
                 value: t.showMembersList,
                 onChanged: on((v) => _save(t.id, {'showMembersList': v}, (c) => c.copyWith(showMembersList: v))),
               ),
+            ],
+          ),
+        ];
+      case RdTenantSettings.assistant:
+        return [
+          RdGroupedList(
+            children: [
               // Chat-Assistent: switched on per tenant (admins).
               RdSwitchRow(
                 title: l10n.assistantSettingsToggle,
