@@ -398,6 +398,9 @@ class IonMdSearchbar extends StatelessWidget {
                   focusNode: focusNode,
                   autofocus: autofocus,
                   onChanged: onChanged,
+                  // `ion-searchbar` is an `<input type="search">`: the keyboard's
+                  // return key is the search key, not "Fertig".
+                  textInputAction: TextInputAction.search,
                   textAlignVertical: TextAlignVertical.center,
                   style: TextStyle(
                       fontSize: IonMd.searchbarFontSize, color: text),
