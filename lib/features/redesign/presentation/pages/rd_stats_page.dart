@@ -17,6 +17,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../export/presentation/pages/export_page.dart' show showExportModal;
 import '../../data/providers/rd_stats_providers.dart';
 import '../../data/rd_stats_logic.dart';
+import '../../data/rd_words.dart';
 import '../widgets/manage/rd_data_sheets.dart' show rdGenerateCertificates;
 import '../widgets/stats/rd_stats_fields.dart';
 import '../widgets/stats/rd_stats_levels.dart';
@@ -238,7 +239,7 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
                     (level) => switch (level) {
                       _Level.overview => l10n.rdStatsTabOverview,
                       _Level.events => l10n.rdStatsTabEvents,
-                      _Level.register => l10n.rdStatsTabRegister,
+                      _Level.register => l10n.rdWordsGroups(ref.watch(rdGroupKindProvider)),
                       _Level.people => l10n.rdStatsTabPeople,
                     },
                 onChanged: _setLevel,
@@ -480,7 +481,7 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
     return [
       Padding(
         padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
-        child: Text(l10n.rdStatsRegisterHint, style: RdType.meta(p, size: 13)),
+        child: Text(l10n.rdStatsGroupHint(ref.watch(rdGroupKindProvider)), style: RdType.meta(p, size: 13)),
       ),
       RdGroupedList(
         children: [

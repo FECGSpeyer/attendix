@@ -16,6 +16,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/pages/general_settings_page.dart' show holidayRegions;
 import '../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
 import '../../data/rd_manage_logic.dart';
+import '../../data/rd_words.dart';
 import '../widgets/rd_desktop.dart' show rdSidebarBreakpoint;
 import '../widgets/rd_split_view.dart';
 import '../widgets/manage/rd_manage_entries.dart';
@@ -91,6 +92,7 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
+    final kind = ref.watch(rdGroupKindProvider);
     final access = ref.watch(rdManageAccessProvider);
     final searchable = rdManageSearchable(access);
     final areas = rdManageAreas(access);
@@ -112,9 +114,9 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
       for (final e in searchable)
         if (rdManageMatches(
           _query,
-          rdManageTitle(l10n, e),
+          rdManageTitle(l10n, e, kind: kind),
           rdManagePlace(l10n, e, access),
-          rdManageHint(l10n, e, access),
+          rdManageHint(l10n, e, access, kind: kind),
           [rdManageFormerName(l10n, e) ?? '', ...rdManageKeywords(l10n, e)].join(' '),
         ))
           e,
@@ -152,7 +154,7 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
           onChanged: _setQuery,
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
-            hintText: l10n.rdAdminSearch,
+            hintText: l10n.rdAdminSearch(kind),
             prefixIcon: Icon(Icons.search, color: p.text2),
             suffixIcon: _query.isEmpty
                 ? null
@@ -220,8 +222,9 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
   /// „Gruppen“", "Auswertung · Saisonbeginn").
   String _searchSubtitle(AppLocalizations l10n, RdManageAccess access, RdManageEntry e) {
     final place = rdManagePlace(l10n, e, access);
-    final title = rdManageTitle(l10n, e);
-    if (rdManageMatches(_query, title, place, rdManageHint(l10n, e, access))) return place;
+    final kind = ref.read(rdGroupKindProvider);
+    final title = rdManageTitle(l10n, e, kind: kind);
+    if (rdManageMatches(_query, title, place, rdManageHint(l10n, e, access, kind: kind))) return place;
     final former = rdManageFormerName(l10n, e);
     if (former != null && rdManageMatches(_query, title, place, former)) {
       return '$place · ${l10n.rdAdminFormerly(former)}';
@@ -279,7 +282,7 @@ class _GroupHero extends ConsumerWidget {
 }
 
 /// The rows of one section with their hint and counts.
-class _AreaList extends StatelessWidget {
+class _AreaList extends ConsumerWidget {
   const _AreaList({required this.area, required this.access, this.inSplit = false});
 
   final RdManageArea area;
@@ -287,7 +290,7 @@ class _AreaList extends StatelessWidget {
   final bool inSplit;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     return RdGroupedList(
       children: [
@@ -296,7 +299,7 @@ class _AreaList extends StatelessWidget {
             entry: e,
             // Next to a page the list is a compact sidebar: title, count or
             // setting; the page itself explains what it is for.
-            subtitle: inSplit ? null : rdManageHint(l10n, e, access),
+            subtitle: inSplit ? null : rdManageHint(l10n, e, access, kind: ref.watch(rdGroupKindProvider)),
             counts: true,
             inSplit: inSplit,
           ),
@@ -481,7 +484,7 @@ class _EntryRow extends ConsumerWidget {
     final split = RdSplitScope.of(context);
     return RdListRow(
       leading: RdRowIcon(rdManageIcon(entry)),
-      title: rdManageTitle(l10n, entry),
+      title: rdManageTitle(l10n, entry, kind: ref.watch(rdGroupKindProvider)),
       subtitle: subtitle == null || subtitle!.isEmpty ? null : subtitle,
       value: shown && !warn ? '$count' : (counts ? _setting(ref, l10n) : null),
       trailing: shown && warn

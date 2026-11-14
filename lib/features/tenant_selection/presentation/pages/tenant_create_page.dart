@@ -615,7 +615,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                             key: 'rd-tenant-new-main'),
                       ],
                     ),
-                    hint(l10n.redesignTenantsNewMainHint),
+                    hint(l10n.redesignTenantsNewMainHint(_selectedType)),
                   ],
                 ),
               ),

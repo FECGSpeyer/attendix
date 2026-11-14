@@ -3,9 +3,11 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/utils/helper_member.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/data/models/person/person.dart';
+import 'package:attendix/features/redesign/data/rd_words.dart';
 import 'package:attendix/features/redesign/presentation/widgets/event/rd_new_person_sheet.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -13,33 +15,36 @@ void main() {
     final created = <Person>[];
     Person? result;
     await tester.pumpWidget(
-      MaterialApp(
-        locale: const Locale('de'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
-        home: Builder(
-          builder:
-              (context) => Scaffold(
-                body: TextButton(
-                  onPressed: () async {
-                    result = await showModalBottomSheet<Person>(
-                      context: context,
-                      isScrollControlled: true,
-                      builder:
-                          (_) => RdNewPersonSheet(
-                            groups: const [Group(id: 1, name: 'Sopran'), Group(id: 2, name: 'Alt')],
-                            initialGroup: 1,
-                            create: (_, person) async {
-                              created.add(person);
-                              return person.copyWith(id: 99);
-                            },
-                          ),
-                    );
-                  },
-                  child: const Text('open'),
+      ProviderScope(
+        overrides: [rdGroupKindProvider.overrideWithValue('choir')],
+        child: MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+          home: Builder(
+            builder:
+                (context) => Scaffold(
+                  body: TextButton(
+                    onPressed: () async {
+                      result = await showModalBottomSheet<Person>(
+                        context: context,
+                        isScrollControlled: true,
+                        builder:
+                            (_) => RdNewPersonSheet(
+                              groups: const [Group(id: 1, name: 'Sopran'), Group(id: 2, name: 'Alt')],
+                              initialGroup: 1,
+                              create: (_, person) async {
+                                created.add(person);
+                                return person.copyWith(id: 99);
+                              },
+                            ),
+                      );
+                    },
+                    child: const Text('open'),
+                  ),
                 ),
-              ),
+          ),
         ),
       ),
     );
@@ -70,20 +75,23 @@ void main() {
     final created = <Person>[];
     final eventDay = DateTime.now().add(const Duration(days: 8));
     await tester.pumpWidget(
-      MaterialApp(
-        locale: const Locale('de'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
-        home: Scaffold(
-          body: RdNewPersonSheet(
-            groups: const [Group(id: 1, name: 'Sopran')],
-            initialGroup: 1,
-            eventDay: eventDay,
-            create: (_, person) async {
-              created.add(person);
-              return person.copyWith(id: 5);
-            },
+      ProviderScope(
+        overrides: [rdGroupKindProvider.overrideWithValue('choir')],
+        child: MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+          home: Scaffold(
+            body: RdNewPersonSheet(
+              groups: const [Group(id: 1, name: 'Sopran')],
+              initialGroup: 1,
+              eventDay: eventDay,
+              create: (_, person) async {
+                created.add(person);
+                return person.copyWith(id: 5);
+              },
+            ),
           ),
         ),
       ),

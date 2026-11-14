@@ -17,6 +17,7 @@ import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_stats_providers.dart' show rdStatsPeopleOf;
 import '../../../data/rd_stats_logic.dart';
+import '../../../data/rd_words.dart';
 import '../../pages/rd_members_page.dart' show rdPercentColor;
 import '../rd_widgets.dart';
 import 'rd_stats_widgets.dart';
@@ -474,7 +475,7 @@ class RdStatsPeopleTable extends ConsumerWidget {
     }
     final columns = [
       _Col(l10n.rdStatsColName, flex: 3, onSort: () => onSort(RdStatsPersonSort.name), sorted: sort == RdStatsPersonSort.name),
-      _Col(l10n.rdStatsColRegister, flex: 2),
+      _Col(l10n.rdWordsGroup(ref.watch(rdGroupKindProvider)), flex: 2),
       _Col(
         l10n.rdStatsColQuote,
         width: 72,
@@ -677,7 +678,7 @@ class RdStatsAgeCard extends ConsumerWidget {
             ),
           if (perGroup.length > 1) ...[
             const SizedBox(height: 14),
-            Text(l10n.rdStatsAgeAvgGroup, style: RdType.section(p)),
+            Text(l10n.rdStatsAgeAvgGroup(ref.watch(rdGroupKindProvider)), style: RdType.section(p)),
             const SizedBox(height: 10),
             for (final g in perGroup)
               RdStatsGroupRow(

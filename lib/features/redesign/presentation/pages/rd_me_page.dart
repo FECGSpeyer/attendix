@@ -37,6 +37,7 @@ import '../../../settings/presentation/widgets/calendar_subscription_dialog.dart
 import '../../../assistant/presentation/widgets/assistant_entry_card.dart';
 import '../../data/providers/rd_today_providers.dart' show rdOwnSeasonRateProvider, rdSignoutDataProvider;
 import '../../data/rd_manage_logic.dart';
+import '../../data/rd_words.dart';
 import '../rd_actions.dart';
 import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/rd_account_switch.dart';
@@ -106,7 +107,7 @@ class RdMePage extends ConsumerWidget {
               RdListRow(
                 leading: const RdRowIcon(Icons.admin_panel_settings_outlined),
                 title: l10n.redesignMeAdmin,
-                subtitle: l10n.redesignMeAdminHint,
+                subtitle: l10n.redesignMeAdminHint(ref.watch(rdGroupKindProvider)),
                 onTap: () => context.push(RedesignRoutes.manage),
               ),
             ],

@@ -14,6 +14,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/attendance_type_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../redesign/data/rd_words.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show rdInputDecoration;
 import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
@@ -340,7 +341,7 @@ class _CircleSheetState extends ConsumerState<_CircleSheet> {
               ),
               if (groups.isNotEmpty) ...[
                 const SizedBox(height: 18),
-                RdGroupLabel(l10n.rdTeamCircleGroups),
+                RdGroupLabel(l10n.rdWordsGroups(ref.watch(rdGroupKindProvider))),
                 RdGroupedList(
                   children: [
                     for (final g in groups)

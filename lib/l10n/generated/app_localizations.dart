@@ -3192,12 +3192,6 @@ abstract class AppLocalizations {
   /// **'Vorname'**
   String get attendanceNewPersonFirstName;
 
-  /// attendance.newPerson.group
-  ///
-  /// In de, this message translates to:
-  /// **'Register'**
-  String get attendanceNewPersonGroup;
-
   /// attendance.newPerson.hint
   ///
   /// In de, this message translates to:
@@ -5262,8 +5256,8 @@ abstract class AppLocalizations {
   /// collections.groupsNone
   ///
   /// In de, this message translates to:
-  /// **'Wähle mindestens eine Gruppe. Bis dahin sieht sie nur die Leitung.'**
-  String get collectionsGroupsNone;
+  /// **'{kind, select, orchestra{Wähle mindestens ein Instrument. Bis dahin sieht sie nur die Leitung.} choir{Wähle mindestens eine Stimme. Bis dahin sieht sie nur die Leitung.} other{Wähle mindestens eine Untergruppe. Bis dahin sieht sie nur die Leitung.}}'**
+  String collectionsGroupsNone(String kind);
 
   /// collections.intoRepertoire
   ///
@@ -5466,8 +5460,8 @@ abstract class AppLocalizations {
   /// collections.visGroups
   ///
   /// In de, this message translates to:
-  /// **'Bestimmte Gruppen'**
-  String get collectionsVisGroups;
+  /// **'Bestimmte {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}}'**
+  String collectionsVisGroups(String kind);
 
   /// collections.visLeads
   ///
@@ -17290,8 +17284,8 @@ abstract class AppLocalizations {
   /// rdAdmin.bulkHint
   ///
   /// In de, this message translates to:
-  /// **'Register, Status und mehr für viele auf einmal'**
-  String get rdAdminBulkHint;
+  /// **'{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}, Status und mehr für viele auf einmal'**
+  String rdAdminBulkHint(String kind);
 
   /// rdAdmin.certificates
   ///
@@ -17371,17 +17365,11 @@ abstract class AppLocalizations {
   /// **'früher „{name}“'**
   String rdAdminFormerly(Object name);
 
-  /// rdAdmin.groups
-  ///
-  /// In de, this message translates to:
-  /// **'Register'**
-  String get rdAdminGroups;
-
   /// rdAdmin.groupsHint
   ///
   /// In de, this message translates to:
-  /// **'Instrumente und Stimmen, nach denen sortiert wird'**
-  String get rdAdminGroupsHint;
+  /// **'{kind, select, orchestra{Wonach Mitglieder und Noten eingeteilt sind, samt Registern} choir{Wonach Mitglieder und Noten eingeteilt sind} other{Wonach die Mitglieder eingeteilt sind}}'**
+  String rdAdminGroupsHint(String kind);
 
   /// rdAdmin.heroMembers
   ///
@@ -17452,8 +17440,8 @@ abstract class AppLocalizations {
   /// rdAdmin.manageGroups
   ///
   /// In de, this message translates to:
-  /// **'Register verwalten'**
-  String get rdAdminManageGroups;
+  /// **'{kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} verwalten'**
+  String rdAdminManageGroups(String kind);
 
   /// rdAdmin.manageTypes
   ///
@@ -17572,8 +17560,8 @@ abstract class AppLocalizations {
   /// rdAdmin.search
   ///
   /// In de, this message translates to:
-  /// **'Suchen, z. B. Saison, Eltern, Register'**
-  String get rdAdminSearch;
+  /// **'Suchen, z. B. Saison, Eltern, {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}}'**
+  String rdAdminSearch(String kind);
 
   /// rdAdmin.sharing
   ///
@@ -18100,8 +18088,8 @@ abstract class AppLocalizations {
   /// rdData.certificatesFor
   ///
   /// In de, this message translates to:
-  /// **'Für welche Gruppen sollen Urkunden erstellt werden?'**
-  String get rdDataCertificatesFor;
+  /// **'Für welche {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} sollen Urkunden erstellt werden?'**
+  String rdDataCertificatesFor(String kind);
 
   /// rdData.columns
   ///
@@ -18508,8 +18496,8 @@ abstract class AppLocalizations {
   /// rdOrg.step2Title
   ///
   /// In de, this message translates to:
-  /// **'Gruppen im Ziel'**
-  String get rdOrgStep2Title;
+  /// **'{kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} im Ziel'**
+  String rdOrgStep2Title(String kind);
 
   /// rdOrg.takeOver
   ///
@@ -18700,8 +18688,8 @@ abstract class AppLocalizations {
   /// rdPeople.teacherNone
   ///
   /// In de, this message translates to:
-  /// **'Für dieses Register gibt es noch keinen Lehrer.'**
-  String get rdPeopleTeacherNone;
+  /// **'Für {kind, select, orchestra{dieses Instrument} choir{diese Stimme} other{diese Untergruppe}} gibt es noch keinen Lehrer.'**
+  String rdPeopleTeacherNone(String kind);
 
   /// rdPeople.transferChoose
   ///
@@ -18715,23 +18703,17 @@ abstract class AppLocalizations {
   /// **'Die Person wird in der Zielgruppe angelegt und hier archiviert.'**
   String get rdPeopleTransferHint;
 
-  /// rdPeople.transferNoRegisters
+  /// rdPeople.transferNoGroups
   ///
   /// In de, this message translates to:
-  /// **'Keine Register'**
-  String get rdPeopleTransferNoRegisters;
+  /// **'{kind, select, orchestra{Keine Instrumente} choir{Keine Stimmen} other{Keine Untergruppen}}'**
+  String rdPeopleTransferNoGroups(String kind);
 
   /// rdPeople.transferNoTargets
   ///
   /// In de, this message translates to:
   /// **'Es gibt keine anderen Gruppen in deiner Organisation.'**
   String get rdPeopleTransferNoTargets;
-
-  /// rdPeople.transferRegister
-  ///
-  /// In de, this message translates to:
-  /// **'Register'**
-  String get rdPeopleTransferRegister;
 
   /// rdPeople.transferTarget
   ///
@@ -18910,8 +18892,8 @@ abstract class AppLocalizations {
   /// rdSettings.membersListHint
   ///
   /// In de, this message translates to:
-  /// **'Auch Mitglieder, Helfer und Stimmführer sehen, wer in welchem Register ist'**
-  String get rdSettingsMembersListHint;
+  /// **'{kind, select, orchestra{Auch Mitglieder, Helfer und Stimmführer sehen, wer welches Instrument spielt} choir{Auch Mitglieder, Helfer und Stimmführer sehen, wer in welcher Stimme singt} other{Auch Mitglieder, Helfer und Stimmführer sehen, wer in welcher Untergruppe ist}}'**
+  String rdSettingsMembersListHint(String kind);
 
   /// rdSettings.name
   ///
@@ -18946,14 +18928,14 @@ abstract class AppLocalizations {
   /// rdSettings.perm.allGroups
   ///
   /// In de, this message translates to:
-  /// **'Alle Register eintragen'**
-  String get rdSettingsPermAllGroups;
+  /// **'Alle {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} eintragen'**
+  String rdSettingsPermAllGroups(String kind);
 
   /// rdSettings.perm.allGroupsHint
   ///
   /// In de, this message translates to:
-  /// **'Aus: nur die Anwesenheit des eigenen Registers'**
-  String get rdSettingsPermAllGroupsHint;
+  /// **'Aus: nur die Anwesenheit {kind, select, orchestra{des eigenen Instruments} choir{der eigenen Stimme} other{der eigenen Untergruppe}}'**
+  String rdSettingsPermAllGroupsHint(String kind);
 
   /// rdSettings.perm.checklist
   ///
@@ -19060,8 +19042,8 @@ abstract class AppLocalizations {
   /// rdSettings.registerFieldsHint
   ///
   /// In de, this message translates to:
-  /// **'Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.'**
-  String get rdSettingsRegisterFieldsHint;
+  /// **'Alle gewählten Felder sind Pflicht. Vorname, Nachname und {kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}} sind immer dabei.'**
+  String rdSettingsRegisterFieldsHint(String kind);
 
   /// rdSettings.registerOffConfirm
   ///
@@ -19288,8 +19270,8 @@ abstract class AppLocalizations {
   /// rdStats.ageAvgGroup
   ///
   /// In de, this message translates to:
-  /// **'Ø Alter je Register'**
-  String get rdStatsAgeAvgGroup;
+  /// **'Ø Alter je {kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}'**
+  String rdStatsAgeAvgGroup(String kind);
 
   /// rdStats.ageBucket
   ///
@@ -19398,12 +19380,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Quote'**
   String get rdStatsColQuote;
-
-  /// rdStats.colRegister
-  ///
-  /// In de, this message translates to:
-  /// **'Register'**
-  String get rdStatsColRegister;
 
   /// rdStats.countAbsent
   ///
@@ -19531,12 +19507,6 @@ abstract class AppLocalizations {
   /// **'Pausierte mitzählen'**
   String get rdStatsFieldsPaused;
 
-  /// rdStats.filterGroups
-  ///
-  /// In de, this message translates to:
-  /// **'Register'**
-  String get rdStatsFilterGroups;
-
   /// rdStats.filterRemove
   ///
   /// In de, this message translates to:
@@ -19560,6 +19530,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Gilt nur für diese Ansicht. Vorausgewählt sind die Arten, die zur Anwesenheitsquote zählen.'**
   String get rdStatsFilterTypesHint;
+
+  /// rdStats.groupHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kurve: Quote je Monat. Antippen zeigt die Personen {kind, select, orchestra{des Instruments} choir{der Stimme} other{der Untergruppe}}.'**
+  String rdStatsGroupHint(String kind);
 
   /// rdStats.members
   ///
@@ -19618,8 +19594,8 @@ abstract class AppLocalizations {
   /// rdStats.notableWeakGroup
   ///
   /// In de, this message translates to:
-  /// **'Schwächstes Register: {name}'**
-  String rdStatsNotableWeakGroup(Object name);
+  /// **'{kind, select, orchestra{Schwächstes Instrument} choir{Schwächste Stimme} other{Schwächste Untergruppe}}: {name}'**
+  String rdStatsNotableWeakGroup(String kind, Object name);
 
   /// rdStats.notableWeakest
   ///
@@ -19752,12 +19728,6 @@ abstract class AppLocalizations {
   /// **'Bis'**
   String get rdStatsRangeTo;
 
-  /// rdStats.registerHint
-  ///
-  /// In de, this message translates to:
-  /// **'Kurve: Quote je Monat. Antippen zeigt die Personen des Registers.'**
-  String get rdStatsRegisterHint;
-
   /// rdStats.sortBest
   ///
   /// In de, this message translates to:
@@ -19812,12 +19782,6 @@ abstract class AppLocalizations {
   /// **'Personen'**
   String get rdStatsTabPeople;
 
-  /// rdStats.tabRegister
-  ///
-  /// In de, this message translates to:
-  /// **'Register'**
-  String get rdStatsTabRegister;
-
   /// rdStats.tabsLabel
   ///
   /// In de, this message translates to:
@@ -19863,8 +19827,8 @@ abstract class AppLocalizations {
   /// rdTeacherNew.noGroups
   ///
   /// In de, this message translates to:
-  /// **'Es gibt noch keine Register, die du auswählen kannst.'**
-  String get rdTeacherNewNoGroups;
+  /// **'Es gibt noch {kind, select, orchestra{keine Instrumente} choir{keine Stimmen} other{keine Untergruppen}}, die du auswählen kannst.'**
+  String rdTeacherNewNoGroups(String kind);
 
   /// rdTeacherNew.noInstrument
   ///
@@ -19943,12 +19907,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Alle Mitglieder'**
   String get rdTeamCircleEveryone;
-
-  /// rdTeam.circleGroups
-  ///
-  /// In de, this message translates to:
-  /// **'Gruppen'**
-  String get rdTeamCircleGroups;
 
   /// rdTeam.circleLeadersHint
   ///
@@ -20346,12 +20304,6 @@ abstract class AppLocalizations {
   /// **'{name}_Mitgliederliste_Stand_{date}'**
   String rdTextExportMembersFile(Object name, Object date);
 
-  /// rdText.groupNewTitle
-  ///
-  /// In de, this message translates to:
-  /// **'Neues Register'**
-  String get rdTextGroupNewTitle;
-
   /// rdText.groupsManageShort
   ///
   /// In de, this message translates to:
@@ -20670,12 +20622,6 @@ abstract class AppLocalizations {
   /// **'Wer zu diesen Terminen gehört'**
   String get rdTypeInvitedHint;
 
-  /// rdType.invitedSome
-  ///
-  /// In de, this message translates to:
-  /// **'{count, plural, one {1 Register} other {{count} Register}}'**
-  String rdTypeInvitedSome(num count);
-
   /// rdType.look
   ///
   /// In de, this message translates to:
@@ -20963,6 +20909,102 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {{count} Werk} other {{count} Werke}}'**
   String rdWmWorksCount(num count);
+
+  /// rdWords.categories
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Register} choir{Kategorien} other{Kategorien}}'**
+  String rdWordsCategories(String kind);
+
+  /// rdWords.category
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Register} choir{Kategorie} other{Kategorie}}'**
+  String rdWordsCategory(String kind);
+
+  /// rdWords.copyVoiceLeaders
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Stimmführer (nur ihr Instrument)} choir{Stimmführer (nur ihre Stimme)} other{Stimmführer (nur ihre Untergruppe)}}'**
+  String rdWordsCopyVoiceLeaders(String kind);
+
+  /// rdWords.group
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}'**
+  String rdWordsGroup(String kind);
+
+  /// rdWords.groupCount
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{{count, plural, one {1 Instrument} other {{count} Instrumente}}} choir{{count, plural, one {1 Stimme} other {{count} Stimmen}}} other{{count, plural, one {1 Untergruppe} other {{count} Untergruppen}}}}'**
+  String rdWordsGroupCount(String kind, num count);
+
+  /// rdWords.groupFilter
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Spielt das Instrument...} choir{Singt in der Stimme...} other{Ist in der Untergruppe...}}'**
+  String rdWordsGroupFilter(String kind);
+
+  /// rdWords.groups
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}}'**
+  String rdWordsGroups(String kind);
+
+  /// rdWords.groupsAll
+  ///
+  /// In de, this message translates to:
+  /// **'Nichts ausgewählt: gilt für alle {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}}.'**
+  String rdWordsGroupsAll(String kind);
+
+  /// rdWords.groupsSome
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt nur für Personen aus den ausgewählten {kind, select, orchestra{Instrumenten} choir{Stimmen} other{Untergruppen}}.'**
+  String rdWordsGroupsSome(String kind);
+
+  /// rdWords.newGroup
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Neues Instrument} choir{Neue Stimme} other{Neue Untergruppe}}'**
+  String rdWordsNewGroup(String kind);
+
+  /// rdWords.newGroupFailed
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Das Instrument „{name}“ konnte nicht angelegt werden} choir{Die Stimme „{name}“ konnte nicht angelegt werden} other{Die Untergruppe „{name}“ konnte nicht angelegt werden}}'**
+  String rdWordsNewGroupFailed(String kind, Object name);
+
+  /// rdWords.noCategory
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Kein Register} choir{Keine Kategorie} other{Keine Kategorie}}'**
+  String rdWordsNoCategory(String kind);
+
+  /// rdWords.noGroup
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Ohne Instrument} choir{Ohne Stimme} other{Ohne Untergruppe}}'**
+  String rdWordsNoGroup(String kind);
+
+  /// rdWords.noGroupsYet
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Es gibt noch keine Instrumente. Lege zuerst mindestens ein Instrument an, bevor du die Anmeldung einschaltest.} choir{Es gibt noch keine Stimmen. Lege zuerst mindestens eine Stimme an, bevor du die Anmeldung einschaltest.} other{Es gibt noch keine Untergruppen. Lege zuerst mindestens eine Untergruppe an, bevor du die Anmeldung einschaltest.}}'**
+  String rdWordsNoGroupsYet(String kind);
+
+  /// rdWords.printGroupPdfs
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{PDFs je Instrument drucken} choir{PDFs je Stimme drucken} other{PDFs je Untergruppe drucken}}'**
+  String rdWordsPrintGroupPdfs(String kind);
+
+  /// rdWords.severalGroups
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Geht an jedes dieser Instrumente} choir{Geht an jede dieser Stimmen} other{Geht an jede dieser Untergruppen}}'**
+  String rdWordsSeveralGroups(String kind);
 
   /// redesign.absence.affects
   ///
@@ -21546,12 +21588,6 @@ abstract class AppLocalizations {
   /// **'Feld'**
   String get redesignBulkActionField;
 
-  /// redesign.bulk.actionGroup
-  ///
-  /// In de, this message translates to:
-  /// **'Register'**
-  String get redesignBulkActionGroup;
-
   /// redesign.bulk.actionPause
   ///
   /// In de, this message translates to:
@@ -21624,12 +21660,6 @@ abstract class AppLocalizations {
   /// **'Mitglieder antippen, dann unten eine Aktion wählen.'**
   String get redesignBulkHint;
 
-  /// redesign.bulk.noGroup
-  ///
-  /// In de, this message translates to:
-  /// **'Ohne Register'**
-  String get redesignBulkNoGroup;
-
   /// redesign.bulk.pauseReason
   ///
   /// In de, this message translates to:
@@ -21641,12 +21671,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Feld setzen'**
   String get redesignBulkPickField;
-
-  /// redesign.bulk.pickGroup
-  ///
-  /// In de, this message translates to:
-  /// **'Neues Register'**
-  String get redesignBulkPickGroup;
 
   /// redesign.bulk.search
   ///
@@ -21717,8 +21741,8 @@ abstract class AppLocalizations {
   /// redesign.compose.groups
   ///
   /// In de, this message translates to:
-  /// **'Register wählen'**
-  String get redesignComposeGroups;
+  /// **'{kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} wählen'**
+  String redesignComposeGroups(String kind);
 
   /// redesign.compose.hint
   ///
@@ -21735,8 +21759,8 @@ abstract class AppLocalizations {
   /// redesign.compose.noRecipients
   ///
   /// In de, this message translates to:
-  /// **'Die Auswahl erreicht noch niemanden. Wähle andere Gruppen oder Versandwege.'**
-  String get redesignComposeNoRecipients;
+  /// **'Die Auswahl erreicht noch niemanden. Wähle andere {kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}} oder Versandwege.'**
+  String redesignComposeNoRecipients(String kind);
 
   /// redesign.compose.send
   ///
@@ -22368,12 +22392,6 @@ abstract class AppLocalizations {
   /// **'Bitte warte, bis alles gespeichert ist.'**
   String get redesignEventBusyLeave;
 
-  /// redesign.event.byGroup
-  ///
-  /// In de, this message translates to:
-  /// **'Nach Stimme'**
-  String get redesignEventByGroup;
-
   /// redesign.event.changeConductorHint
   ///
   /// In de, this message translates to:
@@ -22979,12 +22997,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Status'**
   String get redesignEventStatus;
-
-  /// redesign.event.statusOverviewHint
-  ///
-  /// In de, this message translates to:
-  /// **'Alle Antworten nach Stimme und Status'**
-  String get redesignEventStatusOverviewHint;
 
   /// redesign.event.tabOverview
   ///
@@ -23910,29 +23922,53 @@ abstract class AppLocalizations {
   /// **'Nach Stimme'**
   String get redesignFolderTitleLeads;
 
-  /// redesign.groupCategories.back
+  /// redesign.groupCategories.deleteConfirm
   ///
   /// In de, this message translates to:
-  /// **'Register'**
-  String get redesignGroupCategoriesBack;
+  /// **'{kind, select, orchestra{Register wirklich löschen? Die Instrumente darin gehören danach zu keinem Register mehr.} choir{Kategorie wirklich löschen? Die Stimmen darin gehören danach zu keiner Kategorie mehr.} other{Kategorie wirklich löschen? Die Untergruppen darin gehören danach zu keiner Kategorie mehr.}}'**
+  String redesignGroupCategoriesDeleteConfirm(String kind);
 
-  /// redesign.groupCategories.count
+  /// redesign.groupCategories.deleteFailed
   ///
   /// In de, this message translates to:
-  /// **'{count} Register'**
-  String redesignGroupCategoriesCount(num count);
+  /// **'{kind, select, orchestra{Das Register} choir{Die Kategorie} other{Die Kategorie}} konnte nicht gelöscht werden.'**
+  String redesignGroupCategoriesDeleteFailed(String kind);
+
+  /// redesign.groupCategories.edit
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Register} choir{Kategorie} other{Kategorie}} bearbeiten'**
+  String redesignGroupCategoriesEdit(String kind);
+
+  /// redesign.groupCategories.empty
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Keine Register} choir{Keine Kategorien} other{Keine Kategorien}}'**
+  String redesignGroupCategoriesEmpty(String kind);
 
   /// redesign.groupCategories.intro
   ///
   /// In de, this message translates to:
-  /// **'Kategorien fassen Register zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Register.'**
-  String get redesignGroupCategoriesIntro;
+  /// **'{kind, select, orchestra{Register fassen Instrumente zusammen, etwa Streicher oder Blechbläser. Ihre Reihenfolge gilt auch für die Instrumente.} choir{Kategorien fassen Stimmen zusammen, etwa Frauen- und Männerstimmen. Ihre Reihenfolge gilt auch für die Stimmen.} other{Kategorien fassen Untergruppen zusammen. Ihre Reihenfolge gilt auch für die Untergruppen.}}'**
+  String redesignGroupCategoriesIntro(String kind);
 
-  /// redesign.groupEdit.category
+  /// redesign.groupCategories.name
   ///
   /// In de, this message translates to:
-  /// **'Kategorie'**
-  String get redesignGroupEditCategory;
+  /// **'Name {kind, select, orchestra{des Registers} choir{der Kategorie} other{der Kategorie}}'**
+  String redesignGroupCategoriesName(String kind);
+
+  /// redesign.groupCategories.new
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Neues Register} choir{Neue Kategorie} other{Neue Kategorie}}'**
+  String redesignGroupCategoriesNew(String kind);
+
+  /// redesign.groupCategories.saveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra{Das Register} choir{Die Kategorie} other{Die Kategorie}} konnte nicht gespeichert werden.'**
+  String redesignGroupCategoriesSaveFailed(String kind);
 
   /// redesign.groupEdit.categoryNone
   ///
@@ -23955,20 +23991,20 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.delete
   ///
   /// In de, this message translates to:
-  /// **'Register löschen'**
-  String get redesignGroupEditDelete;
+  /// **'{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}} löschen'**
+  String redesignGroupEditDelete(String kind);
 
   /// redesign.groupEdit.deleteConfirm
   ///
   /// In de, this message translates to:
-  /// **'Register „{name}“ wirklich löschen?'**
-  String redesignGroupEditDeleteConfirm(Object name);
+  /// **'{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}} „{name}“ wirklich löschen?'**
+  String redesignGroupEditDeleteConfirm(String kind, Object name);
 
   /// redesign.groupEdit.deleteFailed
   ///
   /// In de, this message translates to:
-  /// **'Das Register konnte nicht gelöscht werden.'**
-  String get redesignGroupEditDeleteFailed;
+  /// **'{kind, select, orchestra{Das Instrument} choir{Die Stimme} other{Die Untergruppe}} konnte nicht gelöscht werden.'**
+  String redesignGroupEditDeleteFailed(String kind);
 
   /// redesign.groupEdit.deleteMain
   ///
@@ -23979,8 +24015,8 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.deleteMembers
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, one {Im Register ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.} other {Im Register sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.}}'**
-  String redesignGroupEditDeleteMembers(num count);
+  /// **'{kind, select, orchestra{{count, plural, one {Zu diesem Instrument gehört oder gehörte noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst zu einem anderen Instrument.} other {Zu diesem Instrument gehören oder gehörten noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst zu einem anderen Instrument.}}} choir{{count, plural, one {Zu dieser Stimme gehört oder gehörte noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Stimme.} other {Zu dieser Stimme gehören oder gehörten noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Stimme.}}} other{{count, plural, one {Zu dieser Untergruppe gehört oder gehörte noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Untergruppe.} other {Zu dieser Untergruppe gehören oder gehörten noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Untergruppe.}}}}'**
+  String redesignGroupEditDeleteMembers(String kind, num count);
 
   /// redesign.groupEdit.generate
   ///
@@ -24009,8 +24045,8 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.manageCategories
   ///
   /// In de, this message translates to:
-  /// **'Kategorien verwalten'**
-  String get redesignGroupEditManageCategories;
+  /// **'{kind, select, orchestra{Register} choir{Kategorien} other{Kategorien}} verwalten'**
+  String redesignGroupEditManageCategories(String kind);
 
   /// redesign.groupEdit.name
   ///
@@ -24027,8 +24063,8 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.notFound
   ///
   /// In de, this message translates to:
-  /// **'Dieses Register gibt es nicht mehr.'**
-  String get redesignGroupEditNotFound;
+  /// **'{kind, select, orchestra{Dieses Instrument} choir{Diese Stimme} other{Diese Untergruppe}} gibt es nicht mehr.'**
+  String redesignGroupEditNotFound(String kind);
 
   /// redesign.groupEdit.notes
   ///
@@ -24051,8 +24087,8 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.synonymsHint
   ///
   /// In de, this message translates to:
-  /// **'Über die Synonyme ordnet die App hochgeladene Noten automatisch diesem Register zu.'**
-  String get redesignGroupEditSynonymsHint;
+  /// **'Über die Synonyme ordnet die App hochgeladene Noten automatisch {kind, select, orchestra{diesem Instrument} choir{dieser Stimme} other{dieser Untergruppe}} zu.'**
+  String redesignGroupEditSynonymsHint(String kind);
 
   /// redesign.groupEdit.synonymsLabel
   ///
@@ -24063,8 +24099,8 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.title
   ///
   /// In de, this message translates to:
-  /// **'Register bearbeiten'**
-  String get redesignGroupEditTitle;
+  /// **'{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}} bearbeiten'**
+  String redesignGroupEditTitle(String kind);
 
   /// redesign.groupEdit.tuning
   ///
@@ -24075,20 +24111,20 @@ abstract class AppLocalizations {
   /// redesign.groupsList.add
   ///
   /// In de, this message translates to:
-  /// **'Register hinzufügen'**
-  String get redesignGroupsListAdd;
+  /// **'{kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}} hinzufügen'**
+  String redesignGroupsListAdd(String kind);
 
   /// redesign.groupsList.empty
   ///
   /// In de, this message translates to:
-  /// **'Noch keine Register angelegt.'**
-  String get redesignGroupsListEmpty;
+  /// **'Noch {kind, select, orchestra{keine Instrumente} choir{keine Stimmen} other{keine Untergruppen}} angelegt.'**
+  String redesignGroupsListEmpty(String kind);
 
   /// redesign.groupsList.intro
   ///
   /// In de, this message translates to:
-  /// **'Register ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.'**
-  String get redesignGroupsListIntro;
+  /// **'{kind, select, orchestra{Instrumente ordnen die Mitglieder. Ihre Reihenfolge gilt auch für Listen und Noten.} choir{Stimmen ordnen die Mitglieder. Ihre Reihenfolge gilt auch für Listen und Noten.} other{Untergruppen ordnen die Mitglieder. Ihre Reihenfolge gilt auch für Listen.}}'**
+  String redesignGroupsListIntro(String kind);
 
   /// redesign.groupsList.mainGroup
   ///
@@ -24099,8 +24135,8 @@ abstract class AppLocalizations {
   /// redesign.groupsList.manageCategories
   ///
   /// In de, this message translates to:
-  /// **'Kategorien verwalten'**
-  String get redesignGroupsListManageCategories;
+  /// **'{kind, select, orchestra{Register} choir{Kategorien} other{Kategorien}} verwalten'**
+  String redesignGroupsListManageCategories(String kind);
 
   /// redesign.groups.loadFailed
   ///
@@ -24303,8 +24339,8 @@ abstract class AppLocalizations {
   /// redesign.import.answerNewGroup
   ///
   /// In de, this message translates to:
-  /// **'Neue Gruppe „{name}“'**
-  String redesignImportAnswerNewGroup(Object name);
+  /// **'{kind, select, orchestra{Neues Instrument} choir{Neue Stimme} other{Neue Untergruppe}} „{name}“'**
+  String redesignImportAnswerNewGroup(String kind, Object name);
 
   /// redesign.import.answerNone
   ///
@@ -24387,8 +24423,8 @@ abstract class AppLocalizations {
   /// redesign.import.categoryNewGroup
   ///
   /// In de, this message translates to:
-  /// **'Neue Gruppe: {name}'**
-  String redesignImportCategoryNewGroup(Object name);
+  /// **'{kind, select, orchestra{Neues Instrument} choir{Neue Stimme} other{Neue Untergruppe}}: {name}'**
+  String redesignImportCategoryNewGroup(String kind, Object name);
 
   /// redesign.import.categoryNewShort
   ///
@@ -24537,8 +24573,8 @@ abstract class AppLocalizations {
   /// redesign.import.doneNewGroups
   ///
   /// In de, this message translates to:
-  /// **'Neue Gruppen'**
-  String get redesignImportDoneNewGroups;
+  /// **'{kind, select, orchestra{Neue Instrumente} choir{Neue Stimmen} other{Neue Untergruppen}}'**
+  String redesignImportDoneNewGroups(String kind);
 
   /// redesign.import.doneNewWorks
   ///
@@ -25005,14 +25041,14 @@ abstract class AppLocalizations {
   /// redesign.import.newGroupMessage
   ///
   /// In de, this message translates to:
-  /// **'Attendix legt die Gruppe erst beim Hochladen an.'**
-  String get redesignImportNewGroupMessage;
+  /// **'Attendix legt {kind, select, orchestra{das Instrument} choir{die Stimme} other{die Untergruppe}} erst beim Hochladen an.'**
+  String redesignImportNewGroupMessage(String kind);
 
   /// redesign.import.newGroupTitle
   ///
   /// In de, this message translates to:
-  /// **'Neue Gruppe anlegen'**
-  String get redesignImportNewGroupTitle;
+  /// **'{kind, select, orchestra{Neues Instrument} choir{Neue Stimme} other{Neue Untergruppe}} anlegen'**
+  String redesignImportNewGroupTitle(String kind);
 
   /// redesign.import.numberCollection
   ///
@@ -25929,8 +25965,8 @@ abstract class AppLocalizations {
   /// redesign.me.adminHint
   ///
   /// In de, this message translates to:
-  /// **'Register, Rechte, Terminarten, Auswertung und mehr'**
-  String get redesignMeAdminHint;
+  /// **'{kind, select, orchestra{Instrumente} choir{Stimmen} other{Untergruppen}}, Rechte, Terminarten, Auswertung und mehr'**
+  String redesignMeAdminHint(String kind);
 
   /// redesign.me.allSettings
   ///
@@ -26130,11 +26166,11 @@ abstract class AppLocalizations {
   /// **'Geburtstag morgen'**
   String get redesignMembersBirthdayTomorrow;
 
-  /// redesign.members.byRegisterChip
+  /// redesign.members.byGroupChip
   ///
   /// In de, this message translates to:
-  /// **'Nach Register'**
-  String get redesignMembersByRegisterChip;
+  /// **'Nach {kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}'**
+  String redesignMembersByGroupChip(String kind);
 
   /// redesign.members.critical
   ///
@@ -26171,12 +26207,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{name}: {value}'**
   String redesignMembersFilterField(Object name, Object value);
-
-  /// redesign.members.filterGroups
-  ///
-  /// In de, this message translates to:
-  /// **'Gruppen'**
-  String get redesignMembersFilterGroups;
 
   /// redesign.members.filterNoAccount
   ///
@@ -26271,20 +26301,14 @@ abstract class AppLocalizations {
   /// redesign.members.search
   ///
   /// In de, this message translates to:
-  /// **'Name, Instrument, Register'**
-  String get redesignMembersSearch;
+  /// **'{kind, select, orchestra{Name, Instrument, Register} choir{Name oder Stimme} other{Name oder Untergruppe}}'**
+  String redesignMembersSearch(String kind);
 
   /// redesign.members.searchLabel
   ///
   /// In de, this message translates to:
   /// **'Mitglieder suchen'**
   String get redesignMembersSearchLabel;
-
-  /// redesign.members.searchRead
-  ///
-  /// In de, this message translates to:
-  /// **'Name oder Register'**
-  String get redesignMembersSearchRead;
 
   /// redesign.members.section
   ///
@@ -26297,18 +26321,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Gliedern nach'**
   String get redesignMembersSplitBy;
-
-  /// redesign.members.splitCategory
-  ///
-  /// In de, this message translates to:
-  /// **'Kategorie'**
-  String get redesignMembersSplitCategory;
-
-  /// redesign.members.splitRegister
-  ///
-  /// In de, this message translates to:
-  /// **'Register'**
-  String get redesignMembersSplitRegister;
 
   /// redesign.members.stats
   ///
@@ -28443,8 +28455,8 @@ abstract class AppLocalizations {
   /// redesign.stats.perGroup
   ///
   /// In de, this message translates to:
-  /// **'Je Register'**
-  String get redesignStatsPerGroup;
+  /// **'Je {kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}'**
+  String redesignStatsPerGroup(String kind);
 
   /// redesign.stats.range12m
   ///
@@ -28785,8 +28797,8 @@ abstract class AppLocalizations {
   /// redesign.tenants.newMainHint
   ///
   /// In de, this message translates to:
-  /// **'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. Weitere Gruppen wie Sopran oder Geigen legst du später in der Verwaltung an.'**
-  String get redesignTenantsNewMainHint;
+  /// **'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. {kind, select, orchestra{Instrumente wie Violine oder Trompete} choir{Stimmen wie Sopran oder Alt} other{Untergruppen}} legst du später in der Verwaltung an.'**
+  String redesignTenantsNewMainHint(String kind);
 
   /// redesign.tenants.newMainName
   ///
@@ -29382,12 +29394,6 @@ abstract class AppLocalizations {
   /// **'Wer gehört dazu'**
   String get redesignTypeWhoBelongs;
 
-  /// redesign.type.whoBelongsHint
-  ///
-  /// In de, this message translates to:
-  /// **'Gruppen und Filter nach eigenen Feldern'**
-  String get redesignTypeWhoBelongsHint;
-
   /// redesign.typesList.add
   ///
   /// In de, this message translates to:
@@ -29631,8 +29637,8 @@ abstract class AppLocalizations {
   /// redesign.workCreate.instrumentationHint
   ///
   /// In de, this message translates to:
-  /// **'Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.'**
-  String get redesignWorkCreateInstrumentationHint;
+  /// **'{kind, select, orchestra{Welche Instrumente mitspielen, erkennt die App an den Noten, die du gleich hochlädst.} choir{Welche Stimmen mitsingen, erkennt die App an den Noten, die du gleich hochlädst.} other{Welche Untergruppen dabei sind, erkennt die App an den Noten, die du gleich hochlädst.}}'**
+  String redesignWorkCreateInstrumentationHint(String kind);
 
   /// redesign.workCreate.later
   ///
@@ -29727,8 +29733,8 @@ abstract class AppLocalizations {
   /// redesign.workEdit.instrumentationHint
   ///
   /// In de, this message translates to:
-  /// **'Welche Gruppen mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.'**
-  String get redesignWorkEditInstrumentationHint;
+  /// **'{kind, select, orchestra{Welche Instrumente mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.} choir{Welche Stimmen mitsingen, ergibt sich aus den hochgeladenen Noten. Fehlt eine, lädst du sie auf der Werk-Seite hoch.} other{Welche Untergruppen dabei sind, ergibt sich aus den hochgeladenen Noten. Fehlt eine, lädst du die Noten auf der Werk-Seite hoch.}}'**
+  String redesignWorkEditInstrumentationHint(String kind);
 
   /// redesign.workEdit.link
   ///
@@ -29903,12 +29909,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'aus den Noten: {names}'**
   String redesignWorkInstrumentationHint(Object names);
-
-  /// redesign.work.instrumentationValue
-  ///
-  /// In de, this message translates to:
-  /// **'{count, plural, one {1 Gruppe} other {{count} Gruppen}}'**
-  String redesignWorkInstrumentationValue(num count);
 
   /// redesign.work.lastPlayed
   ///
@@ -30315,8 +30315,8 @@ abstract class AppLocalizations {
   /// redesign.works.forGroup
   ///
   /// In de, this message translates to:
-  /// **'Für Gruppe'**
-  String get redesignWorksForGroup;
+  /// **'Für {kind, select, orchestra{Instrument} choir{Stimme} other{Untergruppe}}'**
+  String redesignWorksForGroup(String kind);
 
   /// redesign.works.forGroupAll
   ///

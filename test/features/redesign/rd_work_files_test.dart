@@ -18,6 +18,7 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_ai.dart';
+import 'package:attendix/features/redesign/data/rd_words.dart';
 import 'package:attendix/features/redesign/data/rd_work_files_controller.dart';
 import 'package:attendix/features/redesign/data/rd_work_files_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';
@@ -233,6 +234,7 @@ Widget _app(
       ),
       effectiveRoleProvider.overrideWithValue(role),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+      rdGroupKindProvider.overrideWithValue('orchestra'),
       readySongFileServiceProvider.overrideWith((ref) async => files),
       songFileServiceProvider.overrideWithValue(files),
       songDetailDataProvider((songId: 5, sharingId: null)).overrideWith(
@@ -733,7 +735,7 @@ void main() {
       expect(vision.asked, ['Scan_0815.pdf']);
       expect(find.text('Vorschlag der KI – bitte prüfen'), findsOneWidget);
       expect(find.text('Auf Seite 1 vermutet – bitte prüfen'), findsOneWidget);
-      expect(find.text('Attendix legt die Gruppe erst beim Hochladen an.'), findsOneWidget);
+      expect(find.text('Attendix legt das Instrument erst beim Hochladen an.'), findsOneWidget);
       expect(groups.created, isEmpty);
       await tester.tap(find.text('Hochladen').last);
       await _settle(tester);

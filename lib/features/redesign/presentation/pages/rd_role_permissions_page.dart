@@ -15,6 +15,7 @@ import '../../../../data/repositories/role_permission_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
+import '../../data/rd_words.dart';
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../widgets/rd_widgets.dart';
@@ -250,6 +251,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
   /// Helfer always see them (Ionic `role === HELPER`).
   List<Widget> _helperSection() {
     final l10n = context.l10n;
+    final kind = ref.watch(rdGroupKindProvider);
     final helper = _permissions[Role.helper]!;
     final leader = _permissions[Role.voiceLeaderHelper];
     final allGroups = helper.attendanceAllGroups;
@@ -260,10 +262,10 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
       RdGroupedList(
         children: [
           _switch(
-            l10n.rdSettingsPermAllGroups,
+            l10n.rdSettingsPermAllGroups(kind),
             allDiffers
-                ? '${l10n.rdSettingsPermAllGroupsHint}\n${l10n.rdSettingsPermLeaderDiffers}'
-                : l10n.rdSettingsPermAllGroupsHint,
+                ? '${l10n.rdSettingsPermAllGroupsHint(kind)}\n${l10n.rdSettingsPermLeaderDiffers}'
+                : l10n.rdSettingsPermAllGroupsHint(kind),
             allGroups,
             (v) => _setPermissions({
               Role.helper: (p) => p.copyWith(attendanceAllGroups: v),

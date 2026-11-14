@@ -254,7 +254,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.textContaining('Wenigste zuerst'), findsOneWidget);
       expect(find.text('Holz · 6 abwesend'), findsOneWidget);
-      await tester.tap(find.text('Register'));
+      await tester.tap(find.text('Instrumente'));
       await tester.pumpAndSettle();
       expect(find.text('Holz'), findsOneWidget);
       expect(tester.takeException(), isNull);

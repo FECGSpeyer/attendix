@@ -53,6 +53,7 @@ import '../../../people/presentation/widgets/person_transfer_sheet.dart' show sh
 import '../../../settings/presentation/pages/user_management_page.dart' show TenantUser, tenantUsersProvider;
 import '../../../people/presentation/widgets/planned_absences.dart'
     show addPlannedAbsenceFlow, deletePlannedAbsenceFlow;
+import '../../data/rd_words.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/members/rd_person_form.dart';
 import '../../data/providers/rd_critical_providers.dart';
@@ -1396,7 +1397,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         ),
         if (namesEmpty) hint(l10n.personEnterNames, color: p.absent),
         const SizedBox(height: 20),
-        RdGroupLabel(l10n.rdAdminGroups),
+        RdGroupLabel(l10n.rdWordsGroup(ref.watch(rdGroupKindProvider))),
         RdPersonGroupChips(
           selected: person.instrument,
           onSelected: _setGroup,

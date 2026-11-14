@@ -31,6 +31,7 @@ import '../../../../songs/presentation/widgets/file_upload_sheet.dart' show lear
 import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/import/rd_import_ai.dart' show rdImportAiProvider;
 import '../../../data/import/rd_import_logic.dart' show RdImportCategory, RdImportPlan, RdImportQuestion;
+import '../../../data/rd_words.dart';
 import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
 import '../../../data/rd_work_upload_logic.dart';
@@ -263,7 +264,7 @@ Future<bool> rdAddWorkFiles(
     final id = same.isNotEmpty ? same.first.id : (await groupNotifier.createGroup({'name': name, 'maingroup': false}))?.id;
     if (!context.mounted) return false;
     if (id == null) {
-      ToastHelper.showError(context, l10n.songsFlutterNewGroupFailed(name));
+      ToastHelper.showError(context, l10n.rdWordsNewGroupFailed(rdGroupKindOf(context), name));
     } else {
       created[name] = id;
     }
@@ -1850,8 +1851,8 @@ class _ReviewDialogState extends State<_ReviewDialog> {
       case _Why.ai:
         return l10n.songsFlutterAiSuggested;
       case _Why.name:
-        if (p.category.isSeveral) return l10n.songsFlutterSeveralGroups;
-        if (p.category.newGroup != null) return l10n.redesignImportNewGroupMessage;
+        if (p.category.isSeveral) return l10n.rdWordsSeveralGroups(rdGroupKindOf(context));
+        if (p.category.newGroup != null) return l10n.redesignImportNewGroupMessage(rdGroupKindOf(context));
         return p.category.instrumentId != null || p.category.note != null
             ? l10n.songsFlutterDetectUnsure
             : l10n.songsFlutterDetectNone;

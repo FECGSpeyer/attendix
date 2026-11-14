@@ -154,9 +154,11 @@ String rdManageHomeName(AppLocalizations l10n, RdManageHome home) => switch (hom
       RdManageHome.me => l10n.rdAdminHomeMe,
     };
 
-/// Title of [entry]; the pages it opens use the same title.
-String rdManageTitle(AppLocalizations l10n, RdManageEntry entry) => switch (entry) {
-      RdManageEntry.groups => l10n.rdAdminGroups,
+/// Title of [entry]; the pages it opens use the same title. [kind] is the
+/// kind of the open group (`rdGroupKindProvider`): it names the groups
+/// entry ("Instrumente", "Stimmen", "Untergruppen").
+String rdManageTitle(AppLocalizations l10n, RdManageEntry entry, {String kind = ''}) => switch (entry) {
+      RdManageEntry.groups => l10n.rdWordsGroups(kind),
       RdManageEntry.extraFields => l10n.rdAdminExtraFields,
       RdManageEntry.registration => l10n.rdAdminRegistration,
       RdManageEntry.critical => l10n.rdAdminCritical,
@@ -193,13 +195,14 @@ String rdManageTitle(AppLocalizations l10n, RdManageEntry entry) => switch (entr
     };
 
 /// Second line of a row: what the entry is for (also searched).
-String rdManageHint(AppLocalizations l10n, RdManageEntry entry, RdManageAccess access) => switch (entry) {
-      RdManageEntry.groups => l10n.rdAdminGroupsHint,
+String rdManageHint(AppLocalizations l10n, RdManageEntry entry, RdManageAccess access, {String kind = ''}) =>
+    switch (entry) {
+      RdManageEntry.groups => l10n.rdAdminGroupsHint(kind),
       RdManageEntry.extraFields => l10n.rdAdminExtraFieldsHint,
       RdManageEntry.registration => l10n.rdAdminRegistrationHint,
       RdManageEntry.critical => l10n.rdAdminCriticalHint,
       RdManageEntry.teachers => l10n.rdAdminTeachersHint,
-      RdManageEntry.bulkMembers => l10n.rdAdminBulkHint,
+      RdManageEntry.bulkMembers => l10n.rdAdminBulkHint(kind),
       RdManageEntry.missingAccounts => l10n.redesignManageMissingHint,
       RdManageEntry.archive => l10n.rdAdminArchiveHint,
       RdManageEntry.rolesPermissions => l10n.rdAdminRolesHint,

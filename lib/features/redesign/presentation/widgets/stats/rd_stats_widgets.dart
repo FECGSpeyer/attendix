@@ -20,6 +20,7 @@ import '../../../../../shared/widgets/adaptive/adaptive.dart'
 import '../../../data/providers/rd_stats_providers.dart';
 import '../../../data/providers/rd_today_providers.dart' show rdEventInfo;
 import '../../../data/rd_stats_logic.dart';
+import '../../../data/rd_words.dart';
 import '../../pages/rd_members_page.dart' show rdPercentColor;
 import '../manage/rd_settings_sheets.dart' show RdListNote;
 import '../rd_widgets.dart';
@@ -399,7 +400,7 @@ class RdStatsNotable extends StatelessWidget {
       if (weakGroup != null)
         RdListRow(
           leading: const RdRowIcon(Icons.groups_outlined),
-          title: l10n.rdStatsNotableWeakGroup(weakGroup.group.name),
+          title: l10n.rdStatsNotableWeakGroup(rdGroupKindOf(context), weakGroup.group.name),
           trailing: pct(weakGroup.percent),
           onTap: () => onGroup(weakGroup.group),
         ),
@@ -702,7 +703,7 @@ class _FilterSheet extends ConsumerWidget {
         RdListNote(l10n.rdStatsFilterTypesHint),
         if (rdStatsGroups(groups).length > 1) ...[
           const SizedBox(height: 20),
-          RdGroupLabel(l10n.rdStatsFilterGroups),
+          RdGroupLabel(l10n.rdWordsGroups(ref.watch(rdGroupKindProvider))),
           Wrap(
             spacing: 8,
             runSpacing: 8,

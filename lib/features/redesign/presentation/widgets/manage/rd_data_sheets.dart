@@ -8,6 +8,7 @@ import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../settings/presentation/widgets/vorkurs_certificates.dart';
+import '../../../data/rd_words.dart';
 import '../rd_widgets.dart';
 import 'rd_settings_sheets.dart';
 
@@ -60,7 +61,7 @@ class _CertificatesSheetState extends State<_CertificatesSheet> {
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         children: [
           RdSheetHead(title: l10n.rdDataCertificates),
-          Text(l10n.rdDataCertificatesFor, style: RdType.meta(p)),
+          Text(l10n.rdDataCertificatesFor(rdGroupKindOf(context)), style: RdType.meta(p)),
           const SizedBox(height: 12),
           RdGroupedList(
             children: [

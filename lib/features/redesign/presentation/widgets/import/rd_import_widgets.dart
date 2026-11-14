@@ -10,6 +10,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../data/import/rd_import_controller.dart' show RdImportUpload, rdImportTimeLeft;
 import '../../../data/import/rd_import_logic.dart';
+import '../../../data/rd_words.dart';
 import '../rd_widgets.dart';
 
 /// REDESIGN: pieces shared by the pages of "Noten importieren".
@@ -102,7 +103,7 @@ List<(RdImportCategory, String)> rdImportCategoryOptions(
   final l10n = context.l10n;
   return [
     for (final g in plan.instruments) (RdImportCategory(instrumentId: g.id), g.name),
-    for (final name in newGroups) (RdImportCategory(newGroup: name), l10n.redesignImportCategoryNewGroup(name)),
+    for (final name in newGroups) (RdImportCategory(newGroup: name), l10n.redesignImportCategoryNewGroup(rdGroupKindOf(context), name)),
     (const RdImportCategory(instrumentId: 1), l10n.songsRecording),
     (const RdImportCategory(instrumentId: 2), l10n.songsLyrics),
     (const RdImportCategory(note: 'Partitur'), 'Partitur'),
@@ -124,7 +125,7 @@ String rdImportCategoryLabel(BuildContext context, RdImportPlan plan, RdImportCa
         .map((g) => g.newGroup != null ? l10n.redesignImportCategoryNewShort(g.newGroup!) : rdImportCategoryLabel(context, plan, g))
         .join(' + ');
   }
-  if (c.newGroup != null) return l10n.redesignImportCategoryNewGroup(c.newGroup!);
+  if (c.newGroup != null) return l10n.redesignImportCategoryNewGroup(rdGroupKindOf(context), c.newGroup!);
   if (c.instrumentId == 1) return l10n.songsRecording;
   if (c.instrumentId == 2) return l10n.songsLyrics;
   if (c.instrumentId != null) {
@@ -160,7 +161,7 @@ Future<RdImportCategory?> rdPickImportCategory(
   final partCount = plan.instruments.length + newGroups.length + (several == null ? 0 : 1);
   final parts = [
     ...options.take(partCount),
-    if (newGroupName != null) (_nameNewGroup, '${l10n.redesignImportNewGroupTitle} …'),
+    if (newGroupName != null) (_nameNewGroup, '${l10n.redesignImportNewGroupTitle(rdGroupKindOf(context))} …'),
   ];
   final files = options.skip(partCount).toList();
   final picked = await _pickImportCategorySheet(context, title: title, current: current, header: header, parts: parts, files: files);
@@ -169,10 +170,10 @@ Future<RdImportCategory?> rdPickImportCategory(
   if (!context.mounted) return null;
   final name = await showAppPrompt(
     context,
-    title: l10n.redesignImportNewGroupTitle,
-    message: l10n.redesignImportNewGroupMessage,
+    title: l10n.redesignImportNewGroupTitle(rdGroupKindOf(context)),
+    message: l10n.redesignImportNewGroupMessage(rdGroupKindOf(context)),
     initialValue: newGroupName,
-    confirmText: l10n.redesignImportNewGroupTitle,
+    confirmText: l10n.redesignImportNewGroupTitle(rdGroupKindOf(context)),
   );
   final trimmed = name?.trim() ?? '';
   return trimmed.isEmpty ? null : RdImportCategory(newGroup: trimmed);

@@ -39,6 +39,7 @@ import '../../data/providers/rd_today_providers.dart';
 import '../../data/rd_event_logic.dart';
 import '../../data/providers/rd_phase_tick_provider.dart';
 import '../../data/rd_event_phase.dart';
+import '../../data/rd_words.dart';
 import '../../data/rd_write_queue.dart';
 import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider;
 import '../../../../core/providers/tenant_providers.dart';
@@ -432,7 +433,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     final result = await showRdStatusSheet(
       context,
       member: member,
-      subtitle: member.groupName ?? l10n.attendanceNoGroup,
+      subtitle: member.groupName ?? l10n.rdWordsNoGroup(ref.read(rdGroupKindProvider)),
       available: available,
       canEditNote: canEditNote,
       registration: _registrationOf(member.id, type),
@@ -1150,6 +1151,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         children: [
           RdPultView(
             title: title,
+            noGroupLabel: context.l10n.rdWordsNoGroup(ref.watch(rdGroupKindProvider)),
             members: members,
             available: available.toSet(),
             showNote: canViewNotes,
@@ -1264,7 +1266,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         padding: EdgeInsets.only(top: first ? 0 : 14),
         child: Row(
           children: [
-            Expanded(child: RdGroupLabel(list.first.groupName ?? l10n.attendanceNoGroup)),
+            Expanded(child: RdGroupLabel(list.first.groupName ?? l10n.rdWordsNoGroup(ref.watch(rdGroupKindProvider)))),
             Padding(
               padding: const EdgeInsets.only(right: 4, bottom: 8),
               child: Text(

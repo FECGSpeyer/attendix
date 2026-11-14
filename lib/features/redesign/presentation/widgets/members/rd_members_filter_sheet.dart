@@ -14,12 +14,13 @@ import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../people/rate_filter_labels.dart';
 import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/rd_members_list_filter.dart';
+import '../../../data/rd_words.dart';
 import '../rd_widgets.dart';
 import '../stats/rd_stats_widgets.dart' show showRdStatsRangeSheet;
 
 /// Label of a sort order of the Mitglieder tab.
-String rdMembersSortLabel(AppLocalizations l10n, RdMembersSort sort) => switch (sort) {
-  RdMembersSort.group => l10n.rdAdminGroups,
+String rdMembersSortLabel(AppLocalizations l10n, RdMembersSort sort, String kind) => switch (sort) {
+  RdMembersSort.group => l10n.rdWordsGroup(kind),
   RdMembersSort.firstName => l10n.peopleFirstName,
   RdMembersSort.lastName => l10n.peopleLastName,
   RdMembersSort.attendanceAsc => l10n.peopleAttendanceAsc,
@@ -137,7 +138,8 @@ class _FilterSheet extends ConsumerStatefulWidget {
   /// "Fehlen oft" (only on Aktiv).
   final bool withCritical;
 
-  /// "Gliedern nach" Kategorie / Register (the groups have categories).
+  /// "Gliedern nach" category or group (the groups have categories), in an
+  /// orchestra "Register" or "Instrument".
   final bool withCategories;
 
   @override
@@ -171,6 +173,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
+    final kind = ref.watch(rdGroupKindProvider);
     final filter = ref.watch(rdMembersListFilterProvider);
     final critical = widget.withCritical && ref.watch(rdMembersCriticalOnlyProvider);
     final byCategory = ref.watch(rdMembersByCategoryProvider);
@@ -222,13 +225,13 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
         const SizedBox(height: 12),
         RdGroupedList(
           children: [
-            // Mixed ensembles: many registers under one category ("Sonstiges")
-            // read better split by register.
+            // Mixed ensembles: many instruments under one category
+            // ("Sonstiges") read better split by instrument.
             if (widget.withCategories && filter.sort == RdMembersSort.group)
               RdListRow(
                 key: const Key('rd-members-split'),
                 title: l10n.redesignMembersSplitBy,
-                value: byCategory ? l10n.redesignMembersSplitCategory : l10n.redesignMembersSplitRegister,
+                value: byCategory ? l10n.rdWordsCategory(kind) : l10n.rdWordsGroup(kind),
                 onTap: () async {
                   final choice = await showAppActionSheet<bool>(
                     context,
@@ -237,12 +240,12 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
                       AppActionSheetAction(
                         value: true,
                         icon: byCategory ? Icons.check : null,
-                        label: l10n.redesignMembersSplitCategory,
+                        label: l10n.rdWordsCategory(kind),
                       ),
                       AppActionSheetAction(
                         value: false,
                         icon: byCategory ? null : Icons.check,
-                        label: l10n.redesignMembersSplitRegister,
+                        label: l10n.rdWordsGroup(kind),
                       ),
                     ],
                   );
@@ -252,7 +255,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
             RdListRow(
               key: const Key('rd-members-sort'),
               title: l10n.redesignWorksSort,
-              value: rdMembersSortLabel(l10n, filter.sort),
+              value: rdMembersSortLabel(l10n, filter.sort, kind),
               onTap: () async {
                 final choice = await showAppActionSheet<RdMembersSort>(
                   context,
@@ -262,7 +265,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
                       AppActionSheetAction(
                         value: s,
                         icon: s == filter.sort ? Icons.check : null,
-                        label: rdMembersSortLabel(l10n, s),
+                        label: rdMembersSortLabel(l10n, s, kind),
                       ),
                   ],
                 );
@@ -295,7 +298,7 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
         ),
         if (widget.groups.length > 1) ...[
           const SizedBox(height: 20),
-          RdGroupLabel(l10n.redesignMembersFilterGroups),
+          RdGroupLabel(l10n.rdWordsGroups(kind)),
           Wrap(
             spacing: 8,
             runSpacing: 8,

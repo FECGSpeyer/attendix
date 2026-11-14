@@ -8,6 +8,7 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_today_providers.dart';
+import '../../../data/rd_words.dart';
 import '../../rd_actions.dart' show rdShareLink;
 import '../rd_widgets.dart';
 import 'rd_today_common.dart';
@@ -150,7 +151,7 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
       String? group;
       final rows = <Widget>[];
       for (final person in open) {
-        final g = person.groupName ?? l10n.attendanceNoGroup;
+        final g = person.groupName ?? l10n.rdWordsNoGroup(ref.watch(rdGroupKindProvider));
         if (g != group) {
           group = g;
           if (rows.isNotEmpty) children.add(RdGroupedList(children: List.of(rows)));

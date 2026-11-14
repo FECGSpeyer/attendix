@@ -18,6 +18,7 @@ import '../../../../../data/repositories/player_repository.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../people/person_write.dart';
+import '../../../data/rd_words.dart';
 import '../manage/rd_settings_sheets.dart';
 import '../rd_widgets.dart';
 import 'rd_form_widgets.dart' show rdInputDecoration;
@@ -305,7 +306,7 @@ class _RdNewPersonSheetState extends State<RdNewPersonSheet> {
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: RdGroupLabel(l10n.attendanceNewPersonGroup),
+                  child: RdGroupLabel(l10n.rdWordsGroup(rdGroupKindOf(context))),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),

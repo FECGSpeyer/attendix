@@ -25,6 +25,7 @@ import '../auto_message_texts.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/data/rd_words.dart';
 import '../../../redesign/presentation/widgets/event/rd_event_head.dart' show rdEventMeta;
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';

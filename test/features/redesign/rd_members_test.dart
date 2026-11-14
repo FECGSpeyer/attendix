@@ -673,7 +673,7 @@ void main() {
       // Auswertung and the other member tools sit behind "•••".
       await tester.tap(find.byKey(const Key('rd-members-more')));
       await _settle(tester);
-      for (final label in ['Auswertung', 'Mehrere auswählen', 'Register', 'Problemfälle', 'Archiv', 'Export']) {
+      for (final label in ['Auswertung', 'Mehrere auswählen', 'Instrumente', 'Problemfälle', 'Archiv', 'Export']) {
         expect(find.text(label), findsWidgets, reason: label);
       }
     });

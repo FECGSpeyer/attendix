@@ -10,6 +10,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../../data/providers/rd_works_filter.dart';
+import '../../../data/rd_words.dart';
 import '../../../data/rd_works_logic.dart';
 import '../rd_widgets.dart';
 
@@ -269,12 +270,12 @@ class _FilterSheet extends ConsumerWidget {
           RdGroupedList(
             children: [
               RdListRow(
-                title: l10n.redesignWorksForGroup,
+                title: l10n.redesignWorksForGroup(ref.watch(rdGroupKindProvider)),
                 value: selectedGroups.isEmpty ? l10n.redesignWorksForGroupAll : selectedGroups.join(', '),
                 onTap: () async {
                   final choice = await showAppActionSheet<int>(
                     context,
-                    title: l10n.redesignWorksForGroup,
+                    title: l10n.redesignWorksForGroup(ref.read(rdGroupKindProvider)),
                     actions: [
                       AppActionSheetAction(value: -1, label: l10n.redesignWorksForGroupAll),
                       for (final g in groups) AppActionSheetAction(value: g.id!, label: g.name),

@@ -51,7 +51,7 @@ class _RdHandoverDetailPageState extends ConsumerState<RdHandoverDetailPage> wit
   Future<void> _changeGroup(Person person) async {
     final picked = await showRdChoiceSheet<int>(
       context,
-      title: context.l10n.handoverSelectGroup,
+      title: context.l10n.rdWordsGroup(widget.data?.tenant.type ?? ''),
       selected: groupMapping[person.id],
       options: [
         for (final g in targetGroups)
@@ -100,7 +100,7 @@ class _RdHandoverDetailPageState extends ConsumerState<RdHandoverDetailPage> wit
         children: [
           RdBackLink(label: l10n.rdOrgBackSelection, onTap: () => transferring ? null : _back()),
           const SizedBox(height: 4),
-          Semantics(header: true, child: Text(l10n.rdOrgStep2Title, style: RdType.largeTitle(p))),
+          Semantics(header: true, child: Text(l10n.rdOrgStep2Title(widget.data?.tenant.type ?? ''), style: RdType.largeTitle(p))),
           if (!ready)
             RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
           else ...[

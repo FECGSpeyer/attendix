@@ -28,6 +28,7 @@ import '../../../../songs/presentation/widgets/copy_to_tenant_sheet.dart';
 import '../../../../songs/presentation/widgets/group_pdf_print.dart';
 import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/providers/rd_shared_library.dart';
+import '../../../data/rd_words.dart';
 import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
 import 'rd_sibelius_actions.dart';
@@ -324,7 +325,7 @@ Future<void> rdShowWorkMenu(
           subtitle: l10n.redesignWorkCopyHint,
         ),
       if (!data.readOnly && !data.isPublic && hasGroupPdfs(files))
-        AppActionSheetAction(value: _WorkAction.groupPdfs, icon: Icons.print_outlined, label: l10n.songsPrintGroupPdfs),
+        AppActionSheetAction(value: _WorkAction.groupPdfs, icon: Icons.print_outlined, label: l10n.rdWordsPrintGroupPdfs(ref.read(rdGroupKindProvider))),
     ],
   );
   if (action == null || !button.mounted) return;

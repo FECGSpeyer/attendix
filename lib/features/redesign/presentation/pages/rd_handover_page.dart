@@ -9,6 +9,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/pages/handover_page.dart';
+import '../../data/rd_words.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 
@@ -76,7 +77,7 @@ class _RdHandoverPageState extends ConsumerState<RdHandoverPage> with HandoverSe
   Future<void> _pickGroup(HandoverView view) async {
     final picked = await showRdChoiceSheet<int>(
       context,
-      title: context.l10n.peopleGroup,
+      title: context.l10n.rdWordsGroup(ref.read(rdGroupKindProvider)),
       selected: groupId,
       options: [
         for (final g in view.groups)
@@ -97,7 +98,7 @@ class _RdHandoverPageState extends ConsumerState<RdHandoverPage> with HandoverSe
           AppActionSheetAction(value: 'younger', label: l10n.handoverYoungerThanDots),
           AppActionSheetAction(value: 'older', label: l10n.handoverOlderThanDots),
         ],
-        if (!filters.contains('group')) AppActionSheetAction(value: 'group', label: l10n.handoverInGroupDots),
+        if (!filters.contains('group')) AppActionSheetAction(value: 'group', label: l10n.rdWordsGroupFilter(ref.read(rdGroupKindProvider))),
       ],
     );
     if (picked == null || !mounted) return;

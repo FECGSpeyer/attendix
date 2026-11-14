@@ -14,6 +14,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../data/import/rd_import_controller.dart' show rdImportRunProvider;
 import '../../data/rd_collections_logic.dart';
+import '../../data/rd_words.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
@@ -307,6 +308,7 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
   Widget _form(BuildContext context, SongCollection c) {
     final p = context.rd;
     final l10n = context.l10n;
+    final kind = ref.watch(rdGroupKindProvider);
     final groups = [...?ref.watch(groupsProvider).valueOrNull?.where((g) => g.maingroup != true && g.id != null)];
     _songs = ref.watch(songsProvider).valueOrNull ?? _songs;
     final count = rdWorksIn(_songs ?? const <Song>[], _id).length;
@@ -380,7 +382,7 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
           children: [
             visRow(SongCollectionVisibility.all, l10n.collectionsVisAll),
             visRow(SongCollectionVisibility.leads, l10n.collectionsVisLeads),
-            visRow(SongCollectionVisibility.groups, l10n.collectionsVisGroups),
+            visRow(SongCollectionVisibility.groups, l10n.collectionsVisGroups(kind)),
           ],
         ),
         if (visibility == SongCollectionVisibility.groups) ...[
@@ -398,7 +400,7 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
                 ),
             ],
           ),
-          if (_groupIds.isEmpty) hint(l10n.collectionsGroupsNone, color: p.late),
+          if (_groupIds.isEmpty) hint(l10n.collectionsGroupsNone(kind), color: p.late),
         ],
         hint(l10n.collectionsLeadsSeeAll),
         const SizedBox(height: 20),

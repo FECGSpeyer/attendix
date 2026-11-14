@@ -153,7 +153,7 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
             RdListRow(
               title: l10n.rdTypeInvited,
               subtitle: l10n.rdTypeInvitedHint,
-              value: groupCount == 0 ? l10n.rdTypeInvitedAll : l10n.rdTypeInvitedSome(groupCount),
+              value: groupCount == 0 ? l10n.rdTypeInvitedAll : l10n.rdWordsGroupCount(ref.watch(rdGroupKindProvider), groupCount),
               onTap: () => _rdOpenSub(l10n.rdTypeInvited, _buildFilterSection),
             ),
           ],

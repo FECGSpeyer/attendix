@@ -17,6 +17,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../data/providers/rd_shared_library.dart';
+import '../../data/rd_words.dart';
 import '../../data/rd_works_logic.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
@@ -567,7 +568,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
             _switchRow(l10n.redesignWorkWithSolo, _withSolo, (v) => _set(() => _withSolo = v, () => {'withSolo': v})),
           ],
         ),
-        if (data.isOrchestra) hint(l10n.redesignWorkEditInstrumentationHint),
+        if (data.isOrchestra) hint(l10n.redesignWorkEditInstrumentationHint(ref.watch(rdGroupKindProvider))),
         const SizedBox(height: 20),
         RdGroupLabel(l10n.redesignWorkEditLink),
         RdGroupedList(
