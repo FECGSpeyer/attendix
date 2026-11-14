@@ -1,3 +1,13 @@
+# Testing beyond unit tests
+
+Two things watch the app as a whole, next to the unit and widget tests:
+
+- **Golden images** (`test/golden/`): pictures of whole pages in the classic
+  design and in Beta. A page that looks different fails its test; a pull
+  request that changes pictures gets them as before and after in a comment.
+  How to renew or add one: [test/golden/README.md](../test/golden/README.md).
+- **E2E flows** (`patrol_test/`): the rest of this page.
+
 # E2E flows (Patrol)
 
 The flows in `patrol_test/` drive the real app like a user: they start
