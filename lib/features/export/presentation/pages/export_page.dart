@@ -158,11 +158,12 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
       context: context,
       builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.exportAddField),
-        content: TextField(
+        // Ionic alert input without label or placeholder (export.page.ts).
+        content: AppAlertInput(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
-          decoration: InputDecoration(labelText: context.l10n.exportFlutterColumnName),
+          betaDecoration: InputDecoration(labelText: context.l10n.exportFlutterColumnName),
           onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
         ),
         actions: [

@@ -180,7 +180,8 @@ class _LinkDialogState extends State<_LinkDialog> {
     if (useIosLook(context)) {
       return IosAlertCard(
         title: Text(l10n.editorLink),
-        contentPadding: const EdgeInsets.fromLTRB(16, 0, 16, 21),
+        // ios27 `.alert-message:empty { padding: 0 0 12px }` above the inputs.
+        contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 21),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -210,20 +211,20 @@ class _LinkDialogState extends State<_LinkDialog> {
     }
     return AppAlertDialog(
       title: Text(l10n.editorLink),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      // md: the shared underlined alert inputs.
+      content: AppAlertInputGroup(
+        betaCrossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextField(
+          AppAlertInput(
             controller: _url,
             keyboardType: TextInputType.url,
             autofocus: true,
-            decoration: const InputDecoration(hintText: urlHint),
+            placeholder: urlHint,
           ),
           if (widget.showText)
-            TextField(
+            AppAlertInput(
               controller: _text,
-              decoration: InputDecoration(hintText: l10n.editorLinkText),
+              placeholder: l10n.editorLinkText,
             ),
         ],
       ),

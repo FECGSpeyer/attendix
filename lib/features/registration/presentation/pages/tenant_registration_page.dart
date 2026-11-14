@@ -1154,33 +1154,53 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           builder: (context, setDialogState) {
             return AppAlertDialog(
               title: Text(context.l10n.loginSignIn),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
+              // Ionic alert: `email` + `password` inputs with placeholders
+              // (tenant-register.page.ts login); the hint / a login error is
+              // the alert message.
+              content: AppAlertInputGroup(
+                message: Text(
+                  loginError.isNotEmpty ? loginError : context.l10n.tenantRegisterFlutterSignInExisting,
+                ),
                 children: [
-                  Text(context.l10n.tenantRegisterFlutterSignInExisting),
-                  const SizedBox(height: 16),
-                  TextField(
+                  AppAlertInput(
                     controller: emailController,
-                    decoration: InputDecoration(
-                      labelText: context.l10n.loginEmail,
-                      prefixIcon: Icon(AppIcons.emailOutlined),
-                    ),
+                    placeholder: context.l10n.tenantRegisterEmailAddress,
                     keyboardType: TextInputType.emailAddress,
                   ),
-                  const SizedBox(height: 12),
-                  TextField(
+                  AppAlertInput(
                     controller: passwordController,
-                    decoration: InputDecoration(
-                      labelText: context.l10n.loginPassword,
-                      prefixIcon: Icon(AppIcons.lockOutlined),
-                    ),
+                    placeholder: context.l10n.loginModePassword,
                     obscureText: true,
                   ),
-                  if (loginError.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Text(loginError, style: const TextStyle(color: AppColors.danger, fontSize: 12)),
-                  ],
                 ],
+                beta: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(context.l10n.tenantRegisterFlutterSignInExisting),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        labelText: context.l10n.loginEmail,
+                        prefixIcon: Icon(AppIcons.emailOutlined),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        labelText: context.l10n.loginPassword,
+                        prefixIcon: Icon(AppIcons.lockOutlined),
+                      ),
+                      obscureText: true,
+                    ),
+                    if (loginError.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(loginError, style: const TextStyle(color: AppColors.danger, fontSize: 12)),
+                    ],
+                  ],
+                ),
               ),
               actions: [
                 TextButton(

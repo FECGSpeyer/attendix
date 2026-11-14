@@ -166,7 +166,8 @@ class _PasswordRecoveryDialogState extends State<PasswordRecoveryDialog> {
     if (useIosLook(context)) {
       return IosAlertCard(
         title: Text(l10n.appNewPassword),
-        contentPadding: const EdgeInsets.fromLTRB(16, 0, 16, 21),
+        // ios27 `.alert-message:empty { padding: 0 0 12px }` above the inputs.
+        contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 21),
         content: IosAlertInput(
           controller: _controller,
           placeholder: l10n.appMinSixPlaceholder,
@@ -198,18 +199,20 @@ class _PasswordRecoveryDialogState extends State<PasswordRecoveryDialog> {
       );
     }
 
-    // md alert: underlined input (like "Passwort zurücksetzen").
+    // md alert: the shared underlined alert input (like "Passwort
+    // zurücksetzen"); Beta keeps its field.
     final theme = Theme.of(context);
     final line = UnderlineInputBorder(borderSide: BorderSide(color: theme.dividerColor));
     return AppAlertDialog(
       title: Text(l10n.appNewPassword),
-      content: TextField(
+      content: AppAlertInput(
         controller: _controller,
         autofocus: true,
         obscureText: true,
         autofillHints: const [AutofillHints.newPassword],
         onSubmitted: (_) => _confirm(),
-        decoration: InputDecoration(
+        placeholder: l10n.appMinSixPlaceholder,
+        betaDecoration: InputDecoration(
           hintText: l10n.appMinSixPlaceholder,
           filled: false,
           isDense: true,

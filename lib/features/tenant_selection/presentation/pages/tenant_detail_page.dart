@@ -380,13 +380,15 @@ Future<void> _showDeleteTenantDialog(
                 ),
                 ElevatedButton(
                   onPressed: matches ? () => Navigator.of(context).pop(true) : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.danger,
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor:
-                        AppColors.danger.withValues(alpha: 0.5),
-                    disabledForegroundColor: Colors.white,
-                  ),
+                  style: beta
+                      ? ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.danger,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor:
+                              AppColors.danger.withValues(alpha: 0.5),
+                          disabledForegroundColor: Colors.white,
+                        )
+                      : null,
                   child: Text(context.l10n.registerDeleteConfirm),
                 ),
               ],

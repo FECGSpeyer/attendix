@@ -141,7 +141,8 @@ class AppAlertDialog extends StatelessWidget {
         actionsAlignment: actionsAlignment,
         insetPadding: insetPadding ??
             const EdgeInsets.symmetric(horizontal: 48, vertical: 24),
-        scrollable: scrollable,
+        // A group scrolls its inputs / options itself.
+        scrollable: !grouped && scrollable,
         backgroundColor: backgroundColor,
         shape: shape ??
             const RoundedRectangleBorder(
@@ -176,7 +177,7 @@ class AppAlertDialog extends StatelessWidget {
       title: title,
       content: content,
       contentPadding: grouped ? EdgeInsets.zero : contentPadding,
-      scrollable: scrollable,
+      scrollable: !grouped && scrollable,
       semanticLabel: semanticLabel,
       actions: [
         for (final a in actions ?? const <Widget>[])
@@ -1456,6 +1457,52 @@ class AppAlertInputGroup extends StatelessWidget
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: children,
             ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Ionic alert `header` + `subHeader` (`.alert-title` + `.alert-sub-title`)
+/// as the `title` of an [AppAlertDialog]. iOS (ios27): the sub header grey,
+/// 0.94rem, 5pt under the title; md: 16px in the text colour. Beta shows
+/// only the [title] (its dialogs keep the sub header in their content).
+class AppAlertTitle extends StatelessWidget {
+  const AppAlertTitle(this.title, {super.key, this.subHeader});
+
+  final String title;
+  final String? subHeader;
+
+  @override
+  Widget build(BuildContext context) {
+    final sub = subHeader;
+    if (context.rdSkin != null || sub == null || sub.isEmpty) {
+      return Text(title);
+    }
+    final theme = Theme.of(context);
+    final ios = useIosLook(context);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title),
+        Padding(
+          padding: const EdgeInsets.only(top: 5),
+          child: Text(
+            sub,
+            style: ios
+                ? TextStyle(
+                    fontSize: IosAlertCard.messageFontSize,
+                    height: 1.19,
+                    fontWeight: FontWeight.w400,
+                    color: iosAlertMessageColor(theme.brightness),
+                  )
+                : TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: theme.colorScheme.onSurface,
+                  ),
           ),
         ),
       ],
