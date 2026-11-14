@@ -345,4 +345,6 @@ abstract final class AppIcons {
   static IconData get listCircleOutline => _pick(Ionicons.listCircleOutline, Icons.playlist_add_circle_outlined);
   static IconData get documentOutline => _pick(Ionicons.documentOutline, Icons.description_outlined);
   static IconData get documentsOutline => _pick(Ionicons.documentsOutline, Icons.file_copy_outlined);
+  static IconData get paperPlaneOutline => _pick(Ionicons.paperPlaneOutline, Icons.send_outlined);
+  static IconData get documentAttachOutline => _pick(Ionicons.documentAttachOutline, Icons.attach_file);
 }
