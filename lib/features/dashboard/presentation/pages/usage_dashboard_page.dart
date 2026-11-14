@@ -12,6 +12,7 @@ import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/adaptive/ion_toolbar_segment.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' show ionItemBackground;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 const _palette = [
@@ -57,6 +58,8 @@ class UsageDashboardPage extends ConsumerWidget {
     final classic = context.rdSkin == null;
 
     return Scaffold(
+      // DAS-16: `ion-content` is the plain page colour the light boxes sit on.
+      backgroundColor: classic ? ionItemBackground(context) : null,
       appBar: AppBar(
         title: Text(context.l10n.usageTitle),
         // DAS-16: Ionic second `ion-toolbar` with the `ion-segment`.
@@ -309,7 +312,7 @@ class _Kpi extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               value,
-              maxLines: small ? 2 : 1,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(fontSize: small ? 16 : 24, fontWeight: small ? FontWeight.w600 : FontWeight.w700),
             ),
