@@ -268,6 +268,13 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
   /// it is the Termin's own one (else the one of `sources.first`).
   Future<void> _change(List<SongHistoryEntry> shown, List<RdWorksSource> sources, {required bool own}) async {
     final l10n = context.l10n;
+    // Bound now, before the sheet: the group may change while it is open.
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    final container = ProviderScope.containerOf(context, listen: false);
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
+    final id = _id;
+    final date = widget.attendance.date;
     final songs = ref.read(songsProvider).valueOrNull ?? const <Song>[];
     PlanEventWork? work(SongHistoryEntry e) {
       final song = songs.where((s) => s.id == e.songId).firstOrNull;
@@ -299,7 +306,7 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
       confirmLabel: l10n.redesignEventWorksTake,
       followLabel: own && sources.isNotEmpty ? l10n.redesignEventWorksFollowAgain : null,
     );
-    if (choice == null || !mounted) return;
+    if (choice == null || !mounted || !session.isCurrent()) return;
     if (choice.follow) {
       await _save(const []);
       return;
@@ -321,12 +328,6 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     ];
     // Still the list of the Auftritt: it keeps following it.
     if (!own && _sameWorks(next, shown)) return;
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    final container = ProviderScope.containerOf(context, listen: false);
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
-    final id = _id;
-    final date = widget.attendance.date;
     if (!await _save(next) || !session.isCurrent()) return;
     // A Werk that left the list also leaves the Ablauf, as with "Werk
     // entfernen" (else the Ablauf would bring it back with its next save).
