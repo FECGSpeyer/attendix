@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.145.1",
+      "date": "14.11.2026",
+      "changes": [
+        "🐛 Termin-Links ohne Gruppenangabe (z. B. Dienst-Erinnerungen) wechseln in die Gruppe des Termins und öffnen ihn wie eine Erinnerung"
+      ]
+    },
+    {
       "version": "0.145.0",
       "date": "14.11.2026",
       "changes": [
