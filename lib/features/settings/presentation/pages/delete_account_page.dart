@@ -285,15 +285,20 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
                     : const Color(0xFFF4F5F8),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: SelectableText(
-                _verificationCode,
-                style: TextStyle(
-                  fontFamily: 'Courier New',
-                  fontFamilyFallback: const ['Courier', 'monospace'],
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 6,
-                  color: theme.colorScheme.onSurface,
+              // F-LOGIN-23: read the code out character by character
+              // (SelectableText alone is missing from the web semantics tree).
+              child: Semantics(
+                label: _verificationCode.split('').join(' '),
+                child: SelectableText(
+                  _verificationCode,
+                  style: TextStyle(
+                    fontFamily: 'Courier New',
+                    fontFamilyFallback: const ['Courier', 'monospace'],
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 6,
+                    color: theme.colorScheme.onSurface,
+                  ),
                 ),
               ),
             ),
