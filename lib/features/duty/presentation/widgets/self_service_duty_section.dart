@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonInsetList, IonItem;
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -315,32 +316,6 @@ String _dutyMeta(DutyTermin t) {
   return '$timeText${l10nWithoutContext.signoutDutyOccupied(t.occupied, t.required)}';
 }
 
-/// One open duty with "Ich übernehme". On small phones or with large text
-/// the button moves below title and date, next to them it would leave the
-/// title no room.
-Widget _openDutyTile(
-  BuildContext context, {
-  required String title,
-  required String subtitle,
-  required Widget button,
-}) {
-  final narrow = MediaQuery.sizeOf(context).width < MediaQuery.textScalerOf(context).scale(360);
-  if (!narrow) {
-    return ListTile(title: Text(title), subtitle: Text(subtitle), trailing: button);
-  }
-  return ListTile(
-    title: Text(title),
-    subtitle: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(subtitle),
-        const SizedBox(height: 8),
-        button,
-      ],
-    ),
-  );
-}
-
 /// Sheet "Offene Dienste" with "Ich übernehme" and "Regelmäßig verhindert".
 Future<void> showOpenDutiesSheet(BuildContext context) {
   if (context.rdSkin != null) return _rdOpenDutiesSheet(context);
@@ -363,33 +338,44 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
             body: ListView(
             controller: scroll,
             padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(ctx).bottom),
+            // DAS-30: Ionic `ion-list [inset]` with an `ion-button slot="end"`
+            // per duty, then a second inset list with the detail row.
             children: [
               if (open.isEmpty)
                 Padding(
-                  padding: const EdgeInsets.all(AppDimensions.paddingL),
+                  padding: const EdgeInsets.all(AppDimensions.paddingM),
                   child: Text(context.l10n.signoutAllDutiesFilled, textAlign: TextAlign.center),
+                )
+              else
+                IonInsetList(
+                  margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  children: [
+                    for (final t in open)
+                      IonItem(
+                        title: Text(t.title),
+                        subtitle: Text('${_dateShort(t)} · ${_dutyMeta(t)}'),
+                        trailing: IonButton(
+                          label: context.l10n.signoutIllTakeIt,
+                          onPressed: () => takeDutyAction(ctx, ref, t.attendance.id!),
+                        ),
+                      ),
+                  ],
                 ),
-              for (final t in open)
-                _openDutyTile(
-                  ctx,
-                  title: t.title,
-                  subtitle: '${_dateShort(t)} · ${_dutyMeta(t)}',
-                  button: FilledButton(
-                    onPressed: () => takeDutyAction(ctx, ref, t.attendance.id!),
-                    child: IonButtonLabel(context.l10n.signoutIllTakeIt),
-                  ),
-                ),
-              const Divider(),
               if (overview?.person?.id != null)
-                ListTile(
-                  leading: Icon(AppIcons.eventBusyOutlined),
-                  title: Text(context.l10n.signoutRegularlyUnavailable),
-                  subtitle: Text(context.l10n.signoutRegularlyUnavailableHint),
-                  trailing: Icon(AppIcons.chevronRight),
-                  onTap: () {
-                    Navigator.of(ctx).pop();
-                    openUnavailabilityPage(context, personId: overview!.person!.id!);
-                  },
+                IonInsetList(
+                  margin: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                  children: [
+                    IonItem(
+                      leading: Icon(AppIcons.calendarClearOutline),
+                      title: Text(context.l10n.signoutRegularlyUnavailable),
+                      subtitle: Text(context.l10n.signoutRegularlyUnavailableHint),
+                      detail: true,
+                      onTap: () {
+                        Navigator.of(ctx).pop();
+                        openUnavailabilityPage(context, personId: overview!.person!.id!);
+                      },
+                    ),
+                  ],
                 ),
             ],
             ),

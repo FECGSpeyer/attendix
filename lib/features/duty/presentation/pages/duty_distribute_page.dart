@@ -16,9 +16,18 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 
 /// Opens "Dienste verteilen". Returns true when assignments were saved.
+/// DAS-29: Ionic default `ion-modal` – full screen on phones, a centred
+/// card from 768 × 600 ([showIonModal]); the Beta keeps the full-screen
+/// route.
 Future<bool> openDutyDistributePage(BuildContext context) async {
+  if (context.rdSkin == null) {
+    final result = await showIonModal<bool>(context, builder: (_) => const DutyDistributePage());
+    return result ?? false;
+  }
   final result = await Navigator.of(context, rootNavigator: true).push<bool>(MaterialPageRoute(
     fullscreenDialog: true,
     builder: (_) => const DutyDistributePage(),

@@ -19,6 +19,7 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 
 /// Opens "Regelmäßig verhindert" for a person (as a full screen dialog).
 /// REDESIGN: in the Beta the page "Nicht verfügbar" ([RdUnavailabilityPage]).
@@ -33,10 +34,12 @@ Future<void> openUnavailabilityPage(
       builder: (_) => RdUnavailabilityPage(personId: personId, personName: personName, forOther: forOther),
     ));
   }
-  return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute<void>(
-    fullscreenDialog: true,
+  // DAS-29: Ionic default `ion-modal` – full screen on phones, a centred
+  // card from 768 × 600.
+  return showIonModal<void>(
+    context,
     builder: (_) => UnavailabilityPage(personId: personId, personName: personName, forOther: forOther),
-  ));
+  );
 }
 
 /// "Regelmäßig verhindert": weekly rules (e.g. every Wednesday, Kinderstunde).
