@@ -258,7 +258,10 @@ class _NextEventCard extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Expanded(
+                            // Columns: one line also next to the link
+                            // (short words when it gets narrow).
                             child: RdStatusCounters(
+                              columns: true,
                               counters: rdAnswerCounters(context, counts),
                               semanticLabel: _countsLine(l10n, counts),
                             ),
@@ -266,7 +269,8 @@ class _NextEventCard extends ConsumerWidget {
                           // "offen" always counts the open answers; when
                           // fewer are reminded (stand-ins, another group)
                           // the link says how many.
-                          if (toRemind > 0)
+                          if (toRemind > 0) ...[
+                            const SizedBox(width: 8),
                             InkWell(
                               key: const Key('rd-today-remind'),
                               borderRadius: BorderRadius.circular(8),
@@ -298,6 +302,7 @@ class _NextEventCard extends ConsumerWidget {
                                 ),
                               ),
                             ),
+                          ],
                         ],
                       ),
               ),

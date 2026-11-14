@@ -673,7 +673,8 @@ class RdStatusCounters extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
-    final labelStyle = RdType.meta(p, size: 11);
+    // With the inherited font: the columns are measured as they are drawn.
+    final labelStyle = DefaultTextStyle.of(context).style.merge(RdType.meta(p, size: 12));
     final tappable = counters.any((c) => c.onTap != null);
 
     Widget cell(RdCounter c, String label) {
