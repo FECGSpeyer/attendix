@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.154.1",
+      "date": "14.11.2026",
+      "changes": [
+        "✨ Beta-Ablauf: Die Minuten-Auswahl schließt sich, sobald du eine Zahl antippst"
+      ]
+    },
+    {
       "version": "0.154.0",
       "date": "14.11.2026",
       "changes": [
