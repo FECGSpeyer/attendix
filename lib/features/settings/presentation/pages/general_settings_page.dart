@@ -22,6 +22,8 @@ import '../widgets/critical_rule_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/page_reload.dart';
 import '../widgets/settings_list.dart';
+import '../widgets/settings_form_items.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../widgets/ion_condense.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
@@ -364,6 +366,54 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     }
   }
 
+  /// Ionic `registerFields`: base fields (first/last name and group fixed)
+  /// plus the tenant's extra fields.
+  List<({String key, String label, bool required})> _registrationFieldOptions() {
+    final baseFields = [
+      (key: 'firstName', label: context.l10n.peopleFirstName, required: true),
+      (key: 'lastName', label: context.l10n.peopleLastName, required: true),
+      (key: 'group', label: context.l10n.peopleGroup, required: true),
+      (key: 'picture', label: context.l10n.settingsPassPhoto, required: false),
+      (key: 'birthDate', label: context.l10n.peopleBirthday, required: false),
+      (key: 'phone', label: context.l10n.settingsMobile, required: false),
+    ];
+    return [
+      ...baseFields,
+      for (final f in ref.watch(currentTenantProvider)?.additionalFields ?? const [])
+        (key: f.id, label: f.name, required: false),
+    ];
+  }
+
+  /// EIA-04: Ionic `ion-select multiple` – the checkbox alert, required
+  /// fields shown checked and disabled.
+  Future<void> _pickRegistrationFields() async {
+    final options = _registrationFieldOptions();
+    final result = await showAppMultiSelect<String>(
+      context: context,
+      header: context.l10n.generalSettingsRegisterFields,
+      options: [
+        for (final f in options)
+          AppSelectOption(value: f.key, label: f.label, enabled: !f.required),
+      ],
+      values: [
+        for (final f in options)
+          if (f.required || _selectedRegistrationFields.contains(f.key)) f.key,
+      ],
+    );
+    if (result == null || !mounted) return;
+    setState(() {
+      _selectedRegistrationFields
+        ..removeWhere((k) => options.any((f) => f.key == k && !f.required))
+        ..addAll(result.where((k) => options.any((f) => f.key == k && !f.required)));
+      for (final f in options) {
+        if (f.required && !_selectedRegistrationFields.contains(f.key)) {
+          _selectedRegistrationFields.add(f.key);
+        }
+      }
+    });
+    _markChanged();
+  }
+
   List<Widget> _buildRegistrationFieldChips() {
     // Base fields: firstName and lastName are always required (disabled)
     final baseFields = [
@@ -482,7 +532,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                     title: context.l10n.generalSettingsGeneral,
                     icons: false,
                     children: [
-                      IonStackedField(
+                      SettingsStackedField(
                         label: context.l10n.generalSettingsTenantName,
                         builder: (decoration) => TextFormField(
                           controller: _longNameController,
@@ -491,7 +541,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                           onChanged: (_) => _markChanged(),
                         ),
                       ),
-                      IonStackedField(
+                      SettingsStackedField(
                         label: context.l10n.generalSettingsTenantShort,
                         helper: context.l10n.generalSettingsShortNameHelper,
                         builder: (decoration) => TextFormField(
@@ -509,13 +559,14 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                     title: context.l10n.generalSettingsAttendance,
                     icons: false,
                     children: [
-                      IonStackedValue(
+                      SettingsStackedValue(
                         label: context.l10n.generalSettingsSeasonStart,
                         value: _seasonStart != null
                             ? DateFormat(dateFmt()).format(_seasonStart!)
                             : context.l10n.personNotSet,
                         helper: context.l10n.generalSettingsSeasonHelper,
-                        trailing: ionIsIos(context) ? null : Icon(AppIcons.calendarTodayOutlined),
+                        // Ionic: a plain stacked input (the Beta keeps its calendar icon).
+                        trailing: ionIsIos(context) || context.rdSkin == null ? null : Icon(AppIcons.calendarTodayOutlined),
                         onTap: _selectSeasonStart,
                       ),
                       SettingsListTile(
@@ -558,7 +609,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                           (v) => _dutyView = v,
                         ),
                       if (_showAllAttendances)
-                        IonStackedField(
+                        SettingsStackedField(
                           label: context.l10n.generalSettingsForeignInfo,
                           hint: context.l10n.generalSettingsForeignInfoPh,
                           builder: (decoration) => TextFormField(
@@ -638,6 +689,20 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                           _autoApproveRegistrations,
                           (v) => _autoApproveRegistrations = v,
                         ),
+                        if (context.rdSkin == null) ...[
+                          // EIA-04: Ionic stacked `ion-select multiple`
+                          // (checkbox alert) + `ion-note`, both lines="none".
+                          SettingsStackedValue(
+                            label: context.l10n.generalSettingsRegisterFields,
+                            value: _registrationFieldOptions()
+                                .where((f) => _selectedRegistrationFields.contains(f.key))
+                                .map((f) => f.label)
+                                .join(', '),
+                            trailing: ionIsIos(context) ? const IonSelectIcon() : const IonMdSelectIcon(),
+                            onTap: _pickRegistrationFields,
+                          ),
+                          _padded(IonNote(context.l10n.generalSettingsRegisterFieldsHint)),
+                        ] else
                         _padded(Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -729,10 +794,12 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         (v) => _showHolidays = v,
                       ),
                       if (_showHolidays)
-                        IonStackedField(
+                        SettingsStackedField(
                           label: context.l10n.generalSettingsHolidayState,
                           builder: (decoration) => AppDropdownFormField<String>(
                             interface: AppSelectInterface.alert,
+                            // Ionic: the label is the alert header.
+                            header: context.l10n.generalSettingsHolidayState,
                           value: _selectedRegion,
                           decoration: decoration,
                           items: holidayRegions
