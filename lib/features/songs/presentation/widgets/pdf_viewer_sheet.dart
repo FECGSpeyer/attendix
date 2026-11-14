@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,34 @@ import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/services/pdf_bytes_loader.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/common/escape_to_close.dart';
+
+/// WERKE-33: pdfx tells the page from the visible pages of the previous
+/// transform (its own listener runs before the view updates them), so the
+/// last scroll step could leave the counter on the old page ("Seite 1 von 2"
+/// while page 2 shows). Re-reads the page once all listeners ran.
+VoidCallback _pdfPageSync(
+  PdfControllerPinch controller, {
+  required bool Function() alive,
+  required int Function() current,
+  required ValueChanged<int> onPage,
+}) {
+  var queued = false;
+  return () {
+    if (queued) return;
+    queued = true;
+    scheduleMicrotask(() {
+      queued = false;
+      if (!alive()) return;
+      int page;
+      try {
+        page = controller.page;
+      } catch (_) {
+        return; // view not attached (yet / any more)
+      }
+      if (page != current()) onPage(page);
+    });
+  };
+}
 
 /// Bottom sheet for viewing PDF files in-app
 class PdfViewerSheet extends StatefulWidget {
@@ -59,12 +88,19 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
       final document = await PdfDocument.openData(bytes);
 
       if (mounted) {
+        final controller = PdfControllerPinch(
+          document: Future.value(document),
+        );
+        controller.addListener(_pdfPageSync(
+          controller,
+          alive: () => mounted && _pdfController == controller,
+          current: () => _currentPage,
+          onPage: (page) => setState(() => _currentPage = page),
+        ));
         setState(() {
           _bytes = bytes;
           _totalPages = document.pagesCount;
-          _pdfController = PdfControllerPinch(
-            document: Future.value(document),
-          );
+          _pdfController = controller;
           _isLoading = false;
         });
       }
@@ -366,6 +402,15 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
       document: PdfDocument.openData(widget.bytes),
       initialPage: widget.currentPage,
     );
+    _controller.addListener(_pdfPageSync(
+      _controller,
+      alive: () => mounted,
+      current: () => _currentPage,
+      onPage: (page) {
+        setState(() => _currentPage = page);
+        widget.onPageChanged(page);
+      },
+    ));
   }
 
   @override
@@ -410,17 +455,11 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                 left: 0,
                 right: 0,
                 child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withValues(alpha: 0.7),
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
+                  // WERKE-33: a dark bar instead of a fading gradient – the
+                  // white title stays readable on a white page.
+                  color: Colors.black.withValues(alpha: 0.6),
                   child: SafeArea(
+                    bottom: false,
                     child: Padding(
                       padding: const EdgeInsets.all(AppDimensions.paddingS),
                       child: Row(
@@ -484,8 +523,9 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
+                            // WERKE-33: dark pill, readable on a white page.
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color: Colors.black.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
