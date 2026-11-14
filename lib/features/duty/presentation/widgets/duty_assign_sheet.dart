@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -50,25 +50,20 @@ Future<List<String>?> showDutyAssignSheet(
       _DutyAssignSheet(title: title, openPlaces: openPlaces, candidates: candidates, monthLabel: monthLabel),
     );
   }
-  return showModalBottomSheet<List<String>>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    useSafeArea: true,
+  // Ionic: modalController.create({ breakpoints: [0, 0.75, 1],
+  // initialBreakpoint: 0.75 }).
+  return showIonSheet<List<String>>(
+    context,
+    breakpoints: const [0, 0.75, 1],
+    initialBreakpoint: 0.75,
     // Ionic: ion-content color="light".
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    builder: (ctx) => AppDraggableSheet(
-      expand: false,
-      initialChildSize: 0.75,
-      minChildSize: 0.4,
-      maxChildSize: 1,
-      builder: (ctx, scrollController) => _DutyAssignSheet(
-        title: title,
-        openPlaces: openPlaces,
-        candidates: candidates,
-        monthLabel: monthLabel,
-        scrollController: scrollController,
-      ),
+    builder: (ctx, scrollController) => _DutyAssignSheet(
+      title: title,
+      openPlaces: openPlaces,
+      candidates: candidates,
+      monthLabel: monthLabel,
+      scrollController: scrollController,
     ),
   );
 }
@@ -211,25 +206,16 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
     return Column(
       children: [
         // Ionic toolbar: close at the start, centered title with `.sub` line.
-        AppBar(
-          toolbarHeight: ionModalToolbarHeight(context),
-          automaticallyImplyLeading: false,
-          primary: false,
-          leading: IconButton(
-            icon: Icon(AppIcons.close),
-            tooltip: context.l10n.commonCancel,
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(context.l10n.attendanceAssignPerson),
-              Text('${widget.title} · $places',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.medium)),
-            ],
-          ),
+        IonSheetHeader(
+          title: context.l10n.attendanceAssignPerson,
+          subtitle: '${widget.title} · $places',
+          start: [
+            IconButton(
+              icon: Icon(AppIcons.close),
+              tooltip: context.l10n.commonCancel,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
         ),
         Expanded(
           child: _sorted.isEmpty

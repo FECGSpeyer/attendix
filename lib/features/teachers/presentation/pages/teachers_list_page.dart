@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -67,22 +69,39 @@ Future<Teacher?> showAddTeacherSheet(
       .where((g) => g.maingroup != true)
       .toList();
   if (!context.mounted) return null;
-  final result = await showModalBottomSheet<Teacher>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    showDragHandle: true,
-    builder: (ctx) => Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-      child: _TeacherForm(
-        availableInstruments: groups,
-        initialInstruments: {
-          for (final id in initialInstruments)
-            if (groups.any((g) => g.id == id)) id,
-        },
-      ),
-    ),
-  );
+  final ticked = {
+    for (final id in initialInstruments)
+      if (groups.any((g) => g.id == id)) id,
+  };
+  final result = context.rdSkin == null
+      // Ionic teachers modal: [breakpoints]="[0, 0.7]" [initialBreakpoint]="0.7",
+      // ion-toolbar with the ion-title only.
+      ? await showIonSheet<Teacher>(
+          context,
+          breakpoints: const [0, 0.7],
+          initialBreakpoint: 0.7,
+          builder: (ctx, controller) => IonSheetScaffold(
+            title: ctx.l10n.teachersAdd,
+            body: _TeacherForm(
+              availableInstruments: groups,
+              initialInstruments: ticked,
+              scrollController: controller,
+            ),
+          ),
+        )
+      : await showModalBottomSheet<Teacher>(
+          context: context,
+          useRootNavigator: true, // IOS_SHELL2: above the tab bar
+          isScrollControlled: true,
+          showDragHandle: true,
+          builder: (ctx) => Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+            child: _TeacherForm(
+              availableInstruments: groups,
+              initialInstruments: ticked,
+            ),
+          ),
+        );
   if (result == null) return null;
   // Same tenant and account as when the sheet was opened (one repository
   // instance per tenant and account).
@@ -257,7 +276,12 @@ class _TeacherForm extends StatefulWidget {
     required this.availableInstruments,
     this.players = const [],
     this.initialInstruments = const {},
+    this.scrollController,
   });
+
+  /// Classic "Lehrer hinzufügen" sheet: the controller of the breakpoint
+  /// sheet; the title then sits in the sheet toolbar.
+  final ScrollController? scrollController;
 
   final Teacher? teacher;
   final List<Group> availableInstruments;
@@ -374,12 +398,13 @@ class _TeacherFormState extends State<_TeacherForm> {
         .map((g) => g.name)
         .join(', ');
     return SingleChildScrollView(
+      controller: widget.scrollController,
       padding: const EdgeInsets.all(AppDimensions.paddingM),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (_isNew) ...[
+          if (_isNew && widget.scrollController == null) ...[
             Text(context.l10n.teachersAdd,
                 style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: AppDimensions.paddingM),

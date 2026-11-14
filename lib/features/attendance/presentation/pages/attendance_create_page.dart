@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,6 +34,33 @@ import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 Future<bool> showAttendanceCreateSheet(BuildContext context) async {
   // While saving, the sheet must not be dismissed (drag, barrier, back).
   final saving = ValueNotifier<bool>(false);
+  if (context.rdSkin == null) {
+    // Ionic addAttModal: [breakpoints]="[0, 0.8, 1]" [initialBreakpoint]="0.8",
+    // the modal handle over the toolbar.
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: false,
+      clipBehavior: Clip.antiAlias,
+      builder: (context) => ValueListenableBuilder<bool>(
+        valueListenable: saving,
+        builder: (context, isSaving, _) => IonBreakpointSheet(
+          breakpoints: const [0, 0.8, 1],
+          initialBreakpoint: 0.8,
+          canDismiss: !isSaving,
+          builder: (context, scrollController) => AttendanceCreatePage(
+            asSheet: true,
+            scrollController: scrollController,
+            savingNotifier: saving,
+          ),
+        ),
+      ),
+    );
+    saving.dispose();
+    return result ?? false;
+  }
   final result = await showModalBottomSheet<bool>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -504,7 +533,11 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               : AppColors.light,
           // UX_ATT: Ionic addAttModal toolbar has only the title (closed by
           // swiping the sheet down / tapping outside).
-          toolbarHeight: widget.asSheet ? 44 : null,
+          // Classic: the sheet toolbar of each look (iOS 64, md 56); the
+          // handle lies over it.
+          toolbarHeight: widget.asSheet
+              ? (context.rdSkin != null ? 44 : (ionModalToolbarHeight(context) ?? 56))
+              : null,
           shape: widget.asSheet ? const Border() : null,
         ),
         body: body,
@@ -734,23 +767,10 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         );
     final fmt = DateFormat(dateFmt());
 
-    showModalBottomSheet(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      useSafeArea: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      // Ionic breakpoints [0, 0.5, 1]: opens at half height, can go full.
-      builder: (context) => AppDraggableSheet(
-        initialChildSize: 0.5,
-        minChildSize: 0.3,
-        maxChildSize: 1,
-        expand: false,
-        // Watches the holidays so the sheet fills in once they are loaded
-        // (Ionic shows the type legend right away).
-        builder: (context, scrollController) => Consumer(builder: (context, ref, _) {
+    // Watches the holidays so the sheet fills in once they are loaded
+    // (Ionic shows the type legend right away).
+    Widget content(BuildContext context, ScrollController scrollController) =>
+        Consumer(builder: (context, ref, _) {
           final holidaysAsync = ref.watch(holidaysProvider);
           final holidays = holidaysAsync.valueOrNull;
           final hasHolidays = holidays != null &&
@@ -809,7 +829,33 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               ],
             ],
           );
-        }),
+        });
+    if (context.rdSkin == null) {
+      // Ionic: [breakpoints]="[0, 0.5, 1]" [initialBreakpoint]="0.5", no
+      // header, `ion-content color="light"`.
+      showIonSheet<void>(
+        context,
+        breakpoints: const [0, 0.5, 1],
+        initialBreakpoint: 0.5,
+        builder: content,
+      );
+      return;
+    }
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
+      isScrollControlled: true,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      // Ionic breakpoints [0, 0.5, 1]: opens at half height, can go full.
+      builder: (context) => AppDraggableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.3,
+        maxChildSize: 1,
+        expand: false,
+        builder: content,
       ),
     );
   }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:intl/intl.dart';
 
@@ -57,6 +59,22 @@ Future<AdHocReminderResult?> showAdHocReminderSheet(
   String? attendanceLink,
   bool hasNeutralPersons = false,
 }) {
+  if (context.rdSkin == null) {
+    // Ionic: modalController.create({ breakpoints: [0, 0.75, 1],
+    // initialBreakpoint: 0.75 }).
+    return showIonSheet<AdHocReminderResult>(
+      context,
+      breakpoints: const [0, 0.75, 1],
+      initialBreakpoint: 0.75,
+      builder: (ctx, controller) => _AdHocReminderForm(
+        defaultTitle: defaultTitle,
+        defaultMessage: defaultMessage,
+        attendanceLink: attendanceLink,
+        hasNeutralPersons: hasNeutralPersons,
+        scrollController: controller,
+      ),
+    );
+  }
   return showModalBottomSheet<AdHocReminderResult>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -80,12 +98,16 @@ class _AdHocReminderForm extends StatefulWidget {
     required this.defaultMessage,
     required this.attendanceLink,
     required this.hasNeutralPersons,
+    this.scrollController,
   });
 
   final String defaultTitle;
   final String defaultMessage;
   final String? attendanceLink;
   final bool hasNeutralPersons;
+
+  /// Classic design: the controller of the breakpoint sheet.
+  final ScrollController? scrollController;
 
   @override
   State<_AdHocReminderForm> createState() => _AdHocReminderFormState();
@@ -108,15 +130,15 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child: Column(
+    final classic = context.rdSkin == null;
+    final form = Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(context.l10n.attendanceSendReminder, style: theme.textTheme.titleLarge),
-            const SizedBox(height: 8),
+            if (!classic) ...[
+              Text(context.l10n.attendanceSendReminder, style: theme.textTheme.titleLarge),
+              const SizedBox(height: 8),
+            ],
             Text(
               context.l10n.attendanceReminderInfo,
               style: const TextStyle(color: AppColors.medium),
@@ -177,7 +199,26 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
               label: IonButtonLabel(context.l10n.attendanceSend),
             ),
           ],
+        );
+    if (classic) {
+      // Ionic AdHocReminderModal: ion-title + close ✕ (end), padded content.
+      return IonSheetScaffold(
+        title: context.l10n.attendanceSendReminder,
+        showClose: true,
+        body: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            controller: widget.scrollController,
+            padding: const EdgeInsets.all(16),
+            child: form,
+          ),
         ),
+      );
+    }
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: form,
       ),
     );
   }

@@ -9,7 +9,11 @@ import '../../../core/theme/redesign/rd_theme.dart';
 import '../adaptive/adaptive_platform.dart';
 import '../../../l10n/l10n.dart';
 import '../adaptive/app_toolbar.dart'
-    show kIonModalToolbarHeight, kIonTitleFontSize; // PARITY_R5, IOS27_SWEEP
+    show
+        IonCloseButton,
+        ToolbarButtonGroup,
+        kIonModalToolbarHeight,
+        kIonTitleFontSize; // PARITY_R5, IOS27_SWEEP
 import 'ion_modal_handle.dart' show kIonModalSheetRadius;
 import 'ionic_md.dart';
 
@@ -1067,6 +1071,110 @@ class IonSheetHeader extends StatelessWidget {
   final List<Widget> start;
   final List<Widget> end;
 
+  /// One `ion-buttons` slot: plain buttons share one [ToolbarButtonGroup]
+  /// (iOS: one glass capsule, md: a row); an [IonCloseButton] or a ready
+  /// [ToolbarButtonGroup] stays as it is.
+  static Widget? _slot(List<Widget> children) {
+    if (children.isEmpty) return null;
+    final parts = <Widget>[];
+    var run = <Widget>[];
+    void flush() {
+      if (run.isEmpty) return;
+      parts.add(ToolbarButtonGroup(children: run));
+      run = <Widget>[];
+    }
+
+    for (final child in children) {
+      if (child is IonCloseButton || child is ToolbarButtonGroup) {
+        flush();
+        parts.add(child);
+      } else {
+        run.add(child);
+      }
+    }
+    flush();
+    return parts.length == 1
+        ? parts.single
+        : Row(mainAxisSize: MainAxisSize.min, children: parts);
+  }
+
+  /// ionic-theme-ios27 sheet / card modal toolbar: 64pt, centred title,
+  /// the buttons of a slot in a glass capsule 12pt from the edge, hairline
+  /// below.
+  Widget _iosToolbar(BuildContext context, Widget titleWidget) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: kIonModalToolbarHeight,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(kIonModalSheetRadius)),
+          ),
+          child: NavigationToolbar(
+            leading: _slot(start),
+            middle: titleWidget,
+            trailing: _slot(end),
+            centerMiddle: true,
+            middleSpacing: 8,
+          ),
+        ),
+        const Divider(height: 0.5, thickness: 0.5),
+      ],
+    );
+  }
+
+  /// Ionic md toolbar: 56px, title 20px in, buttons in the toolbar colour
+  /// 4px from the edges, the md header shadow (`.header-md`) below.
+  Widget _mdToolbar(BuildContext context, Widget titleWidget) {
+    final theme = Theme.of(context);
+    final color = IonMd.toolbarText(theme.brightness);
+    final leading = _slot(start);
+    final trailing = _slot(end);
+    return Container(
+      height: 56,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: theme.appBarTheme.backgroundColor ?? theme.colorScheme.surface,
+        boxShadow: IonMd.headerShadow,
+      ),
+      child: IconButtonTheme(
+        data: IconButtonThemeData(
+          style: IconButton.styleFrom(
+              foregroundColor: color, iconSize: IonMd.toolbarIconSize),
+        ),
+        child: TextButtonTheme(
+          data: TextButtonThemeData(
+            style: TextButton.styleFrom(foregroundColor: color),
+          ),
+          child: IconTheme.merge(
+            data: IconThemeData(color: color),
+            child: Row(
+              children: [
+                // ion-title padding-start 20; ion-buttons margin 4.
+                if (leading == null)
+                  const SizedBox(width: IonMd.titleSpacing)
+                else ...[
+                  const SizedBox(width: IonMd.toolbarButtonsMargin),
+                  leading,
+                  const SizedBox(width: IonMd.titleSpacing),
+                ],
+                Expanded(child: titleWidget),
+                if (trailing != null) trailing,
+                SizedBox(
+                    width: trailing == null
+                        ? IonMd.titleSpacing
+                        : IonMd.toolbarButtonsMargin),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final rd = context.rdSkin;
@@ -1106,6 +1214,13 @@ class IonSheetHeader extends StatelessWidget {
               ),
             ],
           );
+    // Classic design: the Ionic toolbar of each look. (Asked again instead
+    // of `rd == null` so the Beta code below keeps its nullable checks.)
+    if (context.rdSkin == null) {
+      return ios
+          ? _iosToolbar(context, titleWidget)
+          : _mdToolbar(context, titleWidget);
+    }
     final header = Container(
       // PARITY_R5: iOS sheet toolbar 64pt (ionic-theme-ios27 modal-sheet
       // `--min-height: 64px`, no padding); md toolbar 56.
