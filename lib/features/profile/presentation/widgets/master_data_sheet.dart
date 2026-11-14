@@ -832,20 +832,25 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: fontSize * iosLabelScale,
-              height: 20.33 / 17,
-              color: Theme.of(context).colorScheme.onSurface,
+          // ROLLEN-A-14: the label names the field for screen readers.
+          ExcludeSemantics(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: fontSize * iosLabelScale,
+                height: 20.33 / 17,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
           ),
           const SizedBox(height: 4),
           ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 44),
-            child: TextField(
+            child: Semantics(
+              label: label,
+              child: TextField(
               controller: controller,
               style: style.copyWith(height: 20.33 / 17),
               keyboardType: keyboardType,
@@ -862,6 +867,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
                 focusedErrorBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
               ),
+            ),
             ),
           ),
         ],
