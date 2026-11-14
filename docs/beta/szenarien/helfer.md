@@ -172,20 +172,25 @@ sieht.
   4. Unter „Nur Leitung“ stehen „Notizen“, die Mitglieder nicht sehen.
 - **Ergebnis:** Änderungen werden sofort gespeichert. Es gibt keinen
   Speichern-Knopf.
-- **Gut zu wissen:** Verschiebst du die Zeit, wandert der Ablauf mit. Werke und
-  Ablauf änderst du im Reiter „Programm“.
+- **Gut zu wissen:** Verschiebst du die Zeit, wandert der Ablauf mit. Den
+  Ablauf änderst du im Reiter „Programm“, die Werke im „Überblick“.
 
 ### H-12 Den Ablauf eines Termins anlegen oder ändern
 
 - **Wo:** Termine › ein Termin › „Programm“
 - **Schritte:**
   1. Öffne den Reiter „Programm“.
-  2. Gibt es noch keinen Ablauf, tippe auf „Ablauf anlegen“. Sonst tippe neben
-     „Ablauf“ auf „Bearbeiten“.
-  3. Mit „Für Mitglieder sichtbar“ entscheidest du, ob die Mitglieder den
+  2. Gibt es noch keinen Ablauf, fragt die Seite „Womit möchtest du
+     beginnen?“. Wähle: mit den Werken des Termins, „Aus einer Vorlage“, wie
+     bei einem früheren Termin oder „Leer beginnen“.
+  3. Gibt es schon einen Ablauf, tippe neben „Ablauf“ auf „Bearbeiten“.
+  4. Mit „Für Mitglieder sichtbar“ entscheidest du, ob die Mitglieder den
      Ablauf sehen.
 - **Ergebnis:** Der Ablauf steht im Termin. Am Tag des Termins zeigt er, was
   gerade dran ist.
+- **Gut zu wissen:** Fehlen Werke des Termins im Ablauf, weist der Reiter
+  darauf hin, und „Einfügen“ setzt sie ans Ende. Ein Werk, das du in den
+  Ablauf aufnimmst, wird auch ein Werk des Termins.
 
 ### H-13 Die Anwesenheit eines Termins als Excel speichern
 

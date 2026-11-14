@@ -91,22 +91,28 @@ die Leitung kann.
 
 ### L-05 Die Werke eines Termins festlegen
 
-- **Wo:** Termine › ein Termin › „Programm“
-- **Voraussetzung:** Die Terminart verwaltet Werke.
+- **Wo:** Termine › ein Termin › „Überblick“ › „Werke“
 - **Schritte:**
-  1. Tippe auf „Werk“ und wähle die Werke aus.
-  2. Tippe auf ein Werk der Liste für „Zum Werk“, „Dirigent ändern“ oder „Werk
+  1. Bei einem Auftritt tippst du neben „Werke“ auf „Werk“ und wählst die
+     Werke aus. Sie stehen dann nummeriert im Termin.
+  2. Eine Probe ohne eigene Werke zeigt die Werke des nächsten Auftritts. Tippe
+     auf „Ändern“ und hake an, was geprobt wird.
+  3. Tippe auf ein Werk der Liste für „Zum Werk“, „Dirigent ändern“ oder „Werk
      entfernen“.
-- **Ergebnis:** Die Werke stehen nummeriert im Termin. Mitglieder sehen sie
-  und öffnen daraus ihre Noten.
-- **Gut zu wissen:** Nach „Werk entfernen“ gibt es „Rückgängig“.
+- **Ergebnis:** Die Werke stehen im Termin. Mitglieder sehen sie und öffnen
+  daraus ihre Noten.
+- **Gut zu wissen:** Als Auftritt gilt ein Termin, dessen Terminart
+  hervorgehoben ist. Die Liste einer Probe folgt dem Auftritt, bis du sie
+  änderst. „Wieder dem Auftritt folgen“ stellt das wieder her. Ein entferntes
+  Werk verlässt auch den Ablauf, danach gibt es „Rückgängig“.
 
 ### L-06 Einen Ablauf als Vorgabe für neue Termine übernehmen
 
-- **Wo:** Termine › ein Termin › „Programm“ › Ablauf
+- **Wo:** Termine › ein Termin › „Programm“ › „Bearbeiten“ › •••
 - **Schritte:**
   1. Richte den Ablauf ein (H-12).
-  2. Tippe auf „Für neue Termine dieser Art übernehmen“ und bestätige.
+  2. Tippe im Ablauf auf ••• und dann auf „Für neue Termine dieser Art
+     übernehmen“. Bestätige.
 - **Ergebnis:** Neue Termine dieser Art bekommen den Ablauf von selbst.
   Bestehende Termine bleiben, wie sie sind.
 

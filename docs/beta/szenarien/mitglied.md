@@ -121,11 +121,10 @@ erlaubt. In allgemeinen Gruppen fehlt „Werke“.
 - **Schritte:**
   1. Tippe auf den Termin.
 - **Ergebnis:** Die Seite zeigt oben, wie du eingeplant bist („Du bist
-  eingeplant“), darunter „Programm“ oder „Werke“, den „Ablauf“ und „Infos zum
-  Termin“.
+  eingeplant“), darunter „Werke“, den „Ablauf“ und „Infos zum Termin“.
 - **Gut zu wissen:** Der Ablauf lässt sich mit „Ganz ansehen“ vollständig
-  öffnen. Steht bei einem Vortrag das Programm noch nicht fest, sagt die Seite
-  das.
+  öffnen. Eine Probe ohne eigene Werke zeigt die Werke des nächsten Auftritts.
+  Steht bei einem Auftritt das Programm noch nicht fest, sagt die Seite das.
 
 ### M-09 Während des Termins dem Ablauf folgen
 
