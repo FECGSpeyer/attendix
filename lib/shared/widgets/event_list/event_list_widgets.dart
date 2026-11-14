@@ -674,6 +674,8 @@ class EventTodayCard extends StatelessWidget {
     final theme = Theme.of(context);
     final card = Card(
       margin: notInvited ? EdgeInsets.zero : margin,
+      // SEL-18: Ionic `.ev-today` is a flat div (no md card shadow).
+      elevation: 0,
       color: notInvited
           ? Color.alphaBlend(
               EvNotInvited.background(context),
