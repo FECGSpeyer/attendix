@@ -1001,6 +1001,13 @@ class IonToggleRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ios = ionIsIos(context);
+    final row = _buildRow(context, ios);
+    // PERSONEN-81: the screen reader reads label + switch state as one
+    // node (Ionic ion-item + ion-toggle). Classic only.
+    return context.rdSkin == null ? MergeSemantics(child: row) : row;
+  }
+
+  Widget _buildRow(BuildContext context, bool ios) {
     return Padding(
       padding: const EdgeInsets.only(left: 16),
       child: Container(
