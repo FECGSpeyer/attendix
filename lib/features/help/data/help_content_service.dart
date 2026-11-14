@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/locale_provider.dart';
+import '../../../core/providers/redesign_providers.dart';
 import 'fuse_search.dart';
 import 'help_content.dart';
 import 'help_content_app.dart';
+import 'help_content_beta.dart';
 import 'help_content_en.dart';
 import 'help_models.dart';
 
@@ -87,7 +89,27 @@ class HelpContentService {
 /// Help content in the UI language (Ionic `localizeHelp`): untranslated
 /// entries stay German; translated glossary terms keep their German name as
 /// alias so `[[Begriff]]` links in German articles still resolve.
-HelpContentService localizedHelpContentService(String language) {
+///
+/// [beta]: the articles on where things are follow the new design
+/// ([betaHelpArticles]).
+HelpContentService localizedHelpContentService(String language, {bool beta = false}) {
+  final service = _languageHelpContentService(language);
+  if (!beta) return service;
+  final versions = language == 'en' ? betaHelpArticlesEn : betaHelpArticles;
+  return HelpContentService(
+    categories: service.categories,
+    articles: [
+      for (final a in service.articles)
+        if (versions[a.id] case final t?)
+          HelpArticle(id: a.id, title: t.title, categoryId: a.categoryId, keywords: t.keywords, body: t.body)
+        else
+          a,
+    ],
+    glossary: service.glossary,
+  );
+}
+
+HelpContentService _languageHelpContentService(String language) {
   if (language != 'en') return const HelpContentService();
   return HelpContentService(
     categories: [
@@ -130,5 +152,8 @@ HelpContentService localizedHelpContentService(String language) {
 /// Help content service (German content ported from Ionic, English
 /// translation from Ionic content/en), following the UI language.
 final helpContentServiceProvider = Provider<HelpContentService>(
-  (ref) => localizedHelpContentService(ref.watch(localeProvider).languageCode),
+  (ref) => localizedHelpContentService(
+    ref.watch(localeProvider).languageCode,
+    beta: ref.watch(redesignEnabledProvider),
+  ),
 );

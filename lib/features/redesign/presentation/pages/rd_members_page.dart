@@ -144,6 +144,9 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
         ? null
         : rateFilterChip(l10n, rateFilter, ref.watch(attendanceTypesProvider).valueOrNull ?? const []);
     final percentages = ref.watch(listAttendancePercentagesProvider).valueOrNull ?? const <int, int>{};
+    // The latest past Termin that counts for the rate: who joined after it
+    // reads "neu" instead of a red 0 %.
+    final lastCounted = rateFilter.isDefault ? ref.watch(_lastCountedTerminProvider) : null;
     final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
     final absences = ref.watch(playerAbsencesProvider).valueOrNull ?? const <PlayerAbsence>[];
     final missing = canApprove ? ref.watch(rdMissingAccountsProvider) : const <Person>[];
@@ -185,7 +188,9 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
     List<Person> apply(List<Person> list, RdMembersListFilter f, Set<String>? ids) =>
         rdFilterMembers(list, f, otherInstanceUserIds: ids, fieldDefs: fields);
     final people = apply(allPeople, listFilter, otherIds);
-    final pending = apply(allPending, listFilter, otherIds);
+    // Wartet is never narrowed by the list filter: the count on the tab and
+    // the row "N neue Anmeldungen" always lead to everyone who waits.
+    final pending = allPending;
 
     final active = people.where((x) => !x.paused).toList();
     final paused = people.where((x) => x.paused).toList();
@@ -256,7 +261,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
         RdMembersFilter.paused => allPeople.where((x) => x.paused),
         RdMembersFilter.pending => allPending,
       };
-      var list = apply(base.toList(), f, ids);
+      var list = filter == RdMembersFilter.pending ? base.toList() : apply(base.toList(), f, ids);
       if (critical && filter == RdMembersFilter.active) list = rdCriticalMembers(list);
       return list.where(matches).length;
     }
@@ -353,7 +358,9 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
         ),
       ),
       const SizedBox(height: 6),
-      Row(
+      // No filter on Wartet (see above).
+      if (filter != RdMembersFilter.pending)
+        Row(
         children: [
           Expanded(
             child: SingleChildScrollView(
@@ -502,6 +509,8 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
               showGroup: s.isRegister,
               sortHint: _sortHint(person, listFilter.sort),
               percent: filter == RdMembersFilter.pending || person.id == null ? null : percentages[person.id],
+              lastCounted: lastCounted,
+              seasonRate: rateFilter.isDefault,
               absence: person.id == null ? null : rdCurrentAbsence(absences, person.id!),
               reason: switch (critical?.reasonOf(person)) {
                 final r? => rdCriticalHitText(r.rule, r.result, l10n),
@@ -909,6 +918,27 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
+/// Date of the latest past Termin whose type counts for the attendance
+/// rate; null while the list loads or nothing counted yet.
+final _lastCountedTerminProvider = Provider.autoDispose<DateTime?>((ref) {
+  final attendances = ref.watch(realtimeAttendanceListProvider).valueOrNull;
+  final types = ref.watch(attendanceTypesProvider).valueOrNull;
+  if (attendances == null || types == null) return null;
+  final counted = {
+    for (final t in types)
+      if (t.includeInAverage && t.id != null) t.id!,
+  };
+  final now = DateTime.now();
+  DateTime? last;
+  for (final a in attendances) {
+    if (a.typeId == null || !counted.contains(a.typeId)) continue;
+    final date = DateTime.tryParse(a.date)?.toLocal();
+    if (date == null || !date.isBefore(now)) continue;
+    if (last == null || date.isAfter(last)) last = date;
+  }
+  return last;
+});
+
 /// Color of an attendance percentage (≥ 75 present, ≥ 50 late, else absent).
 Color rdPercentColor(RdPalette p, int percent) =>
     percent >= 75 ? p.present : (percent >= 50 ? p.late : p.absent);
@@ -921,6 +951,8 @@ class _MemberRow extends StatelessWidget {
     required this.percent,
     required this.absence,
     required this.onTap,
+    this.lastCounted,
+    this.seasonRate = false,
     this.selected = false,
     this.checked,
     this.readOnly = false,
@@ -944,6 +976,10 @@ class _MemberRow extends StatelessWidget {
   final Person person;
   final bool showGroup;
   final int? percent;
+
+  /// For "neu" instead of 0 % (see [rdShownRate]).
+  final DateTime? lastCounted;
+  final bool seasonRate;
   final PlayerAbsence? absence;
   final VoidCallback? onTap;
 
@@ -1007,7 +1043,8 @@ class _MemberRow extends StatelessWidget {
     final helperLastDay = readOnly ? null : helperUntil(person);
     if (helperLastDay != null) hints.add(l10n.rdHelperUntil(short.format(DateTime.parse(helperLastDay))));
 
-    final pct = percent;
+    final rate = rdShownRate(person, percent, lastCounted: lastCounted, seasonRate: seasonRate);
+    final pct = rate.percent;
     final low = pct != null && pct < 50;
     final color = pct == null ? p.text2 : rdPercentColor(p, pct);
 
@@ -1081,6 +1118,10 @@ class _MemberRow extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (rate.isNew) ...[
+                    const SizedBox(width: 8),
+                    Text(l10n.redesignMembersNew, style: TextStyle(fontSize: 15, color: p.text2)),
+                  ],
                   if (pct != null) ...[
                     const SizedBox(width: 8),
                     if (low) ...[

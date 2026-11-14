@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/constants/enums.dart' show Role;
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/viewer_providers.dart';
 import '../../../../data/models/parent/parent_model.dart';
@@ -8,6 +9,7 @@ import '../../../../data/models/viewer/viewer.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../../../settings/presentation/pages/parents_page.dart' show ParentsPage;
+import '../../../settings/presentation/pages/user_management_page.dart' show TenantUser, tenantUsersProvider;
 import '../../../settings/presentation/pages/viewers_page.dart' show ViewersPage;
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
@@ -30,6 +32,9 @@ class RdParentsPage extends ConsumerWidget {
     final async = ref.watch(parentsProvider);
     // TENANT: never the old group's list after a group or account switch.
     final parents = rdLoadedValue(async);
+    final accounts = parents == null
+        ? const <TenantUser>[]
+        : rdRoleAccountsWithoutEntry(ref.watch(tenantUsersProvider), Role.parent, {for (final p in parents) p.appId});
     return RdManageListPage(
       title: rdManageTitle(l10n, RdManageEntry.parents),
       intro: l10n.redesignParentsListIntro,
@@ -66,6 +71,7 @@ class RdParentsPage extends ConsumerWidget {
                     ),
                 ],
               ),
+              _accountsSection(l10n.redesignParentsListAccounts, accounts),
             ],
       loadFailed: async.hasError && !async.isLoading,
       onRetry: () => ref.invalidate(parentsProvider),
@@ -81,6 +87,7 @@ class RdParentsPage extends ConsumerWidget {
       ],
       onRefresh: () async {
         ref.invalidate(parentsProvider);
+        ref.invalidate(tenantUsersProvider);
         await ref.read(parentsProvider.future).catchError((_) => const <ParentModel>[]);
       },
     );
@@ -106,6 +113,9 @@ class RdViewersPage extends ConsumerWidget {
     final async = ref.watch(viewersProvider);
     // TENANT: never the old group's list after a group or account switch.
     final viewers = rdLoadedValue(async);
+    final accounts = viewers == null
+        ? const <TenantUser>[]
+        : rdRoleAccountsWithoutEntry(ref.watch(tenantUsersProvider), Role.viewer, {for (final v in viewers) v.appId});
     return RdManageListPage(
       title: rdManageTitle(l10n, RdManageEntry.viewers),
       intro: l10n.redesignViewersListIntro,
@@ -123,6 +133,7 @@ class RdViewersPage extends ConsumerWidget {
                     ),
                 ],
               ),
+              _accountsSection(l10n.redesignViewersListAccounts, accounts),
             ],
       loadFailed: async.hasError && !async.isLoading,
       onRetry: () => ref.invalidate(viewersProvider),
@@ -132,6 +143,7 @@ class RdViewersPage extends ConsumerWidget {
       onAdd: viewers == null ? null : () => ViewersPage.showAddViewerDialog(context, ref),
       onRefresh: () async {
         ref.invalidate(viewersProvider);
+        ref.invalidate(tenantUsersProvider);
         await ref.read(viewersProvider.future).catchError((_) => const <Viewer>[]);
       },
     );
@@ -144,6 +156,27 @@ class RdViewersPage extends ConsumerWidget {
     if (context.mounted) await ViewersPage.removeViewerWithConfirmation(context, ref, viewer, repo: repo);
   }
 }
+
+/// The accounts of the group with [role] that no entry of the list stands
+/// for ([entryAppIds]: the accounts of the invited Eltern / Beobachter). A
+/// role given another way (e.g. changed in the user list) wrote no entry,
+/// so the list looked empty although somebody has that access. Empty while
+/// the accounts load or cannot be read.
+List<TenantUser> rdRoleAccountsWithoutEntry(AsyncValue<List<TenantUser>> users, Role role, Set<String> entryAppIds) => [
+  for (final u in rdLoadedValue(users) ?? const <TenantUser>[])
+    if (u.roleEnum == role && !entryAppIds.contains(u.userId)) u,
+];
+
+/// The accounts without an entry as an own section (name unknown: only the
+/// e-mail; nothing to remove here, the entry is missing).
+RdManageListSection _accountsSection(String title, List<TenantUser> accounts) => RdManageListSection(
+  key: 'accounts',
+  title: title,
+  items: [
+    for (final u in accounts)
+      RdManageListItem(id: 'account-${u.userId}', title: u.email ?? '–', icon: Icons.person_outline),
+  ],
+);
 
 /// Action sheet of a row with the one action "… entfernen"; true when it
 /// was chosen (the old confirmation follows).

@@ -11684,6 +11684,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'All selected fields are required. First name, last name and group are always included.';
 
   @override
+  String get rdSettingsRegisterOffConfirm => 'Turn off';
+
+  @override
+  String get rdSettingsRegisterOffMessage =>
+      'The sign-up link you handed out stops working. Turning it on again later creates a new link.';
+
+  @override
+  String get rdSettingsRegisterOffTitle => 'Turn off self sign-up?';
+
+  @override
   String get rdSettingsRuleAnd => 'And';
 
   @override
@@ -12301,6 +12311,9 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get rdTeamNoProtocol => 'no minutes';
 
   @override
   String get rdTeamNoTopicsYet => 'no topics yet';
@@ -13013,6 +13026,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignBellByParents => 'reported by the parents';
+
+  @override
+  String get redesignBellDoneAccepted => 'Done: you accepted';
+
+  @override
+  String get redesignBellDoneDeclined => 'Done: you declined';
 
   @override
   String get redesignBellEvent => 'Event';
@@ -16249,6 +16268,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignMembersLow => 'below 50 %';
 
   @override
+  String get redesignMembersNew => 'new';
+
+  @override
   String get redesignMembersNoMatch => 'Nobody matches the search.';
 
   @override
@@ -16541,6 +16563,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String redesignParentsChildRate(Object name, Object percent) {
     return '$name · $percent %';
   }
+
+  @override
+  String get redesignParentsListAccounts => 'Other accounts with parent access';
 
   @override
   String get redesignParentsListAdd => 'Invite parent';
@@ -18241,6 +18266,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignUnavailabilityWeekdays => 'Weekdays';
+
+  @override
+  String get redesignViewersListAccounts =>
+      'Other accounts with observer access';
 
   @override
   String get redesignViewersListAdd => 'Invite observer';

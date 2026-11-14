@@ -14614,6 +14614,18 @@
   "@rdSettingsRegisterFieldsHint": {
     "description": "rdSettings.registerFieldsHint"
   },
+  "rdSettingsRegisterOffConfirm": "Ausschalten",
+  "@rdSettingsRegisterOffConfirm": {
+    "description": "rdSettings.registerOffConfirm"
+  },
+  "rdSettingsRegisterOffMessage": "Der Anmelde-Link, den du verteilt hast, funktioniert dann nicht mehr. Schaltest du es später wieder ein, gibt es einen neuen Link.",
+  "@rdSettingsRegisterOffMessage": {
+    "description": "rdSettings.registerOffMessage"
+  },
+  "rdSettingsRegisterOffTitle": "Selbst anmelden ausschalten?",
+  "@rdSettingsRegisterOffTitle": {
+    "description": "rdSettings.registerOffTitle"
+  },
   "rdSettingsRuleAnd": "Und",
   "@rdSettingsRuleAnd": {
     "description": "rdSettings.rule.and"
@@ -15380,6 +15392,10 @@
         "type": "num"
       }
     }
+  },
+  "rdTeamNoProtocol": "ohne Protokoll",
+  "@rdTeamNoProtocol": {
+    "description": "rdTeam.noProtocol"
   },
   "rdTeamNoTopicsYet": "noch keine Themen",
   "@rdTeamNoTopicsYet": {
@@ -16222,6 +16238,14 @@
   "redesignBellByParents": "von den Eltern gemeldet",
   "@redesignBellByParents": {
     "description": "redesign.bell.byParents"
+  },
+  "redesignBellDoneAccepted": "Erledigt: du hast zugesagt",
+  "@redesignBellDoneAccepted": {
+    "description": "redesign.bell.doneAccepted"
+  },
+  "redesignBellDoneDeclined": "Erledigt: du hast abgesagt",
+  "@redesignBellDoneDeclined": {
+    "description": "redesign.bell.doneDeclined"
   },
   "redesignBellEvent": "Termin",
   "@redesignBellEvent": {
@@ -20096,6 +20120,10 @@
   "@redesignMembersLow": {
     "description": "redesign.members.low"
   },
+  "redesignMembersNew": "neu",
+  "@redesignMembersNew": {
+    "description": "redesign.members.new"
+  },
   "redesignMembersNoMatch": "Niemand passt zur Suche.",
   "@redesignMembersNoMatch": {
     "description": "redesign.members.noMatch"
@@ -20462,6 +20490,10 @@
       "name": {},
       "percent": {}
     }
+  },
+  "redesignParentsListAccounts": "Weitere Konten mit Eltern-Zugang",
+  "@redesignParentsListAccounts": {
+    "description": "redesign.parentsList.accounts"
   },
   "redesignParentsListAdd": "Elternteil einladen",
   "@redesignParentsListAdd": {
@@ -22596,6 +22628,10 @@
   "redesignUnavailabilityWeekdays": "Wochentage",
   "@redesignUnavailabilityWeekdays": {
     "description": "redesign.unavailability.weekdays"
+  },
+  "redesignViewersListAccounts": "Weitere Konten mit Beobachter-Zugang",
+  "@redesignViewersListAccounts": {
+    "description": "redesign.viewersList.accounts"
   },
   "redesignViewersListAdd": "Beobachter einladen",
   "@redesignViewersListAdd": {

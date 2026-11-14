@@ -82,6 +82,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   }
 
   Future<void> _refresh() async {
+    // A failed settings load fell back to the own library: read it again.
+    if (ref.read(songTenantSettingsFailedProvider)) ref.invalidate(songTenantSettingsProvider);
     ref.invalidate(songsProvider);
     ref.invalidate(currentSongsProvider);
     ref.invalidate(songCategoriesProvider);
@@ -274,7 +276,11 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final sharedName = ref.watch(rdSharedLibraryNameProvider);
     final canManage = isAdmin && ref.watch(rdLibraryEditableProvider);
     final async = ref.watch(songsListDataProvider(null));
-    final data = async.valueOrNull;
+    // Which library the group uses could not be read: what loaded may be
+    // the own, empty one instead of the shared Werke. No list and no "+"
+    // (a new Werk would land in the wrong library) until it is known.
+    final sourceUnknown = ref.watch(songTenantSettingsFailedProvider);
+    final data = sourceUnknown ? null : async.valueOrNull;
     // Sammlungen: null before the database has them (then as before).
     final visibleCollections = ref.watch(rdVisibleCollectionsProvider);
     final chosenCollection = rdShownCollectionId(ref.watch(rdWorksCollectionProvider), visibleCollections);
@@ -343,7 +349,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         onRefresh: _refresh,
         children: [
           ...header,
-          async.hasError && !async.isLoading
+          sourceUnknown || (async.hasError && !async.isLoading)
               ? RdInfoCard(
                 text: l10n.redesignTodayLoadFailed,
                 icon: Icons.cloud_off_outlined,

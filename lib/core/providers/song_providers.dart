@@ -34,11 +34,33 @@ final songTenantSettingsProvider =
   final repo = ref.watch(songRepositoryForTenantProvider(
       (tenantId: tenantId, songSourceTenantId: null)));
   try {
-    return await repo.getSongTenantSettings();
+    final settings = await repo.getSongTenantSettings();
+    _setSongSettingsFailed(ref, false);
+    return settings;
   } catch (_) {
+    _setSongSettingsFailed(ref, true);
     return const SongTenantSettings();
   }
 });
+
+/// Whether the last load of [songTenantSettingsProvider] failed and fell
+/// back to the defaults. The Werke then come from the own group even when
+/// the group shares another one's library, so an empty list may be wrong
+/// and a new Werk would land in the wrong library. The redesign shows an
+/// error card instead (the classic pages keep the fallback).
+final songTenantSettingsFailedProvider = StateProvider<bool>((ref) {
+  ref.watch(currentTenantIdProvider);
+  return false;
+});
+
+void _setSongSettingsFailed(Ref ref, bool failed) {
+  try {
+    final flag = ref.read(songTenantSettingsFailedProvider.notifier);
+    if (flag.state != failed) flag.state = failed;
+  } catch (_) {
+    // Disposed while loading (tenant switch): the next load sets it.
+  }
+}
 
 /// Initialized song repository with tenant context and song source tenant.
 /// SOL_FIX1: per-(tenant, song source) immutable instance, so a tenant

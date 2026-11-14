@@ -71,6 +71,23 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
     final upcomingIds = upcoming.map((a) => a.id).toSet();
     final protocols = protocolsAsync.valueOrNull ?? const <Protocol>[];
     final past = protocols.where((x) => x.attendanceId != null && !upcomingIds.contains(x.attendanceId)).toList();
+    // Leads also see past meetings nobody wrote a protocol for yet (it can
+    // still be written); a failed load only leaves them out.
+    final withProtocol = {
+      for (final x in protocols)
+        if (x.attendanceId != null) x.attendanceId!,
+    };
+    final bare = !isLeader || protocolsAsync.valueOrNull == null
+        ? const <ProtocolAttendance>[]
+        : [
+            for (final a in ref.watch(pastProtocolAttendancesProvider).valueOrNull ?? const <ProtocolAttendance>[])
+              if (!withProtocol.contains(a.id)) a,
+          ];
+    // Both kinds in one list, newest first.
+    final pastRows = <({String date, Protocol? protocol, ProtocolAttendance? bare})>[
+      for (final x in past) (date: x.attendance?.date ?? '', protocol: x, bare: null),
+      for (final a in bare) (date: a.date, protocol: null, bare: a),
+    ]..sort((a, b) => b.date.compareTo(a.date));
     // Today's meeting stays under "Geplant" until tomorrow: once its
     // protocol is published the row opens the protocol.
     final publishedIds = {
@@ -122,7 +139,7 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
       if (loading)
         const TeamOrgListSkeleton()
       else ...[
-        if (upcoming.isEmpty && past.isEmpty && !failed)
+        if (upcoming.isEmpty && pastRows.isEmpty && !failed)
           Padding(
             padding: const EdgeInsets.only(bottom: 18),
             child: RdCard(
@@ -169,19 +186,30 @@ class _RdMeetingsTabState extends ConsumerState<RdMeetingsTab> {
           ],
         ),
         const SizedBox(height: 18),
-        if (past.isNotEmpty) ...[
+        if (pastRows.isNotEmpty) ...[
           RdGroupLabel(l10n.rdTeamPast),
           RdGroupedList(
             children: [
-              for (final protocol in past)
-                RdListRow(
-                  key: ValueKey('rd-meeting-past-${protocol.attendanceId}'),
-                  leading: _dateTile(protocol.attendance?.date),
-                  title: attendanceTitle(protocol.attendance?.typeInfo, _type(protocol.attendance?.typeId, types)),
-                  subtitle: pastSubtitle(protocol),
-                  trailing: protocol.status != 'published' ? RdPill(l10n.teamOrgDraft, tone: RdTone.late) : null,
-                  onTap: () => context.push('/settings/protocol/${protocol.attendanceId}'),
-                ),
+              for (final row in pastRows)
+                if (row.protocol case final protocol?)
+                  RdListRow(
+                    key: ValueKey('rd-meeting-past-${protocol.attendanceId}'),
+                    leading: _dateTile(protocol.attendance?.date),
+                    title: attendanceTitle(protocol.attendance?.typeInfo, _type(protocol.attendance?.typeId, types)),
+                    subtitle: pastSubtitle(protocol),
+                    trailing: protocol.status != 'published' ? RdPill(l10n.teamOrgDraft, tone: RdTone.late) : null,
+                    onTap: () => context.push('/settings/protocol/${protocol.attendanceId}'),
+                  )
+                else if (row.bare case final att?)
+                  // No protocol yet: the row opens it to write it now.
+                  RdListRow(
+                    key: ValueKey('rd-meeting-past-${att.id}'),
+                    leading: _dateTile(att.date),
+                    title: attendanceTitle(att.typeInfo, _type(att.typeId, types)),
+                    subtitle: formatShortWeekdayDate(att.date),
+                    trailing: RdPill(l10n.rdTeamNoProtocol),
+                    onTap: () => context.push('/settings/protocol/${att.id}'),
+                  ),
             ],
           ),
         ],

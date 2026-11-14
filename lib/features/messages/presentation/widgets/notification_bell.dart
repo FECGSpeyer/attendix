@@ -251,7 +251,46 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
 
   UserNotificationNotifier get _notifier => ref.read(userNotificationNotifierProvider.notifier);
 
-  bool _isRead(UserNotification n) => _readOverrides[n.id] ?? n.read;
+  /// Beta: reminders to answer a Termin that the person has answered since
+  /// (id → zugesagt), see [bellAnsweredReminders]. They count as read.
+  Map<String, bool> _answered = const {};
+
+  /// Answered reminders already marked read on the server (once each).
+  final Set<String> _autoRead = {};
+
+  bool _isRead(UserNotification n) => _readOverrides[n.id] ?? (n.read || _answered.containsKey(n.id));
+
+  /// Beta: the answered reminders of [list]; the unread ones are marked
+  /// read on the server too, so the bell's count follows.
+  Map<String, bool> _answeredReminders(List<UserNotification> list) {
+    if (!list.any(bellAsksForAnswer)) return const {};
+    final data = ref.watch(signoutDataProvider).valueOrNull;
+    if (data == null) return const {};
+    final own = [...data.allUpcoming, ...data.past];
+    final answered = bellAnsweredReminders(list, (tenantId, attendanceId) {
+      final matches = [
+        for (final a in own)
+          if (a.isMember && a.tenantId == tenantId && a.attendanceId == attendanceId) a,
+      ];
+      // Several entries (a parent's children): unclear whose answer is meant.
+      return matches.length == 1 ? bellOwnAnswer(matches.single.status) : null;
+    });
+    final toMark = [
+      for (final n in list)
+        if (!n.read && answered.containsKey(n.id) && !_readOverrides.containsKey(n.id) && _autoRead.add(n.id)) n,
+    ];
+    if (toMark.isNotEmpty) {
+      final notifier = _notifier;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        for (final n in toMark) {
+          // Stays "Früher" in this sheet either way; a failed mark only
+          // leaves the count as it was.
+          notifier.setRead(n, true).catchError((Object _) {});
+        }
+      });
+    }
+    return answered;
+  }
 
   Future<void> _guard(Future<void> Function() action) async {
     try {
@@ -451,6 +490,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
   ) {
     final p = context.rd;
     final l10n = context.l10n;
+    _answered = _answeredReminders(list);
     final fresh = [for (final n in list) if (!_isRead(n)) n];
     final older = [for (final n in list) if (_isRead(n)) n];
     // REDESIGN (Beta bell): sign-in/out entries of one Termin form one block.
@@ -643,6 +683,13 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
     final read = _isRead(n);
     final tenantName = _allTenants ? _tenantName(n, tenants) : '';
     final body = n.body.replaceAll(RegExp(r'\s+'), ' ').trim();
+    final l10n = context.l10n;
+    final done = switch (_answered[n.id]) {
+      null => null,
+      true => l10n.redesignBellDoneAccepted,
+      false => l10n.redesignBellDoneDeclined,
+    };
+    final subtitle = [if (done != null) done, if (tenantName.isNotEmpty) tenantName].join(' · ');
     return _betaSlidable(
       n,
       RdListRow(
@@ -651,7 +698,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
           children: [_unreadDot(read), const SizedBox(width: 8), RdRowIcon(_betaIcon(n.type))],
         ),
         title: body,
-        subtitle: tenantName.isEmpty ? null : tenantName,
+        subtitle: subtitle.isEmpty ? null : subtitle,
         value: _betaTime(n),
         showChevron: n.isNavigable,
         onTap: () => _onTap(n),

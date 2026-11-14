@@ -365,6 +365,16 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
         'registration_fields': fields,
       }, (c) => c.copyWith(registerId: id, registrationFields: fields));
     } else {
+      // The link dies with the switch: said before, since a new one has to
+      // be handed out again.
+      final confirmed = await showAppConfirm(
+        context,
+        title: context.l10n.rdSettingsRegisterOffTitle,
+        message: context.l10n.rdSettingsRegisterOffMessage,
+        confirmText: context.l10n.rdSettingsRegisterOffConfirm,
+        destructive: true,
+      );
+      if (!confirmed || !mounted) return;
       // Ionic: off → no link, no auto approval, no fields.
       await _save(t.id, {
         'register_id': null,

@@ -542,6 +542,7 @@
         "absentFrom": "abwesend ab {date}",
         "pausedUntil": "pausiert bis {date}",
         "percent": "{percent} %",
+        "new": "neu",
         "low": "unter 50 %",
         "add": "Person hinzufügen",
         "empty": "Noch keine Mitglieder.",
@@ -840,13 +841,15 @@
         "intro": "Eltern sehen die Anwesenheiten ihrer Kinder und tragen Abwesenheiten ein.",
         "empty": "Noch keine Eltern eingeladen.",
         "add": "Elternteil einladen",
-        "remove": "Elternteil entfernen"
+        "remove": "Elternteil entfernen",
+        "accounts": "Weitere Konten mit Eltern-Zugang"
       },
       "viewersList": {
         "intro": "Beobachter dürfen Anwesenheiten und Personendaten nur ansehen.",
         "empty": "Noch keine Beobachter eingeladen.",
         "add": "Beobachter einladen",
-        "remove": "Beobachter entfernen"
+        "remove": "Beobachter entfernen",
+        "accounts": "Weitere Konten mit Beobachter-Zugang"
       },
       "archiveList": {
         "intro": "Ausgetretene Personen. Tippe auf eine Person, um sie anzusehen.",
@@ -1694,6 +1697,8 @@
         "tasksTitle": "Aufgaben aus diesem Termin"
       },
       "bell": {
+        "doneAccepted": "Erledigt: du hast zugesagt",
+        "doneDeclined": "Erledigt: du hast abgesagt",
         "reports": "{count, plural, one {1 Meldung} other {{count} Meldungen}}",
         "openAttendance": "Zur Anwesenheit",
         "openEvent": "Zum Termin",
@@ -2253,6 +2258,7 @@
         "absentFrom": "away from {date}",
         "pausedUntil": "paused until {date}",
         "percent": "{percent} %",
+        "new": "new",
         "low": "below 50 %",
         "add": "Add person",
         "empty": "No members yet.",
@@ -2551,13 +2557,15 @@
         "intro": "Parents see their children's attendance and enter absences.",
         "empty": "No parents invited yet.",
         "add": "Invite parent",
-        "remove": "Remove parent"
+        "remove": "Remove parent",
+        "accounts": "Other accounts with parent access"
       },
       "viewersList": {
         "intro": "Observers can only view attendance and personal data.",
         "empty": "No observers invited yet.",
         "add": "Invite observer",
-        "remove": "Remove observer"
+        "remove": "Remove observer",
+        "accounts": "Other accounts with observer access"
       },
       "archiveList": {
         "intro": "People who have left. Tap a person to view them.",
@@ -3405,6 +3413,8 @@
         "tasksTitle": "Tasks from this event"
       },
       "bell": {
+        "doneAccepted": "Done: you accepted",
+        "doneDeclined": "Done: you declined",
         "reports": "{count, plural, one {1 update} other {{count} updates}}",
         "openAttendance": "Open attendance",
         "openEvent": "Open event",

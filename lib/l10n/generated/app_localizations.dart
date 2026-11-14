@@ -19063,6 +19063,24 @@ abstract class AppLocalizations {
   /// **'Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.'**
   String get rdSettingsRegisterFieldsHint;
 
+  /// rdSettings.registerOffConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Ausschalten'**
+  String get rdSettingsRegisterOffConfirm;
+
+  /// rdSettings.registerOffMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Der Anmelde-Link, den du verteilt hast, funktioniert dann nicht mehr. Schaltest du es später wieder ein, gibt es einen neuen Link.'**
+  String get rdSettingsRegisterOffMessage;
+
+  /// rdSettings.registerOffTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Selbst anmelden ausschalten?'**
+  String get rdSettingsRegisterOffTitle;
+
   /// rdSettings.rule.and
   ///
   /// In de, this message translates to:
@@ -20045,6 +20063,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {1 neuer Vorschlag} other {{count} neue Vorschläge}}'**
   String rdTeamNewSuggestions(num count);
+
+  /// rdTeam.noProtocol
+  ///
+  /// In de, this message translates to:
+  /// **'ohne Protokoll'**
+  String get rdTeamNoProtocol;
 
   /// rdTeam.noTopicsYet
   ///
@@ -21143,6 +21167,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'von den Eltern gemeldet'**
   String get redesignBellByParents;
+
+  /// redesign.bell.doneAccepted
+  ///
+  /// In de, this message translates to:
+  /// **'Erledigt: du hast zugesagt'**
+  String get redesignBellDoneAccepted;
+
+  /// redesign.bell.doneDeclined
+  ///
+  /// In de, this message translates to:
+  /// **'Erledigt: du hast abgesagt'**
+  String get redesignBellDoneDeclined;
 
   /// redesign.bell.event
   ///
@@ -25878,6 +25914,12 @@ abstract class AppLocalizations {
   /// **'unter 50 %'**
   String get redesignMembersLow;
 
+  /// redesign.members.new
+  ///
+  /// In de, this message translates to:
+  /// **'neu'**
+  String get redesignMembersNew;
+
   /// redesign.members.noMatch
   ///
   /// In de, this message translates to:
@@ -26369,6 +26411,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{name} · {percent} %'**
   String redesignParentsChildRate(Object name, Object percent);
+
+  /// redesign.parentsList.accounts
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Konten mit Eltern-Zugang'**
+  String get redesignParentsListAccounts;
 
   /// redesign.parentsList.add
   ///
@@ -29105,6 +29153,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Wochentage'**
   String get redesignUnavailabilityWeekdays;
+
+  /// redesign.viewersList.accounts
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Konten mit Beobachter-Zugang'**
+  String get redesignViewersListAccounts;
 
   /// redesign.viewersList.add
   ///
