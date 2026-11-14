@@ -792,6 +792,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             // ATTENDANCE_SIGNOUT: Anmeldefelder (adjustable at any time)
             _section(
               title: context.l10n.typeSettingsSignupFields,
+              // F-EINST-33: Ionic `ion-badge color="medium"` with the count
+              // (only when there are fields); the Beta keeps its header.
+              action: context.rdSkin == null && _registrationFields.isNotEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: IonBadge(text: '${_registrationFields.length}', color: AppColors.medium),
+                    )
+                  : null,
               items: [RegistrationFieldsEditor(
                 fields: _registrationFields,
                 onChanged: (fields) => setState(() {
