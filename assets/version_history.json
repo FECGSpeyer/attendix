@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.155.0",
+      "date": "15.11.2026",
+      "changes": [
+        "✨ Beta-Ablauf: Beim Hinzufügen bleibt das Blatt offen, bis du auf „Fertig“ tippst, auch nach einem neuen Block",
+        "✨ Beta-Ablauf: Der Knopf heißt nach dem ersten Punkt „Weiteren Punkt hinzufügen“, darüber steht, wie viele Punkte und Minuten schon dazugekommen sind",
+        "✨ Beta-Ablauf: „Programmblock“ steht als eigene Zeile unter „Hinzufügen“"
+      ]
+    },
+    {
       "version": "0.154.1",
       "date": "14.11.2026",
       "changes": [
