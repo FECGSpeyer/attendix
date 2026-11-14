@@ -72,6 +72,25 @@ void main() {
     });
   });
 
+  testWidgets('OtpCodeField keeps a text field semantics node (web a11y tree)',
+      (tester) async {
+    final handle = tester.ensureSemantics();
+    await setPhone(tester);
+    final controller = TextEditingController();
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(app(Scaffold(
+      body: Center(child: OtpCodeField(controller: controller)),
+    )));
+    // The invisible input sits under Opacity(0); its semantics must not be
+    // dropped, otherwise the web cannot type into it.
+    expect(
+      find.semantics.byPredicate((node) =>
+          node.getSemanticsData().flagsCollection.isTextField),
+      findsOneWidget,
+    );
+    handle.dispose();
+  });
+
   group('Neue Instanz anlegen (Ionic register.page)', () {
     testWidgets('dismissable: close button at the end, no account menu',
         (tester) async {
