@@ -22,7 +22,6 @@ import '../widgets/songs_selection_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'
     hide IonInformationIcon;
 import '../../../../shared/widgets/layout/ionic_ios.dart';

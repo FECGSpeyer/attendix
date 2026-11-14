@@ -20,7 +20,6 @@ import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
 import 'ion/ion_widgets.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
 
 DateFormat get _dateFormat => DateFormat(dateFmt());
 
