@@ -336,7 +336,10 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
                 controller: _conductor,
                 caption: widget.conductorLabel ?? l10n.planningPerformer,
                 placeholder: _nz(widget.conductorHint) ?? _nz(widget.conductorLabel) ?? l10n.planningEnterPerformer,
-                maxLines: 3,
+                // F-ABL-03: Ionic alert inputs are single-line; with room
+                // for 3 lines the long placeholder wrapped and doubled the
+                // field height. A performer name never needs more.
+                maxLines: 1,
                 textCapitalization: TextCapitalization.words,
               ),
             if (widget.withInfo)
