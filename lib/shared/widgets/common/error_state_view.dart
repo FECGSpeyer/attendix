@@ -5,6 +5,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
 import '../../../core/utils/error_message.dart';
+import '../adaptive/ion_button.dart';
 import '../adaptive/ion_button_label.dart';
 
 /// Full-page error state: icon, friendly message, retry button.
@@ -85,10 +86,10 @@ class ErrorStateView extends StatelessWidget {
                 ),
               if (onRetry != null) ...[
                 const SizedBox(height: AppDimensions.paddingL),
-                FilledButton.icon(
+                IonButton(
                   onPressed: onRetry,
-                  icon: Icon(AppIcons.refresh),
-                  label: IonButtonLabel(l10n.messagesRetry),
+                  icon: AppIcons.refresh,
+                  label: l10n.messagesRetry,
                 ),
               ],
               if (onSecondary != null && secondaryLabel != null) ...[

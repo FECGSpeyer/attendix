@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import '../adaptive/ion_button.dart';
 import '../adaptive/ion_button_label.dart';
 
 /// Empty state size variants
@@ -239,6 +241,14 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
             // Action button
             if (widget.onAction != null) ...[
               SizedBox(height: widget.size == EmptyStateSize.small ? 16 : 24),
+              // Classic: the Ionic solid button (Material's tonal button
+              // has no Ionic counterpart); the Beta design keeps it.
+              if (context.rdSkin == null)
+                IonButton(
+                  label: widget.actionLabel ?? 'Action',
+                  onPressed: widget.onAction,
+                )
+              else
               FilledButton.tonal(
                 onPressed: widget.onAction,
                 child: IonButtonLabel(widget.actionLabel ?? 'Action'),

@@ -17,7 +17,8 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/extra_fields_repository.dart';
 import '../../../../data/repositories/song_repository.dart' show songRepositoryForTenantProvider;
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonInsetList, IonItem;
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../widgets/ion_condense.dart';
 import '../widgets/settings_list.dart';
@@ -780,6 +781,40 @@ Future<ExtraField?> showExtraFieldSheet(
                             ),
                           ),
                       ],
+                      // Ionic: the last `ion-item-group` of the sheet is one
+                      // `ion-item button detail="false"` with a coloured
+                      // label – "Alle zurücksetzen" (warning) in the edit
+                      // sheet, "Feld hinzufügen" (primary) in the add sheet;
+                      // the edit sheet applies its changes when it is closed.
+                      if (context.rdSkin == null) ...[
+                        if (isEdit && isPerson) ...[
+                          const SizedBox(height: AppDimensions.paddingM),
+                          IonInsetList(
+                            margin: EdgeInsets.zero,
+                            children: [
+                              IonItem(
+                                title: Text(context.l10n.extraFieldsResetAll),
+                                titleColor: AppColors.warning,
+                                onTap: resetValues,
+                              ),
+                            ],
+                          ),
+                        ],
+                        if (!isEdit) ...[
+                          const SizedBox(height: AppDimensions.paddingM),
+                          IonInsetList(
+                            margin: EdgeInsets.zero,
+                            children: [
+                              IonItem(
+                                title: Text(context.l10n.typeSettingsAddField),
+                                titleColor: AppColors.primary,
+                                onTap: submit,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ] else ...[
+                      // Beta design: its buttons as before.
                       if (isEdit && isPerson) ...[
                         const SizedBox(height: AppDimensions.paddingS),
                         TextButton(
@@ -788,14 +823,13 @@ Future<ExtraField?> showExtraFieldSheet(
                               style: const TextStyle(color: AppColors.warning)),
                         ),
                       ],
-                      // Ionic: only the add sheet has a button; the edit sheet
-                      // applies its changes when it is closed.
                       if (!isEdit) ...[
                         const SizedBox(height: AppDimensions.paddingM),
                         ElevatedButton(
                           onPressed: submit,
                           child: Text(context.l10n.typeSettingsAddField),
                         ),
+                      ],
                       ],
                     ],
                   ),

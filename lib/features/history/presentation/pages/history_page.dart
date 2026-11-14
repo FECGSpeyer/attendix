@@ -140,10 +140,10 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         const SizedBox(height: 16),
                         Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e))),
                         const SizedBox(height: 16),
-                        ElevatedButton(
+                        IonButton(
                           onPressed:
                               () => ref.invalidate(performanceHistoryProvider),
-                          child: IonButtonLabel(context.l10n.messagesRetry),
+                          label: context.l10n.messagesRetry,
                         ),
                       ],
                     ),

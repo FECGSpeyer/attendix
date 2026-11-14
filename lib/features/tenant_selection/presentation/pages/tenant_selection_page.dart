@@ -549,9 +549,9 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppDimensions.paddingL),
-                  ElevatedButton(
+                  IonButton(
                     onPressed: () => ref.refresh(userTenantsProvider),
-                    child: IonButtonLabel(context.l10n.messagesRetry),
+                    label: context.l10n.messagesRetry,
                   ),
                 ],
               ),
