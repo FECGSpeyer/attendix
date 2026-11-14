@@ -197,12 +197,13 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
       backgroundColor: ios ? Colors.transparent : null,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leadingWidth: 110,
+        // WERKE-75: 110 was too narrow, "Abbrechen" wrapped inside the button.
+        leadingWidth: 132,
         leading: Align(
           alignment: Alignment.centerLeft,
           child: TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: IonButtonLabel(l10n.commonCancel),
+            child: IonButtonLabel(l10n.commonCancel, maxLines: 1, softWrap: false),
           ),
         ),
         title: Text(l10n.filesMoveTitle(count)),

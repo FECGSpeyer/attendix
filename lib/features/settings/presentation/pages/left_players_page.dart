@@ -222,6 +222,8 @@ class _LeftPlayerItem extends StatelessWidget {
   String _formatDate(String dateStr) {
     final date = DateTime.tryParse(dateStr);
     if (date == null) return dateStr;
-    return DateFormat(dateFmt()).format(date);
+    // PERSONEN-55: the archive modal stores local midnight as UTC; without
+    // toLocal() the list showed the day before east of UTC.
+    return DateFormat(dateFmt()).format(date.toLocal());
   }
 }
