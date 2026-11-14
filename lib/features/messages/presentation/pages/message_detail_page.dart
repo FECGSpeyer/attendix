@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -490,6 +491,17 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
         child: IonInsetGroup(children: [tile]),
       );
     }
+    if (context.rdSkin == null) {
+      // EIB-17: md-ion-list-inset item group (radius 16, item background,
+      // no shadow) instead of a Material card.
+      return Padding(
+        padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(IonMd.groupRadius),
+          child: Material(color: IonMd.itemBackground(theme.brightness), child: tile),
+        ),
+      );
+    }
     return Card(
       margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
       child: tile,
@@ -639,12 +651,15 @@ class _Tile extends StatelessWidget {
         ],
       ),
     );
-    if (!ios) {
+    if (!ios && context.rdSkin != null) {
       return Card(margin: EdgeInsets.zero, child: content);
     }
+    // EIB-17: Ionic `.tile` – flat box, radius 10, item background (md too).
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: IonIos.itemBackground(context),
+        color: ios
+            ? IonIos.itemBackground(context)
+            : IonMd.itemBackground(Theme.of(context).brightness),
         borderRadius: BorderRadius.circular(10),
       ),
       child: content,
