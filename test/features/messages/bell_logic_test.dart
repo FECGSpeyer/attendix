@@ -1,3 +1,4 @@
+import 'package:attendix/core/constants/enums.dart' show AttendanceStatus;
 import 'package:attendix/core/providers/message_providers.dart';
 import 'package:attendix/data/models/user_notification/user_notification.dart';
 import 'package:attendix/features/messages/presentation/bell_logic.dart';
@@ -67,6 +68,23 @@ void main() {
     expect(bellRelativeTime(l10n, DateTime(2026, 11, 3, 9), now: now, locale: 'de_DE'), '3.11.');
     expect(bellEventDay(l10n, DateTime(2026, 11, 10), now: now), 'Heute');
     expect(bellEventDay(l10n, DateTime(2026, 11, 11), now: now), 'Morgen');
+  });
+
+  test('a personal reminder to answer is done once the person has answered', () {
+    UserNotification reminder(String id, String body, {String title = '🔔 Erinnerung: Probe'}) =>
+        UserNotification(id: id, tenantId: 1, type: 'reminder', title: title, body: body, data: const {'attendanceId': '7'});
+    final list = [
+      reminder('ask', 'Hallo Tim,\nfür „Probe“ fehlt noch deine Antwort.'),
+      // The automatic "startet in 2 Stunden" and the classic reminder stay as they are.
+      reminder('auto', 'Hallo Tim, Probe startet in 2 Stunden', title: '⏰ Terminerinnerung'),
+      reminder('classic', 'Chor\nProbe am 20.11.2026'),
+      _n('other', type: 'attendance', att: 7, body: 'Hallo Tim, x'),
+    ];
+    expect(bellAnsweredReminders(list, (_, _) => null), isEmpty);
+    expect(bellAnsweredReminders(list, (tenant, att) => tenant == 1 && att == 7 ? true : null), {'ask': true});
+    expect(bellOwnAnswer(AttendanceStatus.neutral), isNull);
+    expect(bellOwnAnswer(AttendanceStatus.lateExcused), isTrue);
+    expect(bellOwnAnswer(AttendanceStatus.excused), isFalse);
   });
 
   test('bellEventLabelsKey is sorted per tenant', () {

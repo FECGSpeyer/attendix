@@ -14,6 +14,17 @@ void main() {
       expect(de.categories.first.label, helpCategories.first.label);
     });
 
+    test('Beta replaces the articles on where things are, in both languages', () {
+      final de = localizedHelpContentService('de', beta: true);
+      final en = localizedHelpContentService('en', beta: true);
+      expect(de.articles.length, allHelpArticles.length);
+      expect(de.getArticle('gs-navigation')!.body, contains('**Heute**'));
+      expect(de.getArticle('gs-navigation')!.body, isNot(contains('Dashboard')));
+      expect(en.getArticle('gs-navigation')!.body, contains('**Today**'));
+      // Every other article stays.
+      expect(de.getArticle('gs-overview')!.body, localizedHelpContentService('de').getArticle('gs-overview')!.body);
+    });
+
     test('English translates titles and keeps German glossary names as alias', () {
       final en = localizedHelpContentService('en');
       final de = localizedHelpContentService('de');

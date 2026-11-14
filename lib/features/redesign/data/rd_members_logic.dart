@@ -98,6 +98,25 @@ List<Person> _leadersFirst(List<Person> people) {
   ];
 }
 
+/// What the list shows as a member's rate. The list counts Termine until
+/// tomorrow (like Ionic), so someone without a past Termin stands at 0 %
+/// only because of a Termin still ahead: then "neu" ([isNew]) for who
+/// joined after the last past Termin that counts ([lastCounted]; unknown
+/// or none yet: the rate as it is). Only for the season rate
+/// ([seasonRate]); a chosen period or Terminart shows its own numbers.
+({int? percent, bool isNew}) rdShownRate(
+  Person person,
+  int? percent, {
+  required DateTime? lastCounted,
+  required bool seasonRate,
+}) {
+  if (!seasonRate || percent != 0 || lastCounted == null) return (percent: percent, isNew: false);
+  final joined = DateTime.tryParse(person.joined ?? '')?.toLocal();
+  if (joined == null) return (percent: percent, isNew: false);
+  final day = DateTime(joined.year, joined.month, joined.day);
+  return day.isAfter(lastCounted) ? (percent: null, isNew: true) : (percent: percent, isNew: false);
+}
+
 int? rdAveragePercent(List<Person> people, Map<int, int> percentages) {
   final values = [
     for (final p in people)

@@ -207,6 +207,31 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// The latest past Termine of the given types (newest first), e.g. the
+  /// meetings a protocol can still be written for.
+  Future<List<ProtocolAttendance>> getPastAttendances(List<String> typeIds, {int limit = 30}) async {
+    if (typeIds.isEmpty) return const [];
+    try {
+      final now = DateTime.now();
+      final startOfDay = DateTime(now.year, now.month, now.day);
+      final response = await supabase
+          .from('attendance')
+          .select('id, date, type_id, typeInfo, start_time, end_time')
+          .eq('tenantId', currentTenantId)
+          .inFilter('type_id', typeIds)
+          .lt('date', startOfDay.toIso8601String())
+          .order('date', ascending: false)
+          .limit(limit);
+
+      return (response as List)
+          .map((e) => ProtocolAttendance.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'getPastAttendances');
+      rethrow;
+    }
+  }
+
   /// Saves the plan (Ablaufplan) of an attendance and returns the stored plan.
   Future<Map<String, dynamic>?> updateAttendancePlan(int attendanceId, Map<String, dynamic> plan) async {
     ensureNotDemo('updateAttendancePlan'); // DEMO_GUARD

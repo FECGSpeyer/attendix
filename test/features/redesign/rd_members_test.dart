@@ -349,6 +349,17 @@ void main() {
   });
 
   group('helpers', () {
+    test('rdShownRate: 0 % of somebody who joined after the last counted Termin is "neu"', () {
+      final last = DateTime(2026, 11, 10);
+      final fresh = _person(1, 'Neu', 'Hier', 1).copyWith(joined: '2026-11-12');
+      final old = _person(2, 'Lange', 'Dabei', 1).copyWith(joined: '2026-01-05');
+      expect(rdShownRate(fresh, 0, lastCounted: last, seasonRate: true), (percent: null, isNew: true));
+      expect(rdShownRate(old, 0, lastCounted: last, seasonRate: true), (percent: 0, isNew: false));
+      // A real rate and an own period stay as they are.
+      expect(rdShownRate(fresh, 50, lastCounted: last, seasonRate: true), (percent: 50, isNew: false));
+      expect(rdShownRate(fresh, 0, lastCounted: last, seasonRate: false), (percent: 0, isNew: false));
+    });
+
     test('search matches name parts, group and register', () {
       expect(rdPersonMatches(_clara, 'clara d'), isTrue);
       expect(rdPersonMatches(_clara, 'flö'), isTrue);

@@ -11803,6 +11803,16 @@ class AppLocalizationsDe extends AppLocalizations {
       'Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.';
 
   @override
+  String get rdSettingsRegisterOffConfirm => 'Ausschalten';
+
+  @override
+  String get rdSettingsRegisterOffMessage =>
+      'Der Anmelde-Link, den du verteilt hast, funktioniert dann nicht mehr. Schaltest du es später wieder ein, gibt es einen neuen Link.';
+
+  @override
+  String get rdSettingsRegisterOffTitle => 'Selbst anmelden ausschalten?';
+
+  @override
   String get rdSettingsRuleAnd => 'Und';
 
   @override
@@ -12422,6 +12432,9 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get rdTeamNoProtocol => 'ohne Protokoll';
 
   @override
   String get rdTeamNoTopicsYet => 'noch keine Themen';
@@ -13138,6 +13151,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignBellByParents => 'von den Eltern gemeldet';
+
+  @override
+  String get redesignBellDoneAccepted => 'Erledigt: du hast zugesagt';
+
+  @override
+  String get redesignBellDoneDeclined => 'Erledigt: du hast abgesagt';
 
   @override
   String get redesignBellEvent => 'Termin';
@@ -16394,6 +16413,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMembersLow => 'unter 50 %';
 
   @override
+  String get redesignMembersNew => 'neu';
+
+  @override
   String get redesignMembersNoMatch => 'Niemand passt zur Suche.';
 
   @override
@@ -16693,6 +16715,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignParentsChildRate(Object name, Object percent) {
     return '$name · $percent %';
   }
+
+  @override
+  String get redesignParentsListAccounts => 'Weitere Konten mit Eltern-Zugang';
 
   @override
   String get redesignParentsListAdd => 'Elternteil einladen';
@@ -18404,6 +18429,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignUnavailabilityWeekdays => 'Wochentage';
+
+  @override
+  String get redesignViewersListAccounts =>
+      'Weitere Konten mit Beobachter-Zugang';
 
   @override
   String get redesignViewersListAdd => 'Beobachter einladen';

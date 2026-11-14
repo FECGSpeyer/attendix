@@ -4,6 +4,7 @@
 
 import 'package:intl/intl.dart';
 
+import '../../../core/constants/enums.dart' show AttendanceStatus;
 import '../../../data/models/user_notification/user_notification.dart';
 import '../../../l10n/l10n.dart';
 
@@ -172,3 +173,33 @@ String bellEventDay(AppLocalizations l10n, DateTime date, {DateTime? now, String
   if (diff == -1) return l10n.redesignBellYesterday;
   return DateFormat.MMMEd(locale).format(date);
 }
+
+final _personalHello = RegExp(r'^\s*(Hallo|Hi) [^,\n]{1,60},');
+
+/// A lead's personal reminder to answer a Termin ("Offene erinnern" of the
+/// redesign: "Hallo Tim, für … fehlt noch deine Antwort"). The server
+/// stores it like every other reminder (type `reminder` with the Termin);
+/// the automatic "startet in 2 Stunden" has the ⏰ title, the reminder of the
+/// classic design has no greeting.
+bool bellAsksForAnswer(UserNotification n) =>
+    n.type == 'reminder' && n.attendanceId != null && !n.title.startsWith('⏰') && _personalHello.hasMatch(n.body);
+
+/// The own answer behind [status]: true zugesagt (also "komme später"),
+/// false abgesagt, null still open.
+bool? bellOwnAnswer(AttendanceStatus? status) => switch (status) {
+      null || AttendanceStatus.neutral => null,
+      AttendanceStatus.present || AttendanceStatus.late || AttendanceStatus.lateExcused => true,
+      AttendanceStatus.excused || AttendanceStatus.absent => false,
+    };
+
+/// The reminders of [list] that are done because the person has answered
+/// the Termin since (id → zugesagt). [answerOf]: the own answer for a
+/// Termin (group, Termin), null while open or unknown.
+Map<String, bool> bellAnsweredReminders(
+  List<UserNotification> list,
+  bool? Function(int tenantId, int attendanceId) answerOf,
+) => {
+      for (final n in list)
+        if (bellAsksForAnswer(n))
+          if (answerOf(n.targetTenantId, n.attendanceId!) case final accepted?) n.id: accepted,
+    };

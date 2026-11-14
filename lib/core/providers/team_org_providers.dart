@@ -288,6 +288,20 @@ final upcomingProtocolAttendancesProvider = FutureProvider<List<ProtocolAttendan
   return upcomingProtocolAttendances(upcoming, types);
 });
 
+/// The latest past Termine of protocol-enabled types, newest first (the
+/// Beta lists those without a protocol under "Vergangen").
+final pastProtocolAttendancesProvider = FutureProvider.autoDispose<List<ProtocolAttendance>>((ref) async {
+  // SOL_FIX15: role-dependent rows, never kept across an account switch.
+  ref.watch(currentAuthUserIdProvider);
+  final repo = ref.watch(protocolRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return [];
+  final types = await ref.watch(protocolTypesProvider.future);
+  return repo.getPastAttendances([
+    for (final t in types)
+      if (t.enableProtocol) t.id,
+  ]);
+});
+
 // ── Mutations ───────────────────────────────────────────────
 
 /// Mutations of tasks (create / update / delete) with cache invalidation.
@@ -497,6 +511,7 @@ Future<void> reloadTeamOrgTab(WidgetRef ref, String tab, {bool firstLoad = false
         reload(agendaItemsProvider);
         reload(protocolsProvider);
         reload(upcomingProtocolAttendancesProvider);
+        ref.invalidate(pastProtocolAttendancesProvider);
         await ref.read(agendaItemsProvider.future);
       case 'protocols':
         reload(protocolsProvider);
