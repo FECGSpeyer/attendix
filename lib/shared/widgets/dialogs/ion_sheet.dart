@@ -66,7 +66,9 @@ Future<T?> showIonSheet<T>(
     useSafeArea: true,
     showDragHandle: false,
     isDismissible: backdropDismiss && canDismiss,
-    enableDrag: canDismiss,
+    // The breakpoint sheet moves and closes itself (it asks the route's
+    // PopScope first, the Material sheet drag would not).
+    enableDrag: false,
     clipBehavior: Clip.antiAlias,
     backgroundColor: backgroundColor,
     routeSettings: routeSettings,

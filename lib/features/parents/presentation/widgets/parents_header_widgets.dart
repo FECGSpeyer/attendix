@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -266,14 +267,14 @@ Future<void> showCurrentSongsSheet(
       ],
     );
   }
-  return showModalBottomSheet(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (sheetContext) => FractionallySizedBox(
-      // Ionic breakpoints: 0.8 (several Termine) / 0.6 (one Termin)
-      heightFactor: groups.length > 1 ? 0.8 : 0.6,
+  // Ionic breakpoints: 0.8 (several Termine) / 0.6 (one Termin)
+  final initial = groups.length > 1 ? 0.8 : 0.6;
+  return showIonSheet<void>(
+    context,
+    breakpoints: [0, initial, 1],
+    initialBreakpoint: initial,
+    builder: (sheetContext, scrollController) => Material(
+      type: MaterialType.transparency,
       child: Column(
         children: [
           // IOS_PAGES3: Ionic ion-toolbar – close (start) + title
@@ -291,6 +292,7 @@ Future<void> showCurrentSongsSheet(
             child: ColoredBox(
               color: Theme.of(sheetContext).scaffoldBackgroundColor,
               child: ListView(
+                controller: scrollController,
                 padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
                 children: [
                   for (final group in groups) ...[

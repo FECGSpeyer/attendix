@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,8 +61,11 @@ class UpcomingSongsSheet extends ConsumerWidget {
     final groupCount = songsAsync.valueOrNull?.length ?? 0;
 
     // Ionic: breakpoints 0.8 (several Termine) / 0.6 (one Termin)
+    final initial = groupCount > 1 ? 0.8 : 0.6;
     return AppDraggableSheet(
-      initialChildSize: groupCount > 1 ? 0.8 : 0.6,
+      breakpoints: [0, initial, 1],
+      initialBreakpoint: initial,
+      initialChildSize: initial,
       minChildSize: 0.3,
       maxChildSize: 1,
       expand: false,
@@ -70,7 +74,9 @@ class UpcomingSongsSheet extends ConsumerWidget {
         return Container(
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            borderRadius: context.rdSkin == null
+                ? null
+                : const BorderRadius.vertical(top: Radius.circular(16)),
           ),
           child: Column(
             children: [
@@ -304,6 +310,7 @@ Future<void> showUpcomingSongsSheet(BuildContext context) {
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
+    clipBehavior: context.rdSkin == null ? Clip.antiAlias : null,
     backgroundColor: Colors.transparent,
     builder: (context) => const UpcomingSongsSheet(),
   );
@@ -368,6 +375,8 @@ class AttendanceSongsSheet extends ConsumerWidget {
     final heading = [title, subtitle].where((t) => t.isNotEmpty).join(' · ');
     return AppDraggableSheet(
       // Ionic: initialBreakpoint 0.75, breakpoints [0, 0.75, 1]
+      breakpoints: const [0, 0.75, 1],
+      initialBreakpoint: 0.75,
       initialChildSize: 0.75,
       minChildSize: 0.3,
       maxChildSize: 1,
@@ -375,7 +384,9 @@ class AttendanceSongsSheet extends ConsumerWidget {
       builder: (context, scrollController) => Container(
         decoration: BoxDecoration(
           color: theme.scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          borderRadius: context.rdSkin == null
+              ? null
+              : const BorderRadius.vertical(top: Radius.circular(16)),
         ),
         child: Column(
           children: [
@@ -460,6 +471,7 @@ Future<void> showAttendanceSongsSheet(
     useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
+    clipBehavior: context.rdSkin == null ? Clip.antiAlias : null,
     backgroundColor: Colors.transparent,
     builder: (context) => AttendanceSongsSheet(
       title: title,

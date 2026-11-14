@@ -1032,6 +1032,7 @@ class _CopyToOtherInstance extends ConsumerWidget {
             isScrollControlled: true,
             useSafeArea: true,
             enableDrag: false, // not closable while copying
+            clipBehavior: Clip.antiAlias,
             builder: (_) => CopyToTenantSheet(song: song, availableTenants: allowed),
           ),
         ),
@@ -1088,6 +1089,9 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
       isScrollControlled: true,
       useSafeArea: true,
       isDismissible: false,
+      // Classic: the breakpoint sheet inside moves and closes itself.
+      enableDrag: context.rdSkin != null,
+      clipBehavior: Clip.antiAlias,
       builder: (_) => FileUploadSheet(
         songId: song.id!,
         groups: data.instruments,
@@ -1118,6 +1122,9 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
+      // Classic: the breakpoint sheet inside moves and closes itself.
+      enableDrag: context.rdSkin != null,
+      clipBehavior: Clip.antiAlias,
       builder: (_) => SingleFileUploadSheet(
         songId: song.id!,
         file: file,

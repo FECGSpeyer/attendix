@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -186,28 +186,20 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
   }
 
   Widget _buildSheet(BuildContext context) {
-    return AppDraggableSheet(
-      initialChildSize: 0.6,
-      minChildSize: 0.4,
-      maxChildSize: 0.9,
-      expand: false,
+    // Ionic copy modal: [breakpoints]="[0, 0.6, 1]" [initialBreakpoint]="0.6".
+    return IonBreakpointSheet(
+      breakpoints: const [0, 0.6, 1],
+      initialBreakpoint: 0.6,
       // Dragging down to the bottom closes the sheet: not while copying.
-      shouldCloseOnMinExtent: !_isCopying,
+      canDismiss: !_isCopying,
       builder: (context, scrollController) {
         return Column(
           children: [
             // Header
             // Ionic: close button in `ion-buttons slot="end"`
-            AppBar(
-              toolbarHeight: ionModalToolbarHeight(context),
-              title: Text(context.l10n.songsCopySong),
-              automaticallyImplyLeading: false,
-              actions: [
-                IconButton(
-                  icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
-                  onPressed: _isCopying ? null : () => Navigator.pop(context),
-                ),
-              ],
+            IonSheetHeader(
+              title: context.l10n.songsCopySong,
+              end: [IonCloseButton(onPressed: _isCopying ? () {} : null)],
             ),
 
             // Content
