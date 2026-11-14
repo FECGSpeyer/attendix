@@ -1220,7 +1220,11 @@ class IonSelectRow<T> extends StatelessWidget {
     this.placeholder,
     this.stacked = false,
     this.header,
+    this.lines = true,
   });
+
+  /// Item bottom line (false inside an [IonInsetList], which draws its own
+  /// dividers).
 
   final String label;
   final T? value;
@@ -1236,6 +1240,7 @@ class IonSelectRow<T> extends StatelessWidget {
   /// Alert / modal title; defaults to [label] for the alert (Ionic uses the
   /// label as alert header) and to none for the modal.
   final String? header;
+  final bool lines;
 
   @override
   Widget build(BuildContext context) {
@@ -1296,12 +1301,14 @@ class IonSelectRow<T> extends StatelessWidget {
                 minHeight: stacked ? (ios ? 68 : 72) : (ios ? 44 : 48),
               ),
               decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: ionLineColor(context),
-                    width: ios ? 0.55 : 1,
-                  ),
-                ),
+                border: lines
+                    ? Border(
+                        bottom: BorderSide(
+                          color: ionLineColor(context),
+                          width: ios ? 0.55 : 1,
+                        ),
+                      )
+                    : null,
               ),
               padding: EdgeInsets.only(
                 right: 16,
