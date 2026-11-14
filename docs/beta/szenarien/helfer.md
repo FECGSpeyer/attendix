@@ -192,8 +192,8 @@ sieht.
   darauf hin, und „Einfügen“ setzt sie ans Ende. Ein Werk, das du in den
   Ablauf aufnimmst, wird auch ein Werk des Termins.
   Über „Hinzufügen“ › „Programmpunkt“ fügst du mehrere Punkte nacheinander
-  hinzu: Das Blatt bleibt offen, bis du auf „Fertig“ tippst. „Block“ legt
-  dort einen Block an, in den die nächsten Punkte kommen.
+  hinzu: Das Blatt bleibt offen, bis du auf „Fertig“ tippst. „Programmblock“
+  legt im selben Blatt einen Block an, in den die nächsten Punkte kommen.
 
 ### H-13 Die Anwesenheit eines Termins als Excel speichern
 

@@ -27498,6 +27498,18 @@ abstract class AppLocalizations {
   /// **'Block'**
   String get redesignPlanAddBlock;
 
+  /// redesign.plan.addBlockRow
+  ///
+  /// In de, this message translates to:
+  /// **'Programmblock'**
+  String get redesignPlanAddBlockRow;
+
+  /// redesign.plan.addBlockRowHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mehrere Punkte unter einer Überschrift'**
+  String get redesignPlanAddBlockRowHint;
+
   /// redesign.plan.addDefaultField
   ///
   /// In de, this message translates to:
@@ -27543,13 +27555,13 @@ abstract class AppLocalizations {
   /// redesign.plan.addPointHint
   ///
   /// In de, this message translates to:
-  /// **'Punkt, Notiz, Block oder Werke'**
+  /// **'Punkt, Notiz oder Werke'**
   String get redesignPlanAddPointHint;
 
   /// redesign.plan.addPointHintNoWorks
   ///
   /// In de, this message translates to:
-  /// **'Punkt, Notiz oder Block'**
+  /// **'Punkt oder Notiz'**
   String get redesignPlanAddPointHintNoWorks;
 
   /// redesign.plan.addTitle

@@ -17748,6 +17748,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanAddBlock => 'Block';
 
   @override
+  String get redesignPlanAddBlockRow => 'Programme block';
+
+  @override
+  String get redesignPlanAddBlockRowHint => 'Several items under one heading';
+
+  @override
   String get redesignPlanAddDefaultField => 'Add default field';
 
   @override
@@ -17771,10 +17777,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanAddPoint => 'Programme item';
 
   @override
-  String get redesignPlanAddPointHint => 'Item, note, block or works';
+  String get redesignPlanAddPointHint => 'Item, note or works';
 
   @override
-  String get redesignPlanAddPointHintNoWorks => 'Item, note or block';
+  String get redesignPlanAddPointHintNoWorks => 'Item or note';
 
   @override
   String get redesignPlanAddTitle => 'Add';

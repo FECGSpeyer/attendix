@@ -300,10 +300,8 @@ void main() {
       await pump(tester);
       await tester.tap(find.byKey(const Key('rd-plan-add')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('rd-plan-add-field')));
-      await tester.pumpAndSettle();
-      // The chip "Block" only swaps the form: its name and "Block anlegen".
-      await tester.tap(find.byKey(const Key('rd-plan-quick-block')));
+      // "Programmblock": the same sheet, starting with the block's name.
+      await tester.tap(find.byKey(const Key('rd-plan-add-block')));
       await tester.pumpAndSettle();
       await tester.enterText(find.byKey(const Key('rd-plan-quick-block-name')), 'Lobpreis');
       await add();

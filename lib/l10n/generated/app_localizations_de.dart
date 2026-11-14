@@ -17901,6 +17901,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanAddBlock => 'Block';
 
   @override
+  String get redesignPlanAddBlockRow => 'Programmblock';
+
+  @override
+  String get redesignPlanAddBlockRowHint =>
+      'Mehrere Punkte unter einer Überschrift';
+
+  @override
   String get redesignPlanAddDefaultField => 'Standardfeld hinzufügen';
 
   @override
@@ -17924,10 +17931,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanAddPoint => 'Programmpunkt';
 
   @override
-  String get redesignPlanAddPointHint => 'Punkt, Notiz, Block oder Werke';
+  String get redesignPlanAddPointHint => 'Punkt, Notiz oder Werke';
 
   @override
-  String get redesignPlanAddPointHintNoWorks => 'Punkt, Notiz oder Block';
+  String get redesignPlanAddPointHintNoWorks => 'Punkt oder Notiz';
 
   @override
   String get redesignPlanAddTitle => 'Hinzufügen';

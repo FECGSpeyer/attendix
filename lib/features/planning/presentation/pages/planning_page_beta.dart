@@ -1195,10 +1195,10 @@ extension _PlanningBeta on _PlanningPageState {
       after = null;
     }
     if (group != null && !before.any((f) => f.id == group)) group = null;
-    // Programmpunkt (Punkt, Notiz, Block, Werke): one sheet that stays open
-    // for several entries.
-    if (action == 'field') {
-      await _rdQuickAdd(group: group, after: after == null ? null : before[after]);
+    // Programmpunkt (Punkt, Notiz, Werke) and Programmblock: one sheet that
+    // stays open for several entries; the block starts with its name.
+    if (action == 'field' || action == 'block') {
+      await _rdQuickAdd(group: group, after: after == null ? null : before[after], block: action == 'block');
       return;
     }
     if (action == 'register') {
@@ -1606,9 +1606,10 @@ extension _PlanningBeta on _PlanningPageState {
   /// "Fertig": Punkt or Notiz (form), "+ Werke" (the Werke of the Termin or
   /// the next Auftritt, else the Werk list) and "Block" (only its name; the
   /// next entries go into it, or behind it again). [group]: into that block
-  /// (at its end, or behind [after] when it is inside). Every entry is
-  /// stored at once (autosave).
-  Future<void> _rdQuickAdd({String? group, PlanField? after}) async {
+  /// (at its end, or behind [after] when it is inside); [block]: starts
+  /// with the name of a new block ("Programmblock"). Every entry is stored
+  /// at once (autosave).
+  Future<void> _rdQuickAdd({String? group, PlanField? after, bool block = false}) async {
     final l10n = context.l10n;
     final loadGen = _loadGen;
     var join = group;
@@ -1652,7 +1653,15 @@ extension _PlanningBeta on _PlanningPageState {
     }
 
     String? headTitle() => join == null ? null : _fields.where((f) => f.id == join).firstOrNull?.name;
-    final title = headTitle() != null ? l10n.redesignPlanQuickAddInBlock(headTitle()!) : l10n.redesignPlanAddPoint;
+    // Not from "+ Punkt in …" (the sheet of that block): a block never sits
+    // inside another one.
+    final withBlock = !(join != null && after == null);
+    final title =
+        block && withBlock
+            ? l10n.redesignPlanAddBlockRow
+            : headTitle() != null
+            ? l10n.redesignPlanQuickAddInBlock(headTitle()!)
+            : l10n.redesignPlanAddPoint;
     final subtitle =
         join != null && after == null
             ? l10n.redesignPlanQuickAddInBlockHint
@@ -1677,9 +1686,8 @@ extension _PlanningBeta on _PlanningPageState {
             _RdQuickAddBody(
               initialMinutes: join != null ? 5 : 20,
               withWorks: !isGeneral && _songs.isNotEmpty,
-              // Not from "+ Punkt in …" (the sheet of that block): a block
-              // never sits inside another one.
-              withBlock: !(join != null && after == null),
+              withBlock: withBlock,
+              startWithBlock: block && withBlock,
               duration: _rdDuration,
               block: () {
                 final head = _fields.where((f) => f.id == headId).firstOrNull;
@@ -1822,6 +1830,13 @@ extension _PlanningBeta on _PlanningPageState {
                   title: l10n.redesignPlanAddPoint,
                   subtitle: withWorks ? l10n.redesignPlanAddPointHint : l10n.redesignPlanAddPointHintNoWorks,
                   onTap: () => pop('field'),
+                ),
+                RdListRow(
+                  key: const Key('rd-plan-add-block'),
+                  leading: const RdRowIcon(Icons.view_agenda_outlined),
+                  title: l10n.redesignPlanAddBlockRow,
+                  subtitle: l10n.redesignPlanAddBlockRowHint,
+                  onTap: () => pop('block'),
                 ),
                 if (canRegister)
                   RdListRow(
@@ -2871,6 +2886,7 @@ class _RdQuickAddBody extends StatefulWidget {
     required this.initialMinutes,
     required this.withWorks,
     required this.withBlock,
+    required this.startWithBlock,
     required this.duration,
     required this.block,
     required this.onNewBlock,
@@ -2884,6 +2900,9 @@ class _RdQuickAddBody extends StatefulWidget {
 
   /// The chip "Block" (not inside the sheet of an existing block).
   final bool withBlock;
+
+  /// Opens with the name of a new block instead of the Punkt form.
+  final bool startWithBlock;
   final String Function(int minutes) duration;
 
   /// The block made in this sheet with its Unterpunkte (null: none).
@@ -2905,7 +2924,7 @@ class _RdQuickAddBody extends StatefulWidget {
 
 class _RdQuickAddBodyState extends State<_RdQuickAddBody> {
   /// `field`, `note` or `block` (the form of a new block's name).
-  String _kind = 'field';
+  late String _kind = widget.startWithBlock ? 'block' : 'field';
   late int _minutes = widget.initialMinutes;
   final _blockName = TextEditingController();
   int _count = 0;
