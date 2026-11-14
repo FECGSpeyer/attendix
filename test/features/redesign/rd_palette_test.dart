@@ -95,4 +95,55 @@ void main() {
     expect(tester.getSize(green), const Size(150, 8));
     expect(tester.getSize(orange), const Size(50, 8));
   });
+
+  List<RdCounter> counters({required int yes, required int excused, required int open}) => [
+        RdCounter(yes, 'zugesagt', Colors.green, always: true),
+        RdCounter(excused, 'entschuldigt', Colors.blue, shortLabel: 'entsch.'),
+        RdCounter(0, 'später', Colors.orange),
+        RdCounter(open, 'offen', Colors.black),
+      ];
+
+  Widget counterRows(double width) => MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: width,
+            child: Column(
+              children: [
+                RdStatusCounters(
+                  key: const Key('a'),
+                  columns: true,
+                  semanticLabel: 'a',
+                  counters: counters(yes: 15, excused: 1, open: 3),
+                ),
+                RdStatusCounters(
+                  key: const Key('b'),
+                  columns: true,
+                  semanticLabel: 'b',
+                  counters: counters(yes: 0, excused: 0, open: 14),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+  testWidgets('status counters: a 0 is left out but keeps its column, zugesagt stays at 0', (tester) async {
+    await tester.pumpWidget(counterRows(300));
+    Finder inRow(String key, String text) => find.descendant(of: find.byKey(Key(key)), matching: find.text(text));
+
+    expect(find.text('später'), findsNothing);
+    expect(inRow('b', 'entschuldigt'), findsNothing);
+    expect(inRow('b', '0'), findsOneWidget);
+    expect(inRow('b', 'zugesagt'), findsOneWidget);
+    // "offen" sits at the same place in both rows although one has no "entschuldigt".
+    expect(tester.getTopLeft(inRow('a', 'offen')).dx, tester.getTopLeft(inRow('b', 'offen')).dx);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('status counters: short words on a narrow card', (tester) async {
+    await tester.pumpWidget(counterRows(150));
+    expect(find.text('entsch.'), findsOneWidget);
+    expect(find.text('entschuldigt'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 }

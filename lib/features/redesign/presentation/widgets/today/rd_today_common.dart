@@ -6,6 +6,7 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../l10n/l10n.dart';
 import '../rd_widgets.dart';
+import '../../../data/providers/rd_today_providers.dart' show RdStatusCounts;
 import '../../../data/rd_dates.dart';
 
 /// REDESIGN: shared pieces of the "Heute" cards.
@@ -203,4 +204,26 @@ class RdEventDateBox extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The answers before a Termin as [RdStatusCounters]: zugesagt (also at
+/// 0), entschuldigt, später, abwesend (only when someone is) and offen
+/// ([openLabel]: "ohne Antwort" on the Termin).
+List<RdCounter> rdAnswerCounters(BuildContext context, RdStatusCounts c, {String? openLabel}) {
+  final p = context.rd;
+  final l10n = context.l10n;
+  return [
+    RdCounter(c.present, l10n.redesignCountersYes, p.present, always: true),
+    RdCounter(
+      c.excused,
+      l10n.redesignCountersExcused,
+      p.excused,
+      shortLabel: l10n.redesignCountersExcusedShort,
+    ),
+    RdCounter(c.lateAnnounced, l10n.redesignCountersLater, p.late),
+    // Rare before a Termin (someone recorded early): only then a fifth
+    // column, so the usual four keep their width in every other card.
+    if (c.absent > 0) RdCounter(c.absent, l10n.redesignCountersAbsent, p.absent),
+    RdCounter(c.open, openLabel ?? l10n.redesignCountersOpen, p.text),
+  ];
 }

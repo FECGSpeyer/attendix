@@ -1516,24 +1516,30 @@ class _Overview extends ConsumerWidget {
     // Before the start: answers; from the start on: who is there.
     final here = members.where((m) => m.status == AttendanceStatus.present).length;
     final late = members.where((m) => m.status == AttendanceStatus.late || m.status == AttendanceStatus.lateExcused).length;
-    // Each count opens the Anwesenheit filtered to it (no arrows: the
+    // Each number opens the Anwesenheit filtered to it (no arrows: the
     // card stays calm, the "›" at "eingeladen" shows it can be tapped).
-    final List<(String, Color, RdRecordFilter)> legend = started
+    RdCounter counter(int value, String label, Color color, RdRecordFilter filter, {bool always = false}) => RdCounter(
+          value,
+          label,
+          color,
+          always: always,
+          tapKey: Key('rd-event-count-${filter.name}'),
+          onTap: () => onRecord(filter),
+        );
+    final answers = started
         ? [
-            (l10n.redesignEventCountHere(here), p.present, RdRecordFilter.present),
-            if (late > 0) (l10n.redesignEventCountLateStarted(late), p.late, RdRecordFilter.late),
-            if (counts.excused > 0)
-              (l10n.redesignEventCountExcusedStarted(counts.excused), p.excused, RdRecordFilter.excused),
-            if (counts.absent > 0) (l10n.redesignEventCountAbsentStarted(counts.absent), p.absent, RdRecordFilter.absent),
-            if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2, RdRecordFilter.open),
+            counter(here, l10n.redesignCountersHere, p.present, RdRecordFilter.present, always: true),
+            counter(late, l10n.redesignCountersLate, p.late, RdRecordFilter.late),
+            counter(counts.excused, l10n.redesignCountersExcused, p.excused, RdRecordFilter.excused),
+            counter(counts.absent, l10n.redesignCountersAbsent, p.absent, RdRecordFilter.absent),
+            counter(counts.open, l10n.redesignCountersNoAnswer, p.text, RdRecordFilter.open),
           ]
         : [
-            (l10n.redesignTodayCountYes(counts.present), p.present, RdRecordFilter.yes),
-            if (counts.excused > 0) (l10n.redesignTodayCountExcused(counts.excused), p.excused, RdRecordFilter.excused),
-            if (counts.lateAnnounced > 0)
-              (l10n.redesignTodayCountLater(counts.lateAnnounced), p.late, RdRecordFilter.later),
-            if (counts.absent > 0) (l10n.redesignTodayCountAbsent(counts.absent), p.absent, RdRecordFilter.absent),
-            if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2, RdRecordFilter.open),
+            counter(counts.present, l10n.redesignCountersYes, p.present, RdRecordFilter.yes, always: true),
+            counter(counts.excused, l10n.redesignCountersExcused, p.excused, RdRecordFilter.excused),
+            counter(counts.lateAnnounced, l10n.redesignCountersLater, p.late, RdRecordFilter.later),
+            counter(counts.absent, l10n.redesignCountersAbsent, p.absent, RdRecordFilter.absent),
+            counter(counts.open, l10n.redesignCountersNoAnswer, p.text, RdRecordFilter.open),
           ];
     final total = counts.total;
     final percent = total == 0 ? 0 : ((here + late) * 100 / total).round();
@@ -1582,54 +1588,11 @@ class _Overview extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
-              RdStatusBar(
-                total: total,
-                segments: started
-                    ? [
-                        RdBarSegment(here, p.present),
-                        RdBarSegment(late, p.late),
-                        RdBarSegment(counts.excused, p.excused),
-                        RdBarSegment(counts.absent, p.absent),
-                      ]
-                    : [
-                        RdBarSegment(counts.present, p.present),
-                        RdBarSegment(counts.lateAnnounced, p.late),
-                        RdBarSegment(counts.excused, p.excused),
-                        RdBarSegment(counts.absent, p.absent),
-                      ],
-                semanticLabel: legend.map((e) => e.$1).join(', '),
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 14,
-                runSpacing: 0,
-                children: [
-                  for (final (text, color, filter) in legend)
-                    Semantics(
-                      button: true,
-                      child: InkWell(
-                        key: Key('rd-event-count-${filter.name}'),
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () => onRecord(filter),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(minHeight: 28),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 10,
-                                height: 10,
-                                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(text, style: RdType.meta(p, size: 14).copyWith(color: p.text)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
+              const SizedBox(height: 8),
+              // Numbers instead of the bar; a 0 is left out.
+              RdStatusCounters(
+                counters: answers,
+                semanticLabel: [for (final c in answers) if (c.visible) '${c.value} ${c.label}'].join(', '),
               ),
               for (final gap in gaps) ...[
                 const SizedBox(height: 12),
@@ -1840,19 +1803,13 @@ class _LoadingAnswers extends StatelessWidget {
                 if (c != null) Text(l10n.redesignEventInvited(c.total), style: RdType.meta(p, size: 13)),
               ],
             ),
-            const SizedBox(height: 12),
-            RdStatusBar(
-              total: c?.total ?? 0,
-              segments: c == null
-                  ? const []
-                  : [
-                      RdBarSegment(c.present, p.present),
-                      RdBarSegment(c.lateAnnounced, p.late),
-                      RdBarSegment(c.excused, p.excused),
-                      RdBarSegment(c.absent, p.absent),
-                    ],
-              semanticLabel: l10n.redesignTodayLoading,
-            ),
+            if (c != null) ...[
+              const SizedBox(height: 8),
+              RdStatusCounters(
+                counters: rdAnswerCounters(context, c, openLabel: l10n.redesignCountersNoAnswer),
+                semanticLabel: l10n.redesignTodayLoading,
+              ),
+            ],
             const SizedBox(height: 16),
             Row(
               children: [

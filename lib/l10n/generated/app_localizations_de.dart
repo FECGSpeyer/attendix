@@ -13539,6 +13539,36 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignComposeTo => 'An wen?';
 
   @override
+  String get redesignCountersAbsent => 'abwesend';
+
+  @override
+  String get redesignCountersExcused => 'entschuldigt';
+
+  @override
+  String get redesignCountersExcusedShort => 'entsch.';
+
+  @override
+  String get redesignCountersHere => 'anwesend';
+
+  @override
+  String get redesignCountersLate => 'verspätet';
+
+  @override
+  String get redesignCountersLater => 'später';
+
+  @override
+  String get redesignCountersNoAnswer => 'ohne Antwort';
+
+  @override
+  String get redesignCountersOpen => 'offen';
+
+  @override
+  String get redesignCountersRemind => 'Erinnern';
+
+  @override
+  String get redesignCountersYes => 'zugesagt';
+
+  @override
   String get redesignCreateChooseType => 'Art wählen';
 
   @override
@@ -13970,38 +14000,13 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String redesignEventCountAbsentStarted(Object count) {
-    return '$count abwesend';
-  }
-
-  @override
   String redesignEventCountExcused(Object count) {
     return '$count entsch.';
   }
 
   @override
-  String redesignEventCountExcusedStarted(Object count) {
-    return '$count entschuldigt';
-  }
-
-  @override
-  String redesignEventCountHere(Object count) {
-    return '$count anwesend';
-  }
-
-  @override
   String redesignEventCountLate(Object count) {
     return '$count später';
-  }
-
-  @override
-  String redesignEventCountLateStarted(Object count) {
-    return '$count verspätet';
-  }
-
-  @override
-  String redesignEventCountNoAnswer(Object count) {
-    return '$count ohne Antwort';
   }
 
   @override
@@ -17646,11 +17651,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignRemindNoApp => 'ohne App';
-
-  @override
-  String redesignRemindOpenLink(Object count) {
-    return '$count offen';
-  }
 
   @override
   String redesignRemindPartlyFailed(Object sent, Object failed) {
