@@ -1221,7 +1221,13 @@ class IonSelectRow<T> extends StatelessWidget {
     this.stacked = false,
     this.header,
     this.lines = true,
+    this.onTap,
   });
+
+  /// Replaces opening [showAppSelect] (e.g. a `multiple` select that opens
+  /// a checkbox alert).
+  final VoidCallback? onTap;
+
 
   /// Item bottom line (false inside an [IonInsetList], which draws its own
   /// dividers).
@@ -1249,7 +1255,7 @@ class IonSelectRow<T> extends StatelessWidget {
     final current = options.where((o) => o.value == value).firstOrNull;
     final text = selectedText ?? current?.textOr('');
     final showPlaceholder = text == null || text.isEmpty;
-    final enabled = onChanged != null;
+    final enabled = onChanged != null || onTap != null;
     final valueText = Text(
       showPlaceholder ? (placeholder ?? '') : text,
       maxLines: 1,
@@ -1292,7 +1298,7 @@ class IonSelectRow<T> extends StatelessWidget {
       builder: (ctx) => Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: enabled ? () => open(ctx) : null,
+          onTap: enabled ? (onTap ?? () => open(ctx)) : null,
           splashFactory: ios ? NoSplash.splashFactory : null,
           child: Padding(
             padding: const EdgeInsets.only(left: 16),

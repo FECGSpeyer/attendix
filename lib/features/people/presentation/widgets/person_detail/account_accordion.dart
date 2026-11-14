@@ -307,28 +307,7 @@ class AccountAccordion extends ConsumerWidget {
   /// "Hilfe" and a close button.
   void _showHelp(BuildContext context) {
     if (context.rdSkin == null) {
-      // [breakpoints]="[0, 0.5, 1]" [initialBreakpoint]="0.5"; ion-title +
-      // close ✕ (end), padded text.
-      showIonSheet<void>(
-        context,
-        breakpoints: const [0, 0.5, 1],
-        initialBreakpoint: 0.5,
-        builder: (ctx, controller) => IonSheetScaffold(
-          title: ctx.l10n.personHelp,
-          showClose: true,
-          body: ListView(
-            controller: controller,
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
-            children: [
-              if (person.appId == null) ...[
-                Text(ctx.l10n.personAccountHelp),
-                const SizedBox(height: AppDimensions.paddingM),
-              ],
-              Text(ctx.l10n.personExistingUserHint),
-            ],
-          ),
-        ),
-      );
+      showAccountHelpSheet(context, hasAccount: person.appId != null);
       return;
     }
     showModalBottomSheet<void>(
@@ -460,4 +439,30 @@ class _ItemEndButton extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Ionic person page account "Hilfe" sheet (classic design):
+/// `[breakpoints]="[0, 0.5, 1]" [initialBreakpoint]="0.5"`, ion-title +
+/// close ✕ (end), padded text. Also used by the create page.
+Future<void> showAccountHelpSheet(BuildContext context, {bool hasAccount = false}) {
+  return showIonSheet<void>(
+    context,
+    breakpoints: const [0, 0.5, 1],
+    initialBreakpoint: 0.5,
+    builder: (ctx, controller) => IonSheetScaffold(
+      title: ctx.l10n.personHelp,
+      showClose: true,
+      body: ListView(
+        controller: controller,
+        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        children: [
+          if (!hasAccount) ...[
+            Text(ctx.l10n.personAccountHelp),
+            const SizedBox(height: AppDimensions.paddingM),
+          ],
+          Text(ctx.l10n.personExistingUserHint),
+        ],
+      ),
+    ),
+  );
 }
