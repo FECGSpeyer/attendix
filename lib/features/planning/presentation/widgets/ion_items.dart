@@ -657,7 +657,8 @@ class IonSelect<T> extends StatelessWidget {
   final ValueChanged<T?>? onChanged;
   final Widget? leading;
 
-  /// Ionic `ion-select interface` (the alert's header is [label]).
+  /// Ionic `ion-select interface` (the alert's header is [label]; the
+  /// modal has no title, like an `ion-select` without `interfaceOptions`).
   final AppSelectInterface interface;
 
   @override
@@ -673,7 +674,7 @@ class IonSelect<T> extends StatelessWidget {
             child: DropdownButtonHideUnderline(
               child: AppDropdownButton<T>(
                 interface: interface,
-                header: label,
+                header: interface == AppSelectInterface.modal ? null : label,
                 value: value,
                 isExpanded: true,
                 alignment: AlignmentDirectional.centerEnd,

@@ -2361,6 +2361,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           IonSelect<int>(
             key: ValueKey(_attId),
             label: context.l10n.planningCurrent,
+            // Ionic: `interface="modal"` (long list of events).
+            interface: AppSelectInterface.modal,
             value: _attId,
             items: [
               for (final a in _attendances)

@@ -9,7 +9,10 @@ import '../../../l10n/l10n.dart';
 import '../layout/ionic_md.dart' show IonMd;
 import 'adaptive_platform.dart';
 import 'app_action_sheet.dart';
+import '../dialogs/ion_modal.dart' show showIonModal;
 import 'app_dialog.dart';
+import 'app_toolbar.dart' show ionModalToolbarHeight;
+import 'ion_button_label.dart';
 
 /// IOS_THEME2: `ion-select` as Ionic renders it in **iOS mode**
 /// (@rdlabo/ionic-theme-ios26):
@@ -53,6 +56,11 @@ enum AppSelectInterface {
 
   /// `interface="action-sheet"`.
   actionSheet,
+
+  /// `interface="modal"` (`ion-select-modal`, for long lists): a modal with
+  /// the header as its title and the cancel button at the end; a tap on an
+  /// option chooses it and closes the modal.
+  modal,
 }
 
 /// The picked value of [showAppSelect] (wrapped so that a `null` option can
@@ -136,7 +144,8 @@ class IonSelectIcon extends StatelessWidget {
 ///
 /// [context] is the trigger (the select's value); its box anchors the iOS
 /// popover. [cover] makes the popover as wide as the trigger (Ionic
-/// floating / stacked label). [header] is the alert / action sheet title.
+/// floating / stacked label). [header] is the alert / action sheet / modal
+/// title.
 ///
 /// The same three interfaces exist in the md look (see the library comment).
 Future<AppSelection<T>?> showAppSelect<T>({
@@ -209,6 +218,11 @@ Future<AppSelection<T>?> showAppSelect<T>({
       // md: Ionic adds the cancel button (`cancelText`, role cancel) after
       // the options; only the ios27 theme hides it.
       return _showSelectActionSheet<T>(context, options, header, showCancel: !ios);
+    case AppSelectInterface.modal:
+      return showIonModal<AppSelection<T>>(
+        context,
+        builder: (_) => _SelectModal<T>(ios: ios, header: header, options: options, value: value),
+      );
   }
 }
 
@@ -562,6 +576,7 @@ class _IosSelectRow<T> extends StatelessWidget {
     required this.onTap,
     this.primaryLabelWhenChecked = false,
     this.minHeight = 44,
+    this.checkAtStart = false,
   });
 
   final AppSelectOption<T> option;
@@ -569,6 +584,10 @@ class _IosSelectRow<T> extends StatelessWidget {
   final VoidCallback onTap;
   final bool primaryLabelWhenChecked;
   final double minHeight;
+
+  /// `ion-select-modal` (iOS): the radio's checkmark stands before the
+  /// label (`labelPlacement="end"`, `justify="start"`).
+  final bool checkAtStart;
 
   @override
   Widget build(BuildContext context) {
@@ -596,6 +615,13 @@ class _IosSelectRow<T> extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 10, 14, 10),
               child: Row(
                 children: [
+                  if (checkAtStart) ...[
+                    SizedBox(
+                      width: 20,
+                      child: checked ? Icon(AppIcons.check, size: 20, color: primary) : null,
+                    ),
+                    const SizedBox(width: 12),
+                  ],
                   Expanded(
                     child: DefaultTextStyle.merge(
                       // ion-item 1rem = 17pt on the iPhone
@@ -606,13 +632,15 @@ class _IosSelectRow<T> extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 20,
-                    child: checked
-                        ? Icon(AppIcons.check, size: 20, color: primary)
-                        : null,
-                  ),
+                  if (!checkAtStart) ...[
+                    const SizedBox(width: 8),
+                    SizedBox(
+                      width: 20,
+                      child: checked
+                          ? Icon(AppIcons.check, size: 20, color: primary)
+                          : null,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -700,7 +728,6 @@ class _MdSelectPopoverCard<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
     return Material(
       color: theme.colorScheme.surface,
       surfaceTintColor: Colors.transparent,
@@ -714,40 +741,116 @@ class _MdSelectPopoverCard<T> extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             for (final o in options)
-              Semantics(
-                selected: o.value == value,
-                button: true,
-                enabled: o.enabled,
-                child: Opacity(
-                  // md `ion-item` disabled: opacity .3.
-                  opacity: o.enabled ? 1 : 0.3,
-                  child: Material(
-                    color: o.value == value ? primary.withValues(alpha: 0.08) : Colors.transparent,
-                    child: InkWell(
-                      onTap: o.enabled
-                          ? () => Navigator.of(context).pop(AppSelection<T>(o.value))
-                          : null,
-                      child: Container(
-                        constraints: const BoxConstraints(minHeight: IonMd.itemMinHeight),
-                        alignment: AlignmentDirectional.centerStart,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        child: DefaultTextStyle.merge(
-                          // `.select-option-label`: one line, ellipsis.
-                          style: TextStyle(
-                            fontSize: IonMd.itemFontSize,
-                            color: theme.colorScheme.onSurface,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          child: o.child ?? Text(o.label!),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+              _MdSelectRow<T>(
+                option: o,
+                checked: o.value == value,
+                onTap: () => Navigator.of(context).pop(AppSelection<T>(o.value)),
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// md `ion-item` of `ion-select-popover` / `ion-select-modal`: 48px, no
+/// line, the radio hidden and the checked item tinted `rgba(primary, .08)`.
+class _MdSelectRow<T> extends StatelessWidget {
+  const _MdSelectRow({required this.option, required this.checked, required this.onTap});
+
+  final AppSelectOption<T> option;
+  final bool checked;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Semantics(
+      selected: checked,
+      button: true,
+      enabled: option.enabled,
+      child: Opacity(
+        // md `ion-item` disabled: opacity .3.
+        opacity: option.enabled ? 1 : 0.3,
+        child: Material(
+          color: checked ? theme.colorScheme.primary.withValues(alpha: 0.08) : Colors.transparent,
+          child: InkWell(
+            onTap: option.enabled ? onTap : null,
+            child: Container(
+              constraints: const BoxConstraints(minHeight: IonMd.itemMinHeight),
+              alignment: AlignmentDirectional.centerStart,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: DefaultTextStyle.merge(
+                // `.select-option-label`: one line, ellipsis.
+                style: TextStyle(
+                  fontSize: IonMd.itemFontSize,
+                  color: theme.colorScheme.onSurface,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                child: option.child ?? Text(option.label!),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// `ion-select-modal` (`interface="modal"`): `ion-header` with the title
+/// and the cancel button in `ion-buttons slot="end"`, below it the options
+/// as an `ion-list` – iOS rows with the checkmark before the label, md rows
+/// without radio and the checked one tinted. A tap chooses and closes
+/// (`closeModal`).
+class _SelectModal<T> extends StatelessWidget {
+  const _SelectModal({
+    required this.ios,
+    required this.header,
+    required this.options,
+    required this.value,
+  });
+
+  final bool ios;
+  final String? header;
+  final List<AppSelectOption<T>> options;
+  final T? value;
+
+  @override
+  Widget build(BuildContext context) {
+    void pick(AppSelectOption<T> o) => Navigator.of(context).pop(AppSelection<T>(o.value));
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: ionModalToolbarHeight(context),
+        automaticallyImplyLeading: false,
+        title: header == null ? null : Text(header!),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: IonButtonLabel(context.l10n.commonCancel),
+          ),
+        ],
+      ),
+      body: ListView(
+        // md `ion-list`: 8px padding.
+        padding: EdgeInsets.only(
+          top: ios ? 0 : 8,
+          bottom: (ios ? 0 : 8) + MediaQuery.paddingOf(context).bottom,
+        ),
+        children: [
+          for (final o in options)
+            if (ios) ...[
+              _IosSelectRow<T>(
+                option: o,
+                checked: o.value == value,
+                checkAtStart: true,
+                onTap: () => pick(o),
+              ),
+              // `ion-radio::after`: hairline from the label to the end.
+              const Divider(height: 0.5, thickness: 0.5, indent: 48),
+            ] else
+              _MdSelectRow<T>(option: o, checked: o.value == value, onTap: () => pick(o)),
+        ],
       ),
     );
   }
@@ -1081,7 +1184,8 @@ class AppDropdownFormField<T> extends StatelessWidget {
   /// Ionic `ion-select interface` (both looks).
   final AppSelectInterface interface;
 
-  /// Alert / action sheet header (default: the decoration's label).
+  /// Alert / action sheet header (default: the decoration's label) or the
+  /// title of the modal (no default).
   final String? header;
 
   @override
@@ -1163,7 +1267,10 @@ class _SelectFormField<T> extends FormField<T> {
                          options: AppSelectOption.fromMenuItems<T>(items),
                          value: current,
                          interface: interface,
-                         header: header ?? labelText,
+                         // `ion-select-modal` only has a title when
+                         // `interfaceOptions.header` is set.
+                         header: header ??
+                             (interface == AppSelectInterface.modal ? null : labelText),
                          cover: cover,
                        );
                        if (picked == null) return;
@@ -1290,7 +1397,7 @@ class AppDropdownButton<T> extends StatelessWidget {
   /// Ionic `ion-select interface` (both looks).
   final AppSelectInterface interface;
 
-  /// Alert / action sheet header.
+  /// Alert / action sheet header, title of the modal.
   final String? header;
 
   @override

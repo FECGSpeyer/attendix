@@ -248,6 +248,28 @@ void main() {
       expect(changed, 'en');
     }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
+    testWidgets('modal interface: title, cancel button, a tap chooses', (tester) async {
+      String? changed;
+      await tester.pumpWidget(app(AppDropdownButton<String>(
+        value: 'de',
+        items: items,
+        interface: AppSelectInterface.modal,
+        header: 'Sprache',
+        onChanged: (v) => changed = v,
+      )));
+      await tester.tap(find.text('Deutsch'));
+      await tester.pumpAndSettle();
+      // ion-select-modal: header with title + cancel, no OK
+      expect(find.text('Sprache'), findsOneWidget);
+      expect(find.text('OK'), findsNothing);
+      expect(find.byType(AppBar), findsOneWidget);
+      await tester.tap(find.text('English'));
+      await tester.pumpAndSettle();
+      expect(changed, 'en');
+      expect(find.byType(AppBar), findsNothing);
+    }, variant: const TargetPlatformVariant(
+        <TargetPlatform>{TargetPlatform.iOS, TargetPlatform.android}));
+
     test('Sprache picker uses the adaptive select popover (source)', () {
       final src = File(
               'lib/features/settings/presentation/widgets/language_picker_tile.dart')

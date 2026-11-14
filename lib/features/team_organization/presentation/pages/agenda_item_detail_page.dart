@@ -445,6 +445,8 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
           ),
           IonSelect<int?>(
             label: l10n.agendaResponsible,
+            // Ionic: `interface="modal"` (long list of persons).
+            interface: AppSelectInterface.modal,
             value: responsibleValid ? _responsibleId : null,
             items: [
               DropdownMenuItem<int?>(value: null, child: Text(l10n.agendaNobody)),
