@@ -5,6 +5,7 @@ import '../config/supabase_config.dart'
 
 import '../../data/repositories/teacher_repository.dart';
 import 'group_providers.dart';
+import 'player_providers.dart';
 import 'tenant_providers.dart';
 import '../services/tracking/tracking_event.dart';
 import '../services/tracking/tracking_service.dart';
@@ -58,6 +59,9 @@ final teacherByIdProvider = FutureProvider.family<Teacher?, int>((ref, id) async
 /// Provider for student counts per teacher
 final studentCountsProvider = FutureProvider<Map<int, int>>((ref) async {
   final repo = ref.watch(teacherRepositoryWithTenantProvider);
+  // PERSONEN-84: recount whenever the person list is reloaded (a person's
+  // teacher changed) – before, only pull-to-refresh recounted.
+  ref.watch(playersProvider);
 
   if (!repo.hasTenantId) return {};
 
