@@ -37,6 +37,11 @@ part 'auto_message_rule_beta.dart';
 
 enum _Tab { rule, history }
 
+/// Rule ids are UUIDs; anything else can never exist (NACHTEST-A-10).
+bool isAutoMessageRuleId(String id) => RegExp(
+        r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
+    .hasMatch(id);
+
 /// Create or edit one rule of Automatische Nachrichten, with preview and
 /// history. Port of Ionic `AutoMessageRulePage`
 /// (route `/settings/auto-messages/:id`, `new?template=…`, `:id?tab=history`).
@@ -91,7 +96,17 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
     final l10n = context.l10n;
     try {
       if (widget.ruleId != 'new') {
-        final rule = await ref.read(autoMessageRepositoryWithTenantProvider).getRule(widget.ruleId);
+        // NACHTEST-A-10 (EINST-60): an id that is no UUID (e.g. 99999999)
+        // made the query fail with HTTP 400 and left an empty "Neue Regel"
+        // form – treat it (and any load error) like an unknown id.
+        AutoMessageRule? rule;
+        if (isAutoMessageRuleId(widget.ruleId)) {
+          try {
+            rule = await ref.read(autoMessageRepositoryWithTenantProvider).getRule(widget.ruleId);
+          } catch (_) {
+            rule = null;
+          }
+        }
         if (rule != null) {
           _rule = rule;
           _saved = rule;
