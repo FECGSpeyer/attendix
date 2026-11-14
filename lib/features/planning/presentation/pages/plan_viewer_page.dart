@@ -147,6 +147,8 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
     await showPlanExportSheet(
       context,
       ref,
+      // ABL-30: Ionic plan-viewer export sheet – cancel with role destructive.
+      cancelDestructive: true,
       pages: () => [_page(_index, type)],
       fileName: _fileName(type),
       pdfLabel: context.l10n.planningExportPdf,

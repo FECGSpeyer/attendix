@@ -63,6 +63,7 @@ Future<void> showPlanExportSheet(
   String? pdfFileName,
   String? imageFileName,
   Future<PdfBranding?> Function()? branding,
+  bool cancelDestructive = false,
 }) async {
   // P10_SELF_PLAN: [pdfLabel] / [pdf2xLabel] carry the Ionic wording of the
   // sheet ("PDF exportieren" on the Ablaufplan editor and viewer, "PDF (A4)"
@@ -75,6 +76,7 @@ Future<void> showPlanExportSheet(
   final action = await showPlanActionSheet<String>(
     context,
     title: title ?? l10n.planningExport,
+    cancelDestructive: cancelDestructive,
     actions: [
       ...extraActions,
       if (showExports) ...[

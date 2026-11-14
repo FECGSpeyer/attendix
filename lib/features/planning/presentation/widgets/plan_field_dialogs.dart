@@ -484,20 +484,24 @@ Future<T?> showPlanActionSheet<T>(
   String? title,
   String? subtitle,
   required List<PlanSheetAction<T>> actions,
+  bool cancelDestructive = false,
 }) {
   if (context.rdSkin != null) {
     return showRdPlanActionSheet<T>(context, title: title, subtitle: subtitle, actions: actions);
   }
-  // IOS_LOOK: adaptive ion-action-sheet
+  // IOS_LOOK: adaptive ion-action-sheet. ABL-11: the Ionic plan / export /
+  // org-plan action sheets are text-only buttons, so the classic design
+  // leaves the icons out (the Beta sheet above keeps them).
+  // ABL-30: [cancelDestructive] = Ionic `{ role: 'destructive' }` cancel.
   return showAppActionSheet<T>(
     context,
     title: title,
     message: title != null ? subtitle : null,
+    cancelDestructive: cancelDestructive,
     actions: [
       for (final a in actions)
         AppActionSheetAction(
           value: a.value,
-          icon: a.icon,
           label: a.label,
           destructive: a.destructive,
         ),
