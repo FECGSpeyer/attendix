@@ -62,7 +62,16 @@
       "prepareProtocolHint": "Notizen, Ergebnisse und Aufgaben je Thema",
       "finishMeeting": "Abschließen",
       "taskDelete": "Aufgabe löschen",
-      "taskYou": "Du"
+      "taskYou": "Du",
+      "protocolAbout": "Zur Besprechung",
+      "protocolEmpty": "Noch leer",
+      "protocolTasksOpen": "{count} offen",
+      "protocolTasksDone": "Alle erledigt",
+      "protocolTasksNone": "Noch keine",
+      "protocolAttendeesBoth": "{present} anwesend · {excused} entschuldigt",
+      "protocolSlashHint": "Tippe / für Überschrift oder Aufgabe",
+      "protocolMoreFormat": "Mehr Formatierung",
+      "protocolCtrlDown": "Strg ↓"
     }
   },
   "en": {
@@ -128,7 +137,16 @@
       "prepareProtocolHint": "Notes, results and tasks per topic",
       "finishMeeting": "Finish",
       "taskDelete": "Delete task",
-      "taskYou": "You"
+      "taskYou": "You",
+      "protocolAbout": "About this meeting",
+      "protocolEmpty": "Still empty",
+      "protocolTasksOpen": "{count} open",
+      "protocolTasksDone": "All done",
+      "protocolTasksNone": "None yet",
+      "protocolAttendeesBoth": "{present} present · {excused} excused",
+      "protocolSlashHint": "Type / for a heading or a task",
+      "protocolMoreFormat": "More formatting",
+      "protocolCtrlDown": "Ctrl ↓"
     }
   }
 }

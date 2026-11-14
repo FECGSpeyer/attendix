@@ -12364,10 +12364,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTeamPrepareProtocolHint => 'Notes, results and tasks per topic';
 
   @override
+  String get rdTeamProtocolAbout => 'About this meeting';
+
+  @override
+  String rdTeamProtocolAttendeesBoth(Object present, Object excused) {
+    return '$present present · $excused excused';
+  }
+
+  @override
+  String get rdTeamProtocolCtrlDown => 'Ctrl ↓';
+
+  @override
+  String get rdTeamProtocolEmpty => 'Still empty';
+
+  @override
+  String get rdTeamProtocolMoreFormat => 'More formatting';
+
+  @override
   String get rdTeamProtocolPublished => 'Minutes published';
 
   @override
   String get rdTeamProtocolRead => 'Read minutes';
+
+  @override
+  String get rdTeamProtocolSlashHint => 'Type / for a heading or a task';
+
+  @override
+  String get rdTeamProtocolTasksDone => 'All done';
+
+  @override
+  String get rdTeamProtocolTasksNone => 'None yet';
+
+  @override
+  String rdTeamProtocolTasksOpen(Object count) {
+    return '$count open';
+  }
 
   @override
   String rdTeamShowDone(Object count) {

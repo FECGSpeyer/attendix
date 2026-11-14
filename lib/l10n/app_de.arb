@@ -15454,6 +15454,30 @@
   "@rdTeamPrepareProtocolHint": {
     "description": "rdTeam.prepareProtocolHint"
   },
+  "rdTeamProtocolAbout": "Zur Besprechung",
+  "@rdTeamProtocolAbout": {
+    "description": "rdTeam.protocolAbout"
+  },
+  "rdTeamProtocolAttendeesBoth": "{present} anwesend · {excused} entschuldigt",
+  "@rdTeamProtocolAttendeesBoth": {
+    "description": "rdTeam.protocolAttendeesBoth",
+    "placeholders": {
+      "present": {},
+      "excused": {}
+    }
+  },
+  "rdTeamProtocolCtrlDown": "Strg ↓",
+  "@rdTeamProtocolCtrlDown": {
+    "description": "rdTeam.protocolCtrlDown"
+  },
+  "rdTeamProtocolEmpty": "Noch leer",
+  "@rdTeamProtocolEmpty": {
+    "description": "rdTeam.protocolEmpty"
+  },
+  "rdTeamProtocolMoreFormat": "Mehr Formatierung",
+  "@rdTeamProtocolMoreFormat": {
+    "description": "rdTeam.protocolMoreFormat"
+  },
   "rdTeamProtocolPublished": "Protokoll freigegeben",
   "@rdTeamProtocolPublished": {
     "description": "rdTeam.protocolPublished"
@@ -15461,6 +15485,25 @@
   "rdTeamProtocolRead": "Protokoll lesen",
   "@rdTeamProtocolRead": {
     "description": "rdTeam.protocolRead"
+  },
+  "rdTeamProtocolSlashHint": "Tippe / für Überschrift oder Aufgabe",
+  "@rdTeamProtocolSlashHint": {
+    "description": "rdTeam.protocolSlashHint"
+  },
+  "rdTeamProtocolTasksDone": "Alle erledigt",
+  "@rdTeamProtocolTasksDone": {
+    "description": "rdTeam.protocolTasksDone"
+  },
+  "rdTeamProtocolTasksNone": "Noch keine",
+  "@rdTeamProtocolTasksNone": {
+    "description": "rdTeam.protocolTasksNone"
+  },
+  "rdTeamProtocolTasksOpen": "{count} offen",
+  "@rdTeamProtocolTasksOpen": {
+    "description": "rdTeam.protocolTasksOpen",
+    "placeholders": {
+      "count": {}
+    }
   },
   "rdTeamShowDone": "Besprochene Themen anzeigen ({count})",
   "@rdTeamShowDone": {

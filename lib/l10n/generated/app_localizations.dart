@@ -20148,6 +20148,36 @@ abstract class AppLocalizations {
   /// **'Notizen, Ergebnisse und Aufgaben je Thema'**
   String get rdTeamPrepareProtocolHint;
 
+  /// rdTeam.protocolAbout
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Besprechung'**
+  String get rdTeamProtocolAbout;
+
+  /// rdTeam.protocolAttendeesBoth
+  ///
+  /// In de, this message translates to:
+  /// **'{present} anwesend · {excused} entschuldigt'**
+  String rdTeamProtocolAttendeesBoth(Object present, Object excused);
+
+  /// rdTeam.protocolCtrlDown
+  ///
+  /// In de, this message translates to:
+  /// **'Strg ↓'**
+  String get rdTeamProtocolCtrlDown;
+
+  /// rdTeam.protocolEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch leer'**
+  String get rdTeamProtocolEmpty;
+
+  /// rdTeam.protocolMoreFormat
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr Formatierung'**
+  String get rdTeamProtocolMoreFormat;
+
   /// rdTeam.protocolPublished
   ///
   /// In de, this message translates to:
@@ -20159,6 +20189,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Protokoll lesen'**
   String get rdTeamProtocolRead;
+
+  /// rdTeam.protocolSlashHint
+  ///
+  /// In de, this message translates to:
+  /// **'Tippe / für Überschrift oder Aufgabe'**
+  String get rdTeamProtocolSlashHint;
+
+  /// rdTeam.protocolTasksDone
+  ///
+  /// In de, this message translates to:
+  /// **'Alle erledigt'**
+  String get rdTeamProtocolTasksDone;
+
+  /// rdTeam.protocolTasksNone
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine'**
+  String get rdTeamProtocolTasksNone;
+
+  /// rdTeam.protocolTasksOpen
+  ///
+  /// In de, this message translates to:
+  /// **'{count} offen'**
+  String rdTeamProtocolTasksOpen(Object count);
 
   /// rdTeam.showDone
   ///
