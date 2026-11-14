@@ -1,0 +1,90 @@
+name: E2E
+
+# Runs the flows in patrol_test/ against the real app and a LOCAL Supabase
+# that is started fresh inside this job (e2e/supabase). Nothing here talks
+# to the production database.
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'patrol_test/**'
+      - 'e2e/**'
+      - '.github/workflows/e2e.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  PATROL_CLI_VERSION: '4.9.0'
+  SUPABASE_CLI_VERSION: '2.33.9'
+  PATROL_ANALYTICS_ENABLED: 'false'
+
+jobs:
+  web:
+    name: Web (Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read Flutter version from ci.yml
+        id: flutter
+        run: |
+          version=$(sed -n "s/^ *flutter-version: *['\"]\{0,1\}\([0-9][0-9.]*\)['\"]\{0,1\} *$/\1/p" .github/workflows/ci.yml | head -n1)
+          test -n "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.flutter.outputs.version }}
+          channel: 'stable'
+          cache: true
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: ${{ env.SUPABASE_CLI_VERSION }}
+
+      - name: Start local Supabase
+        run: |
+          supabase start --workdir e2e -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-meta
+          supabase status --workdir e2e -o env > "$RUNNER_TEMP/supabase.env"
+
+      - name: Create test accounts
+        run: |
+          source "$RUNNER_TEMP/supabase.env"
+          e2e/seed_accounts.sh "$API_URL" "$SERVICE_ROLE_KEY"
+
+      - name: Point the app at the local Supabase
+        run: |
+          source "$RUNNER_TEMP/supabase.env"
+          printf 'SUPABASE_URL=%s\nSUPABASE_ANON_KEY=%s\n' "$API_URL" "$ANON_KEY" > .env.app
+          cp .env.app .env
+
+      - name: Get dependencies
+        run: |
+          flutter pub get
+          dart pub global activate patrol_cli "$PATROL_CLI_VERSION"
+
+      - name: Run flows
+        env:
+          PATROL_WEB_LOCALE: de-DE
+          PATROL_WEB_TIMEZONE: Europe/Berlin
+          PATROL_WEB_VIEWPORT: '{"width":1280,"height":800}'
+          PATROL_WEB_SCREENSHOT: only-on-failure
+          PATROL_WEB_REPORTER: '["list","html"]'
+        run: patrol test --device chrome --web-headless true
+
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-web-report
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore
+          retention-days: 7
