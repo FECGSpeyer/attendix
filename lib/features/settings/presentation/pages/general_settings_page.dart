@@ -300,7 +300,12 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       ref.invalidate(userTenantsProvider);
 
       if (mounted) {
-        setState(() => _hasChanges = false);
+        // E2E EINST-12: Ionic closes its loading before the alert – the FAB
+        // shows its icon again instead of a spinner while the alert is open.
+        setState(() {
+          _hasChanges = false;
+          _isSaving = false;
+        });
         // LOGIC_SETTINGS: Ionic success toast + alert with "Neu laden"
         ToastHelper.showSuccess(context, context.l10n.generalSettingsSaved);
         final reload = await showAppDialog<bool>(
