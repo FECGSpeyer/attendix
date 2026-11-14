@@ -36,8 +36,8 @@ class RdVoiceLeaderPage extends ConsumerWidget {
       Align(
         alignment: Alignment.centerLeft,
         child: RdBackLink(
-          label: MaterialLocalizations.of(context).backButtonTooltip,
-          onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.today),
+          label: rdBackLabel(context, fallback: l10n.redesignTabMe),
+          onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.me),
         ),
       ),
       const SizedBox(height: 4),

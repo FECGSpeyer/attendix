@@ -5,6 +5,9 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
+import '../../../../core/providers/player_providers.dart' show playerRepositoryWithTenantProvider;
+import '../../../../core/providers/profile_providers.dart' show ownProfileProvider;
+import '../../../../core/providers/tenant_providers.dart' show currentTenantProvider;
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
@@ -15,6 +18,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart'
     show CrossTenantPersonAttendance;
 import '../../../../l10n/l10n.dart';
+import '../../../people/person_stats.dart';
 
 /// REDESIGN: data of "Heute". Only reads through the existing
 /// `…RepositoryWithTenantProvider`s (no new queries, no writes).
@@ -236,4 +240,25 @@ final rdAttendanceTypeProvider =
   if (typeId == null) return null;
   final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
   return types.where((t) => t.id == typeId).firstOrNull;
+});
+
+/// The own attendance rate of the season in the current group, counted
+/// exactly like on the person page ([computePersonAttendanceStats]) and in
+/// the Mitglieder list, so "Ich" shows the number the leads see. Null
+/// without an own person or before the first Termin that counts.
+final rdOwnSeasonRateProvider = FutureProvider.autoDispose<int?>((ref) async {
+  ref.watch(attendanceRefetchCounter);
+  final repo = ref.watch(playerRepositoryWithTenantProvider);
+  final tenant = ref.watch(currentTenantProvider);
+  final person = (await ref.watch(ownProfileProvider.future))?.person;
+  final id = person?.id;
+  if (!repo.hasTenantId || tenant?.id == null || id == null || person?.tenantId != tenant!.id) return null;
+  final rows = await repo.getPersonAttendanceStatsRows(id);
+  final stats = computePersonAttendanceStats(
+    rows,
+    now: DateTime.now(),
+    windowStart: personAttendanceWindowStart(seasonStart: tenant.seasonStart),
+    shiftExcusedAsPresent: tenant.shiftExcusedAsPresent,
+  );
+  return (stats['counted'] ?? 0) == 0 ? null : stats['percentage'];
 });

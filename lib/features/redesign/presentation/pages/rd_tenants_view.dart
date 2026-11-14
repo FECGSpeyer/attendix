@@ -52,7 +52,7 @@ class RdTenantsView extends StatelessWidget {
           RdBackLink(label: l10n.redesignTabMe, onTap: () => context.go(RedesignRoutes.me))
         else
           const SizedBox(height: 16),
-        Semantics(header: true, child: Text(l10n.redesignTenantsTitle, style: RdType.largeTitle(p))),
+        Semantics(header: true, child: Text(l10n.redesignMeGroups, style: RdType.largeTitle(p))),
         const SizedBox(height: 4),
         Text(l10n.redesignTenantsIntro, style: RdType.meta(p, size: 14)),
         const SizedBox(height: 16),

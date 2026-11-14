@@ -439,7 +439,7 @@ class _RdTenantDetail extends ConsumerWidget {
     final p = context.rd;
     final l10n = context.l10n;
     final back = RdBackLink(
-      label: l10n.redesignTenantsTitle,
+      label: l10n.redesignMeGroups,
       onTap: () => context.canPop() ? context.pop() : context.go('/tenants'),
     );
     final list = tenants.valueOrNull;

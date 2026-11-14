@@ -28,7 +28,6 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged;
-import '../../../../core/utils/tenant_label_utils.dart';
 import '../../../../core/utils/text_utils.dart' show emailsMatch;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
@@ -973,7 +972,8 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
       context,
       title: context.l10n.personRemoveAccount,
       message: context.l10n.personRemoveAccountMessage,
-      confirmText: context.l10n.commonYes,
+      // Beta: the button names what happens, never "Ja".
+      confirmText: context.l10n.commonRemove,
       cancelText: context.l10n.commonCancel,
     );
     if (!confirmed || !mounted) return;
@@ -1097,7 +1097,8 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
       context,
       title: context.l10n.attendanceRemovePerson,
       message: context.l10n.personRemovePersonMessage,
-      confirmText: context.l10n.commonYes,
+      // Beta: the button names what happens, never "Ja".
+      confirmText: context.l10n.commonRemove,
       cancelText: context.l10n.commonCancel,
       isDestructive: true,
     );
@@ -1117,9 +1118,9 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   Future<void> _reactivate(Person person) async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: context.l10n.personReactivatePerson,
-      message: context.l10n.personReactivateConfirm,
-      confirmText: context.l10n.commonYes,
+      title: context.l10n.rdTextRestoreTitle(person.fullName),
+      message: context.l10n.rdTextRestoreMessage,
+      confirmText: context.l10n.redesignArchiveListRestore,
       cancelText: context.l10n.commonCancel,
     );
     if (!confirmed || !mounted) return;
@@ -1128,7 +1129,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
       _container.invalidate(realtimePlayersProvider);
       _container.invalidate(personProvider(_personId));
       if (!mounted) return;
-      ToastHelper.showSuccess(context, context.l10n.personReactivated);
+      ToastHelper.showSuccess(context, context.l10n.rdTextRestoreDone(person.fullName));
       _done();
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
@@ -1243,7 +1244,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         RdInfoCard(
           text: l10n.redesignPersonFormArchived,
           icon: Icons.archive_outlined,
-          action: RdPrimaryButton(label: l10n.personReactivatePerson, onPressed: () => _reactivate(person)),
+          action: RdPrimaryButton(label: l10n.redesignArchiveListRestore, onPressed: () => _reactivate(person)),
         ),
       ]);
     } else if (person.pending) {
@@ -1256,7 +1257,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
           action: RdPrimaryButton(
             key: const Key('rd-person-review'),
             label: l10n.redesignPersonReview,
-            onPressed: () => context.push(RedesignRoutes.approvalReview(_personId)),
+            onPressed: () => context.push(RedesignRoutes.membersReview(_personId)),
           ),
         ),
       ]);
@@ -1395,7 +1396,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         ),
         if (namesEmpty) hint(l10n.personEnterNames, color: p.absent),
         const SizedBox(height: 20),
-        RdGroupLabel(groupLabel(tenant?.type)),
+        RdGroupLabel(l10n.rdAdminGroups),
         RdPersonGroupChips(
           selected: person.instrument,
           onSelected: _setGroup,

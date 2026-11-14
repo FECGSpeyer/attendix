@@ -6,7 +6,6 @@ import '../../../../../core/providers/self_service_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../rd_actions.dart';
 import '../join/rd_join_sheet.dart';
 import '../rd_widgets.dart';
 
@@ -70,19 +69,17 @@ class RdApplicantToday extends ConsumerWidget {
             ],
           ),
         ),
-        const SizedBox(height: 24),
-        RdOutlineButton(
-          label: l10n.redesignApplicantOtherGroup,
-          icon: Icons.group_add_outlined,
-          // UX B1: join with the invitation link, not "Neue Instanz".
-          onPressed: () => showRdJoinSheet(context),
-        ),
-        const SizedBox(height: 10),
-        RdOutlineButton(
-          label: l10n.redesignMeLogout,
-          icon: Icons.logout,
-          color: p.absent,
-          onPressed: () => rdLogout(context, ref),
+        const SizedBox(height: 12),
+        // Only the status asks for attention: joining another group is a
+        // link, "Ausloggen" sits in the tab "Ich".
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: RdTextLink(
+            key: const Key('rd-applicant-other-group'),
+            label: l10n.redesignApplicantOtherGroup,
+            // UX B1: join with the invitation link, not "Neue Instanz".
+            onTap: () => showRdJoinSheet(context),
+          ),
         ),
       ],
     );

@@ -424,7 +424,7 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
     final l10n = context.l10n;
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: l10n.typeSettingsDeleteType,
+      title: l10n.rdTextTypeDeleteTitle,
       message: _usageCount > 0 ? l10n.rdTypeDeleteUsedMessage(_nameController.text.trim(), _usageCount) : l10n.rdTypeDeleted,
       confirmText: l10n.commonDelete,
       cancelText: l10n.commonCancel,

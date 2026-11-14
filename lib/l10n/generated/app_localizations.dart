@@ -18268,7 +18268,7 @@ abstract class AppLocalizations {
   /// rdOrg.fieldsEmpty
   ///
   /// In de, this message translates to:
-  /// **'Noch keine gemeinsamen Zusatzfelder.'**
+  /// **'Noch keine gemeinsamen eigenen Felder.'**
   String get rdOrgFieldsEmpty;
 
   /// rdOrg.fieldsSaving
@@ -18454,7 +18454,7 @@ abstract class AppLocalizations {
   /// rdOrg.personFields
   ///
   /// In de, this message translates to:
-  /// **'Gemeinsame Zusatzfelder'**
+  /// **'Gemeinsame eigene Felder'**
   String get rdOrgPersonFields;
 
   /// rdOrg.request
@@ -19522,7 +19522,7 @@ abstract class AppLocalizations {
   /// rdStats.fields
   ///
   /// In de, this message translates to:
-  /// **'Zusatzfelder'**
+  /// **'Eigene Felder'**
   String get rdStatsFields;
 
   /// rdStats.fieldsPaused
@@ -20249,6 +20249,234 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Wer dabei ist, wird eingeladen und sieht Tagesordnung, Protokoll und Aufgaben.'**
   String get rdTeamWhoIsInHint;
+
+  /// rdText.archiveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Person steht danach im Archiv. Unter Mitglieder › ••• › Archiv kannst du sie jederzeit wiederherstellen.'**
+  String get rdTextArchiveHint;
+
+  /// rdText.calendarAllEvents
+  ///
+  /// In de, this message translates to:
+  /// **'Du abonnierst alle Termine der Gruppe.'**
+  String get rdTextCalendarAllEvents;
+
+  /// rdText.categoryDeleteMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werke bleiben erhalten. Sie haben danach keine Kategorie mehr.'**
+  String get rdTextCategoryDeleteMessage;
+
+  /// rdText.categoryDeleteTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorie „{name}“ löschen?'**
+  String rdTextCategoryDeleteTitle(Object name);
+
+  /// rdText.collectionPrefixWhy
+  ///
+  /// In de, this message translates to:
+  /// **'Kürzel „{prefix}“, weil „{first}“ schon vergeben ist. Du kannst es in der Sammlung ändern.'**
+  String rdTextCollectionPrefixWhy(Object prefix, Object first);
+
+  /// rdText.deleteAccountMemberships
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Mitgliedschaften in allen deinen Gruppen'**
+  String get rdTextDeleteAccountMemberships;
+
+  /// rdText.exportMembersFile
+  ///
+  /// In de, this message translates to:
+  /// **'{name}_Mitgliederliste_Stand_{date}'**
+  String rdTextExportMembersFile(Object name, Object date);
+
+  /// rdText.groupNewTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Register'**
+  String get rdTextGroupNewTitle;
+
+  /// rdText.groupsManageShort
+  ///
+  /// In de, this message translates to:
+  /// **'Verwalten'**
+  String get rdTextGroupsManageShort;
+
+  /// rdText.helperUntil
+  ///
+  /// In de, this message translates to:
+  /// **'bis {date}'**
+  String rdTextHelperUntil(Object date);
+
+  /// rdText.importNotDrive
+  ///
+  /// In de, this message translates to:
+  /// **'Das ist kein Link auf einen Google-Drive-Ordner.'**
+  String get rdTextImportNotDrive;
+
+  /// rdText.joinIncomplete
+  ///
+  /// In de, this message translates to:
+  /// **'Der Link ist unvollständig. Kopiere ihn bitte ganz.'**
+  String get rdTextJoinIncomplete;
+
+  /// rdText.loggingOut
+  ///
+  /// In de, this message translates to:
+  /// **'Du wirst abgemeldet …'**
+  String get rdTextLoggingOut;
+
+  /// rdText.meAttendanceSeason
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Anwesenheit diese Saison'**
+  String get rdTextMeAttendanceSeason;
+
+  /// rdText.nextWeek
+  ///
+  /// In de, this message translates to:
+  /// **'Nächste Woche'**
+  String get rdTextNextWeek;
+
+  /// rdText.noRegion
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Bundesland'**
+  String get rdTextNoRegion;
+
+  /// rdText.numberTaken
+  ///
+  /// In de, this message translates to:
+  /// **'Die Nummer {number} ist schon vergeben („{name}“).'**
+  String rdTextNumberTaken(Object number, Object name);
+
+  /// rdText.pendingAccepted
+  ///
+  /// In de, this message translates to:
+  /// **'{name} aufgenommen'**
+  String rdTextPendingAccepted(Object name);
+
+  /// rdText.pendingDeclined
+  ///
+  /// In de, this message translates to:
+  /// **'Anfrage abgelehnt'**
+  String get rdTextPendingDeclined;
+
+  /// rdText.personGroupFirst
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle aus, wohin die Person gehört. Erst dann lässt sie sich anlegen.'**
+  String get rdTextPersonGroupFirst;
+
+  /// rdText.planCopyCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} kopieren'**
+  String rdTextPlanCopyCount(Object count);
+
+  /// rdText.planCopyFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Wie Termin am {date}'**
+  String rdTextPlanCopyFrom(Object date);
+
+  /// rdText.restoreDone
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde wiederhergestellt'**
+  String rdTextRestoreDone(Object name);
+
+  /// rdText.restoreMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Die Person steht danach wieder in der Mitgliederliste.'**
+  String get rdTextRestoreMessage;
+
+  /// rdText.restoreTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wiederherstellen?'**
+  String rdTextRestoreTitle(Object name);
+
+  /// rdText.teacherStudents
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Schüler'**
+  String rdTextTeacherStudents(num count);
+
+  /// rdText.typeDeleteMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Die Terminart „{name}“ wird gelöscht. Das kann nicht rückgängig gemacht werden.'**
+  String rdTextTypeDeleteMessage(Object name);
+
+  /// rdText.typeDeleteTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Terminart löschen?'**
+  String get rdTextTypeDeleteTitle;
+
+  /// rdText.workDeleteMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Das Werk wird mit seinen Dateien gelöscht. Das kann nicht rückgängig gemacht werden.'**
+  String get rdTextWorkDeleteMessage;
+
+  /// rdText.workDeleteSyncedMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werke werden mit {names} geteilt. Das Werk wird dort ebenfalls gelöscht, samt der Historie aller beteiligten Gruppen. Das kann nicht rückgängig gemacht werden.'**
+  String rdTextWorkDeleteSyncedMessage(Object names);
+
+  /// rdText.workDeleteTitle
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ löschen?'**
+  String rdTextWorkDeleteTitle(Object name);
+
+  /// rdText.workListIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Aus einer Excel- oder CSV-Datei. Die erste Zeile enthält die Spaltenüberschriften. Am einfachsten füllst du die Vorlage aus.'**
+  String get rdTextWorkListIntro;
+
+  /// rdText.worksNoFilterMatch
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Werk passt zum Filter.'**
+  String get rdTextWorksNoFilterMatch;
+
+  /// rdText.worksSelected
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk ausgewählt} other {{count} Werke ausgewählt}}'**
+  String rdTextWorksSelected(num count);
+
+  /// rdText.worksSelectedOne
+  ///
+  /// In de, this message translates to:
+  /// **'1 Werk ausgewählt: {name}'**
+  String rdTextWorksSelectedOne(Object name);
+
+  /// rdText.youAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Antworten'**
+  String get rdTextYouAnswer;
+
+  /// rdText.youNoAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Antwort'**
+  String get rdTextYouNoAnswer;
+
+  /// rdText.yourAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Antwort'**
+  String get rdTextYourAnswer;
 
   /// rdType.add
   ///
@@ -22893,13 +23121,13 @@ abstract class AppLocalizations {
   /// redesign.extraFieldEdit.delete
   ///
   /// In de, this message translates to:
-  /// **'Zusatzfeld löschen'**
+  /// **'Feld löschen'**
   String get redesignExtraFieldEditDelete;
 
   /// redesign.extraFieldEdit.deleteFailed
   ///
   /// In de, this message translates to:
-  /// **'Das Zusatzfeld konnte nicht gelöscht werden.'**
+  /// **'Das Feld konnte nicht gelöscht werden.'**
   String get redesignExtraFieldEditDeleteFailed;
 
   /// redesign.extraFieldEdit.deleteHint
@@ -22923,7 +23151,7 @@ abstract class AppLocalizations {
   /// redesign.extraFieldEdit.notFound
   ///
   /// In de, this message translates to:
-  /// **'Dieses Zusatzfeld gibt es nicht mehr.'**
+  /// **'Dieses Feld gibt es nicht mehr.'**
   String get redesignExtraFieldEditNotFound;
 
   /// redesign.extraFieldEdit.optionAdd
@@ -22977,13 +23205,13 @@ abstract class AppLocalizations {
   /// redesign.extraFieldEdit.title
   ///
   /// In de, this message translates to:
-  /// **'Zusatzfeld bearbeiten'**
+  /// **'Feld bearbeiten'**
   String get redesignExtraFieldEditTitle;
 
   /// redesign.extraFieldsList.add
   ///
   /// In de, this message translates to:
-  /// **'Zusatzfeld hinzufügen'**
+  /// **'Feld hinzufügen'**
   String get redesignExtraFieldsListAdd;
 
   /// redesign.extraFieldsList.addFor
@@ -22995,7 +23223,7 @@ abstract class AppLocalizations {
   /// redesign.extraFieldsList.empty
   ///
   /// In de, this message translates to:
-  /// **'Noch keine Zusatzfelder angelegt.'**
+  /// **'Noch keine eigenen Felder angelegt.'**
   String get redesignExtraFieldsListEmpty;
 
   /// redesign.extraFieldsList.intro
@@ -23601,19 +23829,19 @@ abstract class AppLocalizations {
   /// redesign.groupCategories.back
   ///
   /// In de, this message translates to:
-  /// **'Gruppen'**
+  /// **'Register'**
   String get redesignGroupCategoriesBack;
 
   /// redesign.groupCategories.count
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, one {{count} Gruppe} other {{count} Gruppen}}'**
+  /// **'{count} Register'**
   String redesignGroupCategoriesCount(num count);
 
   /// redesign.groupCategories.intro
   ///
   /// In de, this message translates to:
-  /// **'Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.'**
+  /// **'Kategorien fassen Register zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Register.'**
   String get redesignGroupCategoriesIntro;
 
   /// redesign.groupEdit.category
@@ -26595,7 +26823,7 @@ abstract class AppLocalizations {
   /// redesign.personForm.moreHint
   ///
   /// In de, this message translates to:
-  /// **'Geburtstag, Beitritt, Lehrer, Zusatzfelder und mehr'**
+  /// **'Geburtstag, Beitritt, Lehrer, eigene Felder und mehr'**
   String get redesignPersonFormMoreHint;
 
   /// redesign.personForm.newTitle
@@ -29031,7 +29259,7 @@ abstract class AppLocalizations {
   /// redesign.type.whoBelongsHint
   ///
   /// In de, this message translates to:
-  /// **'Gruppen und Zusatzfeld-Filter'**
+  /// **'Gruppen und Filter nach eigenen Feldern'**
   String get redesignTypeWhoBelongsHint;
 
   /// redesign.typesList.add
@@ -29283,7 +29511,7 @@ abstract class AppLocalizations {
   /// redesign.workCreate.later
   ///
   /// In de, this message translates to:
-  /// **'Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“.'**
+  /// **'Link, Schwierigkeit und eigene Felder später in „Bearbeiten“.'**
   String get redesignWorkCreateLater;
 
   /// redesign.workCreate.nextNumber
@@ -29349,7 +29577,7 @@ abstract class AppLocalizations {
   /// redesign.workEdit.fields
   ///
   /// In de, this message translates to:
-  /// **'Zusatzfelder'**
+  /// **'Eigene Felder'**
   String get redesignWorkEditFields;
 
   /// redesign.workEdit.hard

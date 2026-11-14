@@ -11214,7 +11214,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdOrgFieldsAdd => 'Add field';
 
   @override
-  String get rdOrgFieldsEmpty => 'No shared extra fields yet.';
+  String get rdOrgFieldsEmpty => 'No shared custom fields yet.';
 
   @override
   String get rdOrgFieldsSaving => 'Saving change …';
@@ -11328,7 +11328,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get rdOrgPersonFields => 'Shared extra fields';
+  String get rdOrgPersonFields => 'Shared custom fields';
 
   @override
   String rdOrgRequest(Object count) {
@@ -11973,7 +11973,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get rdStatsFields => 'Extra fields';
+  String get rdStatsFields => 'Custom fields';
 
   @override
   String get rdStatsFieldsPaused => 'Include paused';
@@ -12426,6 +12426,174 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get rdTeamWhoIsInHint =>
       'Everyone taking part is invited and sees the agenda, the minutes and the tasks.';
+
+  @override
+  String get rdTextArchiveHint =>
+      'The person moves to the archive. You can restore them any time under Members › ••• › Archive.';
+
+  @override
+  String get rdTextCalendarAllEvents =>
+      'You subscribe to all events of the group.';
+
+  @override
+  String get rdTextCategoryDeleteMessage =>
+      'The works stay. They have no category afterwards.';
+
+  @override
+  String rdTextCategoryDeleteTitle(Object name) {
+    return 'Delete category “$name”?';
+  }
+
+  @override
+  String rdTextCollectionPrefixWhy(Object prefix, Object first) {
+    return 'Prefix “$prefix” because “$first” is already taken. You can change it in the collection.';
+  }
+
+  @override
+  String get rdTextDeleteAccountMemberships =>
+      'Your memberships in all your groups';
+
+  @override
+  String rdTextExportMembersFile(Object name, Object date) {
+    return '${name}_Members_as_of_$date';
+  }
+
+  @override
+  String get rdTextGroupNewTitle => 'New section';
+
+  @override
+  String get rdTextGroupsManageShort => 'Manage';
+
+  @override
+  String rdTextHelperUntil(Object date) {
+    return 'until $date';
+  }
+
+  @override
+  String get rdTextImportNotDrive =>
+      'This is not a link to a Google Drive folder.';
+
+  @override
+  String get rdTextJoinIncomplete =>
+      'The link is incomplete. Please copy all of it.';
+
+  @override
+  String get rdTextLoggingOut => 'Signing you out …';
+
+  @override
+  String get rdTextMeAttendanceSeason => 'Your attendance this season';
+
+  @override
+  String get rdTextNextWeek => 'Next week';
+
+  @override
+  String get rdTextNoRegion => 'No state';
+
+  @override
+  String rdTextNumberTaken(Object number, Object name) {
+    return 'Number $number is already taken (“$name”).';
+  }
+
+  @override
+  String rdTextPendingAccepted(Object name) {
+    return '$name added';
+  }
+
+  @override
+  String get rdTextPendingDeclined => 'Request declined';
+
+  @override
+  String get rdTextPersonGroupFirst =>
+      'Choose where the person belongs. Only then can they be created.';
+
+  @override
+  String rdTextPlanCopyCount(Object count) {
+    return 'Copy $count';
+  }
+
+  @override
+  String rdTextPlanCopyFrom(Object date) {
+    return 'Like the event on $date';
+  }
+
+  @override
+  String rdTextRestoreDone(Object name) {
+    return '$name was restored';
+  }
+
+  @override
+  String get rdTextRestoreMessage =>
+      'The person is back in the members list afterwards.';
+
+  @override
+  String rdTextRestoreTitle(Object name) {
+    return 'Restore $name?';
+  }
+
+  @override
+  String rdTextTeacherStudents(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count students',
+      one: '1 student',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdTextTypeDeleteMessage(Object name) {
+    return 'The event type “$name” will be deleted. This cannot be undone.';
+  }
+
+  @override
+  String get rdTextTypeDeleteTitle => 'Delete event type?';
+
+  @override
+  String get rdTextWorkDeleteMessage =>
+      'The work and its files will be deleted. This cannot be undone.';
+
+  @override
+  String rdTextWorkDeleteSyncedMessage(Object names) {
+    return 'The works are shared with $names. The work is deleted there too, including the history of all groups involved. This cannot be undone.';
+  }
+
+  @override
+  String rdTextWorkDeleteTitle(Object name) {
+    return 'Delete “$name”?';
+  }
+
+  @override
+  String get rdTextWorkListIntro =>
+      'From an Excel or CSV file. The first row holds the column headings. The easiest way is to fill in the template.';
+
+  @override
+  String get rdTextWorksNoFilterMatch => 'No work matches the filter.';
+
+  @override
+  String rdTextWorksSelected(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count works selected',
+      one: '1 work selected',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdTextWorksSelectedOne(Object name) {
+    return '1 work selected: $name';
+  }
+
+  @override
+  String get rdTextYouAnswer => 'Answer';
+
+  @override
+  String get rdTextYouNoAnswer => 'No answer yet';
+
+  @override
+  String get rdTextYourAnswer => 'Your answer';
 
   @override
   String get rdTypeAdd => 'Add';
@@ -14232,11 +14400,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Used when a person or work has no value yet.';
 
   @override
-  String get redesignExtraFieldEditDelete => 'Delete extra field';
+  String get redesignExtraFieldEditDelete => 'Delete custom field';
 
   @override
   String get redesignExtraFieldEditDeleteFailed =>
-      'The extra field could not be deleted.';
+      'The custom field could not be deleted.';
 
   @override
   String get redesignExtraFieldEditDeleteHint =>
@@ -14250,7 +14418,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignExtraFieldEditNotFound =>
-      'This extra field no longer exists.';
+      'This custom field no longer exists.';
 
   @override
   String get redesignExtraFieldEditOptionAdd => 'Add option';
@@ -14280,16 +14448,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignExtraFieldEditTargetSongs => 'Works';
 
   @override
-  String get redesignExtraFieldEditTitle => 'Edit extra field';
+  String get redesignExtraFieldEditTitle => 'Edit custom field';
 
   @override
-  String get redesignExtraFieldsListAdd => 'Add extra field';
+  String get redesignExtraFieldsListAdd => 'Add custom field';
 
   @override
   String get redesignExtraFieldsListAddFor => 'Field for';
 
   @override
-  String get redesignExtraFieldsListEmpty => 'No extra fields yet.';
+  String get redesignExtraFieldsListEmpty => 'No custom fields yet.';
 
   @override
   String get redesignExtraFieldsListIntro =>
@@ -16667,7 +16835,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignPersonFormMoreHint =>
-      'Birthday, joined, teacher, extra fields and more';
+      'Birthday, joined, teacher, custom fields and more';
 
   @override
   String get redesignPersonFormNewTitle => 'New person';
@@ -18189,7 +18357,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignTypeWhoBelongs => 'Who belongs';
 
   @override
-  String get redesignTypeWhoBelongsHint => 'Groups and extra field filters';
+  String get redesignTypeWhoBelongsHint => 'Groups and custom field filters';
 
   @override
   String get redesignTypesListAdd => 'Add attendance type';
@@ -18339,7 +18507,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignWorkCreateLater =>
-      'Link, difficulty and additional fields later in “Edit”.';
+      'Link, difficulty and custom fields later in “Edit”.';
 
   @override
   String redesignWorkCreateNextNumber(Object number) {
@@ -18375,7 +18543,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorkEditEasy => 'Easy';
 
   @override
-  String get redesignWorkEditFields => 'Additional fields';
+  String get redesignWorkEditFields => 'Custom fields';
 
   @override
   String get redesignWorkEditHard => 'Hard';

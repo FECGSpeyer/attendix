@@ -14025,7 +14025,7 @@
   "@rdOrgFieldsAdd": {
     "description": "rdOrg.fieldsAdd"
   },
-  "rdOrgFieldsEmpty": "Noch keine gemeinsamen Zusatzfelder.",
+  "rdOrgFieldsEmpty": "Noch keine gemeinsamen eigenen Felder.",
   "@rdOrgFieldsEmpty": {
     "description": "rdOrg.fieldsEmpty"
   },
@@ -14175,7 +14175,7 @@
       "count": {}
     }
   },
-  "rdOrgPersonFields": "Gemeinsame Zusatzfelder",
+  "rdOrgPersonFields": "Gemeinsame eigene Felder",
   "@rdOrgPersonFields": {
     "description": "rdOrg.personFields"
   },
@@ -14976,7 +14976,7 @@
       }
     }
   },
-  "rdStatsFields": "Zusatzfelder",
+  "rdStatsFields": "Eigene Felder",
   "@rdStatsFields": {
     "description": "rdStats.fields"
   },
@@ -15533,6 +15533,211 @@
   "rdTeamWhoIsInHint": "Wer dabei ist, wird eingeladen und sieht Tagesordnung, Protokoll und Aufgaben.",
   "@rdTeamWhoIsInHint": {
     "description": "rdTeam.whoIsInHint"
+  },
+  "rdTextArchiveHint": "Die Person steht danach im Archiv. Unter Mitglieder › ••• › Archiv kannst du sie jederzeit wiederherstellen.",
+  "@rdTextArchiveHint": {
+    "description": "rdText.archiveHint"
+  },
+  "rdTextCalendarAllEvents": "Du abonnierst alle Termine der Gruppe.",
+  "@rdTextCalendarAllEvents": {
+    "description": "rdText.calendarAllEvents"
+  },
+  "rdTextCategoryDeleteMessage": "Die Werke bleiben erhalten. Sie haben danach keine Kategorie mehr.",
+  "@rdTextCategoryDeleteMessage": {
+    "description": "rdText.categoryDeleteMessage"
+  },
+  "rdTextCategoryDeleteTitle": "Kategorie „{name}“ löschen?",
+  "@rdTextCategoryDeleteTitle": {
+    "description": "rdText.categoryDeleteTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdTextCollectionPrefixWhy": "Kürzel „{prefix}“, weil „{first}“ schon vergeben ist. Du kannst es in der Sammlung ändern.",
+  "@rdTextCollectionPrefixWhy": {
+    "description": "rdText.collectionPrefixWhy",
+    "placeholders": {
+      "prefix": {},
+      "first": {}
+    }
+  },
+  "rdTextDeleteAccountMemberships": "Deine Mitgliedschaften in allen deinen Gruppen",
+  "@rdTextDeleteAccountMemberships": {
+    "description": "rdText.deleteAccountMemberships"
+  },
+  "rdTextExportMembersFile": "{name}_Mitgliederliste_Stand_{date}",
+  "@rdTextExportMembersFile": {
+    "description": "rdText.exportMembersFile",
+    "placeholders": {
+      "name": {},
+      "date": {}
+    }
+  },
+  "rdTextGroupNewTitle": "Neues Register",
+  "@rdTextGroupNewTitle": {
+    "description": "rdText.groupNewTitle"
+  },
+  "rdTextGroupsManageShort": "Verwalten",
+  "@rdTextGroupsManageShort": {
+    "description": "rdText.groupsManageShort"
+  },
+  "rdTextHelperUntil": "bis {date}",
+  "@rdTextHelperUntil": {
+    "description": "rdText.helperUntil",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "rdTextImportNotDrive": "Das ist kein Link auf einen Google-Drive-Ordner.",
+  "@rdTextImportNotDrive": {
+    "description": "rdText.importNotDrive"
+  },
+  "rdTextJoinIncomplete": "Der Link ist unvollständig. Kopiere ihn bitte ganz.",
+  "@rdTextJoinIncomplete": {
+    "description": "rdText.joinIncomplete"
+  },
+  "rdTextLoggingOut": "Du wirst abgemeldet …",
+  "@rdTextLoggingOut": {
+    "description": "rdText.loggingOut"
+  },
+  "rdTextMeAttendanceSeason": "Deine Anwesenheit diese Saison",
+  "@rdTextMeAttendanceSeason": {
+    "description": "rdText.meAttendanceSeason"
+  },
+  "rdTextNextWeek": "Nächste Woche",
+  "@rdTextNextWeek": {
+    "description": "rdText.nextWeek"
+  },
+  "rdTextNoRegion": "Kein Bundesland",
+  "@rdTextNoRegion": {
+    "description": "rdText.noRegion"
+  },
+  "rdTextNumberTaken": "Die Nummer {number} ist schon vergeben („{name}“).",
+  "@rdTextNumberTaken": {
+    "description": "rdText.numberTaken",
+    "placeholders": {
+      "number": {},
+      "name": {}
+    }
+  },
+  "rdTextPendingAccepted": "{name} aufgenommen",
+  "@rdTextPendingAccepted": {
+    "description": "rdText.pendingAccepted",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdTextPendingDeclined": "Anfrage abgelehnt",
+  "@rdTextPendingDeclined": {
+    "description": "rdText.pendingDeclined"
+  },
+  "rdTextPersonGroupFirst": "Wähle aus, wohin die Person gehört. Erst dann lässt sie sich anlegen.",
+  "@rdTextPersonGroupFirst": {
+    "description": "rdText.personGroupFirst"
+  },
+  "rdTextPlanCopyCount": "{count} kopieren",
+  "@rdTextPlanCopyCount": {
+    "description": "rdText.planCopyCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdTextPlanCopyFrom": "Wie Termin am {date}",
+  "@rdTextPlanCopyFrom": {
+    "description": "rdText.planCopyFrom",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "rdTextRestoreDone": "{name} wurde wiederhergestellt",
+  "@rdTextRestoreDone": {
+    "description": "rdText.restoreDone",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdTextRestoreMessage": "Die Person steht danach wieder in der Mitgliederliste.",
+  "@rdTextRestoreMessage": {
+    "description": "rdText.restoreMessage"
+  },
+  "rdTextRestoreTitle": "{name} wiederherstellen?",
+  "@rdTextRestoreTitle": {
+    "description": "rdText.restoreTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdTextTeacherStudents": "{count} Schüler",
+  "@rdTextTeacherStudents": {
+    "description": "rdText.teacherStudents",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdTextTypeDeleteMessage": "Die Terminart „{name}“ wird gelöscht. Das kann nicht rückgängig gemacht werden.",
+  "@rdTextTypeDeleteMessage": {
+    "description": "rdText.typeDeleteMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdTextTypeDeleteTitle": "Terminart löschen?",
+  "@rdTextTypeDeleteTitle": {
+    "description": "rdText.typeDeleteTitle"
+  },
+  "rdTextWorkDeleteMessage": "Das Werk wird mit seinen Dateien gelöscht. Das kann nicht rückgängig gemacht werden.",
+  "@rdTextWorkDeleteMessage": {
+    "description": "rdText.workDeleteMessage"
+  },
+  "rdTextWorkDeleteSyncedMessage": "Die Werke werden mit {names} geteilt. Das Werk wird dort ebenfalls gelöscht, samt der Historie aller beteiligten Gruppen. Das kann nicht rückgängig gemacht werden.",
+  "@rdTextWorkDeleteSyncedMessage": {
+    "description": "rdText.workDeleteSyncedMessage",
+    "placeholders": {
+      "names": {}
+    }
+  },
+  "rdTextWorkDeleteTitle": "„{name}“ löschen?",
+  "@rdTextWorkDeleteTitle": {
+    "description": "rdText.workDeleteTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdTextWorkListIntro": "Aus einer Excel- oder CSV-Datei. Die erste Zeile enthält die Spaltenüberschriften. Am einfachsten füllst du die Vorlage aus.",
+  "@rdTextWorkListIntro": {
+    "description": "rdText.workListIntro"
+  },
+  "rdTextWorksNoFilterMatch": "Kein Werk passt zum Filter.",
+  "@rdTextWorksNoFilterMatch": {
+    "description": "rdText.worksNoFilterMatch"
+  },
+  "rdTextWorksSelected": "{count, plural, one {1 Werk ausgewählt} other {{count} Werke ausgewählt}}",
+  "@rdTextWorksSelected": {
+    "description": "rdText.worksSelected",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTextWorksSelectedOne": "1 Werk ausgewählt: {name}",
+  "@rdTextWorksSelectedOne": {
+    "description": "rdText.worksSelectedOne",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdTextYouAnswer": "Antworten",
+  "@rdTextYouAnswer": {
+    "description": "rdText.youAnswer"
+  },
+  "rdTextYouNoAnswer": "Noch keine Antwort",
+  "@rdTextYouNoAnswer": {
+    "description": "rdText.youNoAnswer"
+  },
+  "rdTextYourAnswer": "Deine Antwort",
+  "@rdTextYourAnswer": {
+    "description": "rdText.yourAnswer"
   },
   "rdTypeAdd": "Hinzufügen",
   "@rdTypeAdd": {
@@ -17707,11 +17912,11 @@
   "@redesignExtraFieldEditDefaultHint": {
     "description": "redesign.extraFieldEdit.defaultHint"
   },
-  "redesignExtraFieldEditDelete": "Zusatzfeld löschen",
+  "redesignExtraFieldEditDelete": "Feld löschen",
   "@redesignExtraFieldEditDelete": {
     "description": "redesign.extraFieldEdit.delete"
   },
-  "redesignExtraFieldEditDeleteFailed": "Das Zusatzfeld konnte nicht gelöscht werden.",
+  "redesignExtraFieldEditDeleteFailed": "Das Feld konnte nicht gelöscht werden.",
   "@redesignExtraFieldEditDeleteFailed": {
     "description": "redesign.extraFieldEdit.deleteFailed"
   },
@@ -17727,7 +17932,7 @@
   "@redesignExtraFieldEditNameEmpty": {
     "description": "redesign.extraFieldEdit.nameEmpty"
   },
-  "redesignExtraFieldEditNotFound": "Dieses Zusatzfeld gibt es nicht mehr.",
+  "redesignExtraFieldEditNotFound": "Dieses Feld gibt es nicht mehr.",
   "@redesignExtraFieldEditNotFound": {
     "description": "redesign.extraFieldEdit.notFound"
   },
@@ -17763,11 +17968,11 @@
   "@redesignExtraFieldEditTargetSongs": {
     "description": "redesign.extraFieldEdit.targetSongs"
   },
-  "redesignExtraFieldEditTitle": "Zusatzfeld bearbeiten",
+  "redesignExtraFieldEditTitle": "Feld bearbeiten",
   "@redesignExtraFieldEditTitle": {
     "description": "redesign.extraFieldEdit.title"
   },
-  "redesignExtraFieldsListAdd": "Zusatzfeld hinzufügen",
+  "redesignExtraFieldsListAdd": "Feld hinzufügen",
   "@redesignExtraFieldsListAdd": {
     "description": "redesign.extraFieldsList.add"
   },
@@ -17775,7 +17980,7 @@
   "@redesignExtraFieldsListAddFor": {
     "description": "redesign.extraFieldsList.addFor"
   },
-  "redesignExtraFieldsListEmpty": "Noch keine Zusatzfelder angelegt.",
+  "redesignExtraFieldsListEmpty": "Noch keine eigenen Felder angelegt.",
   "@redesignExtraFieldsListEmpty": {
     "description": "redesign.extraFieldsList.empty"
   },
@@ -18291,20 +18496,18 @@
   "@redesignFolderTitleLeads": {
     "description": "redesign.folder.titleLeads"
   },
-  "redesignGroupCategoriesBack": "Gruppen",
+  "redesignGroupCategoriesBack": "Register",
   "@redesignGroupCategoriesBack": {
     "description": "redesign.groupCategories.back"
   },
-  "redesignGroupCategoriesCount": "{count, plural, one {{count} Gruppe} other {{count} Gruppen}}",
+  "redesignGroupCategoriesCount": "{count} Register",
   "@redesignGroupCategoriesCount": {
     "description": "redesign.groupCategories.count",
     "placeholders": {
-      "count": {
-        "type": "num"
-      }
+      "count": {}
     }
   },
-  "redesignGroupCategoriesIntro": "Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.",
+  "redesignGroupCategoriesIntro": "Kategorien fassen Register zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Register.",
   "@redesignGroupCategoriesIntro": {
     "description": "redesign.groupCategories.intro"
   },
@@ -20621,7 +20824,7 @@
   "@redesignPersonFormMore": {
     "description": "redesign.personForm.more"
   },
-  "redesignPersonFormMoreHint": "Geburtstag, Beitritt, Lehrer, Zusatzfelder und mehr",
+  "redesignPersonFormMoreHint": "Geburtstag, Beitritt, Lehrer, eigene Felder und mehr",
   "@redesignPersonFormMoreHint": {
     "description": "redesign.personForm.moreHint"
   },
@@ -22531,7 +22734,7 @@
   "@redesignTypeWhoBelongs": {
     "description": "redesign.type.whoBelongs"
   },
-  "redesignTypeWhoBelongsHint": "Gruppen und Zusatzfeld-Filter",
+  "redesignTypeWhoBelongsHint": "Gruppen und Filter nach eigenen Feldern",
   "@redesignTypeWhoBelongsHint": {
     "description": "redesign.type.whoBelongsHint"
   },
@@ -22716,7 +22919,7 @@
   "@redesignWorkCreateInstrumentationHint": {
     "description": "redesign.workCreate.instrumentationHint"
   },
-  "redesignWorkCreateLater": "Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“.",
+  "redesignWorkCreateLater": "Link, Schwierigkeit und eigene Felder später in „Bearbeiten“.",
   "@redesignWorkCreateLater": {
     "description": "redesign.workCreate.later"
   },
@@ -22763,7 +22966,7 @@
   "@redesignWorkEditEasy": {
     "description": "redesign.workEdit.easy"
   },
-  "redesignWorkEditFields": "Zusatzfelder",
+  "redesignWorkEditFields": "Eigene Felder",
   "@redesignWorkEditFields": {
     "description": "redesign.workEdit.fields"
   },

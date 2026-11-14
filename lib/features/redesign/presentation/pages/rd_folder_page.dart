@@ -100,7 +100,7 @@ class _RdFolderPageState extends ConsumerState<RdFolderPage> {
     final lead = ref.watch(effectiveRoleProvider).isConductor;
     final async = ref.watch(songsListDataProvider(null));
     final data = async.valueOrNull;
-    final title = lead ? l10n.redesignFolderTitleLeads : l10n.redesignFolderTitle;
+    final title = lead ? l10n.redesignWorksFoldersMenu : l10n.redesignFolderTitle;
 
     final head = <Widget>[
       Row(children: [RdBackLink(label: l10n.redesignTabWorks, onTap: _back)]),

@@ -217,7 +217,7 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
                     ],
                   ),
                   if (taken != null)
-                    hint(l10n.redesignWorkEditNumberTaken(taken.fullNumber, taken.name), color: p.absent)
+                    hint(l10n.rdTextNumberTaken(taken.fullNumber, taken.name), color: p.absent)
                   else if (next != null)
                     hint('${l10n.redesignWorkCreateNextNumber('$prefix$next')} ${l10n.redesignWorkCreatePrefixHint}')
                   else if (songsAsync.hasError)

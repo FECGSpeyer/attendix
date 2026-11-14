@@ -27,6 +27,7 @@ import '../../../people/person_write.dart';
 import '../../../people/presentation/widgets/person_detail/allgemein_accordion.dart' show personExtraFields;
 import '../../../people/presentation/widgets/person_image_picker.dart';
 import '../../../people/presentation/widgets/person_match_suggestions.dart' show showEmailTakenDialog;
+import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/members/rd_person_form.dart';
@@ -350,7 +351,7 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
   }
 
   /// "Register verwalten": the form stays below; a Register deleted there
-  /// is no longer chosen (the first one is taken again).
+  /// is no longer chosen.
   Future<void> _manageGroups() async {
     await context.push(RedesignRoutes.groups);
     if (!mounted) return;
@@ -368,10 +369,13 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
   }
 
   void _fillDefaults() {
-    // Ionic: a new person starts in the first group.
+    // Ionic starts a new person in the first group, which is often
+    // "Dirigent": the Beta asks for the choice (see [_groupMissing]). Only
+    // a single group needs no choice.
     if (!_groupPicked && _draft.instrument == null) {
-      final first = ref.watch(groupsProvider).valueOrNull?.firstOrNull?.id;
-      if (first != null) _draft = _draft.copyWith(instrument: first);
+      final groups = ref.watch(groupsProvider).valueOrNull;
+      final only = groups != null && groups.length == 1 ? groups.single.id : null;
+      if (only != null) _draft = _draft.copyWith(instrument: only);
     }
     // Ionic getFieldTypeDefaultValue per Zusatzfeld (Gemeinde = first church).
     final fields = personExtraFields(ref, ref.watch(currentTenantProvider));
@@ -386,6 +390,14 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
       if (!_defaulted.add(f.id)) continue;
       _additional[f.id] ??= extraFieldDefaultValue(f.type, defaultValue: f.defaultValue, options: f.options, churchIds: churchIds);
     }
+  }
+
+  /// No Register chosen yet although there are some (or they still load):
+  /// "Fertig" stays grey until one is picked.
+  bool get _groupMissing {
+    if (_draft.instrument != null) return false;
+    final groups = ref.watch(groupsProvider).valueOrNull;
+    return groups == null || groups.isNotEmpty;
   }
 
   @override
@@ -412,7 +424,7 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
                 submit: l10n.redesignPersonFormCreate,
                 saving: _saving,
                 onCancel: _saving ? null : _cancel,
-                onSubmit: canEdit ? _save : null,
+                onSubmit: canEdit && !_groupMissing ? _save : null,
                 submitKey: const Key('rd-person-create'),
               ),
               Expanded(
@@ -514,6 +526,7 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
             _draft = _draft.copyWith(instrument: id);
           }),
         ),
+        if (_groupMissing) RdListNote(l10n.rdTextPersonGroupFirst),
         const SizedBox(height: 20),
         RdGroupLabel(l10n.redesignPersonFormContact),
         RdGroupedList(

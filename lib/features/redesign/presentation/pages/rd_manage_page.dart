@@ -16,6 +16,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/pages/general_settings_page.dart' show holidayRegions;
 import '../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
 import '../../data/rd_manage_logic.dart';
+import '../widgets/rd_desktop.dart' show rdSidebarBreakpoint;
 import '../widgets/rd_split_view.dart';
 import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
@@ -125,6 +126,9 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
       children: [
         if (widget.pushed)
           RdBackLink(label: l10n.commonBack, onTap: () => context.pop())
+        else if (MediaQuery.sizeOf(context).width >= rdSidebarBreakpoint)
+          // The sidebar leads here itself ("Verwaltung") and to "Ich".
+          const SizedBox(height: 44)
         else
           RdBackLink(
             label: l10n.redesignTabMe,
@@ -502,8 +506,10 @@ class _EntryRow extends ConsumerWidget {
         (t.criticalRules ?? const []).isEmpty ? null : l10n.rdAdminCriticalCount(t.criticalRules!.length),
       RdManageEntry.holidays => !t.showHolidays
           ? l10n.rdAdminOff
-          : holidayRegions.where((r) => r.$1.isNotEmpty && r.$1 == t.region).map((r) => r.$1).firstOrNull ??
-              l10n.rdAdminOn,
+          // Switched on without a Bundesland nothing is highlighted: say so
+          // instead of "An".
+          : holidayRegions.where((r) => r.$1.isNotEmpty && r.$1 == t.region).map((r) => r.$2).firstOrNull ??
+              l10n.rdTextNoRegion,
       _ => null,
     };
   }

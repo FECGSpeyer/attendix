@@ -110,7 +110,12 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
               children: [
                 Semantics(header: true, child: Text(l10n.settingsSubscribeCalendar, style: RdType.section(p))),
                 const SizedBox(height: 6),
-                Text(l10n.redesignMeCalendarIntro, style: RdType.meta(p, size: 14)),
+                Text(
+                  // Without an own person (parents, observers) the link holds
+                  // every Termin of the group, not only one's own.
+                  personal ? l10n.redesignMeCalendarIntro : '${l10n.redesignMeCalendarIntro} ${l10n.rdTextCalendarAllEvents}',
+                  style: RdType.meta(p, size: 14),
+                ),
                 const SizedBox(height: 12),
                 RdCard(
                   child: SelectableText(

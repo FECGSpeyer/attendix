@@ -219,17 +219,17 @@ Future<bool> pausePersonFlow(
       ToastHelper.showError(
         toastContext,
         l10nWithoutContext.peopleFlutterErrorWith(friendlyErrorMessage(e)),
-        beta: LegacySnackBar.danger,
       );
     }
     return false;
   }
 
+  // The Beta shows the same toast as after "Wieder aktiv" and "Archivieren"
+  // (it had its own green bar at the bottom here).
   if (showSuccessToast && toastContext.mounted) {
     ToastHelper.showSuccess(
       toastContext,
       l10nWithoutContext.peopleFlutterPausedToast(person.firstName),
-      beta: LegacySnackBar.success,
     );
   }
 
@@ -282,7 +282,6 @@ Future<bool> pausePersonFlow(
             toastContext,
             l10nWithoutContext.peopleErrorAt(
                 tenant.shortName.isNotEmpty ? tenant.shortName : tenant.name, e),
-            beta: LegacySnackBar.danger,
           );
         }
       }

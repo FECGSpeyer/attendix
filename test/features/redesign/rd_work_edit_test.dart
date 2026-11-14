@@ -272,7 +272,7 @@ void main() {
       await _settle(tester);
       await tester.tap(find.byKey(const Key('rd-work-edit-delete')));
       await _settle(tester);
-      expect(find.text('Soll das Werk wirklich gelöscht werden?'), findsOneWidget);
+      expect(find.textContaining('Das Werk wird mit seinen Dateien gelöscht.'), findsOneWidget);
       await tester.tap(find.text('Löschen'));
       await _settle(tester);
 

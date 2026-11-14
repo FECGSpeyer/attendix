@@ -11331,7 +11331,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdOrgFieldsAdd => 'Feld hinzufügen';
 
   @override
-  String get rdOrgFieldsEmpty => 'Noch keine gemeinsamen Zusatzfelder.';
+  String get rdOrgFieldsEmpty => 'Noch keine gemeinsamen eigenen Felder.';
 
   @override
   String get rdOrgFieldsSaving => 'Änderung wird gespeichert …';
@@ -11445,7 +11445,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get rdOrgPersonFields => 'Gemeinsame Zusatzfelder';
+  String get rdOrgPersonFields => 'Gemeinsame eigene Felder';
 
   @override
   String rdOrgRequest(Object count) {
@@ -12094,7 +12094,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get rdStatsFields => 'Zusatzfelder';
+  String get rdStatsFields => 'Eigene Felder';
 
   @override
   String get rdStatsFieldsPaused => 'Pausierte mitzählen';
@@ -12548,6 +12548,168 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get rdTeamWhoIsInHint =>
       'Wer dabei ist, wird eingeladen und sieht Tagesordnung, Protokoll und Aufgaben.';
+
+  @override
+  String get rdTextArchiveHint =>
+      'Die Person steht danach im Archiv. Unter Mitglieder › ••• › Archiv kannst du sie jederzeit wiederherstellen.';
+
+  @override
+  String get rdTextCalendarAllEvents =>
+      'Du abonnierst alle Termine der Gruppe.';
+
+  @override
+  String get rdTextCategoryDeleteMessage =>
+      'Die Werke bleiben erhalten. Sie haben danach keine Kategorie mehr.';
+
+  @override
+  String rdTextCategoryDeleteTitle(Object name) {
+    return 'Kategorie „$name“ löschen?';
+  }
+
+  @override
+  String rdTextCollectionPrefixWhy(Object prefix, Object first) {
+    return 'Kürzel „$prefix“, weil „$first“ schon vergeben ist. Du kannst es in der Sammlung ändern.';
+  }
+
+  @override
+  String get rdTextDeleteAccountMemberships =>
+      'Deine Mitgliedschaften in allen deinen Gruppen';
+
+  @override
+  String rdTextExportMembersFile(Object name, Object date) {
+    return '${name}_Mitgliederliste_Stand_$date';
+  }
+
+  @override
+  String get rdTextGroupNewTitle => 'Neues Register';
+
+  @override
+  String get rdTextGroupsManageShort => 'Verwalten';
+
+  @override
+  String rdTextHelperUntil(Object date) {
+    return 'bis $date';
+  }
+
+  @override
+  String get rdTextImportNotDrive =>
+      'Das ist kein Link auf einen Google-Drive-Ordner.';
+
+  @override
+  String get rdTextJoinIncomplete =>
+      'Der Link ist unvollständig. Kopiere ihn bitte ganz.';
+
+  @override
+  String get rdTextLoggingOut => 'Du wirst abgemeldet …';
+
+  @override
+  String get rdTextMeAttendanceSeason => 'Deine Anwesenheit diese Saison';
+
+  @override
+  String get rdTextNextWeek => 'Nächste Woche';
+
+  @override
+  String get rdTextNoRegion => 'Kein Bundesland';
+
+  @override
+  String rdTextNumberTaken(Object number, Object name) {
+    return 'Die Nummer $number ist schon vergeben („$name“).';
+  }
+
+  @override
+  String rdTextPendingAccepted(Object name) {
+    return '$name aufgenommen';
+  }
+
+  @override
+  String get rdTextPendingDeclined => 'Anfrage abgelehnt';
+
+  @override
+  String get rdTextPersonGroupFirst =>
+      'Wähle aus, wohin die Person gehört. Erst dann lässt sie sich anlegen.';
+
+  @override
+  String rdTextPlanCopyCount(Object count) {
+    return '$count kopieren';
+  }
+
+  @override
+  String rdTextPlanCopyFrom(Object date) {
+    return 'Wie Termin am $date';
+  }
+
+  @override
+  String rdTextRestoreDone(Object name) {
+    return '$name wurde wiederhergestellt';
+  }
+
+  @override
+  String get rdTextRestoreMessage =>
+      'Die Person steht danach wieder in der Mitgliederliste.';
+
+  @override
+  String rdTextRestoreTitle(Object name) {
+    return '$name wiederherstellen?';
+  }
+
+  @override
+  String rdTextTeacherStudents(num count) {
+    return '$count Schüler';
+  }
+
+  @override
+  String rdTextTypeDeleteMessage(Object name) {
+    return 'Die Terminart „$name“ wird gelöscht. Das kann nicht rückgängig gemacht werden.';
+  }
+
+  @override
+  String get rdTextTypeDeleteTitle => 'Terminart löschen?';
+
+  @override
+  String get rdTextWorkDeleteMessage =>
+      'Das Werk wird mit seinen Dateien gelöscht. Das kann nicht rückgängig gemacht werden.';
+
+  @override
+  String rdTextWorkDeleteSyncedMessage(Object names) {
+    return 'Die Werke werden mit $names geteilt. Das Werk wird dort ebenfalls gelöscht, samt der Historie aller beteiligten Gruppen. Das kann nicht rückgängig gemacht werden.';
+  }
+
+  @override
+  String rdTextWorkDeleteTitle(Object name) {
+    return '„$name“ löschen?';
+  }
+
+  @override
+  String get rdTextWorkListIntro =>
+      'Aus einer Excel- oder CSV-Datei. Die erste Zeile enthält die Spaltenüberschriften. Am einfachsten füllst du die Vorlage aus.';
+
+  @override
+  String get rdTextWorksNoFilterMatch => 'Kein Werk passt zum Filter.';
+
+  @override
+  String rdTextWorksSelected(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke ausgewählt',
+      one: '1 Werk ausgewählt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdTextWorksSelectedOne(Object name) {
+    return '1 Werk ausgewählt: $name';
+  }
+
+  @override
+  String get rdTextYouAnswer => 'Antworten';
+
+  @override
+  String get rdTextYouNoAnswer => 'Noch keine Antwort';
+
+  @override
+  String get rdTextYourAnswer => 'Deine Antwort';
 
   @override
   String get rdTypeAdd => 'Hinzufügen';
@@ -14361,11 +14523,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Gilt, solange eine Person oder ein Werk noch keinen Wert hat.';
 
   @override
-  String get redesignExtraFieldEditDelete => 'Zusatzfeld löschen';
+  String get redesignExtraFieldEditDelete => 'Feld löschen';
 
   @override
   String get redesignExtraFieldEditDeleteFailed =>
-      'Das Zusatzfeld konnte nicht gelöscht werden.';
+      'Das Feld konnte nicht gelöscht werden.';
 
   @override
   String get redesignExtraFieldEditDeleteHint =>
@@ -14380,7 +14542,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignExtraFieldEditNotFound =>
-      'Dieses Zusatzfeld gibt es nicht mehr.';
+      'Dieses Feld gibt es nicht mehr.';
 
   @override
   String get redesignExtraFieldEditOptionAdd => 'Option hinzufügen';
@@ -14410,17 +14572,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignExtraFieldEditTargetSongs => 'Werke';
 
   @override
-  String get redesignExtraFieldEditTitle => 'Zusatzfeld bearbeiten';
+  String get redesignExtraFieldEditTitle => 'Feld bearbeiten';
 
   @override
-  String get redesignExtraFieldsListAdd => 'Zusatzfeld hinzufügen';
+  String get redesignExtraFieldsListAdd => 'Feld hinzufügen';
 
   @override
   String get redesignExtraFieldsListAddFor => 'Feld für';
 
   @override
   String get redesignExtraFieldsListEmpty =>
-      'Noch keine Zusatzfelder angelegt.';
+      'Noch keine eigenen Felder angelegt.';
 
   @override
   String get redesignExtraFieldsListIntro =>
@@ -14833,22 +14995,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignFolderTitleLeads => 'Nach Stimme';
 
   @override
-  String get redesignGroupCategoriesBack => 'Gruppen';
+  String get redesignGroupCategoriesBack => 'Register';
 
   @override
   String redesignGroupCategoriesCount(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Gruppen',
-      one: '$count Gruppe',
-    );
-    return '$_temp0';
+    return '$count Register';
   }
 
   @override
   String get redesignGroupCategoriesIntro =>
-      'Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.';
+      'Kategorien fassen Register zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Register.';
 
   @override
   String get redesignGroupEditCategory => 'Kategorie';
@@ -16820,7 +16976,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPersonFormMoreHint =>
-      'Geburtstag, Beitritt, Lehrer, Zusatzfelder und mehr';
+      'Geburtstag, Beitritt, Lehrer, eigene Felder und mehr';
 
   @override
   String get redesignPersonFormNewTitle => 'Neue Person';
@@ -18351,7 +18507,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTypeWhoBelongs => 'Wer gehört dazu';
 
   @override
-  String get redesignTypeWhoBelongsHint => 'Gruppen und Zusatzfeld-Filter';
+  String get redesignTypeWhoBelongsHint =>
+      'Gruppen und Filter nach eigenen Feldern';
 
   @override
   String get redesignTypesListAdd => 'Anwesenheits-Typ hinzufügen';
@@ -18503,7 +18660,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignWorkCreateLater =>
-      'Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“.';
+      'Link, Schwierigkeit und eigene Felder später in „Bearbeiten“.';
 
   @override
   String redesignWorkCreateNextNumber(Object number) {
@@ -18539,7 +18696,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkEditEasy => 'Leicht';
 
   @override
-  String get redesignWorkEditFields => 'Zusatzfelder';
+  String get redesignWorkEditFields => 'Eigene Felder';
 
   @override
   String get redesignWorkEditHard => 'Schwer';

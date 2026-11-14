@@ -121,7 +121,7 @@ void main() {
       );
       final repo = container.read(extraFieldsRepositoryWithTenantProvider) as _FakeExtraFieldsRepo;
 
-      expect(find.text('Zusatzfeld bearbeiten'), findsOneWidget);
+      expect(find.text('Feld bearbeiten'), findsOneWidget);
       expect(find.text('Auswahl'), findsOneWidget); // Typ (read only)
       expect(find.text('Für Mitglieder sichtbar'), findsOneWidget);
       expect(find.text('Alle Werte auf Standard zurücksetzen'), findsOneWidget);

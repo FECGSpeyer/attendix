@@ -638,6 +638,8 @@ class _SectionLabel extends StatelessWidget {
     final month = section.month;
     final text = section.thisWeek
         ? (past ? l10n.redesignEventsLastWeek : l10n.redesignTodayThisWeek)
+        : section.nextWeek
+        ? l10n.rdTextNextWeek
         : DateFormat(month!.year == now.year ? 'MMMM' : 'MMMM y', currentIntlLocale())
             .format(month);
     return Padding(
@@ -762,6 +764,7 @@ class _LeaderEventCard extends StatelessWidget {
         l10n.redesignTodayCountYes(c.present),
         if (c.excused > 0) l10n.redesignTodayCountExcused(c.excused),
         if (c.lateAnnounced > 0) l10n.redesignTodayCountLater(c.lateAnnounced),
+        if (c.absent > 0) l10n.redesignTodayCountAbsent(c.absent),
         if (c.open > 0) l10n.redesignTodayCountOpen(c.open),
       ].join(' · ');
 }

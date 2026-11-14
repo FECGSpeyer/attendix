@@ -362,7 +362,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
 
     final header = <Widget>[
       RdManageBackLink(
-        label: l10n.redesignMeAdmin,
+        label: rdBackLabel(context, fallback: l10n.redesignMeAdmin),
         onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
       ),
       const SizedBox(height: 4),

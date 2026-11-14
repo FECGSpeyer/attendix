@@ -16,7 +16,7 @@ import 'join/rd_join_sheet.dart';
 import 'rd_widgets.dart';
 
 /// REDESIGN: group chip at the top of "Heute" ("SO Stadtorchester ⌄").
-/// Opens the "Gruppe wechseln" sheet when the user has more than one group.
+/// Opens the "Meine Gruppen" sheet (to switch the group) when the user has more than one group.
 class RdGroupChip extends ConsumerWidget {
   const RdGroupChip({super.key});
 
@@ -64,7 +64,7 @@ class RdGroupChip extends ConsumerWidget {
   }
 }
 
-/// "Gruppe wechseln" sheet (canvas E4): all groups of the user with their
+/// "Meine Gruppen" sheet (canvas E4, switch the group): all groups of the user with their
 /// role; tapping one switches to it and opens its "Heute".
 Future<void> showRdGroupSwitchSheet(BuildContext context) {
   return showModalBottomSheet<void>(
@@ -130,16 +130,19 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
     }
   }
 
-  /// "Gruppen verwalten": like a tab switch, a page with unsaved input or a
+  /// "Verwalten": like a tab switch, a page with unsaved input or a
   /// running save is asked first.
   Future<void> _manage() async {
     final navigator = Navigator.of(context);
     final sheet = ModalRoute.of(context);
     final router = GoRouter.of(context);
     final guards = ref.read(routeLeaveGuardRegistryProvider);
+    // With a group the list stays in the tab "Ich" (tab bar stays). Read
+    // before the await: the sheet may be gone afterwards.
+    final target = ref.read(currentTenantProvider) == null ? '/tenants' : RedesignRoutes.myGroups;
     if (guards.hasGuards && !await guards.canLeave()) return;
     if (sheet != null && sheet.isCurrent) navigator.pop();
-    router.go('/tenants');
+    router.go(target);
   }
 
   /// "Einer Gruppe beitreten": the join sheet replaces this one.
@@ -188,7 +191,7 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
               Row(
                 children: [
                   Expanded(
-                    child: Semantics(header: true, child: Text(l10n.redesignGroupsTitle, style: RdType.section(p))),
+                    child: Semantics(header: true, child: Text(l10n.redesignMeGroups, style: RdType.section(p))),
                   ),
                   TextButton(
                     onPressed: _switchingTo == null ? () => Navigator.of(context).pop() : null,
@@ -275,7 +278,7 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
                         children: [
                           Expanded(
                             child: RdOutlineButton(
-                              label: l10n.redesignGroupsManage,
+                              label: l10n.rdTextGroupsManageShort,
                               icon: Icons.apps,
                               onPressed: _switchingTo != null ? null : _manage,
                             ),

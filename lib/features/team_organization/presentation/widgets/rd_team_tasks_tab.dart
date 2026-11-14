@@ -134,7 +134,14 @@ class _RdTeamTasksTabState extends ConsumerState<RdTeamTasksTab> {
               backgroundColor: p.primary,
               foregroundColor: p.onPrimary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-              onPressed: () => showTaskFormSheet(context),
+              onPressed: () async {
+                final created = await showTaskFormSheet(context);
+                // "Meine" would hide a task given to someone else: show the
+                // filter that holds the new task.
+                if (created != null && mounted && created.responsiblePersonId != myPersonId) {
+                  setState(() => _team = true);
+                }
+              },
               child: const Icon(Icons.add, size: 28),
             )
           : null,

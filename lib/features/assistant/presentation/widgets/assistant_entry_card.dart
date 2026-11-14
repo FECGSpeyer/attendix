@@ -42,7 +42,7 @@ class AssistantEntryCard extends ConsumerWidget {
       } else {
         // Where the switch is: Rollen und Rechte › Was Mitglieder sehen (new
         // design), Einstellungen (old design).
-        context.push(redesign ? RedesignRoutes.rolePermissions : '/settings/general');
+        context.push(redesign ? '${RedesignRoutes.rolePermissions}?from=ich' : '/settings/general');
       }
     }
 

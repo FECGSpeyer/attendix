@@ -1299,6 +1299,26 @@ class RdTextLink extends StatelessWidget {
 bool rdIsPushed(BuildContext context) =>
     GoRouter.of(context).routerDelegate.currentConfiguration.lastOrNull is ImperativeRouteMatch;
 
+/// Label of the back link on a page that is opened from several places:
+/// the opener names itself in `?from=` (heute, ich, werke), so the link
+/// says where it really leads; without it [fallback] (the parent route).
+String rdBackLabel(BuildContext context, {required String fallback}) {
+  final l10n = context.l10n;
+  // Shown outside a route (a sheet, a split pane): the parent route.
+  final String? from;
+  try {
+    from = GoRouterState.of(context).uri.queryParameters['from'];
+  } on GoError {
+    return fallback;
+  }
+  return switch (from) {
+    'heute' => l10n.redesignTabToday,
+    'ich' => l10n.redesignTabMe,
+    'werke' => l10n.redesignTabWorks,
+    _ => fallback,
+  };
+}
+
 /// Back from a sub page whose parent route is not where it is opened from
 /// (Werkhistorie under Ich › Verwaltung, opened from the Werke tab): pops
 /// when the page was pushed, otherwise goes to [fallback]. Opened by its

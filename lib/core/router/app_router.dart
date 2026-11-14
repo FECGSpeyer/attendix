@@ -46,6 +46,7 @@ import '../../features/songs/presentation/pages/songs_list_page.dart';
 import '../../features/songs/presentation/pages/song_detail_page.dart';
 import '../../features/songs/presentation/pages/song_create_page.dart';
 import '../../features/songs/presentation/pages/song_edit_page.dart';
+import '../../features/songs/presentation/pages/song_import_page.dart';
 import '../../features/songs/presentation/utils/song_utils.dart' show SongUtils;
 import '../../features/instruments/presentation/pages/instruments_list_page.dart';
 import '../../features/self_service/presentation/pages/self_service_overview_page.dart';
@@ -750,6 +751,22 @@ final routerProvider = Provider<GoRouter>((ref) {
                 name: 'redesignPersonCreate',
                 builder: (context, state) => RdPersonCreatePage(prefill: PersonCreatePrefill.from(state.extra)),
               ),
+              // Archiv and "Anfrage prüfen" from the Mitglieder tab stay in
+              // the tab (before ':id').
+              GoRoute(
+                path: 'archiv',
+                name: 'redesignMembersArchive',
+                builder: (context, state) => const RdArchivePage(fromMembers: true),
+              ),
+              GoRoute(
+                path: 'anfrage/:id',
+                name: 'redesignMembersReview',
+                builder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  if (id == null) return const RdMembersPage();
+                  return RdPendingReviewPage(key: ValueKey('rd-members-review-$id'), personId: id, fromMembers: true);
+                },
+              ),
               GoRoute(
                 path: 'problemfaelle',
                 name: 'redesignCriticalMembers',
@@ -819,6 +836,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
             routes: [
               // Before ':id', which would take "import" for a Werk.
+              GoRoute(
+                path: 'werkliste',
+                name: 'redesignWorkListImport',
+                builder: (context, state) => const SongImportPage(beta: true),
+              ),
               GoRoute(
                 path: 'import',
                 name: 'redesignWorksImport',
@@ -908,6 +930,11 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'benachrichtigungen',
                 builder: (context, state) => const RdNotificationsPage(),
+              ),
+              // "Meine Gruppen" keeps the tab bar (same list as /tenants).
+              GoRoute(
+                path: 'gruppen',
+                builder: (context, state) => const TenantSelectionPage(inTab: true),
               ),
               GoRoute(
                 path: 'verwaltung',

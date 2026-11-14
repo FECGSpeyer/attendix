@@ -604,7 +604,7 @@
         "contact": "Kontakt",
         "emailHint": "Bekommt damit Zugang zur App",
         "more": "Weitere Angaben",
-        "moreHint": "Geburtstag, Beitritt, Lehrer, Zusatzfelder und mehr",
+        "moreHint": "Geburtstag, Beitritt, Lehrer, eigene Felder und mehr",
         "saved": "Gespeichert ✓",
         "liveHint": "Änderungen werden sofort gespeichert.",
         "notAllowed": "Nur Admins und Verantwortliche können Personen anlegen und bearbeiten.",
@@ -691,7 +691,7 @@
         "category": "Kategorie",
         "categoryHint": "Vorausgewählt, weil die Liste gerade auf „{name}“ gefiltert war.",
         "instrumentationHint": "Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.",
-        "later": "Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“."
+        "later": "Link, Schwierigkeit und eigene Felder später in „Bearbeiten“."
       },
       "folder": {
         "title": "Meine Noten",
@@ -803,7 +803,7 @@
         "instrumentationHint": "Welche Gruppen mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.",
         "link": "Link",
         "linkHint": "Video, Hörbeispiel oder Verlag",
-        "fields": "Zusatzfelder",
+        "fields": "Eigene Felder",
         "hint": "Änderungen werden sofort gespeichert. Noten und Dateien pflegst du direkt auf der Werk-Seite.",
         "delete": "Werk löschen",
         "notAllowed": "Werke bearbeiten kann nur die Leitung."
@@ -926,14 +926,14 @@
       },
       "extraFieldsList": {
         "intro": "Eigene Felder für Personen und Werke, zum Beispiel Kleidergröße oder Verlag.",
-        "empty": "Noch keine Zusatzfelder angelegt.",
-        "add": "Zusatzfeld hinzufügen",
+        "empty": "Noch keine eigenen Felder angelegt.",
+        "add": "Feld hinzufügen",
         "addFor": "Feld für",
         "persons": "Für Personen",
         "songs": "Für Werke"
       },
       "extraFieldEdit": {
-        "title": "Zusatzfeld bearbeiten",
+        "title": "Feld bearbeiten",
         "name": "Name",
         "nameEmpty": "Ein leerer Name wird nicht gespeichert.",
         "target": "Gilt für",
@@ -945,10 +945,10 @@
         "optionsNeeded": "Eine Auswahl braucht mindestens eine Option.",
         "defaultHint": "Gilt, solange eine Person oder ein Werk noch keinen Wert hat.",
         "resetHint": "Setzt das Feld bei allen Personen auf den Standardwert.",
-        "delete": "Zusatzfeld löschen",
+        "delete": "Feld löschen",
         "deleteHint": "Die Werte bei allen Personen bzw. Werken werden mit gelöscht.",
-        "deleteFailed": "Das Zusatzfeld konnte nicht gelöscht werden.",
-        "notFound": "Dieses Zusatzfeld gibt es nicht mehr."
+        "deleteFailed": "Das Feld konnte nicht gelöscht werden.",
+        "notFound": "Dieses Feld gibt es nicht mehr."
       },
       "pult": {
         "open": "Pultmodus",
@@ -1648,7 +1648,7 @@
         "off": "aus",
         "remindersActive": "{count} aktiv",
         "whoBelongs": "Wer gehört dazu",
-        "whoBelongsHint": "Gruppen und Zusatzfeld-Filter",
+        "whoBelongsHint": "Gruppen und Filter nach eigenen Feldern",
         "all": "alle",
         "usage": "Wird in {count} Terminen verwendet. Änderungen gelten auch für diese.",
         "delete": "Terminart löschen",
@@ -1680,9 +1680,9 @@
         "resetSend": "Link senden"
       },
       "groupCategories": {
-        "intro": "Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.",
-        "count": "{count, plural, one {{count} Gruppe} other {{count} Gruppen}}",
-        "back": "Gruppen"
+        "intro": "Kategorien fassen Register zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Register.",
+        "count": "{count} Register",
+        "back": "Register"
       },
       "duty": {
         "title": "Dienst",
@@ -2320,7 +2320,7 @@
         "contact": "Contact",
         "emailHint": "Gets access to the app with it",
         "more": "More details",
-        "moreHint": "Birthday, joined, teacher, extra fields and more",
+        "moreHint": "Birthday, joined, teacher, custom fields and more",
         "saved": "Saved ✓",
         "liveHint": "Changes are saved right away.",
         "notAllowed": "Only admins and responsible persons can add and edit people.",
@@ -2407,7 +2407,7 @@
         "category": "Category",
         "categoryHint": "Preselected because the list is filtered to “{name}”.",
         "instrumentationHint": "The app knows which groups play from the sheet music you upload next.",
-        "later": "Link, difficulty and additional fields later in “Edit”."
+        "later": "Link, difficulty and custom fields later in “Edit”."
       },
       "folder": {
         "title": "My parts",
@@ -2519,7 +2519,7 @@
         "instrumentationHint": "Which groups play follows from the uploaded sheet music. If a part is missing, upload it on the work page.",
         "link": "Link",
         "linkHint": "Video, recording or publisher",
-        "fields": "Additional fields",
+        "fields": "Custom fields",
         "hint": "Changes are saved right away. Sheet music and files are managed on the work page.",
         "delete": "Delete work",
         "notAllowed": "Only leaders can edit works."
@@ -2642,14 +2642,14 @@
       },
       "extraFieldsList": {
         "intro": "Your own fields for people and works, e.g. clothing size or publisher.",
-        "empty": "No extra fields yet.",
-        "add": "Add extra field",
+        "empty": "No custom fields yet.",
+        "add": "Add custom field",
         "addFor": "Field for",
         "persons": "For people",
         "songs": "For works"
       },
       "extraFieldEdit": {
-        "title": "Edit extra field",
+        "title": "Edit custom field",
         "name": "Name",
         "nameEmpty": "An empty name is not saved.",
         "target": "For",
@@ -2661,10 +2661,10 @@
         "optionsNeeded": "A selection needs at least one option.",
         "defaultHint": "Used when a person or work has no value yet.",
         "resetHint": "Sets this field to the default for every person.",
-        "delete": "Delete extra field",
+        "delete": "Delete custom field",
         "deleteHint": "The values of all people or works are removed as well.",
-        "deleteFailed": "The extra field could not be deleted.",
-        "notFound": "This extra field no longer exists."
+        "deleteFailed": "The custom field could not be deleted.",
+        "notFound": "This custom field no longer exists."
       },
       "pult": {
         "open": "Stand mode",
@@ -3364,7 +3364,7 @@
         "off": "off",
         "remindersActive": "{count} active",
         "whoBelongs": "Who belongs",
-        "whoBelongsHint": "Groups and extra field filters",
+        "whoBelongsHint": "Groups and custom field filters",
         "all": "all",
         "usage": "Used in {count} events. Changes apply to them too.",
         "delete": "Delete event type",

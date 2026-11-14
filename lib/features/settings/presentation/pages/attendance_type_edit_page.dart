@@ -2337,12 +2337,16 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   Future<void> _deleteType() async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: context.l10n.typeSettingsDeleteType,
-      message: context.l10n.typeSettingsDeleteTypeMessage(_originalType!.name),
+      // Beta: only unused Terminarten get here (see _rdDeleteType), so no
+      // Termin is deleted with it.
+      title: context.rdSkin == null ? context.l10n.typeSettingsDeleteType : context.l10n.rdTextTypeDeleteTitle,
+      message: context.rdSkin == null
+          ? context.l10n.typeSettingsDeleteTypeMessage(_originalType!.name)
+          : context.l10n.rdTextTypeDeleteMessage(_originalType!.name),
       confirmText: context.l10n.commonDelete,
       cancelText: context.l10n.commonCancel,
       // EIA-29: Ionic type.page deleteType uses `role: 'destructive'`.
-      isDestructive: context.rdSkin == null,
+      isDestructive: true,
     );
 
     if (!confirmed) return;

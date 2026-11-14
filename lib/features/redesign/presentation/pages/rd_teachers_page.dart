@@ -88,7 +88,7 @@ List<RdManageListSection> rdTeacherSections(
           id: t.id ?? t.name,
           title: t.name,
           subtitle: (t.insNames ?? '').isEmpty ? null : t.insNames,
-          count: l10n.teachersPlayerCount(t.playerCount ?? 0),
+          count: l10n.rdTextTeacherStudents(t.playerCount ?? 0),
           onTap: onTap == null || t.id == null ? null : () => onTap(t.id!),
         ),
     ],

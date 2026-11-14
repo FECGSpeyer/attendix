@@ -12,22 +12,74 @@ import '../../../core/providers/redesign_providers.dart';
 import '../../../core/providers/tenant_providers.dart';
 import '../../../core/router/redesign_routes.dart';
 import '../../../core/services/song_file_service.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../core/utils/dashboard_logic.dart' show homeRouteFor;
 import '../../../core/utils/toast_helper.dart';
 import '../../../data/models/song/song.dart';
+import '../../../l10n/l10n.dart';
 
 /// REDESIGN: Abmelden, same steps as the settings page (no confirmation,
 /// like Ionic).
 Future<void> rdLogout(BuildContext context, WidgetRef ref) async {
+  if (_loggingOut) return;
   final supabase = ref.read(supabaseClientProvider);
   final tenantNotifier = ref.read(currentTenantProvider.notifier);
-  await removePushTokenBeforeSignOut(ref);
-  await signOutAndClearTenant(
-    signOut: supabase.auth.signOut,
-    clearTenant: tenantNotifier.clearTenant,
+  // Signing out takes a few seconds (push token, session): say so at once
+  // instead of a page that seems to ignore the tap.
+  final p = context.rd;
+  final text = context.l10n.rdTextLoggingOut;
+  final overlay = Overlay.maybeOf(context, rootOverlay: true);
+  final entry = OverlayEntry(
+    builder: (_) => Positioned.fill(
+      child: AbsorbPointer(
+        child: ColoredBox(
+          color: p.bg.withValues(alpha: 0.92),
+          child: Center(
+            child: Semantics(
+              liveRegion: true,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox.square(
+                    dimension: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: p.primary),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    text,
+                    key: const Key('rd-logging-out'),
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: p.text,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
   );
-  if (context.mounted) context.go('/login');
+  _loggingOut = true;
+  try {
+    overlay?.insert(entry);
+    await removePushTokenBeforeSignOut(ref);
+    await signOutAndClearTenant(
+      signOut: supabase.auth.signOut,
+      clearTenant: tenantNotifier.clearTenant,
+    );
+    if (context.mounted) context.go('/login');
+  } finally {
+    _loggingOut = false;
+    if (entry.mounted) entry.remove();
+  }
 }
+
+/// A sign-out is running ([rdLogout]): a second tap does nothing.
+bool _loggingOut = false;
 
 /// Switches "Neues Design (Beta)" on or off and opens the start page of
 /// the chosen design ("Heute", or the old start page of the role).

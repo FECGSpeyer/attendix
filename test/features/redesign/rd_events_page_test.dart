@@ -228,14 +228,24 @@ void main() {
   group('rdGroupEvents', () {
     final now = DateTime(2026, 10, 29, 12);
 
-    test('upcoming: the coming 7 days, then one section per month', () {
-      final dates = [_day(0, from: now), _day(6, from: now), _day(7, from: now), _day(40, from: now)];
+    test('upcoming: this calendar week, next week, then one section per month', () {
+      // Thursday 29.10.: the week ends on Sunday 1.11. (+3), the next one on 8.11. (+10).
+      final dates = [
+        _day(0, from: now),
+        _day(3, from: now),
+        _day(4, from: now),
+        _day(10, from: now),
+        _day(11, from: now),
+        _day(40, from: now),
+      ];
       final sections = rdGroupEvents(dates, (d) => d, now: now);
-      expect(sections.map((s) => s.thisWeek), [true, false, false]);
+      expect(sections.map((s) => s.thisWeek), [true, false, false, false]);
+      expect(sections.map((s) => s.nextWeek), [false, true, false, false]);
       expect(sections.first.items, dates.take(2));
-      expect(sections[1].month, DateTime(2026, 11));
-      expect(sections[1].items, [dates[2]]);
-      expect(sections[2].month, DateTime(2026, 12));
+      expect(sections[1].items, [dates[2], dates[3]]);
+      expect(sections[2].month, DateTime(2026, 11));
+      expect(sections[2].items, [dates[4]]);
+      expect(sections[3].month, DateTime(2026, 12));
     });
 
     test('a running multi-day Termin that started earlier stays in this week', () {

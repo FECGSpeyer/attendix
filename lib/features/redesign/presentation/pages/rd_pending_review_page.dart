@@ -46,7 +46,11 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard, RdLinkButton;
 /// [PlayerRepository.mergePendingPlayerIntoExisting]); every write is bound
 /// to the group the page was opened in.
 class RdPendingReviewPage extends ConsumerStatefulWidget {
-  const RdPendingReviewPage({super.key, required this.personId});
+  const RdPendingReviewPage({super.key, required this.personId, this.fromMembers = false});
+
+  /// Opened from the Mitglieder tab or a person: the page lives in that tab
+  /// and leads back to it.
+  final bool fromMembers;
 
   final int personId;
 
@@ -188,7 +192,7 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
     if (navigator.canPop()) {
       navigator.pop();
     } else {
-      GoRouter.of(context).go(RedesignRoutes.approvals);
+      GoRouter.of(context).go(widget.fromMembers ? RedesignRoutes.members : RedesignRoutes.approvals);
     }
   }
 
@@ -256,7 +260,7 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
       ));
       _refresh(id);
       if (!mounted) return;
-      ToastHelper.showSuccess(context, l10n.personUpdated);
+      ToastHelper.showSuccess(context, l10n.rdTextPendingAccepted(person.firstName.trim().isEmpty ? person.lastName : person.firstName.trim()));
       _leave();
     } catch (_) {
       if (mounted) ToastHelper.showError(context, l10n.personUpdateFailed);
@@ -289,7 +293,7 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
       await notifier.declinePlayer(person, reason);
       _refresh(id);
       if (!mounted) return;
-      ToastHelper.showSuccess(context, l10n.personUpdated);
+      ToastHelper.showSuccess(context, l10n.rdTextPendingDeclined);
       _leave();
     } catch (_) {
       if (mounted) ToastHelper.showError(context, l10n.personUpdateFailed);
@@ -376,7 +380,7 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
     final draft = _draft;
 
     final back = RdBackLink(
-      label: l10n.redesignManagePendingTitle,
+      label: widget.fromMembers ? l10n.redesignTabMembers : l10n.redesignManagePendingTitle,
       onTap: _leave,
     );
 

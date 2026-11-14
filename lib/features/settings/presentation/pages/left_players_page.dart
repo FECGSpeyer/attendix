@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
@@ -150,11 +151,13 @@ class LeftPlayersPage extends ConsumerWidget {
   /// `RdArchivePage`).
   static Future<void> reactivateWithConfirmation(BuildContext context, WidgetRef ref, Person player) async {
     final repository = ref.read(playerRepositoryWithTenantProvider);
+    // Beta: one word for it everywhere ("Wiederherstellen").
+    final beta = context.rdSkin != null;
     final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (ctx) => AppAlertDialog(
-        title: Text(ctx.l10n.peopleReactivateConfirm),
-        content: Text(ctx.l10n.settingsFlutterReactivateMessage(player.fullName)),
+        title: Text(beta ? ctx.l10n.rdTextRestoreTitle(player.fullName) : ctx.l10n.peopleReactivateConfirm),
+        content: Text(beta ? ctx.l10n.rdTextRestoreMessage : ctx.l10n.settingsFlutterReactivateMessage(player.fullName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -162,7 +165,7 @@ class LeftPlayersPage extends ConsumerWidget {
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(ctx.l10n.signoutReactivate),
+            child: Text(beta ? ctx.l10n.redesignArchiveListRestore : ctx.l10n.signoutReactivate),
           ),
         ],
       ),
@@ -177,7 +180,10 @@ class LeftPlayersPage extends ConsumerWidget {
         ref.invalidate(playersProvider);
 
         if (context.mounted) {
-          ToastHelper.showSuccess(context, context.l10n.settingsFlutterReactivated(player.fullName));
+          ToastHelper.showSuccess(
+            context,
+            beta ? context.l10n.rdTextRestoreDone(player.fullName) : context.l10n.settingsFlutterReactivated(player.fullName),
+          );
         }
       } catch (e) {
         if (context.mounted) {
