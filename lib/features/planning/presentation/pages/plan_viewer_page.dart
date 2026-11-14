@@ -14,6 +14,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook;
 import '../../../../shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup;
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../shared/widgets/common/escape_to_close.dart';
@@ -353,18 +354,23 @@ Future<void> showPlanViewer(
   String? Function(PlanField field)? fieldWarning,
   VoidCallback? Function(PlanField field)? songAction,
 }) {
+  Widget page(BuildContext _) => EscapeToClose(
+        child: PlanViewerPage(
+          attendance: attendance,
+          plan: plan,
+          title: title,
+          defaultLive: defaultLive,
+          onEdit: onEdit,
+          fieldWarning: fieldWarning,
+          songAction: songAction,
+        ),
+      );
+  // ABL-15: classic = Ionic `modalController.create({ component:
+  // PlanViewerComponent })` – full screen on phones, centred card from
+  // 768px. The Beta keeps its full-screen page.
+  if (context.rdSkin == null) return showIonModal<void>(context, builder: page);
   return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
     fullscreenDialog: true,
-    builder: (_) => EscapeToClose(
-      child: PlanViewerPage(
-        attendance: attendance,
-        plan: plan,
-        title: title,
-        defaultLive: defaultLive,
-        onEdit: onEdit,
-        fieldWarning: fieldWarning,
-        songAction: songAction,
-      ),
-    ),
+    builder: page,
   ));
 }
