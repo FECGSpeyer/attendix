@@ -26,6 +26,13 @@ import 'package:attendix/shared/widgets/layout/ionic_ios.dart' as ios27
 import '../../../../../shared/widgets/display/ion_badge_text.dart';
 import 'package:attendix/shared/widgets/layout/ionic_md.dart';
 import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
+import '../../../../../shared/widgets/adaptive/app_select.dart'
+    show
+        AppSelectInterface,
+        AppSelectOption,
+        IonMdSelectIcon,
+        IonSelectIcon,
+        showAppSelect;
 
 /// True when the page should look like Ionic's iOS mode.
 bool ionIsIos(BuildContext context) =>
@@ -1025,9 +1032,314 @@ class IonToggleRow extends StatelessWidget {
             Switch.adaptive(
               value: value,
               onChanged: editable ? onChanged : null,
-              activeColor: AppColors.success,
+              // PEO-18: Ionic `ion-toggle` without colour = app primary
+              // (the theme colour); the Beta design keeps its green.
+              activeColor: context.rdSkin != null ? AppColors.success : null,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// PEO-01: `ion-item` with `ion-label position="stacked"` and an inline
+/// `ion-input` / `ion-textarea autoGrow` – you type directly in the row,
+/// nothing opens (the classic replacement of [IonFieldRow] + the bottom-sheet
+/// editor). [onChanged] gets the trimmed-free text on every keystroke
+/// (Ionic `ngModel`). An outside change of [value] is taken over while the
+/// field has no focus.
+class IonInputRow extends StatefulWidget {
+  const IonInputRow({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    this.enabled = true,
+    this.textarea = false,
+    this.keyboardType,
+    this.textCapitalization = TextCapitalization.sentences,
+    this.placeholder,
+    this.trailing,
+    this.lines = true,
+    this.onEditingComplete,
+    this.focusNode,
+    this.onFocusLost,
+  });
+
+  final String label;
+  final String? value;
+  final ValueChanged<String> onChanged;
+
+  /// Ionic `(ionBlur)`: called with the text when the field loses focus.
+  final ValueChanged<String>? onFocusLost;
+  final bool enabled;
+
+  /// `ion-textarea autoGrow="true"` instead of a one-line `ion-input`.
+  final bool textarea;
+  final TextInputType? keyboardType;
+  final TextCapitalization textCapitalization;
+  final String? placeholder;
+
+  /// `slot="end"` content (e.g. an icon button).
+  final Widget? trailing;
+
+  /// Item bottom line (`lines="none"` = false).
+  final bool lines;
+  final VoidCallback? onEditingComplete;
+  final FocusNode? focusNode;
+
+  @override
+  State<IonInputRow> createState() => _IonInputRowState();
+}
+
+class _IonInputRowState extends State<IonInputRow> {
+  late final TextEditingController _controller =
+      TextEditingController(text: widget.value ?? '');
+  FocusNode? _ownFocus;
+  FocusNode get _focus => widget.focusNode ?? (_ownFocus ??= FocusNode());
+  late final FocusNode _listened = _focus;
+  bool _hadFocus = false;
+
+  void _onFocus() {
+    final has = _listened.hasFocus;
+    if (_hadFocus && !has) widget.onFocusLost?.call(_controller.text);
+    _hadFocus = has;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _listened.addListener(_onFocus);
+  }
+
+  @override
+  void didUpdateWidget(covariant IonInputRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final next = widget.value ?? '';
+    if (!_focus.hasFocus && next != _controller.text) {
+      _controller.text = next;
+    }
+  }
+
+  @override
+  void dispose() {
+    _listened.removeListener(_onFocus);
+    _controller.dispose();
+    _ownFocus?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ios = ionIsIos(context);
+    final fg = Theme.of(context).colorScheme.onSurface;
+    return Padding(
+      padding: const EdgeInsets.only(left: 16),
+      child: Container(
+        constraints: BoxConstraints(minHeight: ios ? 68 : 72),
+        decoration: BoxDecoration(
+          border: widget.lines
+              ? Border(
+                  bottom: BorderSide(
+                    color: ionLineColor(context),
+                    width: ios ? 0.55 : 1,
+                  ),
+                )
+              : null,
+        ),
+        padding: EdgeInsets.only(
+            right: widget.trailing == null ? 16 : 4, top: 10, bottom: 4),
+        child: Row(
+          children: [
+            Expanded(
+              child: Opacity(
+                // Ionic `[disabled]` items: .3 (iOS) / .38 (md) – the value
+                // stays readable here, so only the input is dimmed a bit.
+                opacity: widget.enabled ? 1 : 0.85,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.label,
+                      style: TextStyle(
+                        fontSize: ios ? 14 : 12,
+                        color: ios ? fg : AppColors.medium,
+                      ),
+                    ),
+                    TextField(
+                      controller: _controller,
+                      focusNode: _focus,
+                      enabled: widget.enabled,
+                      keyboardType: widget.keyboardType ??
+                          (widget.textarea ? TextInputType.multiline : null),
+                      textCapitalization: widget.textCapitalization,
+                      minLines: 1,
+                      maxLines: widget.textarea ? null : 1,
+                      style: TextStyle(fontSize: ios ? 17 : 16, color: fg),
+                      decoration: InputDecoration(
+                        isDense: true,
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        filled: false,
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 6),
+                        hintText: widget.placeholder,
+                      ),
+                      onChanged: widget.onChanged,
+                      onEditingComplete: widget.onEditingComplete,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if (widget.trailing != null) widget.trailing!,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// PEO-02: `ion-item` with an `ion-select` – the label at the start and the
+/// value + select icon at the end ([stacked] = `ion-label position=
+/// "stacked"`: label above, value below). A tap opens the shared
+/// [showAppSelect] with the Ionic [interface] (`modal` for long lists, the
+/// default `alert` otherwise). Without [onChanged] the select is disabled.
+class IonSelectRow<T> extends StatelessWidget {
+  const IonSelectRow({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.options,
+    this.onChanged,
+    this.interface = AppSelectInterface.alert,
+    this.selectedText,
+    this.placeholder,
+    this.stacked = false,
+    this.header,
+  });
+
+  final String label;
+  final T? value;
+  final List<AppSelectOption<T>> options;
+  final ValueChanged<T>? onChanged;
+  final AppSelectInterface interface;
+
+  /// Ionic `[selectedText]` (shown instead of the option label).
+  final String? selectedText;
+  final String? placeholder;
+  final bool stacked;
+
+  /// Alert / modal title; defaults to [label] for the alert (Ionic uses the
+  /// label as alert header) and to none for the modal.
+  final String? header;
+
+  @override
+  Widget build(BuildContext context) {
+    final ios = ionIsIos(context);
+    final fg = Theme.of(context).colorScheme.onSurface;
+    final current = options.where((o) => o.value == value).firstOrNull;
+    final text = selectedText ?? current?.textOr('');
+    final showPlaceholder = text == null || text.isEmpty;
+    final enabled = onChanged != null;
+    final valueText = Text(
+      showPlaceholder ? (placeholder ?? '') : text,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        fontSize: ios ? 17 : 16,
+        color: showPlaceholder ? fg.withValues(alpha: 0.5) : fg,
+      ),
+    );
+    final icon = Opacity(
+      opacity: enabled ? 1 : 0.4,
+      child: ios ? const IonSelectIcon() : const IonMdSelectIcon(),
+    );
+
+    Future<void> open(BuildContext ctx) async {
+      final picked = await showAppSelect<T>(
+        context: ctx,
+        options: options,
+        value: value,
+        interface: interface,
+        header: header ??
+            (interface == AppSelectInterface.modal ? null : label),
+      );
+      if (picked != null && picked.value != value) {
+        onChanged?.call(picked.value);
+      }
+    }
+
+    final labelText = Text(
+      label,
+      style: stacked
+          ? TextStyle(
+              fontSize: ios ? 14 : 12,
+              color: ios ? fg : AppColors.medium,
+            )
+          : TextStyle(fontSize: ios ? 17 : 16, color: fg),
+    );
+
+    return Builder(
+      builder: (ctx) => Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: enabled ? () => open(ctx) : null,
+          splashFactory: ios ? NoSplash.splashFactory : null,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Container(
+              constraints: BoxConstraints(
+                minHeight: stacked ? (ios ? 68 : 72) : (ios ? 44 : 48),
+              ),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: ionLineColor(context),
+                    width: ios ? 0.55 : 1,
+                  ),
+                ),
+              ),
+              padding: EdgeInsets.only(
+                right: 16,
+                top: stacked ? 10 : 8,
+                bottom: stacked ? 10 : 8,
+              ),
+              child: stacked
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        labelText,
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Expanded(child: valueText),
+                            const SizedBox(width: 8),
+                            icon,
+                          ],
+                        ),
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        labelText,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Align(
+                            alignment: AlignmentDirectional.centerEnd,
+                            child: valueText,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        icon,
+                      ],
+                    ),
+            ),
+          ),
         ),
       ),
     );

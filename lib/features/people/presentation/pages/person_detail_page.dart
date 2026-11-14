@@ -1946,6 +1946,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 onCreateAccount: () => _createAccount(person),
                 canEdit: canEdit,
                 onFieldChanged: _onAccountFieldChanged,
+                onEmailTyped: _onFieldChanged,
                 draftEmail: _draft.email,
                 isLeader: _isLeader,
                 isMainGroup: _isMainGroupSelected,

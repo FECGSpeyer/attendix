@@ -29,6 +29,7 @@ class AccountAccordion extends ConsumerWidget {
     required this.onCreateAccount,
     required this.canEdit,
     this.onFieldChanged,
+    this.onEmailTyped,
     this.draftEmail,
     this.isLeader = false,
     this.isMainGroup = false,
@@ -45,6 +46,11 @@ class AccountAccordion extends ConsumerWidget {
   final VoidCallback onCreateAccount;
   final bool canEdit;
   final void Function(String field, dynamic value)? onFieldChanged;
+
+  /// Inline e-mail input (classic): every keystroke updates the draft
+  /// through this callback; [onFieldChanged] (with the lookup in other
+  /// instances) runs when the field loses focus.
+  final void Function(String field, dynamic value)? onEmailTyped;
 
   /// Unsaved email value (shown instead of the stored one)
   final String? draftEmail;
@@ -86,6 +92,39 @@ class AccountAccordion extends ConsumerWidget {
         // Ionic person.page.html: the e-mail `ion-item` with its button in
         // `slot="end"` – the search (no account yet) or the danger trash
         // that removes the account from the group.
+        if (canEdit && person.appId == null && context.rdSkin == null)
+          // PEO-01: Ionic `ion-input` in the item – typed inline; the
+          // lookup in other instances runs on blur (Ionic onEmailBlur).
+          IonInputRow(
+            label: context.l10n.peopleEmail,
+            value: draftEmail ?? person.email,
+            keyboardType: TextInputType.emailAddress,
+            textCapitalization: TextCapitalization.none,
+            onChanged: (v) {
+              final t = v.trim();
+              (onEmailTyped ?? onFieldChanged)
+                  ?.call('email', t.isEmpty ? null : t);
+            },
+            onFocusLost: onEmailTyped == null
+                ? null
+                : (v) {
+                    final t = v.trim();
+                    if (t.isNotEmpty && t != (person.email ?? '')) {
+                      onFieldChanged?.call('email', t);
+                    }
+                  },
+            trailing: onSearchOtherInstance != null &&
+                    ((draftEmail ?? person.email)?.trim().isNotEmpty ?? false)
+                ? _ItemEndButton(
+                    key: const Key('account-search-button'),
+                    icon: AppIcons.search,
+                    tooltip: context.l10n.personFlutterSearchOtherInstance,
+                    color: AppColors.primary,
+                    onPressed: onSearchOtherInstance,
+                  )
+                : null,
+          )
+        else
         IonFieldRow(
           icon: AppIcons.email,
           label: context.l10n.peopleEmail,

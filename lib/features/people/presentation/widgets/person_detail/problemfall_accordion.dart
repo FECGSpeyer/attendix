@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart' show RdSkinContext;
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../data/models/person/person.dart';
@@ -34,7 +35,27 @@ class ProblemfallAccordion extends StatelessWidget {
       title: context.l10n.peopleProblemCase,
       expanded: isExpanded,
       onToggle: onToggle,
-      child: Padding(
+      // PEO-19: Ionic full-width items (toggle item + stacked textarea).
+      child: context.rdSkin == null
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                IonToggleRow(
+                  label: context.l10n.personTalkedTo,
+                  value: problemSolved,
+                  editable: true,
+                  onChanged: onProblemSolvedChanged,
+                ),
+                if (problemSolved)
+                  IonInputRow(
+                    label: context.l10n.personRemarks,
+                    value: problemNotes,
+                    textarea: true,
+                    onChanged: (v) => onProblemNotesChanged(v),
+                  ),
+              ],
+            )
+          : Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppDimensions.paddingM,
                 0,
