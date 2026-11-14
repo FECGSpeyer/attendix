@@ -133,6 +133,12 @@ void main() {
     });
   });
 
+  test('register links: only the uuid format is looked up (OEFF-18)', () {
+    expect(isRegisterIdFormat('abc'), isFalse);
+    expect(isRegisterIdFormat('3f2b1c4e-9a7d-4e21-b8a0-1c2d3e4f5a6'), isFalse);
+    expect(isRegisterIdFormat('3f2b1c4e-9a7d-4e21-b8a0-1c2d3e4f5a6b'), isTrue);
+  });
+
   group('Validation helpers', () {
     test('isValidEmail (Ionic Utils.validateEmail)', () {
       expect(isValidEmail('max@example.de'), isTrue);

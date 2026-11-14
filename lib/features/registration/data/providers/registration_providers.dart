@@ -19,14 +19,25 @@ import '../../../auth/data/auth_flow_service.dart';
 import '../../../profile/presentation/widgets/profile_helpers.dart' show profileRoleName;
 import '../../../../l10n/l10n.dart';
 
+final RegExp _uuidPattern = RegExp(
+    r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+
+/// Whether [registerId] has the uuid format of `tenants.register_id`.
+bool isRegisterIdFormat(String registerId) =>
+    _uuidPattern.hasMatch(registerId.trim());
+
 /// Provider for loading a tenant by its register ID
 final tenantByRegisterIdProvider = FutureProvider.family<Tenant?, String>((ref, registerId) async {
+  // OEFF-18: `register_id` is a uuid column; a mistyped link would make
+  // Postgres fail with 22P02 and show the raw error. Such a link is simply
+  // invalid (Ionic: toast 'Ungültiger Registrierungslink').
+  if (!isRegisterIdFormat(registerId)) return null;
   final supabase = ref.watch(supabaseClientProvider);
 
   final response = await supabase
       .from('tenants')
       .select('*')
-      .eq('register_id', registerId)
+      .eq('register_id', registerId.trim())
       .maybeSingle();
 
   if (response == null) return null;
