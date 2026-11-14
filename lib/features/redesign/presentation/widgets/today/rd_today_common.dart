@@ -221,6 +221,8 @@ List<RdCounter> rdAnswerCounters(BuildContext context, RdStatusCounts c, {String
       shortLabel: l10n.redesignCountersExcusedShort,
     ),
     RdCounter(c.lateAnnounced, l10n.redesignCountersLater, p.late),
+    // Rare before a Termin (someone recorded early): only then a fifth
+    // column, so the usual four keep their width in every other card.
     if (c.absent > 0) RdCounter(c.absent, l10n.redesignCountersAbsent, p.absent),
     RdCounter(c.open, openLabel ?? l10n.redesignCountersOpen, p.text),
   ];

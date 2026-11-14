@@ -675,6 +675,14 @@ class RdStatusCounters extends StatelessWidget {
     final p = context.rd;
     // With the inherited font: the columns are measured as they are drawn.
     final labelStyle = DefaultTextStyle.of(context).style.merge(RdType.meta(p, size: 12));
+    final numberStyle = DefaultTextStyle.of(context).style.merge(
+      const TextStyle(
+        fontSize: 17,
+        height: 1.2,
+        fontWeight: FontWeight.w700,
+        fontFeatures: [FontFeature.tabularFigures()],
+      ),
+    );
     final tappable = counters.any((c) => c.onTap != null);
 
     Widget cell(RdCounter c, String label) {
@@ -682,17 +690,7 @@ class RdStatusCounters extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '${c.value}',
-            maxLines: 1,
-            style: TextStyle(
-              fontSize: 17,
-              height: 1.2,
-              fontWeight: FontWeight.w700,
-              color: c.color,
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
-          ),
+          Text('${c.value}', maxLines: 1, style: numberStyle.copyWith(color: c.color)),
           Text(label, maxLines: 1, softWrap: false, style: labelStyle),
         ],
       );
@@ -718,23 +716,27 @@ class RdStatusCounters extends StatelessWidget {
       );
     }
 
+    Widget flow() => Wrap(
+          spacing: _flowGap,
+          runSpacing: 6,
+          children: [
+            for (final c in counters)
+              if (c.visible) cell(c, c.label),
+          ],
+        );
+
     final Widget child;
     if (!columns) {
-      child = Wrap(
-        spacing: _flowGap,
-        runSpacing: 6,
-        children: [
-          for (final c in counters)
-            if (c.visible) cell(c, c.label),
-        ],
-      );
+      child = flow();
     } else {
       child = LayoutBuilder(
         builder: (context, box) {
+          // Columns need a width to share (not in a scrolling row).
+          if (!box.hasBoundedWidth) return flow();
           final scaler = MediaQuery.textScalerOf(context);
-          double width(String text) {
+          double measure(String text, TextStyle style) {
             final painter = TextPainter(
-              text: TextSpan(text: text, style: labelStyle),
+              text: TextSpan(text: text, style: style),
               textDirection: Directionality.of(context),
               textScaler: scaler,
               maxLines: 1,
@@ -742,6 +744,15 @@ class RdStatusCounters extends StatelessWidget {
             final w = painter.width;
             painter.dispose();
             return w;
+          }
+
+          // A column is as wide as its word, at least three digits. The
+          // widths depend on the words only, never on the numbers of one
+          // card: cards with the same counters get the same columns.
+          final digits = measure('000', numberStyle);
+          double width(String label) {
+            final w = measure(label, labelStyle);
+            return w < digits ? digits : w;
           }
 
           // Full words when all columns fit, else the short ones.
