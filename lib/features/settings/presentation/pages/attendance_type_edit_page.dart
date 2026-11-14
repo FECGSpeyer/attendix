@@ -39,6 +39,7 @@ import '../../../../core/services/error_reporter.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
+import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/services/web_window.dart' show setUnloadWarning;
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -1466,6 +1467,49 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   /// Ionic reminders sheet (breakpoint 1, checkmark closes).
   Future<void> _openReminders() async {
+    if (context.rdSkin == null) {
+      // EIA-06/16: Ionic sheet modal `[breakpoints]="[0, 1]"`, toolbar
+      // title with the checkmark in slot end, `ion-content color="light"`.
+      final dark = Theme.of(context).brightness == Brightness.dark;
+      await showIonSheet<void>(
+        context,
+        backgroundColor: dark ? null : AppColors.light,
+        builder: (sheetContext, controller) => StatefulBuilder(
+          builder: (sheetContext, setSheet) => IonSheetScaffold(
+            title: context.l10n.typeSettingsReminders,
+            end: [
+              IconButton(
+                tooltip: context.l10n.commonOk,
+                icon: Icon(AppIcons.check),
+                onPressed: () => Navigator.of(sheetContext).pop(),
+              ),
+            ],
+            body: ListView(
+              controller: controller,
+              padding: EdgeInsets.fromLTRB(
+                ionListMargin(context),
+                AppDimensions.paddingM,
+                ionListMargin(context),
+                AppDimensions.paddingM + MediaQuery.paddingOf(sheetContext).bottom,
+              ),
+              children: [
+                TypeRemindersEditor(
+                  reminders: _reminders,
+                  onChanged: (list) {
+                    setState(() {
+                      _reminders = list;
+                      _hasChanges = true;
+                    });
+                    setSheet(() {});
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      return;
+    }
     await showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,
