@@ -90,6 +90,31 @@ class _PresentingSnapshot {
   }
 }
 
+/// The snapshot of the presenting page, drawn like `RawImage(fit: fill)`
+/// with [colorFilter] applied in the same draw.
+class _PresentingImagePainter extends CustomPainter {
+  _PresentingImagePainter(this.image, this.colorFilter);
+
+  final ui.Image image;
+  final ColorFilter colorFilter;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    paintImage(
+      canvas: canvas,
+      rect: Offset.zero & size,
+      image: image,
+      fit: BoxFit.fill,
+      colorFilter: colorFilter,
+      filterQuality: FilterQuality.medium,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_PresentingImagePainter oldDelegate) =>
+      oldDelegate.image != image || oldDelegate.colorFilter != colorFilter;
+}
+
 class _IosCardModalRoute<T> extends PopupRoute<T> {
   _IosCardModalRoute({
     required this.builder,
@@ -213,17 +238,21 @@ class _IosCardModalFrame extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.vertical(
                               top: Radius.circular(10 * t)),
-                          child: ColorFiltered(
-                            colorFilter: ColorFilter.matrix(<double>[
-                              contrast, 0, 0, 0, offset, //
-                              0, contrast, 0, 0, offset, //
-                              0, 0, contrast, 0, offset, //
-                              0, 0, 0, 1, 0,
-                            ]),
-                            child: RawImage(
-                              image: snapshot.image,
-                              fit: BoxFit.fill,
+                          // PERF: the contrast is part of the image
+                          // draw. A ColorFiltered layer cost a full-screen
+                          // offscreen pass on every frame while the card
+                          // is open (also while its content scrolls).
+                          child: CustomPaint(
+                            painter: _PresentingImagePainter(
+                              snapshot.image,
+                              ColorFilter.matrix(<double>[
+                                contrast, 0, 0, 0, offset, //
+                                0, contrast, 0, 0, offset, //
+                                0, 0, contrast, 0, offset, //
+                                0, 0, 0, 1, 0,
+                              ]),
                             ),
+                            child: const SizedBox.expand(),
                           ),
                         ),
                       ),

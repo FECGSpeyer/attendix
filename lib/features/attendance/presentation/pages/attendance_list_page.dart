@@ -554,8 +554,21 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
 
           // UX_ATT: "{present} von {total} anwesend" of past rows
           // Hidden until the counts are loaded (no "0 von 0" flash).
-          final listCounts =
-              ref.watch(attendanceListStatusCountsProvider).valueOrNull;
+          // PERF: counts only for the rows shown. "Alle anzeigen" keeps the
+          // preview's counts while the rest loads.
+          final previewCounts = ref
+              .watch(attendanceListStatusCountsProvider(attendanceStatusCountsKey(
+                  past.take(EventListUtils.pastPreviewCount))))
+              .valueOrNull;
+          final listCounts = !_showAllPast
+              ? previewCounts
+              : {
+                  ...?previewCounts,
+                  ...?ref
+                      .watch(attendanceListStatusCountsProvider(
+                          attendanceStatusCountsKey(pastPreview)))
+                      .valueOrNull,
+                };
           String? countText(Attendance att) {
             final counts = listCounts?[att.id];
             if (counts == null) return null;
