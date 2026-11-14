@@ -12,8 +12,8 @@ Szenario aufgebaut ist und welche Regeln gelten, steht in der
 | Stimmführer | `S` | [stimmfuehrer.md](stimmfuehrer.md) | fertig |
 | Helfer | `H` | [helfer.md](helfer.md) | fertig |
 | Beobachter | `B` | [beobachter.md](beobachter.md) | fertig |
-| Leitung (Verantwortlicher und Administrator) | `L` | folgt | offen |
-| nur Administrator | `A` | folgt | offen |
+| Leitung (Verantwortlicher und Administrator) | `L` | [leitung.md](leitung.md) | fertig |
+| nur Administrator | `A` | [admin.md](admin.md) | fertig |
 | Elternteil | `E` | folgt | offen |
 | Neu dabei (Registrieren, Beitreten, Bewerber) | `N` | folgt | offen |
 
