@@ -559,6 +559,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
   }
 
+  /// A persisted session exists but the auth stream has not reported yet.
+  bool _restoringSession() {
+    try {
+      if (!ref.watch(authStateProvider).isLoading) return false;
+      return ref.read(supabaseAuthProvider).currentSession != null;
+    } catch (_) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ios = useIosLook(context);
@@ -578,6 +588,28 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     // Ionic login.page.scss `.around` in rem: on the iPhone 1rem = 17px.
     final rem = ios ? 17.0 : 16.0;
     final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+
+    // EINST-03: cold start / reload with a stored session (e.g. a deep link
+    // stashed via /open-link): until the auth stream reports it, the router
+    // still sees "signed out" and lands here. Show the background with a
+    // spinner instead of flashing the login form; the router leaves as soon
+    // as the session is reported (a failed restore shows the form).
+    if (!beta && _restoringSession()) {
+      return Scaffold(
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              'assets/images/login_bg.jpg',
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) =>
+                  const ColoredBox(color: AppColors.primary),
+            ),
+            const Center(child: AppSpinner()),
+          ],
+        ),
+      );
+    }
     _measurePasswordForm();
 
     // Ionic login: background photo, centered card (60 % / 95 % under
