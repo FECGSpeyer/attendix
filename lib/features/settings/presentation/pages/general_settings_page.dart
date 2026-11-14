@@ -931,13 +931,20 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(context.l10n.commonCancel),
           ),
+          // EIA-29: Ionic "Löschen" without role (plain alert button).
+          if (ctx.rdSkin != null)
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.danger,
             ),
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(context.l10n.commonDelete),
-          ),
+          )
+          else
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(context.l10n.commonDelete),
+            ),
         ],
       ),
     );

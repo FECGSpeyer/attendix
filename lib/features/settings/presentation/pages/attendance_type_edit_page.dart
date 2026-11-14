@@ -2333,6 +2333,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       message: context.l10n.typeSettingsDeleteTypeMessage(_originalType!.name),
       confirmText: context.l10n.commonDelete,
       cancelText: context.l10n.commonCancel,
+      // EIA-29: Ionic type.page deleteType uses `role: 'destructive'`.
+      isDestructive: context.rdSkin == null,
     );
 
     if (!confirmed) return;
