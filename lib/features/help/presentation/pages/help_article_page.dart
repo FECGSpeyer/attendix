@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/core/theme/app_icons.dart';
+import '../../../../shared/widgets/layout/ion_form_items.dart' show IonArrowBackButton;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -34,10 +34,9 @@ class HelpArticlePage extends ConsumerWidget {
       // `ion-header translucent` (no large title: always blurred)
       extendBodyBehindAppBar: useIosLook(context),
       appBar: IonTranslucentAppBar(child: AppBar(
-        leading: IconButton(
-          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
+        // EIB-12: Ionic custom `arrow-back` ion-button (glass circle on iOS).
+        leading: IonArrowBackButton(onPressed: () => Navigator.of(context).maybePop()),
+        leadingWidth: IonArrowBackButton.leadingWidth(context),
         title: Text(article?.title ?? context.l10n.helpTitle),
       )),
       body: article == null
