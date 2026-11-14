@@ -245,6 +245,8 @@ Future<T?> showAppPopoverMenu<T>({
   bool iosArrow = false,
   // Ionic `--max-height` (e.g. 70 % of the screen); the menu scrolls.
   double? maxHeight,
+  // md look: a page-set Ionic `--width` (default md 250px).
+  double? mdWidth,
 }) {
   final navigator = Navigator.of(context, rootNavigator: true);
   final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
@@ -266,7 +268,7 @@ Future<T?> showAppPopoverMenu<T>({
       overlaySize: overlay.size,
       items: items,
       itemsBuilder: itemsBuilder,
-      width: ios ? iosWidth : 250,
+      width: ios ? iosWidth : (mdWidth ?? 250),
       barrierLabel: context.l10n.commonClose,
       capturedThemes: InheritedTheme.capture(
         from: context,

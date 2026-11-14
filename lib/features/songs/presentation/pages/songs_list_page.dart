@@ -400,6 +400,10 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 final value = await showAppPopoverMenu<String>(
                   context: buttonContext,
                   lines: true,
+                  // songs.page.scss: `ion-popover { --width: 18rem }`
+                  // (17pt root font in iOS mode, 16px in md).
+                  iosWidth: 306,
+                  mdWidth: 288,
                   items: [
                     if (isAdmin)
                       AppPopoverMenuItem(
