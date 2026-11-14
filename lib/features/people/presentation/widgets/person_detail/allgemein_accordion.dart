@@ -955,6 +955,16 @@ class AllgemeinAccordion extends ConsumerWidget {
                   onPressed: () => Navigator.pop(ctx),
                   child: Text(context.l10n.commonCancel),
                 ),
+                // PEO-17: `ion-select multiple` alert = Abbrechen / OK.
+                if (context.rdSkin == null)
+                  TextButton(
+                    onPressed: () => Navigator.pop(
+                      ctx,
+                      otherOrchestraOptions.where(current.contains).toList(),
+                    ),
+                    child: Text(context.l10n.commonOk),
+                  )
+                else
                 FilledButton(
                   onPressed: () => Navigator.pop(
                     ctx,
