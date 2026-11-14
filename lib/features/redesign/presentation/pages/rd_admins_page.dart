@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
 import '../../../../core/providers/admin_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/admin_repository.dart' show TenantAdmin;
@@ -14,6 +15,7 @@ import '../../../settings/presentation/widgets/settings_admins_sheet.dart'
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
+import '../widgets/rd_widgets.dart' show rdBack;
 
 /// REDESIGN: Verwaltung › Admins in the template "Verwaltungsliste"
 /// (replaces the old admins sheet while the Beta is on; super admins only,
@@ -69,6 +71,10 @@ class RdAdminsPage extends ConsumerWidget {
 
     return RdManageListPage(
       title: rdManageTitle(l10n, RdManageEntry.admins),
+      // A row of Rollen und Rechte: back leads there, also on wide screens.
+      backLabel: rdManageTitle(l10n, RdManageEntry.rolesPermissions),
+      onBack: () => rdBack(context, RedesignRoutes.rolePermissions),
+      backInSplit: true,
       intro: l10n.redesignAdminsListIntro,
       sections: admins == null
           ? null

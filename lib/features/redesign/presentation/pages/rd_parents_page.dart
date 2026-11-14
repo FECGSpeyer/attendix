@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/enums.dart' show Role;
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/viewer_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../data/models/parent/parent_model.dart';
 import '../../../../data/models/viewer/viewer.dart';
 import '../../../../l10n/l10n.dart';
@@ -15,7 +16,7 @@ import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/members/rd_invite_sheet.dart' show showRdInviteSheet;
-import '../widgets/rd_widgets.dart' show RdPrimaryButton;
+import '../widgets/rd_widgets.dart' show RdPrimaryButton, rdBack;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 
@@ -37,6 +38,10 @@ class RdParentsPage extends ConsumerWidget {
         : rdRoleAccountsWithoutEntry(ref.watch(tenantUsersProvider), Role.parent, {for (final p in parents) p.appId});
     return RdManageListPage(
       title: rdManageTitle(l10n, RdManageEntry.parents),
+      // A row of Rollen und Rechte: back leads there, also on wide screens.
+      backLabel: rdManageTitle(l10n, RdManageEntry.rolesPermissions),
+      onBack: () => rdBack(context, RedesignRoutes.rolePermissions),
+      backInSplit: true,
       intro: l10n.redesignParentsListIntro,
       // The switch of the old "Allgemein", then the one main action: the
       // sign-up link, where parents register their child ("Mein Kind").
@@ -118,6 +123,10 @@ class RdViewersPage extends ConsumerWidget {
         : rdRoleAccountsWithoutEntry(ref.watch(tenantUsersProvider), Role.viewer, {for (final v in viewers) v.appId});
     return RdManageListPage(
       title: rdManageTitle(l10n, RdManageEntry.viewers),
+      // A row of Rollen und Rechte: back leads there, also on wide screens.
+      backLabel: rdManageTitle(l10n, RdManageEntry.rolesPermissions),
+      onBack: () => rdBack(context, RedesignRoutes.rolePermissions),
+      backInSplit: true,
       intro: l10n.redesignViewersListIntro,
       sections: viewers == null
           ? null

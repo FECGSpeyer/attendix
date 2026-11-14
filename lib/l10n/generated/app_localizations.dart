@@ -17419,6 +17419,12 @@ abstract class AppLocalizations {
   /// **'In Organisation'**
   String get rdAdminHomeOrganisation;
 
+  /// rdAdmin.homeRoles
+  ///
+  /// In de, this message translates to:
+  /// **'In „Rollen und Rechte“'**
+  String get rdAdminHomeRoles;
+
   /// rdAdmin.homeStats
   ///
   /// In de, this message translates to:
@@ -17554,7 +17560,7 @@ abstract class AppLocalizations {
   /// rdAdmin.rolesHint
   ///
   /// In de, this message translates to:
-  /// **'Was Helfer und Mitglieder dürfen und sehen'**
+  /// **'Was jede Rolle darf und sieht'**
   String get rdAdminRolesHint;
 
   /// rdAdmin.search
@@ -18793,6 +18799,252 @@ abstract class AppLocalizations {
   /// **'{name} übertragen'**
   String rdPeopleTransferTitle(Object name);
 
+  /// rdRoles.adjustable
+  ///
+  /// In de, this message translates to:
+  /// **'Einstellbar'**
+  String get rdRolesAdjustable;
+
+  /// rdRoles.always
+  ///
+  /// In de, this message translates to:
+  /// **'Darf immer'**
+  String get rdRolesAlways;
+
+  /// rdRoles.assignNote
+  ///
+  /// In de, this message translates to:
+  /// **'Die Rolle einer Person änderst du bei der Person unter „Rolle“.'**
+  String get rdRolesAssignNote;
+
+  /// rdRoles.count
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0{Noch niemand} one{1 Person} other{{count} Personen}}'**
+  String rdRolesCount(num count);
+
+  /// rdRoles.fixedAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alles in dieser Gruppe'**
+  String get rdRolesFixedAll;
+
+  /// rdRoles.fixedAllHint
+  ///
+  /// In de, this message translates to:
+  /// **'Auch Admins hinzufügen und entfernen'**
+  String get rdRolesFixedAllHint;
+
+  /// rdRoles.fixedAttendance
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit im Termin eintragen'**
+  String get rdRolesFixedAttendance;
+
+  /// rdRoles.fixedManage
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder und Termine verwalten'**
+  String get rdRolesFixedManage;
+
+  /// rdRoles.fixedManageWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Werke und Noten verwalten'**
+  String get rdRolesFixedManageWorks;
+
+  /// rdRoles.fixedMyVoice
+  ///
+  /// In de, this message translates to:
+  /// **'„Meine Stimme“ sehen'**
+  String get rdRolesFixedMyVoice;
+
+  /// rdRoles.fixedMyVoiceHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kontakt und Abwesenheiten {kind, select, orchestra{des eigenen Instruments} choir{der eigenen Stimme} other{der eigenen Untergruppe}}'**
+  String rdRolesFixedMyVoiceHint(String kind);
+
+  /// rdRoles.fixedOwnRole
+  ///
+  /// In de, this message translates to:
+  /// **'Alles, was die eigene Rolle darf'**
+  String get rdRolesFixedOwnRole;
+
+  /// rdRoles.fixedOwnRoleHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglied oder Helfer'**
+  String get rdRolesFixedOwnRoleHint;
+
+  /// rdRoles.fixedSettings
+  ///
+  /// In de, this message translates to:
+  /// **'Einstellungen und Rollen ändern'**
+  String get rdRolesFixedSettings;
+
+  /// rdRoles.fixedSignup
+  ///
+  /// In de, this message translates to:
+  /// **'Sich zu Terminen an- und abmelden'**
+  String get rdRolesFixedSignup;
+
+  /// rdRoles.fixedWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Werke und Noten sehen'**
+  String get rdRolesFixedWorks;
+
+  /// rdRoles.forAll
+  ///
+  /// In de, this message translates to:
+  /// **'Für alle in der Gruppe'**
+  String get rdRolesForAll;
+
+  /// rdRoles.helperHint
+  ///
+  /// In de, this message translates to:
+  /// **'Tragen die Anwesenheit ein'**
+  String get rdRolesHelperHint;
+
+  /// rdRoles.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle eine Rolle und sieh, was sie darf.'**
+  String get rdRolesIntro;
+
+  /// rdRoles.leaderAddOn
+  ///
+  /// In de, this message translates to:
+  /// **'Ein Zusatz zu Mitglied oder Helfer.'**
+  String get rdRolesLeaderAddOn;
+
+  /// rdRoles.leaderHint
+  ///
+  /// In de, this message translates to:
+  /// **'Sehen „Meine Stimme“'**
+  String get rdRolesLeaderHint;
+
+  /// rdRoles.leaderNote
+  ///
+  /// In de, this message translates to:
+  /// **'Wer Stimmführer ist, legst du bei der Person fest.'**
+  String get rdRolesLeaderNote;
+
+  /// rdRoles.leaderOwnAlready
+  ///
+  /// In de, this message translates to:
+  /// **'Helfer tragen schon nur die Anwesenheit {kind, select, orchestra{des eigenen Instruments} choir{der eigenen Stimme} other{der eigenen Untergruppe}} ein. Das gilt auch für Stimmführer.'**
+  String rdRolesLeaderOwnAlready(String kind);
+
+  /// rdRoles.leads
+  ///
+  /// In de, this message translates to:
+  /// **'Leitung'**
+  String get rdRolesLeads;
+
+  /// rdRoles.memberHint
+  ///
+  /// In de, this message translates to:
+  /// **'Melden sich an und ab'**
+  String get rdRolesMemberHint;
+
+  /// rdRoles.membersHelpers
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder und Helfer'**
+  String get rdRolesMembersHelpers;
+
+  /// rdRoles.never
+  ///
+  /// In de, this message translates to:
+  /// **'Darf nie'**
+  String get rdRolesNever;
+
+  /// rdRoles.neverAdmins
+  ///
+  /// In de, this message translates to:
+  /// **'Admins hinzufügen oder entfernen'**
+  String get rdRolesNeverAdmins;
+
+  /// rdRoles.neverAdminsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Admins'**
+  String get rdRolesNeverAdminsHint;
+
+  /// rdRoles.neverAttendance
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit anderer eintragen'**
+  String get rdRolesNeverAttendance;
+
+  /// rdRoles.neverAttendanceHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Helfer, Admins und Verantwortliche'**
+  String get rdRolesNeverAttendanceHint;
+
+  /// rdRoles.neverLead
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder verwalten, Einstellungen ändern'**
+  String get rdRolesNeverLead;
+
+  /// rdRoles.neverLeadHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Admins und Verantwortliche'**
+  String get rdRolesNeverLeadHint;
+
+  /// rdRoles.noPeople
+  ///
+  /// In de, this message translates to:
+  /// **'Noch niemand mit dieser Rolle.'**
+  String get rdRolesNoPeople;
+
+  /// rdRoles.off
+  ///
+  /// In de, this message translates to:
+  /// **'Aus'**
+  String get rdRolesOff;
+
+  /// rdRoles.others
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Zugänge'**
+  String get rdRolesOthers;
+
+  /// rdRoles.people
+  ///
+  /// In de, this message translates to:
+  /// **'Personen'**
+  String get rdRolesPeople;
+
+  /// rdRoles.responsible
+  ///
+  /// In de, this message translates to:
+  /// **'Verantwortliche'**
+  String get rdRolesResponsible;
+
+  /// rdRoles.responsibleHint
+  ///
+  /// In de, this message translates to:
+  /// **'Leiten die Gruppe'**
+  String get rdRolesResponsibleHint;
+
+  /// rdRoles.savedHint
+  ///
+  /// In de, this message translates to:
+  /// **'Jeder Schalter wird sofort gespeichert.'**
+  String get rdRolesSavedHint;
+
+  /// rdRoles.sees
+  ///
+  /// In de, this message translates to:
+  /// **'Sieht'**
+  String get rdRolesSees;
+
   /// rdSettings.addRule
   ///
   /// In de, this message translates to:
@@ -19027,12 +19279,6 @@ abstract class AppLocalizations {
   /// **'Aus: können keine neuen Termine anlegen'**
   String get rdSettingsPermCreateHint;
 
-  /// rdSettings.perm.helperLabel
-  ///
-  /// In de, this message translates to:
-  /// **'Was Helfer dürfen'**
-  String get rdSettingsPermHelperLabel;
-
   /// rdSettings.perm.helperNote
   ///
   /// In de, this message translates to:
@@ -19056,12 +19302,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Helfer, die Stimmführer sind, tragen nur die Anwesenheit ihrer eigenen Stimme ein'**
   String get rdSettingsPermLeaderOwnOnlyHint;
-
-  /// rdSettings.perm.memberLabel
-  ///
-  /// In de, this message translates to:
-  /// **'Was Mitglieder dürfen'**
-  String get rdSettingsPermMemberLabel;
 
   /// rdSettings.perm.memberNote
   ///
@@ -28253,12 +28493,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count} noch offen'**
   String redesignRemindTitle(Object count);
-
-  /// redesign.rolePerm.intro
-  ///
-  /// In de, this message translates to:
-  /// **'Lege fest, was Mitglieder und Helfer in dieser Gruppe sehen und dürfen. Jeder Schalter wird sofort gespeichert.'**
-  String get redesignRolePermIntro;
 
   /// redesign.shift.from
   ///

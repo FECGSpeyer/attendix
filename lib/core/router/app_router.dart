@@ -171,6 +171,7 @@ import '../../features/redesign/presentation/pages/rd_parents_page.dart';
 import '../../features/redesign/presentation/pages/rd_pending_page.dart';
 import '../../features/redesign/presentation/pages/rd_pending_review_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea, RdManageEntry;
+import '../../features/redesign/data/rd_roles_logic.dart' show RdRoleView;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 import '../../features/redesign/presentation/widgets/rd_split_view.dart';
 import '../../features/redesign/presentation/widgets/rd_overview.dart';
@@ -1061,17 +1062,34 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'rollen',
                     pageBuilder: (context, state) => rdManageRoutePage(context, state, RdManageEntry.rolesPermissions, const RdRolePermissionsPage()),
                   ),
+                  // One role; an unknown segment shows the list. A sibling of
+                  // the list, not its child: on wide screens both are the
+                  // one page next to the Verwaltung list (same page key).
+                  GoRoute(
+                    path: 'rollen/:role',
+                    pageBuilder: (context, state) {
+                      final view = RdRoleView.fromKey(state.pathParameters['role']) ?? RdRoleView.list;
+                      return rdManageRoutePage(
+                        context,
+                        state,
+                        RdManageEntry.rolesPermissions,
+                        RdRolePermissionsPage(key: ValueKey('rd-role-${view.name}'), view: view),
+                      );
+                    },
+                  ),
+                  // Admins, Eltern and Beobachter are rows of Rollen und
+                  // Rechte: on wide screens that entry stays marked.
                   GoRoute(
                     path: 'admins',
-                    pageBuilder: (context, state) => rdManageRoutePage(context, state, RdManageEntry.admins, const RdAdminsPage()),
+                    pageBuilder: (context, state) => rdManageRoutePage(context, state, RdManageEntry.rolesPermissions, const RdAdminsPage()),
                   ),
                   GoRoute(
                     path: 'eltern',
-                    pageBuilder: (context, state) => rdManageRoutePage(context, state, RdManageEntry.parents, const RdParentsPage()),
+                    pageBuilder: (context, state) => rdManageRoutePage(context, state, RdManageEntry.rolesPermissions, const RdParentsPage()),
                   ),
                   GoRoute(
                     path: 'beobachter',
-                    pageBuilder: (context, state) => rdManageRoutePage(context, state, RdManageEntry.viewers, const RdViewersPage()),
+                    pageBuilder: (context, state) => rdManageRoutePage(context, state, RdManageEntry.rolesPermissions, const RdViewersPage()),
                   ),
                   GoRoute(
                     path: 'archiv',

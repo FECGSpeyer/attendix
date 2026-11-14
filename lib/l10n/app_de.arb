@@ -13370,6 +13370,10 @@
   "@rdAdminHomeOrganisation": {
     "description": "rdAdmin.homeOrganisation"
   },
+  "rdAdminHomeRoles": "In „Rollen und Rechte“",
+  "@rdAdminHomeRoles": {
+    "description": "rdAdmin.homeRoles"
+  },
   "rdAdminHomeStats": "In der Auswertung",
   "@rdAdminHomeStats": {
     "description": "rdAdmin.homeStats"
@@ -13471,7 +13475,7 @@
   "@rdAdminRoles": {
     "description": "rdAdmin.roles"
   },
-  "rdAdminRolesHint": "Was Helfer und Mitglieder dürfen und sehen",
+  "rdAdminRolesHint": "Was jede Rolle darf und sieht",
   "@rdAdminRolesHint": {
     "description": "rdAdmin.rolesHint"
   },
@@ -14479,6 +14483,181 @@
       "name": {}
     }
   },
+  "rdRolesAdjustable": "Einstellbar",
+  "@rdRolesAdjustable": {
+    "description": "rdRoles.adjustable"
+  },
+  "rdRolesAlways": "Darf immer",
+  "@rdRolesAlways": {
+    "description": "rdRoles.always"
+  },
+  "rdRolesAssignNote": "Die Rolle einer Person änderst du bei der Person unter „Rolle“.",
+  "@rdRolesAssignNote": {
+    "description": "rdRoles.assignNote"
+  },
+  "rdRolesCount": "{count, plural, =0{Noch niemand} one{1 Person} other{{count} Personen}}",
+  "@rdRolesCount": {
+    "description": "rdRoles.count",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdRolesFixedAll": "Alles in dieser Gruppe",
+  "@rdRolesFixedAll": {
+    "description": "rdRoles.fixedAll"
+  },
+  "rdRolesFixedAllHint": "Auch Admins hinzufügen und entfernen",
+  "@rdRolesFixedAllHint": {
+    "description": "rdRoles.fixedAllHint"
+  },
+  "rdRolesFixedAttendance": "Anwesenheit im Termin eintragen",
+  "@rdRolesFixedAttendance": {
+    "description": "rdRoles.fixedAttendance"
+  },
+  "rdRolesFixedManage": "Mitglieder und Termine verwalten",
+  "@rdRolesFixedManage": {
+    "description": "rdRoles.fixedManage"
+  },
+  "rdRolesFixedManageWorks": "Werke und Noten verwalten",
+  "@rdRolesFixedManageWorks": {
+    "description": "rdRoles.fixedManageWorks"
+  },
+  "rdRolesFixedMyVoice": "„Meine Stimme“ sehen",
+  "@rdRolesFixedMyVoice": {
+    "description": "rdRoles.fixedMyVoice"
+  },
+  "rdRolesFixedMyVoiceHint": "Kontakt und Abwesenheiten {kind, select, orchestra{des eigenen Instruments} choir{der eigenen Stimme} other{der eigenen Untergruppe}}",
+  "@rdRolesFixedMyVoiceHint": {
+    "description": "rdRoles.fixedMyVoiceHint",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdRolesFixedOwnRole": "Alles, was die eigene Rolle darf",
+  "@rdRolesFixedOwnRole": {
+    "description": "rdRoles.fixedOwnRole"
+  },
+  "rdRolesFixedOwnRoleHint": "Mitglied oder Helfer",
+  "@rdRolesFixedOwnRoleHint": {
+    "description": "rdRoles.fixedOwnRoleHint"
+  },
+  "rdRolesFixedSettings": "Einstellungen und Rollen ändern",
+  "@rdRolesFixedSettings": {
+    "description": "rdRoles.fixedSettings"
+  },
+  "rdRolesFixedSignup": "Sich zu Terminen an- und abmelden",
+  "@rdRolesFixedSignup": {
+    "description": "rdRoles.fixedSignup"
+  },
+  "rdRolesFixedWorks": "Werke und Noten sehen",
+  "@rdRolesFixedWorks": {
+    "description": "rdRoles.fixedWorks"
+  },
+  "rdRolesForAll": "Für alle in der Gruppe",
+  "@rdRolesForAll": {
+    "description": "rdRoles.forAll"
+  },
+  "rdRolesHelperHint": "Tragen die Anwesenheit ein",
+  "@rdRolesHelperHint": {
+    "description": "rdRoles.helperHint"
+  },
+  "rdRolesIntro": "Wähle eine Rolle und sieh, was sie darf.",
+  "@rdRolesIntro": {
+    "description": "rdRoles.intro"
+  },
+  "rdRolesLeaderAddOn": "Ein Zusatz zu Mitglied oder Helfer.",
+  "@rdRolesLeaderAddOn": {
+    "description": "rdRoles.leaderAddOn"
+  },
+  "rdRolesLeaderHint": "Sehen „Meine Stimme“",
+  "@rdRolesLeaderHint": {
+    "description": "rdRoles.leaderHint"
+  },
+  "rdRolesLeaderNote": "Wer Stimmführer ist, legst du bei der Person fest.",
+  "@rdRolesLeaderNote": {
+    "description": "rdRoles.leaderNote"
+  },
+  "rdRolesLeaderOwnAlready": "Helfer tragen schon nur die Anwesenheit {kind, select, orchestra{des eigenen Instruments} choir{der eigenen Stimme} other{der eigenen Untergruppe}} ein. Das gilt auch für Stimmführer.",
+  "@rdRolesLeaderOwnAlready": {
+    "description": "rdRoles.leaderOwnAlready",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdRolesLeads": "Leitung",
+  "@rdRolesLeads": {
+    "description": "rdRoles.leads"
+  },
+  "rdRolesMemberHint": "Melden sich an und ab",
+  "@rdRolesMemberHint": {
+    "description": "rdRoles.memberHint"
+  },
+  "rdRolesMembersHelpers": "Mitglieder und Helfer",
+  "@rdRolesMembersHelpers": {
+    "description": "rdRoles.membersHelpers"
+  },
+  "rdRolesNever": "Darf nie",
+  "@rdRolesNever": {
+    "description": "rdRoles.never"
+  },
+  "rdRolesNeverAdmins": "Admins hinzufügen oder entfernen",
+  "@rdRolesNeverAdmins": {
+    "description": "rdRoles.neverAdmins"
+  },
+  "rdRolesNeverAdminsHint": "Nur Admins",
+  "@rdRolesNeverAdminsHint": {
+    "description": "rdRoles.neverAdminsHint"
+  },
+  "rdRolesNeverAttendance": "Anwesenheit anderer eintragen",
+  "@rdRolesNeverAttendance": {
+    "description": "rdRoles.neverAttendance"
+  },
+  "rdRolesNeverAttendanceHint": "Nur Helfer, Admins und Verantwortliche",
+  "@rdRolesNeverAttendanceHint": {
+    "description": "rdRoles.neverAttendanceHint"
+  },
+  "rdRolesNeverLead": "Mitglieder verwalten, Einstellungen ändern",
+  "@rdRolesNeverLead": {
+    "description": "rdRoles.neverLead"
+  },
+  "rdRolesNeverLeadHint": "Nur Admins und Verantwortliche",
+  "@rdRolesNeverLeadHint": {
+    "description": "rdRoles.neverLeadHint"
+  },
+  "rdRolesNoPeople": "Noch niemand mit dieser Rolle.",
+  "@rdRolesNoPeople": {
+    "description": "rdRoles.noPeople"
+  },
+  "rdRolesOff": "Aus",
+  "@rdRolesOff": {
+    "description": "rdRoles.off"
+  },
+  "rdRolesOthers": "Weitere Zugänge",
+  "@rdRolesOthers": {
+    "description": "rdRoles.others"
+  },
+  "rdRolesPeople": "Personen",
+  "@rdRolesPeople": {
+    "description": "rdRoles.people"
+  },
+  "rdRolesResponsible": "Verantwortliche",
+  "@rdRolesResponsible": {
+    "description": "rdRoles.responsible"
+  },
+  "rdRolesResponsibleHint": "Leiten die Gruppe",
+  "@rdRolesResponsibleHint": {
+    "description": "rdRoles.responsibleHint"
+  },
+  "rdRolesSavedHint": "Jeder Schalter wird sofort gespeichert.",
+  "@rdRolesSavedHint": {
+    "description": "rdRoles.savedHint"
+  },
+  "rdRolesSees": "Sieht",
+  "@rdRolesSees": {
+    "description": "rdRoles.sees"
+  },
   "rdSettingsAddRule": "Regel hinzufügen",
   "@rdSettingsAddRule": {
     "description": "rdSettings.addRule"
@@ -14644,10 +14823,6 @@
   "@rdSettingsPermCreateHint": {
     "description": "rdSettings.perm.createHint"
   },
-  "rdSettingsPermHelperLabel": "Was Helfer dürfen",
-  "@rdSettingsPermHelperLabel": {
-    "description": "rdSettings.perm.helperLabel"
-  },
   "rdSettingsPermHelperNote": "Gilt auch für Helfer, die Stimmführer sind. Sie sehen Notizen und Checkliste immer.",
   "@rdSettingsPermHelperNote": {
     "description": "rdSettings.perm.helperNote"
@@ -14663,10 +14838,6 @@
   "rdSettingsPermLeaderOwnOnlyHint": "Helfer, die Stimmführer sind, tragen nur die Anwesenheit ihrer eigenen Stimme ein",
   "@rdSettingsPermLeaderOwnOnlyHint": {
     "description": "rdSettings.perm.leaderOwnOnlyHint"
-  },
-  "rdSettingsPermMemberLabel": "Was Mitglieder dürfen",
-  "@rdSettingsPermMemberLabel": {
-    "description": "rdSettings.perm.memberLabel"
   },
   "rdSettingsPermMemberNote": "Gilt auch für Mitglieder, die Stimmführer sind.",
   "@rdSettingsPermMemberNote": {
@@ -22126,10 +22297,6 @@
     "placeholders": {
       "count": {}
     }
-  },
-  "redesignRolePermIntro": "Lege fest, was Mitglieder und Helfer in dieser Gruppe sehen und dürfen. Jeder Schalter wird sofort gespeichert.",
-  "@redesignRolePermIntro": {
-    "description": "redesign.rolePerm.intro"
   },
   "redesignShiftFrom": "ab {time}",
   "@redesignShiftFrom": {

@@ -135,11 +135,10 @@ void main() {
       expect(rows, isNot(contains(RdManageEntry.workHistory)));
       expect(rows, isNot(contains(RdManageEntry.export)));
       expect(rdManageSearchable(_admin), containsAll([RdManageEntry.workHistory, RdManageEntry.certificates]));
-      expect(rdManageEntries(_admin, area: RdManageArea.access), [
-        RdManageEntry.rolesPermissions,
-        RdManageEntry.admins,
-        RdManageEntry.viewers,
-      ]);
+      // Admins, Eltern and Beobachter are rows of Rollen und Rechte.
+      expect(rdManageEntries(_admin, area: RdManageArea.access), [RdManageEntry.rolesPermissions]);
+      expect(rdManageSearchable(_admin), contains(RdManageEntry.viewers));
+      expect(rdManageHome(RdManageEntry.viewers, _admin), RdManageHome.roles);
     });
 
     test('tenant features and roles switch rows on', () {
@@ -412,7 +411,8 @@ void main() {
       await _settle(tester);
       expect(find.text('Zugänge und Rechte'), findsOneWidget);
       expect(find.text('Rollen und Rechte'), findsOneWidget);
-      expect(find.text('Admins'), findsOneWidget);
+      // Admins are a row of Rollen und Rechte now.
+      expect(find.text('Admins'), findsNothing);
       expect(find.text('Instrumente'), findsNothing);
 
       await tester.pumpWidget(_app(_admin, initial: '/ich/verwaltung/gibtsnicht'));
