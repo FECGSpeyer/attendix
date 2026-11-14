@@ -10,7 +10,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
 import '../../../../people/presentation/widgets/ion/ion_widgets.dart' show IonText, ionLineColor;
-import '../ion_stacked_field.dart';
+import '../../../../../shared/widgets/layout/ion_stacked_field.dart';
 
 /// Result of the "Erinnerung versenden" sheet.
 class AdHocReminderResult {

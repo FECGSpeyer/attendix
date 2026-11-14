@@ -11,6 +11,7 @@ import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../dialogs/ion_sheet.dart';
+import '../layout/ion_stacked_field.dart';
 import '../layout/ionic_ios.dart';
 
 // Internal sentinel for the free-text option (never stored).
@@ -175,7 +176,22 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                     onChanged: (v) => setState(() => _selection = v ?? _selection),
                     title: Text(reason == _customReason ? context.l10n.excuseCustomOption : reason),
                   ),
-              if (_selection == _customReason)
+              // TER-18: Ionic `ion-item.custom-reason` – stacked label and an
+              // auto-grow textarea; confirmed only via the toolbar checkmark.
+              if (_selection == _customReason && widget.scrollController != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: IonStackedField(
+                    label: context.l10n.excuseReason,
+                    hintText: context.l10n.excuseMinChars,
+                    controller: _controller,
+                    autofocus: true,
+                    minLines: 1,
+                    maxLines: null,
+                    onChanged: (_) => setState(() {}),
+                  ),
+                )
+              else if (_selection == _customReason)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                   child: TextField(
@@ -192,13 +208,18 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                     ),
                   ),
                 ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: FilledButton(
-                  onPressed: _confirmable ? _confirm : null,
-                  child: IonButtonLabel(context.l10n.commonConfirm),
-                ),
-              ),
+              if (widget.scrollController == null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: FilledButton(
+                    onPressed: _confirmable ? _confirm : null,
+                    child: IonButtonLabel(context.l10n.commonConfirm),
+                  ),
+                )
+              else
+                // `.keyboard-spacer`: room to scroll the textarea clear of
+                // the on-screen keyboard.
+                SizedBox(height: _selection == _customReason ? MediaQuery.sizeOf(context).height * 0.5 : 16),
       ];
 }
 
@@ -377,6 +398,76 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
     Navigator.of(context).pop(_answers);
   }
 
+  /// TER-07: the fields as Ionic items of one inset list.
+  List<Widget> _ionFields(BuildContext context) {
+    final ios = isIosLook(context);
+    final labelSize = ios ? 17.0 : 16.0;
+    final rows = <Widget>[];
+    for (final field in widget.fields) {
+      switch (field.type) {
+        case RegistrationFieldType.boolean:
+          rows.add(IonItem(
+            title: Text(field.label),
+            trailing: Switch.adaptive(
+              value: _answers[field.id] == true,
+              onChanged: (v) => setState(() => _answers[field.id] = v),
+            ),
+            onTap: () => setState(() => _answers[field.id] = _answers[field.id] != true),
+          ));
+        case RegistrationFieldType.select:
+          final options = field.options ?? const <String>[];
+          rows.add(Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(field.label, style: TextStyle(fontSize: labelSize * 0.75)),
+                DropdownButtonHideUnderline(
+                  child: AppDropdownButton<String>(
+                    interface: AppSelectInterface.alert,
+                    header: field.label,
+                    isExpanded: true,
+                    value: options.contains(_answers[field.id]) ? _answers[field.id] as String : null,
+                    items: [
+                      for (final opt in options) DropdownMenuItem(value: opt, child: Text(opt)),
+                    ],
+                    onChanged: (v) => setState(() => _answers[field.id] = v ?? ''),
+                  ),
+                ),
+              ],
+            ),
+          ));
+        case RegistrationFieldType.multiSelect:
+          final selected = List<String>.from(_answers[field.id] as List? ?? const []);
+          rows.add(Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+            child: Text(field.label, style: TextStyle(fontSize: labelSize * 0.75)),
+          ));
+          for (final opt in field.options ?? const <String>[]) {
+            void toggle() => setState(() {
+                  if (!selected.remove(opt)) selected.add(opt);
+                  _answers[field.id] = List<String>.from(selected);
+                });
+            rows.add(IonItem(
+              leading: Checkbox(value: selected.contains(opt), onChanged: (_) => toggle()),
+              title: Text(opt),
+              onTap: toggle,
+            ));
+          }
+        default:
+          rows.add(IonStackedField(
+            label: field.label,
+            hintText: '...',
+            controller: _controllerFor(field),
+            line: false,
+            onChanged: (v) => _answers[field.id] = v,
+          ));
+      }
+    }
+    return rows;
+  }
+
   Widget _buildField(RegistrationField field) {
     switch (field.type) {
       case RegistrationFieldType.boolean:
@@ -455,17 +546,38 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
     ];
     final scrollController = widget.scrollController;
     if (scrollController != null) {
+      // TER-07: Ionic regFieldsModal – close icon at the end,
+      // `ion-content color="light"`, one inset list, block button.
       return IonSheetScaffold(
         title: title,
-        end: end,
+        showClose: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
           top: false,
           child: SingleChildScrollView(
             controller: scrollController,
+            padding: const EdgeInsets.only(top: 12),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: _rows(context),
+              children: [
+                IonInsetList(children: _ionFields(context)),
+                if (_error != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                    child: Text(_error!, style: const TextStyle(color: AppColors.danger)),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: FilledButton.icon(
+                    onPressed: _submit,
+                    icon: Icon(AppIcons.checkCircleOutline),
+                    label: IonButtonLabel(widget.editMode
+                        ? context.l10n.commonSave
+                        : context.l10n.signoutSignIn),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

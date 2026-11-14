@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' as ios27;
-import '../../../people/presentation/widgets/ion/ion_widgets.dart' show ionLineColor;
+import '../../../core/theme/app_colors.dart';
+import '../adaptive/adaptive_platform.dart';
+import 'ionic_ios.dart' as ios27;
 
 /// Classic design: an Ionic `ion-item` holding an `ion-input` /
 /// `ion-textarea` with `labelPlacement="stacked"` – the label (scaled to
@@ -64,7 +63,7 @@ class IonStackedField extends StatelessWidget {
     final border = line
         ? Border(
             bottom: BorderSide(
-              color: ionLineColor(context),
+              color: _lineColor(context, ios),
               width: ios ? 0.55 : 1,
             ),
           )
@@ -130,4 +129,11 @@ class IonStackedField extends StatelessWidget {
       child: content,
     );
   }
+}
+
+/// Ionic item line: ios27 `--ion-border-color`, md rgba(0,0,0,.13) / #222.
+Color _lineColor(BuildContext context, bool ios) {
+  final brightness = Theme.of(context).brightness;
+  if (ios) return ios27.IonIos.line(brightness);
+  return brightness == Brightness.dark ? const Color(0xFF222222) : const Color(0x21000000);
 }
