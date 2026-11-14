@@ -140,11 +140,14 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
     final usageCount = ref.watch(shiftUsageCountProvider(widget.shiftId));
     // Ionic `@if (linkedTenants.length > 0)`: hidden while loading/on error.
     final copyTargetsAsync = ref.watch(shiftCopyTargetTenantsProvider);
+    // E2E EINST-60: an unknown plan id ("nicht gefunden") offers nothing
+    // to delete or save.
+    final notFound = shiftAsync.hasValue && shiftAsync.value == null;
 
     return IonCondenseScaffold(
       title: context.l10n.shiftsEdit,
       leading: settingsBackButton(context, onPressed: _goBack),
-      actions: settingsToolbarActions(context, [
+      actions: notFound ? const [] : settingsToolbarActions(context, [
         // Copy to tenant button (only with linked tenants)
         copyTargetsAsync.when(
           loading: () => const SizedBox.shrink(),
@@ -165,7 +168,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
           onPressed: () => _confirmDelete(context),
         ),
       ]),
-      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
+      floatingActionButton: notFound ? null : TabBarFab.wrap(FloatingActionButton(
         onPressed: _isLoading ? null : _saveChanges,
         tooltip: context.l10n.commonSave,
         child: _isLoading
