@@ -8,6 +8,10 @@ ones the app no longer has, so a renamed button shows up as a stale doc.
     python3 tool/docs/check_app_texts.py          # list unknown texts
     python3 tool/docs/check_app_texts.py --strict # exit 1 if there are any
 
+It also checks the references inside the docs: every scenario number that is
+mentioned (L-17) has its heading, no number is used twice, and every link to
+another page or section leads somewhere.
+
 Texts with placeholders match loosely ("Antwort bis {date}" matches
 „Antwort bis …“ and „Antwort bis Fr 2.11.“). Quotes that are examples and not
 app texts are listed in docs/beta/.app-texts-ignore, one per line.
@@ -63,6 +67,47 @@ def normalise(text):
     return re.sub(r'\s+', ' ', text.replace('…', '...')).strip()
 
 
+SCENARIO = re.compile(r'^### ([A-Z]-\d{2}) ', re.M)
+SCENARIO_REF = re.compile(r'(?<![\w-])([MSHBLAEN]-\d{2})(?!\d)')
+LINK = re.compile(r'\[[^\]]*\]\(([^)\s]+)\)')
+HEADING = re.compile(r'^#{1,6} (.+)$', re.M)
+
+
+def slug(heading):
+    """Anchor GitHub gives a heading."""
+    text = re.sub(r'[`*_]', '', heading).strip().lower()
+    text = re.sub(r'[^\w\- ]', '', text)
+    return text.replace(' ', '-')
+
+
+def check_refs():
+    """Dangling scenario numbers and links; a list of (path, problem)."""
+    # Fenced blocks are examples (the scenario template), not content.
+    pages = {p: re.sub(r'```.*?```', '', p.read_text(encoding='utf-8'), flags=re.S)
+             for p in sorted(DOCS.rglob('*.md'))}
+    problems = []
+    defined = {}
+    for path, text in pages.items():
+        for sid in SCENARIO.findall(text):
+            if sid in defined:
+                problems.append((path, f'{sid} gibt es zweimal (auch in {defined[sid].name})'))
+            defined[sid] = path
+    anchors = {p: {slug(h) for h in HEADING.findall(t)} for p, t in pages.items()}
+    for path, body in pages.items():
+        for sid in sorted(set(SCENARIO_REF.findall(body)) - set(defined)):
+            problems.append((path, f'{sid} wird genannt, aber kein Szenario heißt so'))
+        for target in LINK.findall(body):
+            if re.match(r'[a-z]+:', target):
+                continue
+            file, _, anchor = target.partition('#')
+            dest = (path.parent / file).resolve() if file else path
+            if not dest.exists():
+                problems.append((path, f'Link {target}: die Datei gibt es nicht'))
+            elif anchor and dest in anchors and anchor not in anchors[dest]:
+                problems.append((path, f'Link {target}: den Abschnitt gibt es nicht'))
+    return [(p.relative_to(ROOT), msg) for p, msg in problems]
+
+
 def main():
     arb = json.loads(ARB.read_text(encoding='utf-8'))
     variants = []
@@ -95,9 +140,15 @@ def main():
                 continue
             unknown.append((path.relative_to(ROOT), quote))
 
+    refs = check_refs()
+    if refs:
+        print('Diese Verweise in docs/beta führen ins Leere:\n')
+        for path, msg in refs:
+            print(f'  {path}: {msg}')
+        print()
     if not unknown:
         print('docs/beta: alle zitierten App-Texte gibt es in app_de.arb.')
-        return 0
+        return 1 if refs and '--strict' in sys.argv else 0
     print('Diese Texte stehen in docs/beta in „Anführungszeichen“, aber nicht '
           '(mehr) in lib/l10n/app_de.arb:\n')
     for path, quote in unknown:
