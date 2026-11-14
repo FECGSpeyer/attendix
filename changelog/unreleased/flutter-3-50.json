@@ -1,1 +1,1 @@
-{"bump": "minor", "changes": ["🛠️ Technik: Umstellung auf Flutter 3.50", "🐛 Mac-App: verrauschte Buchstaben an der Ursache behoben (wieder Impeller statt Skia)"]}
+{"bump": "patch", "changes": ["🛠️ Technik: Umstellung auf Flutter 3.50", "🐛 Mac-App: verrauschte Buchstaben an der Ursache behoben (wieder Impeller statt Skia)"]}
