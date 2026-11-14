@@ -316,13 +316,14 @@ class _PlanShareSheetState extends State<_PlanShareSheet> {
                 ),
               ),
               IonInsetList(
+                // ABL-16: Ionic icons document / documents / paper-plane.
                 dividerIndent: 56,
                 children: [
-                  option(AppIcons.descriptionOutlined, l10n.attendanceExportPdf, PlanExportAction.pdf),
-                  option(AppIcons.fileCopyOutlined, l10n.attendanceExportPdfA5, PlanExportAction.pdf2x),
+                  option(AppIcons.documentOutline, l10n.attendanceExportPdf, PlanExportAction.pdf),
+                  option(AppIcons.documentsOutline, l10n.attendanceExportPdfA5, PlanExportAction.pdf2x),
                   if (widget.hasChatId) ...[
-                    option(AppIcons.sendOutlined, l10n.attendanceTelegramPdf, PlanExportAction.telegram),
-                    option(AppIcons.sendOutlined, l10n.attendanceTelegramPdfA5, PlanExportAction.telegram2x),
+                    option(AppIcons.paperPlaneOutline, l10n.attendanceTelegramPdf, PlanExportAction.telegram),
+                    option(AppIcons.paperPlaneOutline, l10n.attendanceTelegramPdfA5, PlanExportAction.telegram2x),
                     if (!_all) option(AppIcons.imageOutlined, l10n.attendanceTelegramImage, PlanExportAction.telegramImage),
                   ],
                 ],
