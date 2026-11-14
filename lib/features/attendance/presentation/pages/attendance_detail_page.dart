@@ -725,6 +725,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           onExportExcel: _exportAttendanceToExcel,
                           onDateSelect: _changeDate,
                           onPlaceChanged: _updatePlace,
+                          onDurationChanged: (days) =>
+                              _updateAttendanceField({'duration_days': days}),
                           onOpenNavigation: attendance.place?.isNotEmpty == true
                               ? () => openEventNavigation(context, attendance.place!)
                               : null,

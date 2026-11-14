@@ -33,6 +33,7 @@ class GeneralInfoAccordion extends StatefulWidget {
     required this.onExportExcel,
     this.onDateSelect,
     this.onPlaceChanged,
+    this.onDurationChanged,
     this.onOpenNavigation,
     this.onChooseFilesFolder,
     this.onRemoveFilesFolder,
@@ -60,6 +61,10 @@ class GeneralInfoAccordion extends StatefulWidget {
 
   /// "Ort" – only shown when the type has `place_enabled`.
   final void Function(String)? onPlaceChanged;
+
+  /// TER-03: "Dauer (Tage)" of all-day types (Ionic `ion-input type="number"`,
+  /// saved on blur). Null keeps the read-only row.
+  final void Function(int)? onDurationChanged;
   final VoidCallback? onOpenNavigation;
 
   /// "Ordner in der Dateiablage".
@@ -78,7 +83,9 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
   late TextEditingController _typeInfoController;
   late TextEditingController _notesController;
   late TextEditingController _placeController;
+  late TextEditingController _durationController;
   final FocusNode _placeFocus = FocusNode();
+  final FocusNode _durationFocus = FocusNode();
   // UX_ATT: Info-Text and Notizen save on blur like Ionic (ionBlur)
   final FocusNode _typeInfoFocus = FocusNode();
   final FocusNode _notesFocus = FocusNode();
@@ -94,6 +101,19 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
     _typeInfoController = TextEditingController(text: widget.attendance.typeInfo ?? '');
     _notesController = TextEditingController(text: widget.attendance.notes ?? '');
     _placeController = TextEditingController(text: widget.attendance.place ?? '');
+    _durationController =
+        TextEditingController(text: '${widget.attendance.durationDays ?? 1}');
+    _durationFocus.addListener(() {
+      if (_durationFocus.hasFocus) return;
+      final days = int.tryParse(_durationController.text.trim());
+      if (days == null || days < 1) {
+        _durationController.text = '${widget.attendance.durationDays ?? 1}';
+        return;
+      }
+      if (days != (widget.attendance.durationDays ?? 1)) {
+        widget.onDurationChanged?.call(days);
+      }
+    });
     // Save the place when the field loses focus (Ionic: ionBlur).
     _placeFocus.addListener(() {
       if (!_placeFocus.hasFocus &&
@@ -128,6 +148,10 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
     if (oldWidget.attendance.notes != widget.attendance.notes) {
       _notesController.text = widget.attendance.notes ?? '';
     }
+    if (oldWidget.attendance.durationDays != widget.attendance.durationDays &&
+        !_durationFocus.hasFocus) {
+      _durationController.text = '${widget.attendance.durationDays ?? 1}';
+    }
     if (oldWidget.attendance.place != widget.attendance.place && !_placeFocus.hasFocus) {
       _placeController.text = widget.attendance.place ?? '';
     }
@@ -138,7 +162,9 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
     _typeInfoController.dispose();
     _notesController.dispose();
     _placeController.dispose();
+    _durationController.dispose();
     _placeFocus.dispose();
+    _durationFocus.dispose();
     _typeInfoFocus.dispose();
     _notesFocus.dispose();
     super.dispose();
@@ -312,7 +338,17 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
             line: true,
           ),
         ],
-        if (isAllDay)
+        if (isAllDay && !beta && widget.onDurationChanged != null)
+          _stackedField(
+            context,
+            label: context.l10n.attListDurationDays,
+            controller: _durationController,
+            focusNode: _durationFocus,
+            keyboardType: TextInputType.number,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) => _durationFocus.unfocus(),
+          )
+        else if (isAllDay)
           _item(
             context,
             label: context.l10n.attListDurationDays,
@@ -370,7 +406,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
                       onPressed: widget.onChooseFilesFolder,
                       child: IonButtonLabel(context.l10n.attendanceChoose),
                     ),
-              dense: true,
+              dense: beta,
             ),
           if (widget.attendance.filesFolder?.isNotEmpty == true)
             Padding(
@@ -463,7 +499,8 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
         title: Text(label, style: labelStyle),
         trailing: trailing,
         onTap: onTap,
-        dense: true,
+        // TER-15: classic md keeps the theme item size (Ionic 16 px).
+        dense: context.rdSkin != null,
       );
     }
     return _iosRow(
@@ -519,6 +556,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
     int maxLines = 1,
     TextInputAction? textInputAction,
     ValueChanged<String>? onSubmitted,
+    TextInputType? keyboardType,
   }) {
     if (!useIosLook(context)) {
       return Padding(
@@ -531,6 +569,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
             border: InputBorder.none,
           ),
           textCapitalization: TextCapitalization.sentences,
+          keyboardType: keyboardType,
           controller: controller,
           focusNode: focusNode,
           minLines: minLines,
@@ -551,6 +590,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           TextField(
             controller: controller,
             focusNode: focusNode,
+            keyboardType: keyboardType,
             minLines: minLines,
             maxLines: maxLines,
             textInputAction: textInputAction,
