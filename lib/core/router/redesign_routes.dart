@@ -149,6 +149,10 @@ class RedesignRoutes {
   /// pending sheet).
   static const String approvals = '$manage/freigaben';
 
+  /// [approvals] pushed from another page: [from] names it for the back
+  /// link ('heute').
+  static String approvalsFrom(String from) => '$approvals?von=$from';
+
   /// Freigaben › "Anfrage prüfen" of a person (replaces the old review
   /// page `/people/:id` in the Beta; leads only like [approvals]).
   static String approvalReview(int id) => '$approvals/$id';

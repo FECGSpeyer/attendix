@@ -20,6 +20,7 @@ import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/features/attendance/presentation/attendance_song_history.dart';
 import 'package:attendix/features/redesign/data/rd_event_logic.dart';
+import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart' show rdOpenPersons, rdOpenPersonsProvider;
 import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_event_edit_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_event_page.dart';
@@ -221,6 +222,9 @@ class _Harness {
             ]),
         mainGroupProvider.overrideWith((ref) async => null),
         attendanceGroupScopeProvider.overrideWith((ref) async => scope),
+        rdOpenPersonsProvider.overrideWith(
+          (ref, id) async => empty ? const [] : rdOpenPersons((rows ?? _rows)(), _persons),
+        ),
         canViewAttendanceNotesProvider.overrideWithValue(canViewNotes),
         supabaseAuthProvider.overrideWithValue(_auth()),
         currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
@@ -609,7 +613,7 @@ void main() {
     await tester.tap(find.text('Alle Offenen als anwesend'));
     await _settle(tester);
     expect(h.writes.toSet(), {'pa-2 {status: 1}', 'pa-5 {status: 1}'});
-    expect(find.text('2 Personen als anwesend'), findsOneWidget);
+    expect(find.text('2 Personen als anwesend markiert'), findsOneWidget);
     expect(find.text('2 von 2 da'), findsOneWidget);
     expect(find.text('1 von 1 da'), findsOneWidget);
     // Nobody open any more: the button goes away.

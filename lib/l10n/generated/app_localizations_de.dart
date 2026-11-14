@@ -13374,6 +13374,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignCreateDeadlineNone => 'Keiner';
 
   @override
+  String redesignCreateDeadlinePassed(Object date) {
+    return '„Antwort bis“ wäre für $date schon vorbei. Wähle eine kürzere Frist oder „Keiner“.';
+  }
+
+  @override
   String get redesignCreateDeadlineWeek => '1 Woche vorher';
 
   @override
@@ -13688,8 +13693,8 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Personen als anwesend',
-      one: '1 Person als anwesend',
+      other: '$count Personen als anwesend markiert',
+      one: '1 Person als anwesend markiert',
     );
     return '$_temp0';
   }

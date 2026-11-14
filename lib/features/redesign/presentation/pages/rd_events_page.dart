@@ -227,12 +227,12 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
             )
           : RdInfoCard(text: l10n.redesignTodayLoading, loading: true);
     }
-    final types = (ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
-        .where((t) => t.visible)
-        .toList();
-    final typeById = {for (final t in types) t.id: t};
-    // All types (hidden ones too) for the length of all-day Termine.
+    // All types (hidden ones too): a Termin of a since-hidden Art keeps its
+    // title, time, pill and all-day length. Only the filter chips are limited
+    // to the visible Arten.
     final allTypes = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    final types = allTypes.where((t) => t.visible).toList();
+    final typeById = {for (final t in allTypes) t.id: t};
     final past = rdPast(all, types: allTypes);
     final average = rdAveragePercentage(past);
     final source = _past ? past : rdUpcoming(all, types: allTypes);

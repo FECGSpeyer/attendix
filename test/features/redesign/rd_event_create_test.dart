@@ -179,6 +179,13 @@ void main() {
     test('a deadline already over means none (signouts stay possible)', () {
       expect(rdDeadlineFor(RdDeadline.week, DateTime(2026, 11, 3), '19:00', now: now), isNull);
     });
+
+    test('rdDeadlinePassedOn names the first day whose deadline is over', () {
+      final soon = DateTime(2026, 11, 3);
+      expect(rdDeadlinePassedOn(RdDeadline.week, [day, soon], '19:00', now: now), soon);
+      expect(rdDeadlinePassedOn(RdDeadline.hours24, [day, soon], '19:00', now: now), isNull);
+      expect(rdDeadlinePassedOn(RdDeadline.none, [soon], '19:00', now: now), isNull);
+    });
   });
 
   test('rdInvitedPersons mirrors the create write path', () {

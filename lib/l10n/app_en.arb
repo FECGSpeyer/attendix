@@ -3554,6 +3554,7 @@
   "redesignCreateDeadline2d": "2 days before",
   "redesignCreateDeadlineHint": "After that, members can no longer accept; declining still works.",
   "redesignCreateDeadlineNone": "None",
+  "redesignCreateDeadlinePassed": "“Reply by” would already be over for {date}. Pick a shorter deadline or “None”.",
   "redesignCreateDeadlineWeek": "1 week before",
   "redesignCreateDiscard": "Discard",
   "redesignCreateDiscardBody": "Your input will be lost.",

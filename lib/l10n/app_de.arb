@@ -16493,6 +16493,13 @@
   "@redesignCreateDeadlineNone": {
     "description": "redesign.create.deadlineNone"
   },
+  "redesignCreateDeadlinePassed": "„Antwort bis“ wäre für {date} schon vorbei. Wähle eine kürzere Frist oder „Keiner“.",
+  "@redesignCreateDeadlinePassed": {
+    "description": "redesign.create.deadlinePassed",
+    "placeholders": {
+      "date": {}
+    }
+  },
   "redesignCreateDeadlineWeek": "1 Woche vorher",
   "@redesignCreateDeadlineWeek": {
     "description": "redesign.create.deadlineWeek"
@@ -16862,7 +16869,7 @@
       }
     }
   },
-  "redesignEventAllDone": "{count, plural, one {1 Person als anwesend} other {{count} Personen als anwesend}}",
+  "redesignEventAllDone": "{count, plural, one {1 Person als anwesend markiert} other {{count} Personen als anwesend markiert}}",
   "@redesignEventAllDone": {
     "description": "redesign.event.allDone",
     "placeholders": {

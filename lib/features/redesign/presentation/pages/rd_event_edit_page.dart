@@ -450,7 +450,8 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
   Future<void> _pickDeadline(Attendance att, AttendanceType? type) async {
     final l10n = context.l10n;
     final date = DateTime.tryParse(att.date);
-    final suggested = date == null ? null : defaultDeadline(date, type?.startTime);
+    // From the Termin's own time (it may differ from the Art's).
+    final suggested = date == null ? null : defaultDeadline(date, att.startTime ?? type?.startTime);
     final choice = await showModalBottomSheet<String>(
       context: context,
       useRootNavigator: true,

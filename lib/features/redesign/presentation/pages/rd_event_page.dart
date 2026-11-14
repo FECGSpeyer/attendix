@@ -1459,6 +1459,9 @@ class _Overview extends ConsumerWidget {
     final notes = (attendance.notes ?? '').trim();
     final id = attendance.id;
     final hasPlan = attendanceHasPlan(attendance) && role != Role.viewer;
+    final toRemind = canMutate && !ended && counts.open > 0 && id != null
+        ? ref.watch(rdOpenPersonsProvider(id)).valueOrNull?.length ?? 0
+        : 0;
 
     // Before the start: answers; from the start on: who is there.
     final here = members.where((m) => m.status == AttendanceStatus.present).length;
@@ -1618,11 +1621,13 @@ class _Overview extends ConsumerWidget {
                 if (rdPlanOf(attendance) case final plan?) RdPlanNow(day: EventListUtils.parse(attendance.date), plan: plan),
               ],
               // Only Termin-Arten with "offen" (Zusage) have someone to remind.
-              if (canMutate && !ended && counts.open > 0 && id != null) ...[
+              // The count is whom the sheet reminds (duty Termine skip
+              // stand-ins, a Helfer only the own group).
+              if (canMutate && !ended && toRemind > 0 && id != null) ...[
                 SizedBox(height: now ? 10 : 16),
                 RdOutlineButton(
                   key: const Key('rd-event-remind-open'),
-                  label: '${l10n.redesignEventRemindOpen} (${counts.open})',
+                  label: '${l10n.redesignEventRemindOpen} ($toRemind)',
                   icon: Icons.notifications_none,
                   height: 44,
                   onPressed: () => showRdRemindOpenSheet(

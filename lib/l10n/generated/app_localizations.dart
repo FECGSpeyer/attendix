@@ -21468,6 +21468,12 @@ abstract class AppLocalizations {
   /// **'Keiner'**
   String get redesignCreateDeadlineNone;
 
+  /// redesign.create.deadlinePassed
+  ///
+  /// In de, this message translates to:
+  /// **'„Antwort bis“ wäre für {date} schon vorbei. Wähle eine kürzere Frist oder „Keiner“.'**
+  String redesignCreateDeadlinePassed(Object date);
+
   /// redesign.create.deadlineWeek
   ///
   /// In de, this message translates to:
@@ -21909,7 +21915,7 @@ abstract class AppLocalizations {
   /// redesign.event.allDone
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, one {1 Person als anwesend} other {{count} Personen als anwesend}}'**
+  /// **'{count, plural, one {1 Person als anwesend markiert} other {{count} Personen als anwesend markiert}}'**
   String redesignEventAllDone(num count);
 
   /// redesign.event.allOpenPresent

@@ -178,6 +178,11 @@ class _NextEventCard extends ConsumerWidget {
     final info = rdEventInfo(attendance, type);
     final id = attendance.id;
     final counts = id == null ? null : ref.watch(rdAttendanceCountsProvider(id)).valueOrNull;
+    // The link counts exactly whom the remind sheet asks (duty Termine skip
+    // stand-ins, a Helfer only the own group), not every open answer.
+    final toRemind = canRemind && id != null && (counts?.open ?? 0) > 0
+        ? ref.watch(rdOpenPersonsProvider(id)).valueOrNull?.length ?? 0
+        : 0;
     final hasTime = (attendance.startTime ?? type?.startTime)?.isNotEmpty ?? false;
     final countdown = rdCountdown(l10n, info.start, hasTime: hasTime);
     final meta = [info.timeRange, info.place].where((s) => s.isNotEmpty).join(' · ');
@@ -219,7 +224,7 @@ class _NextEventCard extends ConsumerWidget {
               semanticLabel: _countsLine(l10n, counts),
             ),
             const SizedBox(height: 8),
-            if (canRemind && id != null && counts.open > 0)
+            if (id != null && toRemind > 0)
               Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
@@ -238,7 +243,7 @@ class _NextEventCard extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            l10n.redesignRemindOpenLink(counts.open),
+                            l10n.redesignRemindOpenLink(toRemind),
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
@@ -326,7 +331,7 @@ class _AttentionSection extends ConsumerWidget {
           title: l10n.redesignTodayPending(pending),
           subtitle: l10n.redesignTodayPendingHint,
           trailing: RdCountBadge(pending),
-          onTap: () => context.push(RedesignRoutes.approvals),
+          onTap: () => context.push(RedesignRoutes.approvalsFrom('heute')),
         ),
       if (critical > 0)
         RdListRow(

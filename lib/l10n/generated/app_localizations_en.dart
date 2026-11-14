@@ -13249,6 +13249,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignCreateDeadlineNone => 'None';
 
   @override
+  String redesignCreateDeadlinePassed(Object date) {
+    return '“Reply by” would already be over for $date. Pick a shorter deadline or “None”.';
+  }
+
+  @override
   String get redesignCreateDeadlineWeek => '1 week before';
 
   @override

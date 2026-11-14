@@ -78,6 +78,16 @@ DateTime? rdDeadlineFor(RdDeadline option, DateTime day, String? startTime, {Dat
   return deadline.isBefore(now ?? DateTime.now()) ? null : deadline;
 }
 
+/// First of [dates] whose [option] deadline is already over at [now]
+/// (null if none): creating would silently drop "Antwort bis" for it.
+DateTime? rdDeadlinePassedOn(RdDeadline option, List<DateTime> dates, String? startTime, {DateTime? now}) {
+  if (option == RdDeadline.none) return null;
+  for (final day in dates) {
+    if (rdDeadlineFor(option, day, startTime, now: now) == null) return day;
+  }
+  return null;
+}
+
 /// Persons a new Termin of [type] is created for, like the create write
 /// path: active (not left, not pending, not paused), in the type's groups
 /// (or named in [circlePersons], the type's single persons) and matching

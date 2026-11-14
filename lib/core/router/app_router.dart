@@ -1052,7 +1052,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: 'freigaben',
-                    builder: (context, state) => const RdPendingPage(),
+                    builder: (context, state) => RdPendingPage(from: state.uri.queryParameters['von']),
                     routes: [
                       GoRoute(
                         path: ':id',
