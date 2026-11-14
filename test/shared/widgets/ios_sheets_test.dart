@@ -165,10 +165,11 @@ void main() {
       expect(find.text('Allgemein Treffen am 15.06.'), findsOneWidget);
     }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-    testWidgets('Android: Material header, no iOS grabber', (tester) async {
+    testWidgets('Android: Material header, Ionic sheet handle', (tester) async {
       await openBell(tester);
 
-      expect(find.byType(IonModalHandle), findsNothing);
+      // Ionic sheet modals show the handle in md mode as well.
+      expect(find.byType(IonModalHandle), findsOneWidget);
       expect(find.byType(ToolbarButtonGroup), findsNothing);
       // IOS_THEME2: Ionic md segment (tab style), not a Material box
       expect(find.byType(IonSegment<bool>), findsOneWidget);

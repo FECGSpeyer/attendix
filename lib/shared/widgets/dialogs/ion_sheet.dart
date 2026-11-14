@@ -85,8 +85,8 @@ Future<T?> showIonSheet<T>(
 
 /// The body of [showIonSheet]: sizes its child to the Ionic [breakpoints]
 /// and draws the modal handle. Use it directly only where a sheet widget is
-/// presented by its own `showModalBottomSheet(isScrollControlled: true)`
-/// call (e.g. to change [canDismiss] while the sheet is open).
+/// presented by its own modal bottom sheet call (`isScrollControlled: true`,
+/// e.g. to change [canDismiss] while the sheet is open).
 class IonBreakpointSheet extends StatelessWidget {
   const IonBreakpointSheet({
     super.key,
