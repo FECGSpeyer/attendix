@@ -29,7 +29,7 @@ import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonItem, 
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
-import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal, isIonModalCard;
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal, isIonModalCard, ionModalWindowSize;
 import '../../../../shared/widgets/display/ion_badge_text.dart';
 import '../widgets/field_stats_section.dart';
 
@@ -49,7 +49,9 @@ import '../widgets/field_stats_section.dart';
 /// ([showIonModal]: full screen on phones, centred card on desktop).
 Future<void> showStatisticsModal(BuildContext context) {
   final dark = Theme.of(context).brightness == Brightness.dark;
-  if (useIosLook(context)) {
+  // EINST-63: from 768 × 600 (window) Ionic shows the centred ~600px modal
+  // in iOS mode too; the iOS card modal is for phones only.
+  if (useIosLook(context) && !isIonModalCard(ionModalWindowSize(context))) {
     return showIosCardModal<void>(
       context,
       backgroundColor: dark ? null : AppColors.light,
