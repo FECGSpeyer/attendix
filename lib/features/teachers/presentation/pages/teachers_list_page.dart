@@ -525,7 +525,7 @@ class _TeacherFormState extends State<_TeacherForm> {
             trailing: Icon(AppIcons.arrowDropDown),
             onTap: _pickInstruments,
           ),
-          SwitchListTile.adaptive(
+          IonSwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(context.l10n.teachersPrivate),
             value: _private,

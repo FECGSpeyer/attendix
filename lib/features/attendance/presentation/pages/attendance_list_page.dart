@@ -436,9 +436,16 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
         // SETTINGS2: Ionic att-list header tenant switcher
         title: _condense.toolbarTitle(
           enabled: largeTitle,
-          title: TenantSwitcherTitle(
-            fallbackTitle: context.l10n.attListEvents,
-            singleTenantTitle: context.l10n.attListEvents,
+          title: TenantSwitcherTitle.iosInset(
+            enabled: ios &&
+                context.rdSkin == null &&
+                TenantSwitcherTitle.centerTitle(ref) == false &&
+                SideNavMenuButton.maybe(context) == null,
+            titleSpacing: NavigationToolbar.kMiddleSpacing,
+            child: TenantSwitcherTitle(
+              fallbackTitle: context.l10n.attListEvents,
+              singleTenantTitle: context.l10n.attListEvents,
+            ),
           ),
         ),
         // UX_ATT: Ionic order: Filter, Dienste verteilen, Glocke

@@ -765,6 +765,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         final total = (t?.additionalFields?.length ?? 0) + (t?.songAdditionalFields?.length ?? 0);
                         return SettingsListTile(
                           title: context.l10n.settingsExtraFields,
+                          detail: true, // Ionic detail="true": chevron in the Material look too
                           trailing: IonNote(
                             total == 0 ? context.l10n.generalSettingsNone : context.l10n.generalSettingsFlutterFieldsCount(total),
                           ),

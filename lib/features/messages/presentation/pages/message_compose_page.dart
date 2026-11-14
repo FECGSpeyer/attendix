@@ -482,7 +482,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
               _ComposeBox(
                 child: Column(
                   children: [
-                    SwitchListTile.adaptive(
+                    IonSwitchListTile(
                       value: _push,
                       title: Text(l10n.messagesPushTelegram),
                       subtitle:
@@ -494,7 +494,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                         _loadCounts();
                       },
                     ),
-                    SwitchListTile.adaptive(
+                    IonSwitchListTile(
                       value: _email,
                       title: Text(l10n.messagesEmail),
                       subtitle:

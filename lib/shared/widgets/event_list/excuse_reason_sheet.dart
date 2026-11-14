@@ -457,7 +457,7 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
         case RegistrationFieldType.boolean:
           rows.add(IonItem(
             title: Text(field.label),
-            trailing: Switch.adaptive(
+            trailing: IonSwitch(
               value: _answers[field.id] == true,
               onChanged: (v) => setState(() => _answers[field.id] = v),
             ),
@@ -520,7 +520,7 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
   Widget _buildField(RegistrationField field) {
     switch (field.type) {
       case RegistrationFieldType.boolean:
-        return SwitchListTile.adaptive(
+        return IonSwitchListTile(
           title: Text(field.label),
           value: _answers[field.id] == true,
           onChanged: (v) => setState(() => _answers[field.id] = v),

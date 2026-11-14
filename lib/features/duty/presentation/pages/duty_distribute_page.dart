@@ -444,7 +444,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
                 ],
               ),
             ),
-            SwitchListTile.adaptive(
+            IonSwitchListTile(
               title: Text(context.l10n.dutyNotTwiceSameDay),
               value: _notTwiceSameDay,
               onChanged: (v) => setState(() => _notTwiceSameDay = v),

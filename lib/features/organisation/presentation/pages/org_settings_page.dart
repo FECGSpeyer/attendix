@@ -155,7 +155,7 @@ class OrgSettingsPage extends ConsumerWidget {
               // Ionic 4.17.10: Gemeinde App (FECG Speyer, FECG Schwegenheim only)
               if (isSuperAdmin && PlanBeamer.gemeindeAppLinked(org)) ...[
                 _Section(title: context.l10n.orgGemeindeApp, children: [
-                  SwitchListTile.adaptive(
+                  IonSwitchListTile(
                     key: const ValueKey('org-beamer-files-toggle'),
                     secondary: Icon(AppIcons.tvOutlined),
                     title: Text(context.l10n.orgGaBeamerFiles),

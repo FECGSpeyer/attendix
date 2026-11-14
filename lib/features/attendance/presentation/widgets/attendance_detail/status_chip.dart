@@ -131,8 +131,9 @@ class AttendanceStatusBadge extends StatelessWidget {
         textAlign: TextAlign.center,
         // PWA_PARITY: ✓ is not in Roboto; the fallback font's taller line
         // box made the badge ~27 px high instead of Ionic's 19.
-        strutStyle: const StrutStyle(
-            fontSize: 13, height: 1, forceStrutHeight: true),
+        // IONIC_PARITY: 0.8125rem, so 13.8 px on the iPhone (root 17 px).
+        strutStyle: StrutStyle(
+            fontSize: ios ? 13.8125 : 13, height: 1, forceStrutHeight: true),
         textHeightBehavior: const TextHeightBehavior(
           applyHeightToFirstAscent: false,
           applyHeightToLastDescent: false,
@@ -140,6 +141,7 @@ class AttendanceStatusBadge extends StatelessWidget {
         // PARITY_R8: real bold (700) also on the web
         style: ionBadgeTextStyle(
           color: blackText ? Colors.black : Colors.white,
+          fontSize: ios ? 13.8125 : 13,
         ),
       ),
     );

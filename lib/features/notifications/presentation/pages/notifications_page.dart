@@ -202,7 +202,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             context,
             top: true,
             [
-                SwitchListTile.adaptive(
+                IonSwitchListTile(
                   title: Text(context.l10n.notifEnable),
                   value: config.enabled,
                   onChanged: (v) => _updateConfig(config.copyWith(enabled: v)),
@@ -215,7 +215,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 ),
                 // PUSH: Ionic `@if (isNative)` – push switch in the native apps
                 if (isNativePushPlatform)
-                  SwitchListTile.adaptive(
+                  IonSwitchListTile(
                     title: Text(context.l10n.notifPush),
                     value: config.pushEnabled,
                     onChanged: (v) => _togglePush(config, v),
@@ -332,7 +332,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 [
                     for (final tenant in tenants)
                       if (tenant.id != null)
-                        SwitchListTile.adaptive(
+                        IonSwitchListTile(
                           title: Text(tenant.longName.isNotEmpty
                               ? tenant.longName
                               : tenant.shortName),

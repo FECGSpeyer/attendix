@@ -300,7 +300,7 @@ class _GroupDivider extends StatelessWidget {
         style: TextStyle(
           color: Colors.white,
           fontWeight: ios ? FontWeight.w600 : FontWeight.w400,
-          fontSize: ios ? 17 : 14,
+          fontSize: ios ? 18.0625 : 14,
           height: ios ? 1.2 : null,
         ),
       ),

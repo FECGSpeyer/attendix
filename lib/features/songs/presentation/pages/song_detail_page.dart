@@ -757,7 +757,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               },
             ),
             const Divider(height: 0.5, thickness: 0.5),
-            SwitchListTile.adaptive(
+            IonSwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.songsChoirOrchestra),
               value: _withChoir,
@@ -767,7 +767,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               },
             ),
             const Divider(height: 0.5, thickness: 0.5),
-            SwitchListTile.adaptive(
+            IonSwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.songsWithSoloSinging),
               value: _withSolo,
@@ -889,7 +889,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
   Widget _buildField(SongDetailData data, SongAdditionalField field) {
     final value = _additional[field.id];
     if (field.isBoolean) {
-      return SwitchListTile.adaptive(
+      return IonSwitchListTile(
         contentPadding: EdgeInsets.zero,
         title: Text(field.name),
         value: value == true,

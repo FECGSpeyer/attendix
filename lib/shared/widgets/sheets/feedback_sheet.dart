@@ -308,7 +308,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                     title: l10n.settingsAnonymous,
                     subtitle: l10n.coreFlutterFeedbackAnonymousHint,
                     showChevron: false,
-                    trailing: Switch.adaptive(
+                    trailing: IonSwitch(
                       value: _anonymous,
                       activeTrackColor: p.primary,
                       onChanged: (v) => setState(() => _anonymous = v),
@@ -590,7 +590,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
             hint: context.l10n.settingsFeedbackPh,
             lines: 6,
           ),
-          SwitchListTile.adaptive(
+          IonSwitchListTile(
             title: Text(context.l10n.settingsAnonymous),
             value: _anonymous,
             onChanged: (value) => setState(() => _anonymous = value),
@@ -708,7 +708,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
           ),
           const SizedBox(height: AppDimensions.paddingM),
           // Anonymous toggle
-          SwitchListTile.adaptive(
+          IonSwitchListTile(
             title: Text(context.l10n.settingsAnonymous),
             subtitle: Text(
               context.l10n.coreFlutterFeedbackAnonymousHint,

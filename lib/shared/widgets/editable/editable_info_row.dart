@@ -3,6 +3,7 @@ import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../adaptive/ion_switch.dart';
 
 /// An info row that can be tapped to edit the value.
 /// Used for inline-editing in detail pages.
@@ -209,7 +210,7 @@ class EditableToggleRow extends StatelessWidget {
               ],
             ),
           ),
-          Switch.adaptive(
+          IonSwitch(
             value: value,
             onChanged: editable ? onChanged : null,
             activeColor: AppColors.success,

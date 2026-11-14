@@ -686,7 +686,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
         return RdListRow(
           title: field.name,
           showChevron: false,
-          trailing: Switch.adaptive(
+          trailing: IonSwitch(
             value: _additional[field.id] == true,
             activeTrackColor: p.primary,
             onChanged: (v) {
@@ -748,7 +748,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       case 'boolean':
         return IonItem(
           label: field.name,
-          end: Switch.adaptive(
+          end: IonSwitch(
             value: _additional[field.id] == true,
             onChanged: (v) => setState(() => _additional[field.id] = v),
           ),

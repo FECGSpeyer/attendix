@@ -12,6 +12,7 @@ import '../../../l10n/l10n.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../adaptive/adaptive_platform.dart';
 import '../adaptive/app_popover_menu.dart' show showAppPopover;
+import '../adaptive/app_toolbar.dart' show IonToolbarButtonMetrics;
 import '../display/ion_badge_text.dart';
 import '../layout/ionic_md.dart' show IonMd;
 
@@ -36,6 +37,29 @@ class TenantSwitcherTitle extends ConsumerWidget {
   /// IOS_SHELL: custom switch handler (default: [switchTenant]).
   final ValueChanged<Tenant>? onSelected;
 
+  /// IONIC_PARITY: where the switcher capsule starts in the iOS look. Ionic
+  /// has a second, empty `ion-buttons slot="start"` (the hidden menu button)
+  /// in front of it; with the toolbar padding (4) and both groups' margins
+  /// (12 each) the capsule starts 40pt from the edge.
+  static const double iosStart = 40;
+
+  /// IONIC_PARITY: shifts [child] (the switcher as an `AppBar.title`) so
+  /// that it starts at [iosStart] on a page whose AppBar uses
+  /// [titleSpacing]. Padding only at the start: a larger `titleSpacing`
+  /// would also take the space in front of the end buttons.
+  static Widget iosInset({
+    required bool enabled,
+    required double titleSpacing,
+    required Widget child,
+  }) =>
+      enabled
+          ? Padding(
+              padding: EdgeInsetsDirectional.only(
+                  start: iosStart - titleSpacing),
+              child: child,
+            )
+          : child;
+
   /// UX_AUTH: Ionic puts the switcher into `ion-buttons slot="start"` (left,
   /// no ion-title), so the AppBar must not centre it. Returns `false` while
   /// the switcher is shown, otherwise null (theme default: centred iOS
@@ -58,6 +82,10 @@ class TenantSwitcherTitle extends ConsumerWidget {
     }
 
     final ios = useIosLook(context);
+    // IONIC_PARITY: the classic iPhone look follows the Ionic toolbar button
+    // (17.85pt, 12pt padding, a long name wraps to two centred lines); the
+    // Beta design keeps its own capsule.
+    final classicIos = ios && context.rdSkin == null;
     final textColor = Theme.of(context).colorScheme.onSurface;
     // Ionic toolbar button: "<longName> ⌄" (chevron-down-outline at the end).
     // iOS 26 theme: the ion-buttons group is a 44 pt glass capsule.
@@ -70,8 +98,13 @@ class TenantSwitcherTitle extends ConsumerWidget {
           child: Text(
             ios ? title : title.toUpperCase(),
             overflow: TextOverflow.ellipsis,
+            maxLines: classicIos ? 2 : 1,
+            textAlign: classicIos ? TextAlign.center : null,
             style: TextStyle(
-              fontSize: ios ? 17 : 14,
+              // ios27 toolbar button: 1.05rem (17.85pt).
+              fontSize: classicIos
+                  ? IonToolbarButtonMetrics.textSize
+                  : (ios ? 17 : 14),
               fontWeight: FontWeight.w500,
               letterSpacing: ios ? null : 0.84,
               color: textColor,
@@ -87,11 +120,16 @@ class TenantSwitcherTitle extends ConsumerWidget {
         ? IosGlassSurface(
             borderRadius: const BorderRadius.all(Radius.circular(22)),
             blur: IosGlass.headerControlBlur,
-            child: SizedBox(
-              height: 44,
+            child: ConstrainedBox(
+              constraints: classicIos
+                  ? const BoxConstraints(minHeight: 44)
+                  : const BoxConstraints.tightFor(height: 44),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Center(widthFactor: 1, child: label),
+                // ion-button padding 12 (+1 for the capsule's rim).
+                padding: classicIos
+                    ? const EdgeInsets.symmetric(horizontal: 13, vertical: 4)
+                    : const EdgeInsets.symmetric(horizontal: 16),
+                child: Center(widthFactor: 1, heightFactor: 1, child: label),
               ),
             ),
           )

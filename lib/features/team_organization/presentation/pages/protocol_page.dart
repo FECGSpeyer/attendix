@@ -1012,7 +1012,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                           ctx.l10n.protocolNotified,
                           '${ctx.l10n.protocolRecipients(summary.recipientCount)}${summary.taskOwners.isNotEmpty ? ctx.l10n.protocolTaskOwners(summary.taskOwners.length) : ''}',
                         ),
-                        SwitchListTile.adaptive(
+                        IonSwitchListTile(
                           value: sendPdf,
                           onChanged: (v) => setLocal(() => sendPdf = v),
                           title: Text(ctx.l10n.protocolSendPdf),
@@ -1131,7 +1131,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             ios27.IonItem(
               title: Text(l10n.protocolSendPdf),
               subtitle: Text(l10n.protocolViaTelegram),
-              trailing: Switch.adaptive(value: sendPdf, onChanged: onSendPdf),
+              trailing: IonSwitch(value: sendPdf, onChanged: onSendPdf),
               onTap: () => onSendPdf(!sendPdf),
             ),
           ],

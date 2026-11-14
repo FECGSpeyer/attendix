@@ -241,7 +241,7 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
         child: Text(l10n.planningBeamer.toUpperCase(),
             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium)),
       ),
-      SwitchListTile.adaptive(
+      IonSwitchListTile(
         key: const ValueKey('plan-field-beamer-toggle'),
         contentPadding: EdgeInsets.zero,
         value: _beamerOn,
@@ -643,7 +643,7 @@ class _PlanFieldEditPageState extends State<PlanFieldEditPage> {
         header: l10n.planningBeamer,
         dividerIndent: 16,
         children: [
-          SwitchListTile.adaptive(
+          IonSwitchListTile(
             key: const ValueKey('plan-field-beamer-toggle'),
             value: _beamerOn,
             onChanged: _setBeamer,

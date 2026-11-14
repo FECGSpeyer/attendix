@@ -7,6 +7,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' as ion;
 import '../../../../shared/widgets/display/ion_badge_text.dart';
 import '../../../../shared/widgets/layout/ionic_md.dart';
+import '../../../../shared/widgets/adaptive/ion_switch.dart';
 
 /// PARITY_R8: md settings list header label (`.9rem` of the md inset
 /// list = 14.4px; the screenshot audit measures Ionic md at 14px).
@@ -151,9 +152,10 @@ Widget ionIosListTileTheme(BuildContext context, {required Widget child}) {
       height: 20.3333 / 17,
       color: IonIos.text(context),
     ),
+    // IONIC_PARITY: `ion-label p` 0.875rem = 14.875 px on the iPhone.
     subtitleTextStyle: base.copyWith(
-      fontSize: 14,
-      height: 1.4,
+      fontSize: 0.875 * ion.IonIos.rem,
+      height: 1.2,
       color: IonIos.labelP(context),
     ),
     leadingAndTrailingTextStyle: base.copyWith(
@@ -233,7 +235,9 @@ class SettingsListSection extends StatelessWidget {
                       child: Text(
                         title!,
                         style: TextStyle(
-                          fontSize: kMdSettingsHeaderFontSize,
+                          // IONIC_PARITY: measured in Ionic md: 16 px, with
+                          // an icon (`.category-list`) 0.95rem = 15.2 px.
+                          fontSize: icon != null ? 15.2 : 16,
                           fontWeight: FontWeight.w600,
                           color: theme.brightness == Brightness.dark
                               ? const Color(0xFFA2A4AB)
@@ -351,7 +355,14 @@ class IonListHeader extends StatelessWidget {
             ],
             Expanded(
               // IOS27_SWEEP: shared ios27 inset list header style
-              child: Text(title, style: ion.IonIos.listHeaderStyle(context)),
+              // IONIC_PARITY: with an icon (`.category-list`) 0.95rem.
+              child: Text(
+                title,
+                style: icon == null
+                    ? ion.IonIos.listHeaderStyle(context)
+                    : ion.IonIos.listHeaderStyle(context)
+                        .copyWith(fontSize: 0.95 * ion.IonIos.rem),
+              ),
             ),
             // ion-list-header ion-button: small, bottom aligned.
             if (action != null)
@@ -480,7 +491,7 @@ class SettingsListTile extends StatelessWidget {
     this.subtitle,
     this.trailing,
     this.onTap,
-    this.detail = true,
+    this.detail,
     this.color,
     this.iconColor,
     this.background,
@@ -496,7 +507,11 @@ class SettingsListTile extends StatelessWidget {
   final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
-  final bool detail;
+
+  /// Ionic `detail`: `true` always shows the chevron, `false` never. Unset
+  /// (the Ionic default) a tappable row has one in the iOS look only – the
+  /// Material look shows none.
+  final bool? detail;
 
   /// Label color (Ionic `ion-label color="..."`).
   final Color? color;
@@ -526,7 +541,7 @@ class SettingsListTile extends StatelessWidget {
         (ios
             ? IonIos.text(context)
             : IonMd.iconColor(Theme.of(context).brightness));
-    final showChevron = detail && onTap != null;
+    final showChevron = onTap != null && (detail ?? ios);
     final tile = ListTile(
       leading:
           iconWidget != null
@@ -839,6 +854,16 @@ class IonStackedField extends StatelessWidget {
   /// Helper/error text colour of iOS inputs (`--ion-color-step-550`).
   static const Color iosHelper = Color(0xFF737373);
 
+  /// IONIC_PARITY: helper text of `ion-input` / `ion-toggle` in the classic
+  /// design, both looks: `--ion-color-step-700` (#4d4d4d, dark #b3b3b3).
+  static Color helperColor(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFFB3B3B3)
+          : const Color(0xFF4D4D4D);
+
+  /// IONIC_PARITY: 0.75rem, so 12.75 px on the iPhone (root 17 px).
+  static const double iosHelperSize = 0.75 * ion.IonIos.rem;
+
   @override
   Widget build(BuildContext context) {
     if (!ionIsIos(context)) {
@@ -851,38 +876,62 @@ class IonStackedField extends StatelessWidget {
           labelText: label,
           helperText: helper,
           helperMaxLines: 4,
+          helperStyle: context.rdSkin == null
+              ? TextStyle(fontSize: 12, color: helperColor(context))
+              : null,
+          // IONIC_PARITY: md stacked label in the text colour, primary
+          // while the field has the focus.
+          floatingLabelStyle: context.rdSkin == null
+              ? WidgetStateTextStyle.resolveWith((states) => TextStyle(
+                    color: states.contains(WidgetState.error)
+                        ? AppColors.danger
+                        : states.contains(WidgetState.focused)
+                            ? AppColors.primary
+                            : Theme.of(context).colorScheme.onSurface,
+                  ))
+              : null,
           hintText: hint,
         )),
       );
     }
     final base = (Theme.of(context).textTheme.bodyLarge ?? const TextStyle())
         .copyWith(letterSpacing: 0);
+    // IONIC_PARITY: classic iPhone look like the Ionic item: label 1rem
+    // (17 px) 11 pt below the item edge, 6 pt gap, a 44 pt input with 17 px
+    // text, helper 0.75rem. The Beta design keeps its compact field.
+    final classic = context.rdSkin == null;
+    final labelSize = classic ? ion.IonIos.rem : 14.0;
+    final inputSize = classic ? ion.IonIos.rem : 16.0;
     return Padding(
       padding: flush
-          ? const EdgeInsets.symmetric(vertical: 8)
-          : const EdgeInsets.fromLTRB(
+          ? EdgeInsets.only(
+              top: classic ? 11 : 8,
+              bottom: classic ? (helper == null ? 0 : 8) : 8,
+            )
+          : EdgeInsets.fromLTRB(
               IonIos.itemPaddingStart,
-              10,
+              classic ? 11 : 10,
               IonIos.itemPaddingEnd,
-              8,
+              classic ? (helper == null ? 0 : 8) : 8,
             ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (label != null)
             Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: EdgeInsets.only(bottom: classic ? 6 : 4),
               child: Text(
                 label!,
-                style: base.copyWith(fontSize: 14, color: IonIos.text(context)),
+                style: base.copyWith(
+                    fontSize: labelSize, color: IonIos.text(context)),
               ),
             ),
           Theme(
-            // ion-input: 16px text without Material letter spacing.
+            // ion-input: text without Material letter spacing.
             data: Theme.of(context).copyWith(
               textTheme: Theme.of(context).textTheme.copyWith(
-                    bodyLarge: base.copyWith(fontSize: 16),
-                    titleMedium: base.copyWith(fontSize: 16),
+                    bodyLarge: base.copyWith(fontSize: inputSize),
+                    titleMedium: base.copyWith(fontSize: inputSize),
                   ),
             ),
             child: builder(InputDecoration(
@@ -894,13 +943,23 @@ class IonStackedField extends StatelessWidget {
               disabledBorder: InputBorder.none,
               filled: false,
               isDense: true,
-              contentPadding: const EdgeInsets.symmetric(vertical: 6),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: classic ? 12 : 6),
               hintText: hint,
-              hintStyle: base.copyWith(fontSize: 16, color: IonIos.note(context)),
+              hintStyle: base.copyWith(
+                  fontSize: inputSize, color: IonIos.note(context)),
               helperText: helper,
               helperMaxLines: 4,
-              helperStyle: base.copyWith(fontSize: 12, color: iosHelper),
-              errorStyle: base.copyWith(fontSize: 12, color: AppColors.danger),
+              helperStyle: classic
+                  ? base.copyWith(
+                      fontSize: iosHelperSize,
+                      height: 1.2,
+                      color: helperColor(context),
+                    )
+                  : base.copyWith(fontSize: 12, color: iosHelper),
+              errorStyle: base.copyWith(
+                  fontSize: classic ? iosHelperSize : 12,
+                  color: AppColors.danger),
             )),
           ),
         ],
@@ -945,16 +1004,26 @@ class IonStackedValue extends StatelessWidget {
     }
     final base = (Theme.of(context).textTheme.bodyLarge ?? const TextStyle())
         .copyWith(letterSpacing: 0);
+    // IONIC_PARITY: same metrics as [IonStackedField] in the classic design.
+    final classic = context.rdSkin == null;
+    final vertical = EdgeInsets.only(
+      top: classic ? 11 : 10,
+      bottom: classic ? (helper == null ? 0 : 8) : 10,
+    );
+    final valueText = Text(
+      value,
+      style: base.copyWith(
+          fontSize: classic ? ion.IonIos.rem : 16,
+          color: IonIos.text(context)),
+    );
     return InkWell(
       onTap: onTap,
       child: Padding(
         padding: flush
-            ? const EdgeInsets.symmetric(vertical: 10)
-            : const EdgeInsets.fromLTRB(
-                IonIos.itemPaddingStart,
-                10,
-                IonIos.itemPaddingEnd,
-                10,
+            ? vertical
+            : vertical.copyWith(
+                left: IonIos.itemPaddingStart,
+                right: IonIos.itemPaddingEnd,
               ),
         child: Row(
           children: [
@@ -962,14 +1031,36 @@ class IonStackedValue extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: base.copyWith(fontSize: 14, color: IonIos.text(context))),
-                  const SizedBox(height: 4),
-                  Text(value, style: base.copyWith(fontSize: 16, color: IonIos.text(context))),
+                  Text(
+                    label,
+                    style: base.copyWith(
+                        fontSize: classic ? ion.IonIos.rem : 14,
+                        color: IonIos.text(context)),
+                  ),
+                  SizedBox(height: classic ? 6 : 4),
+                  if (classic)
+                    SizedBox(
+                      height: 44,
+                      child: Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: valueText,
+                      ),
+                    )
+                  else
+                    valueText,
                   if (helper != null) ...[
-                    const SizedBox(height: 4),
+                    SizedBox(height: classic ? 8 : 4),
                     Text(
                       helper!,
-                      style: base.copyWith(fontSize: 12, color: IonStackedField.iosHelper),
+                      style: classic
+                          ? base.copyWith(
+                              fontSize: IonStackedField.iosHelperSize,
+                              height: 1.2,
+                              color: IonStackedField.helperColor(context),
+                            )
+                          : base.copyWith(
+                              fontSize: 12,
+                              color: IonStackedField.iosHelper),
                     ),
                   ],
                 ],
@@ -1003,16 +1094,23 @@ class IonToggleItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ios = ionIsIos(context);
-    return SwitchListTile.adaptive(
+    return IonSwitchListTile(
       title: Text(title),
       subtitle: helper == null
           ? null
           : Text(
               helper!,
-              style: TextStyle(
-                fontSize: 12,
-                color: ios ? IonStackedField.iosHelper : AppColors.medium,
-              ),
+              style: context.rdSkin == null
+                  ? TextStyle(
+                      fontSize: ios ? IonStackedField.iosHelperSize : 12,
+                      color: IonStackedField.helperColor(context),
+                    )
+                  : TextStyle(
+                      fontSize: 12,
+                      color: ios
+                          ? IonStackedField.iosHelper
+                          : AppColors.medium,
+                    ),
             ),
       value: value,
       onChanged: onChanged,

@@ -481,7 +481,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             _section(
               title: context.l10n.typeSettingsOptions,
               items: [
-                  SwitchListTile.adaptive(
+                  IonSwitchListTile(
                     title: Text(context.l10n.typeSettingsActive),
                     subtitle: Text(
                       context.l10n.typeSettingsActiveHelper,
@@ -534,7 +534,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   ),
                   // Ionic: `@if (!isGeneral)`.
                   if (!_isGeneral)
-                  SwitchListTile.adaptive(
+                  IonSwitchListTile(
                     title: Text(context.l10n.typeSettingsManageSongs),
                     subtitle: Text(
                       context.l10n.typeSettingsSongsHelper,
@@ -546,7 +546,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                     contentPadding: _rowPad,
                   ),
-                  SwitchListTile.adaptive(
+                  IonSwitchListTile(
                     title: Text(context.l10n.typeSettingsAllDay),
                     subtitle: Text(
                       context.l10n.typeSettingsAllDayHelper,
@@ -626,7 +626,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                       onTap: () => _pickTime(isStart: false),
                     ),
                   ],
-                  SwitchListTile.adaptive(
+                  IonSwitchListTile(
                     title: Text(context.l10n.typeSettingsHideName),
                     subtitle: Text(
                       context.l10n.typeSettingsHideNameHelper,
@@ -638,7 +638,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                     contentPadding: _rowPad,
                   ),
-                  SwitchListTile.adaptive(
+                  IonSwitchListTile(
                     title: Text(context.l10n.typeSettingsHighlight),
                     subtitle: Text(
                       context.l10n.typeSettingsHighlightHelper,
@@ -650,7 +650,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                     contentPadding: _rowPad,
                   ),
-                  SwitchListTile.adaptive(
+                  IonSwitchListTile(
                     title: Text(context.l10n.typeSettingsCountForAvg),
                     subtitle: Text(
                       context.l10n.typeSettingsCountForAvgHelper,
@@ -678,7 +678,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                   ),
                   // ATTENDANCE_SIGNOUT: place / navigation
-                  SwitchListTile.adaptive(
+                  IonSwitchListTile(
                     title: Text(context.l10n.typeSettingsEnableLocation),
                     subtitle: Text(
                       context.l10n.typeSettingsLocationHelper,
@@ -702,7 +702,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             _section(
               title: context.l10n.typeSettingsEventReminders,
               items: [
-                  SwitchListTile.adaptive(
+                  IonSwitchListTile(
                     title: Text(context.l10n.typeSettingsEventReminder),
                     subtitle: Text(
                       context.l10n.typeSettingsEventReminderHelper,
@@ -777,7 +777,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ],
             // Ionic: toggle "Checkliste aktivieren" (off = checklist null)
             _section(
-              items: [SwitchListTile.adaptive(
+              items: [IonSwitchListTile(
                 contentPadding: _rowPad,
                 title: Text(context.l10n.typeSettingsEnableChecklist),
                 subtitle: Text(context.l10n.typeSettingsChecklistHelper),
@@ -1142,7 +1142,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     return _section(
       title: context.l10n.typeSettingsDutyRoster,
       items: [
-          SwitchListTile.adaptive(
+          IonSwitchListTile(
             title: Text(context.l10n.typeSettingsDutyMode),
             subtitle: Text(
               context.l10n.typeSettingsDutyHelper,
@@ -1214,7 +1214,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                 ],
               ),
             ),
-            SwitchListTile.adaptive(
+            IonSwitchListTile(
               title: Text(context.l10n.typeSettingsSelfAssign),
               subtitle: Text(context.l10n.typeSettingsSelfAssignHelper),
               value: _dutySelfSignup,
@@ -1240,7 +1240,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                 }),
               ),
             ),
-            SwitchListTile.adaptive(
+            IonSwitchListTile(
               title: Text(context.l10n.typeSettingsNotifyGroup),
               subtitle: Text(
                 context.l10n.typeSettingsNotifyGroupHelper,
@@ -1743,7 +1743,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           ),
           // SETTINGS2: Ionic "Instanz-Name vor Werken" (not for general tenants)
           if (!isGeneral)
-            SwitchListTile.adaptive(
+            IonSwitchListTile(
               contentPadding: _rowPad,
               title: Text(l10n.typeSettingsTenantNameBefore),
               subtitle: Text(l10n.typeSettingsTenantNameHelper),
@@ -1756,7 +1756,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           // ORG_PLANS: Ionic `@if (db.organisation())`, saved with the FAB.
           // Disabled until the stored value is loaded (it is only saved then).
           if (org != null)
-            SwitchListTile.adaptive(
+            IonSwitchListTile(
               contentPadding: _rowPad,
               title: Text(l10n.typeSettingsOrgPlanDefault),
               value: _isDefaultOrgPlan,

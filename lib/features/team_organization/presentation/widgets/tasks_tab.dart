@@ -19,6 +19,7 @@ import 'task_form_sheet.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
+import '../../../../shared/widgets/adaptive/ion_switch.dart';
 
 /// Tab "Aufgaben": leadership sees all tasks with person filters and can add
 /// tasks; members see only their own tasks (RLS) and can complete them.
@@ -160,7 +161,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
                 if (archivedCount > 0 || _includeArchived)
                   IonInsetList(
                     children: [
-                      SwitchListTile.adaptive(
+                      IonSwitchListTile(
                         value: _includeArchived,
                         onChanged: (v) => setState(() => _includeArchived = v),
                         title: Text(l10n.teamOrgShowOlderDone),

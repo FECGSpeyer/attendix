@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../redesign/presentation/rd_actions.dart';
 import 'settings_list.dart';
+import '../../../../shared/widgets/adaptive/ion_switch.dart';
 
 /// REDESIGN: "Neues Design (Beta)" in the System section. Switches the new
 /// design on for this device only; the old design stays the default.
@@ -29,7 +30,7 @@ class RedesignBetaTile extends ConsumerWidget {
           IonBadge(text: l10n.settingsNew, color: AppColors.success),
         ],
       ),
-      trailing: Switch.adaptive(
+      trailing: IonSwitch(
         value: enabled,
         onChanged: (v) => rdSetRedesignEnabled(context, ref, v),
       ),

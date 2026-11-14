@@ -580,8 +580,13 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                     : null,
               ),
             ),
-            _buildOptionsButton(isAdmin: isAdmin),
-            SizedBox(width: ios ? 8 : 4),
+            // Ionic `ion-button` (margin 4 / 2) next to the searchbar: iOS a
+            // 44pt glass circle that ends 8.6pt from the edge, md 40px
+            // ending 2px from the edge.
+            Padding(
+              padding: EdgeInsets.fromLTRB(2, 0, ios ? 8.6 : 2, 0),
+              child: _buildOptionsButton(isAdmin: isAdmin),
+            ),
           ],
         ),
       ),
@@ -827,7 +832,12 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           ),
           child: IconTheme.merge(
             data: const IconThemeData(color: AppColors.primary, size: 20),
-            child: TenantSwitcherTitle(fallbackTitle: tenantTitle),
+            child: TenantSwitcherTitle.iosInset(
+              enabled: context.rdSkin == null &&
+                  SideNavMenuButton.maybe(context) == null,
+              titleSpacing: 8,
+              child: TenantSwitcherTitle(fallbackTitle: tenantTitle),
+            ),
           ),
         ),
         actions: const [ToolbarButtonGroup(children: [NotificationBell()])], // MESSAGES, IOS_SHELL
@@ -971,20 +981,48 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   /// the first tap).
   Widget _buildOptionsButton({required bool isAdmin}) {
     final rate = ref.read(attendanceRateFilterProvider);
+    final active = _filterOption != 'all' || !rate.isDefault;
+    // PEO-28: Ionic `options` (filled).
+    final glyph = AppIcons.ionic ? Ionicons.options : AppIcons.tune;
     return Builder(
-      builder: (buttonContext) => IconButton(
-        key: const Key('people_options_button'),
-        icon: Icon(
-          // PEO-28: Ionic `options` (filled).
-          AppIcons.ionic ? Ionicons.options : AppIcons.tune,
-          color: _filterOption != 'all' || !rate.isDefault ? AppColors.primary : null,
-        ),
-        tooltip: context.l10n.typeSettingsOptions,
-        onPressed: () => showAppFilterPopover(
-          context: buttonContext,
-          rows: () => _optionsRows(isAdmin: isAdmin),
-        ),
-      ),
+      builder: (buttonContext) {
+        void open() => showAppFilterPopover(
+              context: buttonContext,
+              rows: () => _optionsRows(isAdmin: isAdmin),
+            );
+        if (useIosLook(buttonContext) && buttonContext.rdSkin == null) {
+          // ionic-theme-ios27: an icon-only button is a 44pt Liquid Glass
+          // circle with a 1.4rem icon, also next to the searchbar.
+          return Semantics(
+            button: true,
+            label: context.l10n.typeSettingsOptions,
+            child: GestureDetector(
+              key: const Key('people_options_button'),
+              behavior: HitTestBehavior.opaque,
+              onTap: open,
+              child: IosCircleIcon(
+                icon: glyph,
+                iconSize: IonToolbarButtonMetrics.iconSize,
+                color: active ? AppColors.primary : null,
+              ),
+            ),
+          );
+        }
+        return IconButton(
+          key: const Key('people_options_button'),
+          icon: Icon(glyph, color: active ? AppColors.primary : null),
+          tooltip: context.l10n.typeSettingsOptions,
+          // md: 40 × 40 like the Ionic button, no padded tap target.
+          style: context.rdSkin == null
+              ? IconButton.styleFrom(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  minimumSize: const Size(40, 40),
+                  fixedSize: const Size(40, 40),
+                )
+              : null,
+          onPressed: open,
+        );
+      },
     );
   }
 
@@ -1815,17 +1853,22 @@ class _PersonListItem extends StatelessWidget {
             ),
           ),
       ],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '${person.firstName} ${person.lastName}',
-            style: IonText.h2(context),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          ..._lines(context),
-        ],
+      // md `ion-label` headings have a 2px margin above and below (iOS: only
+      // 2px below the h2), so an md row with one sub-line is 62 high.
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: ionIsIos(context) ? 0 : 2),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${person.firstName} ${person.lastName}',
+              style: IonText.h2(context),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            ..._lines(context),
+          ],
+        ),
       ),
     );
 

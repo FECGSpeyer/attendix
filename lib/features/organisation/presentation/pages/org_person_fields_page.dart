@@ -534,7 +534,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
         pl.IonInsetList(
           children: [
             if (_type == 'boolean')
-              SwitchListTile.adaptive(
+              IonSwitchListTile(
                 title: Text(l10n.extraFieldsDefaultValue),
                 value: _boolDefault,
                 onChanged: (v) => setState(() => _boolDefault = v),
@@ -621,7 +621,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 ],
                 onChanged: (v) => setState(() => _displayMode = v ?? 'chip'),
               ),
-              SwitchListTile.adaptive(
+              IonSwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(context.l10n.extraFieldsVisible),
                 subtitle: Text(context.l10n.extraFieldsVisibleHelper),
@@ -629,7 +629,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 onChanged: (v) => setState(() => _visible = v),
               ),
               if (_visible)
-                SwitchListTile.adaptive(
+                IonSwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(context.l10n.extraFieldsEditable),
                   subtitle: Text(context.l10n.extraFieldsEditableHelper),
@@ -667,7 +667,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                     ],
                   ),
               ] else if (_type == 'boolean')
-                SwitchListTile.adaptive(
+                IonSwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(context.l10n.extraFieldsDefaultValue),
                   value: _boolDefault,

@@ -428,7 +428,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                       ),
                       // Beta: the assignee always gets the notice, no switch.
                       if (_showNotifyToggle && !ref.watch(redesignEnabledProvider))
-                        SwitchListTile.adaptive(
+                        IonSwitchListTile(
                           value: _notify,
                           onChanged: (v) => setState(() => _notify = v),
                           title: Text(l10n.tasksNotify(_firstName(persons) ?? l10n.tasksPerson)),

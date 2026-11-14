@@ -1,5 +1,6 @@
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:attendix/features/people/presentation/widgets/ion/ion_widgets.dart';
+import 'package:attendix/features/settings/presentation/widgets/ion_condense.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,24 +12,32 @@ Widget _app(TargetPlatform platform, Widget child) => MaterialApp(
 
 void main() {
   group('UX_PEOPLE ion widgets', () {
-    testWidgets('IonPage uses a condensed large title on iOS', (tester) async {
+    // Classic iPhone look: the regular Ionic toolbar (same height and glass
+    // buttons as every other page) with the large title in the content.
+    testWidgets('IonPage shows the toolbar and a large title on iOS', (tester) async {
       await tester.pumpWidget(_app(
         TargetPlatform.iOS,
         const IonPage(title: 'Lehrer', slivers: [SliverToBoxAdapter(child: Text('x'))]),
       ));
-      expect(find.byType(CupertinoSliverNavigationBar), findsOneWidget);
-      expect(find.byType(AppBar), findsNothing);
+      expect(find.byType(AppBar), findsOneWidget);
+      expect(find.byType(IonLargeTitle), findsOneWidget);
+      expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
     });
 
     testWidgets('PERF_GLASS: nav bar turns solid once content is under it, no blur',
         (tester) async {
       await tester.pumpWidget(_app(
         TargetPlatform.iOS,
-        IonPage(title: 'Lehrer', slivers: [
-          SliverList.list(children: [
-            for (var i = 0; i < 60; i++) SizedBox(height: 40, child: Text('$i')),
-          ]),
-        ]),
+        Scaffold(
+          body: Builder(
+            builder: (context) => CustomScrollView(slivers: [
+              ionCondenseHeader(context, title: 'Lehrer'),
+              SliverList.list(children: [
+                for (var i = 0; i < 60; i++) SizedBox(height: 40, child: Text('$i')),
+              ]),
+            ]),
+          ),
+        ),
       ));
       CupertinoSliverNavigationBar bar() => tester
           .widget<CupertinoSliverNavigationBar>(

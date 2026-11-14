@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import '../../../../shared/widgets/layout/ionic_ios.dart' as ion;
 import 'settings_list.dart';
 
 /// UX_SETTINGS (WAVE 8): Ionic iOS `<ion-header collapse="condense">`.
@@ -88,7 +90,10 @@ class IonLargeTitle extends StatelessWidget {
       child: Text(
         title,
         style: base.copyWith(
-          fontSize: 34,
+          // IONIC_PARITY: 2.125rem = 36.125 px (root 17 px), not 34.
+          fontSize: context.rdSkin == null
+              ? ion.IonIos.largeTitleFontSize
+              : 34,
           fontWeight: FontWeight.w700,
           letterSpacing: 0,
           height: 1.2,

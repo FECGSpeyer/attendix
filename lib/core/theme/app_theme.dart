@@ -67,16 +67,47 @@ class AppTheme {
     Brightness brightness,
     TargetPlatform platform, {
     bool web = kIsWeb,
+    bool ionicText = true,
   }) =>
       // WEB_MODE_FIX: the theme carries the look's platform, so
       // `Theme.of(context).platform` (useIosLook) follows `?mode=` too.
-      _build(brightness, ios: platform == TargetPlatform.iOS, web: web)
+      _build(brightness,
+              ios: platform == TargetPlatform.iOS,
+              web: web,
+              ionicText: ionicText)
           .copyWith(platform: platform);
+
+  /// IONIC_PARITY: the text defaults of Ionic instead of the Material 3 type
+  /// scale, which spaces every text by 0.1–0.5px per letter (all texts were
+  /// 3–7 % wider than in Ionic) and gives every line 1.33–1.5 times the font
+  /// size (Ionic: `line-height: normal`, the font's own line height – a 17px
+  /// label is 20px high, not 24). Ionic's exceptions (md buttons, titles, tab
+  /// and segment labels, `p` in labels) set their values explicitly.
+  static const TextStyle _ionicText =
+      TextStyle(letterSpacing: 0, height: kTextHeightNone);
+  static const TextTheme _ionicTextTheme = TextTheme(
+    displayLarge: _ionicText,
+    displayMedium: _ionicText,
+    displaySmall: _ionicText,
+    headlineLarge: _ionicText,
+    headlineMedium: _ionicText,
+    headlineSmall: _ionicText,
+    titleLarge: _ionicText,
+    titleMedium: _ionicText,
+    titleSmall: _ionicText,
+    bodyLarge: _ionicText,
+    bodyMedium: _ionicText,
+    bodySmall: _ionicText,
+    labelLarge: _ionicText,
+    labelMedium: _ionicText,
+    labelSmall: _ionicText,
+  );
 
   static ThemeData _build(
     Brightness brightness, {
     required bool ios,
     required bool web,
+    bool ionicText = true,
   }) {
     final isDark = brightness == Brightness.dark;
     // IOS_THEME2: iOS dark = black page with #1c1c1d rows / cards (as on
@@ -251,6 +282,8 @@ class AppTheme {
       // Roboto too, as the web engine's global fallback. Native builds keep
       // their platform fonts (iOS: SF, Android: Roboto via Typography).
       fontFamily: web ? webFontFamily : null,
+      textTheme: ionicText ? _ionicTextTheme : null,
+      primaryTextTheme: ionicText ? _ionicTextTheme : null,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: background,
       canvasColor: surface,

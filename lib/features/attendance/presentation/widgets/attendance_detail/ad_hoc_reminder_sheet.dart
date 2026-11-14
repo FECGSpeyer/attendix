@@ -11,6 +11,7 @@ import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
 import '../../../../people/presentation/widgets/ion/ion_widgets.dart' show IonText, ionLineColor;
 import '../../../../../shared/widgets/layout/ion_stacked_field.dart';
+import '../../../../../shared/widgets/adaptive/ion_switch.dart';
 
 /// Result of the "Erinnerung versenden" sheet.
 class AdHocReminderResult {
@@ -207,7 +208,7 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Switch.adaptive(
+                        IonSwitch(
                           value: _neutralOnly,
                           onChanged: (v) => setState(() => _neutralOnly = v),
                         ),
@@ -301,7 +302,7 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
               ),
             ),
             if (widget.hasNeutralPersons)
-              SwitchListTile.adaptive(
+              IonSwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 value: _neutralOnly,
                 onChanged: (v) => setState(() => _neutralOnly = v),

@@ -408,7 +408,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
             controller: _nameController,
             maxLength: 100,
           ),
-          SwitchListTile.adaptive(
+          IonSwitchListTile(
             value: rule.enabled,
             title: Text(l10n.autoMessagesActive),
             onChanged: (v) => _update(_rule.copyWith(enabled: v)),
@@ -697,7 +697,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
             ('push', l10n.autoMessagesChannelPush),
             ('email', l10n.autoMessagesChannelEmail),
           ])
-            SwitchListTile.adaptive(
+            IonSwitchListTile(
               value: rule.channels.contains(channel),
               title: Text(label),
               onChanged:
@@ -718,7 +718,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
         title: l10n.autoMessagesResponses,
         icons: false,
         children: [
-          SwitchListTile.adaptive(
+          IonSwitchListTile(
             value: rule.allowResponses,
             title: Text(l10n.autoMessagesAllowResponses),
             subtitle: Text(l10n.autoMessagesAllowResponsesHint),

@@ -96,7 +96,7 @@ class _FieldStatsSectionState extends ConsumerState<FieldStatsSection> {
         ],
         onChanged: (v) => setState(() => _groupId = v ?? 0),
       ),
-      SwitchListTile.adaptive(
+      IonSwitchListTile(
         title: Text(l10n.statsFieldIncludePaused),
         value: _includePaused,
         onChanged: (v) => setState(() => _includePaused = v),

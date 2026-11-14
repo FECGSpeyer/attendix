@@ -1099,7 +1099,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         );
 
       case 'boolean':
-        return SwitchListTile.adaptive(
+        return IonSwitchListTile(
           title: Text(field.name),
           value: _additionalFieldValues[field.id] as bool? ?? true,
           onChanged: (value) => setState(() => _additionalFieldValues[field.id] = value),
@@ -1243,7 +1243,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           onChanged: (v) => setState(() => _parentId = v),
         ),
       if ((tenant?.maintainTeachers ?? false) && !isMain) ...[
-        SwitchListTile.adaptive(
+        IonSwitchListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(context.l10n.personPlaysWithTeacher),
           value: _hasTeacher,
@@ -1269,7 +1269,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           ),
       ],
       if (!isGeneral && !isMain)
-        SwitchListTile.adaptive(
+        IonSwitchListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(context.l10n.peopleVoiceLeader),
           value: _isLeader,
@@ -1308,7 +1308,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               ),
           ],
         ),
-        SwitchListTile.adaptive(
+        IonSwitchListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(context.l10n.peopleCandidate),
           value: _examinee,

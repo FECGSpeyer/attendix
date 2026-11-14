@@ -7,6 +7,7 @@ import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../data/models/church/church.dart';
 import '../../../../shared/widgets/display/avatar.dart';
 import 'master_data_sheet.dart';
@@ -58,6 +59,8 @@ class ProfileHeroCard extends ConsumerWidget {
     // 12 16 8 (page padding supplies top/sides), radius 16, padding 16,
     // 52pt avatar, 1.15rem bold name, 0.85rem medium role, medium chevron.
     final ios = theme.platform == TargetPlatform.iOS;
+    // IONIC_PARITY: rem sizes: the iPhone root font is 17 px, not 16.
+    final rem = ios && context.rdSkin == null ? 17 / 16 : 1.0;
     return Padding(
       // PARITY_R8: md – the hero card's 8px margin-bottom plus the 16px
       // margin-top of the next md inset list (audit: 48 vs 40 to the
@@ -98,7 +101,7 @@ class ProfileHeroCard extends ConsumerWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 18.4,
+                              fontSize: 18.4 * rem,
                               fontWeight: FontWeight.w700,
                               color: theme.colorScheme.onSurface,
                             ),
@@ -107,9 +110,13 @@ class ProfileHeroCard extends ConsumerWidget {
                           if (profileRoleName(role).isNotEmpty)
                             Text(
                               profileRoleName(role),
-                              style: const TextStyle(
-                                fontSize: 13.6,
-                                color: AppColors.medium,
+                              // IONIC_PARITY: Ionic 9 light medium #636469
+                              style: TextStyle(
+                                fontSize: 13.6 * rem,
+                                color: context.rdSkin == null
+                                    ? AppColors.adaptive(
+                                        context, AppColors.iosMediumLight)
+                                    : AppColors.medium,
                               ),
                             ),
                         ],
@@ -147,6 +154,11 @@ class _StatChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // IONIC_PARITY: rem sizes: the iPhone root font is 17 px, not 16.
+    final rem = Theme.of(context).platform == TargetPlatform.iOS &&
+            context.rdSkin == null
+        ? 17 / 16
+        : 1.0;
     return Container(
       // .stat-chip: radius 8, padding 4/8, 0.8rem, primary 10 % background,
       // 0.9rem icon in primary-shade, gap 5.
@@ -158,13 +170,13 @@ class _StatChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14.4, color: AppColors.primaryDark),
+          Icon(icon, size: 14.4 * rem, color: AppColors.primaryDark),
           const SizedBox(width: 5),
           Flexible(
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 12.8,
+                fontSize: 12.8 * rem,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
               overflow: TextOverflow.ellipsis,

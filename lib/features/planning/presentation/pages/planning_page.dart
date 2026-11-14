@@ -2433,7 +2433,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           ),
         ],
         if (att != null) ...[
-          SwitchListTile.adaptive(
+          IonSwitchListTile(
             title: Text(context.l10n.planningShareWithMembers),
             value: _sharePlan,
             onChanged: (v) async {
@@ -2446,7 +2446,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             },
           ),
           if (org != null)
-            SwitchListTile.adaptive(
+            IonSwitchListTile(
               title: Text(context.l10n.planningOrgPlan),
               value: _isOrgPlan,
               onChanged: (v) async {
@@ -2467,7 +2467,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         ],
         // MISC2: "Branding einbeziehen" (only when logo/text configured)
         if (ref.watch(hasBrandingProvider))
-          SwitchListTile.adaptive(
+          IonSwitchListTile(
             title: Text(context.l10n.planningIncludeBranding),
             value: ref.watch(includeBrandingProvider),
             onChanged: (v) => ref.read(includeBrandingProvider.notifier).state = v,

@@ -5,6 +5,7 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/ion_switch.dart';
 
 /// Toggle "Ablaufplan ist standardmäßig ein Organisationsplan"
 /// (`attendance_types.is_default_org_plan`). Only shown when the tenant
@@ -31,7 +32,7 @@ class _TypeDefaultOrgPlanToggleState extends ConsumerState<TypeDefaultOrgPlanTog
         ?.where((t) => t.id == widget.typeId)
         .firstOrNull;
     final value = _value ?? type?.isDefaultOrgPlan ?? false;
-    return SwitchListTile.adaptive(
+    return IonSwitchListTile(
       title: Text(context.l10n.typeSettingsOrgPlanDefault),
       value: value,
       onChanged: type == null
