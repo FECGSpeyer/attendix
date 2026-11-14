@@ -40,3 +40,23 @@ Future<void> signIn(
 /// capitals on Android and web (like Ionic's Material mode), Beta does not.
 Finder label(String text) => find.textContaining(
     RegExp('^${RegExp.escape(text)}\$', caseSensitive: false));
+
+/// Waits for the page of type [page]. When it does not come, the failure
+/// names the texts on the screen, so the log of a run shows where the app is.
+Future<void> waitForPage(
+  PatrolIntegrationTester $,
+  Type page, {
+  Duration timeout = const Duration(seconds: 30),
+}) async {
+  try {
+    await $(page).waitUntilVisible(timeout: timeout);
+  } on WaitUntilVisibleTimeoutException {
+    final texts = $.tester
+        .widgetList<Text>(find.byType(Text))
+        .map((text) => text.data ?? text.textSpan?.toPlainText() ?? '')
+        .where((text) => text.trim().isNotEmpty)
+        .take(40)
+        .join(' | ');
+    fail('$page did not appear. On screen: $texts');
+  }
+}

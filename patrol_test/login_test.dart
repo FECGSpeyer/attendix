@@ -7,14 +7,12 @@ void main() {
   patrolTest('Anmeldung mit Passwort (Beta)', ($) async {
     await startApp($);
     await signIn($, email: 'admin@attendix.test');
-    await $(TenantSelectionPage)
-        .waitUntilVisible(timeout: const Duration(seconds: 30));
+    await waitForPage($, TenantSelectionPage);
   });
 
   patrolTest('Anmeldung mit Passwort (klassisch)', ($) async {
     await startApp($, beta: false);
     await signIn($, email: 'admin@attendix.test');
-    await $(TenantSelectionPage)
-        .waitUntilVisible(timeout: const Duration(seconds: 30));
+    await waitForPage($, TenantSelectionPage);
   });
 }
