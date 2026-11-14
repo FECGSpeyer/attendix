@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.153.0",
+      "date": "14.11.2026",
+      "changes": [
+        "✨ Beta: „Rollen und Rechte“ ist jetzt eine Liste der Rollen. Jede Rolle hat eine eigene Seite mit dem, was sie immer darf, ihren Schaltern und den Personen mit dieser Rolle",
+        "✨ Beta: Admins, Eltern und Beobachter stehen in der Rollenliste statt als eigene Einträge in der Verwaltung"
+      ]
+    },
+    {
       "version": "0.152.1",
       "date": "14.11.2026",
       "changes": [
