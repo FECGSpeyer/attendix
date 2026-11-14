@@ -17,6 +17,7 @@ import '../widgets/settings_list.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/services/web_window.dart' show setUnloadWarning;
 
 /// Konfigurierbare Rollen (Reihenfolge wie Ionic)
@@ -163,12 +164,15 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
           ),
           title: IonCondenseTitle(context.l10n.rolePermTitle, collapsed: collapsed),
         )),
-        floatingActionButton: FloatingActionButton(
+        // IOS_SHELL: iOS → ion-fab in the tab bar row
+        floatingActionButton: TabBarFab(child: FloatingActionButton(
           onPressed: saving ? null : _save,
           child: saving
-              ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2, color: Colors.white))
+              // The FAB's own icon colour (a white spinner is invisible on
+              // the light iOS glass button).
+              ? SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2, color: fabSpinnerColor(context)))
               : Icon(AppIcons.saveOutlined),
-        ),
+        )),
         body: permissionsAsync.when(
           loading: () => const Center(child: AppSpinner()),
           error: (e, _) => Center(child: Text(context.l10n.rolePermFlutterLoadFailed(friendlyErrorMessage(e)), textAlign: TextAlign.center)),

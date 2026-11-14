@@ -27,6 +27,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/services/web_window.dart' show setUnloadWarning;
 
 /// German holiday regions (also used by the Beta page Allgemein)
@@ -443,17 +444,20 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       // UX_SETTINGS: Ionic saves via FAB (save-outline)
       floatingActionButton: _isLoading
           ? null
-          : FloatingActionButton(
+          // IOS_SHELL: iOS → ion-fab in the tab bar row
+          : TabBarFab(child: FloatingActionButton(
               onPressed: _isSaving ? null : _saveSettings,
               tooltip: context.l10n.commonSave,
               child: _isSaving
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 22,
                       height: 22,
-                      child: AppSpinner(strokeWidth: 2, color: Colors.white),
+                      // The FAB's own icon colour (the iOS glass button is
+                      // light: a white spinner would be invisible).
+                      child: AppSpinner(strokeWidth: 2, color: fabSpinnerColor(context)),
                     )
                   : Icon(AppIcons.saveOutlined),
-            ),
+            )),
       body: _isLoading
           ? const Center(child: AppSpinner())
           : Form(
