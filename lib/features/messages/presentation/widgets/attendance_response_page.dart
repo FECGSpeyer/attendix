@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/auto_message_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -10,6 +11,8 @@ import '../../../../data/models/auto_message/auto_message.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
+import '../../../../shared/widgets/layout/ion_form_items.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart';
@@ -24,6 +27,15 @@ Future<String?> openAttendanceResponse(
   required String termin,
   required String kind,
 }) {
+  final beta = ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider);
+  if (!beta) {
+    // TER-29: Ionic default `ion-modal` – full screen on phones, from 768px
+    // a centred card.
+    return showIonModal<String>(
+      context,
+      builder: (_) => AttendanceResponsePage(messageId: messageId, termin: termin, kind: kind),
+    );
+  }
   return Navigator.of(context, rootNavigator: true).push<String>(
     MaterialPageRoute(
       fullscreenDialog: true,
@@ -210,20 +222,14 @@ class _AttendanceResponsePageState extends ConsumerState<AttendanceResponsePage>
             SettingsListSection(
               icons: false,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  child: TextField(
-                    controller: _textController,
-                    maxLength: 500,
-                    minLines: 3,
-                    maxLines: null,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      labelText: l10n.autoMessagesRespText,
-                      border: InputBorder.none,
-                      counterText: '',
-                    ),
-                  ),
+                // TER-29: `ion-textarea labelPlacement="stacked"`.
+                IonStackedInputItem(
+                  lines: false,
+                  label: l10n.autoMessagesRespText,
+                  controller: _textController,
+                  textarea: true,
+                  maxLength: 500,
+                  textCapitalization: TextCapitalization.sentences,
                 ),
               ],
             ),
