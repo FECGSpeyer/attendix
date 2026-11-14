@@ -359,6 +359,7 @@ Future<Map<String, dynamic>?> showRegistrationFieldsSheet(
   Map<String, dynamic>? existing,
   bool editMode = false,
   bool requireText = true,
+  bool closeIcon = false,
 }) {
   final answers = <String, dynamic>{
     for (final f in fields)
@@ -378,6 +379,7 @@ Future<Map<String, dynamic>?> showRegistrationFieldsSheet(
         answers: answers,
         editMode: editMode,
         requireText: requireText,
+        closeIcon: closeIcon,
         scrollController: scrollController,
       ),
     );
@@ -403,8 +405,12 @@ class _RegistrationFieldsSheet extends StatefulWidget {
     required this.answers,
     required this.editMode,
     required this.requireText,
+    this.closeIcon = false,
     this.scrollController,
   });
+
+  /// Classic: close icon in the toolbar (the modal of the attendance page).
+  final bool closeIcon;
 
   final List<RegistrationField> fields;
   final Map<String, dynamic> answers;
@@ -601,7 +607,11 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
       // `ion-content color="light"`, one inset list, block button.
       return IonSheetScaffold(
         title: title,
-        showClose: true,
+        // Attendance page (Ionic attendance.page regFieldsModal): close icon.
+        // Self-service (signout.page): "Abbrechen" only when editing; sign
+        // in has no button and is not dismissable by the backdrop either.
+        showClose: widget.closeIcon,
+        end: !widget.closeIcon && widget.editMode ? end : const [],
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
           top: false,

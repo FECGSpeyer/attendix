@@ -2482,6 +2482,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         existing: existing,
         editMode: true,
         requireText: false,
+        closeIcon: true,
       );
       if (answers == null || !mounted) return;
       merged = <String, dynamic>{...?existing, ...answers};
