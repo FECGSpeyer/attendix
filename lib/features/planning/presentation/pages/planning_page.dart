@@ -6,6 +6,7 @@ import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/semantics.dart' show CustomSemanticsAction;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -88,11 +89,28 @@ typedef _PlanRef = ({String key, int count, String? json});
 /// Ionic `modalController.create({ component: PlanningPage, cssClass:
 /// 'planningModal' })`: the Ablaufplan editor as `ion-modal` (full screen on
 /// phones, centred card on desktop) with its own close button.
-Future<void> showPlanningModal(BuildContext context, {int? attendanceId}) {
-  return showIonModal<void>(
+Future<bool?> showPlanningModal(BuildContext context, {int? attendanceId, int? planIndex}) {
+  return showIonModal<bool>(
     context,
-    builder: (_) => PlanningPage(attendanceId: attendanceId),
+    builder: (_) => PlanningPage(attendanceId: attendanceId, initialPlanIndex: planIndex),
   );
+}
+
+/// ABL-01: opens the Ablaufplan editor from inside the app. Classic design:
+/// the Ionic modal ([showPlanningModal]: full screen on phones, centred card
+/// from 768px; no tab bar / side nav). The Beta keeps its route; the route
+/// `/planning?attendanceId=…&plan=…` also stays the entry for deep links.
+Future<bool?> openPlanningEditor(BuildContext context, {int? attendanceId, int? planIndex}) {
+  final beta = context.rdSkin != null ||
+      ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider);
+  if (beta) {
+    final query = [
+      if (attendanceId != null) 'attendanceId=$attendanceId',
+      if (planIndex != null && planIndex > 0) 'plan=$planIndex',
+    ].join('&');
+    return context.push<bool>(query.isEmpty ? '/planning' : '/planning?$query');
+  }
+  return showPlanningModal(context, attendanceId: attendanceId, planIndex: planIndex);
 }
 
 /// Ablaufplan editor of a Termin (Ionic `PlanningPage`).

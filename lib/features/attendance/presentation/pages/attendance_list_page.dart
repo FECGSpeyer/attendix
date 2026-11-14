@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../planning/presentation/pages/planning_page.dart' show openPlanningEditor;
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
@@ -154,7 +155,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
       songs: songs,
       extraPlans: extra,
       onEdit: canEdit && id != null
-          ? (i) => context.push<bool>('/planning?attendanceId=$id${i > 0 ? '&plan=$i' : ''}')
+          ? (i) => openPlanningEditor(context, attendanceId: id, planIndex: i)
           : null,
     );
   }

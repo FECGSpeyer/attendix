@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../planning/presentation/pages/planning_page.dart' show openPlanningEditor;
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/archived_attendance.dart';
@@ -818,11 +819,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           // IOS_DETAIL: Ionic never opens an accordion by itself
                           // (no auto-expand after the planning page); the open
                           // state lives with the accordion like Ionic's.
-                          onCreate: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
-                          onEdit: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
+                          onCreate: () => openPlanningEditor(context, attendanceId: widget.attendanceId),
+                          onEdit: () => openPlanningEditor(context, attendanceId: widget.attendanceId),
                           // P10_ATTENDANCE: Ionic editPlan(initialPlanIndex: planIndex)
-                          onEditPlan: (i) => context.push<bool>(
-                              '/planning?attendanceId=${widget.attendanceId}${i > 0 ? '&plan=$i' : ''}'),
+                          onEditPlan: (i) => openPlanningEditor(context, attendanceId: widget.attendanceId, planIndex: i),
                           onExportPdf: _exportPlanPdf,
                           onSendViaTelegram: _showTelegramFormatOptions,
                           onSharePlanChanged: _toggleSharePlan,
@@ -904,7 +904,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   child: IonFabButton(
                     heroTag: 'att-detail-plan-fab',
                     icon: AppIcons.formatListBulleted,
-                    onPressed: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
+                    onPressed: () => openPlanningEditor(context, attendanceId: widget.attendanceId),
                   ),
                 )
               : null,
