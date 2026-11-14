@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.148.0",
+      "date": "14.11.2026",
+      "changes": [
+        "✨ Beta: Terminkarten zeigen die Rückmeldungen als Zahlen in festen Spalten statt als Balken, eine 0 bleibt leer",
+        "✨ Beta: „Heute“ und der Überblick im Termin zeigen dieselben Zahlen, jede Zahl im Termin öffnet die gefilterte Anwesenheit"
+      ]
+    },
+    {
       "version": "0.147.3",
       "date": "14.11.2026",
       "changes": [
