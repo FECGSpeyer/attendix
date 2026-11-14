@@ -43,6 +43,7 @@ import 'core/services/telegram_service.dart' show notificationConfigProvider;
 import 'l10n/l10n.dart';
 import 'shared/widgets/dialogs/ion_modal.dart';
 import 'shared/widgets/adaptive/app_toolbar.dart' show IonToolbarMetrics;
+import 'shared/widgets/layout/scroll_away_dismiss.dart';
 import 'shared/widgets/layout/side_safe_area.dart';
 import 'shared/widgets/layout/tap_outside_dismiss.dart';
 import 'core/services/error_reporter.dart';
@@ -300,7 +301,12 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
                 // PLATFORM: tap outside a field closes the keyboard (web
                 // view).
                 child: TapOutsideToDismissKeyboard(
-                  child: child ?? const SizedBox.shrink(),
+                  // PLATFORM: a field scrolled out of its list loses the
+                  // focus (iOS left its blue selection highlight over the
+                  // list).
+                  child: ScrollAwayDismissesKeyboard(
+                    child: child ?? const SizedBox.shrink(),
+                  ),
                 ),
               ),
             ),
