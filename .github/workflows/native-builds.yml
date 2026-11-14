@@ -1,0 +1,111 @@
+name: Native builds
+
+# CI (ci.yml) only analyzes and tests Dart code, and the deploy workflow only
+# builds the web app. This workflow compiles the Android, iOS and macOS apps,
+# so a Flutter, Gradle, plugin or Xcode project change that no longer builds
+# is seen in the PR and not at the next store build. It only runs for PRs
+# that touch native files, the packages or the Flutter version.
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'android/**'
+      - 'ios/**'
+      - 'macos/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/native-builds.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: native-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: android
+            os: ubuntu-latest
+          - target: ios
+            os: macos-latest
+          - target: macos
+            os: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read Flutter version from ci.yml
+        # One source for the Flutter version, as in scripts/store_build.sh.
+        id: flutter
+        run: |
+          version=$(sed -n "s/^ *flutter-version: *['\"]\{0,1\}\([0-9][0-9.]*\)['\"]\{0,1\} *$/\1/p" .github/workflows/ci.yml | head -n1)
+          test -n "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Java
+        if: matrix.target == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.flutter.outputs.version }}
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Setup build environment
+        run: cp .env.example .env && cp .env.example .env.app
+
+      - name: Placeholder google-services.json
+        # The real file is not in the repo (docs/push-setup.md). A placeholder
+        # makes the build apply the google-services Gradle plugin, as the
+        # store build does.
+        if: matrix.target == 'android'
+        run: |
+          cat > android/app/google-services.json <<'EOF'
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "attendix-ci",
+              "storage_bucket": "attendix-ci.appspot.com"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+                  "android_client_info": { "package_name": "io.stephanus.attendix" }
+                },
+                "api_key": [{ "current_key": "ci-placeholder" }]
+              }
+            ],
+            "configuration_version": "1"
+          }
+          EOF
+
+      - name: Build Android (release APK, debug key)
+        if: matrix.target == 'android'
+        run: flutter build apk --release
+
+      - name: Build iOS (release, unsigned)
+        if: matrix.target == 'ios'
+        run: flutter build ios --release --no-codesign
+
+      - name: Build macOS (release, unsigned)
+        # Unsigned like scripts/store_build.sh macos-release: the runner has
+        # no signing certificate.
+        if: matrix.target == 'macos'
+        env:
+          FLUTTER_XCODE_CODE_SIGNING_ALLOWED: 'NO'
+          FLUTTER_XCODE_CODE_SIGNING_REQUIRED: 'NO'
+        run: flutter build macos --release
