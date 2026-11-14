@@ -526,9 +526,11 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
               actions: [settingsButton],
             )
           : AppBar(
-              leading: addButton,
+              // SEL-13: Ionic toolbar buttons (iOS glass capsules).
+              leading: ToolbarButtonGroup(children: [addButton]),
               title: Text(title),
               actions: [
+                ToolbarButtonGroup(children: [
                 settingsButton,
                 if (currentTenant == null)
                   IconButton(
@@ -542,6 +544,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                     icon: Icon(AppIcons.close),
                     onPressed: () => context.go('/settings'),
                   ),
+                ]),
               ],
             ),
       body: tenantsAsync.when(

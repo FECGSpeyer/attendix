@@ -142,12 +142,15 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               )
             : Text(context.l10n.tenantRegisterTitle),
         automaticallyImplyLeading: false,
+        // SEL-13: Ionic `ion-buttons slot="end"` (iOS glass capsule).
         actions: [
-          IconButton(
-            icon: Icon(AppIcons.homeOutlined),
-            tooltip: context.l10n.coreFlutterRouterGoHome,
-            onPressed: _goHome,
-          ),
+          ToolbarButtonGroup(children: [
+            IconButton(
+              icon: Icon(AppIcons.homeOutlined),
+              tooltip: context.l10n.coreFlutterRouterGoHome,
+              onPressed: _goHome,
+            ),
+          ]),
         ],
       ),
       ),

@@ -83,11 +83,14 @@ class _ChurchPickerState extends State<ChurchPicker> {
         toolbarHeight: ionModalToolbarHeight(context),
         title: Text(widget.title),
         automaticallyImplyLeading: false,
+        // SEL-13: Ionic `ion-buttons slot="end"` (iOS glass capsule).
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: IonButtonLabel(context.l10n.commonClose),
-          ),
+          ToolbarButtonGroup(children: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: IonButtonLabel(context.l10n.commonClose),
+            ),
+          ]),
         ],
         // second toolbar: ion-searchbar
         bottom: PreferredSize(

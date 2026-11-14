@@ -169,7 +169,9 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
         appBar: AppBar(
           title: Text(l10n.registerTitle),
           automaticallyImplyLeading: false,
+          // SEL-13: Ionic `ion-buttons slot="end"` (iOS glass capsule).
           actions: [
+            ToolbarButtonGroup(children: [
             if (_canDismiss)
               IconButton(
                 icon: Icon(AppIcons.close),
@@ -212,6 +214,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                   },
                 ),
               ),
+            ]),
           ],
         ),
         body: ListView(
