@@ -370,6 +370,17 @@ class _TabBarFabState extends State<TabBarFab> {
     // Hide while another route (pushed page, sheet, dialog of the shell
     // navigator) lies on top of this page.
     final visible = ModalRoute.of(context)?.isCurrent ?? true;
+    // ROLLEN-A-35: hide the portal itself (not only its content) while the
+    // page is covered. A covered page can be offstage and is then never
+    // laid out – a still shown overlay child in the root overlay stayed
+    // without layout and every hit test of the app threw ("Null check
+    // operator…", "RenderBox was not laid out"), e.g. after the address
+    // changed to a sub page of another tab (`/settings/notifications`).
+    if (visible && !_controller.isShowing) {
+      _controller.show();
+    } else if (!visible && _controller.isShowing) {
+      _controller.hide();
+    }
     return OverlayPortal.targetsRootOverlay(
       controller: _controller,
       overlayChildBuilder: (context) => !visible
