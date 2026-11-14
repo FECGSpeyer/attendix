@@ -42,9 +42,10 @@ class _RdExportPageState extends ConsumerState<RdExportPage> with ExportLogic {
 
   Future<void> _editColumns(List<String> available) async {
     final tenantId = ref.read(currentTenantIdProvider);
+    final kind = ref.read(rdGroupKindProvider);
     final result = await showRdSettingsSheet<List<String>>(
       context,
-      (_) => _ColumnsSheet(selected: selectedFields, available: available, kind: ref.read(rdGroupKindProvider)),
+      (_) => _ColumnsSheet(selected: selectedFields, available: available, kind: kind),
     );
     if (result != null && _stillIn(tenantId)) setState(() => selectedFields = result);
   }
