@@ -33,6 +33,7 @@ import '../../../../shared/widgets/layout/ionic_ios.dart' show IonInsetList;
 import '../../../../core/utils/file_mime.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/adaptive/ion_loading.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -473,10 +474,15 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       ToastHelper.showWarning(context, context.l10n.filesConnectTelegram);
       return;
     }
-    ToastHelper.showInfo(context, context.l10n.filesSendingTelegram);
+    final beta = ref.read(redesignEnabledProvider);
+    if (beta) ToastHelper.showInfo(context, context.l10n.filesSendingTelegram);
     try {
-      final url = await repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
-      await ref.read(telegramServiceProvider).sendDocumentPerTelegram(url: url, chatId: chatId);
+      Future<void> send() async {
+        final url = await repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
+        await ref.read(telegramServiceProvider).sendDocumentPerTelegram(url: url, chatId: chatId);
+      }
+      // Ionic: `ion-loading` "Datei wird per Telegram gesendet..." (WER-19).
+      beta ? await send() : await _withLoading(send, message: context.l10n.filesSendingTelegram);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.svcMessageSent);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.filesTelegramFailed(_errorText(e)));
@@ -488,7 +494,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final openFailed = context.l10n.filesFlutterOpenLinkFailed;
     final repo = _repo;
     try {
-      final url = await repo.getSignedFileUrl(entry.path, downloadName: entry.name);
+      // Ionic downloadFile: `ion-loading` while the link is fetched (WER-19).
+      Future<String> link() => repo.getSignedFileUrl(entry.path, downloadName: entry.name);
+      final url = ref.read(redesignEnabledProvider)
+          ? await link()
+          : await withIonLoading(context, link);
       // NATIVE_MISC: native app → cache dir + system viewer (Ionic downloadFileNative)
       final ok = await NativeFileService.openUrl(url, fileName: entry.name);
       if (!ok) throw Exception(openFailed);
@@ -580,20 +590,10 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
   Future<void> _moveEntry(StorageEntry entry) => _moveEntries([entry]);
 
-  /// Ionic `Utils.getLoadingElement()`: blocking spinner until [work] is done.
-  Future<void> _withLoading(Future<void> Function() work) async {
-    final navigator = Navigator.of(context, rootNavigator: true);
-    showAppDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const PopScope(canPop: false, child: Center(child: AppSpinner())),
-    );
-    try {
-      await work();
-    } finally {
-      navigator.pop();
-    }
-  }
+  /// Ionic `Utils.getLoadingElement()`: the `ion-loading` box until [work]
+  /// is done (WER-19).
+  Future<void> _withLoading(Future<void> Function() work, {String? message}) =>
+      withIonLoading<void>(context, work, message: message);
 
   // ---- Ionic 4.19.1: Mehrfachauswahl ----
 
@@ -885,6 +885,42 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     return false;
   }
 
+  /// Upload progress: Ionic `ion-loading` whose message follows the upload
+  /// (WER-19); the Beta keeps its alert with spinner and text.
+  ({void Function(String) update, VoidCallback close}) _showUploadProgress(String initial) {
+    if (!ref.read(redesignEnabledProvider)) {
+      final loading = showIonLoading(context, message: initial);
+      return (update: (m) => loading.message = m, close: loading.dismiss);
+    }
+    final progress = ValueNotifier<String>(initial);
+    final navigator = Navigator.of(context, rootNavigator: true);
+    showAppDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AppAlertDialog(
+        content: Row(
+          children: [
+            const AppSpinner(),
+            const SizedBox(width: AppDimensions.paddingM),
+            Expanded(
+              child: ValueListenableBuilder<String>(
+                valueListenable: progress,
+                builder: (_, value, __) => Text(value),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    return (
+      update: (m) => progress.value = m,
+      close: () {
+        if (mounted) navigator.pop();
+        progress.dispose();
+      },
+    );
+  }
+
   Future<void> _upload() async {
     if (!_canEdit) {
       ToastHelper.showWarning(context, context.l10n.filesNoEditRights);
@@ -912,25 +948,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     }
     if (!await _hasEnoughSpace(files, names, duplicates, overwrite) || !mounted || !_stillIn(tenantId)) return;
 
-    final progress = ValueNotifier<String>(context.l10n.filesUploadProgress(0, files.length, 0));
-    showAppDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AppAlertDialog(
-        content: Row(
-          children: [
-            const AppSpinner(),
-            const SizedBox(width: AppDimensions.paddingM),
-            Expanded(
-              child: ValueListenableBuilder<String>(
-                valueListenable: progress,
-                builder: (_, value, __) => Text(value),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    final loading = _showUploadProgress(context.l10n.filesUploadProgress(0, files.length, 0));
 
     var success = 0, failed = 0, skipped = 0, processed = 0;
     String progressText(String? name) {
@@ -942,7 +960,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     for (final f in files) {
       final name = names[f]!;
       final isDuplicate = duplicates.contains(name);
-      progress.value = progressText(name);
+      loading.update(progressText(name));
       // Group switched meanwhile: the rest is skipped (nothing more is
       // uploaded into the old group).
       if ((isDuplicate && !overwrite) || !mounted || !_stillIn(tenantId)) {
@@ -958,11 +976,10 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         failed++;
       }
       processed++;
-      progress.value = progressText(null);
+      loading.update(progressText(null));
     }
 
-    if (mounted) Navigator.of(context, rootNavigator: true).pop();
-    progress.dispose();
+    loading.close();
     if (!mounted) return;
 
     if (success > 0 && failed == 0 && skipped == 0) {
