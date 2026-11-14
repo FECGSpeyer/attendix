@@ -22410,11 +22410,11 @@ abstract class AppLocalizations {
   /// **'Bearbeiten'**
   String get redesignEventPlanEditShort;
 
-  /// redesign.event.planFree
+  /// redesign.event.planEndsEarly
   ///
   /// In de, this message translates to:
-  /// **'{count} Min frei bis Terminende'**
-  String redesignEventPlanFree(Object count);
+  /// **'Ablauf endet {time}, {count} Min vor Terminende'**
+  String redesignEventPlanEndsEarly(Object time, Object count);
 
   /// redesign.event.planHint
   ///
@@ -22433,6 +22433,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count} Min'**
   String redesignEventPlanMinutes(Object count);
+
+  /// redesign.event.planMoved
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf mit verschoben: beginnt jetzt {time}'**
+  String redesignEventPlanMoved(Object time);
 
   /// redesign.event.planNowPill
   ///
@@ -27690,6 +27696,12 @@ abstract class AppLocalizations {
   /// **'Hallo zusammen, für „{event}“ am {when} fehlt noch eure Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!'**
   String redesignRemindShareText(Object event, Object when);
 
+  /// redesign.remind.someLink
+  ///
+  /// In de, this message translates to:
+  /// **'{count} erinnern'**
+  String redesignRemindSomeLink(Object count);
+
   /// redesign.remind.title
   ///
   /// In de, this message translates to:
@@ -29843,6 +29855,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Keine Stimme'**
   String get redesignWorksCurrentNoPart;
+
+  /// redesign.works.currentNoScore
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Partitur'**
+  String get redesignWorksCurrentNoScore;
 
   /// redesign.works.empty
   ///

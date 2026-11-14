@@ -421,18 +421,19 @@ bool rdShowsProgram(WidgetRef ref, AttendanceType? type) =>
 /// Beobachter do not see it. Taking the Ablauf over for the Terminart is
 /// in the ••• of the Ablauf editor.
 class RdEventPlanSection extends ConsumerStatefulWidget {
-  const RdEventPlanSection({super.key, required this.attendance, this.preview, this.range = '', this.freeMinutes});
+  const RdEventPlanSection({super.key, required this.attendance, this.preview, this.end = '', this.freeMinutes});
 
   final Attendance attendance;
 
   /// The Ablauf itself (Reiter Programm).
   final Widget? preview;
 
-  /// "16:00–17:35" next to the heading.
-  final String range;
+  /// "17:35": when the Ablauf ends.
+  final String end;
 
   /// Minutes between the end of the Ablauf and the end of the Termin
-  /// ("20 Min frei"); null when it fills the Termin.
+  /// ("Ablauf endet 17:35, 20 Min vor Terminende"); null when it fills
+  /// the Termin.
   final int? freeMinutes;
 
   @override
@@ -489,9 +490,9 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
     // Beobachter do not see it.
     final canEdit = role.canEdit;
     if (role == Role.viewer || (!hasPlan && !canEdit)) return const SizedBox.shrink();
-    final heading = widget.range.isEmpty
-        ? l10n.redesignEventPlanSection
-        : l10n.redesignEventSectionCount(l10n.redesignEventPlanSection, widget.range);
+    // The Termin's time stands in the page head: no second time span here,
+    // the rows carry their times and the line below names the end.
+    final heading = l10n.redesignEventPlanSection;
     final free = widget.freeMinutes;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -538,7 +539,7 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Text(
-                l10n.redesignEventPlanFree(free),
+                l10n.redesignEventPlanEndsEarly(widget.end, free),
                 key: const Key('rd-plan-free'),
                 style: RdType.meta(p, size: 13),
               ),

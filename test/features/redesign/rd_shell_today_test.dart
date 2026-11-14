@@ -268,9 +268,10 @@ void main() {
     await tester.pumpWidget(_app(Role.admin));
     await _settle(tester);
 
-    // The link counts whom the sheet reminds (rdOpenPersonsProvider), not
-    // every open answer (5).
-    await tester.tap(find.text('2 offen'));
+    // "offen" counts every open answer (5); the link whom the sheet
+    // reminds (rdOpenPersonsProvider).
+    expect(find.textContaining('5 offen'), findsOneWidget);
+    await tester.tap(find.text('2 erinnern'));
     await _settle(tester);
     expect(find.text('2 noch offen'), findsOneWidget);
     expect(find.text('TROMPETE'), findsOneWidget);

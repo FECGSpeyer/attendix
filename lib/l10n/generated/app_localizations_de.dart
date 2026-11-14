@@ -14042,8 +14042,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventPlanEditShort => 'Bearbeiten';
 
   @override
-  String redesignEventPlanFree(Object count) {
-    return '$count Min frei bis Terminende';
+  String redesignEventPlanEndsEarly(Object time, Object count) {
+    return 'Ablauf endet $time, $count Min vor Terminende';
   }
 
   @override
@@ -14055,6 +14055,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String redesignEventPlanMinutes(Object count) {
     return '$count Min';
+  }
+
+  @override
+  String redesignEventPlanMoved(Object time) {
+    return 'Ablauf mit verschoben: beginnt jetzt $time';
   }
 
   @override
@@ -17505,6 +17510,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String redesignRemindSomeLink(Object count) {
+    return '$count erinnern';
+  }
+
+  @override
   String redesignRemindTitle(Object count) {
     return '$count noch offen';
   }
@@ -18869,6 +18879,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignWorksCurrentNoPart => 'Keine Stimme';
+
+  @override
+  String get redesignWorksCurrentNoScore => 'Keine Partitur';
 
   @override
   String get redesignWorksEmpty => 'Noch keine Werke.';

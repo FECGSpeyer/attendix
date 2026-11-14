@@ -32,6 +32,8 @@ Future<void> showRdSignoutSheet(
   final allowExcuse = qa.allowExcuse && !recorded && !qa.excused;
   final allowLate = qa.allowLate && !recorded && !qa.late && (!qa.excused || qa.canSignin);
   if (!allowExcuse && !allowLate) return;
+  // "Ich komme später" never turns into an Abmeldung.
+  if (late && !allowLate) return;
 
   final choice = await showRdReasonSheet(
     context,

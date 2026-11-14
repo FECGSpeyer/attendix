@@ -17297,10 +17297,11 @@
   "@redesignEventPlanEditShort": {
     "description": "redesign.event.planEditShort"
   },
-  "redesignEventPlanFree": "{count} Min frei bis Terminende",
-  "@redesignEventPlanFree": {
-    "description": "redesign.event.planFree",
+  "redesignEventPlanEndsEarly": "Ablauf endet {time}, {count} Min vor Terminende",
+  "@redesignEventPlanEndsEarly": {
+    "description": "redesign.event.planEndsEarly",
     "placeholders": {
+      "time": {},
       "count": {}
     }
   },
@@ -17317,6 +17318,13 @@
     "description": "redesign.event.planMinutes",
     "placeholders": {
       "count": {}
+    }
+  },
+  "redesignEventPlanMoved": "Ablauf mit verschoben: beginnt jetzt {time}",
+  "@redesignEventPlanMoved": {
+    "description": "redesign.event.planMoved",
+    "placeholders": {
+      "time": {}
     }
   },
   "redesignEventPlanNowPill": "jetzt",
@@ -21495,6 +21503,13 @@
       "when": {}
     }
   },
+  "redesignRemindSomeLink": "{count} erinnern",
+  "@redesignRemindSomeLink": {
+    "description": "redesign.remind.someLink",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "redesignRemindTitle": "{count} noch offen",
   "@redesignRemindTitle": {
     "description": "redesign.remind.title",
@@ -23169,6 +23184,10 @@
   "redesignWorksCurrentNoPart": "Keine Stimme",
   "@redesignWorksCurrentNoPart": {
     "description": "redesign.works.currentNoPart"
+  },
+  "redesignWorksCurrentNoScore": "Keine Partitur",
+  "@redesignWorksCurrentNoScore": {
+    "description": "redesign.works.currentNoScore"
   },
   "redesignWorksEmpty": "Noch keine Werke.",
   "@redesignWorksEmpty": {

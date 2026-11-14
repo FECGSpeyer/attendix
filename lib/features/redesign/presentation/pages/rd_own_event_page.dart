@@ -145,7 +145,8 @@ class RdOwnEventPage extends ConsumerWidget {
     final qa = actions.quickActions(att, anyLate: true);
     final plan = !ended && att.hasPlan ? rdPlanFromJson(att.plan) : null;
     final nowSlot = plan != null && running ? rdCurrentPlanSlot(day, plan, now: now) : null;
-    final canLate = qa != null && qa.allowLate && !qa.blocked;
+    // Already "kommt später" (also set by the leads): nothing more to announce.
+    final canLate = qa != null && qa.allowLate && !qa.blocked && !qa.late;
     // "Jetzt im Ablauf" only offers "Ich komme später"; everything else of
     // the answer card stays under "Mehr".
     final nowCard = own && nowSlot != null;
@@ -185,13 +186,13 @@ class RdOwnEventPage extends ConsumerWidget {
           onTap: () => run(type),
         );
 
-    final range = plan == null ? '' : rdPlanRange(plan);
     final planBlock = plan == null
         ? const <Widget>[]
         : [
             const SizedBox(height: 24),
             RdSectionLabel(
-              range.isEmpty ? l10n.redesignEventPlanSection : l10n.redesignEventSectionCount(l10n.redesignEventPlanSection, range),
+              // Like the leads' page: the Termin's time stands in the head.
+              l10n.redesignEventPlanSection,
               actionLabel: running ? l10n.redesignOwnPlanLive : l10n.redesignOwnPlanAll,
               actionIcon: Icons.chevron_right,
               onAction: () => run(SelfServiceActionType.showPlan),

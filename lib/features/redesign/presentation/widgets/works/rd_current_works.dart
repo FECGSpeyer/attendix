@@ -234,12 +234,14 @@ class _CurrentCard extends StatelessWidget {
     // Only a missing part is news; "Deine Stimme" / "Partitur" on every
     // card said nothing (the card opens the whole Werk).
     final missing = rdCurrentWorkFiles(song, ownGroup?.id, choir: choir).isEmpty;
+    // Without a group the card stands for the score, not for a part.
+    final missingLabel = ownGroup?.id == null ? l10n.redesignWorksCurrentNoScore : l10n.redesignWorksCurrentNoPart;
     void open() => rdOpenCurrentWork(context, song);
     // One label for the whole card; the tap stays reachable for screen
     // readers (the excluded InkWell no longer offers it).
     return Semantics(
       button: true,
-      label: [if (number.isNotEmpty) number, song.name, when, if (missing) l10n.redesignWorksCurrentNoPart].join(', '),
+      label: [if (number.isNotEmpty) number, song.name, when, if (missing) missingLabel].join(', '),
       onTap: open,
       excludeSemantics: true,
       child: RdCard(
@@ -284,7 +286,7 @@ class _CurrentCard extends StatelessWidget {
             if (missing) ...[
               const Spacer(),
               Text(
-                l10n.redesignWorksCurrentNoPart,
+                missingLabel,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: p.text2),

@@ -135,6 +135,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     _withSolo = song.withSolo;
     _difficulty = song.difficulty;
     _categoryIds = [...?song.categoryIds];
+    _storedControls = (_difficulty, _withChoir, _withSolo, _categoryIds);
     // Like the old page: empty fields start with their default.
     _additional = {...?song.additionalFields};
     _fields = data.additionalFields;
@@ -258,22 +259,47 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
   Song? _numberTakenBy(String prefix, int? number) =>
       rdNumberTakenBy(_container.read(songsProvider).valueOrNull ?? const [], _songId, prefix, number);
 
+  /// What is stored for the switches and chips (difficulty, choir, solo,
+  /// categories), and how often each was changed here.
+  (int?, bool, bool, List<String>) _storedControls = (null, false, false, const []);
+  final _controlChanges = [0, 0, 0, 0];
+
   /// Applies a switch/chip change at once and writes it; a failed save puts
-  /// the control back, so it never shows a value that is not stored.
+  /// the control back to what is stored, so it never shows another value.
   void _set(void Function() change, Map<String, dynamic> Function() updates) {
     final before = (_difficulty, _withChoir, _withSolo, _categoryIds);
     setState(change);
     final after = (_difficulty, _withChoir, _withSolo, _categoryIds);
+    final touched = [
+      before.$1 != after.$1,
+      before.$2 != after.$2,
+      before.$3 != after.$3,
+      !identical(before.$4, after.$4),
+    ];
+    for (var i = 0; i < 4; i++) {
+      if (touched[i]) _controlChanges[i]++;
+    }
+    final changes = [..._controlChanges];
     final values = updates();
     _enqueue(() async {
-      if (await _store(values) || !mounted) return;
-      // Undo only the controls this change touched, and only when nothing
-      // changed them again in the meantime.
+      if (await _store(values)) {
+        _storedControls = (
+          touched[0] ? after.$1 : _storedControls.$1,
+          touched[1] ? after.$2 : _storedControls.$2,
+          touched[2] ? after.$3 : _storedControls.$3,
+          touched[3] ? after.$4 : _storedControls.$4,
+        );
+        return;
+      }
+      if (!mounted) return;
+      // Back to the stored value, but only for the controls this change
+      // touched and that were not changed again (that write comes next).
+      bool last(int i) => touched[i] && _controlChanges[i] == changes[i];
       setState(() {
-        if (before.$1 != after.$1 && _difficulty == after.$1) _difficulty = before.$1;
-        if (before.$2 != after.$2 && _withChoir == after.$2) _withChoir = before.$2;
-        if (before.$3 != after.$3 && _withSolo == after.$3) _withSolo = before.$3;
-        if (!identical(before.$4, after.$4) && identical(_categoryIds, after.$4)) _categoryIds = before.$4;
+        if (last(0)) _difficulty = _storedControls.$1;
+        if (last(1)) _withChoir = _storedControls.$2;
+        if (last(2)) _withSolo = _storedControls.$3;
+        if (last(3)) _categoryIds = _storedControls.$4;
       });
     });
   }

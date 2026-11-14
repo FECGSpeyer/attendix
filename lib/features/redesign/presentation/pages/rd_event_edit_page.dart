@@ -19,6 +19,7 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/haptic_helper.dart';
+import '../../../../core/utils/plan_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/repositories/attendance_repository.dart';
@@ -39,6 +40,7 @@ import '../../data/rd_type_flags.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../widgets/event/rd_create_sheets.dart' show showRdTypePicker;
+import '../widgets/event/rd_event_now.dart' show rdPlanMovedWithStart;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
@@ -236,6 +238,19 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     }
   }
 
+  /// Says that the Ablauf moved along to [start] and offers to put it back
+  /// ([before] = the stored plan as it was).
+  void _planMoved(Map<String, dynamic> before, String start) {
+    if (!mounted) return;
+    final l10n = context.l10n;
+    ToastHelper.showSuccess(
+      context,
+      l10n.redesignEventPlanMoved(PlanUtils.formatTime(start)),
+      duration: const Duration(seconds: 6),
+      action: ToastAction(label: l10n.redesignEventUndo, onPressed: () => _write({'plan': before})),
+    );
+  }
+
   Future<void> _pickTime(Attendance att, AttendanceType? type, {required bool start}) async {
     // Shown times: the Termin's own, else its type's (like the Termin page).
     final shownStart = att.startTime ?? type?.startTime;
@@ -266,13 +281,17 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       ToastHelper.showError(context, context.l10n.redesignCreateEndBeforeStart);
       return;
     }
+    // An Ablauf that began at the old Beginn moves along with it.
+    final movedPlan = start ? rdPlanMovedWithStart(att.plan, oldStart: shownStart, newStart: times.start) : null;
     final updates = <String, dynamic>{
       if (start && times.start != att.startTime) 'start_time': times.start,
       // A Beginn change writes the Ende only when it moved along.
       if (start ? times.end != shownEnd : times.end != att.endTime) 'end_time': times.end,
+      if (movedPlan != null) 'plan': movedPlan,
     };
     if (updates.isEmpty) return;
     if (!await _write(updates)) return;
+    if (movedPlan != null) _planMoved(att.plan!, times.start!);
     try {
       // LOGIC_ATT: the time window moved, re-run the shift computation for
       // everyone in this Termin (Ionic onInfoChanged).
@@ -393,7 +412,16 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
             ? rdEndAfter(start!, from: oldStart, to: oldEnd)
             : rdEndAfter(start!, from: picked.startTime, to: picked.endTime))
         : null;
-    if (!await _write({'type_id': picked.id, if (fixEnd != null) 'end_time': fixEnd})) return;
+    // The Beginn may come from the type: an Ablauf tied to it moves along.
+    final movedPlan = picked.allDay ? null : rdPlanMovedWithStart(att.plan, oldStart: oldStart, newStart: start);
+    if (!await _write({
+      'type_id': picked.id,
+      if (fixEnd != null) 'end_time': fixEnd,
+      if (movedPlan != null) 'plan': movedPlan,
+    })) {
+      return;
+    }
+    if (movedPlan != null && mounted) _planMoved(att.plan!, start!);
     var failed = 0;
     try {
       if (adopt) {
