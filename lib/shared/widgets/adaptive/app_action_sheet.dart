@@ -108,6 +108,8 @@ Future<T?> showAppActionSheet<T>(
       elevation: 0,
       barrierColor: const Color(0x33000000),
       showDragHandle: false,
+      // F-EINST-30: not Flutter's German scrim label "Gitter".
+      barrierLabel: context.l10n.commonClose,
       builder: (ctx) => _IosActionSheet<T>(
         title: title,
         message: message,
@@ -123,6 +125,7 @@ Future<T?> showAppActionSheet<T>(
     isScrollControlled: true,
     showDragHandle: false,
     shape: const RoundedRectangleBorder(),
+    barrierLabel: context.l10n.commonClose,
     // PARITY_R3: Ionic md action sheet `--max-width: 500px`, centred.
     constraints: const BoxConstraints(maxWidth: 500),
     builder: (ctx) => _MaterialActionSheet<T>(

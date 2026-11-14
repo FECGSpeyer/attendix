@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../adaptive/adaptive.dart';
+import '../../../l10n/l10n.dart';
 import '../layout/ion_modal_handle.dart';
 import '../layout/ionic_ios.dart';
 import '../layout/ionic_md.dart';
@@ -65,6 +66,10 @@ Future<T?> showIonSheet<T>(
     isScrollControlled: true,
     useSafeArea: true,
     showDragHandle: false,
+    // F-EINST-30: the backdrop is announced as "Schließen" (Ionic
+    // `ion-backdrop` has no name); Flutter's German default "Gitter" (the
+    // Material scrim label) was read out at the top of the sheet.
+    barrierLabel: context.l10n.commonClose,
     isDismissible: backdropDismiss && canDismiss,
     // The breakpoint sheet moves and closes itself (it asks the route's
     // PopScope first, the Material sheet drag would not).
