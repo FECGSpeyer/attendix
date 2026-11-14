@@ -10,6 +10,7 @@ import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/role_permission_providers.dart';
+import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/router/redesign_routes.dart';
 import 'package:attendix/core/services/offline_queue_service.dart';
@@ -19,6 +20,9 @@ import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/features/attendance/presentation/attendance_song_history.dart';
+import 'package:attendix/data/models/plan/plan.dart' show PlanAttendance;
+import 'package:attendix/features/attendance/presentation/widgets/songs_selection_sheet.dart' show SongHistoryEntry;
+import 'package:attendix/features/redesign/data/providers/rd_event_works_providers.dart';
 import 'package:attendix/features/redesign/data/rd_event_logic.dart';
 import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart' show rdOpenPersons, rdOpenPersonsProvider;
 import 'package:attendix/core/providers/realtime_providers.dart';
@@ -109,7 +113,11 @@ class _Harness {
     this.empty = false,
     this.editPage = false,
     this.rows,
+    this.sources = const [],
   });
+
+  /// The coming Auftritte whose Werke the Termin can take over.
+  final List<RdWorksSource> sources;
 
   /// Termin without persons.
   final bool empty;
@@ -232,6 +240,8 @@ class _Harness {
         canAccessFilesProvider.overrideWithValue(false),
         protocolTypeByIdProvider.overrideWith((ref, id) => null),
         attendanceSongEntriesProvider.overrideWith((ref, id) async => const []),
+        rdEventWorksSourcesProvider.overrideWith((ref, id) async => sources),
+        songsProvider.overrideWith((ref) async => const []),
       ],
       child: MaterialApp.router(
         locale: const Locale('de'),
@@ -907,6 +917,46 @@ void main() {
       await tester.pumpWidget(_Harness(plan: plan, empty: true).app(tab: RdEventTab.program));
       await _settle(tester);
       expect(find.byKey(const Key('rd-plan-preview')), findsOneWidget);
+    });
+
+    testWidgets('a Probe shows the Werke of the next Auftritt in the Überblick; Programm names what the Ablauf misses',
+        (tester) async {
+      _size(tester, const Size(393, 1600));
+      const concert = (
+        att: PlanAttendance(id: 30, tenantId: 7, date: '2099-12-13', typeId: 'k', typeInfo: 'Adventskonzert'),
+        name: 'Adventskonzert',
+        entries: [
+          SongHistoryEntry(songId: 1, songName: '12 - Machet die Tore weit', conductorName: 'Anna Meier'),
+          SongHistoryEntry(songId: 2, songName: '31 - Tochter Zion', conductorName: 'Anna Meier'),
+        ],
+      );
+      const withWork = {
+        'time': '19:30',
+        'fields': [
+          {'id': 'a', 'name': 'Einspielen', 'time': '15'},
+          {'id': 'b', 'name': '12. Machet die Tore weit', 'time': '5', 'songId': 1},
+        ],
+      };
+      await tester.pumpWidget(_Harness(plan: withWork, sources: const [concert]).app());
+      await _settle(tester);
+
+      // Überblick: the list of the Auftritt, the Werk in the Ablauf with its time.
+      expect(find.text('WERKE · 2'), findsOneWidget);
+      expect(find.byKey(const Key('rd-program-source')), findsOneWidget);
+      expect(find.text('12 - Machet die Tore weit'), findsOneWidget);
+      expect(find.text('19:45'), findsOneWidget);
+      expect(find.text('Ändern'), findsOneWidget);
+      expect(
+        find.text('1 von 2 steht im Ablauf. Die Liste folgt dem Auftritt, bis du sie änderst.'),
+        findsOneWidget,
+      );
+
+      // Reiter Programm: only the Ablauf, with the hint.
+      await tester.tap(find.text('Programm'));
+      await _settle(tester);
+      expect(find.byKey(const Key('rd-program-label')), findsNothing);
+      expect(find.text('1 Werk dieser Probe steht noch nicht im Ablauf'), findsOneWidget);
+      expect(find.byKey(const Key('rd-plan-works-missing')), findsOneWidget);
     });
 
     for (final role in [Role.helper, Role.viewer]) {

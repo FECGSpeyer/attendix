@@ -17914,10 +17914,6 @@
   "@redesignEventPlan": {
     "description": "redesign.event.plan"
   },
-  "redesignEventPlanCreate": "Ablauf anlegen",
-  "@redesignEventPlanCreate": {
-    "description": "redesign.event.planCreate"
-  },
   "redesignEventPlanEdit": "Ablauf bearbeiten",
   "@redesignEventPlanEdit": {
     "description": "redesign.event.planEdit"
@@ -18013,10 +18009,6 @@
       "total": {},
       "percent": {}
     }
-  },
-  "redesignEventProgram": "Programm",
-  "@redesignEventProgram": {
-    "description": "redesign.event.program"
   },
   "redesignEventProgramMore": "{names} und {count} weitere",
   "@redesignEventProgramMore": {
@@ -18195,13 +18187,95 @@
       "name": {}
     }
   },
+  "redesignEventWorkRemovedPlan": "{name} entfernt, auch aus dem Ablauf",
+  "@redesignEventWorkRemovedPlan": {
+    "description": "redesign.event.workRemovedPlan",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignEventWorks": "Werke",
   "@redesignEventWorks": {
     "description": "redesign.event.works"
   },
+  "redesignEventWorksChange": "Ändern",
+  "@redesignEventWorksChange": {
+    "description": "redesign.event.worksChange"
+  },
+  "redesignEventWorksFollowAgain": "Wieder dem Auftritt folgen",
+  "@redesignEventWorksFollowAgain": {
+    "description": "redesign.event.worksFollowAgain"
+  },
+  "redesignEventWorksFollows": "Die Liste folgt dem Auftritt, bis du sie änderst.",
+  "@redesignEventWorksFollows": {
+    "description": "redesign.event.worksFollows"
+  },
+  "redesignEventWorksFrom": "Vom nächsten Auftritt: {label}",
+  "@redesignEventWorksFrom": {
+    "description": "redesign.event.worksFrom",
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "redesignEventWorksInPlan": "{count, plural, one {1 von {total} steht im Ablauf.} other {{count} von {total} stehen im Ablauf.}}",
+  "@redesignEventWorksInPlan": {
+    "description": "redesign.event.worksInPlan",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "total": {}
+    }
+  },
   "redesignEventWorksLoadFailed": "Die Werke konnten nicht geladen werden.",
   "@redesignEventWorksLoadFailed": {
     "description": "redesign.event.worksLoadFailed"
+  },
+  "redesignEventWorksMissing": "{kind, select, probe{{count, plural, one {1 Werk dieser Probe steht noch nicht im Ablauf} other {{count} Werke dieser Probe stehen noch nicht im Ablauf}}} auftritt{{count, plural, one {1 Werk dieses Auftritts steht noch nicht im Ablauf} other {{count} Werke dieses Auftritts stehen noch nicht im Ablauf}}} other{{count, plural, one {1 Werk dieses Termins steht noch nicht im Ablauf} other {{count} Werke dieses Termins stehen noch nicht im Ablauf}}}}",
+  "@redesignEventWorksMissing": {
+    "description": "redesign.event.worksMissing",
+    "placeholders": {
+      "kind": {},
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventWorksMissingInsert": "Einfügen",
+  "@redesignEventWorksMissingInsert": {
+    "description": "redesign.event.worksMissingInsert"
+  },
+  "redesignEventWorksOfThis": "{kind, select, probe{Werke dieser Probe} auftritt{Werke dieses Auftritts} other{Werke dieses Termins}}",
+  "@redesignEventWorksOfThis": {
+    "description": "redesign.event.worksOfThis",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignEventWorksOfThisHint": "{kind, select, probe{Angehakt ist, was geprobt wird.} other{Angehakt ist, was drankommt.}}",
+  "@redesignEventWorksOfThisHint": {
+    "description": "redesign.event.worksOfThisHint",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignEventWorksRemovedPlan": "{count, plural, one {1 Werk auch aus dem Ablauf entfernt} other {{count} Werke auch aus dem Ablauf entfernt}}",
+  "@redesignEventWorksRemovedPlan": {
+    "description": "redesign.event.worksRemovedPlan",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventWorksTake": "{count, plural, one {1 Werk übernehmen} other {{count} Werke übernehmen}}",
+  "@redesignEventWorksTake": {
+    "description": "redesign.event.worksTake",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignEventYesterday": "gestern",
   "@redesignEventYesterday": {
@@ -21630,10 +21704,6 @@
       "count": {}
     }
   },
-  "redesignPlanEmptyTemplate": "Vorlage der Organisation",
-  "@redesignPlanEmptyTemplate": {
-    "description": "redesign.plan.emptyTemplate"
-  },
   "redesignPlanEmptyTitle": "Womit beginnen?",
   "@redesignPlanEmptyTitle": {
     "description": "redesign.plan.emptyTitle"
@@ -21664,13 +21734,6 @@
       }
     }
   },
-  "redesignPlanEventWorksFrom": "Werke vom {date}",
-  "@redesignPlanEventWorksFrom": {
-    "description": "redesign.plan.eventWorksFrom",
-    "placeholders": {
-      "date": {}
-    }
-  },
   "redesignPlanEventWorksNone": "Keine",
   "@redesignPlanEventWorksNone": {
     "description": "redesign.plan.eventWorksNone"
@@ -21682,10 +21745,6 @@
   "redesignPlanEventWorksOtherHint": "Aus der Werkliste",
   "@redesignPlanEventWorksOtherHint": {
     "description": "redesign.plan.eventWorksOtherHint"
-  },
-  "redesignPlanEventWorksOwn": "Werke dieses Termins",
-  "@redesignPlanEventWorksOwn": {
-    "description": "redesign.plan.eventWorksOwn"
   },
   "redesignPlanEventWorksThis": "Dieser Termin",
   "@redesignPlanEventWorksThis": {
@@ -22119,6 +22178,46 @@
   "@redesignPlanStart": {
     "description": "redesign.plan.start"
   },
+  "redesignPlanStartAsk": "Womit möchtest du beginnen?",
+  "@redesignPlanStartAsk": {
+    "description": "redesign.plan.startAsk"
+  },
+  "redesignPlanStartEmpty": "Leer beginnen",
+  "@redesignPlanStartEmpty": {
+    "description": "redesign.plan.startEmpty"
+  },
+  "redesignPlanStartNone": "Noch kein Ablauf",
+  "@redesignPlanStartNone": {
+    "description": "redesign.plan.startNone"
+  },
+  "redesignPlanStartTemplate": "Aus einer Vorlage",
+  "@redesignPlanStartTemplate": {
+    "description": "redesign.plan.startTemplate"
+  },
+  "redesignPlanStartTemplateHint": "Zum Beispiel {name}",
+  "@redesignPlanStartTemplateHint": {
+    "description": "redesign.plan.startTemplateHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanStartWorks": "{kind, select, probe{Mit den Werken dieser Probe} auftritt{Mit den Werken dieses Auftritts} other{Mit den Werken dieses Termins}}",
+  "@redesignPlanStartWorks": {
+    "description": "redesign.plan.startWorks",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignPlanStartWorksHint": "{count, plural, one {1 Werk, {minutes} Min} other {{count} Werke, je {minutes} Min}}",
+  "@redesignPlanStartWorksHint": {
+    "description": "redesign.plan.startWorksHint",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "minutes": {}
+    }
+  },
   "redesignPlanTelegram": "Per Telegram",
   "@redesignPlanTelegram": {
     "description": "redesign.plan.telegram"
@@ -22130,6 +22229,17 @@
   "redesignPlanTemplateHint": "Vorlage · sofort gespeichert",
   "@redesignPlanTemplateHint": {
     "description": "redesign.plan.templateHint"
+  },
+  "redesignPlanTemplatePick": "Vorlage wählen",
+  "@redesignPlanTemplatePick": {
+    "description": "redesign.plan.templatePick"
+  },
+  "redesignPlanTemplateStarts": "Der Ablauf beginnt um {time}, wie der Termin.",
+  "@redesignPlanTemplateStarts": {
+    "description": "redesign.plan.templateStarts",
+    "placeholders": {
+      "time": {}
+    }
   },
   "redesignPlanTemplatesIntro": "Gelten für alle Gruppen der Organisation „{org}“.",
   "@redesignPlanTemplatesIntro": {
@@ -22168,6 +22278,24 @@
   "redesignPlanViewWhole": "Ganzer Ablauf",
   "@redesignPlanViewWhole": {
     "description": "redesign.plan.viewWhole"
+  },
+  "redesignPlanWorksInserted": "{count, plural, one {1 Werk am Ende eingefügt} other {{count} Werke am Ende eingefügt}}",
+  "@redesignPlanWorksInserted": {
+    "description": "redesign.plan.worksInserted",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignPlanWorksPlaced": "{count, plural, one {1 Werk eingesetzt} other {{count} Werke eingesetzt}}",
+  "@redesignPlanWorksPlaced": {
+    "description": "redesign.plan.worksPlaced",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignPultAllOpen": "Alle Offenen da",
   "@redesignPultAllOpen": {
