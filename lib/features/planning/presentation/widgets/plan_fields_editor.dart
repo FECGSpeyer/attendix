@@ -226,24 +226,34 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     }
     final beamerFileOf = widget.beamerFileOf;
     final showBeamer = beamerFileOf != null && !isNote;
-    final result = await showPlanFieldDialog(
-      context,
-      title: context.l10n.planningEditField,
-      nameLabel: isNote ? context.l10n.planningNote : context.l10n.planningItem,
-      nameHint: isNote ? context.l10n.planningEnterNote : context.l10n.planningEnterItem,
-      infoHint: context.l10n.planningInfoOptionalEllipsis,
-      confirmText: context.l10n.planningUpdate,
-      initialName: field.name,
-      initialConductor: field.conductor,
-      initialInfo: field.info,
-      initialMinutes: int.tryParse(field.time) ?? 20,
-      withConductor: !isNote,
-      withInfo: !isNote,
-      withMinutes: !isNote,
-      beamer: showBeamer
-          ? PlanFieldBeamerOptions(manual: field.needsBeamer, songId: field.songId, file: beamerFileOf(field))
-          : null,
-    );
+    // ABL-02: Ionic changeField opens the PlanFieldEditComponent modal;
+    // a note keeps its alert (changeNoteField).
+    final result = isNote
+        ? await showPlanFieldDialog(
+            context,
+            title: context.l10n.planningEditField,
+            nameLabel: context.l10n.planningNote,
+            nameHint: context.l10n.planningEnterNote,
+            infoHint: context.l10n.planningInfoOptionalEllipsis,
+            confirmText: context.l10n.planningUpdate,
+            initialName: field.name,
+            initialConductor: field.conductor,
+            initialInfo: field.info,
+            initialMinutes: int.tryParse(field.time) ?? 20,
+            withConductor: false,
+            withInfo: false,
+            withMinutes: false,
+          )
+        : await showPlanFieldEditModal(
+            context,
+            initialName: field.name,
+            initialConductor: field.conductor,
+            initialInfo: field.info,
+            initialMinutes: int.tryParse(field.time) ?? 20,
+            beamer: showBeamer
+                ? PlanFieldBeamerOptions(manual: field.needsBeamer, songId: field.songId, file: beamerFileOf(field))
+                : null,
+          );
     if (result == null) return;
     final updated = [..._fields];
     updated[index] = isNote
