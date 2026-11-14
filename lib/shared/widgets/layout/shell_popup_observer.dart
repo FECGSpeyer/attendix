@@ -23,6 +23,10 @@ class ShellPopupObserver extends NavigatorObserver {
   final Set<Route<dynamic>> _popups = {};
 
   void _add(Route<dynamic>? route) {
+    // A shell navigator that is disposed (go to /login, /tenants, a link
+    // page) drops its routes without telling its observers: forget popups
+    // that are gone, or the tab bar would stay hidden in the next shell.
+    _popups.removeWhere((r) => !r.isActive);
     if (route is PopupRoute) _popups.add(route);
     _sync();
   }
@@ -36,7 +40,10 @@ class ShellPopupObserver extends NavigatorObserver {
     final open = _popups.isNotEmpty;
     if (popupOpen.value == open) return;
     // Navigator callbacks can arrive during a build; notify afterwards.
-    WidgetsBinding.instance.addPostFrameCallback((_) => popupOpen.value = _popups.isNotEmpty);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _popups.removeWhere((r) => !r.isActive);
+      popupOpen.value = _popups.isNotEmpty;
+    });
   }
 
   @override

@@ -309,6 +309,8 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
             label: context.l10n.deleteAccountCode,
             placeholder: context.l10n.deleteAccountCodePlaceholder,
             controller: _confirmController,
+            autocorrect: false,
+            enableSuggestions: false,
             textCapitalization: TextCapitalization.characters,
             onChanged: (_) => setState(() {}),
           ),

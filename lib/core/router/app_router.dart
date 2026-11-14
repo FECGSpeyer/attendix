@@ -253,7 +253,10 @@ bool _isAdminOrResponsible(Role role) => role.isAdmin || role.isResponsible;
 bool _isConductor(Role role) => role.isConductor;
 bool _canSeePeopleTab(Role role) => role.canSeePeopleTab;
 bool _canSeeAttendanceTab(Role role) => role.canSeeAttendanceTab;
-bool _canSeeNotifications(Role role) => role.canSeeNotifications;
+// The Ionic rule applies to the classic design only; the Beta keeps its
+// own page reachable as before (rd_me_page decides who sees the entry).
+bool _canSeeNotifications(Role role) =>
+    RedesignRoutes.active || role.canSeeNotifications;
 /// ORG_PLANS: public plan routes reachable without login (share keys)
 const Set<String> _publicPlanRoutes = {'/plan', '/planung', '/org-plan'};
 
@@ -1665,10 +1668,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           if (SongUtils.isValidSharingId(state.pathParameters['songSharingId'])) {
             return null;
           }
-          final isLoggedIn = ref.read(authStateProvider).whenOrNull(
+          final authState = ref.read(authStateProvider);
+          final isLoggedIn = authState.whenOrNull(
                     data: (auth) => auth.session != null,
                   ) ??
-              false;
+              _sessionRestoring(ref, authState);
           if (!isLoggedIn) return null;
           final tenantId = ref.read(currentTenantIdProvider);
           if (tenantId == null || ref.read(isRoleLoadingProvider)) return '/tenants';

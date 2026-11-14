@@ -61,7 +61,8 @@ final studentCountsProvider = FutureProvider<Map<int, int>>((ref) async {
   final repo = ref.watch(teacherRepositoryWithTenantProvider);
   // PERSONEN-84: recount whenever the person list is reloaded (a person's
   // teacher changed) – before, only pull-to-refresh recounted.
-  ref.watch(playersProvider);
+  // Only the loaded list counts: no second run for the loading state.
+  ref.watch(playersProvider.select((players) => players.valueOrNull));
 
   if (!repo.hasTenantId) return {};
 

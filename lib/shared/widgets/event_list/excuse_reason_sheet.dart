@@ -212,9 +212,14 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
         ),
         ),
       ),
+      // Ionic `.keyboard-spacer`: room to scroll the textarea clear of the
+      // on-screen keyboard.
+      if (_selection == _customReason)
+        SizedBox(height: MediaQuery.sizeOf(context).height * 0.5),
     ];
   }
 
+  /// The Beta design (no breakpoint sheet): rows, free text and button.
   List<Widget> _rows(BuildContext context) => [
               // Ionic ion-radio (justify start, label end, lines full); iOS
               // draws a checkmark for the selected reason.
@@ -232,22 +237,7 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                     onChanged: (v) => setState(() => _selection = v ?? _selection),
                     title: Text(reason == _customReason ? context.l10n.excuseCustomOption : reason),
                   ),
-              // TER-18: Ionic `ion-item.custom-reason` – stacked label and an
-              // auto-grow textarea; confirmed only via the toolbar checkmark.
-              if (_selection == _customReason && widget.scrollController != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: IonStackedField(
-                    label: context.l10n.excuseReason,
-                    hintText: context.l10n.excuseMinChars,
-                    controller: _controller,
-                    autofocus: true,
-                    minLines: 1,
-                    maxLines: null,
-                    onChanged: (_) => setState(() {}),
-                  ),
-                )
-              else if (_selection == _customReason)
+              if (_selection == _customReason)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                   child: TextField(
@@ -264,18 +254,13 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                     ),
                   ),
                 ),
-              if (widget.scrollController == null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  child: FilledButton(
-                    onPressed: _confirmable ? _confirm : null,
-                    child: IonButtonLabel(context.l10n.commonConfirm),
-                  ),
-                )
-              else
-                // `.keyboard-spacer`: room to scroll the textarea clear of
-                // the on-screen keyboard.
-                SizedBox(height: _selection == _customReason ? MediaQuery.sizeOf(context).height * 0.5 : 16),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: FilledButton(
+                  onPressed: _confirmable ? _confirm : null,
+                  child: IonButtonLabel(context.l10n.commonConfirm),
+                ),
+              ),
       ];
 }
 
@@ -378,7 +363,9 @@ Future<Map<String, dynamic>?> showRegistrationFieldsSheet(
       context,
       breakpoints: const [0, 0.85, 1],
       initialBreakpoint: 0.85,
-      backdropDismiss: editMode,
+      // Ionic: the self-service modal has `[backdropDismiss]="false"` in
+      // both modes; only the modal of the attendance page closes that way.
+      backdropDismiss: closeIcon,
       builder: (ctx, scrollController) => _RegistrationFieldsSheet(
         fields: fields,
         answers: answers,

@@ -5,11 +5,13 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive_platform.dart';
 import '../adaptive/app_select.dart' show IonSelectIcon, IonMdSelectIcon;
-import '../adaptive/app_spinner.dart';
 import '../adaptive/app_toolbar.dart' show IosCircleIcon;
-import '../adaptive/app_dialog.dart' show showAppDialog;
+import '../adaptive/ion_loading.dart' show IonLoadingController;
 import 'ionic_ios.dart' as ios27;
 import 'ionic_md.dart';
+
+export '../adaptive/ion_loading.dart'
+    show IonLoadingBox, IonLoadingController, showIonLoading, withIonLoading;
 
 // KP2_EINSTELLUNGEN_B: Ionic form items for the classic design in BOTH
 // looks (iOS and md): `ion-item` + stacked label + `ion-input` /
@@ -100,7 +102,13 @@ class IonStackedInputItem extends StatefulWidget {
     this.focusNode,
     this.onSubmitted,
     this.maxLength,
+    this.autocorrect = true,
+    this.enableSuggestions = true,
   });
+
+  /// Off for codes: the keyboard must not change what was typed.
+  final bool autocorrect;
+  final bool enableSuggestions;
 
   final String label;
   final TextEditingController controller;
@@ -203,6 +211,8 @@ class _IonStackedInputItemState extends State<IonStackedInputItem> {
               maxLength: widget.maxLength,
               validator: widget.validator,
               obscureText: widget.obscureText,
+              autocorrect: widget.autocorrect,
+              enableSuggestions: widget.enableSuggestions,
               keyboardType:
                   widget.keyboardType ??
                   (multiline ? TextInputType.multiline : null),
@@ -223,6 +233,8 @@ class _IonStackedInputItemState extends State<IonStackedInputItem> {
               focusNode: widget.focusNode,
               maxLength: widget.maxLength,
               obscureText: widget.obscureText,
+              autocorrect: widget.autocorrect,
+              enableSuggestions: widget.enableSuggestions,
               keyboardType:
                   widget.keyboardType ??
                   (multiline ? TextInputType.multiline : null),
@@ -572,125 +584,6 @@ class IonArrowBackButton extends StatelessWidget {
   }
 }
 
-/// Handle of an open [showIonLoading] overlay.
-class IonLoadingHandle {
-  IonLoadingHandle._();
-
-  Route<dynamic>? _route;
-  bool _open = true;
-
-  /// Closes exactly this overlay (also when other routes were pushed on
-  /// top or it is not built yet).
-  void dismiss() {
-    if (!_open) return;
-    _open = false;
-    final route = _route;
-    if (route != null && route.isActive) route.navigator?.removeRoute(route);
-  }
-}
-
-/// Ionic `loadingController.create({ message })` (`ion-loading`): a
-/// blocking overlay with a spinner and the [message] until
-/// [IonLoadingHandle.dismiss] is called.
-///
-/// iOS: #f9f9f9 box (dark #1e1e1e) with radius 8, padding 24 / 34, bold
-/// message; md: #f2f2f2 box (dark #1e1e1e) with radius 2, padding 24 and the
-/// md shadow, primary spinner. Backdrop .3 (iOS) / .32 (md).
-IonLoadingHandle showIonLoading(BuildContext context, {String? message}) {
-  final handle = IonLoadingHandle._();
-  showAppDialog<void>(
-    context: context,
-    barrierDismissible: false,
-    useRootNavigator: true,
-    builder: (ctx) {
-      handle._route ??= ModalRoute.of(ctx);
-      if (!handle._open) {
-        // Dismissed before the first frame.
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final route = handle._route;
-          if (route != null && route.isActive) {
-            route.navigator?.removeRoute(route);
-          }
-        });
-      }
-      return IonLoadingBox(message: message);
-    },
-  );
-  return handle;
-}
-
-/// Runs [task] while an [showIonLoading] overlay with [message] is shown.
-Future<T> withIonLoading<T>(
-  BuildContext context,
-  Future<T> Function() task, {
-  String? message,
-}) async {
-  final handle = showIonLoading(context, message: message);
-  try {
-    return await task();
-  } finally {
-    handle.dismiss();
-  }
-}
-
-/// The box of [showIonLoading] (`.loading-wrapper`).
-class IonLoadingBox extends StatelessWidget {
-  const IonLoadingBox({super.key, this.message});
-
-  final String? message;
-
-  @override
-  Widget build(BuildContext context) {
-    final ios = useIosLook(context);
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final bg =
-        dark
-            ? const Color(0xFF1E1E1E)
-            : (ios ? const Color(0xFFF9F9F9) : const Color(0xFFF2F2F2));
-    final fg = dark ? const Color(0xFFDBDBDB) : const Color(0xFF262626);
-    return PopScope(
-      canPop: false,
-      child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: ios ? 270 : 280),
-          child: Material(
-            color: bg,
-            elevation: ios ? 0 : 24,
-            shadowColor: Colors.black,
-            borderRadius: BorderRadius.circular(ios ? 8 : 2),
-            child: Padding(
-              padding:
-                  ios
-                      ? const EdgeInsets.symmetric(horizontal: 34, vertical: 24)
-                      : const EdgeInsets.all(24),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    width: 28,
-                    height: 28,
-                    child: AppSpinner(color: ios ? null : AppColors.primary),
-                  ),
-                  if (message != null && message!.isNotEmpty) ...[
-                    const SizedBox(width: 16),
-                    Flexible(
-                      child: Text(
-                        message!,
-                        style: TextStyle(
-                          fontSize: ios ? 14 : 15,
-                          fontWeight: ios ? FontWeight.w600 : FontWeight.w400,
-                          color: fg,
-                          decoration: TextDecoration.none,
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+/// EIB-19: the Ionic `ion-loading` overlay lives in ONE place
+/// (`adaptive/ion_loading.dart`); the settings pages use it through here.
+typedef IonLoadingHandle = IonLoadingController;

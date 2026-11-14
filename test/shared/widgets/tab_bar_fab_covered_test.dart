@@ -71,6 +71,26 @@ void main() {
     await tester.pumpAndSettle();
     expect(observer.popupOpen.value, isFalse);
   });
+  testWidgets('ShellPopupObserver forgets a sheet whose navigator was disposed', (tester) async {
+    final observer = ShellPopupObserver();
+    final key = GlobalKey<NavigatorState>();
+    Widget shell(Key k) => MaterialApp(
+          key: k,
+          navigatorKey: key,
+          navigatorObservers: [observer],
+          home: const Scaffold(body: Text('page')),
+        );
+    await tester.pumpWidget(shell(const ValueKey(1)));
+    showModalBottomSheet<void>(context: key.currentContext!, builder: (_) => const Text('sheet'));
+    await tester.pumpAndSettle();
+    expect(observer.popupOpen.value, isTrue);
+    // The shell is left with the sheet open (e.g. sign-out → /login) and
+    // entered again: a new navigator with the same observer.
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(shell(const ValueKey(2)));
+    await tester.pumpAndSettle();
+    expect(observer.popupOpen.value, isFalse);
+  });
   testWidgets('WERKE-82: a FAB that appears later on a covered page (role loaded) does not break hit tests', (tester) async {
     var taps = 0;
     final showFab = ValueNotifier(false);

@@ -1348,6 +1348,14 @@ InputDecoration ionInputDecoration(
       focusedBorder: UnderlineInputBorder(
         borderSide: BorderSide(color: primary, width: 2),
       ),
+      // Keep the underline when a validator fires (the app theme would
+      // switch to its boxed error border and the field would jump).
+      errorBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.danger),
+      ),
+      focusedErrorBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.danger, width: 2),
+      ),
     );
   }
   final hairline = BorderSide(color: Theme.of(context).dividerColor, width: 0.5);
