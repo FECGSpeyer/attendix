@@ -136,7 +136,7 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: _rows(context),
+              children: _classicRows(context),
             ),
           ),
         ),
@@ -157,6 +157,57 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
         ),
       ),
     );
+  }
+
+  /// SEL-09: classic = Ionic excuse-reason-picker content: `ion-content
+  /// class="ion-padding"`, `ion-list lines="full"` of `ion-radio
+  /// justify="start" labelPlacement="end"`, the free text as `ion-item` with a
+  /// stacked label + auto-growing `ion-textarea`; no button (the header
+  /// checkmark confirms).
+  List<Widget> _classicRows(BuildContext context) {
+    final ios = isIosLook(context);
+    final line = Divider(height: ios ? 0.5 : 1, thickness: ios ? 0.5 : 1);
+    final options = [...widget.reasons, _customReason];
+    return [
+      Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final reason in options) ...[
+              IonRadioItem<String>(
+                value: reason,
+                groupValue: _selection,
+                labelEnd: true,
+                onChanged: (v) => setState(() => _selection = v ?? _selection),
+                title: Text(reason == _customReason
+                    ? context.l10n.excuseCustomOption
+                    : reason),
+              ),
+              line,
+            ],
+            if (_selection == _customReason)
+              Padding(
+                padding: const EdgeInsets.only(left: 16, top: 8),
+                child: TextField(
+                  controller: _controller,
+                  autofocus: true,
+                  minLines: 1,
+                  maxLines: null, // ion-textarea autoGrow
+                  textCapitalization: TextCapitalization.sentences,
+                  onChanged: (_) => setState(() {}),
+                  decoration: ionInputDecoration(
+                    context,
+                    label: context.l10n.excuseReason,
+                    hintText: context.l10n.excuseMinChars,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    ];
   }
 
   List<Widget> _rows(BuildContext context) => [
