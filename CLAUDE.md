@@ -166,6 +166,8 @@ Stattdessen legt jeder PR **eine** Changelog-Datei an:
 - Nach dem Merge auf master macht der Deploy-Workflow daraus automatisch eine Version (`tool/release/release_version.py`): `pubspec.yaml` (inkl. Build-Nummer), `appVersion` und `version_history.json` werden erhöht, die Fragmente gelöscht.
 - In PR-Titel und -Beschreibung keine Versionsnummer nennen.
 - PRs bauen keine Cloudflare-Vorschau mehr. Wer eine braucht: Label `preview` an den PR hängen (oder „Run workflow“ auf dem Branch); die URL steht dann im Deploy-Run.
+- PRs, die `android/`, `ios/`, `macos/`, die Pakete (`pubspec.yaml`, `pubspec.lock`) oder die Flutter-Version ändern, bauen zusätzlich die nativen Apps (`.github/workflows/native-builds.yml`: Android-APK, iOS und macOS unsigniert).
+- Flutter-Version: einzige Quelle ist `flutter-version` in `.github/workflows/ci.yml` (gleicher Wert in `deploy-cloudflare.yml`); `native-builds.yml` und `scripts/store_build.sh` lesen sie von dort. Vor einem Upgrade prüfen, ob Shorebird die Version unterstützt (`docs/release/shorebird.md`).
 - Ein master-Merge in den PR-Branch ohne Konflikt im eigenen Code braucht kein neues Review, nur grüne CI. Ohne Konflikt muss master vor dem Merge gar nicht reingeholt werden.
 
 **Interne vs. Nutzer-Version:** `appVersion` und `assets/version_history.json` sind die interne Entwicklerhistorie (0.x, Sentry-Release) und werden Nutzern nicht gezeigt. Nutzer sehen `AppConstants.displayVersion` und `assets/version_history_user.json` (weitergeführte Ionic-Historie). Diese beiden nur bei Store-Releases pflegen: `displayVersion` erhöhen und einen Eintrag obendrauf in `assets/version_history_user.json` setzen (oberster Eintrag = `displayVersion`).

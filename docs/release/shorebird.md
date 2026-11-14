@@ -17,6 +17,11 @@ Patch-Nummer steht in den Einstellungen bei „Was ist neu“ (z. B.
 ## Einrichtung (erledigt)
 
 - Shorebird-CLI 1.6.137 auf Leons Mac unter `~/.shorebird/bin`.
+- Eine neue Flutter-Version (in `.github/workflows/ci.yml`) erst mergen, wenn
+  Shorebird sie unterstützt (Liste: `shorebird flutter versions list` oder
+  <https://docs.shorebird.dev/getting-started/flutter-version/>), sonst
+  scheitert `shorebird release`. Vor dem ersten Build mit der neuen Version
+  die CLI aktualisieren: `shorebird upgrade`.
 - Anmeldung per `SHOREBIRD_TOKEN` in `~/.zshrc`.
 - App in der Shorebird-Konsole angelegt, `app_id` siehe `shorebird.yaml`
   (nicht geheim). `shorebird.yaml` ist als Asset in `pubspec.yaml` eingetragen

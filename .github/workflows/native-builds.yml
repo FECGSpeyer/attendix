@@ -95,7 +95,10 @@ jobs:
 
       - name: Build Android (release APK, debug key)
         if: matrix.target == 'android'
-        run: flutter build apk --release
+        run: |
+          flutter build apk --release
+          # The placeholder must have gone through the google-services plugin.
+          grep -rqs "google_app_id" build/app/generated
 
       - name: Build iOS (release, unsigned)
         if: matrix.target == 'ios'

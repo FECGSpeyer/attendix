@@ -12,6 +12,7 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
+
 // Plugins that still compile against an older Android API (file_picker 8.x:
 // 34) fail AGP's AAR metadata check as soon as one of their dependencies
 // needs a newer one (flutter_plugin_android_lifecycle: 36). Compile every
@@ -39,7 +40,6 @@ subprojects {
 subprojects {
     project.evaluationDependsOn(":app")
 }
-
 
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
