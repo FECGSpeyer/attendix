@@ -648,6 +648,7 @@ class IonSelect<T> extends StatelessWidget {
     required this.items,
     required this.onChanged,
     this.leading,
+    this.interface = AppSelectInterface.popover,
   });
 
   final String label;
@@ -655,6 +656,9 @@ class IonSelect<T> extends StatelessWidget {
   final List<DropdownMenuItem<T>> items;
   final ValueChanged<T?>? onChanged;
   final Widget? leading;
+
+  /// Ionic `ion-select interface` (the alert's header is [label]).
+  final AppSelectInterface interface;
 
   @override
   Widget build(BuildContext context) {
@@ -668,6 +672,8 @@ class IonSelect<T> extends StatelessWidget {
           Expanded(
             child: DropdownButtonHideUnderline(
               child: AppDropdownButton<T>(
+                interface: interface,
+                header: label,
                 value: value,
                 isExpanded: true,
                 alignment: AlignmentDirectional.centerEnd,

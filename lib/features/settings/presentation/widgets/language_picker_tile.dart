@@ -56,64 +56,35 @@ class LanguagePickerTile extends ConsumerWidget {
                 // ion-select ios: `chevron-expand` toggle icon.
                 ios
                     ? const IonSelectIcon(key: Key('languagePickerChevron'))
-                    : Icon(AppIcons.arrowDropDown,
-                        color: AppColors.medium),
+                    // ion-select md: caret (13px, step-500).
+                    : const IonMdSelectIcon(),
               ],
             );
           }),
         );
 
-    if (ios) {
-      return KeyedSubtree(
-        key: const Key('languagePicker'),
-        child: tile(
-          onTap: () async {
-            final picked = await showAppSelect<String>(
-              context: valueContext ?? context,
-              value: current,
-              options: [
-                for (final lang in enabledLanguages)
-                  AppSelectOption<String>(
-                    value: lang,
-                    label: languageNames[lang] ?? lang,
-                  ),
-              ],
-            );
-            if (picked == null || picked.value == current) return;
-            ref.read(localeProvider.notifier).setLanguage(picked.value);
-          },
-        ),
-      );
-    }
-
-    // PARITY_R3: Ionic md select popover marks the current option with
-    // `.item-radio-checked` – a primary 8 % row background (no grey
-    // Material "initial value" highlight, no radio circle).
-    final primary = Theme.of(context).colorScheme.primary;
-    return PopupMenuButton<String>(
+    // KP_SELECTS: one select in both looks – the shared `ion-select
+    // interface="popover"` (md: the md popover with the current option
+    // tinted `rgba(primary, .08)`, no radio circle).
+    return KeyedSubtree(
       key: const Key('languagePicker'),
-      tooltip: l10n.settingsLanguageTitle,
-      position: PopupMenuPosition.under,
-      onSelected: (value) {
-        if (value == current) return;
-        ref.read(localeProvider.notifier).setLanguage(value);
-      },
-      itemBuilder: (_) => [
-        for (final lang in enabledLanguages)
-          PopupMenuItem<String>(
-            value: lang,
-            padding: EdgeInsets.zero,
-            child: Container(
-              key: Key('languageOption_$lang'),
-              constraints: const BoxConstraints(minHeight: 48),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              alignment: AlignmentDirectional.centerStart,
-              color: lang == current ? primary.withValues(alpha: 0.08) : null,
-              child: Text(languageNames[lang] ?? lang),
-            ),
-          ),
-      ],
-      child: tile(),
+      child: tile(
+        onTap: () async {
+          final picked = await showAppSelect<String>(
+            context: valueContext ?? context,
+            value: current,
+            options: [
+              for (final lang in enabledLanguages)
+                AppSelectOption<String>(
+                  value: lang,
+                  label: languageNames[lang] ?? lang,
+                ),
+            ],
+          );
+          if (picked == null || picked.value == current) return;
+          ref.read(localeProvider.notifier).setLanguage(picked.value);
+        },
+      ),
     );
   }
 }

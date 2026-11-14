@@ -565,7 +565,8 @@ class _ExportSegment extends StatelessWidget {
 }
 
 /// Ionic `ion-item` with `ion-select interface="popover"`: label left,
-/// current value right, popup menu on tap.
+/// current value right; a tap on the item opens the shared select popover
+/// ([showAppSelect]) at the value.
 class _SelectItem<T> extends StatelessWidget {
   const _SelectItem({
     required this.label,
@@ -582,19 +583,27 @@ class _SelectItem<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final current = options.where((o) => o.$1 == value).firstOrNull?.$2 ?? '';
+    BuildContext? valueContext;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        PopupMenuButton<T>(
-          initialValue: value,
-          onSelected: onChanged,
-          itemBuilder: (_) => [
-            for (final o in options) PopupMenuItem<T>(value: o.$1, child: Text(o.$2)),
-          ],
-          child: ListTile(
-            title: Text(label),
-            trailing: _SelectValue(current),
+        ListTile(
+          title: Text(label),
+          trailing: Builder(
+            builder: (c) {
+              valueContext = c;
+              return _SelectValue(current);
+            },
           ),
+          onTap: () async {
+            final picked = await showAppSelect<T>(
+              context: valueContext ?? context,
+              value: value,
+              options: [for (final o in options) AppSelectOption<T>(value: o.$1, label: o.$2)],
+              header: label,
+            );
+            if (picked != null && picked.value != value) onChanged(picked.value);
+          },
         ),
         _itemLine(context),
       ],
@@ -645,7 +654,10 @@ class _SelectValue extends StatelessWidget {
               ),
             )
           else
-            Icon(AppIcons.arrowDropDown, color: AppColors.medium),
+            const Padding(
+              padding: EdgeInsets.only(left: 4),
+              child: IonMdSelectIcon(),
+            ),
         ],
       ),
     );

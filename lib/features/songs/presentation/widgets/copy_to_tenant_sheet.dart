@@ -15,6 +15,8 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonInsetList;
+import '../../../planning/presentation/widgets/ion_items.dart' show IonSelect;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
@@ -216,43 +218,30 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                 controller: scrollController,
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // Target tenant dropdown
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.l10n.shiftsFlutterTargetTenant,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.medium,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          DropdownButtonFormField<int>(
-                            value: _targetTenantId,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(AppIcons.business),
-                            ),
-                            items: widget.availableTenants
-                                .map((t) => DropdownMenuItem(
-                                      value: t.id,
-                                      child: Text(t.longName),
-                                    ))
-                                .toList(),
-                            onChanged: _isCopying
-                                ? null
-                                : (value) {
-                                    if (value != null) {
-                                      setState(() => _targetTenantId = value);
-                                    }
-                                  },
-                          ),
-                        ],
+                  // Target tenant: Ionic inset list item with
+                  // `ion-select [label]` (no `interface` → alert).
+                  IonInsetList(
+                    margin: EdgeInsets.zero,
+                    children: [
+                      IonSelect<int>(
+                        label: context.l10n.personTargetInstance,
+                        interface: AppSelectInterface.alert,
+                        value: _targetTenantId,
+                        items: widget.availableTenants
+                            .map((t) => DropdownMenuItem(
+                                  value: t.id,
+                                  child: Text(t.longName),
+                                ))
+                            .toList(),
+                        onChanged: _isCopying
+                            ? null
+                            : (value) {
+                                if (value != null) {
+                                  setState(() => _targetTenantId = value);
+                                }
+                              },
                       ),
-                    ),
+                    ],
                   ),
                   const SizedBox(height: 16),
 

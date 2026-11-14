@@ -846,7 +846,10 @@ class _FileItemState extends State<_FileItem> {
                 const SizedBox(width: 8),
                 Flexible(
                   child: DropdownButtonHideUnderline(
-                    child: DropdownButton<int?>(
+                    // Ionic `ion-select slot="end"` without `interface`: the
+                    // alert with radios (shared select, both looks).
+                    child: AppDropdownButton<int?>(
+                      interface: AppSelectInterface.alert,
                       value: value,
                       items: items,
                       isExpanded: true,
