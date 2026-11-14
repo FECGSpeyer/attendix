@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -59,7 +60,7 @@ class UpcomingSongsSheet extends ConsumerWidget {
     final groupCount = songsAsync.valueOrNull?.length ?? 0;
 
     // Ionic: breakpoints 0.8 (several Termine) / 0.6 (one Termin)
-    return DraggableScrollableSheet(
+    return AppDraggableSheet(
       initialChildSize: groupCount > 1 ? 0.8 : 0.6,
       minChildSize: 0.3,
       maxChildSize: 1,
@@ -365,7 +366,7 @@ class AttendanceSongsSheet extends ConsumerWidget {
     final isChoir = ref.watch(currentTenantProvider)?.type == 'choir';
     final theme = Theme.of(context);
     final heading = [title, subtitle].where((t) => t.isNotEmpty).join(' · ');
-    return DraggableScrollableSheet(
+    return AppDraggableSheet(
       // Ionic: initialBreakpoint 0.75, breakpoints [0, 0.75, 1]
       initialChildSize: 0.75,
       minChildSize: 0.3,

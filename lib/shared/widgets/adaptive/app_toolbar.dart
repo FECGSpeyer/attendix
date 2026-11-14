@@ -38,7 +38,12 @@ class ToolbarButtonGroup extends StatelessWidget {
     final fg = Theme.of(context).colorScheme.onSurface;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: IosGlassSurface(
+      // An `AppBar.leading` is laid out with the toolbar's full height;
+      // centred, the capsule keeps its 44pt instead of being stretched to
+      // a tall oval.
+      child: Center(
+        widthFactor: 1,
+        child: IosGlassSurface(
         borderRadius: const BorderRadius.all(Radius.circular(22)),
         blur: IosGlass.headerControlBlur,
         child: SizedBox(
@@ -66,6 +71,7 @@ class ToolbarButtonGroup extends StatelessWidget {
               child: Row(mainAxisSize: MainAxisSize.min, children: children),
             ),
           ),
+        ),
         ),
       ),
     );
@@ -114,7 +120,11 @@ class IonCloseButton extends StatelessWidget {
         label: tooltip ?? context.l10n.commonClose,
         child: GestureDetector(
           onTap: onTap,
-          child: IosCircleIcon(icon: AppIcons.close, size: 44),
+          // Centred: stays a 44pt circle as an `AppBar.leading` too.
+          child: Center(
+            widthFactor: 1,
+            child: IosCircleIcon(icon: AppIcons.close, size: 44),
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -56,7 +57,7 @@ Future<List<String>?> showDutyAssignSheet(
     useSafeArea: true,
     // Ionic: ion-content color="light".
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    builder: (ctx) => DraggableScrollableSheet(
+    builder: (ctx) => AppDraggableSheet(
       expand: false,
       initialChildSize: 0.75,
       minChildSize: 0.4,

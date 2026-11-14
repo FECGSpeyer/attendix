@@ -720,13 +720,29 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           : RefreshIndicator.adaptive(onRefresh: _refresh, child: scrollView),
       floatingActionButton: _isSelectionMode
           ? _selectedPlayerIds.isNotEmpty
-              ? TabBarFab(
-                  child: FloatingActionButton.extended(
-                    onPressed: _showHandoverSheet,
-                    icon: Icon(AppIcons.swapHoriz),
-                    label: Text(context.l10n.peopleFlutterTransferCount(_selectedPlayerIds.length)),
-                    backgroundColor: AppColors.warning,
-                  ),
+              // A wide pill does not fit into the 61pt "+" slot beside the
+              // iOS tab bar (it covered the tabs): it sits above the bar.
+              ? TabBarFab.above(
+                  child: ios
+                      ? FilledButton.icon(
+                          onPressed: _showHandoverSheet,
+                          icon: Icon(AppIcons.swapHoriz),
+                          label: Text(context.l10n.peopleFlutterTransferCount(_selectedPlayerIds.length)),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.warning,
+                            foregroundColor: Colors.black,
+                            elevation: 3,
+                            shadowColor: Colors.black,
+                          ),
+                        )
+                      : FloatingActionButton.extended(
+                          onPressed: _showHandoverSheet,
+                          icon: Icon(AppIcons.swapHoriz),
+                          label: Text(context.l10n.peopleFlutterTransferCount(_selectedPlayerIds.length)),
+                          backgroundColor: AppColors.warning,
+                          foregroundColor: Colors.black,
+                          shape: const StadiumBorder(),
+                        ),
                 )
               : null
           // Ionic: FAB "add" only for admins
@@ -915,7 +931,31 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   /// (funnel), Sortierung (filter), Ansicht (eye, multiple) as popover
   /// selects, then Gemeinde-Übersicht, Bulk-Bearbeitung, Personen
   /// importieren and Reihenfolge anpassen.
+  ///
+  /// The selects open nested popovers and the options popover stays open
+  /// while they are used (a Material `MenuAnchor` closed everything with
+  /// the first tap).
   Widget _buildOptionsButton({required bool isAdmin}) {
+    final rate = ref.read(attendanceRateFilterProvider);
+    return Builder(
+      builder: (buttonContext) => IconButton(
+        key: const Key('people_options_button'),
+        icon: Icon(
+          AppIcons.tune,
+          color: _filterOption != 'all' || !rate.isDefault ? AppColors.primary : null,
+        ),
+        tooltip: context.l10n.typeSettingsOptions,
+        onPressed: () => showAppFilterPopover(
+          context: buttonContext,
+          rows: () => _optionsRows(isAdmin: isAdmin),
+        ),
+      ),
+    );
+  }
+
+  /// The rows of the options popover, built from the current state (the
+  /// popover reads them again after every change).
+  List<AppFilterRow> _optionsRows({required bool isAdmin}) {
     final tenant = ref.read(currentTenantProvider);
     final filterLabels = _filterOptionLabels(tenant);
     final sortLabels = _sortOptionLabels(tenant);
@@ -925,183 +965,89 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       for (final t in ref.read(attendanceTypesProvider).valueOrNull ?? const [])
         if (t.id != null && t.visible) t,
     ];
-    final ios = ionIsIos(context);
-    final menuStyle = MenuStyle(
-      backgroundColor: WidgetStatePropertyAll(
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.surfaceDark
-            : Colors.white,
+    List<(String, String)> entries(Map<String, String> m) =>
+        [for (final e in m.entries) (e.key, e.value)];
+    return [
+      AppFilterSelect<String>(
+        icon: AppIcons.filterAlt,
+        value: filterLabels.containsKey(_filterOption) ? _filterOption : 'all',
+        options: entries(filterLabels),
+        onSelected: _onFilterSelected,
       ),
-      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(ios ? 13 : 4),
-      )),
-      padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
-    );
-    final itemStyle = MenuItemButton.styleFrom(
-      minimumSize: const Size(256, 44),
-      textStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 16),
-    );
-    Widget check(bool on) => SizedBox(
-          width: 24,
-          child: on
-              ? Icon(AppIcons.check, size: 20, color: AppColors.primary)
-              : null,
-        );
-
-    Widget selectRow({
-      required IconData icon,
-      required String value,
-      required Map<String, String> options,
-      required void Function(String) onSelected,
-    }) {
-      return SubmenuButton(
-        style: itemStyle,
-        menuStyle: menuStyle,
-        leadingIcon: Icon(icon, size: 18),
-        menuChildren: [
-          for (final e in options.entries)
-            MenuItemButton(
-              style: itemStyle,
-              leadingIcon: check(e.key == value),
-              onPressed: () => onSelected(e.key),
-              child: Text(e.value),
-            ),
+      AppFilterSelect<String>(
+        icon: AppIcons.filterList,
+        value: sortLabels.containsKey(_sortOption) ? _sortOption : 'group',
+        options: entries(sortLabels),
+        onSelected: _onSortSelected,
+      ),
+      // "Anwesenheit zählen": period of the percentages.
+      AppFilterSelect<String>(
+        icon: AppIcons.calendarToday,
+        value: rate.period.name,
+        options: [
+          for (final period in RatePeriod.values)
+            (period.name, ratePeriodLabel(context.l10n, period, filter: rate)),
         ],
-        // Ionic: ion-select slot="end", text width 9rem
-        child: SizedBox(
-          width: 144,
-          child: Text(
-            options[value] ?? options.values.first,
-            textAlign: TextAlign.right,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      );
-    }
-
-    final viewSummary = viewLabels.entries
-        .where((e) => _viewOptions.contains(e.key))
-        .map((e) => e.value)
-        .join(', ');
-
-    return MenuAnchor(
-      style: menuStyle,
-      menuChildren: [
-        selectRow(
-          icon: AppIcons.filterAlt,
-          value: filterLabels.containsKey(_filterOption) ? _filterOption : 'all',
-          options: filterLabels,
-          onSelected: _onFilterSelected,
-        ),
-        selectRow(
-          icon: AppIcons.filterList,
-          value: sortLabels.containsKey(_sortOption) ? _sortOption : 'group',
-          options: sortLabels,
-          onSelected: _onSortSelected,
-        ),
-        // "Anwesenheit zählen": period of the percentages.
-        selectRow(
-          icon: AppIcons.calendarToday,
-          value: rate.period.name,
-          options: {
-            for (final period in RatePeriod.values)
-              period.name: ratePeriodLabel(context.l10n, period, filter: rate),
-          },
-          onSelected: (v) => _onRatePeriodSelected(RatePeriod.values.byName(v)),
-        ),
-        if (rateTypes.length > 1)
-          selectRow(
-            icon: AppIcons.event,
-            value: rate.typeId ?? '',
-            options: {
-              '': context.l10n.peopleRateAllTypes,
-              for (final t in rateTypes) t.id!: t.name,
-            },
-            onSelected: (v) => ref.read(attendanceRateFilterProvider.notifier).state =
-                ref.read(attendanceRateFilterProvider).withType(v.isEmpty ? null : v),
-          ),
-        SubmenuButton(
-          style: itemStyle,
-          menuStyle: menuStyle,
-          leadingIcon: Icon(AppIcons.visibility, size: 18),
-          menuChildren: [
-            for (final e in viewLabels.entries)
-              CheckboxMenuButton(
-                style: itemStyle,
-                closeOnActivate: false,
-                value: _viewOptions.contains(e.key),
-                onChanged: (v) {
-                  setState(() {
-                    if (v == true) {
-                      _viewOptions.add(e.key);
-                    } else {
-                      _viewOptions.remove(e.key);
-                    }
-                  });
-                  _saveViewOptions();
-                },
-                child: Text(e.value),
-              ),
+        onSelected: (v) => _onRatePeriodSelected(RatePeriod.values.byName(v)),
+      ),
+      if (rateTypes.length > 1)
+        AppFilterSelect<String>(
+          icon: AppIcons.event,
+          value: rate.typeId ?? '',
+          options: [
+            ('', context.l10n.peopleRateAllTypes),
+            for (final t in rateTypes) (t.id!, t.name),
           ],
-          child: SizedBox(
-            width: 144,
-            child: Text(
-              viewSummary,
-              textAlign: TextAlign.right,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
+          onSelected: (v) => ref.read(attendanceRateFilterProvider.notifier).state =
+              ref.read(attendanceRateFilterProvider).withType(v.isEmpty ? null : v),
         ),
-        if (_churchField(tenant) != null)
-          MenuItemButton(
-            style: itemStyle,
-            leadingIcon: Icon(AppIcons.businessOutlined, size: 18),
-            onPressed: _showChurchOverview,
-            child: Text(context.l10n.attendanceChurchOverview),
-          ),
-        if (isAdmin) ...[
-          MenuItemButton(
-            style: itemStyle,
-            leadingIcon: Icon(AppIcons.edit, size: 18),
-            onPressed: _openBulkEdit,
-            child: Text(context.l10n.peopleBulkEdit),
-          ),
-          MenuItemButton(
-            style: itemStyle,
-            leadingIcon: Icon(AppIcons.cloudUploadOutlined, size: 18),
-            onPressed: _openImport,
-            child: Text(context.l10n.peopleImportPeople),
-          ),
-          if (_sortOption == 'group')
-            MenuItemButton(
-              style: itemStyle,
-              leadingIcon: Icon(AppIcons.swapVert, size: 18),
-              onPressed: _toggleReorderMode,
-              child: Text(context.l10n.peopleReorder),
-            ),
-          // Flutter extra: multi-select handover (Ionic only has the
-          // handover page in the settings)
-          MenuItemButton(
-            style: itemStyle,
-            leadingIcon: Icon(AppIcons.checklist, size: 18),
-            onPressed: _enterSelectionMode,
-            child: Text(context.l10n.peopleFlutterTransferPeople),
-          ),
-        ],
-      ],
-      builder: (context, controller, _) => IconButton(
-        key: const Key('people_options_button'),
-        icon: Icon(
-          AppIcons.tune,
-          color: _filterOption != 'all' || !rate.isDefault ? AppColors.primary : null,
-        ),
-        tooltip: context.l10n.typeSettingsOptions,
-        onPressed: () =>
-            controller.isOpen ? controller.close() : controller.open(),
+      AppFilterMultiSelect<String>(
+        icon: AppIcons.visibility,
+        values: () => _viewOptions.toList(),
+        options: entries(viewLabels),
+        onChanged: (key, on) {
+          setState(() {
+            if (on) {
+              _viewOptions.add(key);
+            } else {
+              _viewOptions.remove(key);
+            }
+          });
+          _saveViewOptions();
+        },
       ),
-    );
+      if (_churchField(tenant) != null)
+        AppFilterAction(
+          icon: AppIcons.businessOutlined,
+          label: context.l10n.attendanceChurchOverview,
+          onTap: _showChurchOverview,
+        ),
+      if (isAdmin) ...[
+        AppFilterAction(
+          icon: AppIcons.edit,
+          label: context.l10n.peopleBulkEdit,
+          onTap: _openBulkEdit,
+        ),
+        AppFilterAction(
+          icon: AppIcons.cloudUploadOutlined,
+          label: context.l10n.peopleImportPeople,
+          onTap: _openImport,
+        ),
+        if (_sortOption == 'group')
+          AppFilterAction(
+            icon: AppIcons.swapVert,
+            label: context.l10n.peopleReorder,
+            onTap: _toggleReorderMode,
+          ),
+        // Flutter extra: multi-select handover (Ionic only has the
+        // handover page in the settings)
+        AppFilterAction(
+          icon: AppIcons.checklist,
+          label: context.l10n.peopleFlutterTransferPeople,
+          onTap: _enterSelectionMode,
+        ),
+      ],
+    ];
   }
 
   List<ExtraField> _filterableExtraFields(Tenant? tenant) =>

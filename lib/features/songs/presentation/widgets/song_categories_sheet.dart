@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -32,7 +33,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
     final categoriesAsync = ref.watch(songCategoriesProvider);
     final notifierState = ref.watch(songCategoryNotifierProvider);
 
-    return DraggableScrollableSheet(
+    return AppDraggableSheet(
       initialChildSize: 0.6,
       minChildSize: 0.3,
       maxChildSize: 0.9,

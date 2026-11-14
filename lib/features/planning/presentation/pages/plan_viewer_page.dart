@@ -260,7 +260,9 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
       appBar: AppBar(
         // Ionic: modal with close button at the start.
         // IOS_PAGES3: iOS → ion-buttons in a Liquid Glass capsule.
-        leadingWidth: useIosLook(context) ? 68 : null,
+        // 12 + 48 + 12: the capsule of one toolbar button; narrower, the
+        // button was cut off inside its capsule.
+        leadingWidth: useIosLook(context) ? 72 : null,
         leading: ToolbarButtonGroup(children: [
           IconButton(
             tooltip: context.l10n.commonClose,

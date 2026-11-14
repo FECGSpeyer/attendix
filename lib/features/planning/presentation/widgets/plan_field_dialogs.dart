@@ -261,6 +261,43 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
     ];
   }
 
+  static String? _nz(String? s) => s == null || s.isEmpty ? null : s;
+
+  /// Existing values are edited: the fields get captions.
+  late final bool _editing = (widget.initialName ?? '').isNotEmpty ||
+      (widget.initialConductor ?? '').isNotEmpty ||
+      (widget.initialInfo ?? '').isNotEmpty;
+
+  List<Widget> _input({
+    required TextEditingController controller,
+    required String caption,
+    required String placeholder,
+    bool autofocus = false,
+    int maxLines = 1,
+    TextInputType? keyboardType,
+    TextCapitalization textCapitalization = TextCapitalization.none,
+  }) {
+    return [
+      if (_editing && caption.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(caption, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+          ),
+        ),
+      AppAlertInput(
+        controller: controller,
+        placeholder: placeholder,
+        autofocus: autofocus,
+        minLines: 1,
+        maxLines: maxLines,
+        keyboardType: keyboardType,
+        textCapitalization: textCapitalization,
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -282,46 +319,42 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Text(widget.message!),
               ),
-            TextField(
+            // Ionic `alertController` inputs: no labels, only placeholders
+            // (planning.page.ts addExtraField …), in the same look as every
+            // other alert. While existing values are edited each field
+            // keeps a small caption, otherwise nobody could tell a filled
+            // "Ausführender" from "Info".
+            ..._input(
               controller: _name,
+              caption: widget.nameLabel ?? l10n.planningItem,
+              placeholder: _nz(widget.nameHint) ?? _nz(widget.nameLabel) ?? l10n.planningEnterItem,
               autofocus: true,
-              minLines: 1,
               maxLines: 3,
               textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(
-                labelText: widget.nameLabel ?? l10n.planningItem,
-                hintText: widget.nameHint ?? l10n.planningEnterItem,
-              ),
             ),
-            if (widget.withConductor) ...[
-              const SizedBox(height: 8),
-              TextField(
+            if (widget.withConductor)
+              ..._input(
                 controller: _conductor,
+                caption: widget.conductorLabel ?? l10n.planningPerformer,
+                placeholder: _nz(widget.conductorHint) ?? _nz(widget.conductorLabel) ?? l10n.planningEnterPerformer,
+                maxLines: 3,
                 textCapitalization: TextCapitalization.words,
-                decoration: InputDecoration(
-                  labelText: widget.conductorLabel ?? l10n.planningPerformer,
-                  hintText: widget.conductorHint ?? l10n.planningEnterPerformer,
-                ),
               ),
-            ],
-            if (widget.withInfo) ...[
-              const SizedBox(height: 8),
-              TextField(
+            if (widget.withInfo)
+              ..._input(
                 controller: _info,
-                minLines: 1,
+                caption: l10n.planningInfo,
+                placeholder: widget.infoHint ?? l10n.planningInfoOptional,
                 maxLines: 3,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(labelText: l10n.planningInfo, hintText: widget.infoHint ?? l10n.planningInfoOptional),
               ),
-            ],
-            if (widget.withMinutes) ...[
-              const SizedBox(height: 8),
-              TextField(
+            if (widget.withMinutes)
+              ..._input(
                 controller: _minutes,
+                caption: l10n.planningMinutes,
+                placeholder: l10n.planningMinutes,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: l10n.planningMinutes, suffixText: l10n.planningMinPlaceholder),
               ),
-            ],
             if (_error != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -387,11 +420,11 @@ Future<String?> showPlanTextPrompt(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (shownMessage != null) Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(shownMessage!)),
-            TextField(
+            AppAlertInput(
               controller: controller,
               autofocus: true,
               textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(hintText: hint),
+              placeholder: hint,
             ),
           ],
         ),

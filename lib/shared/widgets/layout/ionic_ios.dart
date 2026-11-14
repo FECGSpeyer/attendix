@@ -12,6 +12,7 @@ import '../adaptive/app_toolbar.dart'
     show kIonModalToolbarHeight, kIonTitleFontSize; // PARITY_R5, IOS27_SWEEP
 import 'ion_modal_handle.dart' show kIonModalSheetRadius;
 import 'ionic_md.dart';
+import 'sheet_drag.dart';
 
 /// Page building blocks that mirror Ionic components as they render in
 /// **iOS mode** (iPhone app and iPhone Safari PWA, @rdlabo ionic-theme-ios26)
@@ -1110,6 +1111,10 @@ class IonSheetHeader extends StatelessWidget {
       // PARITY_R5: iOS sheet toolbar 64pt (ionic-theme-ios27 modal-sheet
       // `--min-height: 64px`, no padding); md toolbar 56.
       height: ios ? kIonModalToolbarHeight : 56,
+      // An `ion-toolbar` always spans the sheet: without the width the
+      // header shrank to its title and the start / end buttons sat
+      // indented next to it instead of at the sheet's edges.
+      width: double.infinity,
       decoration: BoxDecoration(
         // Beta-Skin: the sheet colour of the new design (page background).
         color: rd?.bg ?? Theme.of(context).colorScheme.surface,
@@ -1160,12 +1165,15 @@ class IonSheetHeader extends StatelessWidget {
               ),
       ),
     );
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        header,
-        Divider(height: rd != null ? 1 : 0.5, thickness: rd != null ? 1 : 0.5, color: rd?.line),
-      ],
+    // Ionic sheet modals follow a drag on their toolbar too.
+    return SheetDragArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          header,
+          Divider(height: rd != null ? 1 : 0.5, thickness: rd != null ? 1 : 0.5, color: rd?.line),
+        ],
+      ),
     );
   }
 }

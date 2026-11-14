@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,7 +88,7 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
       // ion-content color="light" behind the inset list
       backgroundColor: beta ? context.rd.bg : Theme.of(context).scaffoldBackgroundColor,
       builder:
-          (_) => DraggableScrollableSheet(
+          (_) => AppDraggableSheet(
             expand: false,
             initialChildSize: 0.75 * full,
             minChildSize: 0.4 * full,
@@ -746,9 +747,12 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
 
     return Column(
       children: [
+        // Ionic sheet modal: a swipe on the header moves the sheet too.
         if (ios)
-          _iosHeader(unread, list)
-        else ...[
+          SheetDragArea(child: _iosHeader(unread, list))
+        else
+          SheetDragArea(
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
           // ion-toolbar: ion-title + end buttons (md mode)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
@@ -775,7 +779,8 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
             padding: const EdgeInsets.all(AppDimensions.paddingS),
             child: _segment(false),
           ),
-        ],
+            ]),
+          ),
         Expanded(
           child: RefreshIndicator.adaptive(
             onRefresh: () async {

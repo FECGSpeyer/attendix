@@ -50,12 +50,14 @@ void main() {
       expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
     });
 
-    testWidgets('IonFabButton is a glass button on iOS and a FAB on md', (tester) async {
+    // One "+" for every page: the theme's FAB (glass on iOS) in both looks,
+    // so the Termine and the Personen button look the same.
+    testWidgets('IonFabButton is the themed FAB on iOS and md', (tester) async {
       await tester.pumpWidget(_app(
         TargetPlatform.iOS,
         Scaffold(floatingActionButton: IonFabButton(onPressed: () {})),
       ));
-      expect(find.byType(FloatingActionButton), findsNothing);
+      expect(find.byType(FloatingActionButton), findsOneWidget);
       expect(find.byIcon(AppIcons.add), findsOneWidget);
 
       await tester.pumpWidget(_app(

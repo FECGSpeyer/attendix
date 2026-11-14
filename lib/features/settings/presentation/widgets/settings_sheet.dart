@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 
 import 'settings_list.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -46,7 +47,7 @@ Future<T?> showSettingsSheet<T>(
           ),
         );
       }
-      return DraggableScrollableSheet(
+      return AppDraggableSheet(
         expand: false,
         initialChildSize: initialBreakpoint,
         minChildSize: initialBreakpoint,

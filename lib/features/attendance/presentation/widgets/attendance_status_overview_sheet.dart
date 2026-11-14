@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -128,7 +129,7 @@ class StatusOverviewSheet extends StatelessWidget {
         ? theme.scaffoldBackgroundColor
         : AppColors.adaptive(context, AppColors.light);
 
-    return DraggableScrollableSheet(
+    return AppDraggableSheet(
       initialChildSize: 0.5,
       minChildSize: 0.25,
       maxChildSize: 0.75,

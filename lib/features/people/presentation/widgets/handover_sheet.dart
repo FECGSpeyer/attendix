@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/config/supabase_config.dart';
@@ -100,7 +101,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
     final currentTenant = ref.watch(currentTenantProvider);
     final sourceGroupsAsync = ref.watch(groupsProvider);
 
-    return DraggableScrollableSheet(
+    return AppDraggableSheet(
       initialChildSize: 0.7,
       minChildSize: 0.4,
       maxChildSize: 0.95,

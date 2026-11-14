@@ -1056,6 +1056,9 @@ class IosAlertInput extends StatelessWidget {
     this.onSubmitted,
     this.readOnly = false,
     this.onTap,
+    this.minLines,
+    this.maxLines = 1,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   final TextEditingController controller;
@@ -1064,6 +1067,11 @@ class IosAlertInput extends StatelessWidget {
   final bool autofocus;
   final TextInputType? keyboardType;
   final ValueChanged<String>? onSubmitted;
+
+  /// `type: 'textarea'` inputs grow with their text ([maxLines] > 1).
+  final int? minLines;
+  final int? maxLines;
+  final TextCapitalization textCapitalization;
 
   /// A read-only field that reacts to [onTap] (e.g. the date input of
   /// [showAppDateAlert]).
@@ -1094,6 +1102,9 @@ class IosAlertInput extends StatelessWidget {
         onSubmitted: onSubmitted,
         readOnly: readOnly,
         onTap: onTap,
+        minLines: minLines,
+        maxLines: maxLines,
+        textCapitalization: textCapitalization,
         style:
             TextStyle(fontSize: fontSize, color: theme.colorScheme.onSurface),
         decoration: InputDecoration(
@@ -1110,6 +1121,105 @@ class IosAlertInput extends StatelessWidget {
           enabledBorder: border,
           focusedBorder: border,
           disabledBorder: border,
+        ),
+      ),
+    );
+  }
+}
+
+/// One text input of an Ionic `ion-alert` (`inputs: [{type, placeholder}]`)
+/// for every look, so all alerts with inputs show the same fields:
+///
+/// - iOS: [IosAlertInput] (white, 0.55pt border, radius 7);
+/// - md: Ionic md `.alert-input` – no box, a 1px line below (2px primary
+///   while focused), 16px text;
+/// - Beta: the field of the new design.
+///
+/// Like in Ionic the field has no label, only the [placeholder]; a field
+/// that needs a caption (editing existing values) gets it from the dialog.
+class AppAlertInput extends StatelessWidget {
+  const AppAlertInput({
+    super.key,
+    required this.controller,
+    this.placeholder,
+    this.autofocus = false,
+    this.keyboardType,
+    this.onSubmitted,
+    this.minLines,
+    this.maxLines = 1,
+    this.textCapitalization = TextCapitalization.none,
+  });
+
+  final TextEditingController controller;
+  final String? placeholder;
+  final bool autofocus;
+  final TextInputType? keyboardType;
+  final ValueChanged<String>? onSubmitted;
+  final int? minLines;
+  final int? maxLines;
+  final TextCapitalization textCapitalization;
+
+  @override
+  Widget build(BuildContext context) {
+    if (context.rdSkin != null) {
+      return TextField(
+        controller: controller,
+        autofocus: autofocus,
+        keyboardType: keyboardType,
+        onSubmitted: onSubmitted,
+        minLines: minLines,
+        maxLines: maxLines,
+        textCapitalization: textCapitalization,
+        decoration: InputDecoration(hintText: placeholder),
+      );
+    }
+    if (useIosLook(context)) {
+      return IosAlertInput(
+        controller: controller,
+        placeholder: placeholder,
+        autofocus: autofocus,
+        keyboardType: keyboardType,
+        onSubmitted: onSubmitted,
+        minLines: minLines,
+        maxLines: maxLines,
+        textCapitalization: textCapitalization,
+      );
+    }
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    // Ionic md `.alert-input`: `border-bottom: 1px solid step-150`,
+    // `margin: 5px 0`, `padding: 10px 0`; focused 2px primary.
+    final line = UnderlineInputBorder(
+      borderSide: BorderSide(
+        color: dark ? const Color(0xFF363636) : const Color(0xFFD9D9D9),
+      ),
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: TextField(
+        controller: controller,
+        autofocus: autofocus,
+        keyboardType: keyboardType,
+        onSubmitted: onSubmitted,
+        minLines: minLines,
+        maxLines: maxLines,
+        textCapitalization: textCapitalization,
+        style: TextStyle(fontSize: 16, color: theme.colorScheme.onSurface),
+        decoration: InputDecoration(
+          hintText: placeholder,
+          hintStyle: TextStyle(
+            fontSize: 16,
+            color: dark ? const Color(0xFF8C8C8C) : const Color(0xFF999999),
+          ),
+          isDense: true,
+          filled: false,
+          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+          border: line,
+          enabledBorder: line,
+          disabledBorder: line,
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
+          ),
         ),
       ),
     );
