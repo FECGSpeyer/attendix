@@ -785,15 +785,16 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       context: context,
       builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.filesRequestMore),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+        // Ionic alert: message + `type: 'textarea'` input (files.page.ts).
+        content: AppAlertInputGroup(
+          message: Text(context.l10n.filesRequestHint),
           children: [
-            Text(context.l10n.filesRequestHint),
-            const SizedBox(height: AppDimensions.paddingS),
-            TextField(
+            const AppAlertBetaGap(AppDimensions.paddingS),
+            AppAlertInput(
               controller: controller,
               maxLines: 3,
-              decoration: InputDecoration(hintText: ctx.l10n.filesHowMuch),
+              textarea: true,
+              placeholder: ctx.l10n.filesHowMuch,
             ),
           ],
         ),

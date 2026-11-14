@@ -129,10 +129,12 @@ class AppAlertDialog extends StatelessWidget {
         actions: mdActions.isEmpty
             ? null
             : [MdAlertButtonGroup(children: mdActions)],
-        contentPadding: contentPadding ??
-            (grouped
-                ? EdgeInsets.zero
-                : EdgeInsets.fromLTRB(24, title == null ? 20 : 0, 24, 20)),
+        // A group brings the Ionic paddings: [contentPadding] then only
+        // counts for Beta.
+        contentPadding: grouped
+            ? EdgeInsets.zero
+            : contentPadding ??
+                EdgeInsets.fromLTRB(24, title == null ? 20 : 0, 24, 20),
         titlePadding: titlePadding ??
             EdgeInsets.fromLTRB(24, 20, 24, content == null ? 20 : 15),
         actionsPadding: actionsPadding ?? const EdgeInsets.all(8),
@@ -173,7 +175,7 @@ class AppAlertDialog extends StatelessWidget {
       icon: icon,
       title: title,
       content: content,
-      contentPadding: contentPadding ?? (grouped ? EdgeInsets.zero : null),
+      contentPadding: grouped ? EdgeInsets.zero : contentPadding,
       scrollable: scrollable,
       semanticLabel: semanticLabel,
       actions: [
@@ -186,9 +188,12 @@ class AppAlertDialog extends StatelessWidget {
 
 /// Content of an [AppAlertDialog] that lays out the Ionic alert groups
 /// itself (`.alert-message` + `.alert-input-group` / `.alert-radio-group` /
-/// `.alert-checkbox-group`): the dialog then adds no content padding in the
-/// classic looks. Implemented by [AppAlertInputGroup], `AppAlertRadioGroup`
-/// and `AppAlertCheckboxGroup`.
+/// `.alert-checkbox-group`): in the classic looks the dialog adds no content
+/// padding (its `contentPadding` then only counts for Beta). Implemented by
+/// [AppAlertInputGroup], `AppAlertRadioGroup` and `AppAlertCheckboxGroup`.
+///
+/// Each group has a `beta` widget: the content of the dialog in the Beta
+/// design, when that differs from the group's default Beta layout.
 abstract interface class AppAlertGroupContent {
   /// The plain message text, if any (the iOS card is as wide as its text).
   String? get alertMessageText;
@@ -1405,12 +1410,17 @@ class AppAlertInputGroup extends StatelessWidget
     this.message,
     required this.children,
     this.betaCrossAxisAlignment = CrossAxisAlignment.center,
+    this.beta,
   });
 
   /// Usually a [Text].
   final Widget? message;
   final List<Widget> children;
   final CrossAxisAlignment betaCrossAxisAlignment;
+
+  /// Beta only: shown instead of the column (a dialog whose Beta content
+  /// is laid out differently).
+  final Widget? beta;
 
   @override
   String? get alertMessageText => switch (message) {
@@ -1422,6 +1432,8 @@ class AppAlertInputGroup extends StatelessWidget
   Widget build(BuildContext context) {
     final message = this.message;
     if (context.rdSkin != null) {
+      final beta = this.beta;
+      if (beta != null) return beta;
       return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: betaCrossAxisAlignment,

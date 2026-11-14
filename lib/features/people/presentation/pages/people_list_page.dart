@@ -1076,15 +1076,18 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         context: context,
         builder: (ctx) => AppAlertDialog(
           title: Text(field.name),
-          content: TextField(
+          // Ionic alert input `type: 'number'`; "Abbrechen" has
+          // `role: 'destructive'` (list.page.ts onFilterChanged).
+          content: AppAlertInput(
             controller: controller,
             autofocus: true,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(hintText: context.l10n.peopleEnterValue),
+            placeholder: context.l10n.peopleEnterValue,
           ),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(ctx),
+                style: appAlertDestructiveStyle(ctx),
                 child: Text(context.l10n.commonCancel)),
             FilledButton(
                 onPressed: () => Navigator.pop(ctx, controller.text.trim()),

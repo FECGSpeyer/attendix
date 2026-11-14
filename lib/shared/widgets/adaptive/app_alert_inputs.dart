@@ -46,6 +46,7 @@ class AppAlertRadioGroup<T> extends StatelessWidget
     required this.groupValue,
     required this.onChanged,
     this.footer,
+    this.beta,
   });
 
   final Widget? message;
@@ -53,6 +54,10 @@ class AppAlertRadioGroup<T> extends StatelessWidget
   final T? groupValue;
   final ValueChanged<T> onChanged;
   final Widget? footer;
+
+  /// Beta only: the content of the dialog in the new design (default:
+  /// Material radio tiles).
+  final Widget? beta;
 
   @override
   String? get alertMessageText => switch (message) {
@@ -63,8 +68,8 @@ class AppAlertRadioGroup<T> extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     if (context.rdSkin != null) {
-      // Beta: Material radio tiles (callers with their own Beta layout do
-      // not get here).
+      final beta = this.beta;
+      if (beta != null) return beta;
       return SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -122,6 +127,7 @@ class AppAlertCheckboxGroup<T> extends StatelessWidget
     required this.values,
     required this.onChanged,
     this.footer,
+    this.beta,
   });
 
   final Widget? message;
@@ -134,6 +140,10 @@ class AppAlertCheckboxGroup<T> extends StatelessWidget
   final void Function(T value, bool checked) onChanged;
   final Widget? footer;
 
+  /// Beta only: the content of the dialog in the new design (default:
+  /// Material checkbox tiles).
+  final Widget? beta;
+
   @override
   String? get alertMessageText => switch (message) {
         final Text t => t.data,
@@ -143,8 +153,8 @@ class AppAlertCheckboxGroup<T> extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     if (context.rdSkin != null) {
-      // Beta: Material checkbox tiles (callers with their own Beta layout
-      // do not get here).
+      final beta = this.beta;
+      if (beta != null) return beta;
       return SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

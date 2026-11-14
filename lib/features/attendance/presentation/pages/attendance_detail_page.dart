@@ -1632,20 +1632,20 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       context: context,
       builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.attendanceAddTodo),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+        // Ionic alert inputs `text` + `number` (attendance.page.ts addTodo).
+        content: AppAlertInputGroup(
           children: [
-            TextField(
+            AppAlertInput(
               controller: textController,
               autofocus: true,
               textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(hintText: context.l10n.attendanceTodoText),
+              placeholder: context.l10n.attendanceTodoText,
             ),
-            const SizedBox(height: 8),
-            TextField(
+            const AppAlertBetaGap(8),
+            AppAlertInput(
               controller: hoursController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(hintText: context.l10n.attendanceDeadlineHours),
+              placeholder: context.l10n.attendanceDeadlineHours,
             ),
           ],
         ),

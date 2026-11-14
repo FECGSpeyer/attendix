@@ -57,19 +57,27 @@ Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) asy
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AppAlertDialog(
         title: Text(context.l10n.orgSelect),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final org in organisations)
-                RadioListTile<int?>(
-                  contentPadding: EdgeInsets.zero,
-                  value: org.id,
-                  groupValue: selected,
-                  title: Text(org.name),
-                  onChanged: (v) => setState(() => selected = v),
-                ),
-            ],
+        // Ionic alert with `type: 'radio'` inputs (org-settings.page.ts).
+        content: AppAlertRadioGroup<int?>(
+          options: [
+            for (final org in organisations) AppAlertOption(org.id, org.name),
+          ],
+          groupValue: selected,
+          onChanged: (v) => setState(() => selected = v),
+          beta: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final org in organisations)
+                  RadioListTile<int?>(
+                    contentPadding: EdgeInsets.zero,
+                    value: org.id,
+                    groupValue: selected,
+                    title: Text(org.name),
+                    onChanged: (v) => setState(() => selected = v),
+                  ),
+              ],
+            ),
           ),
         ),
         actions: [
@@ -119,16 +127,16 @@ Future<void> showCreateOrganisationDialog(
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AppAlertDialog(
           title: Text(context.l10n.orgCreate),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          content: AppAlertInputGroup(
+            betaCrossAxisAlignment: CrossAxisAlignment.start,
+            message: error == null ? null : Text(error!),
             children: [
-              if (error != null) Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(error!)),
-              TextField(
+              if (error != null) const AppAlertBetaGap(8),
+              AppAlertInput(
                 controller: controller,
                 autofocus: true,
                 textCapitalization: TextCapitalization.words,
-                decoration: InputDecoration(hintText: context.l10n.orgNamePh),
+                placeholder: context.l10n.orgNamePh,
               ),
             ],
           ),

@@ -160,11 +160,9 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
       context: context,
       builder: (context) => AppAlertDialog(
         title: Text(context.l10n.songsAddCategory),
-        content: TextField(
+        content: AppAlertInput(
           controller: controller,
-          decoration: InputDecoration(
-            hintText: context.l10n.songsCategoryName,
-          ),
+          placeholder: context.l10n.songsCategoryName,
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
         ),
@@ -205,11 +203,9 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
       context: context,
       builder: (context) => AppAlertDialog(
         title: Text(context.l10n.songsEditCategory),
-        content: TextField(
+        content: AppAlertInput(
           controller: controller,
-          decoration: InputDecoration(
-            hintText: context.l10n.songsCategoryName,
-          ),
+          placeholder: context.l10n.songsCategoryName,
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
         ),

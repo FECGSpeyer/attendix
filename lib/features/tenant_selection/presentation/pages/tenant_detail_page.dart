@@ -314,35 +314,64 @@ Future<void> _showDeleteTenantDialog(
             final matches = controller.text.trim() == tenantName;
             return AppAlertDialog(
               title: Text(beta ? context.l10n.redesignTenantsDeleteTitle : context.l10n.tenantSelectFlutterDeleteTenant),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (beta)
-                    Text(context.l10n.redesignTenantsDeleteMessage(tenantName))
-                  else ...[
+              // Ionic alert: message + text input, plain buttons
+              // (settings.page.ts deleteInstance).
+              content: AppAlertInputGroup(
+                message: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
                       '${context.l10n.peopleCannotUndoExcl} ${context.l10n.tenantSelectFlutterDeleteAllData}',
                       style: TextStyle(color: AppColors.danger),
                     ),
                     const SizedBox(height: 16),
                     Text(context.l10n.tenantSelectFlutterEnterNameToConfirm),
-                  ],
-                  const SizedBox(height: 8),
-                  Text(
-                    tenantName,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: controller,
-                    decoration: InputDecoration(
-                      hintText: beta ? context.l10n.redesignTenantsDeleteNamePh : context.l10n.orgNamePh,
+                    const SizedBox(height: 8),
+                    Text(
+                      tenantName,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
+                  ],
+                ),
+                children: [
+                  AppAlertInput(
+                    controller: controller,
+                    placeholder: context.l10n.orgNamePh,
                     autofocus: true,
                     onChanged: (_) => setDialogState(() {}),
                   ),
                 ],
+                beta: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (beta)
+                      Text(context.l10n.redesignTenantsDeleteMessage(tenantName))
+                    else ...[
+                      Text(
+                        '${context.l10n.peopleCannotUndoExcl} ${context.l10n.tenantSelectFlutterDeleteAllData}',
+                        style: TextStyle(color: AppColors.danger),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(context.l10n.tenantSelectFlutterEnterNameToConfirm),
+                    ],
+                    const SizedBox(height: 8),
+                    Text(
+                      tenantName,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: controller,
+                      decoration: InputDecoration(
+                        hintText: beta ? context.l10n.redesignTenantsDeleteNamePh : context.l10n.orgNamePh,
+                      ),
+                      autofocus: true,
+                      onChanged: (_) => setDialogState(() {}),
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(
