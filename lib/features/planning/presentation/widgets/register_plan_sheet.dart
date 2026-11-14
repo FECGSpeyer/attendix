@@ -240,10 +240,10 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
       body: _loading
           ? const Center(child: AppSpinner())
           : ListView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+              padding: const EdgeInsets.only(bottom: 32),
               children: [
-                _listHeader(l10n.planningGroups, () => setState(() => _groups.add(_entry('')))),
-                _insetList([
+                // ABL-09/17: ion-list [inset] with its ion-list-header.
+                _insetList(l10n.planningGroups, () => setState(() => _groups.add(_entry(''))), [
                   for (var i = 0; i < _groups.length; i++)
                     _inputRow(
                       key: ValueKey('group-${_groups[i].id}'),
@@ -254,9 +254,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                       onRemove: _groups.length > 2 ? () => _remove(_groups, i) : null,
                     ),
                 ]),
-                const SizedBox(height: 16),
-                _listHeader(l10n.planningConductors, () => setState(() => _conductors.add(_entry('')))),
-                _insetList([
+                _insetList(l10n.planningConductors, () => setState(() => _conductors.add(_entry(''))), [
                   for (var i = 0; i < _conductors.length; i++)
                     _inputRow(
                       key: ValueKey('conductor-${_conductors[i].id}'),
@@ -267,8 +265,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                       onRemove: _conductors.length > 1 ? () => _remove(_conductors, i) : null,
                     ),
                 ]),
-                const SizedBox(height: 16),
-                _insetList([
+                _insetList(null, null, [
                   // Ionic: ion-input with an inline start label.
                   ListTile(
                     leading: Icon(AppIcons.schedule, color: AppColors.medium),
@@ -295,26 +292,35 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                     ),
                   ),
                 ]),
-                const SizedBox(height: 24),
-                FilledButton.icon(
-                  onPressed: _disabled ? null : () => _createPlan(),
-                  icon: Icon(AppIcons.descriptionOutlined),
-                  label: IonButtonLabel(l10n.planningExport),
+                // Ionic `.plan-actions`: block buttons below the lists.
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      FilledButton.icon(
+                        onPressed: _disabled ? null : () => _createPlan(),
+                        // ABL-29: Ionic document-outline.
+                        icon: Icon(AppIcons.documentOutline),
+                        label: IonButtonLabel(l10n.planningExport),
+                      ),
+                      if (chatId != null) ...[
+                        const SizedBox(height: 8),
+                        OutlinedButton.icon(
+                          onPressed: _disabled ? null : () => _createPlan(perTelegram: true),
+                          icon: Icon(AppIcons.sendOutlined),
+                          label: IonButtonLabel(l10n.planningTelegramPdfShort),
+                        ),
+                        const SizedBox(height: 8),
+                        OutlinedButton.icon(
+                          onPressed: _disabled ? null : () => _createPlan(perTelegram: true, asImage: true),
+                          icon: Icon(AppIcons.imageOutlined),
+                          label: IonButtonLabel(l10n.planningTelegramImageShort),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
-                if (chatId != null) ...[
-                  const SizedBox(height: 8),
-                  OutlinedButton.icon(
-                    onPressed: _disabled ? null : () => _createPlan(perTelegram: true),
-                    icon: Icon(AppIcons.sendOutlined),
-                    label: IonButtonLabel(l10n.planningTelegramPdfShort),
-                  ),
-                  const SizedBox(height: 8),
-                  OutlinedButton.icon(
-                    onPressed: _disabled ? null : () => _createPlan(perTelegram: true, asImage: true),
-                    icon: Icon(AppIcons.imageOutlined),
-                    label: IonButtonLabel(l10n.planningTelegramImageShort),
-                  ),
-                ],
               ],
             ),
     );
@@ -507,29 +513,20 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     });
   }
 
-  Widget _listHeader(String label, VoidCallback onAdd) {
-    return IonListHeader(
-      title: label,
-      trailing: IconButton(
-        icon: Icon(AppIcons.addCircleOutline, semanticLabel: context.l10n.a11yIncrease),
-        color: AppColors.primary,
-        onPressed: onAdd,
-      ),
-    );
-  }
-
-  Widget _insetList(List<Widget> children) {
-    return Card(
-      margin: EdgeInsets.zero,
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          for (var i = 0; i < children.length; i++) ...[
-            if (i > 0) const Divider(height: 1, indent: 56),
-            children[i],
-          ],
-        ],
-      ),
+  /// Ionic `ion-list [inset]` with an optional `ion-list-header` and its
+  /// small clear add button; item lines start at the label (after the icon).
+  Widget _insetList(String? header, VoidCallback? onAdd, List<Widget> children) {
+    return IonInsetList(
+      header: header,
+      headerTrailing: onAdd == null
+          ? null
+          : IconButton(
+              icon: Icon(AppIcons.addCircleOutline, semanticLabel: context.l10n.a11yIncrease),
+              color: AppColors.primary,
+              onPressed: onAdd,
+            ),
+      dividerIndent: 56,
+      children: children,
     );
   }
 

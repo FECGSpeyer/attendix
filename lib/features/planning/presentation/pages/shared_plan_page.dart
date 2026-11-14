@@ -812,7 +812,10 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
         // Ionic: ion-list [inset]; header = plan title (+ edit icon and the
         // "+" popover trigger in edit mode); start/end as ion-note.
         IonInsetList(
+          // ABL-09: the inset-list header style (ion-list-header in an
+          // ion-list [inset]).
           headerWidget: IonListHeader(
+            inset: true,
             trailing: _editMode
                 ? Builder(
                     builder: (anchor) => IconButton(

@@ -341,4 +341,8 @@ abstract final class AppIcons {
   static IconData get shareSocialOutline => _pick(Ionicons.shareSocialOutline, Icons.share_outlined);
   static IconData get optionsFilled => _pick(Ionicons.options, Icons.tune);
   static IconData get linkFilled => _pick(Ionicons.link, Icons.link);
+  // Ablauf (stage 2): Ionic icon names used by the planning / org plan pages.
+  static IconData get listCircleOutline => _pick(Ionicons.listCircleOutline, Icons.playlist_add_circle_outlined);
+  static IconData get documentOutline => _pick(Ionicons.documentOutline, Icons.description_outlined);
+  static IconData get documentsOutline => _pick(Ionicons.documentsOutline, Icons.file_copy_outlined);
 }

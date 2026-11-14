@@ -1807,7 +1807,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           AppPopoverMenuItem(
             value: 'topics',
             label: l10n.attendanceAddTopics,
-            icon: AppIcons.playlistAddCircleOutlined,
+            // ABL-29: Ionic list-circle-outline.
+            icon: AppIcons.listCircleOutline,
             iconColor: AppColors.primary,
           ),
         if (canInsertAgenda)
@@ -2283,7 +2284,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                 headerWidget: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // ABL-09: same inset-list header as "Zugehöriger Termin".
                     IonListHeader(
+                      inset: true,
                       title: context.l10n.planningRunSheet,
                       trailing: Builder(
                         builder: (anchor) => IconButton(
