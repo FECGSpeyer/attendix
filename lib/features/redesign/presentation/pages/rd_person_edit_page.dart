@@ -1443,7 +1443,21 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
               title: l10n.rdCriticalTalk,
               titleColor: p.link,
               showChevron: false,
-              onTap: _editable ? () => rdRecordTalk(context, ref, person, reason: criticalReason, run: _enqueue) : null,
+              onTap:
+                  _editable
+                      ? () => rdRecordTalk(
+                        context,
+                        ref,
+                        person,
+                        reason: criticalReason,
+                        // Like _store: nothing once the person left the group
+                        // or may no longer be edited (while the sheet was open).
+                        run: (write) => _enqueue(() async {
+                          if (_deleted || !_editable) return;
+                          await write();
+                        }),
+                      )
+                      : null,
             ),
           ]),
         ],
