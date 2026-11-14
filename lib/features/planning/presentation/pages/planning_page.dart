@@ -679,15 +679,15 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       }
       final captured = _messenger;
       final messenger = captured != null && captured.mounted ? captured : rootScaffoldMessengerKey.currentState;
-      messenger?.showSnackBar(SnackBar(
-        content: Row(children: [
-          Icon(AppIcons.error, color: Colors.white),
-          const SizedBox(width: 12),
-          Expanded(child: Text(message, style: const TextStyle(color: Colors.white))),
-        ]),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-      ));
+      final toastContext = messenger?.context;
+      if (toastContext == null || !toastContext.mounted) return;
+      // QUE-26: iOS look – the Ionic toast in the root overlay too (the
+      // Beta keeps its SnackBar).
+      ToastHelper.showError(
+        toastContext,
+        message,
+        beta: LegacySnackBar(color: Colors.red, floating: true, icon: AppIcons.error),
+      );
     } catch (_) {
       // App already closed.
     }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
@@ -702,29 +704,22 @@ class IonSelect<T> extends StatelessWidget {
 
 /// Ionic `ion-datetime-button`: grey rounded chip showing the date/time
 /// (no "Uhr" suffix). Without [onTap] it is read-only (disabled datetime).
+/// QUE-28: the shared [IonDatetimeButton] under its old name; [disabled]
+/// is Ionic's `[disabled]` on the button (40 % opacity).
 class IonDatetimeChip extends StatelessWidget {
-  const IonDatetimeChip({super.key, required this.text, this.onTap});
+  const IonDatetimeChip({super.key, required this.text, this.onTap, this.disabled = false});
 
   final String text;
-  final VoidCallback? onTap;
+  final FutureOr<void> Function()? onTap;
+  final bool disabled;
 
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final background = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFEDEEF0);
-    return Material(
-      color: background,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Text(text, style: Theme.of(context).textTheme.bodyLarge),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => IonDatetimeButton(
+        date: text,
+        onDateTap: onTap,
+        disabled: disabled,
+        betaStyle: Theme.of(context).textTheme.bodyLarge,
+      );
 }
 
 /// Ionic `ion-header collapse="condense"`: on iOS the page shows a large

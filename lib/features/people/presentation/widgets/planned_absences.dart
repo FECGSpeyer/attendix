@@ -18,6 +18,7 @@ import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
 import 'ion/ion_widgets.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 
 DateFormat get _dateFormat => DateFormat(dateFmt());
 
@@ -97,6 +98,36 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
     super.dispose();
   }
 
+  /// QUE-27: Ionic has two `ion-datetime` ("Von *" / "Bis *", the second
+  /// with `[min]="absenceFrom"`), no range picker. The Beta keeps its
+  /// Material range picker.
+  Future<void> _pickDay({required bool from}) async {
+    if (context.rdSkin != null) return _pickRange();
+    final now = DateTime.now();
+    final first = DateTime(now.year - 1);
+    final min = from || _from == null ? first : _from!;
+    var initial = (from ? _from : _until) ?? _from ?? DateUtils.dateOnly(now);
+    if (initial.isBefore(min)) initial = min;
+    final picked = await showAppDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: min,
+      lastDate: DateTime(now.year + 3),
+      locale: Locale(currentLanguage()),
+      helpText: from ? context.l10n.personFromRequired : context.l10n.personUntilRequired,
+    );
+    if (picked == null || !mounted) return;
+    setState(() {
+      if (from) {
+        _from = picked;
+        // "Bis" may not lie before "Von" (`[min]`).
+        if (_until != null && _until!.isBefore(picked)) _until = null;
+      } else {
+        _until = picked;
+      }
+    });
+  }
+
   Future<void> _pickRange() async {
     final now = DateTime.now();
     final range = await showDateRangePicker(
@@ -172,7 +203,15 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
               subtitle: Text(_from != null
                   ? _dateFormat.format(_from!)
                   : context.l10n.personNoDateChosen),
-              onTap: _pickRange,
+              // Ionic: every row has its own clear button.
+              trailing: context.rdSkin == null && _from != null
+                  ? IconButton(
+                      icon: Icon(AppIcons.cancelOutlined,
+                          color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
+                      onPressed: () => setState(() => _from = null),
+                    )
+                  : null,
+              onTap: () => _pickDay(from: true),
             ),
             ListTile(
               leading: Icon(AppIcons.eventAvailable),
@@ -180,17 +219,17 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
               subtitle: Text(_until != null
                   ? _dateFormat.format(_until!)
                   : context.l10n.personNoDateChosen),
-              trailing: _from != null
+              trailing: (context.rdSkin == null ? _until != null : _from != null)
                   ? IconButton(
                       icon: Icon(AppIcons.cancelOutlined,
                           color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
                       onPressed: () => setState(() {
-                        _from = null;
+                        if (context.rdSkin != null) _from = null;
                         _until = null;
                       }),
                     )
                   : null,
-              onTap: _pickRange,
+              onTap: () => _pickDay(from: false),
             ),
             if (widget.showLongAbsenceHint)
               Padding(

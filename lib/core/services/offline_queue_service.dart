@@ -16,6 +16,7 @@ import '../providers/attendance_providers.dart';
 import '../providers/connectivity_provider.dart';
 import '../providers/tenant_providers.dart';
 import '../../l10n/l10n.dart';
+import '../utils/toast_helper.dart';
 
 /// Root messenger so services can show toasts without a BuildContext.
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
@@ -889,13 +890,15 @@ class OfflineQueueNotifier extends Notifier<int> {
 
     if (failed.isEmpty && !aborted) {
       try {
-        rootScaffoldMessengerKey.currentState?.showSnackBar(
-          SnackBar(
-            content: Text(l10nWithoutContext.svcOfflineSaved),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        // Ionic: Utils.showToast(translate('svc.offlineSaved'), 'success')
+        final toastContext = rootScaffoldMessengerKey.currentContext;
+        if (toastContext != null && toastContext.mounted) {
+          ToastHelper.showSuccess(
+            toastContext,
+            l10nWithoutContext.svcOfflineSaved,
+            beta: const LegacySnackBar(color: Colors.green, floating: true),
+          );
+        }
       } catch (_) {
         // No messenger available (e.g. tests)
       }

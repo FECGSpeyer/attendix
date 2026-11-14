@@ -870,9 +870,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     final writer = AttendanceCreateWriter(ref);
     final tenant = writer.tenant;
     if (_selectedType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.attendanceFlutterChooseType)),
-      );
+      ToastHelper.showError(context, context.l10n.attendanceFlutterChooseType, beta: LegacySnackBar.plain);
       return;
     }
 
@@ -947,8 +945,10 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)))),
+      ToastHelper.showError(
+        context,
+        context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)),
+        beta: LegacySnackBar.plain,
       );
     } finally {
       widget.savingNotifier?.value = false;

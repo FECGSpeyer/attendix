@@ -18,6 +18,7 @@ import '../../data/assistant_command.dart';
 import '../../data/assistant_logic.dart' show assistantMaxChanges;
 import '../../data/assistant_reply.dart';
 import '../assistant_voice.dart';
+import '../../../../core/utils/toast_helper.dart';
 
 /// Chat assistant. One page for both designs: in the new design it takes
 /// the colours of the Beta palette.
@@ -90,8 +91,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
     );
     if (!ok && mounted) {
       setState(() => _listening = false);
-      ScaffoldMessenger.maybeOf(context)
-          ?.showSnackBar(SnackBar(content: Text(context.l10n.assistantVoiceUnavailable)));
+      ToastHelper.showWarning(context, context.l10n.assistantVoiceUnavailable, beta: LegacySnackBar.plain);
     }
   }
 

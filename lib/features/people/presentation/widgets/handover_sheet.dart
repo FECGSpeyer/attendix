@@ -669,11 +669,10 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
         debugPrint('Error loading target groups: $e');
       }
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.peopleFlutterGroupsLoadFailed),
-            backgroundColor: Colors.red,
-          ),
+        ToastHelper.showError(
+          context,
+          context.l10n.peopleFlutterGroupsLoadFailed,
+          beta: const LegacySnackBar(color: Colors.red),
         );
       }
     }

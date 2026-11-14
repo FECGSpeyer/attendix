@@ -337,6 +337,8 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
       initialDate: current,
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
+      // md look: Ionic has a native date input here (calendar with buttons).
+      overlay: IonDatetimeOverlay.buttons,
     );
     if (picked == null || !mounted) return;
     setState(() => _defaultValue = DateFormat('yyyy-MM-dd').format(picked));

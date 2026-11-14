@@ -547,7 +547,10 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       if (expanded) ...[
         ListTile(
           title: Text(context.l10n.shiftsStartTime),
-          trailing: TextButton(onPressed: () => _pickStart(i), child: Text(start.isEmpty ? '--:--' : start)),
+          // Ionic `ion-datetime-button slot="end"` (QUE-28); Beta: as before.
+          trailing: context.rdSkin != null
+              ? TextButton(onPressed: () => _pickStart(i), child: Text(start.isEmpty ? '--:--' : start))
+              : IonDatetimeButton(time: start.isEmpty ? '--:--' : start, onTimeTap: () => _pickStart(i)),
         ),
         PlanFieldsEditor(
           fields: tpl.fields,

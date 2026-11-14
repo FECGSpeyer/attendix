@@ -350,6 +350,9 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       firstDate: first,
       lastDate: today,
       locale: Locale(currentLanguage()), // PARITY_R10: app language
+      // Ionic: `ion-modal.attDateModal`, `show-adjacent-days`.
+      overlay: IonDatetimeOverlay.dateModal,
+      showAdjacentDays: true,
     );
     if (picked != null) {
       // Fix double setState (Issue #13) - set both values in one setState

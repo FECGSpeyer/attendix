@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/archived_attendance.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
@@ -719,6 +720,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           onEndTimeSelect: _selectEndTime,
                           onDeadlineToggle: _toggleDeadline,
                           onDeadlineSelect: _selectDeadline,
+                          onDeadlineDateSelect: () => _selectDeadline(time: false),
+                          onDeadlineTimeSelect: () => _selectDeadline(date: false),
                           onExportExcel: _exportAttendanceToExcel,
                           onDateSelect: _changeDate,
                           onPlaceChanged: _updatePlace,
@@ -1889,7 +1892,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     }
   }
 
-  Future<void> _selectDeadline() async {
+  /// QUE-28: the deadline's `ion-datetime-button` has a date and a time
+  /// pill; each opens only its part ([date] / [time]). Both (the Beta's
+  /// single chip): the calendar, then the time wheels.
+  Future<void> _selectDeadline({bool date = true, bool time = true}) async {
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
     if (attendance == null) return;
@@ -1924,13 +1930,16 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (initialDate.isBefore(firstDate)) initialDate = firstDate;
     if (initialDate.isAfter(lastDate)) initialDate = lastDate;
 
-    final selectedDate = await showAppDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: firstDate,
-      lastDate: lastDate,
-      helpText: context.l10n.attendanceFlutterChooseDeadline,
-    );
+    final selectedDate = !date
+        // the time pill keeps the day, also one before today
+        ? (currentDeadline ?? initialDate)
+        : await showAppDatePicker(
+            context: context,
+            initialDate: initialDate,
+            firstDate: firstDate,
+            lastDate: lastDate,
+            helpText: context.l10n.attendanceFlutterChooseDeadline,
+          );
 
     if (selectedDate == null || !mounted) return;
 
@@ -1938,18 +1947,24 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     // and returns null when left unchanged, so that is what gets saved.
     final rawTime = TimeOfDay.fromDateTime(currentDeadline ?? initialDate);
     final initialTime = TimeOfDay(hour: rawTime.hour, minute: rawTime.minute - rawTime.minute % 5);
-    final selectedTime = await showAppTimePicker(
-      context: context,
-      initialTime: initialTime,
-      // Ionic minuteValues="0,5,10,…,55"
-      minuteInterval: 5,
-    );
+    final selectedTime = !time
+        ? null
+        : await showAppTimePicker(
+            context: context,
+            initialTime: initialTime,
+            // Ionic minuteValues="0,5,10,…,55"
+            minuteInterval: 5,
+          );
 
     if (!mounted) return;
+    // Only the time pill, wheels left unchanged: nothing to save.
+    if (!date && selectedTime == null) return;
 
-    // The iOS wheel returns null when the time was left unchanged.
-    final time = selectedTime ?? initialTime;
-    var picked = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, time.hour, time.minute);
+    // The iOS wheel returns null when the time was left unchanged; the date
+    // pill alone keeps the time as it is.
+    final timeOfDay = selectedTime ?? (time ? initialTime : rawTime);
+    var picked = DateTime(
+        selectedDate.year, selectedDate.month, selectedDate.day, timeOfDay.hour, timeOfDay.minute);
     // ion-datetime clamps to [min, max].
     if (picked.isAfter(maxDeadline)) picked = maxDeadline;
     final deadlineStr = DateTime.utc(picked.year, picked.month, picked.day, picked.hour, picked.minute)
@@ -2473,6 +2488,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final selectedTime = await showAppTimePicker(
       context: context,
       initialTime: currentTime,
+      // Ionic minuteValues="0,5,10,…,55"; the Beta keeps its minute steps.
+      minuteInterval: context.rdSkin != null ? 1 : 5,
     );
 
     if (selectedTime == null || !mounted) return;
@@ -2528,6 +2545,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final selectedTime = await showAppTimePicker(
       context: context,
       initialTime: currentTime,
+      // Ionic minuteValues="0,5,10,…,55"; the Beta keeps its minute steps.
+      minuteInterval: context.rdSkin != null ? 1 : 5,
     );
 
     if (selectedTime == null || !mounted) return;

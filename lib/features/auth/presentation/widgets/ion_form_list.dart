@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/adaptive/app_select.dart';
+import '../../../../shared/widgets/adaptive/ion_datetime_button.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' as ion;
 
 /// UX_AUTH: building blocks for the Ionic `ion-list [inset]="true"` forms of
@@ -353,35 +356,23 @@ class IonButtonItem extends StatelessWidget {
 }
 
 /// `ion-datetime-button` at the end of an item: light grey rounded chip
-/// with the formatted value.
+/// with the formatted value. QUE-28: the shared [IonDatetimeButton] under
+/// its old name.
 class IonDateButton extends StatelessWidget {
   const IonDateButton({super.key, required this.text, required this.onTap});
 
   final String text;
-  final VoidCallback? onTap;
+  final FutureOr<void> Function()? onTap;
 
   @override
-  Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    return Material(
-      color: dark ? const Color(0xFF2C2C2E) : const Color(0xFFEDEEF0),
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: ionItemFontSize(context),
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
+  Widget build(BuildContext context) => IonDatetimeButton(
+        date: text,
+        onDateTap: onTap,
+        betaStyle: TextStyle(
+          fontSize: ionItemFontSize(context),
+          color: Theme.of(context).colorScheme.onSurface,
         ),
-      ),
-    );
-  }
+      );
 }
 
 /// Value + caret at the end of an `ion-select` item (non-stacked label).
