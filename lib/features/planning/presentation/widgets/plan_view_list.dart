@@ -295,6 +295,8 @@ class PlanChips extends StatelessWidget {
   }
 }
 
+/// ABL-29: Ionic `ion-chip` of app-plan-chips – outline medium, the
+/// selected one filled primary (the shared [IonChip]).
 class _PlanChip extends StatelessWidget {
   const _PlanChip({required this.label, required this.selected, required this.onTap});
 
@@ -303,29 +305,10 @@ class _PlanChip extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
-    final color = selected ? AppColors.primary : AppColors.medium;
-    final shape = StadiumBorder(
-      side: selected ? BorderSide.none : BorderSide(color: AppColors.medium.withValues(alpha: 0.32)),
-    );
-    return Material(
-      color: selected ? AppColors.primary.withValues(alpha: 0.12) : Colors.transparent,
-      shape: shape,
-      child: InkWell(
-        customBorder: shape,
+  Widget build(BuildContext context) => IonChip(
+        label: label,
+        outline: !selected,
+        color: selected ? AppColors.primary : AppColors.medium,
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 13,
-              color: selected ? AppColors.primaryDark : color,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+      );
 }

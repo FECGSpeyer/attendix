@@ -668,10 +668,17 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       key: ValueKey('slide-${_fields[index].id}-$index'),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
-        extentRatio: canIndent ? 0.45 : 0.2,
+        // F-ABL-11: room for the whole "Ausrücken" label on phones.
+        extentRatio: canIndent ? 0.5 : 0.2,
+        // ABL-29: Ionic `(ionSwipe)` + `expandable` – a full swipe deletes
+        // (a block head asks first, so it keeps the plain options).
+        dismissible: PlanUtils.isGroupHead(_fields[index])
+            ? null
+            : DismissiblePane(onDismissed: () => _removeField(index)),
         children: [
           if (canIndent)
             SlidableAction(
+              flex: 2,
               onPressed: (_) => _toggleIndent(index),
               backgroundColor: AppColors.medium,
               foregroundColor: Colors.white,
