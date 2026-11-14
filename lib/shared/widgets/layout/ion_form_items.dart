@@ -99,6 +99,7 @@ class IonStackedInputItem extends StatefulWidget {
     this.obscureText = false,
     this.focusNode,
     this.onSubmitted,
+    this.maxLength,
   });
 
   final String label;
@@ -132,6 +133,9 @@ class IonStackedInputItem extends StatefulWidget {
   final bool lines;
   final bool obscureText;
   final FocusNode? focusNode;
+
+  /// Ionic `maxlength` (no counter is shown).
+  final int? maxLength;
 
   /// Enter / done on the keyboard.
   final ValueChanged<String>? onSubmitted;
@@ -170,6 +174,7 @@ class _IonStackedInputItemState extends State<IonStackedInputItem> {
       helperMaxLines: 4,
       helperStyle: TextStyle(fontSize: 12, color: helperColor, height: 1.3),
       errorMaxLines: 3,
+      counterText: '',
       errorStyle: const TextStyle(fontSize: 12, color: AppColors.danger),
       isDense: true,
       filled: false,
@@ -195,6 +200,7 @@ class _IonStackedInputItemState extends State<IonStackedInputItem> {
               onChanged: widget.onChanged,
               onFieldSubmitted: widget.onSubmitted,
               focusNode: widget.focusNode,
+              maxLength: widget.maxLength,
               validator: widget.validator,
               obscureText: widget.obscureText,
               keyboardType:
@@ -215,6 +221,7 @@ class _IonStackedInputItemState extends State<IonStackedInputItem> {
               onChanged: widget.onChanged,
               onSubmitted: widget.onSubmitted,
               focusNode: widget.focusNode,
+              maxLength: widget.maxLength,
               obscureText: widget.obscureText,
               keyboardType:
                   widget.keyboardType ??
