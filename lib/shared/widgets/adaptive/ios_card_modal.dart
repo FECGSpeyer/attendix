@@ -90,29 +90,20 @@ class _PresentingSnapshot {
   }
 }
 
-/// The snapshot of the presenting page, drawn like `RawImage(fit: fill)`
-/// with [colorFilter] applied in the same draw.
-class _PresentingImagePainter extends CustomPainter {
-  _PresentingImagePainter(this.image, this.colorFilter);
+/// Keeps what lies above [bottom] (the part of the presenting page the card
+/// does not cover).
+class _AboveCardClipper extends CustomClipper<Rect> {
+  const _AboveCardClipper(this.bottom);
 
-  final ui.Image image;
-  final ColorFilter colorFilter;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    paintImage(
-      canvas: canvas,
-      rect: Offset.zero & size,
-      image: image,
-      fit: BoxFit.fill,
-      colorFilter: colorFilter,
-      filterQuality: FilterQuality.medium,
-    );
-  }
+  final double bottom;
 
   @override
-  bool shouldRepaint(_PresentingImagePainter oldDelegate) =>
-      oldDelegate.image != image || oldDelegate.colorFilter != colorFilter;
+  Rect getClip(Size size) =>
+      Rect.fromLTRB(0, 0, size.width, bottom.clamp(0.0, size.height));
+
+  @override
+  bool shouldReclip(_AboveCardClipper oldClipper) =>
+      oldClipper.bottom != bottom;
 }
 
 class _IosCardModalRoute<T> extends PopupRoute<T> {
@@ -208,6 +199,9 @@ class _IosCardModalFrame extends StatelessWidget {
     );
     final snapshot = route.snapshot;
     final theme = Theme.of(context);
+    final cardColor = route.backgroundColor ??
+        context.rdSkin?.bg ??
+        theme.colorScheme.surface;
 
     return Stack(
       children: [
@@ -217,14 +211,28 @@ class _IosCardModalFrame extends StatelessWidget {
             animation: curved,
             builder: (context, _) {
               final t = curved.value.clamp(0.0, 1.0);
+              // PERF: only the part the card does not cover is drawn. The
+              // shrunk page with its contrast layer was otherwise painted
+              // in full under the card on every frame (also while the
+              // card's content scrolls), although only the strip above
+              // the card shows.
+              Widget aboveCard(Widget page) => cardColor.a < 1
+                  ? page
+                  : ClipRect(
+                      clipper: _AboveCardClipper(cardTop +
+                          (1 - curved.value) * cardHeight +
+                          kIosCardModalRadius +
+                          1),
+                      child: page,
+                    );
               if (snapshot == null) {
-                return ColoredBox(
-                    color: Colors.black.withValues(alpha: 0.4 * t));
+                return aboveCard(ColoredBox(
+                    color: Colors.black.withValues(alpha: 0.4 * t)));
               }
               final scale = 1 - (1 - kIosCardModalPresentingScale) * t;
               final contrast = 1 - 0.15 * t;
               final offset = (1 - contrast) / 2 * 255;
-              return ColoredBox(
+              final page = ColoredBox(
                 color: Colors.black,
                 child: Stack(
                   children: [
@@ -238,21 +246,17 @@ class _IosCardModalFrame extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.vertical(
                               top: Radius.circular(10 * t)),
-                          // PERF: the contrast is part of the image
-                          // draw. A ColorFiltered layer cost a full-screen
-                          // offscreen pass on every frame while the card
-                          // is open (also while its content scrolls).
-                          child: CustomPaint(
-                            painter: _PresentingImagePainter(
-                              snapshot.image,
-                              ColorFilter.matrix(<double>[
-                                contrast, 0, 0, 0, offset, //
-                                0, contrast, 0, 0, offset, //
-                                0, 0, contrast, 0, offset, //
-                                0, 0, 0, 1, 0,
-                              ]),
+                          child: ColorFiltered(
+                            colorFilter: ColorFilter.matrix(<double>[
+                              contrast, 0, 0, 0, offset, //
+                              0, contrast, 0, 0, offset, //
+                              0, 0, contrast, 0, offset, //
+                              0, 0, 0, 1, 0,
+                            ]),
+                            child: RawImage(
+                              image: snapshot.image,
+                              fit: BoxFit.fill,
                             ),
-                            child: const SizedBox.expand(),
                           ),
                         ),
                       ),
@@ -266,6 +270,7 @@ class _IosCardModalFrame extends StatelessWidget {
                   ],
                 ),
               );
+              return aboveCard(page);
             },
           ),
         ),
@@ -306,7 +311,7 @@ class _IosCardModalFrame extends StatelessWidget {
                 ),
                 child: Material(
                   // Beta-Skin: the page colour of the new design.
-                  color: route.backgroundColor ?? context.rdSkin?.bg ?? theme.colorScheme.surface,
+                  color: cardColor,
                   child: MediaQuery.removePadding(
                     context: context,
                     removeTop: true,
