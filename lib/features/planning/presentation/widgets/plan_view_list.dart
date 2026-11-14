@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../l10n/l10n.dart';
@@ -295,8 +296,9 @@ class PlanChips extends StatelessWidget {
   }
 }
 
-/// ABL-29: Ionic `ion-chip` of app-plan-chips – outline medium, the
-/// selected one filled primary (the shared [IonChip]).
+/// ABL-29: Ionic `ion-chip` of app-plan-chips (plan-chips.component.scss:
+/// font-size 13px, normal weight): outline medium, selected = color primary
+/// (`current-color(base, .08..12)` background, shade text).
 class _PlanChip extends StatelessWidget {
   const _PlanChip({required this.label, required this.selected, required this.onTap});
 
@@ -305,10 +307,30 @@ class _PlanChip extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => IonChip(
-        label: label,
-        outline: !selected,
-        color: selected ? AppColors.primary : AppColors.medium,
+  Widget build(BuildContext context) {
+    final color = selected ? AppColors.primary : AppColors.medium;
+    final shape = StadiumBorder(
+      side: selected ? BorderSide.none : BorderSide(color: AppColors.medium.withValues(alpha: 0.32)),
+    );
+    return Material(
+      color: selected ? AppColors.primary.withValues(alpha: 0.12) : Colors.transparent,
+      shape: shape,
+      child: InkWell(
+        customBorder: shape,
         onTap: onTap,
-      );
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              color: selected ? AppColors.primaryDark : color,
+              // The Beta keeps its bold selected chip.
+              fontWeight: selected && context.rdSkin != null ? FontWeight.w600 : FontWeight.w400,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
