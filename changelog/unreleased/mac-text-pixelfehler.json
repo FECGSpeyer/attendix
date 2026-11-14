@@ -1,1 +1,0 @@
-{"bump": "patch", "changes": ["🐛 Mac-App: Einzelne Buchstaben oder ganze Texte erscheinen nicht mehr als Pixelrauschen (Mac-App zeichnet wieder mit Skia, bis Flutter 3.50 eingebaut ist)"]}

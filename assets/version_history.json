@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.152.1",
+      "date": "14.11.2026",
+      "changes": [
+        "🐛 Mac-App: Einzelne Buchstaben oder ganze Texte erscheinen nicht mehr als Pixelrauschen (Mac-App zeichnet wieder mit Skia, bis Flutter 3.50 eingebaut ist)"
+      ]
+    },
+    {
       "version": "0.152.0",
       "date": "14.11.2026",
       "changes": [
