@@ -140,7 +140,13 @@ class _GroupPdfRatioDialogState extends State<GroupPdfRatioDialog> {
     ];
     return AppAlertDialog(
       title: Text(l10n.songsPrintOptions),
-      content: Column(
+      // Ionic alert: message + `type: 'radio'` inputs (song.page.ts).
+      content: AppAlertRadioGroup<int>(
+        message: Text(l10n.songsCopiesPerGroup),
+        options: [for (final o in options) AppAlertOption(o.$1, o.$2)],
+        groupValue: _ratio,
+        onChanged: (v) => setState(() => _ratio = v),
+        beta: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -154,6 +160,7 @@ class _GroupPdfRatioDialogState extends State<GroupPdfRatioDialog> {
               onChanged: (v) => setState(() => _ratio = v ?? 1),
             ),
         ],
+      ),
       ),
       actions: [
         TextButton(

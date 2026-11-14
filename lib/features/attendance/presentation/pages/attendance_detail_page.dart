@@ -1327,7 +1327,18 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           return AppAlertDialog(
             title: Text(context.l10n.attendanceSorting),
             contentPadding: const EdgeInsets.symmetric(vertical: 12),
-            content: SizedBox(
+            // Ionic alert with `type: 'radio'` inputs (attendance.page.ts).
+            content: AppAlertRadioGroup<String>(
+              options: [
+                AppAlertOption('__default__', context.l10n.attendanceDefaultSortGroup),
+                for (final f in fields) ...[
+                  AppAlertOption('${f.id}__asc', '${f.name} ↑'),
+                  AppAlertOption('${f.id}__desc', '${f.name} ↓'),
+                ],
+              ],
+              groupValue: selected,
+              onChanged: (v) => setDialogState(() => selected = v),
+              beta: SizedBox(
               width: double.maxFinite,
               child: ListView(
                 shrinkWrap: true,
@@ -1339,6 +1350,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   ],
                 ],
               ),
+            ),
             ),
             actions: [
               TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),

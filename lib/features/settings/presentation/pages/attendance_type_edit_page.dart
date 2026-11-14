@@ -833,7 +833,25 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(context.l10n.typeSettingsAvailableStatus),
           contentPadding: const EdgeInsets.symmetric(vertical: 8),
-          content: SingleChildScrollView(
+          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
+          content: AppAlertCheckboxGroup<AttendanceStatus>(
+            options: [
+              for (final status in _ionicStatusOptions)
+                AppAlertOption(
+                  status,
+                  _getStatusName(status),
+                  enabled: status != AttendanceStatus.present,
+                ),
+            ],
+            values: selected,
+            onChanged: (status, checked) => setLocal(() {
+              if (checked) {
+                selected.add(status);
+              } else if (selected.length > 1) {
+                selected.remove(status);
+              }
+            }),
+            beta: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -853,6 +871,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   ),
               ],
             ),
+          ),
           ),
           actions: [
             TextButton(
@@ -1232,7 +1251,17 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(context.l10n.typeSettingsRelevantGroups),
           contentPadding: const EdgeInsets.symmetric(vertical: 8),
-          content: SingleChildScrollView(
+          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
+          content: AppAlertCheckboxGroup<int>(
+            options: [
+              for (final group in groups.where((g) => g.id != null))
+                AppAlertOption(group.id!, group.name),
+            ],
+            values: selected,
+            onChanged: (id, checked) => setLocal(() {
+              checked ? selected.add(id) : selected.remove(id);
+            }),
+            beta: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -1250,6 +1279,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   ),
               ],
             ),
+          ),
           ),
           actions: [
             TextButton(

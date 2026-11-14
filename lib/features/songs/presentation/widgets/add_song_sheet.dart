@@ -107,7 +107,17 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(context.l10n.songsInstrumentation),
-          content: SizedBox(
+          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
+          content: AppAlertCheckboxGroup<int>(
+            options: [
+              for (final g in groups)
+                if (g.id != null) AppAlertOption(g.id!, g.name),
+            ],
+            values: selection.toSet(),
+            onChanged: (id, checked) => setLocal(() {
+              checked ? selection.add(id) : selection.remove(id);
+            }),
+            beta: SizedBox(
             width: double.maxFinite,
             child: ListView(
               shrinkWrap: true,
@@ -122,6 +132,7 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
                   ),
               ],
             ),
+          ),
           ),
           actions: [
             TextButton(

@@ -195,7 +195,12 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(ctx.l10n.dateDialogWhichType),
-          content: Column(
+          // Ionic alert with `type: 'radio'` inputs (attendance-date-dialog.ts).
+          content: AppAlertRadioGroup<String>(
+            options: [for (final t in types) AppAlertOption(t.id!, t.name)],
+            groupValue: selected,
+            onChanged: (v) => setLocal(() => selected = v),
+            beta: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               for (final t in types)
@@ -206,6 +211,7 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
                   onChanged: (v) => setLocal(() => selected = v),
                 ),
             ],
+          ),
           ),
           actions: [
             TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(ctx.l10n.commonCancel)),

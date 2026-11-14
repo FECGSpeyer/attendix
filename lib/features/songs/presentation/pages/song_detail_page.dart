@@ -902,7 +902,16 @@ class _MultiSelectTile<T> extends StatelessWidget {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(title),
-          content: SizedBox(
+          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
+          content: AppAlertCheckboxGroup<T>(
+            options: [
+              for (final o in options) AppAlertOption(o.$1, o.$2, enabled: !o.$3),
+            ],
+            values: selection.toSet(),
+            onChanged: (v, checked) => setLocal(() {
+              checked ? selection.add(v) : selection.remove(v);
+            }),
+            beta: SizedBox(
             width: double.maxFinite,
             child: ListView(
               shrinkWrap: true,
@@ -919,6 +928,7 @@ class _MultiSelectTile<T> extends StatelessWidget {
                   ),
               ],
             ),
+          ),
           ),
           actions: [
             TextButton(
