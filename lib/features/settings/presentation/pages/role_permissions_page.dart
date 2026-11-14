@@ -14,6 +14,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/role_permission/tenant_role_permission.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/ion_condense.dart';
+import '../../../../shared/widgets/layout/ion_form_items.dart' show IonArrowBackButton;
 import '../widgets/settings_list.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
@@ -105,11 +106,22 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
             context.l10n.rolePermUnsavedMessage),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, 'discard'),
-            child: Text(context.l10n.rolePermDiscard, style: const TextStyle(color: AppColors.danger)),
-          ),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, 'save'), child: Text(context.l10n.commonSave)),
+          // EIB-13: the destructive colour on the button itself (also the
+          // iOS alert action sees it), "Speichern" a plain alert button.
+          if (ctx.rdSkin == null) ...[
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, 'discard'),
+              style: appAlertDestructiveStyle(ctx),
+              child: Text(context.l10n.rolePermDiscard),
+            ),
+            TextButton(onPressed: () => Navigator.pop(ctx, 'save'), child: Text(context.l10n.commonSave)),
+          ] else ...[
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, 'discard'),
+              child: Text(context.l10n.rolePermDiscard, style: const TextStyle(color: AppColors.danger)),
+            ),
+            ElevatedButton(onPressed: () => Navigator.pop(ctx, 'save'), child: Text(context.l10n.commonSave)),
+          ],
         ],
       ),
     );
@@ -159,10 +171,14 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
         extendBodyBehindAppBar: ionIsIos(context),
         // IOS_R6: `ion-header translucent` (blur once condensed)
         appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
-          leading: IconButton(
-            icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-            onPressed: () => Navigator.of(context).maybePop(),
-          ),
+          // EIB-12: Ionic custom `arrow-back` ion-button (glass circle on iOS).
+          leading: context.rdSkin == null
+              ? IonArrowBackButton(onPressed: () => Navigator.of(context).maybePop())
+              : IconButton(
+                  icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
+                  onPressed: () => Navigator.of(context).maybePop(),
+                ),
+          leadingWidth: context.rdSkin == null ? IonArrowBackButton.leadingWidth(context) : null,
           title: IonCondenseTitle(context.l10n.rolePermTitle, collapsed: collapsed),
         )),
         // IOS_SHELL: iOS → ion-fab in the tab bar row
@@ -180,14 +196,19 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
           data: (permissions) {
             _initFrom(permissions);
             final ios = ionIsIos(context);
+            final classic = context.rdSkin == null;
             return ListView(
               padding: EdgeInsets.fromLTRB(
-                  ionListMargin(context), ios ? 0 : AppDimensions.paddingM, ionListMargin(context), 96),
+                  ionListMargin(context),
+                  ios ? 0 : AppDimensions.paddingM,
+                  ionListMargin(context),
+                  classic ? scrollEndPadding(context, base: 16, fabRoom: 84) : 96),
               children: [
                 const IonContentTopInset(),
                 IonLargeTitle(context.l10n.rolePermTitle, padding: const EdgeInsets.only(bottom: 4)),
                 if (ios) const SizedBox(height: 16),
-                if (ios)
+                // EIB-13: the inset list in the md look too.
+                if (ios || classic)
                   SettingsListSection(
                     title: context.l10n.rolePermFiles,
                     icons: false,
@@ -299,6 +320,14 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
         title: Text(label, style: TextStyle(fontSize: 16, color: IonIos.text(context))),
         childrenPadding: const EdgeInsets.only(top: 8, bottom: 16),
         children: [IonInsetGroup(children: toggles)],
+      );
+    }
+    if (!beta) {
+      // EIB-13: md – the accordion header on the light page, the toggles in
+      // an inset list (no Material card).
+      return IonAccordionTile(
+        title: Text(label),
+        children: [SettingsListSection(icons: false, children: toggles)],
       );
     }
     return Card(
