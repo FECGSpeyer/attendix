@@ -63,7 +63,8 @@ class AiService {
     final blocked = {for (final t in taken) _key(t)};
     for (final s in splitSynonyms(generated)) {
       final key = _key(s);
-      if (key.isEmpty || blocked.contains(key) || !seen.add(key)) continue;
+      // A single letter ("S", "A") is in too many file names.
+      if (key.length < 2 || blocked.contains(key) || !seen.add(key)) continue;
       result.add(s);
     }
     return result.join(', ');

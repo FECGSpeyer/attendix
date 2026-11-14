@@ -32,7 +32,7 @@ const SYSTEM = `You help a rehearsal app assign sheet music files to the parts (
 For one group you list the other terms this part is called in the file names and on the title of printed parts.
 
 Give:
-- the usual abbreviations of the instrument or voice (Violine: Vl, Vln; Flöte: Fl; Trompete: Trp, Tpt; Posaune: Pos, Tbn; Sopran: Sop, S),
+- the usual abbreviations of the instrument or voice (Violine: Vl, Vln; Flöte: Fl; Trompete: Trp, Tpt; Posaune: Pos, Tbn; Sopran: Sop), never a single letter,
 - its name in German, English and Italian where it differs from the group name (Geige, Violin, Violino).
 
 Rules:
@@ -118,7 +118,8 @@ Deno.serve(async (req: Request) => {
     for (const raw of (choice.message?.content ?? "").split(/[,\n]/)) {
       const term = raw.trim().replace(/^["']+|["'.]+$/g, "").trim();
       const k = key(term);
-      if (!k || term.length > 40 || seen.has(k)) continue;
+      // A single letter ("S", "A") is in too many file names.
+      if (k.length < 2 || term.length > 40 || seen.has(k)) continue;
       seen.add(k);
       terms.push(term);
       if (terms.length === MAX_TERMS) break;
