@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -428,7 +429,7 @@ class _ContentPopoverRoute<T> extends PopupRoute<T> {
       curve: Curves.easeOutCubic,
       reverseCurve: Curves.easeIn,
     );
-    return capturedThemes.wrap(
+    return capturedThemes.wrap(_EscapeDismiss(child:
       MediaQuery.removePadding(
         context: context,
         removeTop: true,
@@ -449,8 +450,60 @@ class _ContentPopoverRoute<T> extends PopupRoute<T> {
           ),
         ),
       ),
-    );
+    ));
   }
+}
+
+/// F-PERS-05: Escape closes a popover even when the keyboard focus is not
+/// inside it. On the web the focus can stay on the trigger of the page
+/// below (e.g. its accessibility element took the browser focus on the
+/// click), so the popover's own Escape action (an ancestor of the focus
+/// only inside the popover) never saw the key until something in it was
+/// clicked. With the focus inside the popover the usual action handles
+/// Escape (a nested popover closes alone), so nothing runs twice.
+class _EscapeDismiss extends StatefulWidget {
+  const _EscapeDismiss({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_EscapeDismiss> createState() => _EscapeDismissState();
+}
+
+class _EscapeDismissState extends State<_EscapeDismiss> {
+  @override
+  void initState() {
+    super.initState();
+    HardwareKeyboard.instance.addHandler(_onKey);
+  }
+
+  @override
+  void dispose() {
+    HardwareKeyboard.instance.removeHandler(_onKey);
+    super.dispose();
+  }
+
+  bool _onKey(KeyEvent event) {
+    if (event is! KeyDownEvent ||
+        event.logicalKey != LogicalKeyboardKey.escape ||
+        !mounted) {
+      return false;
+    }
+    final route = ModalRoute.of(context);
+    if (route == null || !route.isCurrent || !route.isActive) return false;
+    final focus = FocusManager.instance.primaryFocus;
+    // The route's own focus scope (its page lies right inside it).
+    final scope = FocusScope.of(context, createDependency: false);
+    if (focus != null &&
+        (focus == scope || focus.ancestors.contains(scope))) {
+      return false;
+    }
+    Navigator.of(context).maybePop();
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 /// Where an [_AnchoredPopover] was put on its first layout. Like Ionic, a
@@ -856,7 +909,7 @@ class _PopoverRoute<T> extends PopupRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    return capturedThemes.wrap(
+    return capturedThemes.wrap(_EscapeDismiss(child:
       MediaQuery.removePadding(
         context: context,
         removeTop: true,
@@ -868,7 +921,7 @@ class _PopoverRoute<T> extends PopupRoute<T> {
           bottomPadding: MediaQuery.of(context).padding.bottom,
         ),
       ),
-    );
+    ));
   }
 }
 
