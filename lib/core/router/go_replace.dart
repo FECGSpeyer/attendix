@@ -54,3 +54,16 @@ Future<bool> untilRouteShown(
     return false;
   });
 }
+
+/// LINKS_STARTUP: for resolver pages that open on top of the running tab
+/// shell and navigate back into it at once (`/open-link`,
+/// `/open-attendance`, `/open-file`, `/register/<id>` when signed in).
+/// Waits for the page's own push transition ([untilRouteShown]) so the old
+/// shell has left the tree before the new one is built (otherwise both
+/// share the shell's navigator key and the tab content stays blank). True
+/// when the caller may still navigate: [route] is still the top route (also
+/// after a timeout); false when it is being removed or was replaced.
+Future<bool> untilReadyToLeave(ModalRoute<dynamic>? route) async {
+  await untilRouteShown(route);
+  return route == null || route.isCurrent;
+}

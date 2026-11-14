@@ -6,6 +6,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/message_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/go_replace.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/services/error_reporter.dart';
@@ -35,10 +36,17 @@ class _OpenAttendancePageState extends ConsumerState<OpenAttendancePage> {
   }
 
   Future<void> _resolve() async {
+    // F-RAHMEN-17: a link opened in the running app puts this page on top
+    // of the tab shell; going back into the shell before it is shown left
+    // the Termin blank (old and new shell shared their navigator key). Wait
+    // first and navigate with the router captured now.
+    final route = ModalRoute.of(context);
+    final router = GoRouter.of(context);
+    if (!await untilReadyToLeave(route) || !mounted) return;
     final idParam = widget.attendanceId;
     final attendanceId = idParam == null ? null : int.tryParse(idParam);
     if (idParam != null && attendanceId == null) {
-      if (mounted) context.go('/login');
+      router.go('/login');
       return;
     }
 
@@ -54,6 +62,7 @@ class _OpenAttendancePageState extends ConsumerState<OpenAttendancePage> {
     } catch (_) {
       // Fall back to the current tenant.
     }
+    if (!mounted) return;
 
     Role role = Role.none;
     try {
@@ -63,7 +72,7 @@ class _OpenAttendancePageState extends ConsumerState<OpenAttendancePage> {
     if (!mounted) return;
 
     if (ref.read(currentTenantProvider) == null) {
-      context.go('/tenants');
+      router.go('/tenants');
       return;
     }
     if (attendanceId != null) {
@@ -81,16 +90,16 @@ class _OpenAttendancePageState extends ConsumerState<OpenAttendancePage> {
       // LOGIC_SELF: Ionic navigateToAttendance — only ADMIN, RESPONSIBLE,
       // HELPER and VOICE_LEADER_HELPER open the Termin detail (not VIEWER).
       if (role.canAddAttendance) {
-        context.go(RedesignRoutes.betaTarget('/attendance/$attendanceId'));
+        router.go(RedesignRoutes.betaTarget('/attendance/$attendanceId'));
         return;
       }
       // Parents land on their portal, everybody else on "Meine Termine";
       // both open this Termin's action sheet (Ionic pendingAttendanceId).
       ref.read(pendingAttendanceIdProvider.notifier).state = attendanceId;
-      context.go(role.isParent ? '/parents' : RedesignRoutes.betaTarget('/signout'));
+      router.go(role.isParent ? '/parents' : RedesignRoutes.betaTarget('/signout'));
       return;
     }
-    context.go(role.defaultRoute);
+    router.go(role.defaultRoute);
   }
 
   @override

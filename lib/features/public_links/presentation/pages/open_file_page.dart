@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/go_replace.dart';
 import '../../../../core/utils/dashboard_logic.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
@@ -91,6 +92,11 @@ class _OpenFilePageState extends ConsumerState<OpenFilePage> {
   }
 
   Future<void> _resolve() async {
+    // F-RAHMEN-17: opened in the running app this page sits on top of the
+    // tab shell; wait until it is shown before going back into the shell
+    // (otherwise the new shell shares the old one's navigator key and stays
+    // blank).
+    if (!await untilReadyToLeave(ModalRoute.of(context)) || !mounted) return;
     try {
       await _resolveLink();
     } catch (_) {
@@ -132,9 +138,10 @@ class _OpenFilePageState extends ConsumerState<OpenFilePage> {
       }
       await ref.read(currentTenantProvider.notifier).setTenant(target);
     }
+    if (!mounted) return;
     // Wait until the role of the (new) tenant is loaded so the router
     // does not bounce the navigation to the tenant selection.
-    for (var i = 0; i < 50 && ref.read(isRoleLoadingProvider); i++) {
+    for (var i = 0; i < 50 && mounted && ref.read(isRoleLoadingProvider); i++) {
       await Future<void>.delayed(const Duration(milliseconds: 100));
     }
     if (!mounted) return;
