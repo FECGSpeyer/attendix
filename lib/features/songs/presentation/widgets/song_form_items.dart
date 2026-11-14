@@ -61,6 +61,9 @@ class SongStackedInput extends StatelessWidget {
     required this.controller,
     required this.label,
     this.helperText,
+    this.hintText,
+    this.enabled = true,
+    this.onChanged,
     this.keyboardType,
     this.inputFormatters,
     this.textCapitalization = TextCapitalization.sentences,
@@ -72,6 +75,11 @@ class SongStackedInput extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final String? helperText;
+
+  /// Ionic `placeholder`.
+  final String? hintText;
+  final bool enabled;
+  final ValueChanged<String>? onChanged;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final TextCapitalization textCapitalization;
@@ -81,12 +89,15 @@ class SongStackedInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final decoration = ionInputDecoration(context, label: label, helperText: helperText);
+    final decoration =
+        ionInputDecoration(context, label: label, helperText: helperText, hintText: hintText);
     final pad = decoration.contentPadding?.resolve(TextDirection.ltr);
     return Padding(
       padding: const EdgeInsetsDirectional.only(start: 16, top: 4),
       child: TextField(
         controller: controller,
+        enabled: enabled,
+        onChanged: onChanged,
         keyboardType: keyboardType,
         inputFormatters: inputFormatters,
         textCapitalization: textCapitalization,

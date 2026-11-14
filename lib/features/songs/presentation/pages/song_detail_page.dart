@@ -1310,7 +1310,11 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
           enabled: !data.readOnly && !_busy,
           onFiles: _onFilesDropped,
           builder: (context, hovering) => _FilesGroup(
-            border: hovering ? Border.all(color: AppColors.primary, width: 2) : null,
+            // WER-27: Ionic `outline: 2px dashed primary` (Beta: solid).
+            border: hovering && context.rdSkin != null
+                ? Border.all(color: AppColors.primary, width: 2)
+                : null,
+            dashedOutline: hovering && context.rdSkin == null,
             color: hovering
                 ? Color.alphaBlend(
                     AppColors.primary.withAlpha(13), Theme.of(context).colorScheme.surface)
@@ -1635,17 +1639,43 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
 /// apply: on iOS the rows ("Keine Dateien vorhanden." / the files) form a
 /// plain full-width block with square corners. Material keeps the inset card.
 class _FilesGroup extends StatelessWidget {
-  const _FilesGroup({required this.children, this.color, this.border});
+  const _FilesGroup({
+    required this.children,
+    this.color,
+    this.border,
+    this.dashedOutline = false,
+  });
 
   final List<Widget> children;
   final Color? color;
   final BoxBorder? border;
 
+  /// `.files-drop-area--active`: a 2px dashed primary outline.
+  final bool dashedOutline;
+
   @override
   Widget build(BuildContext context) {
+    if (dashedOutline) {
+      const margin = EdgeInsets.symmetric(horizontal: 16, vertical: 4);
+      return Padding(
+        padding: margin,
+        child: CustomPaint(
+          foregroundPainter: DashedRRectPainter(
+            color: AppColors.primary,
+            radius: 12,
+            outset: 2,
+          ),
+          child: _FilesGroup(color: color, children: children)._group(context, EdgeInsets.zero),
+        ),
+      );
+    }
+    return _group(context, const EdgeInsets.symmetric(horizontal: 16, vertical: 4));
+  }
+
+  Widget _group(BuildContext context, EdgeInsets margin) {
     // Beta-Skin: the files are a card like every other group.
     if (!isIosLook(context) || context.rdSkin != null) {
-      return IonInsetList(color: color, border: border, children: children);
+      return IonInsetList(color: color, border: border, margin: margin, children: children);
     }
     final rows = <Widget>[];
     for (var i = 0; i < children.length; i++) {
@@ -1653,7 +1683,7 @@ class _FilesGroup extends StatelessWidget {
       rows.add(children[i]);
     }
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      margin: margin,
       decoration: BoxDecoration(
         color: color ?? Theme.of(context).colorScheme.surface,
         border: border,

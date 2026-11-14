@@ -18,6 +18,8 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../utils/song_utils.dart';
 import 'file_drop/file_drop_target.dart';
+import 'song_form_items.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonInsetList, ionItemBackground;
 import '../../../../l10n/l10n.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -530,7 +532,12 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                 const Divider(height: 1),
               Flexible(
                 fit: controller == null ? FlexFit.loose : FlexFit.tight,
-                child: ListView(
+                // Classic: `ion-content color="light"` (the page grey).
+                child: ColoredBox(
+                  color: controller == null
+                      ? Colors.transparent
+                      : Theme.of(context).scaffoldBackgroundColor,
+                  child: ListView(
                   controller: controller,
                   shrinkWrap: controller == null,
                   padding: const EdgeInsets.only(bottom: 24),
@@ -562,6 +569,9 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                               children: [_uploadInfoText(context, onWarning: true)],
                             ),
                     ),
+                    if (controller != null)
+                      _classicList(context)
+                    else ...[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                       child: _isUploading
@@ -611,27 +621,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                             children: [
                               for (var i = 0; i < _files.length; i++) ...[
                                 if (i > 0) const Divider(height: 1),
-                                _FileItem(
-                                  key: ObjectKey(_files[i]),
-                                  file: _files[i],
-                                  groups: widget.groups,
-                                  isChoir: widget.isChoir,
-                                  enabled: !_isUploading,
-                                  onCategoryChanged: (id, note) => _setCategory(i, id, note),
-                                  onToggleLearn: (v) => setState(() {
-                                    // Confirmed by hand: a late page-1 result keeps it.
-                                    _files[i]
-                                      ..learn = v
-                                      ..reviewed = true;
-                                  }),
-                                  onToggleReplace: (url) => setState(() {
-                                    // Chosen by hand: a late page-1 result keeps it.
-                                    _files[i].reviewed = true;
-                                    final set = _files[i].toReplace;
-                                    set.contains(url) ? set.remove(url) : set.add(url);
-                                  }),
-                                  onRemove: () => setState(() => _files.removeAt(i)),
-                                ),
+                                _fileItem(i),
                               ],
                             ],
                           ),
@@ -656,7 +646,9 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                           ],
                         ),
                       ),
+                    ],
                   ],
+                ),
                 ),
               ),
             ],
@@ -665,7 +657,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
       canPop: !_isUploading,
       child: context.rdSkin == null
           // Ionic: [breakpoints]="[0, 1]" [initialBreakpoint]="1",
-          // [canDismiss]="!isUploading".
+          // [canDismiss]="!isUploading"; `ion-content color="light"`.
           ? IonBreakpointSheet(
               canDismiss: !_isUploading,
               builder: (context, controller) => content(controller),
@@ -677,6 +669,120 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                 child: content(null),
               ),
             ),
+    );
+  }
+
+  Widget _fileItem(int i, {bool classic = false}) => _FileItem(
+        key: ObjectKey(_files[i]),
+        file: _files[i],
+        groups: widget.groups,
+        isChoir: widget.isChoir,
+        enabled: !_isUploading,
+        classic: classic,
+        onCategoryChanged: (id, note) => _setCategory(i, id, note),
+        onToggleLearn: (v) => setState(() {
+          // Confirmed by hand: a late page-1 result keeps it.
+          _files[i]
+            ..learn = v
+            ..reviewed = true;
+        }),
+        onToggleReplace: (url) => setState(() {
+          // Chosen by hand: a late page-1 result keeps it.
+          _files[i].reviewed = true;
+          final set = _files[i].toReplace;
+          set.contains(url) ? set.remove(url) : set.add(url);
+        }),
+        onRemove: () => setState(() => _files.removeAt(i)),
+      );
+
+  /// Classic: Ionic `<ion-list [inset]="true">` holding the drop zone (or
+  /// the progress), the file items (`ion-item-group`), a `<br>` and the two
+  /// block buttons.
+  Widget _classicList(BuildContext context) {
+    final percent = (_uploadProgress * 100).round();
+    return Container(
+      margin: const EdgeInsets.all(16),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: ionItemBackground(context),
+        borderRadius: BorderRadius.circular(IonInsetList.radiusOf(context)),
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (_isUploading)
+              // `.upload-progress`: padding 16.
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            context.l10n.songsUploadProgress(_doneCount, _files.length),
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        Text(
+                          '$percent %',
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(value: _uploadProgress, minHeight: 8),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      context.l10n.songsDontClose,
+                      style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                    ),
+                  ],
+                ),
+              )
+            else
+              // `.drop-zone { margin: 8px 0 }`
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: FileDropZone(onTap: _pickFiles, onFiles: _addFiles),
+              ),
+            if (_files.isNotEmpty)
+              SlidableAutoCloseBehavior(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = 0; i < _files.length; i++) _fileItem(i, classic: true),
+                  ],
+                ),
+              ),
+            // `<br>`
+            const SizedBox(height: 20),
+            if (_files.isNotEmpty && !_isUploading) ...[
+              // `ion-button expand="block"` (margin 4px 2px), solid + outline.
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+                child: FilledButton(
+                  onPressed: () => _upload(replace: true),
+                  child: IonButtonLabel(context.l10n.songsReplaceAndAdd),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(2, 4, 2, 8),
+                child: OutlinedButton(
+                  onPressed: () => _upload(replace: false),
+                  child: IonButtonLabel(context.l10n.songsAddWithoutReplace),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }
@@ -727,7 +833,12 @@ class _FileItem extends StatefulWidget {
     required this.onRemove,
     this.onToggleLearn,
     this.isChoir = false,
+    this.classic = false,
   });
+
+  /// Classic sheet: Ionic `ion-item` rows (inset item line, stacked free
+  /// text input, conflict hint as popover).
+  final bool classic;
 
   final _FileToUpload file;
   final List<Group> groups;
@@ -775,6 +886,26 @@ class _FileItemState extends State<_FileItem> {
         final conflicts = widget.file.conflicts;
         if (conflicts.isEmpty) return null;
         final icon = Icon(AppIcons.warningAmberRounded, color: AppColors.warning, size: 20);
+        if (conflicts.length == 1 && widget.classic) {
+          // Ionic `ion-popover [trigger] triggerAction="click"` with one
+          // `ion-item lines="none"` (13px wrapping label).
+          return Builder(
+            builder: (iconContext) => InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () => showAppPopover<void>(
+                context: iconContext,
+                builder: (_) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Text(
+                    context.l10n.songsReplaces(conflicts.first.fileName),
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                ),
+              ),
+              child: icon,
+            ),
+          );
+        }
         return conflicts.length == 1
             ? Tooltip(
                 message: context.l10n.songsReplaces(conflicts.first.fileName),
@@ -827,8 +958,14 @@ class _FileItemState extends State<_FileItem> {
               ),
             ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 12, 4),
+          child: Container(
+            padding: widget.classic
+                ? const EdgeInsets.fromLTRB(0, 4, 12, 4)
+                : const EdgeInsets.fromLTRB(16, 4, 12, 4),
+            margin: widget.classic ? const EdgeInsets.only(left: 16) : null,
+            decoration: widget.classic
+                ? BoxDecoration(border: Border(bottom: songItemLine(context)))
+                : null,
             child: Row(
               children: [
                 if (leading != null) ...[leading, const SizedBox(width: 12)],
@@ -908,7 +1045,16 @@ class _FileItemState extends State<_FileItem> {
             ),
           ),
         ),
-        if (value == null)
+        if (value == null && widget.classic)
+          // Ionic `ion-item` > stacked `ion-label` + `ion-input placeholder`.
+          SongStackedInput(
+            controller: _note,
+            enabled: widget.enabled,
+            label: context.l10n.songsFreeText,
+            hintText: context.l10n.songsEnterCategory,
+            onChanged: (v) => widget.onCategoryChanged(null, v.trim()),
+          )
+        else if (value == null)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: TextField(
