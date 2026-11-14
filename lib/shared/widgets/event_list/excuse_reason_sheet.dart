@@ -171,7 +171,10 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
     return [
       Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
+        // Ionic item height (48 instead of the 56+ of a ListTile).
+        child: ListTileTheme.merge(
+          visualDensity: VisualDensity.compact,
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -192,7 +195,8 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                 padding: const EdgeInsets.only(left: 16, top: 8),
                 child: TextField(
                   controller: _controller,
-                  autofocus: true,
+                  // Ionic's textarea has no autofocus (the keyboard would
+                  // scroll the 0.6 sheet away from the reasons).
                   minLines: 1,
                   maxLines: null, // ion-textarea autoGrow
                   textCapitalization: TextCapitalization.sentences,
@@ -205,6 +209,7 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                 ),
               ),
           ],
+        ),
         ),
       ),
     ];
