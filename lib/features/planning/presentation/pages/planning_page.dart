@@ -1722,7 +1722,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       confirmText: context.l10n.commonDelete,
       destructive: true,
     );
-    if (!ok) return;
+    // TERMINE-22: the editor may have gone while the alert was open.
+    if (!ok || !mounted) return;
     // Ionic tenant.service: a failed tenant update shows this toast (the
     // only error message here; the template simply stays otherwise).
     bool deleted;
@@ -2138,6 +2139,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           PlanSheetAction('sectional', context.l10n.planningCreateSectionalPlan, icon: AppIcons.groups),
       ],
       onExtraAction: (a) async {
+        // TERMINE-22: the editor may have gone while the sheet was open.
+        if (!mounted) return;
         if (a == 'sectional') {
           await showRegisterPlanSheet(context, attendanceDate: DateTime.tryParse(att?.date ?? ''));
         } else if (a == 'all' && att != null) {

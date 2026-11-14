@@ -166,6 +166,8 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     } catch (e, st) {
       ErrorReporter.report(e, st, where: 'register_plan_sheet');
     }
+    // TERMINE-22: the sheet may be closed while the groups load.
+    if (!mounted) return;
     try {
       conductors = await ref.read(conductorsProvider.future);
     } catch (e, st) {

@@ -740,7 +740,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                                 widget.attendanceId,
                                 {'notes': value.isEmpty ? null : value},
                               );
-                              ref.invalidate(attendanceDetailProvider(widget.attendanceId));
+                              // TERMINE-22: saved on blur, also while the page goes.
+                              if (mounted) ref.invalidate(attendanceDetailProvider(widget.attendanceId));
                             } catch (e) {
                               if (mounted) {
                                 ToastHelper.showError(this.context, this.context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
