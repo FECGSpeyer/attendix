@@ -19,6 +19,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/demo_guard.dart' show DemoModeException;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -1125,6 +1126,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             ? (saved == 'false' ? 'false' : 'true')
             : null,
         confirmText: context.l10n.peopleFilter,
+        // Ionic: "Abbrechen" has `role: 'destructive'` (Beta unchanged).
+        cancelDestructive: context.rdSkin == null,
       );
       value = result?.value;
     }
