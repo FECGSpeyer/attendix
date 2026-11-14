@@ -24,7 +24,8 @@ env:
 jobs:
   web:
     name: Web (Chromium)
-    runs-on: ubuntu-latest
+    # Patrol pins a Playwright version; it must support the runner image.
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
@@ -76,7 +77,7 @@ jobs:
           PATROL_WEB_VIEWPORT: '{"width":1280,"height":800}'
           PATROL_WEB_SCREENSHOT: only-on-failure
           PATROL_WEB_REPORTER: '["list","html"]'
-        run: patrol test --device chrome --web-headless true
+        run: patrol test --device chrome --web-headless
 
       - name: Upload report
         if: ${{ !cancelled() }}
