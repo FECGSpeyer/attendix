@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.150.0",
+      "date": "14.11.2026",
+      "changes": [
+        "🐛 Beta, Mitglieder: Die Chips unter „Aktiv | Pausiert“ schieben sich auf schmalen Handys und bei großer Schrift nicht mehr über „Filter“",
+        "✨ Beta-Ablauf: Werke eines kommenden Vortrags lassen sich mit „Werke vom …“ in den Ablauf einer Probe übernehmen (Auswahl mit Häkchen, Dirigent wird mitgenommen)",
+        "🎨 Beta-Werke: „Alle als PDF“ neben „Aktuell“ entfernt – der Termin darunter hat jetzt die ganze Zeile"
+      ]
+    },
+    {
       "version": "0.149.0",
       "date": "14.11.2026",
       "changes": [
