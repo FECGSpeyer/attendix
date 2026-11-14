@@ -7,9 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/adaptive/ion_toolbar_segment.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 const _palette = [
@@ -52,11 +54,26 @@ class UsageDashboardPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final range = ref.watch(usageDashboardRangeProvider);
     final async = ref.watch(usageDashboardProvider);
+    final classic = context.rdSkin == null;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.usageTitle),
-        bottom: PreferredSize(
+        // DAS-16: Ionic second `ion-toolbar` with the `ion-segment`.
+        bottom: classic
+            ? PreferredSize(
+                preferredSize: Size.fromHeight(IonToolbarSegment.toolbarHeight(context)),
+                child: IonToolbarSegment<int>(
+                  items: [
+                    IonSegmentItem(value: 7, label: Text(context.l10n.usageDays7)),
+                    IonSegmentItem(value: 30, label: Text(context.l10n.usageDays30)),
+                    IonSegmentItem(value: 90, label: Text(context.l10n.usageDays90)),
+                  ],
+                  value: range,
+                  onChanged: (v) => ref.read(usageDashboardRangeProvider.notifier).state = v,
+                ),
+              )
+            : PreferredSize(
           preferredSize: const Size.fromHeight(52),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
@@ -78,7 +95,7 @@ class UsageDashboardPage extends ConsumerWidget {
         error: (e, _) => _empty(context),
         data: (data) {
           if (data.kpis.totalEvents <= 0) return _empty(context);
-          return _content(context, data, range);
+          return _content(context, data, range, classic: classic);
         },
       ),
     );
@@ -101,30 +118,51 @@ class UsageDashboardPage extends ConsumerWidget {
         ),
       );
 
-  Widget _content(BuildContext context, UsageDashboardData data, int range) {
+  Widget _content(BuildContext context, UsageDashboardData data, int range, {bool classic = false}) {
     final topNames = data.byName.take(10).toList();
     final topTenants = data.byTenant.take(10).toList();
     final perDay = fillUsagePerDay(data.perDay, range);
+    final distribution = _ChartCard(
+      classic: classic,
+      title: context.l10n.usageDistribution,
+      height: 320,
+      child: _Doughnut(
+        rows: topNames,
+        colorFor: (i, _) => _palette[i % _palette.length],
+      ),
+    );
+    final devices = _ChartCard(
+      classic: classic,
+      title: context.l10n.usageDevices,
+      height: 280,
+      child: _Doughnut(
+        rows: data.byDevice,
+        colorFor: (_, label) => _deviceColors[label] ?? const Color(0xFF999999),
+      ),
+    );
 
     return ListView(
       padding: EdgeInsets.fromLTRB(16, 16, 16, scrollEndPadding(context, base: 16)),
       children: [
         GridView.count(
-          crossAxisCount: MediaQuery.sizeOf(context).width >= 768 ? 4 : 2,
+          // DAS-16: dashboard.page.scss `.kpi-grid` 4 columns from 720px.
+          crossAxisCount: MediaQuery.sizeOf(context).width >= (classic ? 720 : 768) ? 4 : 2,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
           childAspectRatio: 1.9,
           children: [
-            _Kpi(context.l10n.usageTotalEvents, '${data.kpis.totalEvents}'),
-            _Kpi(context.l10n.usageActiveTenants, '${data.kpis.distinctTenants}'),
-            _Kpi(context.l10n.usageActive7, '${data.kpis.activeTenants7d}'),
-            _Kpi(context.l10n.usageTopEvent, topNames.isNotEmpty ? topNames.first.label : '—', small: true),
+            _Kpi(context.l10n.usageTotalEvents, '${data.kpis.totalEvents}', classic: classic),
+            _Kpi(context.l10n.usageActiveTenants, '${data.kpis.distinctTenants}', classic: classic),
+            _Kpi(context.l10n.usageActive7, '${data.kpis.activeTenants7d}', classic: classic),
+            _Kpi(context.l10n.usageTopEvent, topNames.isNotEmpty ? topNames.first.label : '—',
+                small: true, classic: classic),
           ],
         ),
         const SizedBox(height: 16),
         _ChartCard(
+          classic: classic,
           title: context.l10n.usageEventsPerDay,
           height: 280,
           child: LineChart(
@@ -175,11 +213,13 @@ class UsageDashboardPage extends ConsumerWidget {
           ),
         ),
         _ChartCard(
+          classic: classic,
           title: context.l10n.usageTopEvents,
           height: 36.0 * math.max(topNames.length, 1) + 16,
           child: _HorizontalBars(rows: topNames),
         ),
         _ChartCard(
+          classic: classic,
           title: context.l10n.usageTopTenants,
           height: 280,
           child: BarChart(
@@ -218,36 +258,69 @@ class UsageDashboardPage extends ConsumerWidget {
             ),
           ),
         ),
-        _ChartCard(
-          title: context.l10n.usageDistribution,
-          height: 320,
-          child: _Doughnut(
-            rows: topNames,
-            colorFor: (i, _) => _palette[i % _palette.length],
-          ),
-        ),
-        _ChartCard(
-          title: context.l10n.usageDevices,
-          height: 280,
-          child: _Doughnut(
-            rows: data.byDevice,
-            colorFor: (_, label) => _deviceColors[label] ?? const Color(0xFF999999),
-          ),
-        ),
+        // DAS-16: `.chart-row` – both doughnuts side by side from 720px.
+        if (classic && MediaQuery.sizeOf(context).width >= 720)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: distribution),
+              const SizedBox(width: 16),
+              Expanded(child: devices),
+            ],
+          )
+        else ...[
+          distribution,
+          devices,
+        ],
       ],
     );
   }
 }
 
 class _Kpi extends StatelessWidget {
-  const _Kpi(this.label, this.value, {this.small = false});
+  const _Kpi(this.label, this.value, {this.small = false, this.classic = false});
 
   final String label;
   final String value;
   final bool small;
+  final bool classic;
 
   @override
-  Widget build(BuildContext context) => Card(
+  Widget build(BuildContext context) {
+    if (classic) {
+      // DAS-16: dashboard.page.scss `.kpi-card` – flat light box, radius 10,
+      // padding 14/16, uppercase 12px label, 24/700 value (top event 16/600).
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark : AppColors.light,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label.toUpperCase(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 12, letterSpacing: 0.5, color: AppColors.medium),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              maxLines: small ? 2 : 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: small ? 16 : 24, fontWeight: small ? FontWeight.w600 : FontWeight.w700),
+            ),
+          ],
+        ),
+      );
+    }
+    return _card(context);
+  }
+
+  Widget _card(BuildContext context) => Card(
         margin: EdgeInsets.zero,
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -273,14 +346,38 @@ class _Kpi extends StatelessWidget {
 }
 
 class _ChartCard extends StatelessWidget {
-  const _ChartCard({required this.title, required this.height, required this.child});
+  const _ChartCard({required this.title, required this.height, required this.child, this.classic = false});
 
   final String title;
   final double height;
   final Widget child;
+  final bool classic;
 
   @override
-  Widget build(BuildContext context) => Card(
+  Widget build(BuildContext context) {
+    if (classic) {
+      // DAS-16: `.chart-card` – flat light box, radius 10, h3 15/600.
+      return Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark : AppColors.light,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 12),
+            SizedBox(height: height, child: child),
+          ],
+        ),
+      );
+    }
+    return _card(context);
+  }
+
+  Widget _card(BuildContext context) => Card(
         margin: const EdgeInsets.only(bottom: 16),
         child: Padding(
           padding: const EdgeInsets.all(16),
