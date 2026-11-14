@@ -10,7 +10,8 @@ import '../../../core/theme/redesign/rd_theme.dart';
 /// in `ion-item`, `ion-toolbar`, `ion-list-header`, `ion-searchbar`); the
 /// Flutter rows started at the screen edge, so names sat under the Dynamic
 /// Island. Here the app as a whole moves in between the two insets (pages,
-/// modals and sheets alike) on the page colour.
+/// modals and sheets alike); the strips beside it are black like the bezel,
+/// which fits every page colour and the black body behind card modals.
 ///
 /// The window size stays as it is, so the layout breakpoints (tab bar vs
 /// menu at 768pt) keep following the window like in Ionic. Without side
@@ -27,7 +28,7 @@ class SideSafeArea extends StatelessWidget {
     if (padding.left == 0 && padding.right == 0) return child;
     if (context.rdSkin != null) return child;
     return ColoredBox(
-      color: Theme.of(context).scaffoldBackgroundColor,
+      color: Colors.black,
       child: SafeArea(top: false, bottom: false, child: child),
     );
   }
