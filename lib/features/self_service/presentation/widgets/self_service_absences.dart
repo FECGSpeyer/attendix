@@ -24,7 +24,7 @@ import '../../../redesign/presentation/widgets/members/rd_pause_sheets.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'
-    show IonAccordionTile, IonButton;
+    show IonAccordionTile, IonButton, IonMdCalendar, IonMdDatetime;
 import '../../../../shared/widgets/dialogs/ion_sheet.dart'
     show showIonSheet, IonSheetScaffold, IonCloseButton;
 import '../../../../core/utils/error_message.dart';
@@ -413,12 +413,13 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
         ],
       ),
       _rangeHeader(),
-      CalendarDatePicker(
+      _inlineCalendar(
+        context,
         key: ValueKey(_calendarKey),
         initialDate: _until ?? _from ?? now,
         firstDate: DateTime(now.year - 1),
         lastDate: DateTime(now.year + 5),
-        onDateChanged: _onPick,
+        onPick: _onPick,
       ),
       if (widget.showLongAbsenceHint)
         Padding(
@@ -472,6 +473,41 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
       ),
     );
   }
+}
+
+/// SEL-03 (md part): the inline `ion-datetime presentation="date"` of the
+/// absence / pause sheets. md look = the Ionic md calendar of stage 1
+/// ([IonMdCalendar]); the iOS look keeps the calendar grid the app uses for
+/// every iOS date card (the same one as `showAppDatePicker`).
+Widget _inlineCalendar(
+  BuildContext context, {
+  Key? key,
+  required DateTime initialDate,
+  required DateTime firstDate,
+  required DateTime lastDate,
+  required ValueChanged<DateTime> onPick,
+}) {
+  if (isIosLook(context)) {
+    return CalendarDatePicker(
+      key: key,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      onDateChanged: onPick,
+    );
+  }
+  return SizedBox(
+    key: key,
+    height: IonMdDatetime.gridHeight,
+    child: IonMdCalendar(
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      onChanged: (d, {required bool byDay}) {
+        if (byDay) onPick(d);
+      },
+    ),
+  );
 }
 
 /// "Pausieren" sheet: reason (required) + optional end date.
@@ -553,11 +589,12 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
                       onPressed: () => setState(() => _until = null),
                     ),
               children: [
-                CalendarDatePicker(
+                _inlineCalendar(
+                  context,
                   initialDate: _until ?? now,
                   firstDate: DateTime(now.year, now.month, now.day),
                   lastDate: DateTime(now.year + 5),
-                  onDateChanged: (d) => setState(() => _until = d),
+                  onPick: (d) => setState(() => _until = d),
                 ),
               ],
             ),
