@@ -129,6 +129,8 @@ void main() {
     expect(storedMinutes(), ['5', '40', '5']);
     expect(find.text('16:45'), findsOneWidget);
     expect(find.text('Gespeichert'), findsOneWidget);
+    // The choice closes the duration field.
+    expect(find.byKey(const ValueKey('rd-plan-dur-editor-1')), findsNothing);
     await close(tester);
   });
 
