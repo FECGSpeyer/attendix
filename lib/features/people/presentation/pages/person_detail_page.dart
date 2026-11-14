@@ -21,6 +21,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart' show ExtraField;
 import '../../../../data/services/auth_service.dart';
 import '../widgets/planned_absences.dart';
+import '../../../../core/providers/teacher_providers.dart' show studentCountsProvider;
 import '../../../duty/presentation/pages/unavailability_page.dart';
 import '../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../core/utils/text_utils.dart';
@@ -908,6 +909,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
+      // E2E PERSONEN-84: the teacher list counts students per teacher.
+      if (_changedFields.contains('teacher') ||
+          _changedFields.contains('hasTeacher') ||
+          _changedFields.contains('instrument')) {
+        ref.invalidate(studentCountsProvider);
+      }
 
       setState(() {
         _hasChanges = false;
