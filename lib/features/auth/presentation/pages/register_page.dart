@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -540,13 +541,28 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 ),
                 if (_mode == AuthMode.otp && _otpSent) ...[
                   const SizedBox(height: 12),
-                  Center(
-                    child: ResendCodeButton(
-                      cooldown: _cooldown,
-                      enabled: !_isLoading,
-                      onResend: _requestCode,
+                  if (context.rdSkin == null)
+                    // SEL-21: Ionic `ion-button expand="block" fill="clear"`.
+                    ListenableBuilder(
+                      listenable: _cooldown,
+                      builder: (context, _) => IonBlockButton(
+                        solid: false,
+                        label: _cooldown.active
+                            ? context.l10n.loginResendIn(_cooldown.remaining)
+                            : context.l10n.loginResendCode,
+                        onPressed: (_isLoading || _cooldown.active)
+                            ? null
+                            : _requestCode,
+                      ),
+                    )
+                  else
+                    Center(
+                      child: ResendCodeButton(
+                        cooldown: _cooldown,
+                        enabled: !_isLoading,
+                        onResend: _requestCode,
+                      ),
                     ),
-                  ),
                 ],
                 const SizedBox(height: 12),
                 // Ionic: clear "Abbrechen" button closes the modal.

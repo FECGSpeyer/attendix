@@ -1044,11 +1044,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             const SizedBox(height: AppDimensions.paddingM),
             _primaryButton(context.l10n.loginSignIn, _verifyCode),
             const SizedBox(height: AppDimensions.paddingS),
-            Center(
-              child: ResendCodeButton(
-                cooldown: _cooldown,
-                enabled: !_isLoading,
-                onResend: _requestCode,
+            // SEL-21: Ionic `ion-button size="small" fill="clear"` in a
+            // left-aligned column.
+            Align(
+              alignment: Alignment.centerLeft,
+              child: ListenableBuilder(
+                listenable: _cooldown,
+                builder: (context, _) => _smallClearButton(
+                  _cooldown.active
+                      ? context.l10n.loginResendIn(_cooldown.remaining)
+                      : context.l10n.loginResendCode,
+                  (_isLoading || _cooldown.active) ? null : _requestCode,
+                ),
               ),
             ),
           ],
