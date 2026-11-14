@@ -17,7 +17,8 @@ String mapIonicRoute(String route) {
   final path = route.trim();
   final uri = Uri.tryParse(path);
   if (uri == null) return path;
-  final legacy = legacyRouteRedirect(uri);
+  // In-app: the group is already set, the Termin opens directly.
+  final legacy = legacyRouteRedirect(uri, terminResolver: false);
   if (legacy != null) return legacy;
   // Without the /tabs prefix: Ionic's protocol route has no Flutter twin.
   final protocol = RegExp(r'^/attendance/(\d+)/protocol$').firstMatch(uri.path);
