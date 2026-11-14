@@ -14,8 +14,8 @@ Szenario aufgebaut ist und welche Regeln gelten, steht in der
 | Beobachter | `B` | [beobachter.md](beobachter.md) | fertig |
 | Leitung (Verantwortlicher und Administrator) | `L` | [leitung.md](leitung.md) | fertig |
 | nur Administrator | `A` | [admin.md](admin.md) | fertig |
-| Elternteil | `E` | folgt | offen |
-| Neu dabei (Registrieren, Beitreten, Bewerber) | `N` | folgt | offen |
+| Elternteil | `E` | [eltern.md](eltern.md) | fertig |
+| Neu dabei (Registrieren, Beitreten, Bewerber) | `N` | [neu-dabei.md](neu-dabei.md) | fertig |
 
 ## Wer baut auf wem auf?
 
