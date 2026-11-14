@@ -246,7 +246,15 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     }
     setState(() => _generating = true);
     try {
-      final synonyms = await ref.read(aiServiceProvider).getGroupSynonyms(name);
+      final others = ref.read(groupsProvider).valueOrNull ?? const <Group>[];
+      final synonyms = await ref.read(aiServiceProvider).getGroupSynonyms(
+        name,
+        existing: _synonyms.text,
+        otherGroups: [
+          for (final g in others)
+            if (g.id != _groupId) (name: g.name, synonyms: g.synonyms),
+        ],
+      );
       if (!mounted) return;
       _synonyms.text = synonyms;
       _saveText('synonyms');

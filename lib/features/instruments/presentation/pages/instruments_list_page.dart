@@ -605,7 +605,15 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
         ? showIonLoading(context, message: context.l10n.instrumentsGeneratingSynonyms)
         : null;
     try {
-      final synonyms = await ref.read(aiServiceProvider).getGroupSynonyms(name);
+      final others = ref.read(groupsProvider).valueOrNull ?? const <Group>[];
+      final synonyms = await ref.read(aiServiceProvider).getGroupSynonyms(
+        name,
+        existing: _synonymsController.text,
+        otherGroups: [
+          for (final g in others)
+            if (g.id != widget.group?.id) (name: g.name, synonyms: g.synonyms),
+        ],
+      );
       loading?.dismiss();
       _synonymsController.text = synonyms;
       if (mounted) ToastHelper.showSuccess(context, context.l10n.instrumentsSynonymsGenerated);
