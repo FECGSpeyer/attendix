@@ -460,7 +460,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             ),
             const SizedBox(height: AppDimensions.paddingS),
             AppDropdownFormField<int>(
-              iosInterface: AppSelectInterface.alert,
+              interface: AppSelectInterface.alert,
               value: _targetTenantId,
               decoration: InputDecoration(
                 prefixIcon: Icon(AppIcons.business),
@@ -556,7 +556,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: AppDropdownFormField<int?>(
-                        iosInterface: AppSelectInterface.alert,
+                        interface: AppSelectInterface.alert,
                         value: _groupMapping[instrumentId],
                         decoration: const InputDecoration(
                           isDense: true,

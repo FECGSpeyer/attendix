@@ -679,7 +679,7 @@ Future<ExtraField?> showExtraFieldSheet(
                         )
                       else
                         AppDropdownFormField<String>(
-                          iosInterface: AppSelectInterface.alert,
+                          interface: AppSelectInterface.alert,
                           value: type,
                           decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
                           items: [
@@ -702,7 +702,7 @@ Future<ExtraField?> showExtraFieldSheet(
                         decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
                       ),
                       AppDropdownFormField<String>(
-                        iosInterface: AppSelectInterface.alert,
+                        interface: AppSelectInterface.alert,
                         value: displayMode,
                         decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
                         items: [

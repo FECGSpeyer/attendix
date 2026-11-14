@@ -112,7 +112,7 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
         ),
         const SizedBox(height: 8),
         AppDropdownFormField<String>(
-          iosInterface: AppSelectInterface.alert,
+          interface: AppSelectInterface.alert,
           value: _type,
           decoration: InputDecoration(labelText: context.l10n.typeSettingsType, border: const OutlineInputBorder()),
           items: [

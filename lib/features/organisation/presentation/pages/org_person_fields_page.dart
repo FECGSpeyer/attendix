@@ -421,7 +421,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 )
               else
                 AppDropdownFormField<String>(
-                  iosInterface: AppSelectInterface.alert,
+                  interface: AppSelectInterface.alert,
                   value: _type,
                   decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
                   items: [
@@ -435,7 +435,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
               ),
               AppDropdownFormField<String>(
-                iosInterface: AppSelectInterface.alert,
+                interface: AppSelectInterface.alert,
                 value: _displayMode,
                 decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
                 items: [

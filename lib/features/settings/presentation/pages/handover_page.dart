@@ -267,7 +267,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> with HandoverSelect
                     vertical: AppDimensions.paddingS,
                   ),
                   child: AppDropdownFormField<int>(
-                    iosInterface: AppSelectInterface.alert,
+                    interface: AppSelectInterface.alert,
                     // ignore: deprecated_member_use
                     value: targetTenantId,
                     isExpanded: true,
@@ -314,7 +314,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> with HandoverSelect
                       children: [
                         Expanded(
                           child: AppDropdownFormField<int>(
-                            iosInterface: AppSelectInterface.alert,
+                            interface: AppSelectInterface.alert,
                             // ignore: deprecated_member_use
                             value: groupId,
                             isExpanded: true,

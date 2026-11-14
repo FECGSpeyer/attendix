@@ -429,7 +429,7 @@ class _AddGroupSheetState extends ConsumerState<_AddGroupSheet> {
           if (categories.isNotEmpty) ...[
             const SizedBox(height: AppDimensions.paddingM),
             AppDropdownFormField<int?>(
-              iosInterface: AppSelectInterface.alert,
+              interface: AppSelectInterface.alert,
               value: _categoryId,
               decoration: InputDecoration(labelText: context.l10n.instrumentsCategory),
               items: [
@@ -606,7 +606,7 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
             ),
             const SizedBox(height: AppDimensions.paddingM),
             AppDropdownFormField<int?>(
-              iosInterface: AppSelectInterface.alert,
+              interface: AppSelectInterface.alert,
               value: _selectedCategoryId,
               decoration: InputDecoration(labelText: context.l10n.instrumentsCategory),
               items: [

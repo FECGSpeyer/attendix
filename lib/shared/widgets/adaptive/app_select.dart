@@ -6,6 +6,7 @@ import 'package:attendix/core/theme/app_icons.dart';
 import '../../../core/theme/redesign/rd_palette.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../l10n/l10n.dart';
+import '../layout/ionic_md.dart' show IonMd;
 import 'adaptive_platform.dart';
 import 'app_action_sheet.dart';
 import 'app_dialog.dart';
@@ -25,10 +26,22 @@ import 'app_dialog.dart';
 /// - `interface="action-sheet"`: an iOS action sheet with one button per
 ///   option.
 ///
-/// Material (Android / desktop, Ionic md mode) keeps the Flutter dropdowns:
-/// [AppDropdownFormField] / [AppDropdownButton] are drop-in replacements for
-/// [DropdownButtonFormField] / [DropdownButton] that build exactly those
-/// widgets outside iOS.
+/// KP_SELECTS: the md look (Android / desktop / web, Ionic **md mode**)
+/// mirrors `ion-select` md the same way – one select implementation for the
+/// classic design:
+///
+/// - the value is followed by the md caret (`caret-down`, 13px, step-500)
+///   which turns while the select is open ([IonMdSelectIcon]);
+/// - `interface="popover"`: the md popover (surface, radius 4, md shadow,
+///   250px wide or as wide as a field with a floating label, no backdrop)
+///   below the value with 48px rows, the current option tinted
+///   `rgba(primary, .08)` (`ion-select-popover` md hides the radios);
+/// - `interface="alert"`: the md alert with a radio list (radio at the
+///   start, 48px rows between two hairlines) and "ABBRECHEN" / "OK";
+/// - `interface="action-sheet"`: the md action sheet with one button per
+///   option and the cancel button.
+///
+/// The Beta design (`context.rdSkin != null`) keeps its own select menu.
 
 /// Ionic `ion-select` `interface`.
 enum AppSelectInterface {
@@ -125,7 +138,7 @@ class IonSelectIcon extends StatelessWidget {
 /// popover. [cover] makes the popover as wide as the trigger (Ionic
 /// floating / stacked label). [header] is the alert / action sheet title.
 ///
-/// Outside iOS a Material menu opens at the trigger.
+/// The same three interfaces exist in the md look (see the library comment).
 Future<AppSelection<T>?> showAppSelect<T>({
   required BuildContext context,
   required List<AppSelectOption<T>> options,
@@ -167,44 +180,12 @@ Future<AppSelection<T>?> showAppSelect<T>({
     );
   }
 
-  if (!useIosLook(context)) {
-    final picked = await showMenu<AppSelection<T>>(
-      context: context,
-      // Below the trigger like the Ionic md popover.
-      position: RelativeRect.fromRect(
-        Rect.fromLTWH(anchor.left, anchor.bottom, anchor.width, 0),
-        Offset.zero & overlay.size,
-      ),
-      // MD_SWEEP: md select popover – 250px wide, 8px list padding, the
-      // checked option tinted `rgba(primary, .08)` (radios hidden).
-      constraints: const BoxConstraints.tightFor(width: 250),
-      menuPadding: const EdgeInsets.symmetric(vertical: 8),
-      items: [
-        for (final o in options)
-          PopupMenuItem<AppSelection<T>>(
-            value: AppSelection<T>(o.value),
-            enabled: o.enabled,
-            padding: EdgeInsets.zero,
-            child: Container(
-              constraints: const BoxConstraints(minHeight: 48),
-              width: double.infinity,
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              color: o.value == value
-                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.08)
-                  : null,
-              child: o.child ?? Text(o.label!),
-            ),
-          ),
-      ],
-    );
-    return picked;
-  }
-
+  final ios = useIosLook(context);
   switch (interface) {
     case AppSelectInterface.popover:
       return navigator.push<AppSelection<T>>(
-        _IosSelectPopoverRoute<T>(
+        _SelectPopoverRoute<T>(
+          ios: ios,
           anchor: anchor,
           overlaySize: overlay.size,
           options: options,
@@ -220,11 +201,14 @@ Future<AppSelection<T>?> showAppSelect<T>({
     case AppSelectInterface.alert:
       return showAppDialog<AppSelection<T>>(
         context: context,
-        builder: (_) =>
-            _IosSelectAlert<T>(header: header, options: options, value: value),
+        builder: (_) => ios
+            ? _IosSelectAlert<T>(header: header, options: options, value: value)
+            : _MdSelectAlert<T>(header: header, options: options, value: value),
       );
     case AppSelectInterface.actionSheet:
-      return _showSelectActionSheet<T>(context, options, header);
+      // md: Ionic adds the cancel button (`cancelText`, role cancel) after
+      // the options; only the ios27 theme hides it.
+      return _showSelectActionSheet<T>(context, options, header, showCancel: !ios);
   }
 }
 
@@ -232,14 +216,15 @@ Future<AppSelection<T>?> showAppSelect<T>({
 Future<AppSelection<T>?> _showSelectActionSheet<T>(
   BuildContext context,
   List<AppSelectOption<T>> options,
-  String? header,
-) {
+  String? header, {
+  bool showCancel = false,
+}) {
   return showAppActionSheet<AppSelection<T>>(
     context,
     title: header,
     // IOS27_SWEEP: ios27 hides the cancel button of
     // `ion-select[interface=action-sheet]` (`.select-action-sheet`).
-    showCancel: false,
+    showCancel: showCancel,
     actions: [
       for (final o in options)
         AppActionSheetAction<AppSelection<T>>(
@@ -333,24 +318,87 @@ Future<AppSelection<T>?> _showRdSelectMenu<T>({
   );
 }
 
-/// The toggle icon after a select's value: the Ionic `chevron-expand`, in
-/// the Beta design its own ▾ (like the "Stimme" cells of the file table).
-Widget _selectToggleIcon(BuildContext context, {required bool enabled}) {
-  final rd = context.rdSkin;
-  return Opacity(
-    opacity: enabled ? 1 : 0.4,
-    child: rd != null
-        ? Icon(Icons.keyboard_arrow_down, size: 20, color: rd.text2)
-        : const IonSelectIcon(),
+/// Ionic `ion-select` md toggle icon (`caret-down`, `.select-icon`:
+/// 0.8125rem wide, `--ion-color-step-500`). While the select is open
+/// ([expanded]) it is turned by 180° and, outside an item, shown in the
+/// highlight colour.
+class IonMdSelectIcon extends StatelessWidget {
+  const IonMdSelectIcon({super.key, this.expanded = false, this.color});
+
+  final bool expanded;
+  final Color? color;
+
+  /// `--ion-color-step-500`: #808080 (the same grey in dark mode).
+  static const Color defaultColor = Color(0xFF808080);
+
+  @override
+  Widget build(BuildContext context) => AnimatedRotation(
+    turns: expanded ? 0.5 : 0,
+    duration: const Duration(milliseconds: 150),
+    curve: const Cubic(0.4, 0, 0.2, 1),
+    child: Icon(AppIcons.arrowDropDown, size: 13, color: color ?? defaultColor),
   );
 }
 
+/// Whether the select around is open (its popover / alert / action sheet is
+/// showing): Ionic `.select-expanded`.
+class _SelectExpanded extends InheritedWidget {
+  const _SelectExpanded({required this.expanded, required super.child});
+
+  final bool expanded;
+
+  static bool of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_SelectExpanded>()?.expanded ?? false;
+
+  @override
+  bool updateShouldNotify(_SelectExpanded old) => old.expanded != expanded;
+}
+
+/// The toggle icon after a select's value: the Ionic `chevron-expand` (iOS)
+/// or caret (md), in the Beta design its own ▾ (like the "Stimme" cells of
+/// the file table). [highlightExpanded]: md colours the caret primary while
+/// the select is open (a select with a field decoration, not one in an item).
+Widget _selectToggleIcon(
+  BuildContext context, {
+  required bool enabled,
+  bool highlightExpanded = false,
+}) {
+  final rd = context.rdSkin;
+  final Widget icon;
+  if (rd != null) {
+    icon = Icon(Icons.keyboard_arrow_down, size: 20, color: rd.text2);
+  } else if (useIosLook(context)) {
+    icon = const IonSelectIcon();
+  } else {
+    icon = Builder(
+      builder: (context) {
+        final expanded = _SelectExpanded.of(context);
+        return IonMdSelectIcon(
+          expanded: expanded,
+          color: expanded && highlightExpanded ? Theme.of(context).colorScheme.primary : null,
+        );
+      },
+    );
+  }
+  // md: `:host(.select-disabled) { opacity: .38 }`.
+  return Opacity(opacity: enabled ? 1 : 0.4, child: icon);
+}
+
+/// Gap between a select's value and its toggle icon (md `.select-icon`
+/// `margin-inline-start: 4px`).
+double _selectIconGap(BuildContext context) =>
+    context.rdSkin == null && !useIosLook(context) ? 4 : 6;
+
 // ---------------------------------------------------------------------------
-// iOS popover
+// Popover (interface="popover"): iOS glass / md surface
 // ---------------------------------------------------------------------------
 
-class _IosSelectPopoverRoute<T> extends PopupRoute<AppSelection<T>> {
-  _IosSelectPopoverRoute({
+/// Ionic md popover default `--width: 250px`.
+const double kMdSelectPopoverWidth = 250;
+
+class _SelectPopoverRoute<T> extends PopupRoute<AppSelection<T>> {
+  _SelectPopoverRoute({
+    required this.ios,
     required this.anchor,
     required this.overlaySize,
     required this.options,
@@ -360,6 +408,8 @@ class _IosSelectPopoverRoute<T> extends PopupRoute<AppSelection<T>> {
     required this.capturedThemes,
   });
 
+  /// iOS look (glass popover) or md look (Ionic md popover).
+  final bool ios;
   final Rect anchor;
   final Size overlaySize;
   final List<AppSelectOption<T>> options;
@@ -370,9 +420,10 @@ class _IosSelectPopoverRoute<T> extends PopupRoute<AppSelection<T>> {
   @override
   final String barrierLabel;
 
-  /// ionic-theme-ios26 `ion-popover.ios { --backdrop-opacity: .2 }`.
+  /// ionic-theme-ios26 `ion-popover.ios { --backdrop-opacity: .2 }`; the md
+  /// select popover has no backdrop (`showBackdrop: false`).
   @override
-  Color? get barrierColor => const Color(0x33000000);
+  Color? get barrierColor => ios ? const Color(0x33000000) : Colors.transparent;
 
   @override
   bool get barrierDismissible => true;
@@ -390,11 +441,15 @@ class _IosSelectPopoverRoute<T> extends PopupRoute<AppSelection<T>> {
     Animation<double> secondaryAnimation,
   ) {
     final media = MediaQuery.of(context);
-    const margin = 8.0;
+    // Ionic keeps a popover `bodyPadding` away from the edges: md 12px.
+    final margin = ios ? 8.0 : 12.0;
+    final defaultWidth = ios ? kIosSelectPopoverWidth : kMdSelectPopoverWidth;
+    // The md popover sits right at the value (no arrow, no gap).
+    final gap = ios ? 6.0 : 0.0;
     final maxW = overlaySize.width - 2 * margin;
     final w = cover
-        ? math.min(math.max(anchor.width, kIosSelectPopoverWidth), maxW)
-        : math.min(kIosSelectPopoverWidth, maxW);
+        ? math.min(math.max(anchor.width, defaultWidth), maxW)
+        : math.min(defaultWidth, maxW);
     // Centred on the value (cover: aligned with the field), kept on screen.
     final preferredLeft = cover ? anchor.left : anchor.center.dx - w / 2;
     final left = preferredLeft
@@ -405,11 +460,14 @@ class _IosSelectPopoverRoute<T> extends PopupRoute<AppSelection<T>> {
     final spaceAbove = anchor.top - media.padding.top - margin;
     // global.scss: `ion-select-popover ion-list { max-height: 23rem }`.
     const listMax = 368.0;
-    final rowsHeight = math.min(listMax, options.length * 45.0 + 12);
+    final rowsHeight = math.min(
+      listMax,
+      ios ? options.length * 45.0 + 12 : options.length * 48.0 + 16,
+    );
     final below = spaceBelow >= math.min(rowsHeight, 160) || spaceBelow >= spaceAbove;
     final maxHeight = math.max(
       88.0,
-      math.min(listMax, (below ? spaceBelow : spaceAbove) - 6),
+      math.min(listMax, (below ? spaceBelow : spaceAbove) - gap),
     );
     final curved = CurvedAnimation(
       parent: animation,
@@ -419,11 +477,16 @@ class _IosSelectPopoverRoute<T> extends PopupRoute<AppSelection<T>> {
     final card = FadeTransition(
       opacity: curved,
       child: ScaleTransition(
-        scale: Tween<double>(begin: 0.85, end: 1).animate(curved),
-        alignment: below ? Alignment.topCenter : Alignment.bottomCenter,
+        // md `.popover-content { transform-origin: left top }`, scale .8.
+        scale: Tween<double>(begin: ios ? 0.85 : 0.8, end: 1).animate(curved),
+        alignment: ios
+            ? (below ? Alignment.topCenter : Alignment.bottomCenter)
+            : (below ? Alignment.topLeft : Alignment.bottomLeft),
         child: ConstrainedBox(
           constraints: BoxConstraints(maxHeight: maxHeight),
-          child: _IosSelectPopoverCard<T>(options: options, value: value),
+          child: ios
+              ? _IosSelectPopoverCard<T>(options: options, value: value)
+              : _MdSelectPopoverCard<T>(options: options, value: value),
         ),
       ),
     );
@@ -436,10 +499,10 @@ class _IosSelectPopoverRoute<T> extends PopupRoute<AppSelection<T>> {
         child: Stack(
           children: [
             if (below)
-              Positioned(top: anchor.bottom + 6, left: left, width: w, child: card)
+              Positioned(top: anchor.bottom + gap, left: left, width: w, child: card)
             else
               Positioned(
-                bottom: overlaySize.height - anchor.top + 6,
+                bottom: overlaySize.height - anchor.top + gap,
                 left: left,
                 width: w,
                 child: card,
@@ -622,6 +685,241 @@ class _IosSelectAlertState<T> extends State<_IosSelectAlert<T>> {
 }
 
 // ---------------------------------------------------------------------------
+// md popover + md alert (Ionic md mode)
+// ---------------------------------------------------------------------------
+
+/// `ion-select-popover` in an md `ion-popover`: surface card (radius 4, md
+/// shadow), an `ion-list` (8px padding) of 48px items without lines; the
+/// radios are hidden and the checked item is tinted `rgba(primary, .08)`.
+class _MdSelectPopoverCard<T> extends StatelessWidget {
+  const _MdSelectPopoverCard({required this.options, required this.value});
+
+  final List<AppSelectOption<T>> options;
+  final T? value;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    return Material(
+      color: theme.colorScheme.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 8,
+      borderRadius: BorderRadius.circular(4),
+      clipBehavior: Clip.antiAlias,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final o in options)
+              Semantics(
+                selected: o.value == value,
+                button: true,
+                enabled: o.enabled,
+                child: Opacity(
+                  // md `ion-item` disabled: opacity .3.
+                  opacity: o.enabled ? 1 : 0.3,
+                  child: Material(
+                    color: o.value == value ? primary.withValues(alpha: 0.08) : Colors.transparent,
+                    child: InkWell(
+                      onTap: o.enabled
+                          ? () => Navigator.of(context).pop(AppSelection<T>(o.value))
+                          : null,
+                      child: Container(
+                        constraints: const BoxConstraints(minHeight: IonMd.itemMinHeight),
+                        alignment: AlignmentDirectional.centerStart,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        child: DefaultTextStyle.merge(
+                          // `.select-option-label`: one line, ellipsis.
+                          style: TextStyle(
+                            fontSize: IonMd.itemFontSize,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          child: o.child ?? Text(o.label!),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Ionic md `ion-alert` of an `ion-select` (`interface="alert"`, the Ionic
+/// default): the header, the options as `.alert-radio-group` (hairline
+/// above and below, at most 266px high on a phone) with 48px rows – a 20px
+/// radio 24px from the edge, the 16px step-850 label 32px after it – and
+/// the flat buttons "ABBRECHEN" / "OK". The choice counts with OK.
+class _MdSelectAlert<T> extends StatefulWidget {
+  const _MdSelectAlert({
+    required this.header,
+    required this.options,
+    required this.value,
+  });
+
+  final String? header;
+  final List<AppSelectOption<T>> options;
+  final T? value;
+
+  @override
+  State<_MdSelectAlert<T>> createState() => _MdSelectAlertState<T>();
+}
+
+class _MdSelectAlertState<T> extends State<_MdSelectAlert<T>> {
+  late AppSelection<T>? _selected = widget.options
+          .any((o) => o.value == widget.value)
+      ? AppSelection<T>(widget.value as T)
+      : null;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final b = theme.brightness;
+    final primary = theme.colorScheme.primary;
+    // `--ion-color-step-150`: #d9d9d9, md dark #363636.
+    final line = b == Brightness.dark ? const Color(0xFF363636) : const Color(0xFFD9D9D9);
+    final size = MediaQuery.sizeOf(context);
+    // Phones: `.alert-radio-group { max-height: 266px }`; from 768px the
+    // whole alert may grow to min(100vh - 96px, 560px).
+    final groupMax = size.width < 768
+        ? 266.0
+        : math.max(144.0, math.min(size.height - 96, 560.0) - 120);
+    return AppAlertDialog(
+      title: widget.header == null ? null : Text(widget.header!),
+      contentPadding: EdgeInsets.zero,
+      content: Container(
+        constraints: BoxConstraints(maxHeight: groupMax),
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(color: line),
+            bottom: BorderSide(color: line),
+          ),
+        ),
+        // The radio rows ripple on the alert's surface.
+        child: Material(
+          type: MaterialType.transparency,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (final o in widget.options)
+                  _MdAlertRadioRow(
+                    checked: _selected != null && _selected!.value == o.value,
+                    enabled: o.enabled,
+                    primary: primary,
+                    onTap: () => setState(() => _selected = AppSelection<T>(o.value)),
+                    child: o.child ?? Text(o.label!),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(context.l10n.commonCancel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(_selected),
+          child: Text(context.l10n.commonOk),
+        ),
+      ],
+    );
+  }
+}
+
+/// `.alert-radio` (md): `.alert-tappable` min-height 48, `.alert-radio-icon`
+/// 20px (2px step-550 border, checked: primary border + 10px primary dot)
+/// at `inset-inline-start: 24px`, `.alert-radio-label` 16px step-850 with
+/// 13px vertical padding, 32px after the radio and 24px before the edge.
+class _MdAlertRadioRow extends StatelessWidget {
+  const _MdAlertRadioRow({
+    required this.checked,
+    required this.enabled,
+    required this.primary,
+    required this.onTap,
+    required this.child,
+  });
+
+  final bool checked;
+  final bool enabled;
+  final Color primary;
+  final VoidCallback onTap;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final b = Theme.of(context).brightness;
+    return Semantics(
+      checked: checked,
+      inMutuallyExclusiveGroup: true,
+      enabled: enabled,
+      child: Opacity(
+        // `.alert-radio-button-disabled .alert-button-inner { opacity: .5 }`
+        opacity: enabled ? 1 : 0.5,
+        child: InkWell(
+          onTap: enabled ? onTap : null,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 280),
+                    curve: const Cubic(0.4, 0, 0.2, 1),
+                    width: 20,
+                    height: 20,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 2,
+                        color: checked ? primary : IonMd.step550(b),
+                      ),
+                    ),
+                    child: AnimatedScale(
+                      scale: checked ? 1 : 0,
+                      duration: const Duration(milliseconds: 280),
+                      curve: const Cubic(0.4, 0, 0.2, 1),
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(color: primary, shape: BoxShape.circle),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 32),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                      child: DefaultTextStyle.merge(
+                        style: TextStyle(fontSize: 16, color: IonMd.step850(b)),
+                        child: child,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Drop-in dropdowns
 // ---------------------------------------------------------------------------
 
@@ -643,7 +941,8 @@ Widget? _selectedChild<T>(
 
 /// The tappable value of a custom select: tap, or Tab + Enter / Space
 /// (`ActivateIntent`) like the Material dropdowns it replaces; a focus ring
-/// shows in keyboard mode.
+/// shows in keyboard mode. While [onTap] runs (the select is open) the
+/// subtree sees [_SelectExpanded] (md: turned caret, highlighted field).
 class _SelectTrigger extends StatefulWidget {
   const _SelectTrigger({
     required this.onTap,
@@ -652,7 +951,7 @@ class _SelectTrigger extends StatefulWidget {
     required this.child,
   });
 
-  final VoidCallback? onTap;
+  final Future<void> Function()? onTap;
   final FocusNode? focusNode;
   final bool autofocus;
   final Widget child;
@@ -663,27 +962,39 @@ class _SelectTrigger extends StatefulWidget {
 
 class _SelectTriggerState extends State<_SelectTrigger> {
   bool _focused = false;
+  bool _expanded = false;
+
+  Future<void> _open() async {
+    final onTap = widget.onTap;
+    if (onTap == null || _expanded) return;
+    setState(() => _expanded = true);
+    try {
+      await onTap();
+    } finally {
+      if (mounted) setState(() => _expanded = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final onTap = widget.onTap;
+    final enabled = widget.onTap != null;
     return FocusableActionDetector(
       focusNode: widget.focusNode,
       autofocus: widget.autofocus,
-      enabled: onTap != null,
-      mouseCursor: onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
+      enabled: enabled,
+      mouseCursor: enabled ? SystemMouseCursors.click : MouseCursor.defer,
       onShowFocusHighlight: (v) => setState(() => _focused = v),
       actions: {
         ActivateIntent: CallbackAction<ActivateIntent>(
           onInvoke: (_) {
-            onTap?.call();
+            _open();
             return null;
           },
         ),
       },
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: onTap,
+        onTap: enabled ? _open : null,
         child: DecoratedBox(
           position: DecorationPosition.foreground,
           decoration: BoxDecoration(
@@ -692,20 +1003,21 @@ class _SelectTriggerState extends State<_SelectTrigger> {
                 ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
                 : null,
           ),
-          child: widget.child,
+          child: _SelectExpanded(expanded: _expanded, child: widget.child),
         ),
       ),
     );
   }
 }
 
-/// IOS_THEME2: drop-in replacement for [DropdownButtonFormField].
+/// IOS_THEME2 / KP_SELECTS: drop-in replacement for
+/// [DropdownButtonFormField] – the one select field of the classic design.
 ///
-/// Outside iOS it builds a [DropdownButtonFormField] with the same
-/// parameters. On iOS the field keeps its [decoration] (label, borders,
-/// errors, validator) but shows the value with the `chevron-expand` icon and
-/// opens [showAppSelect] with [iosInterface] (match the Ionic page's
-/// `ion-select interface`).
+/// The field keeps its [decoration] (label, borders, errors, validator) but
+/// shows the value with the Ionic toggle icon (iOS `chevron-expand`, md
+/// caret) and opens [showAppSelect] with [interface] (match the Ionic
+/// page's `ion-select interface`; an `ion-select` without `interface` is
+/// [AppSelectInterface.alert]). In the Beta design it opens the Beta menu.
 class AppDropdownFormField<T> extends StatelessWidget {
   const AppDropdownFormField({
     super.key,
@@ -732,9 +1044,10 @@ class AppDropdownFormField<T> extends StatelessWidget {
     this.alignment = AlignmentDirectional.centerStart,
     this.borderRadius,
     this.padding,
-    this.iosInterface = AppSelectInterface.popover,
-    this.iosHeader,
-  });
+    AppSelectInterface? interface,
+    this.header,
+    @Deprecated('Use interface') AppSelectInterface? iosInterface,
+  }) : interface = interface ?? iosInterface ?? AppSelectInterface.popover;
 
   final List<DropdownMenuItem<T>>? items;
   final DropdownButtonBuilder? selectedItemBuilder;
@@ -744,6 +1057,11 @@ class AppDropdownFormField<T> extends StatelessWidget {
   final ValueChanged<T?>? onChanged;
   final VoidCallback? onTap;
   final TextStyle? style;
+
+  /// Unused: the toggle icon is the Ionic one of the current look. (Kept so
+  /// the widget stays a drop-in for [DropdownButtonFormField]; the same
+  /// holds for [isDense], [isExpanded], [itemHeight], [dropdownColor],
+  /// [menuMaxHeight], [alignment] and [borderRadius].)
   final Widget? icon;
   final bool isDense;
   final bool isExpanded;
@@ -760,43 +1078,15 @@ class AppDropdownFormField<T> extends StatelessWidget {
   final BorderRadius? borderRadius;
   final EdgeInsetsGeometry? padding;
 
-  /// Ionic `ion-select interface` on iOS.
-  final AppSelectInterface iosInterface;
+  /// Ionic `ion-select interface` (both looks).
+  final AppSelectInterface interface;
 
   /// Alert / action sheet header (default: the decoration's label).
-  final String? iosHeader;
+  final String? header;
 
   @override
   Widget build(BuildContext context) {
-    // BETA_SELECT: the Beta design opens its own select on every platform.
-    if (!useIosLook(context) && context.rdSkin == null) {
-      return DropdownButtonFormField<T>(
-        items: items,
-        selectedItemBuilder: selectedItemBuilder,
-        value: value,
-        hint: hint,
-        disabledHint: disabledHint,
-        onChanged: onChanged,
-        onTap: onTap,
-        style: style,
-        icon: icon,
-        isDense: isDense,
-        isExpanded: isExpanded,
-        itemHeight: itemHeight,
-        focusNode: focusNode,
-        autofocus: autofocus,
-        dropdownColor: dropdownColor,
-        decoration: decoration,
-        onSaved: onSaved,
-        validator: validator,
-        autovalidateMode: autovalidateMode,
-        menuMaxHeight: menuMaxHeight,
-        alignment: alignment,
-        borderRadius: borderRadius,
-        padding: padding,
-      );
-    }
-    return _IosSelectFormField<T>(
+    final field = _SelectFormField<T>(
       items: items,
       selectedItemBuilder: selectedItemBuilder,
       value: value,
@@ -809,16 +1099,22 @@ class AppDropdownFormField<T> extends StatelessWidget {
       onSaved: onSaved,
       validator: validator,
       autovalidateMode: autovalidateMode,
-      interface: iosInterface,
-      header: iosHeader,
+      interface: interface,
+      header: header,
       focusNode: focusNode,
       autofocus: autofocus,
     );
+    final padding = this.padding;
+    // md: [DropdownButtonFormField] applied [padding] around its button.
+    if (padding != null && !useIosLook(context) && context.rdSkin == null) {
+      return Padding(padding: padding, child: field);
+    }
+    return field;
   }
 }
 
-class _IosSelectFormField<T> extends FormField<T> {
-  _IosSelectFormField({
+class _SelectFormField<T> extends FormField<T> {
+  _SelectFormField({
     required List<DropdownMenuItem<T>>? items,
     required DropdownButtonBuilder? selectedItemBuilder,
     required T? value,
@@ -841,6 +1137,7 @@ class _IosSelectFormField<T> extends FormField<T> {
          builder: (field) {
            final context = field.context;
            final theme = Theme.of(context);
+           final md = !useIosLook(context) && context.rdSkin == null;
            final enabled = onChanged != null && items != null && items.isNotEmpty;
            final current = field.value;
            final selected =
@@ -876,26 +1173,31 @@ class _IosSelectFormField<T> extends FormField<T> {
                child: Semantics(
                  button: true,
                  enabled: enabled,
-                 child: InputDecorator(
-                   decoration: effective,
-                   isEmpty: selected == null && placeholder == null,
-                   child: Row(
-                     children: [
-                       Expanded(
-                         child: DefaultTextStyle.merge(
-                           style: selected == null
-                               ? textStyle.copyWith(
-                                   color: theme.hintColor,
-                                 )
-                               : textStyle,
-                           maxLines: 1,
-                           overflow: TextOverflow.ellipsis,
-                           child: selected ?? placeholder ?? const SizedBox.shrink(),
+                 // md `.select-expanded`: the open select is highlighted
+                 // like a focused field (primary border / label).
+                 child: Builder(
+                   builder: (context) => InputDecorator(
+                     decoration: effective,
+                     isEmpty: selected == null && placeholder == null,
+                     isFocused: md && _SelectExpanded.of(context),
+                     child: Row(
+                       children: [
+                         Expanded(
+                           child: DefaultTextStyle.merge(
+                             style: selected == null
+                                 ? textStyle.copyWith(
+                                     color: theme.hintColor,
+                                   )
+                                 : textStyle,
+                             maxLines: 1,
+                             overflow: TextOverflow.ellipsis,
+                             child: selected ?? placeholder ?? const SizedBox.shrink(),
+                           ),
                          ),
-                       ),
-                       const SizedBox(width: 6),
-                       _selectToggleIcon(context, enabled: enabled),
-                     ],
+                         SizedBox(width: _selectIconGap(context)),
+                         _selectToggleIcon(context, enabled: enabled, highlightExpanded: true),
+                       ],
+                     ),
                    ),
                  ),
                ),
@@ -905,12 +1207,12 @@ class _IosSelectFormField<T> extends FormField<T> {
        );
 
   @override
-  FormFieldState<T> createState() => _IosSelectFormFieldState<T>();
+  FormFieldState<T> createState() => _SelectFormFieldState<T>();
 }
 
-class _IosSelectFormFieldState<T> extends FormFieldState<T> {
+class _SelectFormFieldState<T> extends FormFieldState<T> {
   @override
-  void didUpdateWidget(covariant _IosSelectFormField<T> oldWidget) {
+  void didUpdateWidget(covariant _SelectFormField<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.initialValue != widget.initialValue) {
       setValue(widget.initialValue);
@@ -918,12 +1220,13 @@ class _IosSelectFormFieldState<T> extends FormFieldState<T> {
   }
 }
 
-/// IOS_THEME2: drop-in replacement for [DropdownButton] (inline selects,
-/// e.g. an `ion-select` at the end of an `ion-item`).
+/// IOS_THEME2 / KP_SELECTS: drop-in replacement for [DropdownButton]
+/// (inline selects, e.g. an `ion-select` at the end of an `ion-item`).
 ///
-/// Outside iOS it builds a [DropdownButton] with the same parameters. On iOS
-/// it shows the selected value + `chevron-expand` and opens [showAppSelect]
-/// ([iosInterface], popover by default) anchored on the value.
+/// It shows the selected value + the Ionic toggle icon of the current look
+/// (iOS `chevron-expand`, md caret; no underline) and opens [showAppSelect]
+/// ([interface], popover by default) anchored on the value. In the Beta
+/// design it opens the Beta menu.
 class AppDropdownButton<T> extends StatelessWidget {
   const AppDropdownButton({
     super.key,
@@ -950,9 +1253,10 @@ class AppDropdownButton<T> extends StatelessWidget {
     this.alignment = AlignmentDirectional.centerStart,
     this.borderRadius,
     this.padding,
-    this.iosInterface = AppSelectInterface.popover,
-    this.iosHeader,
-  });
+    AppSelectInterface? interface,
+    this.header,
+    @Deprecated('Use interface') AppSelectInterface? iosInterface,
+  }) : interface = interface ?? iosInterface ?? AppSelectInterface.popover;
 
   final List<DropdownMenuItem<T>>? items;
   final DropdownButtonBuilder? selectedItemBuilder;
@@ -961,6 +1265,11 @@ class AppDropdownButton<T> extends StatelessWidget {
   final Widget? disabledHint;
   final ValueChanged<T?>? onChanged;
   final VoidCallback? onTap;
+
+  /// Unused, like [underline], [icon], [iconSize], [itemHeight],
+  /// [focusColor], [dropdownColor], [menuMaxHeight], [alignment] and
+  /// [borderRadius] (kept so the widget stays a drop-in for
+  /// [DropdownButton]).
   final int elevation;
   final TextStyle? style;
   final Widget? underline;
@@ -978,42 +1287,15 @@ class AppDropdownButton<T> extends StatelessWidget {
   final BorderRadius? borderRadius;
   final EdgeInsetsGeometry? padding;
 
-  /// Ionic `ion-select interface` on iOS.
-  final AppSelectInterface iosInterface;
+  /// Ionic `ion-select interface` (both looks).
+  final AppSelectInterface interface;
 
   /// Alert / action sheet header.
-  final String? iosHeader;
+  final String? header;
 
   @override
   Widget build(BuildContext context) {
-    // BETA_SELECT: the Beta design opens its own select on every platform.
-    if (!useIosLook(context) && context.rdSkin == null) {
-      return DropdownButton<T>(
-        items: items,
-        selectedItemBuilder: selectedItemBuilder,
-        value: value,
-        hint: hint,
-        disabledHint: disabledHint,
-        onChanged: onChanged,
-        onTap: onTap,
-        elevation: elevation,
-        style: style,
-        underline: underline,
-        icon: icon,
-        iconSize: iconSize,
-        isDense: isDense,
-        isExpanded: isExpanded,
-        itemHeight: itemHeight,
-        focusColor: focusColor,
-        focusNode: focusNode,
-        autofocus: autofocus,
-        dropdownColor: dropdownColor,
-        menuMaxHeight: menuMaxHeight,
-        alignment: alignment,
-        borderRadius: borderRadius,
-        padding: padding,
-      );
-    }
+    final md = !useIosLook(context) && context.rdSkin == null;
     final theme = Theme.of(context);
     final enabled = onChanged != null && items != null && items!.isNotEmpty;
     final selected =
@@ -1029,7 +1311,7 @@ class AppDropdownButton<T> extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       child: selected ?? placeholder ?? const SizedBox.shrink(),
     );
-    return Builder(
+    final trigger = Builder(
       builder: (triggerContext) => _SelectTrigger(
         focusNode: focusNode,
         autofocus: autofocus,
@@ -1041,8 +1323,8 @@ class AppDropdownButton<T> extends StatelessWidget {
                   context: triggerContext,
                   options: AppSelectOption.fromMenuItems<T>(items!),
                   value: value,
-                  interface: iosInterface,
-                  header: iosHeader,
+                  interface: interface,
+                  header: header,
                 );
                 if (picked != null && picked.value != value) {
                   onChanged!(picked.value);
@@ -1052,12 +1334,14 @@ class AppDropdownButton<T> extends StatelessWidget {
           button: true,
           enabled: enabled,
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: isDense ? 24 : 44),
+            // md: the 48px of the Material button it replaces (an md
+            // `ion-item` is 48px high).
+            constraints: BoxConstraints(minHeight: isDense ? 24 : (md ? 48 : 44)),
             child: Row(
               mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
               children: [
                 if (isExpanded) Expanded(child: label) else Flexible(child: label),
-                const SizedBox(width: 6),
+                SizedBox(width: _selectIconGap(context)),
                 _selectToggleIcon(context, enabled: enabled),
               ],
             ),
@@ -1065,5 +1349,9 @@ class AppDropdownButton<T> extends StatelessWidget {
         ),
       ),
     );
+    // md: [DropdownButton] applied [padding] around the button.
+    final padding = this.padding;
+    if (md && padding != null) return Padding(padding: padding, child: trigger);
+    return trigger;
   }
 }

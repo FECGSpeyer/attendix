@@ -725,7 +725,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         IonStackedField(
                           label: context.l10n.generalSettingsHolidayState,
                           builder: (decoration) => AppDropdownFormField<String>(
-                            iosInterface: AppSelectInterface.alert,
+                            interface: AppSelectInterface.alert,
                           value: _selectedRegion,
                           decoration: decoration,
                           items: holidayRegions

@@ -380,7 +380,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                       Expanded(child: Text(l10n.attListConductor, style: const TextStyle(fontSize: 17))),
                       DropdownButtonHideUnderline(
                         child: AppDropdownButton<int>(
-                          iosInterface: AppSelectInterface.alert,
+                          interface: AppSelectInterface.alert,
                           value: otherConductor != null ? -1 : selectedConductorId,
                           alignment: AlignmentDirectional.centerEnd,
                           items: [

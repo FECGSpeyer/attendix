@@ -507,7 +507,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     flush: true,
                     label: context.l10n.typeSettingsDefaultStatus,
                     builder: (decoration) => AppDropdownFormField<AttendanceStatus>(
-                      iosInterface: AppSelectInterface.alert,
+                      interface: AppSelectInterface.alert,
                       decoration: decoration,
                       value: _availableStatuses.contains(_defaultStatus)
                           ? _defaultStatus
@@ -1160,7 +1160,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               label: context.l10n.typeSettingsExtraFilter,
               helper: context.l10n.typeSettingsExtraFilterHelper,
               builder: (decoration) => AppDropdownFormField<String?>(
-                iosInterface: AppSelectInterface.alert,
+                interface: AppSelectInterface.alert,
                 decoration: decoration,
                 value: selectedField?.id,
                 items: [
@@ -1186,7 +1186,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               flush: true,
               label: context.l10n.typeSettingsValue,
               builder: (decoration) => AppDropdownFormField<bool>(
-                iosInterface: AppSelectInterface.alert,
+                interface: AppSelectInterface.alert,
                 decoration: decoration,
                 value: rawOption is bool ? rawOption : null,
                 items: [
@@ -1206,7 +1206,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               flush: true,
               label: context.l10n.typeSettingsOption,
               builder: (decoration) => AppDropdownFormField<String>(
-                iosInterface: AppSelectInterface.alert,
+                interface: AppSelectInterface.alert,
                 decoration: decoration,
                 value: rawOption is String && selectedField.options!.contains(rawOption) ? rawOption : null,
                 items: [
@@ -1739,7 +1739,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             // the type (Ionic compares only the type).
             builder: (decoration) => Form(
               child: AppDropdownFormField<int?>(
-                iosInterface: AppSelectInterface.actionSheet,
+                interface: AppSelectInterface.actionSheet,
                 decoration: decoration.copyWith(hintText: l10n.typeSettingsNoDeadline),
                 value: _newTodoDeadline,
                 items: [

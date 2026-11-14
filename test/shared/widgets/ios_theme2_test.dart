@@ -143,7 +143,7 @@ void main() {
       await tester.pumpWidget(app(AppDropdownFormField<String>(
         value: 'de',
         items: items,
-        iosInterface: AppSelectInterface.alert,
+        interface: AppSelectInterface.alert,
         decoration: const InputDecoration(labelText: 'Sprache'),
         onChanged: (v) => changed = v,
       )));

@@ -256,7 +256,7 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AppDropdownFormField<int>(
-                    iosInterface: AppSelectInterface.alert,
+                    interface: AppSelectInterface.alert,
                     value: _tenantId,
                     isExpanded: true,
                     decoration: InputDecoration(labelText: l10n.personTargetInstance),
@@ -276,7 +276,7 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
                   if (_tenantId != null && _groups.isNotEmpty) ...[
                     const SizedBox(height: AppDimensions.paddingM),
                     AppDropdownFormField<int>(
-                      iosInterface: AppSelectInterface.alert,
+                      interface: AppSelectInterface.alert,
                       value: _groupId,
                       isExpanded: true,
                       decoration: InputDecoration(labelText: l10n.personTargetGroup),

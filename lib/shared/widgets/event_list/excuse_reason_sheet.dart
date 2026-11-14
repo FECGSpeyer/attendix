@@ -327,7 +327,7 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: AppDropdownFormField<String>(
-            iosInterface: AppSelectInterface.alert,
+            interface: AppSelectInterface.alert,
             value: (field.options ?? []).contains(_answers[field.id]) ? _answers[field.id] as String : null,
             decoration: InputDecoration(labelText: field.label, border: const OutlineInputBorder()),
             items: [
