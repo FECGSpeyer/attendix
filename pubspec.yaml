@@ -128,6 +128,7 @@ dev_dependencies:
 
   # App Icon Generation
   flutter_launcher_icons: ^0.14.3
+  patrol: ^4.11.0
 
 flutter:
   uses-material-design: true
@@ -171,6 +172,15 @@ flutter:
           weight: 600
         - asset: assets/fonts/Roboto-Bold.ttf
           weight: 700
+
+# E2E tests (patrol_test/): see docs/testing.md
+patrol:
+  app_name: Attendix
+  test_directory: patrol_test
+  android:
+    package_name: io.stephanus.attendix
+  ios:
+    bundle_id: io.stephanus.attendix
 
 # App Icon Configuration
 flutter_launcher_icons:

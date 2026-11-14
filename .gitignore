@@ -64,3 +64,9 @@ macos/Runner/GoogleService-Info.plist
 
 # Golden test failure output (flutter test writes diff images here)
 test/**/failures/
+
+# E2E (Patrol): generated bundle, local dart-defines, Playwright output
+test_bundle.dart
+.patrol.env
+/playwright-report/
+/test-results/

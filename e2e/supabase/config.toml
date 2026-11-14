@@ -1,0 +1,71 @@
+# Local Supabase for the E2E flows (patrol_test/) and the database tests.
+# Started fresh for every test run: `supabase start --workdir e2e`.
+# It never talks to the production project.
+project_id = "attendix-e2e"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[db.migrations]
+enabled = true
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[realtime]
+enabled = true
+
+[studio]
+enabled = false
+
+# Local mailbox: every mail the app "sends" (login codes, confirmations)
+# lands here and can be read by a test.
+[inbucket]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+site_url = "http://localhost:8080"
+additional_redirect_urls = ["http://localhost:8080", "http://127.0.0.1:8080"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+enable_signup = true
+minimum_password_length = 6
+
+# Tests sign in many times in a row.
+[auth.rate_limit]
+email_sent = 1000
+token_refresh = 1000
+sign_in_sign_ups = 1000
+token_verifications = 1000
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = false
+# Like production: a new account must confirm its e-mail address.
+enable_confirmations = true
+max_frequency = "1s"
+otp_length = 6
+otp_expiry = 3600
+
+[edge_runtime]
+enabled = false
+
+[analytics]
+enabled = false
