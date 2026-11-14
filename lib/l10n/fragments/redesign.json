@@ -1086,7 +1086,8 @@
         "subject": "Betreff",
         "body": "Text",
         "hint": "Die Mitteilung erscheint bei allen Empfängern unter Mitteilungen.",
-        "missing": "Betreff, Text und mindestens ein Versandweg fehlen noch."
+        "missing": "Betreff, Text und mindestens ein Versandweg fehlen noch.",
+        "noRecipients": "Die Auswahl erreicht noch niemanden. Wähle andere Gruppen oder Versandwege."
       },
       "notif": {
         "how": "Wie",
@@ -2793,7 +2794,8 @@
         "subject": "Subject",
         "body": "Text",
         "hint": "The message appears for all recipients under Messages.",
-        "missing": "Subject, text and at least one channel are still missing."
+        "missing": "Subject, text and at least one channel are still missing.",
+        "noRecipients": "This selection reaches nobody yet. Choose other groups or channels."
       },
       "notif": {
         "how": "How",

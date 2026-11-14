@@ -13329,6 +13329,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Betreff, Text und mindestens ein Versandweg fehlen noch.';
 
   @override
+  String get redesignComposeNoRecipients =>
+      'Die Auswahl erreicht noch niemanden. Wähle andere Gruppen oder Versandwege.';
+
+  @override
   String get redesignComposeSend => 'Senden';
 
   @override

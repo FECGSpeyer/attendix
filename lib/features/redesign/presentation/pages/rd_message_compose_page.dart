@@ -200,7 +200,11 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
 
   Future<void> _send() async {
     if (!_canSend) {
-      if (!_complete) ToastHelper.showError(context, context.l10n.redesignComposeMissing);
+      if (!_complete) {
+        ToastHelper.showError(context, context.l10n.redesignComposeMissing);
+      } else if (!_sending && _counts != null && !_countsFailed) {
+        ToastHelper.showError(context, context.l10n.redesignComposeNoRecipients);
+      }
       return;
     }
     if (DemoGuard.blocked()) return; // DEMO_GUARD

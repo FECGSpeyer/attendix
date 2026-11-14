@@ -16440,6 +16440,10 @@
   "@redesignComposeMissing": {
     "description": "redesign.compose.missing"
   },
+  "redesignComposeNoRecipients": "Die Auswahl erreicht noch niemanden. Wähle andere Gruppen oder Versandwege.",
+  "@redesignComposeNoRecipients": {
+    "description": "redesign.compose.noRecipients"
+  },
   "redesignComposeSend": "Senden",
   "@redesignComposeSend": {
     "description": "redesign.compose.send"

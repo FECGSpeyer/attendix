@@ -3542,6 +3542,7 @@
   "redesignComposeGroups": "Choose sections",
   "redesignComposeHint": "The message appears for all recipients under Messages.",
   "redesignComposeMissing": "Subject, text and at least one channel are still missing.",
+  "redesignComposeNoRecipients": "This selection reaches nobody yet. Choose other groups or channels.",
   "redesignComposeSend": "Send",
   "redesignComposeSubject": "Subject",
   "redesignComposeTitle": "Write message",

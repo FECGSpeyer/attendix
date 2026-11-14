@@ -13204,6 +13204,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Subject, text and at least one channel are still missing.';
 
   @override
+  String get redesignComposeNoRecipients =>
+      'This selection reaches nobody yet. Choose other groups or channels.';
+
+  @override
   String get redesignComposeSend => 'Send';
 
   @override

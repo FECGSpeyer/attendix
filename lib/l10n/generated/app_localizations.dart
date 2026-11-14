@@ -21396,6 +21396,12 @@ abstract class AppLocalizations {
   /// **'Betreff, Text und mindestens ein Versandweg fehlen noch.'**
   String get redesignComposeMissing;
 
+  /// redesign.compose.noRecipients
+  ///
+  /// In de, this message translates to:
+  /// **'Die Auswahl erreicht noch niemanden. Wähle andere Gruppen oder Versandwege.'**
+  String get redesignComposeNoRecipients;
+
   /// redesign.compose.send
   ///
   /// In de, this message translates to:
