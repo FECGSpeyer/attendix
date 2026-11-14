@@ -7,6 +7,9 @@ import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:ionicons/ionicons.dart';
+import 'ion/ion_widgets.dart'
+    show IonBadge, IonItem, IonText, ionLightColor;
 
 /// Inline typeahead list of possible matches in linked tenants
 /// (Ionic person.page `name-suggestions`).
@@ -25,6 +28,7 @@ class PersonMatchSuggestions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    if (context.rdSkin == null) return _buildIonic(context);
     return Card(
       margin: EdgeInsets.zero,
       child: Column(
@@ -89,6 +93,110 @@ class PersonMatchSuggestions extends StatelessWidget {
               ),
               onTap: () => onSelected(m.candidate),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+extension on PersonMatchSuggestions {
+  /// PEO-24: Ionic `.name-suggestions` – `ion-list lines="full"` on light
+  /// background with rounded corners, a small solid round close button top
+  /// right, a coloured start icon and solid badges (person.html:127-158,
+  /// person.page.scss:132-160).
+  Widget _buildIonic(BuildContext context) {
+    final light = ionLightColor(context);
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: light,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 10, 48, 4),
+                child: Text(
+                  context.l10n.personFlutterMatchFound,
+                  style: IonText.h3(context),
+                ),
+              ),
+              for (final m in matches)
+                IonItem(
+                  background: light,
+                  onTap: () => onSelected(m.candidate),
+                  start: Icon(
+                    m.candidate.person.appId != null
+                        ? Ionicons.personCircleOutline
+                        : (m.candidate.person.email?.isNotEmpty ?? false)
+                            ? Ionicons.mailOutline
+                            : Ionicons.helpCircleOutline,
+                    color: m.candidate.person.appId != null
+                        ? AppColors.success
+                        : (m.candidate.person.email?.isNotEmpty ?? false)
+                            ? AppColors.primary
+                            : AppColors.medium,
+                  ),
+                  end: [
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (m.candidate.person.appId != null)
+                          IonBadge(
+                            text: context.l10n.personAccountBadge,
+                            color: AppColors.success,
+                          )
+                        else if (m.candidate.person.email?.isNotEmpty ?? false)
+                          IonBadge(text: context.l10n.peopleEmail),
+                        const SizedBox(height: 4),
+                        IonBadge(
+                          text: '${(m.score * 100).round()}%',
+                          color: AppColors.medium,
+                        ),
+                      ],
+                    ),
+                  ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${m.candidate.person.firstName} ${m.candidate.person.lastName}',
+                        style: IonText.h3(context),
+                      ),
+                      Text(
+                        '${m.candidate.groupName ?? '?'} · ${m.candidate.tenantName ?? '?'}',
+                        style: IonText.p(context),
+                      ),
+                      Text(m.reason, style: IonText.p(context)),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+          Positioned(
+            top: 6,
+            right: 6,
+            child: Semantics(
+              button: true,
+              label: context.l10n.personCloseSuggestions,
+              child: Material(
+                color: AppColors.medium,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: onDismiss,
+                  child: const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Icon(Ionicons.close, size: 16, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
