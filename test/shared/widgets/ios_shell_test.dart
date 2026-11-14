@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/app_theme.dart';
+import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
@@ -193,6 +194,51 @@ void main() {
     expect(picked, [2]);
     expect(find.text('Orchester'), findsNothing);
   }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+  testWidgets('TenantSwitcherTitle md: Ionic md popover (220px) below the button',
+      (tester) async {
+    final chor = TestFactories.createTenant(id: 1, longName: 'Chor');
+    final orchester = TestFactories.createTenant(id: 2, longName: 'Orchester');
+    final container = createTestContainer(
+      tenant: chor,
+      overrides: [
+        userTenantsProvider.overrideWith((ref) async => [chor, orchester]),
+      ],
+    );
+    addTearDown(container.dispose);
+    final picked = <int?>[];
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: container,
+      child: MaterialApp(
+        theme: AppTheme.light,
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          appBar: AppBar(
+            title: TenantSwitcherTitle(onSelected: (t) => picked.add(t.id)),
+          ),
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.byType(PopupMenuButton<Tenant>), findsNothing);
+
+    final button = tester.getRect(find.text('CHOR'));
+    await tester.tap(find.text('CHOR'));
+    await tester.pumpAndSettle();
+    expect(find.byType(PopupMenuItem<Tenant>), findsNothing);
+    expect(find.text('Aktuell'), findsOneWidget);
+    final row = tester.getRect(find.ancestor(
+        of: find.text('Orchester'), matching: find.byType(InkWell)).first);
+    expect(row.width, 220);
+    expect(row.top, greaterThanOrEqualTo(button.bottom));
+
+    await tester.tap(find.text('Orchester'));
+    await tester.pumpAndSettle();
+    expect(picked, [2]);
+    expect(find.text('Orchester'), findsNothing);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
   group('Source checks', () {
     test('tab page FABs use TabBarFab, header buttons are grouped', () {
