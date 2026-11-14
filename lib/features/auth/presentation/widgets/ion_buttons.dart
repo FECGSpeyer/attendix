@@ -71,13 +71,19 @@ class IonBlockButton extends StatelessWidget {
     if (solid) {
       final greyDisabled = ios && !primaryWhenDisabled;
       if (greyDisabled) fade = false;
+      // OEFF-49: the light #ccc fill was the brightest element of the dark
+      // page; dark mode uses a muted dark grey with a dimmed label.
+      final dark = Theme.of(context).brightness == Brightness.dark;
       button = ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          disabledBackgroundColor:
-              greyDisabled ? AppColors.iosDisabledButton : AppColors.primary,
-          disabledForegroundColor: Colors.white,
+          disabledBackgroundColor: greyDisabled
+              ? (dark ? const Color(0xFF3A3A3C) : AppColors.iosDisabledButton)
+              : AppColors.primary,
+          disabledForegroundColor: greyDisabled && dark
+              ? Colors.white.withValues(alpha: 0.5)
+              : Colors.white,
           minimumSize: size,
           maximumSize: size,
           padding: padding,

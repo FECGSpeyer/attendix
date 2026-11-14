@@ -378,9 +378,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   /// page. On `registered` show the toast, on `signedIn` route like a login.
   Future<void> _openRegister() async {
     final email = _emailController.text.trim();
+    // F-LOGIN-10: Ionic opens the register modal empty (no componentProps);
+    // only the Beta design prefills the login e-mail.
+    final prefill = ref.read(redesignEnabledProvider) && email.isNotEmpty;
     final outcome = await showRegisterModal(
       context,
-      email: email.isNotEmpty ? email : null,
+      email: prefill ? email : null,
     );
     if (!mounted || outcome == null) return;
     if (outcome == RegisterOutcome.signedIn) {
@@ -745,7 +748,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                             const TextSpan(text: ' | '),
                             TextSpan(
-                              text: context.l10n.loginLegal,
+                              // OEFF-46: classic keeps "Impressum &
+                              // Datenschutz" on one line, so its tap area
+                              // (one rect around the span) no longer covers
+                              // "Demo starten" when the footer wraps.
+                              text: beta
+                                  ? context.l10n.loginLegal
+                                  : context.l10n.loginLegal
+                                      .replaceAll(' ', '\u00A0'),
                               recognizer: _legalTap,
                             ),
                           ],
