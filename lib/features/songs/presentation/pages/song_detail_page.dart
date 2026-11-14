@@ -359,6 +359,23 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final publicId = widget.songSharingId;
+    if (publicId != null && !SongUtils.isValidSharingId(publicId)) {
+      // No UUID: no such public link, without a database round trip (its
+      // error would be shown raw).
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(context.l10n.songsFlutterSong),
+          leading: BackButton(
+            onPressed: () => context.canPop() ? context.pop() : context.go('/login'),
+          ),
+        ),
+        body: ErrorStateView(
+          icon: AppIcons.linkOff,
+          message: context.l10n.songsInvalidShareLink,
+        ),
+      );
+    }
     if (_songId == null) {
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.songsFlutterSong)),

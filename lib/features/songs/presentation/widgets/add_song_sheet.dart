@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,13 +10,24 @@ import '../../../../data/models/song/song.dart';
 import '../utils/song_utils.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import '../../../../shared/widgets/dialogs/ion_sheet.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
+import 'song_form_items.dart';
 
 /// "Werk hinzufügen" (Ionic addSongsModal). Returns the id of the new song.
 class AddSongSheet extends ConsumerStatefulWidget {
-  const AddSongSheet({super.key, required this.data, this.onCreated});
+  const AddSongSheet({
+    super.key,
+    required this.data,
+    this.onCreated,
+    this.scrollController,
+  });
 
   final SongsListData data;
+
+  /// The sheet's scroll controller ([showIonSheet]).
+  final ScrollController? scrollController;
 
   /// Called instead of popping with the new id (used by the full page route)
   final ValueChanged<int>? onCreated;
@@ -61,7 +73,12 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
 
   Future<void> _save() async {
     final number = int.tryParse(_number.text.trim());
-    if (number == null) return;
+    if (number == null) {
+      // WERKE-10: Ionic `type="number"` only takes digits; say why nothing
+      // is saved instead of returning silently.
+      ToastHelper.showError(context, context.l10n.coreFlutterImportNumberRequired);
+      return;
+    }
     final prefix = _prefix.text.trim();
     final link = _link.text.trim();
     final key = '$prefix$number';
@@ -99,7 +116,23 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
     }
   }
 
+  List<AppSelectOption<int>> get _instrumentOptions => [
+        for (final g in widget.data.instruments)
+          if (g.id != null) AppSelectOption(value: g.id!, label: g.name),
+      ];
+
+  /// Ionic `ion-select interface="modal" multiple`: every tick counts.
   Future<void> _pickInstruments() async {
+    await showAppMultiSelectModal<int>(
+      context: context,
+      options: _instrumentOptions,
+      values: _instrumentIds,
+      onChanged: (v) => setState(() => _instrumentIds = v),
+    );
+  }
+
+  /// Beta design: the alert with checkboxes as before.
+  Future<void> _pickInstrumentsBeta() async {
     final groups = widget.data.instruments;
     final selection = [..._instrumentIds];
     final result = await showAppDialog<List<int>>(
@@ -107,17 +140,7 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(context.l10n.songsInstrumentation),
-          // Ionic alert with `type: 'checkbox'` inputs (`ion-select multiple`).
-          content: AppAlertCheckboxGroup<int>(
-            options: [
-              for (final g in groups)
-                if (g.id != null) AppAlertOption(g.id!, g.name),
-            ],
-            values: selection.toSet(),
-            onChanged: (id, checked) => setLocal(() {
-              checked ? selection.add(id) : selection.remove(id);
-            }),
-            beta: SizedBox(
+          content: SizedBox(
             width: double.maxFinite,
             child: ListView(
               shrinkWrap: true,
@@ -132,7 +155,6 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
                   ),
               ],
             ),
-          ),
           ),
           actions: [
             TextButton(
@@ -150,16 +172,82 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
     if (result != null) setState(() => _instrumentIds = result);
   }
 
+  String get _selectedNames => widget.data.instruments
+      .where((g) => _instrumentIds.contains(g.id))
+      .map((g) => g.name)
+      .join(', ');
+
+  Widget _saveButton() => ElevatedButton(
+        onPressed: _canSave ? _save : null,
+        child: _saving
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: AppSpinner(strokeWidth: 2),
+              )
+            : IonButtonLabel(context.l10n.attendanceAdd),
+      );
+
+  /// Ionic `ion-input type="number"`: digits only.
+  static final _digits = [FilteringTextInputFormatter.digitsOnly];
+
   @override
   Widget build(BuildContext context) {
-    final instruments = widget.data.instruments;
-    final selectedNames = instruments
-        .where((g) => _instrumentIds.contains(g.id))
-        .map((g) => g.name)
-        .join(', ');
+    if (context.rdSkin != null) return _buildBeta(context);
+    // UX_SONGS_SELF: Ionic addSongsModal: toolbar title, plain ion-items
+    // (stacked inputs, toggles, the modal select) and the block button.
+    final form = ListView(
+      controller: widget.scrollController,
+      padding: EdgeInsets.only(bottom: 16 + MediaQuery.paddingOf(context).bottom),
+      children: [
+        SongStackedInput(
+          controller: _prefix,
+          label: context.l10n.songsPrefixOptional,
+          helperText: context.l10n.songsPrefixHelper,
+        ),
+        SongStackedInput(
+          controller: _number,
+          label: context.l10n.songsNumber,
+          keyboardType: TextInputType.number,
+          inputFormatters: _digits,
+        ),
+        SongStackedInput(controller: _name, label: context.l10n.songsName),
+        SongStackedInput(
+          controller: _link,
+          label: context.l10n.songsLink,
+          minLines: 1,
+          maxLines: 4,
+          keyboardType: TextInputType.url,
+        ),
+        SongToggleItem(
+          label: context.l10n.songsChoirOrchestra,
+          value: _withChoir,
+          onChanged: (v) => setState(() => _withChoir = v),
+        ),
+        SongToggleItem(
+          label: context.l10n.songsWithSoloSinging,
+          value: _withSolo,
+          onChanged: (v) => setState(() => _withSolo = v),
+        ),
+        if (widget.data.isOrchestra)
+          SongSelectItem(
+            label: context.l10n.songsInstrumentation,
+            text: _selectedNames,
+            onTap: _instrumentOptions.isEmpty ? null : _pickInstruments,
+          ),
+        // `ion-button expand="block"` (margin 4px 2px).
+        Padding(
+          padding: const EdgeInsets.fromLTRB(2, 12, 2, 4),
+          child: _saveButton(),
+        ),
+      ],
+    );
+    if (widget.onCreated != null) return form;
+    return IonSheetScaffold(title: context.l10n.songsAddSong, body: form);
+  }
 
-    // UX_SONGS_SELF: Ionic addSongsModal: toolbar title, stacked ion-items,
-    // toggles and the "Hinzufügen" block button.
+  Widget _buildBeta(BuildContext context) {
+    final selectedNames = _selectedNames;
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       child: Column(
@@ -187,6 +275,7 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
             TextField(
               controller: _number,
               keyboardType: TextInputType.number,
+              inputFormatters: _digits,
               decoration: ionInputDecoration(context, label: context.l10n.songsNumber),
             ),
             const SizedBox(height: AppDimensions.paddingS),
@@ -225,19 +314,10 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 trailing: Icon(AppIcons.arrowDropDown),
-                onTap: _pickInstruments,
+                onTap: _pickInstrumentsBeta,
               ),
             const SizedBox(height: AppDimensions.paddingM),
-            ElevatedButton(
-              onPressed: _canSave ? _save : null,
-              child: _saving
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: AppSpinner(strokeWidth: 2),
-                    )
-                  : IonButtonLabel(context.l10n.attendanceAdd),
-            ),
+            _saveButton(),
           ],
         ),
             ),
@@ -248,12 +328,22 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
   }
 }
 
+/// "Werk hinzufügen": Ionic `ion-modal [breakpoints]="[0, 1]"
+/// [initialBreakpoint]="1"` (Beta: the content-high sheet as before).
 Future<int?> showAddSongSheet(BuildContext context, SongsListData data) {
-  return showModalBottomSheet<int>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (_) => AddSongSheet(data: data),
+  if (context.rdSkin != null) {
+    return showModalBottomSheet<int>(
+      context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => AddSongSheet(data: data),
+    );
+  }
+  return showIonSheet<int>(
+    context,
+    breakpoints: const [0, 1],
+    initialBreakpoint: 1,
+    builder: (_, controller) => AddSongSheet(data: data, scrollController: controller),
   );
 }

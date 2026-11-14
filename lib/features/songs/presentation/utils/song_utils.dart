@@ -213,6 +213,16 @@ class SongUtils {
         uri.host.isNotEmpty;
   }
 
+  /// The `song_sharing_id` of a public Werke link is a UUID. Anything else
+  /// (a typo, an unknown top-level path that falls through to the public
+  /// `/:songSharingId` route) cannot match a tenant and is rejected before
+  /// a request, which would otherwise answer with a raw database error.
+  static bool isValidSharingId(String? id) =>
+      id != null && _uuid.hasMatch(id.trim());
+
+  static final _uuid = RegExp(
+      r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+
   /// Public song sharing link (Ionic `getSongSharingLink`)
   static String shareLink(String sharingId, [int? songId]) =>
       songId == null

@@ -159,7 +159,13 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
   @override
   Widget build(BuildContext context) {
     if (!_isPublic) ref.watch(songsRealtimeProvider);
-    final dataAsync = ref.watch(songsListDataProvider(widget.songSharingId));
+    // A public link whose id is no UUID cannot exist: answer like an unknown
+    // link without asking the database (its error would be shown raw).
+    final invalidPublicId =
+        _isPublic && !SongUtils.isValidSharingId(widget.songSharingId);
+    final AsyncValue<SongsListData?> dataAsync = invalidPublicId
+        ? const AsyncValue.data(null)
+        : ref.watch(songsListDataProvider(widget.songSharingId));
     final role = ref.watch(currentRoleProvider);
     final isAdmin = !_isPublic && (role.isAdmin || role.isResponsible);
     final data = dataAsync.valueOrNull;
