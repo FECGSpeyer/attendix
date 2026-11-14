@@ -67,6 +67,16 @@ class IonButton extends StatelessWidget {
     final ios = useIosLook(context);
     final solid = fill == IonButtonFill.solid;
     final fg = solid ? (foregroundColor ?? (color == null ? null : Colors.white)) : color;
+    final theme = Theme.of(context);
+    final themedText = switch (fill) {
+          IonButtonFill.solid => theme.filledButtonTheme.style,
+          IonButtonFill.outline => theme.outlinedButtonTheme.style,
+          IonButtonFill.clear => theme.textButtonTheme.style,
+        }
+            ?.textStyle
+            ?.resolve(const <WidgetState>{}) ??
+        theme.textTheme.labelLarge ??
+        const TextStyle();
 
     // Only what differs from the themed default is set, so an [IonButton]
     // without attributes is exactly the themed button.
@@ -101,15 +111,15 @@ class IonButton extends StatelessWidget {
       minimumSize: small
           ? WidgetStatePropertyAll(Size(0, ios ? 29 : 27.3))
           : null,
+      // The small label keeps the themed button font (family etc.) and
+      // only takes the Ionic small size: .8125rem.
       textStyle: small
           ? WidgetStatePropertyAll(
-              ios
-                  ? const TextStyle(fontSize: 13.8125, fontWeight: FontWeight.w500)
-                  : const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.78,
-                    ),
+              themedText.copyWith(
+                fontSize: ios ? 13.8125 : 13,
+                fontWeight: FontWeight.w500,
+                letterSpacing: ios ? themedText.letterSpacing : 0.78,
+              ),
             )
           : null,
       tapTargetSize: small ? MaterialTapTargetSize.shrinkWrap : null,
