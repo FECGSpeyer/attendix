@@ -177,6 +177,25 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// LINK_TERMIN: group of a Termin opened by a link without `tenantId`.
+  /// Only the user's own groups ([tenantIds]) are searched; null when the
+  /// Termin belongs to none of them.
+  Future<int?> findTenantIdOfAttendance(int id, List<int> tenantIds) async {
+    if (tenantIds.isEmpty) return null;
+    try {
+      final response = await supabase
+          .from('attendance')
+          .select('tenantId')
+          .eq('id', id)
+          .inFilter('tenantId', tenantIds)
+          .maybeSingle();
+      return (response?['tenantId'] as num?)?.toInt();
+    } catch (e, stack) {
+      handleError(e, stack, 'findTenantIdOfAttendance');
+      rethrow;
+    }
+  }
+
   /// REDESIGN (bell): date and name of the given Termine of this tenant –
   /// `typeInfo`, else the type name unless it is hidden (Ionic
   /// Utils.getTypeTitle). Ids of other tenants are simply not returned.

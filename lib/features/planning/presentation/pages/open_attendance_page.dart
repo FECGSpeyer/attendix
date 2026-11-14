@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/message_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
@@ -50,10 +51,22 @@ class _OpenAttendancePageState extends ConsumerState<OpenAttendancePage> {
       return;
     }
 
-    final tenantId = int.tryParse(widget.tenantId ?? '');
+    var tenantId = int.tryParse(widget.tenantId ?? '');
     try {
+      final tenants = await ref.read(userTenantsProvider.future);
+      // LINK_TERMIN: a link without `tenantId` (duty reminders
+      // `/tabs/attendance/:id`) opens the Termin in its own group, not in
+      // whichever group happens to be open.
+      if (tenantId == null && attendanceId != null) {
+        tenantId = await ref
+            .read(attendanceRepositoryWithTenantProvider)
+            .findTenantIdOfAttendance(
+              attendanceId,
+              [for (final t in tenants) if (t.id != null) t.id!],
+            );
+        if (!mounted) return;
+      }
       if (tenantId != null && tenantId != ref.read(currentTenantIdProvider)) {
-        final tenants = await ref.read(userTenantsProvider.future);
         final tenant = tenants.where((t) => t.id == tenantId).firstOrNull;
         if (tenant != null && mounted) {
           await ref.read(currentTenantProvider.notifier).setTenant(tenant);

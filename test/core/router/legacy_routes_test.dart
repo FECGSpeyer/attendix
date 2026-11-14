@@ -18,7 +18,8 @@ void main() {
       '/tabs/members': '/members',
       '/tabs/player': '/people',
       '/tabs/attendance': '/attendance',
-      '/tabs/attendance/42': '/attendance/42',
+      // LINK_TERMIN: Termin links go through the Termin resolver
+      '/tabs/attendance/42': '/open-attendance?id=42',
       '/tabs/attendance/42/protocol': '/settings/protocol/42',
       '/tabs/songs-tab': '/songs-tab',
       '/tabs/songs-tab/7': '/songs-tab/7',
@@ -83,7 +84,8 @@ void main() {
 
     test('keeps query parameters (tenantId, tab)', () {
       expect(_r('/tabs/list?tenantId=3'), '/attendance?tenantId=3');
-      expect(_r('/tabs/attendance/42?tenantId=3'), '/attendance/42?tenantId=3');
+      expect(_r('/tabs/attendance/42?tenantId=3'),
+          '/open-attendance?tenantId=3&id=42');
       expect(_r('/tabs/settings/team-organization?tab=topics'),
           '/settings/team-organization?tab=topics');
     });
@@ -113,6 +115,7 @@ void main() {
         expect(
           isTenantScopedRoute(path) ||
               path == kOpenLinkRoute ||
+              path == kOpenAttendanceRoute ||
               path == '/new-password' ||
               path == '/tenants/new',
           isTrue,
@@ -246,6 +249,9 @@ void main() {
               builder: (_, s) => Text('message ${s.pathParameters['id']}')),
           GoRoute(path: '/new-password', builder: (_, __) => const Text('pw')),
           GoRoute(
+              path: '/open-attendance',
+              builder: (_, s) => Text('resolver ${s.uri.queryParameters['id']}')),
+          GoRoute(
             path: '/:songSharingId',
             builder: (_, __) => const Text('share'),
             routes: [
@@ -270,9 +276,10 @@ void main() {
       expect(find.text('message 5'), findsOneWidget);
     });
 
-    testWidgets('/tabs/attendance/:id opens the Termin', (tester) async {
-      expect(await open(tester, '/tabs/attendance/9'), '/attendance/9');
-      expect(find.text('detail 9'), findsOneWidget);
+    testWidgets('/tabs/attendance/:id opens the Termin resolver', (tester) async {
+      // LINK_TERMIN: the resolver switches to the Termin's group first.
+      expect(await open(tester, '/tabs/attendance/9'), '/open-attendance?id=9');
+      expect(find.text('resolver 9'), findsOneWidget);
     });
 
     testWidgets('/resetPassword opens "Neues Passwort"', (tester) async {
