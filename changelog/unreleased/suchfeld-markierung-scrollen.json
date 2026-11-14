@@ -1,0 +1,1 @@
+{"bump": "patch", "changes": ["🐛 iPhone/Android: Wird ein Suchfeld (oder anderes Textfeld) aus der Liste gescrollt, schließt sich die Tastatur; die blaue Textmarkierung bleibt nicht mehr über der Liste stehen"]}
