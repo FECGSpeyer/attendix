@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
@@ -466,16 +467,19 @@ class SelfServiceEventActions {
       return;
     }
 
+    // SEL-06: Ionic `actionSheetController.create({ buttons })` – no header
+    // and no icons (Beta keeps its title, meta line and icons).
+    final classic = context.rdSkin == null;
     final selected = await showAppActionSheet<SelfServiceActionType>(
       context,
-      title: att.eventTitle,
-      message: att.eventMeta(withDate: true),
+      title: classic ? null : att.eventTitle,
+      message: classic ? null : att.eventMeta(withDate: true),
       cancelDestructive: true,
       actions: [
         for (final action in actions)
           AppActionSheetAction(
             value: action.type,
-            icon: action.type.icon,
+            icon: classic ? null : action.type.icon,
             label: action.type.label(context.l10n),
           ),
       ],
