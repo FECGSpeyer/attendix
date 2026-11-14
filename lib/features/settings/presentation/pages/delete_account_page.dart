@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import '../../../../shared/widgets/layout/ion_form_items.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground;
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +18,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/settings_list.dart';
 import '../widgets/strong_html_text.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
@@ -88,7 +89,14 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
     if (confirmed != true || !mounted) return;
 
     try {
-      await ref.read(accountNotifierProvider.notifier).deleteAccount();
+      final notifier = ref.read(accountNotifierProvider.notifier);
+      // EIB-19 / EIB-22: Ionic `ion-loading` "Konto wird gelöscht…".
+      if (ref.read(redesignEnabledProvider)) {
+        await notifier.deleteAccount();
+      } else {
+        await withIonLoading(context, notifier.deleteAccount,
+            message: context.l10n.deleteAccountDeleting);
+      }
       if (!mounted) return;
       ToastHelper.showSuccess(context, context.l10n.deleteAccountDeleted);
       context.go('/login');
@@ -204,15 +212,15 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
     if (ref.watch(redesignEnabledProvider)) return _buildBeta(context, isDeleting);
     const white = TextStyle(color: Colors.white);
 
-    final ios = ionIsIos(context);
     // UX_SETTINGS (WAVE 8): delete-account.page.html — arrow-back, danger
     // tint warning box (radius 12), centred code chip, stacked input item.
     return Scaffold(
+      // EIB-22: `<ion-content class="ion-padding">` without colour.
+      backgroundColor: ionPlainContentBackground(context),
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
+        // EIB-12: Ionic custom `arrow-back` ion-button.
+        leading: IonArrowBackButton(onPressed: () => Navigator.of(context).maybePop()),
+        leadingWidth: IonArrowBackButton.leadingWidth(context),
         title: Text(context.l10n.deleteAccountTitle),
       ),
       body: ListView(
@@ -259,7 +267,9 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
               ),
             ),
           ),
-          const SizedBox(height: 48),
+          // .warning-box margin-bottom 24 / .verification-box margin-top 24
+          // (collapsing margins).
+          const SizedBox(height: 24),
           Text(
             context.l10n.deleteAccountEnterCode,
             textAlign: TextAlign.center,
@@ -289,39 +299,23 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
             ),
           ),
           const SizedBox(height: 8),
-          IonStackedField(
+          // EIB-15: `ion-item` + stacked label + `ion-input`.
+          IonStackedInputItem(
             label: context.l10n.deleteAccountCode,
-            hint: context.l10n.deleteAccountCodePlaceholder,
-            builder: (decoration) => TextField(
-              controller: _confirmController,
-              autocorrect: false,
-              enableSuggestions: false,
-              textCapitalization: TextCapitalization.characters,
-              decoration: decoration,
-              onChanged: (_) => setState(() {}),
-            ),
+            placeholder: context.l10n.deleteAccountCodePlaceholder,
+            controller: _confirmController,
+            textCapitalization: TextCapitalization.characters,
+            onChanged: (_) => setState(() {}),
           ),
-          if (ios)
-            Divider(height: 0.5, thickness: 0.5, color: IonIos.line(context)),
+          // `ion-button expand="block" color="danger" class="ion-margin-top"`
+          // with the trash icon; the progress is the loading overlay.
           const SizedBox(height: AppDimensions.paddingM),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.danger,
-              foregroundColor: Colors.white,
-              disabledBackgroundColor: AppColors.danger.withValues(alpha: 0.5),
-              disabledForegroundColor: Colors.white,
-            ),
+          IonButton(
+            expand: true,
+            color: AppColors.danger,
+            icon: AppIcons.deleteOutline,
+            label: context.l10n.deleteAccountDeleteForever,
             onPressed: !_canDelete || isDeleting ? null : _deleteAccount,
-            icon: isDeleting
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: AppSpinner(
-                        strokeWidth: 2, color: Colors.white),
-                  )
-                : Icon(AppIcons.deleteOutline),
-            label: IonButtonLabel(
-                isDeleting ? context.l10n.deleteAccountDeleting : context.l10n.deleteAccountDeleteForever),
           ),
         ],
       ),
