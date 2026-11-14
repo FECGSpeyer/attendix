@@ -7,6 +7,8 @@ import 'package:flutter_quill/flutter_quill.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_palette.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart' show priorityLabels, taskStatusLabels, topicStatusLabels;
@@ -199,7 +201,17 @@ class ProtocolEditor extends StatefulWidget {
     this.focusNode,
     this.onNextPoint,
     this.onPreviousPoint,
+    this.slim = false,
+    this.hint,
   });
+
+  /// Beta: slim toolbar (bold, italic, the three lists; "more" opens the
+  /// remaining controls as a second row) and no frame of its own – the
+  /// caller puts the editor on a card.
+  final bool slim;
+
+  /// Beta: grey hint at the end of the slim toolbar.
+  final String? hint;
 
   /// ⌘/Strg ↓ / ↑ (replaces Quill's scroll shortcut while set).
   final VoidCallback? onNextPoint;
@@ -228,6 +240,9 @@ class ProtocolEditor extends StatefulWidget {
 
 class _ProtocolEditorState extends State<ProtocolEditor> {
   ({int start, String query})? _slash;
+
+  /// Slim toolbar: second row with the remaining controls is open.
+  bool _more = false;
 
   @override
   void initState() {
@@ -295,6 +310,123 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
     await command.run();
   }
 
+
+  /// Full toolbar (classic, and the "more" row of the slim toolbar: there
+  /// without the controls the slim toolbar already shows).
+  QuillSimpleToolbarConfig _toolbarConfig({bool rest = false}) => QuillSimpleToolbarConfig(
+        multiRowsDisplay: false,
+        showBoldButton: !rest,
+        showItalicButton: !rest,
+        showUnderLineButton: true,
+        showStrikeThrough: true,
+        showColorButton: false,
+        showBackgroundColorButton: false,
+        showInlineCode: false,
+        showCodeBlock: false,
+        showLink: true,
+        showSearchButton: false,
+        showSubscript: false,
+        showSuperscript: false,
+        showFontFamily: false,
+        showFontSize: false,
+        showHeaderStyle: true,
+        showListNumbers: !rest,
+        showListBullets: !rest,
+        showListCheck: !rest,
+        showQuote: true,
+        showIndent: true,
+        showAlignmentButtons: false,
+        showDirection: false,
+        showUndo: true,
+        showRedo: true,
+        showClearFormat: false,
+        showDividers: false,
+        showSmallButton: false,
+        showLineHeightButton: false,
+        // FLUTTER347: flutter_quill 11.6 marks the clipboard buttons experimental.
+        // ignore: experimental_member_use
+        showClipboardCut: false,
+        // ignore: experimental_member_use
+        showClipboardCopy: false,
+        // ignore: experimental_member_use
+        showClipboardPaste: false,
+      );
+
+  /// Whether [a] is set at the cursor (a checklist counts for both of its
+  /// states).
+  bool _isOn(Attribute a) {
+    final current = widget.controller.getSelectionStyle().attributes[a.key];
+    if (current == null) return false;
+    if (a.key != Attribute.list.key) return true;
+    if (a.value == Attribute.unchecked.value) {
+      return current.value == Attribute.unchecked.value || current.value == Attribute.checked.value;
+    }
+    return current.value == a.value;
+  }
+
+  void _toggle(Attribute a) => widget.controller.formatSelection(_isOn(a) ? Attribute.clone(a, null) : a);
+
+  Widget _slimButton(RdPalette p, IconData icon, String label, bool active, VoidCallback onTap) => Tooltip(
+        message: label,
+        child: Semantics(
+          button: true,
+          selected: active,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: active ? p.soft : null,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 22, color: active ? p.softText : p.text),
+            ),
+          ),
+        ),
+      );
+
+  /// Beta toolbar: what a protocol needs most, the rest behind "more".
+  Widget _slimToolbar(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    Widget format(IconData icon, String label, Attribute a) =>
+        _slimButton(p, icon, label, _isOn(a), () => _toggle(a));
+    Widget gap() => Container(width: 1, height: 22, margin: const EdgeInsets.symmetric(horizontal: 6), color: p.line);
+    return Material(
+      type: MaterialType.transparency,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Row(
+          children: [
+            format(Icons.format_bold, l10n.editorBold, Attribute.bold),
+            format(Icons.format_italic, l10n.editorItalic, Attribute.italic),
+            gap(),
+            format(Icons.format_list_bulleted, l10n.editorBulletList, Attribute.ul),
+            format(Icons.format_list_numbered, l10n.editorOrderedList, Attribute.ol),
+            format(Icons.checklist, l10n.rdTypeChecklist, Attribute.unchecked),
+            gap(),
+            _slimButton(p, Icons.more_horiz, l10n.rdTeamProtocolMoreFormat, _more, () => setState(() => _more = !_more)),
+            if (widget.hint != null)
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 8),
+                  child: Text(
+                    widget.hint!,
+                    textAlign: TextAlign.end,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: RdType.meta(p, size: 13),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final builders = <EmbedBuilder>[
@@ -313,10 +445,12 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
 
     final editor = Container(
       constraints: BoxConstraints(minHeight: widget.minHeight),
-      decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).dividerColor),
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
-      ),
+      decoration: widget.slim
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).dividerColor),
+              borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
+            ),
       child: QuillEditor.basic(
         controller: widget.controller,
         focusNode: widget.focusNode,
@@ -324,7 +458,9 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
           scrollable: widget.expands,
           expands: widget.expands,
           placeholder: context.l10n.editorNotesPlaceholder,
-          padding: const EdgeInsets.all(AppDimensions.paddingS),
+          padding: widget.slim
+              ? const EdgeInsets.fromLTRB(16, 12, 16, 12)
+              : const EdgeInsets.all(AppDimensions.paddingS),
           embedBuilders: builders,
           customShortcuts: {
             if (widget.onNextPoint != null) ...{
@@ -356,47 +492,12 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: widget.expands ? MainAxisSize.max : MainAxisSize.min,
       children: [
-        QuillSimpleToolbar(
-          controller: widget.controller,
-          config: const QuillSimpleToolbarConfig(
-            multiRowsDisplay: false,
-            showBoldButton: true,
-            showItalicButton: true,
-            showUnderLineButton: true,
-            showStrikeThrough: true,
-            showColorButton: false,
-            showBackgroundColorButton: false,
-            showInlineCode: false,
-            showCodeBlock: false,
-            showLink: true,
-            showSearchButton: false,
-            showSubscript: false,
-            showSuperscript: false,
-            showFontFamily: false,
-            showFontSize: false,
-            showHeaderStyle: true,
-            showListNumbers: true,
-            showListBullets: true,
-            showListCheck: true,
-            showQuote: true,
-            showIndent: true,
-            showAlignmentButtons: false,
-            showDirection: false,
-            showUndo: true,
-            showRedo: true,
-            showClearFormat: false,
-            showDividers: false,
-            showSmallButton: false,
-            showLineHeightButton: false,
-            // FLUTTER347: flutter_quill 11.6 marks the clipboard buttons experimental.
-            // ignore: experimental_member_use
-            showClipboardCut: false,
-            // ignore: experimental_member_use
-            showClipboardCopy: false,
-            // ignore: experimental_member_use
-            showClipboardPaste: false,
-          ),
-        ),
+        if (widget.slim) ...[
+          ListenableBuilder(listenable: widget.controller, builder: (context, _) => _slimToolbar(context)),
+          if (_more) QuillSimpleToolbar(controller: widget.controller, config: _toolbarConfig(rest: true)),
+          Divider(height: 1, thickness: 1, color: context.rd.line),
+        ] else
+          QuillSimpleToolbar(controller: widget.controller, config: _toolbarConfig()),
         if (widget.expands) Expanded(child: editor) else editor,
         if (matches.isNotEmpty)
           Card(

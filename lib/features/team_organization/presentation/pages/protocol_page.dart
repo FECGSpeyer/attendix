@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
@@ -32,6 +33,7 @@ import '../../protocol_pdf.dart';
 import '../../team_org_utils.dart';
 import '../../tiptap_delta.dart';
 import '../../protocol_layout.dart';
+import '../widgets/protocol_beta_widgets.dart';
 import '../widgets/protocol_editor.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, outcomeColor;
@@ -153,6 +155,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   bool _disposed = false;
 
   String? _activeId;
+
+  /// Beta, wide: the right pane shows 'general' (Allgemeine Notizen) or
+  /// 'tasks' (all tasks) instead of the active point.
+  String? _sidePane;
   int _savingCount = 0;
   DateTime? _lastSavedAt;
   DateTime _lastErrorToast = DateTime(2000);
@@ -678,6 +684,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         _buildSections();
         _updateLive();
         _activeId = fieldId(field);
+        _sidePane = null;
       });
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.protocolPointFailed);
@@ -1384,7 +1391,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         action: RdOutlineButton(label: l10n.protocolRetry, onPressed: _load),
       ));
     } else {
-      body = _isLeader ? (wide ? _buildWideLayout(context) : _buildEditLayout(context)) : _buildReadLayout(context);
+      body = _isLeader ? (wide ? _buildBetaWide(context) : _buildBetaEditLayout(context)) : _buildReadLayout(context);
     }
 
     return PopScope(
@@ -1419,6 +1426,16 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                             label: l10n.protocolSharePdf,
                             onPressed: _sharePdf,
                           ),
+                        // Wide: the one main action sits here, always visible.
+                        if (ready && wide && _isLeader) ...[
+                          const SizedBox(width: 10),
+                          RdPrimaryButton(
+                            key: const Key('rd-protocol-finish'),
+                            label: _isPublished ? l10n.protocolRepublish : l10n.rdTeamFinishMeeting,
+                            height: 44,
+                            onPressed: _openPublish,
+                          ),
+                        ],
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -1458,7 +1475,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   Widget _betaState(Widget card) => ListView(padding: const EdgeInsets.fromLTRB(20, 16, 20, 20), children: [card]);
 
-  /// Beta footer: save state above "Notizen" and "Veröffentlichen".
+  /// Beta footer (phone): save state above the one main action.
   Widget _betaFooter(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
@@ -1478,27 +1495,20 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                       padding: EdgeInsets.only(right: 6),
                       child: SizedBox(width: 12, height: 12, child: AppSpinner(strokeWidth: 2)),
                     ),
-                  Text(_saveLabel, style: RdType.meta(p, size: 13)),
+                  Flexible(
+                    child: Text(_saveLabel,
+                        style: RdType.meta(p, size: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ),
                 ],
               ),
               const SizedBox(height: 6),
-              Row(
-                children: [
-                  Expanded(
-                    child: RdOutlineButton(
-                      label: _hasNotes(protocolGeneralSectionId) ? '${l10n.protocolNotes} •' : l10n.protocolNotes,
-                      icon: Icons.description_outlined,
-                      onPressed: _openGeneralNotes,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: RdPrimaryButton(
-                      label: _isPublished ? l10n.protocolRepublish : l10n.rdTeamFinishMeeting,
-                      onPressed: _openPublish,
-                    ),
-                  ),
-                ],
+              SizedBox(
+                width: double.infinity,
+                child: RdPrimaryButton(
+                  key: const Key('rd-protocol-finish'),
+                  label: _isPublished ? l10n.protocolRepublish : l10n.rdTeamFinishMeeting,
+                  onPressed: _openPublish,
+                ),
               ),
             ],
           ),
@@ -1519,37 +1529,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final att = _attendees;
     final preview = att.present.take(4).toList();
     final more = att.present.length - preview.length;
-    if (context.rdSkin == null) return _classicAttendeeRow(preview, more);
-    return Card(
-      child: ListTile(
-        onTap: _openAttendees,
-        leading: SizedBox(
-          width: 28.0 * (preview.length + (more > 0 ? 1 : 0)).clamp(1, 5) + 8,
-          child: Stack(
-            children: [
-              for (var i = 0; i < preview.length; i++)
-                Positioned(
-                  left: i * 22.0,
-                  child: CircleAvatar(
-                    radius: 15,
-                    backgroundColor: _avatarColors[(preview[i].personId ?? i) % _avatarColors.length],
-                    child: Text(_initials(preview[i]), style: const TextStyle(fontSize: 11, color: Colors.white)),
-                  ),
-                ),
-              if (more > 0)
-                Positioned(
-                  left: preview.length * 22.0,
-                  child: CircleAvatar(radius: 15, child: Text('+$more', style: const TextStyle(fontSize: 11))),
-                ),
-            ],
-          ),
-        ),
-        title: Text(context.l10n.protocolPresentCount(att.present.length)),
-        subtitle: Text(
-            '${att.excused.isNotEmpty ? context.l10n.protocolExcusedCount(att.excused.length) : ''}${context.l10n.protocolFromAttendance}'),
-        trailing: const IonDetailIcon(),
-      ),
-    );
+    return _classicAttendeeRow(preview, more);
   }
 
   /// DAS-23: Ionic `.attendee-row` in a `.card`: overlapping 28px initials
@@ -1686,57 +1666,51 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       );
       return;
     }
-    await showModalBottomSheet<void>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (ctx) => SizedBox(
-        height: MediaQuery.of(ctx).size.height * 0.7,
-        child: Column(
+    final p = context.rd;
+    Widget row(ProtocolAttendee a, int i, {Color? color, bool muted = false}) => RdListRow(
+          leading: muted ? null : ExcludeSemantics(child: _betaAvatar(a, i, size: 32, color: color)),
+          title: a.name,
+          subtitle: a.notes?.isNotEmpty == true ? a.notes : null,
+          titleColor: muted ? p.text2 : null,
+          showChevron: false,
+        );
+    await showRdSheet<void>(
+      context,
+      Builder(
+        builder: (ctx) => Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppBar(
-              toolbarHeight: ionModalToolbarHeight(context),
-              automaticallyImplyLeading: false,
-              title: Text(ctx.l10n.protocolParticipants),
-              actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(ctx.l10n.personDone))],
-            ),
-            Expanded(
+            RdSheetTitle(ctx.l10n.protocolParticipants),
+            Flexible(
               child: ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                 children: [
-                  ListTile(title: Text(ctx.l10n.protocolPresentList(att.present.length), style: Theme.of(ctx).textTheme.titleSmall)),
-                  for (final a in att.present)
-                    ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: _avatarColors[(a.personId ?? 0) % _avatarColors.length],
-                        child: Text(_initials(a), style: const TextStyle(color: Colors.white)),
-                      ),
-                      title: Text(a.name),
-                    ),
-                  if (att.present.isEmpty)
-                    ListTile(
-                        title: Text(ctx.l10n.protocolNobodyPresent, style: const TextStyle(color: AppColors.medium))),
+                  RdGroupLabel(ctx.l10n.protocolPresentList(att.present.length)),
+                  RdGroupedList(
+                    children: [
+                      for (var i = 0; i < att.present.length; i++) row(att.present[i], i),
+                      if (att.present.isEmpty)
+                        RdListRow(title: ctx.l10n.protocolNobodyPresent, titleColor: p.text2, showChevron: false),
+                    ],
+                  ),
                   if (att.excused.isNotEmpty) ...[
-                    ListTile(
-                        title: Text(ctx.l10n.protocolExcusedList(att.excused.length), style: Theme.of(ctx).textTheme.titleSmall)),
-                    for (final a in att.excused)
-                      ListTile(
-                        leading: CircleAvatar(child: Text(_initials(a))),
-                        title: Text(a.name),
-                        subtitle: a.notes?.isNotEmpty == true ? Text(a.notes!) : null,
-                      ),
+                    const SizedBox(height: 16),
+                    RdGroupLabel(ctx.l10n.protocolExcusedList(att.excused.length)),
+                    RdGroupedList(
+                      children: [for (var i = 0; i < att.excused.length; i++) row(att.excused[i], i, color: p.off)],
+                    ),
                   ],
                   if (att.others.isNotEmpty) ...[
-                    ListTile(
-                        title: Text(ctx.l10n.protocolOthersList(att.others.length),
-                            style: Theme.of(ctx).textTheme.titleSmall)),
-                    for (final a in att.others)
-                      ListTile(title: Text(a.name, style: const TextStyle(color: AppColors.medium))),
+                    const SizedBox(height: 16),
+                    RdGroupLabel(ctx.l10n.protocolOthersList(att.others.length)),
+                    RdGroupedList(
+                      children: [for (var i = 0; i < att.others.length; i++) row(att.others[i], i, muted: true)],
+                    ),
                   ],
-                  Padding(
-                    padding: const EdgeInsets.all(AppDimensions.paddingM),
-                    child: Text(ctx.l10n.protocolListFromAttendance),
-                  ),
+                  const SizedBox(height: 12),
+                  Text(ctx.l10n.protocolListFromAttendance, style: RdType.meta(p, size: 13)),
                 ],
               ),
             ),
@@ -1793,54 +1767,61 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       if (mounted) setState(() {});
       return;
     }
-    await showModalBottomSheet<void>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (ctx) => SizedBox(
-        height: MediaQuery.of(ctx).size.height * 0.8,
-        child: Column(
-          children: [
-            AppBar(
-              toolbarHeight: ionModalToolbarHeight(context),
-              automaticallyImplyLeading: false,
-              title: Text(ctx.l10n.protocolGeneralNotes),
-              actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(ctx.l10n.personDone))],
-            ),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                children: [
-                  Text(ctx.l10n.protocolWholeMeeting),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  _editor(controller),
-                  // Ionic: the task form opens above the notes sheet; back in
-                  // the sheet the reference and the task are shown and
-                  // writing continues.
-                  StatefulBuilder(
-                    builder: (sheetCtx, setSheet) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _taskList(_tasksFor(protocolGeneralSectionId, _taskSectionMap)),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextButton.icon(
-                            onPressed: () async {
-                              await _createTask(protocolGeneralSectionId);
-                              if (sheetCtx.mounted) setSheet(() {});
-                            },
-                            icon: Icon(AppIcons.addCircleOutline),
-                            label: IonButtonLabel(ctx.l10n.tasksTask),
-                          ),
-                        ),
-                      ],
+    await showRdSheet<void>(
+      context,
+      Builder(
+        // The keyboard must not cover the notes.
+        builder: (ctx) => Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(ctx).bottom),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              RdSheetTitle(ctx.l10n.protocolGeneralNotes),
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  children: [
+                    Text(ctx.l10n.protocolWholeMeeting, style: RdType.meta(ctx.rd, size: 14)),
+                    const SizedBox(height: 12),
+                    RdCard(
+                      padding: EdgeInsets.zero,
+                      // The task form opens above the sheet; back in the
+                      // sheet the reference and the task are shown and
+                      // writing continues.
+                      child: StatefulBuilder(
+                        builder: (sheetCtx, setSheet) {
+                          final tasks = _tasksFor(protocolGeneralSectionId, _taskSectionMap);
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _betaEditor(protocolGeneralSectionId, minHeight: 140),
+                              Divider(height: 1, thickness: 1, color: ctx.rd.line),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (tasks.isNotEmpty) _betaTaskList(tasks),
+                                    _betaAddTask(protocolGeneralSectionId, after: () {
+                                      if (sheetCtx.mounted) setSheet(() {});
+                                    }),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -1950,25 +1931,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   }
 
   Widget _outcomeSelector(String sectionId) {
-    final current = _outcomes[sectionId];
-    if (context.rdSkin == null) {
-      return _OutcomeSegment(value: current, onChanged: (o) => _setOutcome(sectionId, o));
-    }
-    return Wrap(
-      spacing: 8,
-      children: [
-        for (final o in const ['discussed', 'decided', 'postponed'])
-          ChoiceChip(
-            label: Text(outcomeLabels[o]!),
-            selected: current == o,
-            selectedColor: outcomeColor(o).withValues(alpha: 0.25),
-            // Classic: the selection is shown by colour only (no Material
-            // checkmark); Beta keeps the chip as it was.
-            showCheckmark: context.rdSkin != null,
-            onSelected: (_) => _setOutcome(sectionId, o),
-          ),
-      ],
-    );
+    return _OutcomeSegment(value: _outcomes[sectionId], onChanged: (o) => _setOutcome(sectionId, o));
   }
 
   Widget _buildEditLayout(BuildContext context) {
@@ -1985,29 +1948,13 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
         _attendeeRow(),
-        if (_live != null && liveSec != null && context.rdSkin == null)
+        if (_live != null && liveSec != null)
           _LiveBar(
             label: context.l10n.protocolRunning(
                 liveSec.topNumber != null ? context.l10n.protocolTop(liveSec.topNumber!) : liveSec.name,
                 _live!.remainingMinutes),
             nextLabel: hasNext ? context.l10n.protocolNextPoint : null,
             onNext: hasNext ? () => setState(() => _activeId = _sections[activeIndex + 1].id) : null,
-          )
-        else if (_live != null && liveSec != null)
-          Card(
-            color: AppColors.danger.withValues(alpha: 0.08),
-            child: ListTile(
-              leading: Icon(AppIcons.circle, color: AppColors.danger, size: 12),
-              title: Text(context.l10n.protocolRunning(
-                  liveSec.topNumber != null ? context.l10n.protocolTop(liveSec.topNumber!) : liveSec.name,
-                  _live!.remainingMinutes)),
-              trailing: hasNext
-                  ? TextButton(
-                      onPressed: () => setState(() => _activeId = _sections[activeIndex + 1].id),
-                      child: IonButtonLabel(context.l10n.protocolNextPoint),
-                    )
-                  : null,
-            ),
           ),
         if (_isPublished)
           Padding(
@@ -2018,27 +1965,20 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               Expanded(child: Text(_statusLine)),
             ]),
           ),
-        if (_sections.isEmpty && context.rdSkin == null)
+        if (_sections.isEmpty)
           _ProtocolCard(
             padding: const EdgeInsets.all(16),
             child: Text(context.l10n.protocolPlanEmpty, style: const TextStyle(color: AppColors.medium)),
-          )
-        else if (_sections.isEmpty)
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Text(context.l10n.protocolPlanEmpty),
-            ),
           ),
         for (final s in _sections) _sectionCard(s, map),
         // Ionic `.add-point`: clear block button in the accent colour.
         TextButton.icon(
-          style: context.rdSkin == null ? TextButton.styleFrom(foregroundColor: _protocolAccent) : null,
+          style: TextButton.styleFrom(foregroundColor: _protocolAccent),
           onPressed: _addSpontaneousTopic,
           icon: Icon(AppIcons.add),
           label: IonButtonLabel(context.l10n.protocolPoint),
         ),
-        if (unassigned.isNotEmpty && context.rdSkin == null) ...[
+        if (unassigned.isNotEmpty) ...[
           // Ionic `.group-label`: 13px / 600 uppercase grey.
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 18, 0, 6),
@@ -2047,9 +1987,6 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.26, color: AppColors.medium)),
           ),
           _ProtocolCard(padding: const EdgeInsets.symmetric(horizontal: 16), child: _taskList(unassigned)),
-        ] else if (unassigned.isNotEmpty) ...[
-          Text(context.l10n.protocolMoreTasks, style: Theme.of(context).textTheme.titleSmall),
-          Card(child: _taskList(unassigned)),
         ],
         ..._leftoverWidgets(),
       ],
@@ -2060,83 +1997,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final active = _activeId == s.id;
     final isLive = _live?.fieldId == s.id;
     final tasks = _tasksFor(s.id, map);
-    final outcome = _outcomes[s.id];
-    final theme = Theme.of(context);
-    if (context.rdSkin == null) return _classicSectionCard(s, map, active, isLive, tasks, outcome);
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusL),
-        side: BorderSide(
-          // Ionic: live TOP = green ring, active = accent ring.
-          color: isLive
-              ? (context.rdSkin == null ? AppColors.success : AppColors.danger)
-              : (active ? (context.rdSkin == null ? _protocolAccent : AppColors.primary) : Colors.transparent),
-          width: context.rdSkin == null ? 2 : 1.5,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ListTile(
-            onTap: () => setState(() => _activeId = active ? null : s.id),
-            leading: !active && _hasNotes(s.id) && outcome == null
-                ? Icon(AppIcons.checkCircleOutline, color: AppColors.success)
-                : null,
-            title: s.isTop
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('${context.l10n.protocolTop(s.topNumber!)}${s.start != null ? ' · ${s.start}' : ''}',
-                          style: theme.textTheme.labelSmall),
-                      Text(s.name),
-                    ],
-                  )
-                : Text('${s.start != null ? '${s.start} · ' : ''}${s.name}'),
-            subtitle: !active && _hasNotes(s.id)
-                ? Text(_previewOf(s.id), maxLines: 2, overflow: TextOverflow.ellipsis)
-                : (s.isTop && s.conductor != null ? Text(s.conductor!) : null),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (!active && outcome != null)
-                  TeamOrgBadge(label: outcomeLabels[outcome] ?? outcome, color: outcomeColor(outcome)),
-                if (s.duration > 0)
-                  Padding(padding: const EdgeInsets.only(left: 6), child: Text(context.l10n.planningMinShort(s.duration))),
-                Icon(active ? AppIcons.expandLess : AppIcons.expandMore),
-              ],
-            ),
-          ),
-          if (active)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  AppDimensions.paddingM, 0, AppDimensions.paddingM, AppDimensions.paddingS),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (s.isTop) _outcomeSelector(s.id),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  _editor(_controllerFor(s.id)),
-                  _taskList(tasks),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: () => _createTask(s.id),
-                      icon: Icon(AppIcons.addCircleOutline),
-                      label: IonButtonLabel(context.l10n.tasksTask),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          else if (tasks.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(AppDimensions.paddingM, 0, AppDimensions.paddingM, AppDimensions.paddingS),
-              child: Text(context.l10n.protocolTaskCount(tasks.length),
-                  style: theme.textTheme.bodySmall),
-            ),
-        ],
-      ),
-    );
+    return _classicSectionCard(s, map, active, isLive, tasks, _outcomes[s.id]);
   }
 
   /// DAS-23: Ionic `.card.section-card` – flat card (radius 20), head row
@@ -2278,7 +2139,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   /// Selects a point (and focuses its editor in the wide layout).
   void _activate(String id, {bool focus = false}) {
-    setState(() => _activeId = id);
+    setState(() {
+      _activeId = id;
+      _sidePane = null;
+    });
     if (focus) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _focusNodes[id]?.requestFocus();
@@ -2400,27 +2264,17 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final hasNext = nextSectionId(_sectionIds, _activeId) != null;
     final l10n = context.l10n;
     final label = liveSec.topNumber != null ? l10n.protocolTop(liveSec.topNumber!) : liveSec.name;
-    if (context.rdSkin == null) {
-      return _LiveBar(
-        label: l10n.protocolRunning(label, _live!.remainingMinutes),
-        nextLabel: hasNext ? l10n.protocolNextPoint : null,
-        onNext: hasNext ? _nextSection : null,
-      );
-    }
-    return Card(
-      color: AppColors.danger.withValues(alpha: 0.08),
-      child: ListTile(
-        dense: true,
-        leading: Icon(AppIcons.circle, color: AppColors.danger, size: 12),
-        title: Text(l10n.protocolRunning(label, _live!.remainingMinutes)),
-        trailing: hasNext ? TextButton(onPressed: _nextSection, child: IonButtonLabel(l10n.protocolNextPoint)) : null,
-      ),
+    return _LiveBar(
+      label: l10n.protocolRunning(label, _live!.remainingMinutes),
+      nextLabel: hasNext ? l10n.protocolNextPoint : null,
+      onNext: hasNext ? _nextSection : null,
     );
   }
 
+  /// Classic, wide (Ionic B4): Tagesordnung | Notizen zum Punkt | Allgemeine
+  /// Notizen. The Beta has its own two columns ([_buildBetaWide]).
   Widget _buildWideLayout(BuildContext context) {
     final theme = Theme.of(context);
-    final classic = context.rdSkin == null;
     final map = _taskSectionMap;
     _Section? active;
     for (final s in _sections) {
@@ -2435,8 +2289,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
         // Ionic `.side-title`: 17px / 700.
-        Text(_title,
-            style: classic ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w700) : theme.textTheme.titleLarge),
+        Text(_title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
         Text([_dateLabel, if (_timeRange.isNotEmpty) _timeRange].join(' · '), style: theme.textTheme.bodySmall),
         Text(_statusLine,
             style: theme.textTheme.bodySmall?.copyWith(color: _isPublished ? AppColors.success : AppColors.medium)),
@@ -2452,28 +2305,19 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   dense: true,
                   selected: _activeId == s.id,
                   // Ionic `.agenda-item.sel`: accent tint + 3px accent left
-                  // border; `.live`: green bold time (Beta: red border).
-                  selectedTileColor: classic
-                      ? const Color(0x1F438E96)
-                      : AppColors.primary.withValues(alpha: 0.08),
-                  selectedColor: classic ? theme.colorScheme.onSurface : null,
-                  shape: classic
-                      ? Border(
-                          left: BorderSide(
-                              color: _activeId == s.id ? _protocolAccent : Colors.transparent, width: 3))
-                      : (_live?.fieldId == s.id
-                          ? const Border(left: BorderSide(color: AppColors.danger, width: 3))
-                          : null),
+                  // border; `.live`: green bold time.
+                  selectedTileColor: const Color(0x1F438E96),
+                  selectedColor: theme.colorScheme.onSurface,
+                  shape: Border(
+                      left: BorderSide(color: _activeId == s.id ? _protocolAccent : Colors.transparent, width: 3)),
                   leading: SizedBox(
                       width: 40,
                       child: Text(s.start ?? '',
-                          style: classic
-                              ? TextStyle(
-                                  fontSize: 13,
-                                  fontFeatures: const [FontFeature.tabularFigures()],
-                                  fontWeight: _live?.fieldId == s.id ? FontWeight.w700 : null,
-                                  color: _live?.fieldId == s.id ? const Color(0xFF00815E) : AppColors.medium)
-                              : theme.textTheme.bodySmall)),
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontFeatures: const [FontFeature.tabularFigures()],
+                              fontWeight: _live?.fieldId == s.id ? FontWeight.w700 : null,
+                              color: _live?.fieldId == s.id ? const Color(0xFF00815E) : AppColors.medium))),
                   minLeadingWidth: 40,
                   title: Text(s.title, maxLines: 2, overflow: TextOverflow.ellipsis),
                   subtitle: (s.conductor != null || s.duration > 0)
@@ -2509,13 +2353,11 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 dense: true,
                 leading: SizedBox(
                     width: 40,
-                    child: Icon(AppIcons.add, size: 18, color: classic ? _protocolAccent : AppColors.primary)),
+                    child: Icon(AppIcons.add, size: 18, color: _protocolAccent)),
                 minLeadingWidth: 40,
                 // Ionic `.agenda-item.add`: accent / 600.
                 title: Text(context.l10n.protocolPoint,
-                    style: classic
-                        ? const TextStyle(color: _protocolAccent, fontWeight: FontWeight.w600)
-                        : const TextStyle(color: AppColors.primary)),
+                    style: const TextStyle(color: _protocolAccent, fontWeight: FontWeight.w600)),
                 onTap: _addSpontaneousTopic,
               ),
             ],
@@ -2526,9 +2368,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         const SizedBox(height: AppDimensions.paddingM),
         FilledButton(
           onPressed: _openPublish,
-          child: IonButtonLabel(_isPublished
-              ? context.l10n.protocolRepublish
-              : (ref.watch(redesignEnabledProvider) ? context.l10n.rdTeamFinishMeeting : context.l10n.protocolPublish)),
+          child: IonButtonLabel(_isPublished ? context.l10n.protocolRepublish : context.l10n.protocolPublish),
         ),
       ],
     );
@@ -2543,24 +2383,19 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       ].join(' · ');
       main = Padding(
         // Ionic `.main`: padding 24 28 16 on the card colour.
-        padding: classic ? const EdgeInsets.fromLTRB(28, 24, 28, 16) : const EdgeInsets.all(AppDimensions.paddingM),
+        padding: const EdgeInsets.fromLTRB(28, 24, 28, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (kicker.isNotEmpty)
               Text(kicker,
-                  style: classic
-                      ? const TextStyle(
-                          fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.44, color: _protocolAccent)
-                      : theme.textTheme.labelMedium?.copyWith(color: AppColors.medium)),
+                  style: const TextStyle(
+                      fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.44, color: _protocolAccent)),
             // Ionic `.main-head h1`: 26px / 700, margin 4 0 12.
-            if (classic)
-              Padding(
-                padding: const EdgeInsets.only(top: 4, bottom: 4),
-                child: Text(s.name, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700)),
-              )
-            else
-              Text(s.name, style: theme.textTheme.headlineSmall),
+            Padding(
+              padding: const EdgeInsets.only(top: 4, bottom: 4),
+              child: Text(s.name, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700)),
+            ),
             const SizedBox(height: AppDimensions.paddingS),
             Wrap(
               spacing: AppDimensions.paddingM,
@@ -2568,8 +2403,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 // Ionic `.main-head .outcome-seg { min-width: 320px }`.
-                if (s.isTop && classic) SizedBox(width: 320, child: _outcomeSelector(s.id))
-                else if (s.isTop) _outcomeSelector(s.id),
+                if (s.isTop) SizedBox(width: 320, child: _outcomeSelector(s.id)),
                 if (s.conductor != null)
                   Text(context.l10n.protocolResponsible(s.conductor!), style: theme.textTheme.bodySmall),
               ],
@@ -2737,7 +2571,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               SizedBox(width: leftW, child: left),
               _resizer('left', container),
               // Ionic `.main`: white `--protocol-card` surface.
-              Expanded(child: classic ? ColoredBox(color: ionItemBackground(context), child: main) : main),
+              Expanded(child: ColoredBox(color: ionItemBackground(context), child: main)),
               _resizer('right', container),
               SizedBox(width: rightW, child: right),
             ],
@@ -2745,6 +2579,751 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         ),
       );
     });
+  }
+
+  // ── Beta: two columns (wide) and phone ─────────────────────
+
+  String _betaKicker(_Section s, {bool withStart = true}) => [
+        if (s.topNumber != null) context.l10n.protocolTop(s.topNumber!),
+        if (withStart && s.start != null) s.start!,
+        if (s.duration > 0) context.l10n.planningMinShort(s.duration),
+      ].join(' · ');
+
+  /// Status of a point as a word: the result, else "Notiert" once there
+  /// are notes, else nothing.
+  Widget? _betaStatusPill(String id) {
+    final o = _outcomes[id];
+    if (o != null) return RdPill(outcomeLabels[o] ?? o, tone: protocolOutcomeTone(o));
+    return _hasNotes(id) ? RdPill(context.l10n.protocolNoted) : null;
+  }
+
+  String get _betaAttendeeSummary {
+    final att = _attendees;
+    final l10n = context.l10n;
+    return att.excused.isEmpty
+        ? l10n.protocolPresentCount(att.present.length)
+        : l10n.rdTeamProtocolAttendeesBoth(att.present.length, att.excused.length);
+  }
+
+  String get _betaTaskSummary {
+    final l10n = context.l10n;
+    if (_tasks.isEmpty) return l10n.rdTeamProtocolTasksNone;
+    final open = _tasks.where((t) => t.status != 'completed').length;
+    return open > 0 ? l10n.rdTeamProtocolTasksOpen(open) : l10n.rdTeamProtocolTasksDone;
+  }
+
+  Widget _betaAvatar(ProtocolAttendee a, int index, {double size = 28, Color? color}) => Container(
+        width: size,
+        height: size,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: color ?? _avatarColors[(a.personId ?? index) % _avatarColors.length],
+          shape: BoxShape.circle,
+          border: Border.all(color: context.rd.surface, width: 2),
+        ),
+        child: Text(
+          _initials(a),
+          style: TextStyle(fontSize: size * 0.36, fontWeight: FontWeight.w700, color: Colors.white),
+        ),
+      );
+
+  /// At most three overlapping initials (the row's text has the numbers).
+  Widget? _betaAvatars(List<ProtocolAttendee> present) {
+    final shown = present.take(3).toList();
+    if (shown.isEmpty) return null;
+    return ExcludeSemantics(
+      child: SizedBox(
+        width: 28 + 18.0 * (shown.length - 1),
+        height: 28,
+        child: Stack(
+          children: [
+            for (var i = 0; i < shown.length; i++) Positioned(left: i * 18.0, child: _betaAvatar(shown[i], i)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget? _betaLiveCard(VoidCallback? onNext) {
+    _Section? liveSec;
+    for (final s in _sections) {
+      if (s.id == _live?.fieldId) liveSec = s;
+    }
+    if (_live == null || liveSec == null) return null;
+    final l10n = context.l10n;
+    return ProtocolLiveCard(
+      label: l10n.protocolRunning(
+          liveSec.topNumber != null ? l10n.protocolTop(liveSec.topNumber!) : liveSec.name, _live!.remainingMinutes),
+      nextLabel: onNext != null ? l10n.protocolNextPoint : null,
+      onNext: onNext,
+    );
+  }
+
+  Widget _betaPublishedLine() => Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Row(children: [
+          Icon(Icons.check_circle, color: context.rd.present, size: 18),
+          const SizedBox(width: 6),
+          Expanded(child: Text(_statusLine, style: RdType.meta(context.rd, size: 13))),
+        ]),
+      );
+
+  Widget _betaEditor(String sectionId, {bool expands = false, bool wide = false, double minHeight = 96}) =>
+      ProtocolEditor(
+        key: ValueKey('beta-editor-$sectionId'),
+        controller: _controllerFor(sectionId),
+        focusNode: wide ? _focusFor(sectionId) : null,
+        slim: true,
+        hint: wide ? context.l10n.rdTeamProtocolSlashHint : null,
+        expands: expands,
+        minHeight: minHeight,
+        onNextPoint: wide ? _nextSection : null,
+        onPreviousPoint: wide ? _previousSection : null,
+        taskStatuses: _taskStatuses,
+        agendaItems: _openTopics,
+        onCreateTask: () => _createTask(sectionId),
+        onOpenTask: (id) => context.push('/settings/tasks/$id'),
+        onOpenTopic: (id) => context.push('/settings/agenda-items/$id'),
+      );
+
+  /// Tasks as Beta rows; [labels] adds the point a task belongs to.
+  Widget _betaTaskList(List<TeamTask> list, {Map<String, String>? labels, void Function(TeamTask)? onOpen}) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final t in list)
+            ProtocolTaskRow(
+              title: t.title,
+              meta: [if (labels != null) _sectionLabelOfTask(t, labels), _taskLine(t)]
+                  .whereType<String>()
+                  .where((x) => x.isNotEmpty)
+                  .join(' · '),
+              done: t.status == 'completed',
+              onTap: () => onOpen != null ? onOpen(t) : context.push('/settings/tasks/${t.id}'),
+            ),
+        ],
+      );
+
+  Widget _betaAddTask(String sectionId, {VoidCallback? after}) {
+    final p = context.rd;
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Semantics(
+        button: true,
+        child: InkWell(
+          onTap: () async {
+            await _createTask(sectionId);
+            after?.call();
+          },
+          borderRadius: BorderRadius.circular(10),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.add_circle_outline, size: 22, color: p.link),
+                  const SizedBox(width: 10),
+                  Text(context.l10n.tasksTask,
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.link)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Wide: the writing surface. The notes fill the height; the tasks of the
+  /// point and "+ Aufgabe" stay at its lower edge.
+  Widget _betaPaneCard(String sectionId, List<TeamTask> tasks) {
+    final p = context.rd;
+    final radius = BorderRadius.circular(p.cardRadius);
+    return DecoratedBox(
+      decoration: BoxDecoration(color: p.surface, borderRadius: radius, boxShadow: p.cardShadow),
+      child: Material(
+        type: MaterialType.transparency,
+        borderRadius: radius,
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: _betaEditor(sectionId, expands: true, wide: true)),
+            Divider(height: 1, thickness: 1, color: p.line),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (tasks.isNotEmpty)
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 112),
+                      child: SingleChildScrollView(child: _betaTaskList(tasks)),
+                    ),
+                  _betaAddTask(sectionId),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Wide: a pane whose card fills the height. In a very low window (tablet
+  /// with the keyboard open) the pane keeps a minimum height and scrolls.
+  Widget _betaFillPane({required List<Widget> head, required Widget card}) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final hasNext = nextSectionId(_sectionIds, _activeId) != null;
+    final apple = defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.iOS;
+    return LayoutBuilder(builder: (context, constraints) {
+      final minHeight = 520 * MediaQuery.textScalerOf(context).scale(1);
+      return SingleChildScrollView(
+        child: SizedBox(
+          height: constraints.maxHeight < minHeight ? minHeight : constraints.maxHeight,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(12, 12, 20, scrollEndPadding(context, base: 12)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ...head,
+                Expanded(child: card),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: SizedBox(
+                    height: 44,
+                    child: Row(
+                      children: [
+                        if (_savingCount > 0)
+                          const Padding(
+                            padding: EdgeInsets.only(right: 6),
+                            child: SizedBox(width: 12, height: 12, child: AppSpinner(strokeWidth: 2)),
+                          ),
+                        Expanded(
+                          child: Text(_saveLabel,
+                              style: RdType.meta(p, size: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+                        ),
+                        if (hasNext)
+                          ProtocolNextButton(
+                            key: const Key('rd-protocol-next'),
+                            label: l10n.protocolNextPoint,
+                            shortcut: apple ? '⌘ ↓' : l10n.rdTeamProtocolCtrlDown,
+                            onPressed: _nextSection,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _betaPaneTitle(String text) => Semantics(
+        header: true,
+        child: Text(
+          text,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: RdType.cardTitle(context.rd).copyWith(fontSize: 24),
+        ),
+      );
+
+  Widget _betaPointPane(_Section s, Map<String, String> map) {
+    final p = context.rd;
+    final kicker = _betaKicker(s);
+    return _betaFillPane(
+      head: [
+        if (kicker.isNotEmpty) Text(kicker.toUpperCase(), style: RdType.eyebrow(p.text2)),
+        const SizedBox(height: 2),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(child: _betaPaneTitle(s.name)),
+            if (s.conductor != null)
+              Padding(
+                padding: const EdgeInsets.only(left: 12, bottom: 3),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 280),
+                  child: Text(
+                    context.l10n.protocolResponsible(s.conductor!),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: RdType.meta(p, size: 14),
+                  ),
+                ),
+              ),
+          ],
+        ),
+        if (s.isTop) ...[
+          const SizedBox(height: 12),
+          ProtocolOutcomeChips(value: _outcomes[s.id], onChanged: (o) => _setOutcome(s.id, o)),
+        ],
+        const SizedBox(height: 12),
+      ],
+      card: _betaPaneCard(s.id, _tasksFor(s.id, map)),
+    );
+  }
+
+  Widget _betaGeneralPane(Map<String, String> map) => _betaFillPane(
+        head: [
+          _betaPaneTitle(context.l10n.protocolGeneralNotes),
+          const SizedBox(height: 2),
+          Text(context.l10n.protocolWholeMeeting, style: RdType.meta(context.rd, size: 14)),
+          const SizedBox(height: 12),
+        ],
+        card: _betaPaneCard(protocolGeneralSectionId, _tasksFor(protocolGeneralSectionId, map)),
+      );
+
+  Widget _betaTasksPane(Map<String, String> map) {
+    final l10n = context.l10n;
+    return ListView(
+      padding: EdgeInsets.fromLTRB(12, 12, 20, scrollEndPadding(context, base: 20)),
+      children: [
+        _betaPaneTitle(l10n.teamOrgTabTasks),
+        const SizedBox(height: 2),
+        Text(l10n.protocolSessionTasks(_tasks.length), style: RdType.meta(context.rd, size: 14)),
+        const SizedBox(height: 12),
+        RdCard(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_tasks.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text(l10n.protocolNoTasksYet, style: RdType.meta(context.rd, size: 14)),
+                )
+              else
+                _betaTaskList(_tasks, labels: map),
+              _betaAddTask(protocolGeneralSectionId),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _betaLeftoverPane(_Leftover l, Map<String, String> map) {
+    final p = context.rd;
+    final tasks = _tasksFor(l.key, map);
+    return ListView(
+      padding: EdgeInsets.fromLTRB(12, 12, 20, scrollEndPadding(context, base: 20)),
+      children: [
+        Text(context.l10n.protocolMoreNotes.toUpperCase(), style: RdType.eyebrow(p.text2)),
+        const SizedBox(height: 2),
+        _betaPaneTitle(l.title),
+        const SizedBox(height: 2),
+        Text(context.l10n.protocolNotInPlan, style: RdType.meta(p, size: 14)),
+        const SizedBox(height: 12),
+        RdCard(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _editor(_controllerFor('leftover:${l.key}', readOnly: true, initialDoc: l.doc), editable: false),
+              if (tasks.isNotEmpty) _betaTaskList(tasks),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Wide, left: the Ablaufplan with the status of every point as a word,
+  /// below it what belongs to the whole meeting.
+  Widget _betaSide(Map<String, String> map) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final live = _betaLiveCard(nextSectionId(_sectionIds, _activeId) != null ? _nextSection : null);
+    final pointSelected = _sidePane == null;
+    return ListView(
+      padding: EdgeInsets.fromLTRB(20, 12, 12, scrollEndPadding(context, base: 20)),
+      children: [
+        if (_isPublished) _betaPublishedLine(),
+        if (live != null) ...[live, const SizedBox(height: 16)],
+        RdGroupLabel(l10n.protocolRunSheet),
+        RdGroupedList(
+          children: [
+            for (final s in _sections)
+              ProtocolAgendaRow(
+                leading: Padding(
+                  padding: const EdgeInsets.only(top: 3),
+                  child: Text(
+                    s.start ?? '',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                      fontWeight: _live?.fieldId == s.id ? FontWeight.w700 : FontWeight.w400,
+                      color: _live?.fieldId == s.id ? p.absent : p.text2,
+                    ),
+                  ),
+                ),
+                title: s.name,
+                meta: _betaKicker(s, withStart: false),
+                status: _betaStatusPill(s.id),
+                selected: pointSelected && _activeId == s.id,
+                onTap: () => _activate(s.id, focus: true),
+              ),
+            for (final l in _leftovers)
+              ProtocolAgendaRow(
+                leading: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Icon(Icons.inventory_2_outlined, size: 20, color: p.text2),
+                ),
+                title: l.title,
+                meta: l10n.protocolMoreNotes,
+                selected: pointSelected && _activeId == l.key,
+                onTap: () => _activate(l.key),
+              ),
+            ProtocolAgendaRow(
+              leading: Align(alignment: Alignment.centerLeft, child: Icon(Icons.add, size: 22, color: p.link)),
+              title: l10n.protocolPoint,
+              titleColor: p.link,
+              onTap: _addSpontaneousTopic,
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        RdGroupLabel(l10n.rdTeamProtocolAbout),
+        RdGroupedList(
+          children: [
+            RdListRow(
+              key: const Key('rd-protocol-general'),
+              leading: const RdRowIcon(Icons.notes),
+              title: l10n.protocolGeneralNotes,
+              subtitle: _hasNotes(protocolGeneralSectionId)
+                  ? _betaShortPreview(protocolGeneralSectionId)
+                  : l10n.rdTeamProtocolEmpty,
+              selected: _sidePane == 'general',
+              onTap: () => _openSidePane('general'),
+            ),
+            RdListRow(
+              key: const Key('rd-protocol-tasks'),
+              leading: const RdRowIcon(Icons.task_alt),
+              title: l10n.teamOrgTabTasks,
+              subtitle: _betaTaskSummary,
+              selected: _sidePane == 'tasks',
+              onTap: () => _openSidePane('tasks'),
+            ),
+            RdListRow(
+              key: const Key('rd-protocol-attendees'),
+              leading: const RdRowIcon(Icons.group),
+              title: l10n.protocolPresent,
+              subtitle: _betaAttendeeSummary,
+              trailing: _betaAvatars(_attendees.present),
+              onTap: _openAttendees,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  String _betaShortPreview(String id) {
+    final text = _previewOf(id);
+    return text.length > 60 ? '${text.substring(0, 59)}…' : text;
+  }
+
+  void _openSidePane(String pane) {
+    setState(() => _sidePane = pane);
+    if (pane == 'general') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _focusNodes[protocolGeneralSectionId]?.requestFocus();
+      });
+    }
+  }
+
+  /// Beta, wide: two columns like the other Beta split views. Left the
+  /// overview, right one large writing surface.
+  Widget _buildBetaWide(BuildContext context) {
+    final map = _taskSectionMap;
+    _Section? active;
+    for (final s in _sections) {
+      if (s.id == _activeId) active = s;
+    }
+    _Leftover? activeLeftover;
+    for (final l in _leftovers) {
+      if (l.key == _activeId) activeLeftover = l;
+    }
+    final Widget pane;
+    if (_sidePane == 'general') {
+      pane = _betaGeneralPane(map);
+    } else if (_sidePane == 'tasks') {
+      pane = _betaTasksPane(map);
+    } else if (active != null) {
+      pane = _betaPointPane(active, map);
+    } else if (activeLeftover != null) {
+      pane = _betaLeftoverPane(activeLeftover, map);
+    } else {
+      pane = ListView(
+        padding: const EdgeInsets.fromLTRB(12, 12, 20, 20),
+        children: [
+          RdInfoCard(
+            icon: Icons.list,
+            text: _sections.isNotEmpty
+                ? context.l10n.protocolFlutterChooseLeft
+                : context.l10n.protocolFlutterPlanEmptyShort,
+            action: RdOutlineButton(label: context.l10n.protocolAddPoint, onPressed: _addSpontaneousTopic),
+          ),
+        ],
+      );
+    }
+    return LayoutBuilder(builder: (context, constraints) {
+      final sideWidth = (constraints.maxWidth * 0.32).clamp(300.0, 380.0);
+      return CallbackShortcuts(
+        bindings: {
+          const SingleActivator(LogicalKeyboardKey.arrowDown, control: true): _nextSection,
+          const SingleActivator(LogicalKeyboardKey.arrowDown, meta: true): _nextSection,
+          const SingleActivator(LogicalKeyboardKey.arrowUp, control: true): _previousSection,
+          const SingleActivator(LogicalKeyboardKey.arrowUp, meta: true): _previousSection,
+        },
+        child: Focus(
+          focusNode: _pageFocus,
+          autofocus: true,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(width: sideWidth, child: _betaSide(map)),
+              Expanded(child: pane),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  /// Beta, phone: three buttons for what belongs to the whole meeting,
+  /// then the points; only "Abschließen" stays in the footer.
+  Widget _buildBetaEditLayout(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final map = _taskSectionMap;
+    final unassigned = _unassignedTasks(map);
+    final activeIndex = _sections.indexWhere((s) => s.id == _activeId);
+    final hasNext = activeIndex >= 0 && activeIndex + 1 < _sections.length;
+    final live = _betaLiveCard(hasNext ? () => setState(() => _activeId = _sections[activeIndex + 1].id) : null);
+    return ListView(
+      padding: EdgeInsets.fromLTRB(20, 12, 20, scrollEndPadding(context, base: 20)),
+      children: [
+        Row(
+          children: [
+            Expanded(
+              flex: 11,
+              child: ProtocolStripButton(
+                key: const Key('rd-protocol-attendees'),
+                icon: Icons.group,
+                label: l10n.protocolPresentCount(_attendees.present.length),
+                semanticLabel: _betaAttendeeSummary,
+                onTap: _openAttendees,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 9,
+              child: ProtocolStripButton(
+                key: const Key('rd-protocol-general'),
+                icon: Icons.notes,
+                label: l10n.protocolNotes,
+                dot: _hasNotes(protocolGeneralSectionId),
+                semanticLabel: _hasNotes(protocolGeneralSectionId)
+                    ? '${l10n.protocolGeneralNotes}, ${l10n.protocolHasNotes}'
+                    : l10n.protocolGeneralNotes,
+                onTap: _openGeneralNotes,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 11,
+              child: ProtocolStripButton(
+                key: const Key('rd-protocol-tasks'),
+                icon: Icons.task_alt,
+                label: _tasks.isEmpty ? l10n.teamOrgTabTasks : l10n.protocolTaskCount(_tasks.length),
+                onTap: _openTasksSheet,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (live != null) ...[live, const SizedBox(height: 12)],
+        if (_isPublished) _betaPublishedLine(),
+        if (_sections.isEmpty)
+          RdCard(child: Text(l10n.protocolPlanEmpty, style: RdType.meta(p, size: 15))),
+        for (final s in _sections)
+          Padding(padding: const EdgeInsets.only(bottom: 12), child: _betaSectionCard(s, map)),
+        Center(
+          child: Semantics(
+            button: true,
+            child: InkWell(
+              onTap: _addSpontaneousTopic,
+              borderRadius: BorderRadius.circular(10),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 44),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.add, size: 22, color: p.link),
+                      const SizedBox(width: 6),
+                      Text(l10n.protocolPoint,
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.link)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        if (unassigned.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          RdGroupLabel(l10n.protocolMoreTasks),
+          RdCard(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            child: _betaTaskList(unassigned),
+          ),
+        ],
+        ..._leftoverWidgets(),
+      ],
+    );
+  }
+
+  /// Beta, phone: one point. Closed it shows its status as a word; open it
+  /// shows the result chips in one row, the notes and its tasks.
+  Widget _betaSectionCard(_Section s, Map<String, String> map) {
+    final p = context.rd;
+    final active = _activeId == s.id;
+    final isLive = _live?.fieldId == s.id;
+    final tasks = _tasksFor(s.id, map);
+    final kicker = _betaKicker(s);
+    final status = active ? null : _betaStatusPill(s.id);
+    return RdCard(
+      padding: EdgeInsets.zero,
+      border: isLive
+          ? Border.all(color: p.absent, width: 1.5)
+          : (active ? Border.all(color: p.primary, width: 1.5) : null),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Semantics(
+            button: true,
+            expanded: active,
+            child: InkWell(
+              onTap: () => setState(() => _activeId = active ? null : s.id),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16, 14, 12, active ? 6 : 14),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (kicker.isNotEmpty) Text(kicker.toUpperCase(), style: RdType.eyebrow(p.text2)),
+                          const SizedBox(height: 2),
+                          Text(s.name, style: RdType.section(p)),
+                          if (active && s.conductor != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(s.conductor!, style: RdType.meta(p, size: 14)),
+                            ),
+                          if (!active && _hasNotes(s.id))
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(_previewOf(s.id),
+                                  maxLines: 2, overflow: TextOverflow.ellipsis, style: RdType.meta(p, size: 13)),
+                            ),
+                          if (!active && tasks.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(context.l10n.protocolTaskCount(tasks.length), style: RdType.meta(p, size: 13)),
+                            ),
+                        ],
+                      ),
+                    ),
+                    if (status != null) Padding(padding: const EdgeInsets.only(left: 8), child: status),
+                    const SizedBox(width: 4),
+                    Icon(active ? Icons.expand_less : Icons.expand_more, color: p.text2),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          if (active)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (s.isTop) ...[
+                    ProtocolOutcomeChips(
+                      value: _outcomes[s.id],
+                      onChanged: (o) => _setOutcome(s.id, o),
+                      singleLine: true,
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(p.listRadius),
+                    child: ColoredBox(color: p.bg, child: _betaEditor(s.id)),
+                  ),
+                  if (tasks.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 6), child: _betaTaskList(tasks)),
+                  _betaAddTask(s.id),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// Beta, phone: all tasks of the meeting with the point they belong to.
+  Future<void> _openTasksSheet() async {
+    final map = _taskSectionMap;
+    await showRdSheet<void>(
+      context,
+      Builder(
+        builder: (ctx) => Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            RdSheetTitle(ctx.l10n.teamOrgTabTasks),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                children: [
+                  RdCard(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    child: _tasks.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Text(ctx.l10n.protocolNoTasksYet, style: RdType.meta(ctx.rd, size: 14)),
+                          )
+                        : _betaTaskList(_tasks, labels: map, onOpen: (t) {
+                            // The sheet lies above the pages: close it first.
+                            Navigator.of(ctx).pop();
+                            context.push('/settings/tasks/${t.id}');
+                          }),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   /// "TOP 2" / point name / "Allgemein" of the section a task belongs to.
