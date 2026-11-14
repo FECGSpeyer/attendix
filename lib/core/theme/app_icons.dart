@@ -330,4 +330,11 @@ abstract final class AppIcons {
   static IconData get cupertinoMusicNote2 => _pick(Ionicons.musicalNotesOutline, CupertinoIcons.music_note_2);
   static IconData get cupertinoQuestionCircle => _pick(Ionicons.helpCircleOutline, CupertinoIcons.question_circle);
   static IconData get cupertinoSearch => _pick(Ionicons.searchOutline, CupertinoIcons.search);
+
+  // KP2 rahmen (DAS-10): outline variants named by the Ionic templates.
+  static IconData get paperPlaneOutline => _pick(Ionicons.paperPlaneOutline, Icons.send_outlined);
+  static IconData get closeOutline => _pick(Ionicons.closeOutline, Icons.close);
+  static IconData get musicalNoteOutline => _pick(Ionicons.musicalNoteOutline, Icons.music_note_outlined);
+  static IconData get chevronDownOutline => _pick(Ionicons.chevronDownOutline, Icons.expand_more);
+  static IconData get calendarClearOutline => _pick(Ionicons.calendarClearOutline, Icons.calendar_today_outlined);
 }
