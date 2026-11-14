@@ -20,6 +20,7 @@ import '../widgets/ion_items.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Public plan link without login (Ionic `SharedPlanPage`, route `/plan`).
@@ -668,14 +669,33 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   }
 
   Future<void> _showAddMenu(BuildContext anchor) async {
-    // Ionic: ion-popover anchored to the "+" in the list header.
-    final action = await showIonPopover<String>(
-      anchor,
-      items: [
-        PopupMenuItem(value: 'field', child: Text(context.l10n.planningAddField)),
-        PopupMenuItem(value: 'note', child: Text(context.l10n.planningAddNoteField)),
-      ],
-    );
+    // Ionic: ion-popover anchored to the "+" in the list header: two bare
+    // `ion-item button`s, the second one `lines="none"`.
+    final String? action;
+    if (context.rdSkin != null) {
+      // Beta design: its Material menu as before.
+      final box = anchor.findRenderObject() as RenderBox;
+      final overlay = Navigator.of(anchor).overlay!.context.findRenderObject() as RenderBox;
+      final topLeft = box.localToGlobal(Offset(0, box.size.height), ancestor: overlay);
+      final bottomRight = box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay);
+      action = await showMenu<String>(
+        context: anchor,
+        position: RelativeRect.fromRect(Rect.fromPoints(topLeft, bottomRight), Offset.zero & overlay.size),
+        items: [
+          PopupMenuItem(value: 'field', child: Text(context.l10n.planningAddField)),
+          PopupMenuItem(value: 'note', child: Text(context.l10n.planningAddNoteField)),
+        ],
+      );
+    } else {
+      action = await showAppPopoverMenu<String>(
+        context: anchor,
+        lines: true,
+        items: [
+          AppPopoverMenuItem(value: 'field', label: context.l10n.planningAddField),
+          AppPopoverMenuItem(value: 'note', label: context.l10n.planningAddNoteField, lines: false),
+        ],
+      );
+    }
     if (action == null || !mounted) return;
     final now = DateTime.now().millisecondsSinceEpoch;
     if (action == 'field') {

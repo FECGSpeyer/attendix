@@ -183,32 +183,34 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                             : context.go('/tenants'),
               )
             else
-              // Ionic register-account-menu popover: Abmelden / Konto löschen
-              PopupMenuButton<String>(
-                key: const ValueKey('register-account-menu'),
-                icon: Icon(ios ? AppIcons.moreHoriz : AppIcons.moreVert),
-                position: PopupMenuPosition.under,
-                onSelected: (value) =>
-                    value == 'logout' ? _logout() : _confirmDeleteAccount(),
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 'logout',
-                    child: Row(children: [
-                      Icon(AppIcons.logout),
-                      const SizedBox(width: 12),
-                      Text(l10n.registerLogout),
-                    ]),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Row(children: [
-                      Icon(AppIcons.deleteOutline, color: AppColors.danger),
-                      const SizedBox(width: 12),
-                      Text(l10n.registerDeleteAccount,
-                          style: const TextStyle(color: AppColors.danger)),
-                    ]),
-                  ),
-                ],
+              // Ionic register-account-menu popover (`ion-list
+              // lines="none"`): Abmelden / Konto löschen (danger)
+              Builder(
+                builder: (buttonContext) => IconButton(
+                  key: const ValueKey('register-account-menu'),
+                  icon: Icon(ios ? AppIcons.moreHoriz : AppIcons.moreVert),
+                  tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                  onPressed: () async {
+                    final value = await showAppPopoverMenu<String>(
+                      context: buttonContext,
+                      items: [
+                        AppPopoverMenuItem(
+                          value: 'logout',
+                          icon: AppIcons.logout,
+                          label: l10n.registerLogout,
+                        ),
+                        AppPopoverMenuItem(
+                          value: 'delete',
+                          icon: AppIcons.deleteOutline,
+                          label: l10n.registerDeleteAccount,
+                          destructive: true,
+                        ),
+                      ],
+                    );
+                    if (value == null || !mounted) return;
+                    value == 'logout' ? _logout() : _confirmDeleteAccount();
+                  },
+                ),
               ),
           ],
         ),
