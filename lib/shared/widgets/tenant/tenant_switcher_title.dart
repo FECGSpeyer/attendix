@@ -9,7 +9,11 @@ import '../../../core/providers/user_preferences_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/tenant/tenant.dart';
 import '../../../l10n/l10n.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
 import '../adaptive/adaptive_platform.dart';
+import '../adaptive/app_popover_menu.dart' show showAppPopover;
+import '../display/ion_badge_text.dart';
+import '../layout/ionic_md.dart' show IonMd;
 
 /// AppBar title with a quick tenant switcher (Ionic people/list
 /// `tenant-switcher-list` popover). Shows the current tenant's long name; if
@@ -116,6 +120,34 @@ class TenantSwitcherTitle extends ConsumerWidget {
       );
     }
 
+    // KP_SELECTS (QUE-03): md = the Ionic md `ion-popover` (trigger click,
+    // `--width: 220px`, `ion-list lines="none"`) below the toolbar button –
+    // the same switcher popover as the side panel ([showTenantPopover]).
+    if (context.rdSkin == null) {
+      return Semantics(
+        button: true,
+        label: context.l10n.settingsSwitchTenant,
+        child: Tooltip(
+          message: context.l10n.settingsSwitchTenant,
+          child: Builder(
+            builder: (triggerContext) => InkWell(
+              borderRadius: BorderRadius.circular(4),
+              onTap: () async {
+                final picked = await showTenantPopover(
+                  triggerContext,
+                  tenants: tenants,
+                  currentTenantId: tenant?.id,
+                );
+                if (picked != null) select(picked);
+              },
+              child: trigger,
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Beta design: unchanged Material menu.
     return PopupMenuButton<Tenant>(
       tooltip: context.l10n.settingsSwitchTenant,
       position: PopupMenuPosition.under,
@@ -199,6 +231,107 @@ class _IosPopoverTriggerState extends State<_IosPopoverTrigger> {
         duration: const Duration(milliseconds: 200),
         child: widget.child,
       ),
+    );
+  }
+}
+
+/// KP_SELECTS (QUE-03): the tenant switcher `ion-popover` of the classic
+/// design (toolbar title button and side panel) – one `ion-item` per
+/// instance (long name, Ionic order) and a primary "Aktuell" `ion-badge` on
+/// the current one. Resolves with the tapped tenant (`dismissOnSelect`) or
+/// null.
+///
+/// [context] is the trigger. iOS look without [anchor]: the glass popover
+/// that replaces the toolbar capsule ([showIosTenantPopover]). Otherwise the
+/// shared popover ([showAppPopover]: md surface / iOS glass) [width] wide
+/// (Ionic `--width`) at the trigger, or at [anchor] (global coordinates,
+/// e.g. beside the collapsed side panel – Ionic `side="end"`).
+Future<Tenant?> showTenantPopover(
+  BuildContext context, {
+  required List<Tenant> tenants,
+  int? currentTenantId,
+  double width = 220,
+  Rect? anchor,
+}) {
+  final ios = useIosLook(context);
+  if (ios && anchor == null) {
+    return showIosTenantPopover(context, tenants: tenants, currentTenantId: currentTenantId);
+  }
+  return showAppPopover<Tenant>(
+    context: context,
+    anchor: anchor,
+    width: width,
+    builder: (popoverContext) => _TenantPopoverList(
+      ios: ios,
+      tenants: tenants,
+      currentTenantId: currentTenantId,
+    ),
+  );
+}
+
+/// The `ion-list lines="none"` of the tenant switcher popover: md 48px
+/// items (16px label, md badge), iOS 44pt items (17pt label, pill badge).
+class _TenantPopoverList extends StatelessWidget {
+  const _TenantPopoverList({
+    required this.ios,
+    required this.tenants,
+    required this.currentTenantId,
+  });
+
+  final bool ios;
+  final List<Tenant> tenants;
+  final int? currentTenantId;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final t in tenants)
+          InkWell(
+            onTap: () => Navigator.of(context).pop(t),
+            splashFactory: ios ? NoSplash.splashFactory : null,
+            highlightColor: ios ? IosGlass.itemActivated(theme.brightness) : null,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: ios ? 44 : IonMd.itemMinHeight),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        t.longName.isNotEmpty ? t.longName : t.shortName,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: ios ? 17 : IonMd.itemFontSize,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                    if (t.id == currentTenantId)
+                      Container(
+                        // ion-badge slot="end" color="primary"
+                        margin: EdgeInsets.only(left: ios ? 8 : IonMd.endGap),
+                        padding: ios
+                            ? const EdgeInsets.symmetric(horizontal: 8, vertical: 3)
+                            : IonMd.badgePadding,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(ios ? 10 : IonMd.badgeRadius),
+                        ),
+                        child: Text(
+                          context.l10n.settingsCurrent,
+                          style: ionBadgeTextStyle(color: Colors.white),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

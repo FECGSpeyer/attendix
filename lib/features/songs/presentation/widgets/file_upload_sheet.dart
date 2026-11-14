@@ -16,6 +16,7 @@ import '../../../../data/models/song/song.dart';
 import '../utils/song_utils.dart';
 import 'file_drop/file_drop_target.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Ionic `detectSpecialFileType`: category from the file name / extension
@@ -770,6 +771,14 @@ class _FileItemState extends State<_FileItem> {
         if (g.id != null) DropdownMenuItem(value: g.id, child: Text(g.name)),
     ];
     final leading = _leading();
+    final ValueChanged<int?>? onCategoryPicked = widget.enabled
+        ? (v) {
+            final category = resolveFileCategoryOption(
+                v, value == kChoirAllOptionValue ? '' : _note.text.trim(), clearChoirNote: true);
+            if (v == null) _note.text = category.note ?? '';
+            widget.onCategoryChanged(category.instrumentId, category.note);
+          }
+        : null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -847,22 +856,24 @@ class _FileItemState extends State<_FileItem> {
                 Flexible(
                   child: DropdownButtonHideUnderline(
                     // Ionic `ion-select slot="end"` without `interface`: the
-                    // alert with radios (shared select, both looks).
-                    child: AppDropdownButton<int?>(
-                      interface: AppSelectInterface.alert,
-                      value: value,
-                      items: items,
-                      isExpanded: true,
-                      hint: Text(context.l10n.songsInstrument),
-                      onChanged: widget.enabled
-                          ? (v) {
-                              final category = resolveFileCategoryOption(
-                                  v, value == kChoirAllOptionValue ? '' : _note.text.trim(), clearChoirNote: true);
-                              if (v == null) _note.text = category.note ?? '';
-                              widget.onCategoryChanged(category.instrumentId, category.note);
-                            }
-                          : null,
-                    ),
+                    // alert with radios (shared select, both looks). The
+                    // Beta design keeps its Material dropdown.
+                    child: context.rdSkin != null
+                        ? DropdownButton<int?>(
+                            value: value,
+                            items: items,
+                            isExpanded: true,
+                            hint: Text(context.l10n.songsInstrument),
+                            onChanged: onCategoryPicked,
+                          )
+                        : AppDropdownButton<int?>(
+                            interface: AppSelectInterface.alert,
+                            value: value,
+                            items: items,
+                            isExpanded: true,
+                            hint: Text(context.l10n.songsInstrument),
+                            onChanged: onCategoryPicked,
+                          ),
                   ),
                 ),
               ],

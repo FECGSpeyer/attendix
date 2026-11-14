@@ -723,12 +723,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             // the colour at the end) opening a colour grid popover.
             _buildSection(
               title: context.l10n.typeSettingsAppearance,
-              child: ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(context.l10n.typeSettingsColor),
-                subtitle: Text(context.l10n.typeSettingsColorHint),
-                trailing: Icon(AppIcons.circle, color: ColorUtils.getColorForPicker(_color)),
-                onTap: _pickColor,
+              child: Builder(
+                builder: (rowContext) => ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(context.l10n.typeSettingsColor),
+                  subtitle: Text(context.l10n.typeSettingsColorHint),
+                  trailing: Icon(AppIcons.circle, color: ColorUtils.getColorForPicker(_color)),
+                  onTap: () => rowContext.rdSkin != null ? _pickColor() : _pickColorPopover(rowContext),
+                ),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingL),
@@ -784,6 +786,70 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   /// Ionic colour popover: a grid of ellipses, the selected one on a grey
   /// rounded background.
+  /// Ionic `ion-popover #colorPopover` (trigger = the colour item): an
+  /// `ion-grid` with three columns (`ion-col size="4"`, 1rem radius, the
+  /// current colour on `--ion-color-medium`) of 1.5rem ellipses.
+  Future<void> _pickColorPopover(BuildContext rowContext) async {
+    final box = rowContext.findRenderObject()! as RenderBox;
+    final picked = await showAppPopover<String>(
+      context: rowContext,
+      // The item is the trigger: below it (md: left edge, iOS: centred).
+      anchor: box.localToGlobal(Offset.zero) & box.size,
+      builder: (ctx) => Padding(
+        // ion-grid `--ion-grid-padding: 5px`; the popover list padding of
+        // the shared popover is not part of the Ionic grid popover.
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var i = 0; i < ColorUtils.availableColors.length; i += 3)
+              Row(
+                children: [
+                  for (var j = i; j < i + 3; j++)
+                    Expanded(
+                      child: j >= ColorUtils.availableColors.length
+                          ? const SizedBox.shrink()
+                          : _colorCell(ctx, ColorUtils.availableColors[j]),
+                    ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+    if (picked == null || !mounted) return;
+    setState(() {
+      _color = picked;
+      _hasChanges = true;
+    });
+  }
+
+  /// `ion-col` of the colour popover: padding 8 / 5 / 5 / 5, radius 1rem.
+  Widget _colorCell(BuildContext ctx, String colorName) {
+    final radius = BorderRadius.circular(16);
+    return InkWell(
+      borderRadius: radius,
+      onTap: () => Navigator.pop(ctx, colorName),
+      child: Semantics(
+        selected: _color == colorName,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(5, 8, 5, 5),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: _color == colorName ? AppColors.medium : null,
+            borderRadius: radius,
+          ),
+          child: Icon(
+            AppIcons.circle,
+            size: 24,
+            color: ColorUtils.getColorForPicker(colorName),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The colour dialog of the Beta design (also attendance_type_edit_page_beta).
   Future<void> _pickColor() async {
     final picked = await showAppDialog<String>(
       context: context,

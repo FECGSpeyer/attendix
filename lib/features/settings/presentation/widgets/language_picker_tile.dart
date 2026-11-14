@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/locale_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_select.dart';
 import 'settings_list.dart';
@@ -57,7 +58,9 @@ class LanguagePickerTile extends ConsumerWidget {
                 ios
                     ? const IonSelectIcon(key: Key('languagePickerChevron'))
                     // ion-select md: caret (13px, step-500).
-                    : const IonMdSelectIcon(),
+                    : (context.rdSkin == null
+                        ? const IonMdSelectIcon()
+                        : Icon(AppIcons.arrowDropDown, color: AppColors.medium)),
               ],
             );
           }),
@@ -66,25 +69,55 @@ class LanguagePickerTile extends ConsumerWidget {
     // KP_SELECTS: one select in both looks – the shared `ion-select
     // interface="popover"` (md: the md popover with the current option
     // tinted `rgba(primary, .08)`, no radio circle).
-    return KeyedSubtree(
+    if (ios || context.rdSkin == null) {
+      return KeyedSubtree(
+        key: const Key('languagePicker'),
+        child: tile(
+          onTap: () async {
+            final picked = await showAppSelect<String>(
+              context: valueContext ?? context,
+              value: current,
+              options: [
+                for (final lang in enabledLanguages)
+                  AppSelectOption<String>(
+                    value: lang,
+                    label: languageNames[lang] ?? lang,
+                  ),
+              ],
+            );
+            if (picked == null || picked.value == current) return;
+            ref.read(localeProvider.notifier).setLanguage(picked.value);
+          },
+        ),
+      );
+    }
+
+    // Beta design on Android / desktop: unchanged Material menu.
+    final primary = Theme.of(context).colorScheme.primary;
+    return PopupMenuButton<String>(
       key: const Key('languagePicker'),
-      child: tile(
-        onTap: () async {
-          final picked = await showAppSelect<String>(
-            context: valueContext ?? context,
-            value: current,
-            options: [
-              for (final lang in enabledLanguages)
-                AppSelectOption<String>(
-                  value: lang,
-                  label: languageNames[lang] ?? lang,
-                ),
-            ],
-          );
-          if (picked == null || picked.value == current) return;
-          ref.read(localeProvider.notifier).setLanguage(picked.value);
-        },
-      ),
+      tooltip: l10n.settingsLanguageTitle,
+      position: PopupMenuPosition.under,
+      onSelected: (value) {
+        if (value == current) return;
+        ref.read(localeProvider.notifier).setLanguage(value);
+      },
+      itemBuilder: (_) => [
+        for (final lang in enabledLanguages)
+          PopupMenuItem<String>(
+            value: lang,
+            padding: EdgeInsets.zero,
+            child: Container(
+              key: Key('languageOption_$lang'),
+              constraints: const BoxConstraints(minHeight: 48),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              alignment: AlignmentDirectional.centerStart,
+              color: lang == current ? primary.withValues(alpha: 0.08) : null,
+              child: Text(languageNames[lang] ?? lang),
+            ),
+          ),
+      ],
+      child: tile(),
     );
   }
 }

@@ -19,6 +19,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
+import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
@@ -35,6 +36,21 @@ class ParentsTenantTitle extends ConsumerWidget {
 
     if (tenants.length <= 1) return Text(name);
 
+    // KP_SELECTS (QUE-03): the shared tenant switcher (toolbar button +
+    // Ionic `ion-popover` `--width: 220px`) like on the other tab pages.
+    if (context.rdSkin == null) {
+      return Padding(
+        padding: EdgeInsets.only(
+          left: Theme.of(context).appBarTheme.titleSpacing ?? NavigationToolbar.kMiddleSpacing,
+        ),
+        child: TenantSwitcherTitle(
+          fallbackTitle: context.l10n.tabsEvents,
+          onSelected: (t) => _switchTenant(context, ref, t),
+        ),
+      );
+    }
+
+    // Beta design: unchanged Material menu.
     return PopupMenuButton<Tenant>(
       tooltip: context.l10n.settingsSwitchTenant,
       onSelected: (t) => _switchTenant(context, ref, t),

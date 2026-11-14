@@ -20,6 +20,7 @@ import '../widgets/songs_selection_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'
     hide IonInformationIcon;
 import '../../../../shared/widgets/layout/ionic_ios.dart';
@@ -223,39 +224,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                       alignment: Alignment.centerRight,
                       child: Icon(AppIcons.errorOutline, color: AppColors.danger),
                     ),
-                    // Ionic `ion-select [label]` without `interface`: the
-                    // md alert with radios (shared select).
-                    data: (types) => DropdownButtonHideUnderline(
-                      child: AppDropdownButton<AttendanceType>(
-                        interface: AppSelectInterface.alert,
-                        header: context.l10n.attListType,
-                        isExpanded: true,
-                        value: types.contains(_selectedType) ? _selectedType : null,
-                        hint: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(context.l10n.attendanceFlutterNoEventTypes),
-                        ),
-                        alignment: AlignmentDirectional.centerEnd,
-                        selectedItemBuilder: (context) => [
-                          for (final type in types)
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                type.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                        ],
-                        items: [
-                          for (final type in types)
-                            DropdownMenuItem(value: type, child: Text(type.name)),
-                        ],
-                        onChanged: (value) {
-                          if (value != null) _onTypeChanged(value);
-                        },
-                      ),
-                    ),
+                    data: _mdTypeSelect,
                   ),
                 ),
               ],
@@ -614,8 +583,57 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     );
   }
 
+  /// md "Typ" value: Ionic `ion-select [label]` without `interface` – the
+  /// shared select with the md alert (radios, ABBRECHEN / OK). The Beta
+  /// design keeps its Material dropdown.
+  Widget _mdTypeSelect(List<AttendanceType> types) {
+    final value = types.contains(_selectedType) ? _selectedType : null;
+    final hint = Align(
+      alignment: Alignment.centerRight,
+      child: Text(context.l10n.attendanceFlutterNoEventTypes),
+    );
+    List<Widget> selectedItems(BuildContext context) => [
+      for (final type in types)
+        Align(
+          alignment: Alignment.centerRight,
+          child: Text(type.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
+    ];
+    final items = [
+      for (final type in types) DropdownMenuItem(value: type, child: Text(type.name)),
+    ];
+    void onChanged(AttendanceType? value) {
+      if (value != null) _onTypeChanged(value);
+    }
+
+    return DropdownButtonHideUnderline(
+      child: context.rdSkin != null
+          ? DropdownButton<AttendanceType>(
+              isExpanded: true,
+              value: value,
+              hint: hint,
+              alignment: AlignmentDirectional.centerEnd,
+              selectedItemBuilder: selectedItems,
+              items: items,
+              onChanged: onChanged,
+            )
+          : AppDropdownButton<AttendanceType>(
+              interface: AppSelectInterface.alert,
+              header: context.l10n.attListType,
+              isExpanded: true,
+              value: value,
+              hint: hint,
+              alignment: AlignmentDirectional.centerEnd,
+              selectedItemBuilder: selectedItems,
+              items: items,
+              onChanged: onChanged,
+            ),
+    );
+  }
+
   /// Ionic `ion-select` without `interface`: the shared select alert.
   Future<void> _pickTypeIos(List<AttendanceType> types) async {
+    if (context.rdSkin != null) return _pickTypeBeta(types);
     final result = await showAppSelect<AttendanceType>(
       context: context,
       interface: AppSelectInterface.alert,
@@ -626,6 +644,59 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       ],
     );
     if (result != null && mounted) _onTypeChanged(result.value);
+  }
+
+  /// The Beta design keeps its type dialog.
+  Future<void> _pickTypeBeta(List<AttendanceType> types) async {
+    var picked = types.contains(_selectedType) ? _selectedType : null;
+    final result = await showAppDialog<AttendanceType>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AppAlertDialog(
+          title: Text(context.l10n.attListType),
+          scrollable: true,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final type in types)
+                InkWell(
+                  onTap: () => setDialogState(() => picked = type),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            type.name,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: type == picked ? AppColors.primary : null,
+                            ),
+                          ),
+                        ),
+                        if (type == picked)
+                          Icon(AppIcons.check, size: 20, color: AppColors.primary),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(context.l10n.commonCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(picked),
+              child: Text(context.l10n.commonOk),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (result != null && mounted) _onTypeChanged(result);
   }
 
   /// Ionic onDateClick: tapping the field while only today is selected
