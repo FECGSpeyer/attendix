@@ -356,7 +356,7 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
   /// states).
   bool _isOn(Attribute a) {
     final current = widget.controller.getSelectionStyle().attributes[a.key];
-    if (current == null) return false;
+    if (current == null || current.value == null) return false;
     if (a.key != Attribute.list.key) return true;
     if (a.value == Attribute.unchecked.value) {
       return current.value == Attribute.unchecked.value || current.value == Attribute.checked.value;
@@ -394,34 +394,51 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
     Widget format(IconData icon, String label, Attribute a) =>
         _slimButton(p, icon, label, _isOn(a), () => _toggle(a));
     Widget gap() => Container(width: 1, height: 22, margin: const EdgeInsets.symmetric(horizontal: 6), color: p.line);
+    final buttons = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        format(Icons.format_bold, l10n.editorBold, Attribute.bold),
+        format(Icons.format_italic, l10n.editorItalic, Attribute.italic),
+        gap(),
+        format(Icons.format_list_bulleted, l10n.editorBulletList, Attribute.ul),
+        format(Icons.format_list_numbered, l10n.editorOrderedList, Attribute.ol),
+        format(Icons.checklist, l10n.rdTypeChecklist, Attribute.unchecked),
+        gap(),
+        _slimButton(p, Icons.more_horiz, l10n.rdTeamProtocolMoreFormat, _more, () => setState(() => _more = !_more)),
+      ],
+    );
     return Material(
       type: MaterialType.transparency,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Row(
-          children: [
-            format(Icons.format_bold, l10n.editorBold, Attribute.bold),
-            format(Icons.format_italic, l10n.editorItalic, Attribute.italic),
-            gap(),
-            format(Icons.format_list_bulleted, l10n.editorBulletList, Attribute.ul),
-            format(Icons.format_list_numbered, l10n.editorOrderedList, Attribute.ol),
-            format(Icons.checklist, l10n.rdTypeChecklist, Attribute.unchecked),
-            gap(),
-            _slimButton(p, Icons.more_horiz, l10n.rdTeamProtocolMoreFormat, _more, () => setState(() => _more = !_more)),
-            if (widget.hint != null)
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 12, right: 8),
-                  child: Text(
-                    widget.hint!,
-                    textAlign: TextAlign.end,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: RdType.meta(p, size: 13),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // The hint only where it has room; on a very narrow phone the
+            // buttons scroll sideways instead of being cut off.
+            if (widget.hint == null || constraints.maxWidth < 520) {
+              return Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: buttons),
+              );
+            }
+            return Row(
+              children: [
+                buttons,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 12, right: 8),
+                    child: Text(
+                      widget.hint!,
+                      textAlign: TextAlign.end,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: RdType.meta(p, size: 13),
+                    ),
                   ),
                 ),
-              ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );

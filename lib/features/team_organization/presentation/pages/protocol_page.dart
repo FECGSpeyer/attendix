@@ -2781,7 +2781,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final hasNext = nextSectionId(_sectionIds, _activeId) != null;
     final apple = defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.iOS;
     return LayoutBuilder(builder: (context, constraints) {
-      final minHeight = 520 * MediaQuery.textScalerOf(context).scale(1);
+      final minHeight = 600 * MediaQuery.textScalerOf(context).scale(1);
       return SingleChildScrollView(
         child: SizedBox(
           height: constraints.maxHeight < minHeight ? minHeight : constraints.maxHeight,
@@ -2960,6 +2960,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   padding: const EdgeInsets.only(top: 3),
                   child: Text(
                     s.start ?? '',
+                    softWrap: false,
                     style: TextStyle(
                       fontSize: 13,
                       fontFeatures: const [FontFeature.tabularFigures()],
@@ -3111,7 +3112,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final unassigned = _unassignedTasks(map);
     final activeIndex = _sections.indexWhere((s) => s.id == _activeId);
     final hasNext = activeIndex >= 0 && activeIndex + 1 < _sections.length;
-    final live = _betaLiveCard(hasNext ? () => setState(() => _activeId = _sections[activeIndex + 1].id) : null);
+    final live = _betaLiveCard(hasNext ? () => _activate(_sections[activeIndex + 1].id) : null);
     return ListView(
       padding: EdgeInsets.fromLTRB(20, 12, 20, scrollEndPadding(context, base: 20)),
       children: [
@@ -3219,7 +3220,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             button: true,
             expanded: active,
             child: InkWell(
-              onTap: () => setState(() => _activeId = active ? null : s.id),
+              onTap: () => setState(() {
+                _activeId = active ? null : s.id;
+                _sidePane = null;
+              }),
               child: Padding(
                 padding: EdgeInsets.fromLTRB(16, 14, 12, active ? 6 : 14),
                 child: Row(

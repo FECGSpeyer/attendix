@@ -136,7 +136,8 @@ void main() {
   });
 
   testWidgets('phone: three buttons on top, result chips in one row, only "Abschließen" below', (tester) async {
-    await _open(tester, const Size(360, 780));
+    // The narrowest phones: nothing may overflow.
+    await _open(tester, const Size(320, 700));
 
     expect(find.byType(ProtocolStripButton), findsNWidgets(3));
     expect(find.byType(RdPrimaryButton), findsOneWidget);

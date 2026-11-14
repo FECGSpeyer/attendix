@@ -130,7 +130,8 @@ class ProtocolAgendaRow extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: hasSecondLine ? CrossAxisAlignment.start : CrossAxisAlignment.center,
                 children: [
-                  SizedBox(width: 48, child: leading),
+                  // Grows with the text size so "19:00" never breaks.
+                  SizedBox(width: MediaQuery.textScalerOf(context).scale(48), child: leading),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
