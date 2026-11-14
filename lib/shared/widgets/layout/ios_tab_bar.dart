@@ -355,13 +355,9 @@ class TabBarFab extends StatefulWidget {
 }
 
 class _TabBarFabState extends State<TabBarFab> {
-  final _controller = OverlayPortalController();
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.show();
-  }
+  /// A fresh, already shown controller for every time the page becomes
+  /// the current route; null while it is covered.
+  OverlayPortalController? _controller;
 
   @override
   Widget build(BuildContext context) {
@@ -370,22 +366,22 @@ class _TabBarFabState extends State<TabBarFab> {
     // Hide while another route (pushed page, sheet, dialog of the shell
     // navigator) lies on top of this page.
     final visible = ModalRoute.of(context)?.isCurrent ?? true;
-    // ROLLEN-A-35: hide the portal itself (not only its content) while the
-    // page is covered. A covered page can be offstage and is then never
-    // laid out – a still shown overlay child in the root overlay stayed
-    // without layout and every hit test of the app threw ("Null check
-    // operator…", "RenderBox was not laid out"), e.g. after the address
-    // changed to a sub page of another tab (`/settings/notifications`).
-    if (visible && !_controller.isShowing) {
-      _controller.show();
-    } else if (!visible && _controller.isShowing) {
-      _controller.hide();
+    // ROLLEN-A-35 / WERKE-60 / WERKE-82: no portal at all while the page
+    // is covered. A covered page can be offstage and is then never laid
+    // out – a shown overlay child of it in the root overlay stayed without
+    // layout and every hit test of the app threw ("Null check operator…",
+    // "RenderBox was not laid out"), e.g. after the address changed to a sub
+    // page of another tab or when the FAB of a covered page appeared later
+    // (role loaded). show()/hide() may not run during a build, so the
+    // portal is removed and a new one (shown before it attaches) is built.
+    if (!visible) {
+      _controller = null;
+      return const SizedBox.shrink();
     }
+    final controller = _controller ??= OverlayPortalController()..show();
     return OverlayPortal.targetsRootOverlay(
-      controller: _controller,
-      overlayChildBuilder: (context) => !visible
-          ? const SizedBox.shrink()
-          : widget.above
+      controller: controller,
+      overlayChildBuilder: (context) => widget.above
               ? Positioned(
                   left: 16,
                   right: 16,
