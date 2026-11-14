@@ -658,15 +658,20 @@ Alles unter „Ich“ › „Verwaltung“. Die Suche oben findet jede Einstellu
 
 ### L-53 Festlegen, was Helfer und Mitglieder dürfen und sehen
 
-- **Wo:** Verwaltung › Zugänge und Rechte › „Rollen und Rechte“
+- **Wo:** Verwaltung › „Rollen und Rechte“
 - **Schritte:**
-  1. Schalte die Rechte ein oder aus. Was jeder Schalter bewirkt, steht unter
-     [Rollen](../rollen.md#schalter-der-gruppe).
+  1. Die Seite zeigt die Rollen der Gruppe mit der Zahl ihrer Personen. Tippe
+     auf eine Rolle, zum Beispiel „Helfer“.
+  2. Unter „Darf immer“ und „Darf nie“ steht, was fest zur Rolle gehört.
+  3. Unter „Einstellbar“ schaltest du die Rechte ein oder aus. Was jeder
+     Schalter bewirkt, steht unter [Rollen](../rollen.md#schalter-der-gruppe).
 - **Ergebnis:** Jeder Schalter wird sofort gespeichert und gilt sofort.
+- **Gut zu wissen:** Unter „Personen“ steht, wer die Rolle hat. Die Rolle
+  einer Person änderst du bei der Person (L-21).
 
 ### L-54 Eltern einladen
 
-- **Wo:** Verwaltung › Zugänge und Rechte › „Eltern“
+- **Wo:** Verwaltung › „Rollen und Rechte“ › „Eltern“
 - **Voraussetzung:** Der Eltern-Zugang ist für die Gruppe eingeschaltet.
 - **Schritte:**
   1. Tippe auf das Plus und lade ein Elternteil per E-Mail ein. Oder schick
@@ -678,7 +683,7 @@ Alles unter „Ich“ › „Verwaltung“. Die Suche oben findet jede Einstellu
 
 ### L-55 Beobachter einladen
 
-- **Wo:** Verwaltung › Zugänge und Rechte › „Beobachter“
+- **Wo:** Verwaltung › „Rollen und Rechte“ › „Beobachter“
 - **Schritte:**
   1. Tippe auf „Beobachter einladen“ und gib die E-Mail an.
   2. Zum Entfernen tippst du auf einen Eintrag und dann auf „Beobachter

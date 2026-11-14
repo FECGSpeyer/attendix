@@ -34,8 +34,8 @@ Verantwortliche sehen sie. Die Verwaltung hat ein Suchfeld und fünf Bereiche:
 
 | Bereich | Beispiele |
 |---------|-----------|
-| **Mitglieder** | Instrumente, Stimmen oder Untergruppen, eigene Felder, Anmeldung per Link, Problemfälle, Lehrer, Archiv |
-| **Zugänge und Rechte** | Rollen und Rechte, Admins, Eltern, Beobachter, Zugänge anlegen |
+| **Mitglieder** | Instrumente, Stimmen oder Untergruppen, eigene Felder, Anmeldung per Link, Problemfälle, Lehrer, Zugänge anlegen, Archiv |
+| **Zugänge und Rechte** | Rollen und Rechte: eine Seite je Rolle, dort auch Admins, Eltern und Beobachter |
 | **Termine** | Terminarten, Abmeldegründe, Schichtpläne, Ferien und Feiertage, Ablaufplan ohne Termin |
 | **Auswertung und Mitteilungen** | Auswertung, Mitteilungen |
 | **Gruppe und Organisation** | Name und Kürzel, Organisation |
@@ -53,6 +53,7 @@ Suche der Verwaltung findet auch diese Einträge und sagt, wo sie sind:
 | Ablaufpläne | im Termin unter „Programm“ |
 | Export, Urkunden | in der Auswertung |
 | Branding, Planvorlagen & Felder, Org-Pläne | in „Organisation“ |
+| Admins, Eltern, Beobachter | in „Rollen und Rechte“ |
 | Kalender abonnieren, Team | unter „Ich“ |
 
 ## Handy, Tablet und Computer

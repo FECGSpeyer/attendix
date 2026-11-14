@@ -33,10 +33,19 @@ jeden Eintrag, auch die umgezogenen.
 
 | Eintrag | Wofür | Erscheint | Szenario |
 |---------|-------|-----------|----------|
-| „Rollen und Rechte“ | Was Helfer und Mitglieder dürfen und sehen | immer | L-53, [Rollen](rollen.md#schalter-der-gruppe) |
-| „Admins“ | Dürfen alles in dieser Gruppe | nur für Administratoren | A-01, A-02 |
-| „Eltern“ | Sehen ihre Kinder und melden sie ab | wenn der Eltern-Zugang an ist, sonst unter „Noch nicht genutzt“ | L-54 |
-| „Beobachter“ | Sehen alles, ändern nichts | immer | L-55 |
+| „Rollen und Rechte“ | Was jede Rolle darf und sieht | immer | L-53, [Rollen](rollen.md#schalter-der-gruppe) |
+
+Die Seite listet die Rollen. Jede Zeile öffnet die Seite der Rolle:
+
+| Zeile | Wofür | Szenario |
+|-------|-------|----------|
+| „Admin“ | Dürfen alles in dieser Gruppe. Administratoren fügen hier Admins hinzu und entfernen sie. | A-01, A-02 |
+| „Verantwortliche“ | Leiten die Gruppe | L-21 |
+| „Helfer“ | Tragen die Anwesenheit ein, mit Schaltern | L-53 |
+| „Stimmführer“ | Sehen „Meine Stimme“ | L-53 |
+| „Mitglied“ | Melden sich an und ab, mit Schaltern | L-53 |
+| „Eltern“ | Sehen ihre Kinder und melden sie ab. Zeigt „Aus“, solange der Eltern-Zugang aus ist. | L-54 |
+| „Beobachter“ | Sehen alles, ändern nichts | L-55 |
 
 ### Termine
 
@@ -88,6 +97,7 @@ findet sie und nennt den Ort.
 | „Branding“ | in „Organisation“ | L-60 |
 | „Planvorlagen & Felder“ | in „Organisation“ | |
 | „Org-Pläne“ | in „Organisation“ | |
+| „Admins“, „Eltern“, „Beobachter“ | in „Rollen und Rechte“ | A-01, L-54, L-55 |
 | „Kalender abonnieren“ | unter „Ich“ | M-28 |
 | „Team“ | unter „Ich“, wenn die Teamorganisation an ist | L-61 bis L-63 |
 

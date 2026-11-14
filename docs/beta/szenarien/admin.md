@@ -19,7 +19,7 @@ ernennen, die Gruppe mit einer Organisation verbinden und die Gruppe löschen.
 
 ### A-01 Einen weiteren Administrator hinzufügen
 
-- **Wo:** Ich › Verwaltung › Zugänge und Rechte › „Admins“
+- **Wo:** Ich › Verwaltung › „Rollen und Rechte“ › „Admin“
 - **Schritte:**
   1. Tippe auf „Admin hinzufügen“.
   2. Gib die „E-Mail-Adresse“ der Person ein und tippe auf „Hinzufügen“.
@@ -31,13 +31,14 @@ ernennen, die Gruppe mit einer Organisation verbinden und die Gruppe löschen.
 
 ### A-02 Einen Administrator entfernen
 
-- **Wo:** Ich › Verwaltung › Zugänge und Rechte › „Admins“
+- **Wo:** Ich › Verwaltung › „Rollen und Rechte“ › „Admin“
 - **Schritte:**
   1. Tippe auf den Eintrag und dann auf „Admin entfernen“.
   2. Bestätige.
 - **Ergebnis:** Die Person ist kein Administrator dieser Gruppe mehr.
 - **Gut zu wissen:** Dich selbst kannst du nicht entfernen. Dein Eintrag trägt
-  den Hinweis „Das bist du“.
+  den Hinweis „Das bist du“. Verantwortliche sehen unter „Admin“ nur, wer
+  Administrator ist.
 
 ---
 
@@ -45,8 +46,7 @@ ernennen, die Gruppe mit einer Organisation verbinden und die Gruppe löschen.
 
 ### A-03 Die Dateiablage für alle lesbar machen
 
-- **Wo:** Ich › Verwaltung › Zugänge und Rechte › „Rollen und Rechte“ ›
-  „Dateiablage“
+- **Wo:** Ich › Verwaltung › „Rollen und Rechte“ › „Für alle in der Gruppe“
 - **Schritte:**
   1. Schalte „Dateiablage für alle lesbar“ ein.
 - **Ergebnis:** Alle Mitglieder sehen die Dateiablage (siehe H-15). Sonst
