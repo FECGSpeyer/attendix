@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +17,6 @@ import '../../../l10n/l10n.dart';
 import '../../../core/utils/error_message.dart';
 import '../adaptive/adaptive.dart';
 import '../../../features/auth/presentation/widgets/ion_form_list.dart';
-import '../layout/ion_modal_handle.dart';
 
 /// User-facing version history ("Was ist neu"): the continued Ionic history
 /// with the store versions, topmost entry = [AppConstants.displayVersion].
@@ -73,8 +73,9 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
   @override
   Widget build(BuildContext context) {
     if (widget.beta) return _buildBeta(context);
-    final ios = useIosLook(context);
     return AppDraggableSheet(
+      breakpoints: const [0, 0.5, 1],
+      initialBreakpoint: 0.5,
       initialChildSize: 0.5,
       minChildSize: 0.25,
       maxChildSize: 1,
@@ -82,40 +83,13 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
       snapSizes: const [0.5],
       expand: false,
       builder: (context, scrollController) {
-        final sheet = Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(AppDimensions.borderRadiusL),
-            ),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (ios)
-                IonModalHeader(
-                  title: Text(context.l10n.settingsWhatsNew),
-                  showClose: false,
-                )
-              else ...[
-                const SizedBox(height: 16),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-                  child: Text(
-                    context.l10n.settingsWhatsNew,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-                const Divider(height: 1),
-              ],
-              Expanded(
-                child: _buildContent(scrollController),
-              ),
-            ],
-          ),
+        // The sheet shape, the Ionic handle and the toolbar (iOS and md)
+        // come from the shared sheet scaffold.
+        return IonSheetScaffold(
+          title: context.l10n.settingsWhatsNew,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          body: _buildContent(scrollController),
         );
-        return ios ? IonModalHandleOverlay(child: sheet) : sheet;
       },
     );
   }
@@ -257,6 +231,7 @@ Future<void> showVersionHistorySheet(BuildContext context) {
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
+    clipBehavior: Clip.antiAlias,
     backgroundColor: Colors.transparent,
     builder: (context) => const VersionHistorySheet(),
   );

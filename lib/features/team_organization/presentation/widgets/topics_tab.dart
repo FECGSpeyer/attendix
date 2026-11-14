@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -256,11 +257,15 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
               AppBar(
                 toolbarHeight: ionModalToolbarHeight(context),
                 automaticallyImplyLeading: false,
-                leading: IconButton(
-                  icon: Icon(AppIcons.close),
-                  tooltip: ctx.l10n.commonClose,
-                  onPressed: () => Navigator.of(ctx).pop(),
-                ),
+                // Ionic: close ✕ in `ion-buttons slot="start"` (iOS glass circle).
+                leadingWidth: ctx.rdSkin == null && useIosLook(ctx) ? 68 : null,
+                leading: ctx.rdSkin == null
+                    ? IonCloseButton(onPressed: () => Navigator.of(ctx).pop())
+                    : IconButton(
+                        icon: Icon(AppIcons.close),
+                        tooltip: ctx.l10n.commonClose,
+                        onPressed: () => Navigator.of(ctx).pop(),
+                      ),
                 title: Text(ctx.l10n.teamOrgSuggestions),
               ),
               Expanded(

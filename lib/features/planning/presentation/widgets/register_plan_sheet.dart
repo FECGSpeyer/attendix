@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +39,15 @@ import '../../../redesign/presentation/widgets/rd_widgets.dart';
 /// [attendanceDate] is the date of the Termin selected in the editor (Ionic
 /// uses it for "Stand: …"; today when none is selected).
 Future<void> showRegisterPlanSheet(BuildContext context, {DateTime? attendanceDate}) async {
+  if (context.rdSkin == null) {
+    await showIonSheet<void>(
+      context,
+      // The Scaffold of the sheet moves its content above the keyboard.
+      avoidKeyboard: false,
+      builder: (context, _) => RegisterPlanSheet(attendanceDate: attendanceDate),
+    );
+    return;
+  }
   await showModalBottomSheet(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
