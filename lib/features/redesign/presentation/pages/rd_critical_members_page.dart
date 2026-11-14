@@ -89,11 +89,17 @@ class _RdCriticalMembersPageState extends ConsumerState<RdCriticalMembersPage> {
     final reasons = rdCriticalContextOf(ref);
     final canTalk = rdCanRecordTalk(role);
 
+    // Once the list shows the conversation saved (no Problemfall any more),
+    // the row needs no hiding: flagged again later, the person comes back.
+    if (people != null) {
+      _talked.removeWhere((id) => !people.any((x) => x.id == id && x.isCritical));
+    }
     final critical =
         people == null
             ? null
             : (rdCriticalMembers(people).where((x) => !_talked.contains(x.id)).toList()..sort(_byName));
-    final rules = ref.watch(currentTenantProvider)?.criticalRules ?? const <CriticalRule>[];
+    // The rules the hits were worked out with (the group's rules until then).
+    final rules = reasons?.rules ?? ref.watch(currentTenantProvider)?.criticalRules ?? const <CriticalRule>[];
     final groups = rdCriticalRuleGroups(rules);
     String ruleTitle(CriticalRule rule) {
       final name = (rule.name ?? '').trim();
@@ -103,10 +109,14 @@ class _RdCriticalMembersPageState extends ConsumerState<RdCriticalMembersPage> {
     String? subtitle(Person x, List<RdCriticalReason> hits) {
       final parts = [
         if ((x.groupName ?? '').isNotEmpty) x.groupName!,
-        if (hits.isNotEmpty) rdCriticalHitText(hits.first.rule, hits.first.result, l10n),
-        // Further "eine reicht" rules that hit too (the "und" parts are one rule).
-        for (final h in hits.skip(1))
-          if (h.rule.operator == CriticalRuleOperator.or) l10n.rdCriticalAlsoRule(ruleTitle(h.rule)),
+        // The "und" rule: all its parts (they only count together).
+        if (hits.isNotEmpty && hits.first.rule.operator == CriticalRuleOperator.and)
+          hits.map((h) => rdCriticalHitText(h.rule, h.result, l10n)).join(' ${l10n.rdCriticalAnd} ')
+        else if (hits.isNotEmpty) ...[
+          rdCriticalHitText(hits.first.rule, hits.first.result, l10n),
+          // Further "eine reicht" rules that hit too.
+          for (final h in hits.skip(1)) l10n.rdCriticalAlsoRule(ruleTitle(h.rule)),
+        ],
       ];
       return parts.isEmpty ? null : parts.join(' · ');
     }

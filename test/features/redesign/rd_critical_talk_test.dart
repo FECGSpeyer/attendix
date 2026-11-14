@@ -88,7 +88,7 @@ Widget _app(Role role, MockPlayerRepository repo) {
         (ref) async => RdCriticalContext(
           tenantId: 7,
           rules: _rules,
-          entries: {2: _entries(2, 4, 4), 3: _entries(3, 4, 3), 4: _entries(4, 3, 5)},
+          entries: {2: [..._entries(2, 4, 4), ..._entries(2, 3, 5)], 3: _entries(3, 4, 3), 4: _entries(4, 3, 5)},
         ),
       ),
     ],
@@ -134,6 +134,8 @@ void main() {
     expect(find.text('Fehlt oft · 2'), findsOneWidget);
     expect(find.text('Oft zu spät · 1'), findsOneWidget);
     expect(find.text('Regeln bearbeiten'), findsOneWidget);
+    // Ben hits both rules: listed under the first, the second named.
+    expect(find.textContaining('auch „Oft zu spät“'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('rd-critical-talk-2')));
     await _settle(tester);
