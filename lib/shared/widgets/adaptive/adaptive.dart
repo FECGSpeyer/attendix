@@ -14,4 +14,5 @@ export 'ion_accordion_tile.dart';
 export 'ion_button.dart';
 export 'ion_button_label.dart';
 export 'ion_icons.dart';
+export 'ion_radio_item.dart';
 export 'ios_card_modal.dart';

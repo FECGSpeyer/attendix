@@ -1562,6 +1562,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             label: Text(outcomeLabels[o]!),
             selected: current == o,
             selectedColor: outcomeColor(o).withValues(alpha: 0.25),
+            // Classic: the selection is shown by colour only (no Material
+            // checkmark); Beta keeps the chip as it was.
+            showCheckmark: context.rdSkin != null,
             onSelected: (_) => _setOutcome(sectionId, o),
           ),
       ],

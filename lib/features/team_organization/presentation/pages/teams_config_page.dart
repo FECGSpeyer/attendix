@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -162,14 +163,25 @@ class _TenantRadioList extends StatelessWidget {
     return Column(
       children: [
         for (final tenant in tenants)
-          RadioListTile<int>(
-            value: tenant.id ?? -1,
-            groupValue: selectedId,
-            onChanged: tenant.id == null ? null : onChanged,
-            title: Text(
-              tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
+          if (context.rdSkin != null)
+            RadioListTile<int>(
+              value: tenant.id ?? -1,
+              groupValue: selectedId,
+              onChanged: tenant.id == null ? null : onChanged,
+              title: Text(
+                tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
+              ),
+            )
+          else
+            // ion-radio (default placement): label first, control at the end.
+            IonRadioItem<int>(
+              value: tenant.id ?? -1,
+              groupValue: selectedId,
+              onChanged: tenant.id == null ? null : onChanged,
+              title: Text(
+                tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
+              ),
             ),
-          ),
       ],
     );
   }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import '../../../planning/presentation/widgets/ion_items.dart' show IonChip;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../shared/widgets/common/swipe_actions.dart';
 import '../../../../l10n/l10n.dart';
@@ -135,9 +137,20 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
             runSpacing: 8,
             children: TypeRemindersEditor.predefined.map((h) {
               final exists = reminders.contains(h);
-              return ActionChip(
-                label: Text(TypeRemindersEditor.format(h)),
-                onPressed: exists ? null : () => _add(h),
+              if (context.rdSkin != null) {
+                return ActionChip(
+                  label: Text(TypeRemindersEditor.format(h)),
+                  onPressed: exists ? null : () => _add(h),
+                );
+              }
+              // ion-chip: primary with an add icon, medium + disabled once
+              // the reminder exists.
+              return IonChip(
+                icon: AppIcons.addCircleOutline,
+                label: TypeRemindersEditor.format(h),
+                color: exists ? AppColors.medium : AppColors.primary,
+                disabled: exists,
+                onTap: () => _add(h),
               );
             }).toList(),
           ),

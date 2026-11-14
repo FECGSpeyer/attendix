@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:attendix/core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import 'package:attendix/shared/widgets/adaptive/ion_radio_item.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/services/part_vision_service.dart';
 import '../../../../core/services/song_file_service.dart';
@@ -288,18 +290,34 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                     ),
                     const Divider(height: 1),
                     for (final o in options)
-                      RadioListTile<int?>(
-                        dense: true,
-                        value: o.$1,
-                        groupValue: _choirAll ? kChoirAllOptionValue : _instrumentId,
-                        title: Text(o.$2),
-                        subtitle: o.$1 == kChoirAllOptionValue
-                            ? Text(context.l10n.songsChoirAllHint)
-                            : null,
-                        onChanged: _uploading
-                            ? null
-                            : (v) => setState(() => _choose(v)),
-                      ),
+                      if (context.rdSkin != null)
+                        RadioListTile<int?>(
+                          dense: true,
+                          value: o.$1,
+                          groupValue: _choirAll ? kChoirAllOptionValue : _instrumentId,
+                          title: Text(o.$2),
+                          subtitle: o.$1 == kChoirAllOptionValue
+                              ? Text(context.l10n.songsChoirAllHint)
+                              : null,
+                          onChanged: _uploading
+                              ? null
+                              : (v) => setState(() => _choose(v)),
+                        )
+                      else
+                        // ion-radio (default placement): label first, the
+                        // control at the end of the item.
+                        IonRadioItem<int?>(
+                          dense: true,
+                          value: o.$1,
+                          groupValue: _choirAll ? kChoirAllOptionValue : _instrumentId,
+                          title: Text(o.$2),
+                          subtitle: o.$1 == kChoirAllOptionValue
+                              ? Text(context.l10n.songsChoirAllHint)
+                              : null,
+                          onChanged: _uploading
+                              ? null
+                              : (v) => setState(() => _choose(v)),
+                        ),
                     if (_learnTerm != null && _instrumentId != null)
                       CheckboxListTile(
                         dense: true,

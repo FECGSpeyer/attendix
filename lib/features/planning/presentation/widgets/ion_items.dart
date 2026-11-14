@@ -817,6 +817,7 @@ class IonChip extends StatelessWidget {
     required this.color,
     this.outline = false,
     this.disabled = false,
+    this.icon,
     this.onTap,
   });
 
@@ -824,7 +825,16 @@ class IonChip extends StatelessWidget {
   final Color color;
   final bool outline;
   final bool disabled;
+
+  /// `ion-icon` before the label (20 px, the chip's text colour).
+  final IconData? icon;
   final VoidCallback? onTap;
+
+  Widget _label(bool ios) => Text(label,
+      style: TextStyle(
+          fontSize: ios ? 0.875 * ios27.IonIos.rem : IonMd.chipFontSize,
+          height: ios ? null : 20 / 14,
+          color: ios ? color : IonMd.shade(color)));
 
   @override
   Widget build(BuildContext context) {
@@ -844,11 +854,17 @@ class IonChip extends StatelessWidget {
           onTap: disabled ? null : onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Text(label,
-                style: TextStyle(
-                    fontSize: ios ? 0.875 * ios27.IonIos.rem : IonMd.chipFontSize,
-                    height: ios ? null : 20 / 14,
-                    color: ios ? color : IonMd.shade(color))),
+            child: icon == null
+                ? _label(ios)
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // chip.scss: icon 20px, margin -4 / 8 / -4 / -4.
+                      Icon(icon, size: 20, color: ios ? color : IonMd.shade(color)),
+                      const SizedBox(width: 4),
+                      Flexible(child: _label(ios)),
+                    ],
+                  ),
           ),
         ),
       ),

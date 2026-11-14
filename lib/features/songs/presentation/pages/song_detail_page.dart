@@ -1542,10 +1542,9 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
         padding: const EdgeInsets.only(bottom: 16),
         children: [
           for (final o in options)
-            RadioListTile<int?>(
+            IonRadioItem<int?>(
               value: o.$1,
               groupValue: _id,
-              controlAffinity: ListTileControlAffinity.trailing,
               title: Text(o.$2),
               subtitle: o.$1 == kChoirAllOptionValue
                   ? Text(context.l10n.songsChoirAllHint)
