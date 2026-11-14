@@ -46,7 +46,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonInsetList;
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonInsetList, IonItem;
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../../duty/presentation/widgets/duty_staffing_section.dart';
@@ -550,7 +550,36 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             ),
             actions: [
               // UX_ATT: Ionic offline chip in the header
-              if (!isOnline)
+              if (!isOnline && context.rdSkin == null)
+                // TER-23: Ionic `ion-chip color="warning"` – tinted
+                // background, warning-shade text and icon, 28 high, 12px.
+                Padding(
+                  padding: const EdgeInsets.only(right: 4),
+                  child: Center(
+                    child: Container(
+                      height: 28,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: AppColors.warning.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(AppIcons.cloudOff, size: 16, color: AppColors.warningDark),
+                          const SizedBox(width: 4),
+                          Text(
+                            pendingOffline > 0
+                                ? context.l10n.attendancePending(pendingOffline)
+                                : context.l10n.attendanceOffline,
+                            style: const TextStyle(fontSize: 12, color: AppColors.warningDark),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              else if (!isOnline)
                 Padding(
                   padding: const EdgeInsets.only(right: 4),
                   child: Chip(
@@ -1549,6 +1578,25 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   /// "Neu laden" banner when the persons of the Termin could not be loaded.
   Widget _buildLoadFailedBanner() {
+    if (context.rdSkin == null) {
+      // TER-27: Ionic `ion-item lines="none" class="ion-padding-vertical
+      // ion-text-center"` with h2 / p and an outline reload button at the end.
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: IonItem(
+          title: Text(context.l10n.attendanceLoadFailed, textAlign: TextAlign.center),
+          subtitle: SizedBox(
+            width: double.infinity,
+            child: Text(context.l10n.attendanceTryAgain, textAlign: TextAlign.center),
+          ),
+          trailing: OutlinedButton.icon(
+            onPressed: _reloadFromBanner,
+            icon: Icon(AppIcons.refresh),
+            label: IonButtonLabel(context.l10n.attendanceReload),
+          ),
+        ),
+      );
+    }
     return Card(
       margin: const EdgeInsets.all(AppDimensions.paddingM),
       child: Padding(
@@ -2285,14 +2333,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       title: entry.songName,
       message: entry.displayConductor,
       actions: [
+        // TER-22: Ionic buttons without icons (the Beta keeps them).
         AppActionSheetAction(
           value: 'conductor',
-          icon: AppIcons.personOutline,
+          icon: context.rdSkin != null ? AppIcons.personOutline : null,
           label: context.l10n.attendanceChangeConductor,
         ),
         AppActionSheetAction(
           value: 'song',
-          icon: AppIcons.musicNoteOutlined,
+          icon: context.rdSkin != null ? AppIcons.musicNoteOutlined : null,
           label: context.l10n.attendanceToSong,
         ),
       ],
