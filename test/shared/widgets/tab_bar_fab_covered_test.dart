@@ -1,5 +1,6 @@
 import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import 'package:attendix/shared/widgets/layout/shell_popup_observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -52,5 +53,22 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(taps, 1);
+  });
+
+  testWidgets('F-RAHMEN-08: ShellPopupObserver reports an open sheet', (tester) async {
+    final observer = ShellPopupObserver();
+    final key = GlobalKey<NavigatorState>();
+    await tester.pumpWidget(MaterialApp(
+      navigatorKey: key,
+      navigatorObservers: [observer],
+      home: const Scaffold(body: Text('page')),
+    ));
+    expect(observer.popupOpen.value, isFalse);
+    showModalBottomSheet<void>(context: key.currentContext!, builder: (_) => const Text('sheet'));
+    await tester.pumpAndSettle();
+    expect(observer.popupOpen.value, isTrue);
+    key.currentState!.pop();
+    await tester.pumpAndSettle();
+    expect(observer.popupOpen.value, isFalse);
   });
 }

@@ -22,6 +22,7 @@ import '../../features/tenant_selection/presentation/pages/tenant_selection_page
 import '../../features/tenant_selection/presentation/pages/tenant_create_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_detail_page.dart';
 import '../../shared/widgets/layout/main_shell.dart';
+import '../../shared/widgets/layout/shell_popup_observer.dart' show ShellPopupObserver;
 import '../../features/people/presentation/pages/people_list_page.dart';
 import '../../features/people/presentation/pages/person_detail_page.dart';
 import '../../features/people/presentation/pages/person_create_page.dart';
@@ -642,6 +643,9 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Main app shell with tabs
       ShellRoute(
+        // F-RAHMEN-08: lets the classic iOS shell hide its floating tab bar
+        // while a sheet / dialog is open on the shell navigator.
+        observers: [ShellPopupObserver()],
         // REDESIGN: the new shell (fixed tabs) while the Beta is on.
         builder: (context, state, child) => _AppShell(child: child),
         routes: [

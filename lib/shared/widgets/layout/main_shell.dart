@@ -26,6 +26,7 @@ import 'ios_tab_bar.dart';
 import 'root_back_button_scope.dart';
 import 'ionic_md.dart' show IonMd;
 import 'route_leave_guard.dart';
+import 'shell_popup_observer.dart';
 import 'side_nav/side_nav.dart';
 import 'side_nav/side_nav_layout.dart';
 
@@ -291,14 +292,27 @@ class MainShell extends ConsumerWidget {
               left: 0,
               right: 0,
               bottom: 0,
-              child: IosTabBar(
-                selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
-                onSelected: (index) =>
-                    _onItemTapped(context, ref, index, destinations),
-                items: [
-                  for (final d in destinations)
-                    IosTabBarItem(icon: d.icon, label: d.label),
-                ],
+              // F-RAHMEN-08: Ionic overlays cover the tab bar – hide it while
+              // a sheet / dialog is open on the shell navigator (which lies
+              // under the bar).
+              child: ValueListenableBuilder<bool>(
+                valueListenable: ShellPopupObserver.current?.popupOpen ?? _noPopup,
+                builder: (context, popupOpen, bar) => Visibility(
+                  visible: !popupOpen,
+                  maintainState: true,
+                  maintainAnimation: true,
+                  maintainSize: true,
+                  child: bar!,
+                ),
+                child: IosTabBar(
+                  selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
+                  onSelected: (index) =>
+                      _onItemTapped(context, ref, index, destinations),
+                  items: [
+                    for (final d in destinations)
+                      IosTabBarItem(icon: d.icon, label: d.label),
+                  ],
+                ),
               ),
             ),
           ],
@@ -671,6 +685,8 @@ class _IosPageWithFadeState extends State<_IosPageWithFade> {
 }
 
 /// IOS_SHELL2: "Neue Version verfügbar" closed for this session (iOS toast).
+final _noPopup = ValueNotifier<bool>(false);
+
 final _updateToastDismissedProvider = StateProvider<bool>((ref) => false);
 
 /// IOS_SHELL2: iOS update notice as an Ionic iOS 26 `ion-toast` (Liquid
