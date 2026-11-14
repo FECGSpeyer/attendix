@@ -223,6 +223,33 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
       );
     }
 
+    if (data == null && context.rdSkin == null) {
+      // WER-26: Ionic keeps header, large title and the list card while
+      // loading; only the rows are skeleton items inside the inset list.
+      final title = _isPublic ? '' : context.l10n.settingsSongs;
+      return Scaffold(
+        extendBodyBehindAppBar: isIosLook(context),
+        appBar: IonTranslucentAppBar(
+          condensed: false,
+          child: AppBar(title: CondenseTitle(condensed: false, child: Text(title))),
+        ),
+        body: CustomScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          slivers: [
+            const SliverIonContentTopInset(),
+            SliverToBoxAdapter(child: IonLargeTitle(title)),
+            SliverToBoxAdapter(
+              child: IonInsetList(
+                children: List.generate(
+                  10,
+                  (_) => const SkeletonListTile(showAvatar: false),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     if (data == null) {
       return Scaffold(
         appBar: AppBar(title: Text(_isPublic ? '' : context.l10n.settingsSongs)),
