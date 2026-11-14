@@ -285,7 +285,12 @@ extension _PlanningBeta on _PlanningPageState {
     final p = context.rd;
     final l10n = context.l10n;
     final Widget content;
-    if (!_hasPendingChanges) {
+    final att = _att;
+    if (!_hasPendingChanges && !_hasUserEdits && att != null && PlanUtils.allPlans(att).isEmpty) {
+      // The untouched start plan of a Termin without Ablauf is not stored:
+      // no "Gespeichert" for it.
+      return const SizedBox(height: 18);
+    } else if (!_hasPendingChanges) {
       content = Row(
         mainAxisSize: MainAxisSize.min,
         children: [

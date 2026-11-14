@@ -459,6 +459,9 @@ class _AttendanceCard extends ConsumerWidget {
     final seasonStart = DateTime.tryParse(ref.watch(currentTenantProvider)?.seasonStart ?? '');
     final total = (stats?['total'] as int?) ?? 0;
     final attended = (stats?['attended'] as int?) ?? 0;
+    // The percentage only counts Termine of types that count for the
+    // average, so "von" names the same Termine.
+    final counted = (stats?['counted'] as int?) ?? total;
     final percent = (stats?['percentage'] as int?) ?? 0;
     final last = history == null ? const <AttendanceStatus>[] : rdLastStatuses(history);
 
@@ -504,7 +507,7 @@ class _AttendanceCard extends ConsumerWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 6),
-                  child: Text(l10n.redesignPersonOfTermine(attended, total), style: RdType.meta(p, size: 14)),
+                  child: Text(l10n.redesignPersonOfTermine(attended, counted), style: RdType.meta(p, size: 14)),
                 ),
               ],
             ),

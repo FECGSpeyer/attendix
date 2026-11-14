@@ -23,7 +23,7 @@ Future<void> showRdSignoutSheet(
   required SelfServiceEventActions actions,
   bool late = false,
 }) async {
-  final qa = actions.quickActions(att);
+  final qa = actions.quickActions(att, anyLate: true);
   if (qa == null || att.id == null) return;
   // Recorded as absent by the leads: nothing to announce. An own answer
   // changes into the other one (abgemeldet to später only while the

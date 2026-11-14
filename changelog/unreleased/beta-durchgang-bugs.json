@@ -1,10 +1,14 @@
-{"bump": "patch", "changes": [
+{
+ "bump": "patch",
+ "changes": [
   "🐛 Beta: Speichern der Zusatzfelder löscht nicht mehr „Aushilfe bis“ und behält Werte umbenannter Auswahl-Optionen",
   "🐛 Beta: eigene Admin-Rolle und letzter Admin lassen sich nicht mehr entziehen",
   "🐛 Beta: „Abbrechen“ in Blättern bricht nicht mehr um, Titel werden nicht abgeschnitten",
+  "🐛 Beta: „Verspätet“ gilt auf Heute und am Termin als Antwort „Komme später“ statt als offene Frage",
   "🐛 Beta: Termine einer ausgeblendeten Art behalten Titel und Zeit, „Offene erinnern“ zählt wie das Blatt",
   "🐛 Beta: abgelaufenes „Antwort bis“ wird beim Anlegen gemeldet statt still weggelassen",
   "🐛 Beta: alte Links (Termin, Start, Einstellungen) öffnen die Beta-Seiten",
   "🐛 Beta: Werkhistorie aktualisiert „Zuletzt gespielt“ und zeigt Nummern mit Kürzel",
   "🐛 Beta: weitere kleine Fehler in Werke, Mitglieder, Ich und Verwaltung behoben"
-]}
+ ]
+}

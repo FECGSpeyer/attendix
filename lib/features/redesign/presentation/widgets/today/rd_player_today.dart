@@ -151,7 +151,8 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final dataAsync = ref.watch(rdSignoutDataProvider);
-    final player = ref.watch(currentSelfServicePlayerProvider).valueOrNull;
+    final playerAsync = ref.watch(currentSelfServicePlayerProvider);
+    final player = playerAsync.valueOrNull;
     final tenant = ref.watch(currentTenantProvider);
 
     final Widget body;
@@ -164,8 +165,10 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
         signoutEventActions(context, ref, tenant: tenant, player: player),
       );
     }
-    if (data == null) {
-      body = dataAsync.hasError
+    // Right after sign-in the own person is still loading: wait instead of
+    // saying "not a member" for a moment.
+    if (data == null || (player == null && playerAsync.isLoading)) {
+      body = data == null && dataAsync.hasError
           ? RdInfoCard(
               text: l10n.redesignTodayLoadFailed,
               icon: Icons.error_outline,
@@ -206,7 +209,7 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
   ) {
     final p = context.rd;
     final l10n = context.l10n;
-    final qa = actions.quickActions(att);
+    final qa = actions.quickActions(att, anyLate: true);
     final start = EventListUtils.parse(att.date);
     final startTime = att.startTime ?? att.attendanceType?.startTime;
     final hasTime = startTime?.isNotEmpty ?? false;

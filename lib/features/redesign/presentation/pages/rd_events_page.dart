@@ -435,7 +435,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     _openPending(data, actions);
 
     bool waiting(CrossTenantPersonAttendance att) {
-      final qa = actions.quickActions(att);
+      final qa = actions.quickActions(att, anyLate: true);
       return qa != null && att.status == AttendanceStatus.neutral && qa.canSignin;
     }
 
@@ -813,7 +813,7 @@ class _PlayerEventCardState extends ConsumerState<_PlayerEventCard> {
     final att = widget.att;
     final actions = widget.actions;
     final own = actions.isOwn(att);
-    final qa = actions.quickActions(att);
+    final qa = actions.quickActions(att, anyLate: true);
     final today = !att.isPast && att.isRunning;
     final deadline = att.deadline != null && att.deadline!.isNotEmpty && !att.isPast
         ? EventListUtils.deadlineText(att.deadline)
