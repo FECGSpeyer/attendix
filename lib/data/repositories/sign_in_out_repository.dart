@@ -387,6 +387,86 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// REDESIGN: the Werke of the next Auftritt (hervorgehobene Terminart)
+  /// after the Termin [attendanceId], for a Probe that has none of its own
+  /// ("Vom nächsten Auftritt"). Null when there is none with Werke.
+  ///
+  /// Only a Termin whose Terminart has Werke and is no Auftritt itself
+  /// follows one (not a Besprechung). Only for Termine of the current
+  /// group: every query filters by [currentTenantId]. Flat queries (no
+  /// embedded Termin rows).
+  Future<({List<Map<String, dynamic>> rows, String name, String date})?> getNextPerformanceProgram({
+    required int attendanceId,
+  }) async {
+    try {
+      final own = await supabase
+          .from('attendance')
+          .select('date, start_time, type_id')
+          .eq('id', attendanceId)
+          .eq('tenantId', currentTenantId)
+          .maybeSingle();
+      final date = own?['date'] as String?;
+      if (date == null || own?['type_id'] == null) return null;
+      final types = ((await supabase
+              .from('attendance_types')
+              .select('id, name, highlight, manage_songs')
+              .eq('tenant_id', currentTenantId)) as List)
+          .cast<Map<String, dynamic>>();
+      final ownType = types.where((t) => '${t['id']}' == '${own?['type_id']}').firstOrNull;
+      if (ownType == null || ownType['manage_songs'] != true || ownType['highlight'] == true) return null;
+      final typeNames = {
+        for (final t in types)
+          if (t['highlight'] == true) '${t['id']}': (t['name'] as String?) ?? '',
+      };
+      if (typeNames.isEmpty) return null;
+      final next = await supabase
+          .from('attendance')
+          .select('id, date, start_time, typeInfo, type_id')
+          .eq('tenantId', currentTenantId)
+          .gte('date', date)
+          .neq('id', attendanceId)
+          .not('archived', 'is', true)
+          .inFilter('type_id', typeNames.keys.toList())
+          .order('date', ascending: true)
+          .order('id', ascending: true)
+          .limit(6);
+      final ownStart = own?['start_time'] as String?;
+      final candidates = [
+        for (final a in (next as List).cast<Map<String, dynamic>>())
+          // The same day: not an Auftritt that begins before this Termin.
+          if (!(a['date'] == date &&
+              ownStart != null &&
+              a['start_time'] is String &&
+              (a['start_time'] as String).compareTo(ownStart) < 0))
+            a,
+      ];
+      if (candidates.isEmpty) return null;
+      final rows = await supabase
+          .from('history')
+          .select('id, attendance_id, songId, person_id, otherConductor, '
+              'song:songId(id, name, number, prefix, link, instrument_ids, files), '
+              'person:person_id(firstName, lastName)')
+          .inFilter('attendance_id', [for (final a in candidates) a['id']])
+          .eq('tenantId', currentTenantId)
+          .order('id', ascending: true);
+      final all = List<Map<String, dynamic>>.from(rows as List);
+      for (final a in candidates) {
+        final mine = [for (final r in all) if (r['attendance_id'] == a['id']) r];
+        if (mine.isEmpty) continue;
+        final info = (a['typeInfo'] as String?)?.trim() ?? '';
+        return (
+          rows: mine,
+          name: info.isNotEmpty ? info : (typeNames['${a['type_id']}'] ?? ''),
+          date: a['date'] as String,
+        );
+      }
+      return null;
+    } catch (e, stack) {
+      handleError(e, stack, 'getNextPerformanceProgram');
+      rethrow;
+    }
+  }
+
   AttendanceType? _parseType(dynamic json) {
     if (json is! Map<String, dynamic>) return null;
     try {

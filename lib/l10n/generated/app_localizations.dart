@@ -23064,12 +23064,6 @@ abstract class AppLocalizations {
   /// **'Ablauf ansehen'**
   String get redesignEventPlan;
 
-  /// redesign.event.planCreate
-  ///
-  /// In de, this message translates to:
-  /// **'Ablauf anlegen'**
-  String get redesignEventPlanCreate;
-
   /// redesign.event.planEdit
   ///
   /// In de, this message translates to:
@@ -23177,12 +23171,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{present} von {total} · {percent} %'**
   String redesignEventPresentOf(Object present, Object total, Object percent);
-
-  /// redesign.event.program
-  ///
-  /// In de, this message translates to:
-  /// **'Programm'**
-  String get redesignEventProgram;
 
   /// redesign.event.programMore
   ///
@@ -23376,17 +23364,89 @@ abstract class AppLocalizations {
   /// **'{name} entfernt'**
   String redesignEventWorkRemoved(Object name);
 
+  /// redesign.event.workRemovedPlan
+  ///
+  /// In de, this message translates to:
+  /// **'{name} entfernt, auch aus dem Ablauf'**
+  String redesignEventWorkRemovedPlan(Object name);
+
   /// redesign.event.works
   ///
   /// In de, this message translates to:
   /// **'Werke'**
   String get redesignEventWorks;
 
+  /// redesign.event.worksChange
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get redesignEventWorksChange;
+
+  /// redesign.event.worksFollowAgain
+  ///
+  /// In de, this message translates to:
+  /// **'Wieder dem Auftritt folgen'**
+  String get redesignEventWorksFollowAgain;
+
+  /// redesign.event.worksFollows
+  ///
+  /// In de, this message translates to:
+  /// **'Die Liste folgt dem Auftritt, bis du sie änderst.'**
+  String get redesignEventWorksFollows;
+
+  /// redesign.event.worksFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Vom nächsten Auftritt: {label}'**
+  String redesignEventWorksFrom(Object label);
+
+  /// redesign.event.worksInPlan
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 von {total} steht im Ablauf.} other {{count} von {total} stehen im Ablauf.}}'**
+  String redesignEventWorksInPlan(num count, Object total);
+
   /// redesign.event.worksLoadFailed
   ///
   /// In de, this message translates to:
   /// **'Die Werke konnten nicht geladen werden.'**
   String get redesignEventWorksLoadFailed;
+
+  /// redesign.event.worksMissing
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, probe{{count, plural, one {1 Werk dieser Probe steht noch nicht im Ablauf} other {{count} Werke dieser Probe stehen noch nicht im Ablauf}}} auftritt{{count, plural, one {1 Werk dieses Auftritts steht noch nicht im Ablauf} other {{count} Werke dieses Auftritts stehen noch nicht im Ablauf}}} other{{count, plural, one {1 Werk dieses Termins steht noch nicht im Ablauf} other {{count} Werke dieses Termins stehen noch nicht im Ablauf}}}}'**
+  String redesignEventWorksMissing(String kind, num count);
+
+  /// redesign.event.worksMissingInsert
+  ///
+  /// In de, this message translates to:
+  /// **'Einfügen'**
+  String get redesignEventWorksMissingInsert;
+
+  /// redesign.event.worksOfThis
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, probe{Werke dieser Probe} auftritt{Werke dieses Auftritts} other{Werke dieses Termins}}'**
+  String redesignEventWorksOfThis(String kind);
+
+  /// redesign.event.worksOfThisHint
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, probe{Angehakt ist, was geprobt wird.} other{Angehakt ist, was drankommt.}}'**
+  String redesignEventWorksOfThisHint(String kind);
+
+  /// redesign.event.worksRemovedPlan
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk auch aus dem Ablauf entfernt} other {{count} Werke auch aus dem Ablauf entfernt}}'**
+  String redesignEventWorksRemovedPlan(num count);
+
+  /// redesign.event.worksTake
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk übernehmen} other {{count} Werke übernehmen}}'**
+  String redesignEventWorksTake(num count);
 
   /// redesign.event.yesterday
   ///
@@ -27660,12 +27720,6 @@ abstract class AppLocalizations {
   /// **'Kopie vom {date} · {count}'**
   String redesignPlanEmptyCopyHint(Object date, Object count);
 
-  /// redesign.plan.emptyTemplate
-  ///
-  /// In de, this message translates to:
-  /// **'Vorlage der Organisation'**
-  String get redesignPlanEmptyTemplate;
-
   /// redesign.plan.emptyTitle
   ///
   /// In de, this message translates to:
@@ -27696,12 +27750,6 @@ abstract class AppLocalizations {
   /// **'{count, plural, one {1 Werk} other {{count} Werke}}'**
   String redesignPlanEventWorksCount(num count);
 
-  /// redesign.plan.eventWorksFrom
-  ///
-  /// In de, this message translates to:
-  /// **'Werke vom {date}'**
-  String redesignPlanEventWorksFrom(Object date);
-
   /// redesign.plan.eventWorksNone
   ///
   /// In de, this message translates to:
@@ -27719,12 +27767,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Aus der Werkliste'**
   String get redesignPlanEventWorksOtherHint;
-
-  /// redesign.plan.eventWorksOwn
-  ///
-  /// In de, this message translates to:
-  /// **'Werke dieses Termins'**
-  String get redesignPlanEventWorksOwn;
 
   /// redesign.plan.eventWorksThis
   ///
@@ -28284,6 +28326,48 @@ abstract class AppLocalizations {
   /// **'Beginn'**
   String get redesignPlanStart;
 
+  /// redesign.plan.startAsk
+  ///
+  /// In de, this message translates to:
+  /// **'Womit möchtest du beginnen?'**
+  String get redesignPlanStartAsk;
+
+  /// redesign.plan.startEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Leer beginnen'**
+  String get redesignPlanStartEmpty;
+
+  /// redesign.plan.startNone
+  ///
+  /// In de, this message translates to:
+  /// **'Noch kein Ablauf'**
+  String get redesignPlanStartNone;
+
+  /// redesign.plan.startTemplate
+  ///
+  /// In de, this message translates to:
+  /// **'Aus einer Vorlage'**
+  String get redesignPlanStartTemplate;
+
+  /// redesign.plan.startTemplateHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Beispiel {name}'**
+  String redesignPlanStartTemplateHint(Object name);
+
+  /// redesign.plan.startWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, probe{Mit den Werken dieser Probe} auftritt{Mit den Werken dieses Auftritts} other{Mit den Werken dieses Termins}}'**
+  String redesignPlanStartWorks(String kind);
+
+  /// redesign.plan.startWorksHint
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk, {minutes} Min} other {{count} Werke, je {minutes} Min}}'**
+  String redesignPlanStartWorksHint(num count, Object minutes);
+
   /// redesign.plan.telegram
   ///
   /// In de, this message translates to:
@@ -28301,6 +28385,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Vorlage · sofort gespeichert'**
   String get redesignPlanTemplateHint;
+
+  /// redesign.plan.templatePick
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage wählen'**
+  String get redesignPlanTemplatePick;
+
+  /// redesign.plan.templateStarts
+  ///
+  /// In de, this message translates to:
+  /// **'Der Ablauf beginnt um {time}, wie der Termin.'**
+  String redesignPlanTemplateStarts(Object time);
 
   /// redesign.plan.templatesIntro
   ///
@@ -28349,6 +28445,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ganzer Ablauf'**
   String get redesignPlanViewWhole;
+
+  /// redesign.plan.worksInserted
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk am Ende eingefügt} other {{count} Werke am Ende eingefügt}}'**
+  String redesignPlanWorksInserted(num count);
+
+  /// redesign.plan.worksPlaced
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk eingesetzt} other {{count} Werke eingesetzt}}'**
+  String redesignPlanWorksPlaced(num count);
 
   /// redesign.pult.allOpen
   ///

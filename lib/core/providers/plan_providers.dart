@@ -53,6 +53,15 @@ final planAttendancesProvider = FutureProvider<List<PlanAttendance>>((ref) async
   return repo.getPlanAttendances(since: attendanceListStartDate(seasonStart), includeArchived: includeArchived);
 });
 
+/// The Termine from the stored date [from] on, nearest first, without plans
+/// (see [PlanRepository.getComingPlanAttendances]). Read anew whenever it is
+/// needed again: a Termin created or moved since shows up.
+final comingPlanAttendancesProvider = FutureProvider.autoDispose.family<List<PlanAttendance>, String>((ref, from) async {
+  final repo = ref.watch(planRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return [];
+  return repo.getComingPlanAttendances(from: from);
+});
+
 /// One Termin with its plans
 final planAttendanceByIdProvider = FutureProvider.family<PlanAttendance?, int>((ref, id) async {
   final repo = ref.watch(planRepositoryWithTenantProvider);

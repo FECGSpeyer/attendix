@@ -144,7 +144,7 @@ extension _PlanningBeta on _PlanningPageState {
       const SizedBox(height: 16),
       _rdSummary(att, start, total),
       const SizedBox(height: 12),
-      if (_fields.isEmpty) ..._rdEmpty(att, blockTemplates) else _rdTimeline(start, showBeamer: showBeamer),
+      if (_fields.isEmpty) ..._rdEmpty(att) else _rdTimeline(start, showBeamer: showBeamer),
       const SizedBox(height: 12),
       RdPrimaryButton(
         key: const Key('rd-plan-add'),
@@ -665,15 +665,7 @@ extension _PlanningBeta on _PlanningPageState {
         sub.add(Text(field.info!, style: RdType.meta(p, size: 13).copyWith(fontStyle: FontStyle.italic)));
       }
     }
-    final warning = isHead || isNote ? null : _missingGroups(field);
-    if (warning != null && warning.isNotEmpty) {
-      sub.add(
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Align(alignment: Alignment.centerLeft, child: RdPill(warning, tone: RdTone.late)),
-        ),
-      );
-    }
+    // "Ohne Tenor" stands at the Werke of the Termin (Überblick), not here.
     if (showBeamer && !isHead && !isNote && !isAgenda && PlanBeamer.needsBeamer(field)) {
       final file = _beamerFileOf(field);
       sub.add(
@@ -1143,7 +1135,11 @@ extension _PlanningBeta on _PlanningPageState {
   /// Same row; the Gemeinde App uid a write may add meanwhile does not count.
   static bool _rdSame(PlanField a, PlanField b) => a.copyWith(uid: null) == b.copyWith(uid: null);
 
-  void _rdRemove(List<PlanField> next, String name) {
+  void _rdRemove(List<PlanField> next, String name) =>
+      _rdApplyWithUndo(next, context.l10n.redesignPlanRemoved(name));
+
+  /// Applies [next] and offers "Rückgängig" next to [message].
+  void _rdApplyWithUndo(List<PlanField> next, String message) {
     final before = _fields;
     final loadGen = _loadGen;
     _rdApply(next);
@@ -1155,17 +1151,20 @@ extension _PlanningBeta on _PlanningPageState {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(l10n.redesignPlanRemoved(name)),
+          content: Text(message),
           duration: const Duration(seconds: 5),
           persist: false,
-          action: SnackBarAction(
-            label: l10n.redesignPlanUndo,
-            onPressed: () {
-              // Only while nothing else changed the plan meanwhile.
-              if (!mounted || loadGen != _loadGen || editGen != _editGen) return;
-              _rdApply(before);
-            },
-          ),
+          // Not back to an empty Ablauf: that one cannot be stored.
+          action: before.isEmpty
+              ? null
+              : SnackBarAction(
+                  label: l10n.redesignPlanUndo,
+                  onPressed: () {
+                    // Only while nothing else changed the plan meanwhile.
+                    if (!mounted || loadGen != _loadGen || editGen != _editGen) return;
+                    _rdApply(before);
+                  },
+                ),
         ),
       );
   }
@@ -1280,22 +1279,6 @@ extension _PlanningBeta on _PlanningPageState {
   /// "Adventskonzert": the Termin's own title, else its Terminart.
   String _rdAttName(PlanAttendance a) => (a.typeInfo?.isNotEmpty ?? false) ? a.typeInfo! : (_typeOf(a)?.name ?? '');
 
-  /// The entry "Werke vom 14.12.2026" / "Adventskonzert · 6 Werke" for the
-  /// nearest of [sources] (empty state and "Hinzufügen").
-  Widget _rdEventWorksRow(List<PlanEventWorks> sources, VoidCallback onTap, {required bool chevron}) {
-    final l10n = context.l10n;
-    final first = sources.first;
-    final name = first.own ? '' : _rdAttName(first.att);
-    return RdListRow(
-      key: const Key('rd-plan-event-works'),
-      leading: const RdRowIcon(Icons.queue_music_outlined),
-      title: first.own ? l10n.redesignPlanEventWorksOwn : l10n.redesignPlanEventWorksFrom(_rdDate(first.att)),
-      subtitle: [if (name.isNotEmpty) name, l10n.redesignPlanEventWorksCount(first.works.length)].join(' · '),
-      showChevron: chevron,
-      onTap: onTap,
-    );
-  }
-
   /// "Werke übernehmen": the Werke of the Termine as a checklist (the
   /// nearest one ticked); the rows of the chosen ones, each with the
   /// conductor planned there (empty: nothing chosen).
@@ -1339,12 +1322,145 @@ extension _PlanningBeta on _PlanningPageState {
     ];
   }
 
-  /// Empty Ablauf: the chosen Werke are its first rows.
-  Future<void> _rdTakeEventWorks() async {
+  /// The Werke of the Termin (its own, else those of the next Auftritt)
+  /// that are not in the Ablauf yet, as Werk and conductor.
+  Future<List<({Song song, String conductor})>> _rdOpenWorks() async {
+    final id = _att?.id;
+    if (id == null || ref.read(currentTenantProvider)?.type == 'general') return const [];
+    final RdEventWorks works;
+    final List<Song> songs;
+    try {
+      works = await _container.read(rdEventWorksProvider(id).future);
+      songs = await _container.read(planSongsProvider.future);
+    } catch (_) {
+      return const []; // the Ablauf opens as it is
+    }
+    final inPlan = _fields.map((f) => f.songId).whereType<int>().toSet();
+    return [
+      for (final e in works.entries)
+        if (inPlan.add(e.songId))
+          if (songs.where((s) => s.id == e.songId).firstOrNull case final song?)
+            (song: song, conductor: e.otherConductor != null || e.conductorName != null ? e.displayConductor : ''),
+    ];
+  }
+
+  /// The row of [song] in the Ablauf, [time] minutes long.
+  PlanField _rdWorkRow(Song song, String conductor, String time) => PlanSongHelper.songField(
+        song,
+        history: [SongHistory(songId: song.id, conductorName: conductor.isEmpty ? null : conductor)],
+        prefix: _songPrefix(_typeOf(_att)),
+        time: time,
+      );
+
+  /// "Mit den Werken dieser Probe" / "Einfügen" (Termin › Programm): the
+  /// Werke of the Termin that are not in the Ablauf yet go to its end,
+  /// with "Rückgängig".
+  Future<void> _rdStartWorks() async {
+    final l10n = context.l10n;
     final loadGen = _loadGen;
-    final rows = await _rdPickEventWorksFields(null);
-    if (rows.isEmpty || !_samePlan(loadGen)) return;
-    _rdApply([..._fields, ...rows]);
+    final open = await _rdOpenWorks();
+    if (open.isEmpty || !_samePlan(loadGen)) return;
+    final rows = [for (final w in open) _rdWorkRow(w.song, w.conductor, PlanSongHelper.betaTime(w.song))];
+    _rdApplyWithUndo([..._fields, ...rows], l10n.redesignPlanWorksInserted(rows.length));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Start of a new Ablauf: Vorlage, copy of the last Termin
+  // ---------------------------------------------------------------------------
+
+  /// The Vorlagen for the open Termin (see [rdPlanTemplates]).
+  List<RdPlanTemplate> _rdTemplates(PlanAttendance att) => rdPlanTemplates(
+        type: _typeOf(att),
+        auftritt: PlanSongHelper.isAuftritt(att, _types),
+        tenantType: ref.read(currentTenantProvider)?.type,
+        orgTemplates: ref.read(currentOrganisationProvider).valueOrNull?.planningTemplates ?? const [],
+        blockTemplates: ref.read(planBlockTemplatesProvider).valueOrNull ?? const [],
+      );
+
+  /// "Aus einer Vorlage": the Vorlagen in a sheet, the chosen one becomes
+  /// the Ablauf.
+  Future<void> _rdPickTemplate() async {
+    final att = _att;
+    if (att == null) return;
+    final loadGen = _loadGen;
+    final id = await showRdPlanTemplateSheet(context, _rdTemplates(att), startTime: _time);
+    if (id == null || !_samePlan(loadGen)) return;
+    await _rdApplyTemplate(id);
+  }
+
+  /// The Vorlage [id] as the rows of the Ablauf (it begins when the Termin
+  /// begins). The Werke of the Termin take the places for Werke: the Werk
+  /// placeholders of a saved Vorlage, then rows like "Chor/Orchester" or
+  /// "Werk 1" (see [rdFillWorkSlots]); "Rückgängig" leaves those as they
+  /// were.
+  Future<void> _rdApplyTemplate(String id) async {
+    final att = _att;
+    if (att == null) return;
+    final l10n = context.l10n;
+    final loadGen = _loadGen;
+    final tpl = _rdTemplates(att).where((t) => t.id == id).firstOrNull;
+    if (tpl == null) return;
+    final empty = _fields.isEmpty;
+    final open = await _rdOpenWorks();
+    if (!_samePlan(loadGen)) return;
+    if (tpl.block) {
+      _rdApply([..._fields, ...PlanUtils.cloneBlock(tpl.fields)]);
+      return;
+    }
+    // A whole Vorlage replaces the rows: not over something added meanwhile.
+    if (empty && _fields.isNotEmpty) return;
+    final conductors = {for (final w in open) w.song.id: w.conductor};
+    final songs = [for (final w in open) w.song];
+    final prefix = _songPrefix(_typeOf(att));
+    // Fresh ids: a Vorlage can be applied to many Termine.
+    final stamp = DateTime.now().microsecondsSinceEpoch;
+    final ids = <String, String>{};
+    String fresh(String id) => ids.putIfAbsent(id, () => '$stamp-${ids.length}');
+    final plain = [
+      for (final f in tpl.fields)
+        if (f.id.startsWith('song-placeholder-') || PlanUtils.isAgendaPlaceholder(f))
+          f.copyWith(groupId: f.groupId == null ? null : fresh(f.groupId!))
+        else
+          f.copyWith(
+            id: PlanUtils.isNote(f) ? 'noteFld ${fresh(f.id)}' : fresh(f.id),
+            groupId: f.groupId == null ? null : fresh(f.groupId!),
+            uid: null,
+            beamerFile: null,
+          ),
+    ];
+    // Without the Werke: the Vorlage as it is (Werk placeholders drop out).
+    final bare = PlanSongHelper.resolvePlaceholders(plain, history: const [], songs: const [], prefix: prefix);
+    final resolved = PlanSongHelper.resolvePlaceholders(
+      plain,
+      history: [for (final w in open) SongHistory(songId: w.song.id, conductorName: w.conductor.isEmpty ? null : w.conductor)],
+      songs: songs,
+      prefix: prefix,
+    );
+    final used = resolved.map((f) => f.songId).whereType<int>().toSet();
+    final filled = rdFillWorkSlots(
+      resolved,
+      [for (final s in songs) if (!used.contains(s.id)) s],
+      row: (song, time) => _rdWorkRow(song, conductors[song.id] ?? '', time),
+    );
+    final placed = used.length + filled.placed;
+    _rdApply(bare);
+    if (placed > 0) _rdApplyWithUndo(filled.fields, l10n.redesignPlanWorksPlaced(placed));
+  }
+
+  /// What the editor does once the Termin is loaded ([PlanningPage.start]):
+  /// "works", "copy", `tpl:<id>` or "empty".
+  Future<void> _rdStart(String start) async {
+    final att = _att;
+    if (att == null) return;
+    switch (start) {
+      case 'works':
+        await _rdStartWorks();
+      case 'copy':
+        final previous = rdPreviousPlan(att, _attendances);
+        if (previous != null && _fields.isEmpty) _rdCopyPrevious(previous.att, previous.plan);
+      case _ when start.startsWith('tpl:'):
+        if (_fields.isEmpty || start.startsWith('tpl:block:')) await _rdApplyTemplate(start.substring(4));
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -2271,17 +2387,44 @@ extension _PlanningBeta on _PlanningPageState {
   // Empty plan, Termin choice, flags
   // ---------------------------------------------------------------------------
 
-  /// No items: offer templates and the plan of the last Termin of the same
-  /// type instead of only an empty card.
-  List<Widget> _rdEmpty(PlanAttendance att, List<PlanBlockTemplate> blockTemplates) {
+  /// No items: how to start (the same choices as in the Reiter Programm of
+  /// the Termin): with the Werke of the Termin, from a Vorlage, or like
+  /// the last Termin of the same Terminart.
+  List<Widget> _rdEmpty(PlanAttendance att) {
     final l10n = context.l10n;
-    final org = ref.watch(currentOrganisationProvider).valueOrNull;
-    final orgTemplates = org?.planningTemplates ?? const <Plan>[];
-    final previous = _rdPreviousPlan(att);
-    final eventWorks = _rdEventWorks();
+    // Rebuilds when Vorlagen or Werke arrive.
+    ref.watch(currentOrganisationProvider);
+    ref.watch(planBlockTemplatesProvider);
+    final id = att.id;
+    final general = ref.watch(currentTenantProvider)?.type == 'general';
+    final works = id == null || general ? null : ref.watch(rdEventWorksProvider(id)).valueOrNull;
+    final songs = {for (final s in _songs) s.id: s};
+    final open = [
+      for (final e in works?.entries ?? const <SongHistoryEntry>[])
+        if (songs[e.songId] case final song?) song,
+    ];
+    final templates = _rdTemplates(att);
+    final previous = rdPreviousPlan(att, _attendances);
+    final type = _typeOf(att);
     final rows = <Widget>[
-      // The Werke of the next Auftritt: what a Probe mostly starts with.
-      if (eventWorks.isNotEmpty) _rdEventWorksRow(eventWorks, _rdTakeEventWorks, chevron: true),
+      if (open.isNotEmpty)
+        RdListRow(
+          key: const Key('rd-plan-start-works'),
+          leading: const RdRowIcon(Icons.queue_music_outlined),
+          title: l10n.redesignPlanStartWorks(
+            rdPlanWorksKind(typeName: type?.name, highlight: PlanSongHelper.isAuftritt(att, _types)),
+          ),
+          subtitle: rdPlanStartWorksHint(l10n, open),
+          onTap: _rdStartWorks,
+        ),
+      if (templates.isNotEmpty)
+        RdListRow(
+          key: const Key('rd-plan-start-template'),
+          leading: const RdRowIcon(Icons.view_day_outlined),
+          title: l10n.redesignPlanStartTemplate,
+          subtitle: l10n.redesignPlanStartTemplateHint(templates.first.name),
+          onTap: _rdPickTemplate,
+        ),
       if (previous != null)
         RdListRow(
           key: const Key('rd-plan-copy-last'),
@@ -2291,38 +2434,9 @@ extension _PlanningBeta on _PlanningPageState {
           subtitle: l10n.rdTextPlanCopyCount(l10n.redesignPlanItemCount(previous.plan.fields.length)),
           onTap: () => _rdCopyPrevious(previous.att, previous.plan),
         ),
-      for (var i = 0; i < orgTemplates.length; i++)
-        RdListRow(
-          leading: const RdRowIcon(Icons.account_balance_outlined),
-          title: orgTemplates[i].title ?? '',
-          subtitle: l10n.redesignPlanEmptyTemplate,
-          onTap: () => _runAddAction('tpl:$i'),
-        ),
-      for (final tpl in blockTemplates)
-        RdListRow(
-          leading: const RdRowIcon(Icons.view_agenda_outlined),
-          title: tpl.name,
-          subtitle: l10n.redesignPlanBlockTemplateHint(PlanUtils.templateMinutes(tpl)),
-          onTap: () => _runAddAction('block:${tpl.id}'),
-        ),
     ];
     if (rows.isEmpty) return const [];
     return [RdGroupLabel(l10n.redesignPlanEmptyTitle), RdGroupedList(children: rows)];
-  }
-
-  /// Main plan of the newest earlier Termin of the same type with items.
-  ({PlanAttendance att, Plan plan})? _rdPreviousPlan(PlanAttendance att) {
-    final date = DateTime.tryParse(att.date);
-    if (date == null) return null;
-    for (final a in _attendances) {
-      final d = DateTime.tryParse(a.date);
-      if (a.id == att.id || d == null || !d.isBefore(date) || a.typeId != att.typeId) continue;
-      final plan = a.plan;
-      if (plan != null && plan.fields.any((f) => f.agendaItemId == null && !PlanUtils.isAgendaPlaceholder(f))) {
-        return (att: a, plan: plan);
-      }
-    }
-    return null;
   }
 
   void _rdCopyPrevious(PlanAttendance from, Plan plan) {
