@@ -9,9 +9,9 @@ Szenario aufgebaut ist und welche Regeln gelten, steht in der
 | Rolle | Kürzel | Datei | Stand |
 |-------|:------:|-------|-------|
 | Mitglied | `M` | [mitglied.md](mitglied.md) | fertig |
-| Stimmführer | `S` | folgt | offen |
-| Helfer | `H` | folgt | offen |
-| Beobachter | `B` | folgt | offen |
+| Stimmführer | `S` | [stimmfuehrer.md](stimmfuehrer.md) | fertig |
+| Helfer | `H` | [helfer.md](helfer.md) | fertig |
+| Beobachter | `B` | [beobachter.md](beobachter.md) | fertig |
 | Leitung (Verantwortlicher und Administrator) | `L` | folgt | offen |
 | nur Administrator | `A` | folgt | offen |
 | Elternteil | `E` | folgt | offen |

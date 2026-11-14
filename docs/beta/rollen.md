@@ -29,7 +29,7 @@ In dieser Doku heißt **Leitung**: Administrator und Verantwortlicher.
 |-------|:-----:|:-------:|:----------:|:-----:|:---:|:----------:|
 | Administrator | ja | alle der Gruppe | volle Liste | ja | ja | ja |
 | Verantwortlicher | ja | alle der Gruppe | volle Liste | ja | ja | ja, ohne „Admins“ |
-| Beobachter | ja | alle der Gruppe, nur lesen | volle Liste, nur lesen | ja | ja | nein |
+| Beobachter | ja | alle der Gruppe als Liste, ohne sie zu öffnen | volle Liste, nur lesen | ja | ja | nein |
 | Helfer, Stimmführer-Helfer | ja | alle der Gruppe | einfache Liste, wenn erlaubt | ja | ja | nein |
 | Stimmführer | ja | eigene | einfache Liste, wenn erlaubt | ja | ja | nein |
 | Mitglied | ja | eigene | einfache Liste, wenn erlaubt | ja | ja | nein |
@@ -51,9 +51,13 @@ Dazu gilt:
 |---------|-----|
 | Für sich selbst zusagen, absagen, Verspätung melden | Mitglied, Stimmführer, Helfer. Die Leitung und Beobachter haben keine eigene Zusage. |
 | Für ein Kind antworten | Elternteil |
+| Einen Termin der Gruppe öffnen | Leitung, Helfer. Beobachter sehen nur die Liste mit den Zahlen. |
 | Anwesenheit erfassen | Leitung, Helfer |
+| Personen zu einem Termin hinzufügen, Offene erinnern, Vorbereitung abhaken | Leitung, Stimmführer-Helfer |
+| Ablauf eines Termins bearbeiten | Leitung, Helfer |
 | Termine anlegen | Leitung. Helfer nur mit dem Schalter „Termine anlegen“. |
 | Mitglieder anlegen, bearbeiten, freigeben, archivieren | Leitung |
+| Notizen der Leitung zu einer Person lesen | Leitung |
 | Werke anlegen und bearbeiten, Noten hochladen | Leitung |
 | „Gespielte Werke“ ansehen | Leitung, Helfer |
 | Dateiablage lesen | Leitung, Helfer. Alle anderen außer Bewerbern nur mit „Dateiablage für alle lesbar“. |
