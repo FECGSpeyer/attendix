@@ -39,6 +39,7 @@ import '../../../../shared/widgets/layout/centered_content.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
 
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/organisation/organisation.dart' show Organisation;
@@ -679,11 +680,15 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       if (plan != null && mounted) _loadPlan(plan);
       return;
     }
-    // Ionic: full ion-modal (MyPlansComponent).
-    final plan = await Navigator.of(context, rootNavigator: true).push<SharedPlan>(MaterialPageRoute(
-      fullscreenDialog: true,
-      builder: (_) => const _MyPlansSheet(),
-    ));
+    // ABL-04: Ionic sheet modal (MyPlansComponent) with `breakpoints:
+    // [0, 0.5, 0.9], initialBreakpoint: 0.9, handleBehavior: 'none'`.
+    final plan = await showIonSheet<SharedPlan>(
+      context,
+      breakpoints: const [0, 0.5, 0.9],
+      initialBreakpoint: 0.9,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (_, controller) => _MyPlansSheet(scrollController: controller),
+    );
     if (plan != null) _loadPlan(plan);
   }
 
@@ -1041,26 +1046,33 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
 
 /// "Meine Pläne" (Ionic `MyPlansComponent`).
 class _MyPlansSheet extends ConsumerWidget {
-  const _MyPlansSheet();
+  const _MyPlansSheet({required this.scrollController});
+
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final plansAsync = ref.watch(mySharedPlansProvider);
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(context.l10n.plansMyPlans),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: IonButtonLabel(context.l10n.commonClose)),
-        ],
-      ),
+    return IonSheetScaffold(
+      title: context.l10n.plansMyPlans,
+      end: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonClose)),
+      ],
       body: plansAsync.when(
-        loading: () => const Center(child: AppSpinner()),
-        error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
+        loading: () => ListView(
+          controller: scrollController,
+          children: const [Padding(padding: EdgeInsets.all(16), child: Center(child: AppSpinner()))],
+        ),
+        error: (e, _) => ListView(
+          controller: scrollController,
+          padding: const EdgeInsets.all(16),
+          children: [Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)), textAlign: TextAlign.center)],
+        ),
         // Ionic: inset list, ion-item-sliding with a danger option; empty
         // text as a centered grey item.
         data: (plans) => ListView(
-          padding: const EdgeInsets.only(bottom: 16),
+          controller: scrollController,
+          padding: EdgeInsets.only(bottom: 16 + MediaQuery.paddingOf(context).bottom),
           children: [
             SlidableAutoCloseBehavior(
               child: IonInsetList(
