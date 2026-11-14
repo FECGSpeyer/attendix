@@ -122,6 +122,22 @@ void main() {
     });
   });
 
+  group('AiService.mergeSynonyms', () {
+    test('keeps what is there and only adds new terms', () {
+      expect(
+        AiService.mergeSynonyms('Geige 1, Violine 1', 'Vl 1, violine 1, Violin I, Geige  1', group: 'Violine 1'),
+        'Geige 1, Violine 1, Vl 1, Violin I',
+      );
+    });
+
+    test('leaves out the group name and terms of other groups', () {
+      expect(
+        AiService.mergeSynonyms('', 'Violine 1, Geige, Vl 2, Vl 1', group: 'Violine 1', taken: ['Violine 2', 'Geige', 'vl. 2']),
+        'Vl 1',
+      );
+    });
+  });
+
   group('collectCurrentSongPrintEntries', () {
     Song song(int id, List<SongFile> files) => Song(id: id, name: 'Werk $id', files: files);
     final groups = [
