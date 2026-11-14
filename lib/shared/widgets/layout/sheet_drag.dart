@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/redesign/rd_theme.dart';
+import '../dialogs/ion_sheet.dart' show IonBreakpointSheet;
 
 /// A [DraggableScrollableSheet] that also follows drags outside its list.
 ///
@@ -13,9 +14,19 @@ import '../../../core/theme/redesign/rd_theme.dart';
 /// [DraggableScrollableSheet], so it is a drop-in replacement.
 ///
 /// The Beta design keeps the plain sheet behaviour.
+///
+/// With [breakpoints] the classic design renders the shared Ionic sheet
+/// ([IonBreakpointSheet]: these breakpoints 1:1, the Ionic modal handle,
+/// closes when dragged to 0) while the Beta design keeps the
+/// [DraggableScrollableSheet] sizes given here. This is the drop-in for
+/// sheets that both designs share; new classic sheets use `showIonSheet`.
 class AppDraggableSheet extends StatefulWidget {
   const AppDraggableSheet({
     super.key,
+    this.breakpoints,
+    this.initialBreakpoint,
+    this.ionHandle = true,
+    this.canDismiss = true,
     this.initialChildSize = 0.5,
     this.minChildSize = 0.25,
     this.maxChildSize = 1.0,
@@ -25,6 +36,19 @@ class AppDraggableSheet extends StatefulWidget {
     this.shouldCloseOnMinExtent = true,
     required this.builder,
   });
+
+  /// Classic design: the Ionic `breakpoints` (e.g. `[0, 0.6, 1]`).
+  final List<double>? breakpoints;
+
+  /// Classic design: the Ionic `initialBreakpoint`; defaults to the first
+  /// breakpoint above 0.
+  final double? initialBreakpoint;
+
+  /// Classic design with [breakpoints]: draw the Ionic modal handle.
+  final bool ionHandle;
+
+  /// Classic design with [breakpoints]: Ionic `canDismiss`.
+  final bool canDismiss;
 
   final double initialChildSize;
   final double minChildSize;
@@ -105,6 +129,19 @@ class _AppDraggableSheetState extends State<AppDraggableSheet> {
   @override
   Widget build(BuildContext context) {
     final classic = context.rdSkin == null;
+    final breakpoints = widget.breakpoints;
+    if (classic && breakpoints != null) {
+      return IonBreakpointSheet(
+        breakpoints: breakpoints,
+        initialBreakpoint: widget.initialBreakpoint ??
+            breakpoints.firstWhere((b) => b > 0, orElse: () => 1),
+        handle: widget.ionHandle,
+        canDismiss: widget.canDismiss,
+        // The callers of this drop-in handle the keyboard as before.
+        avoidKeyboard: false,
+        builder: widget.builder,
+      );
+    }
     return DraggableScrollableSheet(
       controller: _controller,
       initialChildSize: widget.initialChildSize,

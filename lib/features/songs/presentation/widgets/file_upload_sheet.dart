@@ -1,5 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -491,16 +493,19 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
   Widget build(BuildContext context) {
     final percent = (_uploadProgress * 100).round();
     final scheme = Theme.of(context).colorScheme;
-    return PopScope(
-      canPop: !_isUploading,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Container(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.95),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+    // [controller] set = classic design: the Ionic sheet toolbar and a list
+    // that fills the breakpoint sheet.
+    Widget content(ScrollController? controller) => Column(
+            mainAxisSize: controller == null ? MainAxisSize.min : MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (controller != null)
+                // Ionic: ion-title + close ✕ (end), disabled while uploading.
+                IonSheetHeader(
+                  title: context.l10n.songsUploadFiles,
+                  end: [IonCloseButton(onPressed: _isUploading ? () {} : () => Navigator.pop(context, false))],
+                )
+              else
               // Ionic toolbar: title + close button (+ progress bar while uploading)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
@@ -521,11 +526,13 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
               ),
               if (_isUploading)
                 LinearProgressIndicator(value: _uploadProgress, minHeight: 2)
-              else
+              else if (controller == null)
                 const Divider(height: 1),
               Flexible(
+                fit: controller == null ? FlexFit.loose : FlexFit.tight,
                 child: ListView(
-                  shrinkWrap: true,
+                  controller: controller,
+                  shrinkWrap: controller == null,
                   padding: const EdgeInsets.only(bottom: 24),
                   children: [
                     // Ionic accordion "Wichtige Infos" (warning colour, collapsed)
@@ -653,9 +660,23 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                 ),
               ),
             ],
-          ),
-        ),
-      ),
+          );
+    return PopScope(
+      canPop: !_isUploading,
+      child: context.rdSkin == null
+          // Ionic: [breakpoints]="[0, 1]" [initialBreakpoint]="1",
+          // [canDismiss]="!isUploading".
+          ? IonBreakpointSheet(
+              canDismiss: !_isUploading,
+              builder: (context, controller) => content(controller),
+            )
+          : Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.95),
+                child: content(null),
+              ),
+            ),
     );
   }
 }

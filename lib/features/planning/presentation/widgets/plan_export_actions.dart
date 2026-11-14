@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
@@ -240,25 +241,34 @@ Future<PlanShareChoice?> showPlanShareSheet(
   if (context.rdSkin != null) {
     return showRdPlanShareSheet(context, currentLabel: currentLabel, planCount: planCount, hasChatId: hasChatId);
   }
-  return showModalBottomSheet<PlanShareChoice>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    useSafeArea: true,
+  // Ionic openPlanShareSheet: breakpoints [0, 0.75 | 0.5, 1]
+  final initial = hasChatId ? 0.75 : 0.5;
+  return showIonSheet<PlanShareChoice>(
+    context,
+    breakpoints: [0, initial, 1],
+    initialBreakpoint: initial,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    builder: (_) => FractionallySizedBox(
-      heightFactor: hasChatId ? 0.75 : 0.5,
-      child: _PlanShareSheet(currentLabel: currentLabel, planCount: planCount, hasChatId: hasChatId),
+    builder: (_, scrollController) => _PlanShareSheet(
+      currentLabel: currentLabel,
+      planCount: planCount,
+      hasChatId: hasChatId,
+      scrollController: scrollController,
     ),
   );
 }
 
 class _PlanShareSheet extends StatefulWidget {
-  const _PlanShareSheet({required this.currentLabel, required this.planCount, required this.hasChatId});
+  const _PlanShareSheet({
+    required this.currentLabel,
+    required this.planCount,
+    required this.hasChatId,
+    this.scrollController,
+  });
 
   final String currentLabel;
   final int planCount;
   final bool hasChatId;
+  final ScrollController? scrollController;
 
   @override
   State<_PlanShareSheet> createState() => _PlanShareSheetState();
@@ -281,23 +291,15 @@ class _PlanShareSheetState extends State<_PlanShareSheet> {
           title: Text(label),
           onTap: () => _choose(action),
         );
-    return Column(
+    // Ionic plan-share-sheet: toolbar title + close ✕ at the end.
+    return IonSheetScaffold(
+      title: l10n.attendanceShareRunSheet,
+      showClose: true,
+      body: Column(
       children: [
-        AppBar(
-          toolbarHeight: ionModalToolbarHeight(context),
-          automaticallyImplyLeading: false,
-          primary: false,
-          title: Text(l10n.attendanceShareRunSheet),
-          actions: [
-            IconButton(
-              tooltip: l10n.commonClose,
-              icon: Icon(AppIcons.close),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
         Expanded(
           child: ListView(
+            controller: widget.scrollController,
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -327,6 +329,7 @@ class _PlanShareSheetState extends State<_PlanShareSheet> {
           ),
         ),
       ],
+      ),
     );
   }
 }

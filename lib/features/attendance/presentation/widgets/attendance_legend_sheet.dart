@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
@@ -7,6 +9,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'attendance_detail/status_chip.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 
 /// Shows a modal bottom sheet explaining attendance status types
 ///
@@ -15,6 +18,21 @@ void showAttendanceLegendSheet(
   BuildContext context, {
   Set<AttendanceStatus>? availableStatuses,
 }) {
+  if (context.rdSkin == null) {
+    // Ionic legendModal: [breakpoints]="[0, 0.5, 1]" [initialBreakpoint]="0.5",
+    // no ion-header, `ion-content color="light"`.
+    showIonSheet<void>(
+      context,
+      breakpoints: const [0, 0.5, 1],
+      initialBreakpoint: 0.5,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (context, controller) => AttendanceLegendSheet(
+        availableStatuses: availableStatuses,
+        scrollController: controller,
+      ),
+    );
+    return;
+  }
   showModalBottomSheet(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -28,9 +46,14 @@ void showAttendanceLegendSheet(
 
 /// Bottom sheet with legend explaining all attendance statuses
 class AttendanceLegendSheet extends StatelessWidget {
-  const AttendanceLegendSheet({super.key, this.availableStatuses});
+  const AttendanceLegendSheet({super.key, this.availableStatuses, this.scrollController});
 
   final Set<AttendanceStatus>? availableStatuses;
+
+  /// Classic design ([showIonSheet]): the controller of the breakpoint
+  /// sheet. Then only the Ionic content is built – an inset list with the
+  /// list header "Legende", no toolbar and no close button.
+  final ScrollController? scrollController;
 
   // UX_ATT: Ionic legend modal (badge + common.status label, Ionic order)
   static List<(AttendanceStatus, String)> _allItems(AppLocalizations l10n) => [
@@ -52,8 +75,47 @@ class AttendanceLegendSheet extends StatelessWidget {
         .toList();
   }
 
+  Widget _buildClassic(BuildContext context) {
+    final l10n = context.l10n;
+    final all = _allItems(l10n);
+    final items = availableStatuses != null
+        ? all.where((item) => availableStatuses!.contains(item.$1))
+        : all;
+    return ListView(
+      controller: scrollController,
+      padding: EdgeInsets.only(
+        top: 16,
+        bottom: 16 + MediaQuery.paddingOf(context).bottom,
+      ),
+      children: [
+        IonListHeader(l10n.signoutLegend),
+        // ion-item-group, items with lines="none".
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: ionItemBackground(context),
+            borderRadius: BorderRadius.circular(IonInsetList.radiusOf(context)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final item in items)
+                IonItem(
+                  leading: AttendanceStatusBadge(status: item.$1),
+                  title: Text(item.$2),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (scrollController != null) return _buildClassic(context);
     return AppDraggableSheet(
       initialChildSize: 0.55,
       minChildSize: 0.3,

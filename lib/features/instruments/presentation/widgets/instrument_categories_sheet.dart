@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -97,74 +97,39 @@ class _InstrumentCategoriesSheetState
     final categoriesAsync = ref.watch(groupCategoriesProvider);
     final notifierState = ref.watch(groupNotifierProvider);
 
-    return AppDraggableSheet(
-      initialChildSize: 0.6,
-      minChildSize: 0.3,
-      maxChildSize: 0.9,
-      expand: false,
+    // Ionic categories modal: [breakpoints]="[0, 0.6, 1]"
+    // [initialBreakpoint]="0.6"; toolbar with the ion-title and the end
+    // buttons reorder + add (no leading icon, no close button).
+    return IonBreakpointSheet(
+      breakpoints: const [0, 0.6, 1],
+      initialBreakpoint: 0.6,
       builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(AppDimensions.borderRadiusL),
-            ),
-          ),
+        return ColoredBox(
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: Column(
             children: [
-              // Handle bar
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.medium.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              // Header
-              Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Row(
-                  children: [
-                    Icon(AppIcons.category, color: AppColors.primary),
-                    const SizedBox(width: AppDimensions.paddingS),
-                    Expanded(
-                      child: Text(
-                        context.l10n.instrumentsCategories,
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                      ),
-                    ),
+              IonSheetHeader(
+                title: context.l10n.instrumentsCategories,
+                end: [
+                  IconButton(
+                    icon: Icon(
+                        _isReordering ? AppIcons.check : AppIcons.swapVert),
+                    tooltip: _isReordering
+                        ? context.l10n.peopleFlutterSaveOrder
+                        : context.l10n.peopleReorder,
+                    onPressed: categoriesAsync.hasValue
+                        ? () => _toggleReorder(categoriesAsync.value!)
+                        : null,
+                  ),
+                  if (!_isReordering)
                     IconButton(
-                      icon: Icon(
-                          _isReordering ? AppIcons.check : AppIcons.swapVert),
-                      tooltip: _isReordering
-                          ? context.l10n.peopleFlutterSaveOrder
-                          : context.l10n.peopleReorder,
-                      onPressed: categoriesAsync.hasValue
-                          ? () => _toggleReorder(categoriesAsync.value!)
-                          : null,
+                      icon: Icon(AppIcons.add),
+                      onPressed: () => _showAddCategoryDialog(context),
+                      tooltip: context.l10n.instrumentsNewCategory,
                     ),
-                    if (!_isReordering)
-                      IconButton(
-                        icon: Icon(AppIcons.add),
-                        onPressed: () => _showAddCategoryDialog(context),
-                        tooltip: context.l10n.instrumentsNewCategory,
-                      ),
-                    IconButton(
-                      icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
+                ],
               ),
-              if (notifierState.isLoading)
-                const LinearProgressIndicator()
-              else
-                const Divider(height: 1),
+              if (notifierState.isLoading) const LinearProgressIndicator(),
               // Content
               Expanded(
                 child: categoriesAsync.when(
@@ -472,7 +437,8 @@ Future<void> showInstrumentCategoriesSheet(BuildContext context) async {
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    useSafeArea: true,
+    clipBehavior: Clip.antiAlias,
     builder: (context) => const InstrumentCategoriesSheet(),
   );
 }

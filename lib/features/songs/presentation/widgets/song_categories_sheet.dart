@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,6 +35,9 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
     final notifierState = ref.watch(songCategoryNotifierProvider);
 
     return AppDraggableSheet(
+      // Ionic categoriesModal
+      breakpoints: const [0, 0.6, 1],
+      initialBreakpoint: 0.6,
       initialChildSize: 0.6,
       minChildSize: 0.3,
       maxChildSize: 0.9,
@@ -42,9 +46,12 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
         return Container(
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(16),
-            ),
+            // Classic: the sheet itself is clipped to the Ionic modal shape.
+            borderRadius: context.rdSkin == null
+                ? null
+                : const BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
           ),
           child: Column(
             children: [
@@ -345,6 +352,8 @@ Future<void> showSongCategoriesSheet(BuildContext context) async {
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
+    useSafeArea: true,
+    clipBehavior: Clip.antiAlias,
     backgroundColor: Colors.transparent,
     builder: (context) => const SongCategoriesSheet(),
   );

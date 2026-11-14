@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -276,6 +278,22 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
   /// Ionic settings.page.html instances modal: cog button opens a small sheet
   /// with the "Instanzauswahl aktivieren" toggle.
   void _openInstanceSettings() {
+    if (context.rdSkin == null) {
+      // Ionic: [breakpoints]="[0, .2]" [initialBreakpoint]=".2", no header,
+      // `ion-content color="light"` with the inset toggle.
+      showIonSheet<void>(
+        context,
+        breakpoints: const [0, 0.2],
+        initialBreakpoint: 0.2,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        builder: (sheetContext, controller) => SingleChildScrollView(
+          controller: controller,
+          padding: const EdgeInsets.only(top: 20),
+          child: const _InstanceSelectionToggle(),
+        ),
+      );
+      return;
+    }
     showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar

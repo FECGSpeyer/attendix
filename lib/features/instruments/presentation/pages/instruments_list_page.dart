@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../data/repositories/base_repository.dart' show RepositoryException;
@@ -353,13 +355,29 @@ Future<void> showAddGroupSheet(
   WidgetRef ref,
   List<GroupCategory> categories,
 ) async {
-  final added = await showModalBottomSheet<bool>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    showDragHandle: true,
-    builder: (ctx) => _AddGroupSheet(categories: categories),
-  );
+  final added = context.rdSkin == null
+      // Ionic add-group modal: [breakpoints]="[0, 0.8]"
+      // [initialBreakpoint]="0.8", ion-toolbar with the ion-title only.
+      ? await showIonSheet<bool>(
+          context,
+          breakpoints: const [0, 0.8],
+          initialBreakpoint: 0.8,
+          builder: (ctx, controller) => IonSheetScaffold(
+            title: ctx.l10n.instrumentsAddGroup,
+            body: SingleChildScrollView(
+              controller: controller,
+              padding: const EdgeInsets.only(top: AppDimensions.paddingM),
+              child: _AddGroupSheet(categories: categories, showTitle: false),
+            ),
+          ),
+        )
+      : await showModalBottomSheet<bool>(
+          context: context,
+          useRootNavigator: true, // IOS_SHELL2: above the tab bar
+          isScrollControlled: true,
+          showDragHandle: true,
+          builder: (ctx) => _AddGroupSheet(categories: categories),
+        );
   if (added == true) ref.invalidate(playerCountsForGroupsProvider);
   if (added == false && context.mounted) {
     ToastHelper.showError(context, context.l10n.instrumentsFlutterAddFailed);
@@ -368,9 +386,12 @@ Future<void> showAddGroupSheet(
 
 /// Owns its controller so it is disposed after the sheet's exit animation.
 class _AddGroupSheet extends ConsumerStatefulWidget {
-  const _AddGroupSheet({required this.categories});
+  const _AddGroupSheet({required this.categories, this.showTitle = true});
 
   final List<GroupCategory> categories;
+
+  /// False in the classic sheet: the title is in the sheet toolbar.
+  final bool showTitle;
 
   @override
   ConsumerState<_AddGroupSheet> createState() => _AddGroupSheetState();
@@ -414,9 +435,11 @@ class _AddGroupSheetState extends ConsumerState<_AddGroupSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(context.l10n.instrumentsAddGroup,
-              style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: AppDimensions.paddingM),
+          if (widget.showTitle) ...[
+            Text(context.l10n.instrumentsAddGroup,
+                style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: AppDimensions.paddingM),
+          ],
           TextField(
             controller: _controller,
             autofocus: true,

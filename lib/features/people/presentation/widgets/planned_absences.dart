@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -56,6 +58,20 @@ Future<AbsenceInput?> showAbsenceInputSheet(
   bool showLongAbsenceHint = false,
   bool forOther = false,
 }) {
+  if (context.rdSkin == null) {
+    // Ionic absence modal: [breakpoints]="[0, 0.85, 1]"
+    // [initialBreakpoint]="0.85".
+    return showIonSheet<AbsenceInput>(
+      context,
+      breakpoints: const [0, 0.85, 1],
+      initialBreakpoint: 0.85,
+      builder: (context, controller) => _AbsenceInputSheet(
+        showLongAbsenceHint: showLongAbsenceHint,
+        forOther: forOther,
+        scrollController: controller,
+      ),
+    );
+  }
   return showModalBottomSheet<AbsenceInput>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -73,7 +89,11 @@ class _AbsenceInputSheet extends StatefulWidget {
   const _AbsenceInputSheet({
     required this.showLongAbsenceHint,
     this.forOther = false,
+    this.scrollController,
   });
+
+  /// Classic design: the controller of the breakpoint sheet.
+  final ScrollController? scrollController;
 
   final bool showLongAbsenceHint;
 
@@ -168,10 +188,15 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: SingleChildScrollView(
+        controller: widget.scrollController,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (widget.scrollController != null)
+              // Ionic: ion-title + close ✕ in the end slot.
+              IonSheetHeader(title: context.l10n.personEnterAbsence, end: const [IonCloseButton()])
+            else
             AppBar(
               toolbarHeight: ionModalToolbarHeight(context),
               title: Text(context.l10n.personEnterAbsence),

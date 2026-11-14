@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -265,6 +267,31 @@ class AccountAccordion extends ConsumerWidget {
   /// Ionic accountHelpModal: sheet modal (breakpoint 0.5) with toolbar
   /// "Hilfe" and a close button.
   void _showHelp(BuildContext context) {
+    if (context.rdSkin == null) {
+      // [breakpoints]="[0, 0.5, 1]" [initialBreakpoint]="0.5"; ion-title +
+      // close ✕ (end), padded text.
+      showIonSheet<void>(
+        context,
+        breakpoints: const [0, 0.5, 1],
+        initialBreakpoint: 0.5,
+        builder: (ctx, controller) => IonSheetScaffold(
+          title: ctx.l10n.personHelp,
+          showClose: true,
+          body: ListView(
+            controller: controller,
+            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            children: [
+              if (person.appId == null) ...[
+                Text(ctx.l10n.personAccountHelp),
+                const SizedBox(height: AppDimensions.paddingM),
+              ],
+              Text(ctx.l10n.personExistingUserHint),
+            ],
+          ),
+        ),
+      );
+      return;
+    }
     showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,

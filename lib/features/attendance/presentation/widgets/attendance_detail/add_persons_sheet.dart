@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
@@ -96,23 +98,33 @@ Future<AddPersonsPick?> showAddPersonsSheet(
   required String Function(Person) groupNameOf,
   bool offerCreate = false,
 }) {
-  return showModalBottomSheet<AddPersonsPick>(
-    context: context,
-    useRootNavigator: true, // IOS_SHELL2: above the tab bar
-    isScrollControlled: true,
-    showDragHandle: true,
-    builder: (ctx) => AppDraggableSheet(
-      expand: false,
-      initialChildSize: 0.8,
-      minChildSize: 0.4,
-      maxChildSize: 0.95,
-      builder: (ctx, controller) => _AddPersonsView(
+  Widget view(BuildContext ctx, ScrollController controller) => _AddPersonsView(
         candidates: candidates,
         groupNameOf: groupNameOf,
         scrollController: controller,
         offerCreate: offerCreate,
+      );
+  if (context.rdSkin != null) {
+    return showModalBottomSheet<AddPersonsPick>(
+      context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (ctx) => AppDraggableSheet(
+        expand: false,
+        initialChildSize: 0.8,
+        minChildSize: 0.4,
+        maxChildSize: 0.95,
+        builder: view,
       ),
-    ),
+    );
+  }
+  // Ionic addPersonModal: [breakpoints]="[0, 0.8, 1]" [initialBreakpoint]="0.8".
+  return showIonSheet<AddPersonsPick>(
+    context,
+    breakpoints: const [0, 0.8, 1],
+    initialBreakpoint: 0.8,
+    builder: view,
   );
 }
 
@@ -177,13 +189,17 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
     final count = _selected.length;
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(context.l10n.attendanceAddPerson, style: Theme.of(context).textTheme.titleLarge),
-          ),
-        ),
+        if (context.rdSkin != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(context.l10n.attendanceAddPerson, style: Theme.of(context).textTheme.titleLarge),
+            ),
+          )
+        else
+          // Ionic: ion-title + close ✕ in the end slot.
+          IonSheetHeader(title: context.l10n.attendanceAddPerson, end: const [IonCloseButton()]),
         Expanded(
           child: c.isEmpty
               ? Center(

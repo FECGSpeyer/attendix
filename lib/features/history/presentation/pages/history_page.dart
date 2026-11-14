@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -329,21 +331,16 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       dateController.text = DateFormat(dateFmt()).format(selectedDate);
     }
 
-    final result = await showModalBottomSheet<bool>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      showDragHandle: true,
-      useSafeArea: true,
-      builder: (sheetContext) => StatefulBuilder(
+    final classic = context.rdSkin == null;
+    Widget sheet(BuildContext sheetContext, ScrollController? scrollController) => StatefulBuilder(
         builder: (sheetContext, setSheetState) {
           final l10n = sheetContext.l10n;
           final divider = Divider(height: 0.5, thickness: 0.5, indent: 16, color: Theme.of(sheetContext).dividerColor);
-          return SizedBox(
-            height: MediaQuery.sizeOf(sheetContext).height * 0.7,
-            child: ListView(
+          final list = ListView(
+              controller: scrollController,
               padding: const EdgeInsets.only(bottom: 24),
               children: [
+                if (!classic)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
@@ -485,11 +482,31 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                   ),
                 ),
               ],
-            ),
+            );
+          // Ionic: ion-header > ion-toolbar > ion-title only.
+          if (classic) return IonSheetScaffold(title: l10n.historyAddSongs, body: list);
+          return SizedBox(
+            height: MediaQuery.sizeOf(sheetContext).height * 0.7,
+            child: list,
           );
         },
-      ),
-    );
+      );
+    final result = classic
+        // Ionic addHisModal: [breakpoints]="[0, 0.7]" [initialBreakpoint]="0.7".
+        ? await showIonSheet<bool>(
+            context,
+            breakpoints: const [0, 0.7],
+            initialBreakpoint: 0.7,
+            builder: sheet,
+          )
+        : await showModalBottomSheet<bool>(
+            context: context,
+            useRootNavigator: true, // IOS_SHELL2: above the tab bar
+            isScrollControlled: true,
+            showDragHandle: true,
+            useSafeArea: true,
+            builder: (sheetContext) => sheet(sheetContext, null),
+          );
 
     // A date typed without leaving the field still counts (Ionic ionBlur
     // fires before the button tap).

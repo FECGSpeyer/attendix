@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/constants/app_constants.dart';
@@ -109,6 +111,75 @@ class _FieldEditorSheetState extends State<FieldEditorSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final field = TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: widget.hint,
+                border: const OutlineInputBorder(),
+                errorText: _errorText,
+              ),
+              maxLines: widget.maxLines,
+              keyboardType: widget.keyboardType,
+              textCapitalization: widget.textCapitalization ??
+                  (widget.keyboardType == null ||
+                          widget.keyboardType == TextInputType.text ||
+                          widget.keyboardType == TextInputType.multiline
+                      ? TextCapitalization.sentences
+                      : TextCapitalization.none),
+              autofocus: true,
+              onChanged: (_) {
+                if (_errorText != null) {
+                  setState(() => _errorText = null);
+                }
+              },
+              onSubmitted: widget.maxLines == 1 ? (_) => _submit() : null,
+            );
+    final actions = Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: IonButtonLabel(widget.cancelText ?? context.l10n.commonCancel),
+                ),
+                const SizedBox(width: AppDimensions.paddingS),
+                FilledButton(
+                  onPressed: _submit,
+                  child: IonButtonLabel(widget.confirmText ?? context.l10n.commonSave),
+                ),
+              ],
+            );
+    if (context.rdSkin == null) {
+      // Classic: the shared sheet toolbar (title + close ✕) under the
+      // Ionic modal handle. The sheet keeps the height of its content
+      // (Flutter-only editor, Ionic edits these fields inline).
+      return Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              IonModalHandleOverlay(
+                child: IonSheetHeader(title: widget.title, end: const [IonCloseButton()]),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(AppDimensions.paddingL),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    field,
+                    const SizedBox(height: AppDimensions.paddingL),
+                    actions,
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -148,46 +219,11 @@ class _FieldEditorSheetState extends State<FieldEditorSheet> {
             const SizedBox(height: AppDimensions.paddingL),
 
             // Text field
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                hintText: widget.hint,
-                border: const OutlineInputBorder(),
-                errorText: _errorText,
-              ),
-              maxLines: widget.maxLines,
-              keyboardType: widget.keyboardType,
-              textCapitalization: widget.textCapitalization ??
-                  (widget.keyboardType == null ||
-                          widget.keyboardType == TextInputType.text ||
-                          widget.keyboardType == TextInputType.multiline
-                      ? TextCapitalization.sentences
-                      : TextCapitalization.none),
-              autofocus: true,
-              onChanged: (_) {
-                if (_errorText != null) {
-                  setState(() => _errorText = null);
-                }
-              },
-              onSubmitted: widget.maxLines == 1 ? (_) => _submit() : null,
-            ),
+            field,
             const SizedBox(height: AppDimensions.paddingL),
 
             // Action buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: IonButtonLabel(widget.cancelText ?? context.l10n.commonCancel),
-                ),
-                const SizedBox(width: AppDimensions.paddingS),
-                FilledButton(
-                  onPressed: _submit,
-                  child: IonButtonLabel(widget.confirmText ?? context.l10n.commonSave),
-                ),
-              ],
-            ),
+            actions,
             const SizedBox(height: AppDimensions.paddingL),
           ],
         ),

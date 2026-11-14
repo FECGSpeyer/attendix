@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -53,16 +55,21 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
   bool get _isSuperAdmin => ref.read(effectiveRoleProvider) == Role.admin;
 
   Future<void> _add(int orgId) async {
-    final field = await showModalBottomSheet<OrgExtraField>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      // Ionic addField checks the name before closing: the sheet stays open
-      // with all inputs.
-      builder: (_) => _FieldEditorSheet(
-        nameExists: (name) => _fields!.any((f) => f.id == orgFieldId(orgId, name)),
-      ),
-    );
+    bool nameExists(String name) => _fields!.any((f) => f.id == orgFieldId(orgId, name));
+    final field = context.rdSkin == null
+        // Ionic addOrgFieldModal: initialBreakpoint="1" [breakpoints]="[0, 1]".
+        ? await showIonSheet<OrgExtraField>(
+            context,
+            builder: (_, controller) => _FieldEditorSheet(nameExists: nameExists, scrollController: controller),
+          )
+        : await showModalBottomSheet<OrgExtraField>(
+            context: context,
+            useRootNavigator: true, // IOS_SHELL2: above the tab bar
+            isScrollControlled: true,
+            // Ionic addField checks the name before closing: the sheet stays open
+            // with all inputs.
+            builder: (_) => _FieldEditorSheet(nameExists: nameExists),
+          );
     if (field == null || !mounted) return;
     final id = orgFieldId(orgId, field.name);
     if (_fields!.any((f) => f.id == id)) return;
@@ -70,12 +77,18 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
   }
 
   Future<void> _edit(int index) async {
-    final field = await showModalBottomSheet<OrgExtraField>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      builder: (_) => _FieldEditorSheet(initial: _fields![index]),
-    );
+    final field = context.rdSkin == null
+        // Ionic edit modal: initialBreakpoint="1" [breakpoints]="[0, 1]".
+        ? await showIonSheet<OrgExtraField>(
+            context,
+            builder: (_, controller) => _FieldEditorSheet(initial: _fields![index], scrollController: controller),
+          )
+        : await showModalBottomSheet<OrgExtraField>(
+            context: context,
+            useRootNavigator: true, // IOS_SHELL2: above the tab bar
+            isScrollControlled: true,
+            builder: (_) => _FieldEditorSheet(initial: _fields![index]),
+          );
     if (field == null) return;
     setState(() {
       final list = [..._fields!];
@@ -288,8 +301,12 @@ String numberFieldDefaultText(String text) {
 /// Add / edit sheet of one org extra field.
 
 class _FieldEditorSheet extends StatefulWidget {
-  const _FieldEditorSheet({this.initial, this.nameExists});
+  const _FieldEditorSheet({this.initial, this.nameExists, this.scrollController});
   final OrgExtraField? initial;
+
+  /// Classic design: the controller of the breakpoint sheet; the title is
+  /// then in the sheet toolbar.
+  final ScrollController? scrollController;
 
   /// Add mode: true when an org field with this name exists already.
   final bool Function(String name)? nameExists;
@@ -404,17 +421,16 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
+    final classic = widget.scrollController != null;
+    final title = _isEdit ? context.l10n.typeSettingsEditField : context.l10n.extraFieldsAddNew;
+    final form = Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(_isEdit ? context.l10n.typeSettingsEditField : context.l10n.extraFieldsAddNew, style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 12),
+              if (!classic) ...[
+                Text(title, style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 12),
+              ],
               if (_isEdit)
                 ListTile(
                   contentPadding: EdgeInsets.zero,
@@ -530,7 +546,29 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 child: Text(_isEdit ? context.l10n.orgFieldsApplyChanges : context.l10n.typeSettingsAddField),
               ),
             ],
+          );
+    if (classic) {
+      // Ionic: toolbar with the ion-title; the edit modal also has the
+      // close ✕ in the end slot.
+      return IonSheetScaffold(
+        title: title,
+        showClose: _isEdit,
+        body: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            controller: widget.scrollController,
+            padding: const EdgeInsets.all(16),
+            child: form,
           ),
+        ),
+      );
+    }
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: form,
         ),
       ),
     );
