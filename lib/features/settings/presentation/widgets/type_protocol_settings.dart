@@ -6,6 +6,11 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
+import '../../../../shared/widgets/adaptive/ion_button.dart';
+import '../../../../shared/widgets/layout/ionic_md.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import 'settings_form_items.dart';
+import 'settings_list.dart';
 
 /// Protocol settings of an attendance type (Ionic type.page "Protokoll &
 /// Tagesordnung"): columns `enable_protocol`, `agenda_default_duration`,
@@ -108,6 +113,7 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
 
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin == null) return _buildClassic(context);
     final s = widget.settings;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -166,6 +172,87 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
                     child: IonButtonLabel(context.l10n.typeSettingsInsertPlaceholder),
                   ),
           ),
+        ],
+      ],
+    );
+  }
+
+  /// EIA-02/22: classic design – every tile is its own `ion-item` of the
+  /// options group (item padding, inset line between the rows); the minutes
+  /// are an `ion-input labelPlacement="start" class="ion-text-end"`.
+  Widget _buildClassic(BuildContext context) {
+    final s = widget.settings;
+    final ios = ionIsIos(context);
+    final pad = ios ? null : const EdgeInsets.symmetric(horizontal: IonMd.itemPaddingStart);
+    final rows = <Widget>[
+      SwitchListTile.adaptive(
+        title: Text(context.l10n.typeSettingsProtocolAgenda),
+        subtitle: Text(context.l10n.typeSettingsProtocolHelper),
+        value: s.enableProtocol,
+        onChanged: (v) => widget.onChanged(s.toggled(v)),
+        contentPadding: pad,
+      ),
+      if (widget.showLearnMore)
+        ListTile(
+          contentPadding: pad,
+          leading: Icon(AppIcons.helpOutline, color: AppColors.primary),
+          title: Text(context.l10n.typeSettingsLearnMore, style: const TextStyle(color: AppColors.primary)),
+          onTap: () => context.push('/settings/help/article/team-activate'),
+        ),
+      if (s.enableProtocol) ...[
+        SettingsNumberItem(
+          label: context.l10n.typeSettingsTopicMinutes,
+          controller: _duration,
+          placeholder: '10',
+          onChanged: (v) {
+            // Ionic validate(): rounded to a whole number of minutes.
+            final p = num.tryParse(v.trim().replaceAll(',', '.'));
+            final n = p != null && p.isFinite ? p.round() : null;
+            widget.onChanged(n != null && n > 0
+                ? s.copyWith(agendaDefaultDuration: n)
+                : s.copyWith(clearDuration: true));
+          },
+        ),
+        SwitchListTile.adaptive(
+          title: Text(context.l10n.typeSettingsSuggestPostponed),
+          subtitle: Text(context.l10n.typeSettingsPostponedHelper),
+          value: s.suggestPostponed,
+          onChanged: (v) => widget.onChanged(s.copyWith(suggestPostponed: v)),
+          contentPadding: pad,
+        ),
+        ListTile(
+          contentPadding: pad,
+          subtitle: Text(context.l10n.typeSettingsPlaceholderHint),
+          trailing: widget.hasPlaceholder
+              ? null
+              : IonButton(
+                  label: context.l10n.typeSettingsInsertPlaceholder,
+                  fill: IonButtonFill.clear,
+                  small: true,
+                  onPressed: widget.onInsertPlaceholder,
+                ),
+        ),
+      ],
+    ];
+    final line = ios
+        ? Divider(
+            height: 0.5,
+            thickness: 0.5,
+            indent: IonIos.itemPaddingStart,
+            endIndent: IonIos.itemPaddingEnd,
+            color: IonIos.line(context),
+          )
+        : const Divider(
+            height: IonMd.lineWidth,
+            thickness: IonMd.lineWidth,
+            indent: IonMd.itemPaddingStart,
+          );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var i = 0; i < rows.length; i++) ...[
+          if (i > 0) line,
+          rows[i],
         ],
       ],
     );
