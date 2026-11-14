@@ -14,6 +14,9 @@ import 'rd_plan_widgets.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/data/rd_collections_logic.dart';
 
+/// The Werke planned for [att] ([own]: the Termin of the open Ablauf).
+typedef PlanEventWorks = ({PlanAttendance att, bool own, List<PlanEventWork> works});
+
 /// Song related helpers of the Ablaufplan editor (Ionic `PlanningPage`
 /// `onSongsChange`, `addCurrentSongs`, `resolvePlaceholderFields`).
 class PlanSongHelper {
@@ -59,6 +62,79 @@ class PlanSongHelper {
       if (song == null) continue;
       existing.add(id);
       result.add(songField(song, history: history, prefix: prefix));
+    }
+    return result;
+  }
+
+  /// "Werke vom … übernehmen" (Beta): the Termine whose planned Werke are
+  /// offered for the Ablauf of [att], at most [limit].
+  ///
+  /// First [att] itself, then the Termine after it (same day: not before
+  /// its start), nearest first. A later Termin counts when its Terminart is
+  /// highlighted (Vortrag, Konzert) or differs from the one of [att]: a
+  /// Probe takes the Werke of the next Auftritt, not those of the next Probe.
+  /// [history] holds the Werke of the coming Termine (`currentSongsProvider`).
+  static List<PlanEventWorks> eventWorks(
+    PlanAttendance att, {
+    required List<PlanAttendance> attendances,
+    required List<PlanAttendanceType> types,
+    required List<SongHistory> history,
+    required List<Song> songs,
+    int limit = 3,
+  }) {
+    DateTime? dayOf(PlanAttendance a) {
+      final d = DateTime.tryParse(a.date);
+      return d == null ? null : DateTime(d.year, d.month, d.day);
+    }
+
+    final day = dayOf(att);
+    if (att.id == null || day == null) return const [];
+    final start = PlanUtils.parseTimeToMinutes(PlanUtils.formatTime(att.startTime));
+    int? startOf(PlanAttendance a) => PlanUtils.parseTimeToMinutes(PlanUtils.formatTime(a.startTime));
+    bool highlighted(PlanAttendance a) =>
+        a.type == 'vortrag' || (types.where((t) => t.id == a.typeId).firstOrNull?.highlight ?? false);
+
+    final found = <({PlanAttendance att, DateTime day, List<PlanEventWork> works})>[];
+    for (final a in attendances) {
+      final d = dayOf(a);
+      if (a.id == null || d == null) continue;
+      final own = a.id == att.id;
+      if (!own) {
+        if (d.isBefore(day)) continue;
+        final s = startOf(a);
+        if (d == day && start != null && s != null && s < start) continue;
+        if (!highlighted(a) && a.typeId == att.typeId) continue;
+      }
+      // In the order they were planned (the Programm has no other order).
+      final entries = history.where((h) => h.attendanceId == a.id && h.songId != null).toList()
+        ..sort((x, y) => (x.id ?? 0).compareTo(y.id ?? 0));
+      final seen = <int>{};
+      final works = <PlanEventWork>[];
+      for (final h in entries) {
+        final song = songs.where((s) => s.id == h.songId).firstOrNull;
+        if (song == null || !seen.add(h.songId!)) continue;
+        works.add((song: song, conductor: h.conductorName ?? ''));
+      }
+      if (works.isNotEmpty) found.add((att: a, day: d, works: works));
+    }
+    found.sort((x, y) {
+      final own = (y.att.id == att.id ? 1 : 0) - (x.att.id == att.id ? 1 : 0);
+      if (own != 0) return own;
+      final byDay = x.day.compareTo(y.day);
+      if (byDay != 0) return byDay;
+      final byStart = (startOf(x.att) ?? 0).compareTo(startOf(y.att) ?? 0);
+      return byStart != 0 ? byStart : x.att.id!.compareTo(y.att.id!);
+    });
+    // A Werk of several Termine is listed once, at the nearest one.
+    final listed = <int>{};
+    final result = <PlanEventWorks>[];
+    for (final f in found) {
+      final works = [
+        for (final w in f.works)
+          if (listed.add(w.song.id!)) w,
+      ];
+      if (works.isNotEmpty) result.add((att: f.att, own: f.att.id == att.id, works: works));
+      if (result.length == limit) break;
     }
     return result;
   }

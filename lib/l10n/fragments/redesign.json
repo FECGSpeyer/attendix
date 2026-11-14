@@ -1580,7 +1580,15 @@
         "registerMoreGroups": "{count, plural, one {Mehr Gruppen als Leitungen: in jeder Runde probt eine Gruppe selbstständig.} other {Mehr Gruppen als Leitungen: in jeder Runde proben {count} Gruppen selbstständig.}}",
         "registerMoreLeads": "{count, plural, one {Mehr Leitungen als Gruppen: in jeder Runde hat eine Leitung Pause.} other {Mehr Leitungen als Gruppen: in jeder Runde haben {count} Leitungen Pause.}}",
         "registerIncomplete": "Wähle mindestens zwei Gruppen und eine Leitung.",
-        "registerOwnGroupRemove": "Gruppe „{name}“ entfernen"
+        "registerOwnGroupRemove": "Gruppe „{name}“ entfernen",
+        "eventWorksFrom": "Werke vom {date}",
+        "eventWorksOwn": "Werke dieses Termins",
+        "eventWorksCount": "{count, plural, one {1 Werk} other {{count} Werke}}",
+        "eventWorksTitle": "Werke übernehmen",
+        "eventWorksThis": "Dieser Termin",
+        "eventWorksAdd": "{count, plural, =0 {Werke hinzufügen} one {1 Werk hinzufügen} other {{count} Werke hinzufügen}}",
+        "eventWorksAll": "Alle",
+        "eventWorksNone": "Keine"
       },
       "messages": {
         "intro": "Alles, was an die Gruppe ging, mit Lesestatus.",
@@ -3296,7 +3304,15 @@
         "registerMoreGroups": "{count, plural, one {More groups than leads: in every round one group rehearses on its own.} other {More groups than leads: in every round {count} groups rehearse on their own.}}",
         "registerMoreLeads": "{count, plural, one {More leads than groups: in every round one lead has a break.} other {More leads than groups: in every round {count} leads have a break.}}",
         "registerIncomplete": "Pick at least two groups and one lead.",
-        "registerOwnGroupRemove": "Remove group “{name}”"
+        "registerOwnGroupRemove": "Remove group “{name}”",
+        "eventWorksFrom": "Works of {date}",
+        "eventWorksOwn": "Works of this event",
+        "eventWorksCount": "{count, plural, one {1 work} other {{count} works}}",
+        "eventWorksTitle": "Take over works",
+        "eventWorksThis": "This event",
+        "eventWorksAdd": "{count, plural, =0 {Add works} one {Add 1 work} other {Add {count} works}}",
+        "eventWorksAll": "All",
+        "eventWorksNone": "None"
       },
       "messages": {
         "intro": "Everything sent to the group, with read status.",

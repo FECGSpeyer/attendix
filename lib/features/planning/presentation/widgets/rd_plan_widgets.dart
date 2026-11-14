@@ -819,6 +819,137 @@ class _RdSongPickerState extends State<_RdSongPicker> {
   }
 }
 
+/// One Werk planned for a Termin, with the conductor planned there.
+typedef PlanEventWork = ({Song song, String conductor});
+
+/// Beta "Werke übernehmen": the Werke planned for the Termine in [groups]
+/// as a checklist. Those of the first Termin are ticked, except the ones
+/// already [inPlanIds]. Returns the ticked Werke in the listed order.
+Future<List<PlanEventWork>?> showRdEventWorksSheet(
+  BuildContext context, {
+  required List<({String label, List<PlanEventWork> works})> groups,
+  Set<int> inPlanIds = const {},
+  String? subtitle,
+}) {
+  final selected = ValueNotifier<Set<int>>({
+    if (groups.isNotEmpty)
+      for (final w in groups.first.works)
+        if (!inPlanIds.contains(w.song.id)) w.song.id!,
+  });
+  List<PlanEventWork> chosen() => [
+    for (final g in groups)
+      for (final w in g.works)
+        if (selected.value.contains(w.song.id)) w,
+  ];
+
+  return showRdPlanSheet<List<PlanEventWork>>(
+    context,
+    title: context.l10n.redesignPlanEventWorksTitle,
+    subtitle: subtitle,
+    builder:
+        (ctx, pop) => [
+          ValueListenableBuilder<Set<int>>(
+            valueListenable: selected,
+            builder: (ctx, value, _) => _RdEventWorksList(groups: groups, inPlanIds: inPlanIds, selected: selected),
+          ),
+        ],
+    footer:
+        (ctx, pop) => ValueListenableBuilder<Set<int>>(
+          valueListenable: selected,
+          builder:
+              (ctx, value, _) => RdPrimaryButton(
+                key: const Key('rd-plan-event-works-add'),
+                label: ctx.l10n.redesignPlanEventWorksAdd(value.length),
+                onPressed: value.isEmpty ? null : () => pop(chosen()),
+              ),
+        ),
+  ).whenComplete(selected.dispose);
+}
+
+class _RdEventWorksList extends StatelessWidget {
+  const _RdEventWorksList({required this.groups, required this.inPlanIds, required this.selected});
+
+  final List<({String label, List<PlanEventWork> works})> groups;
+  final Set<int> inPlanIds;
+  final ValueNotifier<Set<int>> selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final chosen = selected.value;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final (i, g) in groups.indexed) ...[
+          if (i > 0) const SizedBox(height: 12),
+          Builder(
+            builder: (context) {
+              final ids = {for (final w in g.works) w.song.id!};
+              final all = chosen.containsAll(ids);
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(child: RdGroupLabel(g.label)),
+                  // Several Werke at once: all of this Termin, or none.
+                  if (ids.length > 1)
+                    Semantics(
+                      button: true,
+                      child: InkWell(
+                        key: ValueKey('rd-plan-event-works-all-$i'),
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () {
+                          final now = selected.value;
+                          selected.value = now.containsAll(ids) ? now.difference(ids) : now.union(ids);
+                        },
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 44),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 0, 4, 8),
+                            child: Align(
+                              alignment: Alignment.bottomRight,
+                              widthFactor: 1,
+                              child: Text(
+                                all ? l10n.redesignPlanEventWorksNone : l10n.redesignPlanEventWorksAll,
+                                style: TextStyle(fontSize: 15, color: p.link),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+          RdGroupedList(
+            children: [
+              for (final w in g.works)
+                RdListRow(
+                  key: ValueKey('rd-plan-event-work-$i-${w.song.id}'),
+                  leading: Icon(
+                    chosen.contains(w.song.id) ? Icons.check_circle : Icons.radio_button_unchecked,
+                    color: chosen.contains(w.song.id) ? p.primary : p.text2,
+                  ),
+                  title: '${w.song.prefix ?? ''}${w.song.number ?? ''} ${w.song.name}'.trim(),
+                  subtitle: w.conductor.isEmpty ? null : w.conductor,
+                  value: inPlanIds.contains(w.song.id) ? l10n.redesignPlanSongInPlan : null,
+                  showChevron: false,
+                  onTap: () {
+                    // The value now, not the one this row was built with.
+                    final id = w.song.id!;
+                    final now = selected.value;
+                    selected.value = now.contains(id) ? now.difference({id}) : now.union({id});
+                  },
+                ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
 /// Result of the Beta "Neuer Plan" sheet.
 typedef RdNewPlanChoice = ({bool copy, int? day, String label});
 
