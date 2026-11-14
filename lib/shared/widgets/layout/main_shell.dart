@@ -20,6 +20,7 @@ import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive_platform.dart';
 import '../audio_player/audio_player_widget.dart';
 import '../debug/debug_role_fab.dart';
+import '../dialogs/ion_modal.dart' show IonWindowSizeScope;
 import '../dialogs/native_app_ad.dart';
 import 'ios_tab_bar.dart';
 import 'root_back_button_scope.dart';
@@ -180,6 +181,13 @@ class MainShell extends ConsumerWidget {
       if (location.startsWith(destinations[i].route)) {
         return i;
       }
+    }
+
+    // ROLLEN-A-20: right after "Tab ausblenden" the page stays on the hidden
+    // optional tab ("Werke" / "Org"); it lives under "Mehr" now, so mark
+    // that tab instead of the first one.
+    if (location.startsWith('/songs-tab') || location.startsWith('/org-plans-tab')) {
+      return destinations.length - 1;
     }
 
     // If current route doesn't match any tab, default to first
@@ -412,6 +420,10 @@ class _SidePanelShellState extends ConsumerState<_SidePanelShell> {
         ),
         child: content,
       );
+      // PERSONEN-92: Ionic decides modal card vs full screen by the WINDOW
+      // (min-width 768px, min-height 600px), not by the room next to the
+      // side panel.
+      content = IonWindowSizeScope(size: mq.size, child: content);
     }
     content = SideNavScope(
       mode: widget.mode,

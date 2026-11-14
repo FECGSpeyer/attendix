@@ -311,7 +311,7 @@ Future<T?> showIonCardModal<T>(
   double width = 600,
   double? height,
 }) {
-  final size = MediaQuery.sizeOf(context);
+  final size = ionModalWindowSize(context);
   if (isIonModalCard(size)) {
     return showIonModal<T>(
       context,
