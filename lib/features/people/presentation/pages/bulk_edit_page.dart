@@ -35,6 +35,10 @@ String _fieldLabel(BuildContext context, _FieldOption f) => switch (f.key) {
   _ => f.label,
 };
 
+/// Values of the two disabled `ion-select-option` headers of the field select.
+const _kHeaderStandard = '__header_standard__';
+const _kHeaderExtra = '__header_extra__';
+
 class _FieldOption {
   const _FieldOption({required this.key, required this.label, this.extraField});
 
@@ -295,7 +299,11 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
             ),
             hint: Text(context.l10n.peopleChooseFieldPlaceholder),
             items: [
+              // E2E PERSONEN-12: disabled headers need a (never chosen)
+              // value of their own – a `null` value broke the select cast
+              // (`null as String`) and matched the empty current value.
               DropdownMenuItem<String>(
+                value: _kHeaderStandard,
                 enabled: false,
                 child: Text(
                   context.l10n.peopleStandardFields,
@@ -309,6 +317,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
                 ),
               if (hasExtra) ...[
                 DropdownMenuItem<String>(
+                  value: _kHeaderExtra,
                   enabled: false,
                   child: Text(
                     context.l10n.peopleExtraFields,
