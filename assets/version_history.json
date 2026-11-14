@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.149.0",
+      "date": "14.11.2026",
+      "changes": [
+        "✨ Beta: Protokoll einer Besprechung übersichtlicher. Im breiten Fenster (Mac, Tablet quer) zwei Spalten mit Ablaufplan links und großer Schreibfläche rechts, am Handy drei Knöpfe oben und unten nur noch „Abschließen“",
+        "✨ Beta: Im Ablaufplan steht der Status jedes Punkts als Wort, die Werkzeugleiste ist schlanker und „Nächster Punkt“ ist ein Knopf",
+        "🐛 Beta: Die Karte „Anwesend“ im Protokoll bricht bei vielen Teilnehmenden nicht mehr um"
+      ]
+    },
+    {
       "version": "0.148.0",
       "date": "14.11.2026",
       "changes": [
