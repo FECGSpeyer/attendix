@@ -208,6 +208,29 @@ void main() {
     });
   });
 
+  group('nonRouteFragmentUrl (OEFF-41: Supabase error/token fragments)', () {
+    String? n(String url) => nonRouteFragmentUrl(Uri.parse(url));
+
+    test('error and token fragments start the app at its base path', () {
+      expect(
+          n('https://attendix.de/#error=access_denied&error_code=otp_expired'
+              '&error_description=Email+link+is+invalid+or+has+expired'),
+          '/');
+      expect(n('https://attendix.de/#foo=bar'), '/');
+      expect(n('https://attendix.de/login?error=access_denied#error=x'), '/');
+      expect(n('https://attendix.de/resetPassword?error=a#error=a'), '/');
+      expect(n('https://attendix.de/?mode=ios#access_token=a&type=signup'),
+          '/?mode=ios');
+      expect(n('https://attendix.de/tabs/list#foo=bar'), '/#/tabs/list');
+    });
+
+    test('route fragments and plain URLs stay untouched', () {
+      expect(n('https://attendix.de/'), isNull);
+      expect(n('https://attendix.de/#/login'), isNull);
+      expect(n('https://attendix.de/tabs/list'), isNull);
+    });
+  });
+
   group('GoRouter: legacy links win over the public song share routes', () {
     Future<String> open(WidgetTester tester, String location) async {
       final router = GoRouter(

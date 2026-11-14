@@ -224,6 +224,7 @@ class AuthLink {
     this.accessToken,
     this.refreshToken,
     this.errorDescription,
+    this.errorCode,
     this.path = '',
   });
 
@@ -233,6 +234,9 @@ class AuthLink {
   final String? accessToken;
   final String? refreshToken;
   final String? errorDescription;
+
+  /// Supabase `error_code` (e.g. `otp_expired` for an expired e-mail link).
+  final String? errorCode;
   final String path;
 
   /// Parses query and fragment of [uri]. With the hash URL strategy the
@@ -269,6 +273,7 @@ class AuthLink {
       accessToken: get('access_token'),
       refreshToken: get('refresh_token'),
       errorDescription: get('error_description'),
+      errorCode: get('error_code'),
       path: uri.path + (uri.fragment.startsWith('/') ? uri.fragment : ''),
     );
   }
@@ -290,7 +295,16 @@ class AuthLink {
   /// Whether this URL is an auth link at all.
   bool get isAuthLink =>
       (isRecovery || isSignupConfirm) ||
-      (errorDescription != null && (type != null || path.contains('reset')));
+      (errorDescription != null &&
+          (type != null || path.contains('reset') || isEmailLinkError));
+
+  /// OEFF-41: Supabase redirects an expired / already used e-mail link
+  /// (confirmation, magic link, reset) to `/#error=access_denied&
+  /// error_code=otp_expired&error_description=Email+link+is+invalid…` –
+  /// without `type`, so it is recognised by its error.
+  bool get isEmailLinkError =>
+      (errorCode?.startsWith('otp_') ?? false) ||
+      (errorDescription?.toLowerCase().contains('email link') ?? false);
 }
 
 /// Maps the link's `type` parameter to the [OtpType] for `verifyOTP`

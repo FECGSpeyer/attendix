@@ -53,6 +53,14 @@ void main() {
       expect(link.isSignupConfirm, isTrue);
     });
 
+    test('expired e-mail link without type is an auth link (OEFF-41)', () {
+      final link = AuthLink.parse(Uri.parse(
+          'https://attendix.de/#error=access_denied&error_code=otp_expired'
+          '&error_description=Email+link+is+invalid+or+has+expired'));
+      expect(link.errorCode, 'otp_expired');
+      expect(link.isAuthLink, isTrue);
+    });
+
     test('normal app URL is no auth link', () {
       final link = AuthLink.parse(Uri.parse('https://attendix.de/#/people'));
       expect(link.isAuthLink, isFalse);

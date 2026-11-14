@@ -197,3 +197,44 @@ String? legacyPathToHashUrl(Uri uri, {String basePath = '/'}) {
   if (route.split('/').last.contains('.')) return null;
   return '$base#$route${uri.hasQuery ? '?${uri.query}' : ''}';
 }
+
+/// OEFF-41: the full browser URL the web app was opened with, saved by
+/// [nonRouteFragmentUrl]'s caller before the URL is cleaned up. Auth link
+/// handling reads it instead of `Uri.base` (which no longer holds the tokens
+/// or the error of an expired link after the cleanup). `null` = nothing was
+/// cleaned up (or native).
+Uri? startupLinkUri;
+
+/// Query keys of Supabase auth links (kept in sync with `kAuthLinkParams`).
+const Set<String> _authUrlParams = {
+  'token_hash', 'type', 'code', 'access_token', 'refresh_token',
+  'expires_at', 'expires_in', 'token_type', 'provider_token',
+  'provider_refresh_token', 'error', 'error_code', 'error_description',
+};
+
+/// OEFF-41: with the hash URL strategy the router reads the `#` fragment as
+/// its start location. Supabase puts tokens and errors of e-mail links into a
+/// fragment WITHOUT a leading `/` (`/#error=access_denied&error_code=otp_expired…`,
+/// `/#access_token=…`); go_router cannot match such a relative location and
+/// the app stays grey. Returns the clean URL to start from instead (base
+/// path, auth paths `/login` / `/resetPassword` and auth query keys dropped,
+/// any other path promoted to its `#/route`), or `null` when the fragment is
+/// empty or already a route.
+String? nonRouteFragmentUrl(Uri uri, {String basePath = '/'}) {
+  if (uri.fragment.isEmpty || uri.fragment.startsWith('/')) return null;
+  final base = basePath.endsWith('/') ? basePath : '$basePath/';
+  final kept = {
+    for (final e in uri.queryParameters.entries)
+      if (!_authUrlParams.contains(e.key)) e.key: e.value,
+  };
+  final query = kept.isEmpty ? '' : '?${Uri(queryParameters: kept).query}';
+  final path = uri.path;
+  var route = path.startsWith(base) ? path.substring(base.length - 1) : '/';
+  if (route == '/login' || route == '/resetPassword') route = '/';
+  if (route.isEmpty || route == '/') return '$base$query';
+  return legacyPathToHashUrl(
+        Uri(path: path, query: query.isEmpty ? null : query.substring(1)),
+        basePath: base,
+      ) ??
+      '$base$query';
+}

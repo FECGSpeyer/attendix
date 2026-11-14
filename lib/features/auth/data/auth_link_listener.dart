@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/config/supabase_config.dart';
+import '../../../core/router/legacy_routes.dart' show startupLinkUri;
 import '../../../core/services/offline_queue_service.dart'
     show rootScaffoldMessengerKey;
 import '../../../core/theme/app_colors.dart';
@@ -36,7 +37,8 @@ void initAuthLinkHandling(WidgetRef ref, GoRouter router) {
     initNativeAppLinks(ref, router);
     return;
   }
-  final link = AuthLink.parse(Uri.base);
+  // OEFF-41: the start URL before a non-route fragment was cleaned up.
+  final link = AuthLink.parse(startupLinkUri ?? Uri.base);
   if (!link.isAuthLink) return;
   unawaited(_processLink(ref, router, link));
 }
