@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
@@ -1051,6 +1052,79 @@ extension on IonItem {
   }
 }
 
+/// NB-T03: iOS sheet toolbar row. Like before (`NavigationToolbar`, 8pt
+/// spacing) the title is centred between the start / end buttons, but it
+/// always gets at least the room of the Ionic `ion-title` (iOS: absolutely
+/// positioned over the whole toolbar with `padding-inline: 90px`), so a
+/// short title next to wide text buttons ("Abbrechen" / "Updaten") is no
+/// longer cut off.
+class _IonIosToolbarLayout extends StatelessWidget {
+  const _IonIosToolbarLayout({this.leading, required this.middle, this.trailing});
+
+  final Widget? leading;
+  final Widget middle;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomMultiChildLayout(
+      delegate: _IonIosToolbarDelegate(Directionality.of(context)),
+      children: [
+        if (leading != null) LayoutId(id: _IonToolbarSlot.leading, child: leading!),
+        LayoutId(id: _IonToolbarSlot.middle, child: middle),
+        if (trailing != null) LayoutId(id: _IonToolbarSlot.trailing, child: trailing!),
+      ],
+    );
+  }
+}
+
+enum _IonToolbarSlot { leading, middle, trailing }
+
+class _IonIosToolbarDelegate extends MultiChildLayoutDelegate {
+  _IonIosToolbarDelegate(this.textDirection);
+
+  final TextDirection textDirection;
+
+  static const double _spacing = 8;
+  static const double _ionTitlePadding = 90;
+
+  @override
+  void performLayout(Size size) {
+    final ltr = textDirection == TextDirection.ltr;
+    final loose = BoxConstraints.loose(size);
+    var leadingWidth = 0.0;
+    var trailingWidth = 0.0;
+    if (hasChild(_IonToolbarSlot.leading)) {
+      final s = layoutChild(_IonToolbarSlot.leading, loose.copyWith(minHeight: size.height));
+      leadingWidth = s.width;
+      positionChild(_IonToolbarSlot.leading, Offset(ltr ? 0 : size.width - s.width, 0));
+    }
+    if (hasChild(_IonToolbarSlot.trailing)) {
+      final s = layoutChild(_IonToolbarSlot.trailing, loose.copyWith(minHeight: size.height));
+      trailingWidth = s.width;
+      positionChild(_IonToolbarSlot.trailing, Offset(ltr ? size.width - s.width : 0, 0));
+    }
+    final between = size.width - leadingWidth - trailingWidth - 2 * _spacing;
+    final ionic = size.width - 2 * _ionTitlePadding;
+    final maxWidth = math.max(0.0, math.max(between, ionic));
+    final m = layoutChild(_IonToolbarSlot.middle, loose.copyWith(maxWidth: maxWidth));
+    var start = (size.width - m.width) / 2;
+    if (m.width > ionic) {
+      // Wider than the Ionic title area (only next to narrow buttons): kept
+      // between the buttons as before.
+      final first = ltr ? leadingWidth : trailingWidth;
+      final last = ltr ? trailingWidth : leadingWidth;
+      final lo = first + _spacing;
+      final hi = size.width - last - _spacing - m.width;
+      start = hi < lo ? lo : start.clamp(lo, hi);
+    }
+    positionChild(_IonToolbarSlot.middle, Offset(start, (size.height - m.height) / 2));
+  }
+
+  @override
+  bool shouldRelayout(_IonIosToolbarDelegate oldDelegate) => oldDelegate.textDirection != textDirection;
+}
+
 /// Toolbar of an Ionic sheet modal (`ion-modal` > `ion-header` >
 /// `ion-toolbar`): title centered on iOS (start-aligned in md mode) with
 /// optional start / end buttons.
@@ -1124,12 +1198,10 @@ class IonSheetHeader extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(kIonModalSheetRadius)),
           ),
-          child: NavigationToolbar(
+          child: _IonIosToolbarLayout(
             leading: _slot(start, ios: true),
             middle: titleWidget,
             trailing: _slot(end, ios: true),
-            centerMiddle: true,
-            middleSpacing: 8,
           ),
         ),
         if (border) const Divider(height: 0.5, thickness: 0.5),
