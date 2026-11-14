@@ -18922,9 +18922,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorksCurrent => 'Current';
 
   @override
-  String get redesignWorksCurrentAllPdf => 'All as PDF';
-
-  @override
   String get redesignWorksCurrentBack => 'Scroll back';
 
   @override

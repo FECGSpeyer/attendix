@@ -23435,10 +23435,6 @@
   "@redesignWorksCurrent": {
     "description": "redesign.works.current"
   },
-  "redesignWorksCurrentAllPdf": "Alle als PDF",
-  "@redesignWorksCurrentAllPdf": {
-    "description": "redesign.works.currentAllPdf"
-  },
   "redesignWorksCurrentBack": "Zurück blättern",
   "@redesignWorksCurrentBack": {
     "description": "redesign.works.currentBack"

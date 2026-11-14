@@ -32,7 +32,6 @@ import 'package:attendix/features/redesign/presentation/widgets/rd_overview.dart
 import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
 import 'package:attendix/features/redesign/presentation/widgets/works/rd_current_works.dart';
 import 'package:attendix/features/redesign/presentation/widgets/works/rd_works_filter_sheet.dart';
-import 'package:attendix/features/songs/data/song_print_service.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/features/songs/presentation/utils/song_utils.dart';
 import 'package:flutter/material.dart';
@@ -167,23 +166,6 @@ const _abend = Song(
 );
 
 /// Bounded pumps: loading spinners never settle.
-/// Builds no PDF: counts the calls and waits for [done].
-class _FakePrintService extends SongPrintService {
-  var calls = 0;
-  var done = Completer<SongPrintResult?>();
-
-  @override
-  Future<SongPrintResult?> printEntries(
-    List<SongPrintEntry> entries,
-    String fileName, {
-    VoidCallback? onMerged,
-  }) {
-    calls++;
-    if (done.isCompleted) done = Completer<SongPrintResult?>();
-    return done.future;
-  }
-}
-
 Future<void> _settle(WidgetTester tester) async {
   for (var i = 0; i < 10; i++) {
     await tester.pump(const Duration(milliseconds: 100));
@@ -605,7 +587,8 @@ void main() {
       final cards = find.byKey(const Key('rd-works-current'));
       expect(find.descendant(of: cards, matching: find.byType(RdCard)), findsNWidgets(2));
       expect(find.descendant(of: cards, matching: find.text('Keine Stimme')), findsOneWidget);
-      expect(find.byKey(const Key('rd-works-current-pdf')), findsOneWidget);
+      // The Termin line has the whole width: no "Alle als PDF" next to it.
+      expect(find.text('Alle als PDF'), findsNothing);
       // Status instead of PDF / Audio badges.
       expect(find.text('Deine Stimme · Aufnahme · Konzert'), findsOneWidget);
       expect(find.text('keine Noten für Klarinette · Kirche'), findsOneWidget);
@@ -680,26 +663,6 @@ void main() {
       for (final type in ['Probe', 'Konzert']) {
         expect(tester.renderObject<RenderParagraph>(find.textContaining(type)).didExceedMaxLines, isFalse, reason: type);
       }
-    });
-
-    testWidgets('Alle als PDF is locked and loading while the PDF is built', (tester) async {
-      _phone(tester);
-      final printer = _FakePrintService();
-      await tester.pumpWidget(_worksApp(Role.player, overrides: [songPrintServiceProvider.overrideWithValue(printer)]));
-      await _settle(tester);
-
-      final link = find.byKey(const Key('rd-works-current-pdf'));
-      await tester.tap(link);
-      await tester.pump();
-      expect(printer.calls, 1);
-      expect(link, findsNothing);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-      printer.done.complete(const SongPrintResult(pageCount: 1, skipped: 0));
-      await _settle(tester);
-      await tester.tap(link);
-      await tester.pump();
-      expect(printer.calls, 2);
     });
 
     testWidgets('category chips and search filter the list', (tester) async {

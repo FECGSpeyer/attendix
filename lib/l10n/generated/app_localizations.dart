@@ -30180,12 +30180,6 @@ abstract class AppLocalizations {
   /// **'Aktuell'**
   String get redesignWorksCurrent;
 
-  /// redesign.works.currentAllPdf
-  ///
-  /// In de, this message translates to:
-  /// **'Alle als PDF'**
-  String get redesignWorksCurrentAllPdf;
-
   /// redesign.works.currentBack
   ///
   /// In de, this message translates to:

@@ -130,7 +130,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         // switch it on first if it is off (off again in Verwaltung).
         if (isAdmin || (sharingId != null && sharingId.isNotEmpty))
           AppActionSheetAction(value: 'share', icon: Icons.ios_share, label: l10n.generalSettingsShareSongs),
-        // A list of the Werke, not their Noten ("Alle als PDF" at Aktuell).
+        // A list of the Werke, not their Noten.
         AppActionSheetAction(value: 'pdf', icon: Icons.description_outlined, label: l10n.rdWmListPdf),
       ],
     );
