@@ -1273,9 +1273,12 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 ),
             ],
           ),
+          // DAS-02: Ionic `ion-buttons slot="end"` (iOS glass capsule).
           actions: [
             if (_attendance != null && !_notAvailable && !_loadFailed)
-              IconButton(tooltip: context.l10n.protocolSharePdf, icon: Icon(AppIcons.iosShare), onPressed: _sharePdf),
+              ToolbarButtonGroup(children: [
+                IconButton(tooltip: context.l10n.protocolSharePdf, icon: Icon(AppIcons.iosShare), onPressed: _sharePdf),
+              ]),
           ],
         ),
         // Ionic `.protocol-footer`: centered save state above two equal buttons.

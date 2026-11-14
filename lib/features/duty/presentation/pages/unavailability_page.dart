@@ -218,24 +218,25 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
       child: Scaffold(
         appBar: AppBar(
           // Ionic: text button "Zurück" while editing a rule.
-          leadingWidth: editing != null ? 90 : null,
+          // DAS-02: Ionic `ion-buttons` (iOS glass capsule).
+          leadingWidth: editing != null ? (useIosLook(context) ? 120 : 90) : (useIosLook(context) ? 68 : null),
           leading: editing != null
-              ? TextButton(
-                  onPressed: () => setState(() => _editing = null),
-                  child: IonButtonLabel(context.l10n.commonBack),
-                )
-              : IconButton(
-                  icon: Icon(AppIcons.close),
-                  tooltip: context.l10n.commonClose,
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
+              ? ToolbarButtonGroup(children: [
+                  TextButton(
+                    onPressed: () => setState(() => _editing = null),
+                    child: IonButtonLabel(context.l10n.commonBack),
+                  ),
+                ])
+              : IonCloseButton(onPressed: () => Navigator.of(context).pop()),
           title: title,
           actions: [
             if (editing != null)
-              TextButton(
-                onPressed: _saving ? null : _save,
-                child: IonButtonLabel(context.l10n.commonSave, style: const TextStyle(fontWeight: FontWeight.bold)),
-              ),
+              ToolbarButtonGroup(children: [
+                TextButton(
+                  onPressed: _saving ? null : _save,
+                  child: IonButtonLabel(context.l10n.commonSave, style: const TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ]),
           ],
         ),
         body: editing != null ? _buildEditor(editing) : _buildList(),

@@ -303,28 +303,39 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
 
   @override
   Widget build(BuildContext context) {
+    final classic = context.rdSkin == null;
+    final back = TextButton(
+      onPressed: () => setState(() => _preview = false),
+      child: IonButtonLabel(context.l10n.commonBack),
+    );
+    final shuffle = IconButton(
+      icon: Icon(AppIcons.shuffle),
+      tooltip: context.l10n.dutyRedistribute,
+      onPressed: _run,
+    );
     return Scaffold(
       appBar: AppBar(
         // Ionic: text button "Zurück" in the preview step, close icon otherwise.
-        leadingWidth: _preview ? 90 : null,
+        // DAS-02: Ionic `ion-buttons slot="start"` (iOS glass capsule);
+        // the Beta keeps its plain buttons.
+        leadingWidth: classic && useIosLook(context) ? (_preview ? 120 : 68) : (_preview ? 90 : null),
         leading: _preview
-            ? TextButton(
-                onPressed: () => setState(() => _preview = false),
-                child: IonButtonLabel(context.l10n.commonBack),
-              )
-            : IconButton(
-                icon: Icon(AppIcons.close),
-                tooltip: context.l10n.commonCancel,
-                onPressed: () => Navigator.of(context).pop(false),
-              ),
+            ? (classic
+                ? ToolbarButtonGroup(children: [back])
+                : back)
+            : classic
+                ? IonCloseButton(tooltip: context.l10n.commonCancel, onPressed: () => Navigator.of(context).pop(false))
+                : IconButton(
+                    icon: Icon(AppIcons.close),
+                    tooltip: context.l10n.commonCancel,
+                    onPressed: () => Navigator.of(context).pop(false),
+                  ),
         title: Text(_preview ? context.l10n.teamOrgProposal : context.l10n.attListDistributeDuties),
         actions: [
-          if (_preview)
-            IconButton(
-              icon: Icon(AppIcons.shuffle),
-              tooltip: context.l10n.dutyRedistribute,
-              onPressed: _run,
-            ),
+          if (_preview && classic)
+            ToolbarButtonGroup(children: [shuffle])
+          else if (_preview)
+            shuffle,
         ],
       ),
       // P10_SELF_PLAN: Ionic loading messages "Verteile Dienste…" /

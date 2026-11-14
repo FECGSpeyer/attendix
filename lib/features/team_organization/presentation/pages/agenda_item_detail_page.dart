@@ -320,7 +320,16 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
       appBar: AppBar(
         title: Text(_isNew ? l10n.agendaNewTopic : l10n.agendaTopic),
         actions: [
-          if (!_isNew && item != null && isLeader)
+          if (!_isNew && item != null && isLeader && !beta)
+            // DAS-02: Ionic `ion-buttons slot="end"` (iOS glass capsule).
+            ToolbarButtonGroup(children: [
+              IconButton(
+                tooltip: l10n.agendaDeleteTopic,
+                icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
+                onPressed: _delete,
+              ),
+            ])
+          else if (!_isNew && item != null && isLeader)
             IconButton(
               tooltip: l10n.agendaDeleteTopic,
               icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
