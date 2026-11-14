@@ -1,17 +1,12 @@
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../../core/utils/error_message.dart';
-import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/song/song.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../songs/data/song_print_service.dart';
-import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../data/rd_works_logic.dart';
 import '../rd_split_view.dart';
 import '../rd_widgets.dart';
@@ -19,11 +14,9 @@ import '../rd_widgets.dart';
 /// REDESIGN: "Aktuell" of the Werke tab (canvas "Aktuelle Noten im
 /// Werke-Tab", variant A): one row of cards with the Werke of the coming
 /// Termine ([rdCurrentWorkCards]), for members and leads. A tap opens the
-/// Werk page ([rdOpenCurrentWork]), which shows the own part on top;
-/// "Alle als PDF" puts all own parts (without a group the scores) into one
-/// PDF.
+/// Werk page ([rdOpenCurrentWork]), which shows the own part on top.
 /// On the desktop (list next to the Werk) ‹ › page through the row.
-class RdCurrentWorksStrip extends ConsumerStatefulWidget {
+class RdCurrentWorksStrip extends StatefulWidget {
   const RdCurrentWorksStrip({super.key, required this.works, required this.ownGroup, required this.choir});
 
   final List<RdCurrentWork> works;
@@ -34,14 +27,11 @@ class RdCurrentWorksStrip extends ConsumerStatefulWidget {
   final bool choir;
 
   @override
-  ConsumerState<RdCurrentWorksStrip> createState() => _RdCurrentWorksStripState();
+  State<RdCurrentWorksStrip> createState() => _RdCurrentWorksStripState();
 }
 
-class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
+class _RdCurrentWorksStripState extends State<RdCurrentWorksStrip> {
   final _scroll = ScrollController();
-
-  /// "Alle als PDF" is building its PDF (no second one on a double tap).
-  bool _printing = false;
 
   static const double _cardWidth = 136;
   static const double _gap = 10;
@@ -50,33 +40,6 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
   void dispose() {
     _scroll.dispose();
     super.dispose();
-  }
-
-  List<SongPrintEntry> _printable() => [
-    for (final w in widget.works)
-      for (final f in rdCurrentWorkFiles(w.song, widget.ownGroup?.id, choir: widget.choir))
-        if (SongUtils.isPdf(f) || SongUtils.isImage(f)) SongPrintEntry(song: w.song, file: f),
-  ];
-
-  Future<void> _openAll(List<SongPrintEntry> entries) async {
-    if (_printing) return;
-    final l10n = context.l10n;
-    setState(() => _printing = true);
-    try {
-      final date = DateTime.now().toIso8601String().substring(0, 10);
-      final name = widget.ownGroup?.name ?? l10n.redesignWorkScore;
-      final result = await ref.read(songPrintServiceProvider).printEntries(entries, 'Noten_${name}_$date.pdf');
-      if (!mounted || result == null) return;
-      if (result.pageCount == 0) {
-        ToastHelper.showWarning(context, l10n.svcNoPrintableScores);
-      } else if (result.skipped > 0) {
-        ToastHelper.showWarning(context, l10n.songsFlutterFilesSkipped(result.skipped));
-      }
-    } catch (e) {
-      if (mounted) ToastHelper.showError(context, l10n.songsFlutterPrintFailed(friendlyErrorMessage(e)));
-    } finally {
-      if (mounted) setState(() => _printing = false);
-    }
   }
 
   static (int?, DateTime?, String) _eventKey(RdCurrentWork w) => (w.event.attendanceId, w.event.date, w.event.type);
@@ -93,7 +56,6 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
     final p = context.rd;
     final l10n = context.l10n;
     final desktop = RdSplitScope.of(context) != null;
-    final printable = _printable();
     // All cards for one Termin: it is named once above the row; otherwise
     // the first card of each Termin names it.
     final events = widget.works.map(_eventKey).toSet();
@@ -137,20 +99,6 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
                 ],
               ),
             ),
-            if (printable.isNotEmpty)
-              _printing
-                  ? Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: SizedBox.square(
-                      dimension: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: p.link),
-                    ),
-                  )
-                  : RdTextLink(
-                    key: const Key('rd-works-current-pdf'),
-                    label: l10n.redesignWorksCurrentAllPdf,
-                    onTap: () => _openAll(printable),
-                  ),
             if (desktop && widget.works.length > 2) ...[
               IconButton(
                 tooltip: l10n.redesignWorksCurrentBack,
