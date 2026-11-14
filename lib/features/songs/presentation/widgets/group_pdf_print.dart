@@ -7,6 +7,8 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/adaptive/ion_loading.dart' show IonLoadingBox;
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../data/song_print_service.dart';
 import '../utils/song_utils.dart';
 
@@ -184,6 +186,10 @@ class PrintLoadingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin == null) {
+      // WER-19: the shared Ionic `ion-loading` box.
+      return PopScope(canPop: false, child: IonLoadingBox(message: message));
+    }
     return PopScope(
       canPop: false,
       child: Center(

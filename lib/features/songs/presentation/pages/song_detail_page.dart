@@ -35,6 +35,7 @@ import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../data/song_print_service.dart';
 import '../utils/song_utils.dart';
 import '../widgets/copy_to_tenant_sheet.dart';
+import '../../../../shared/widgets/adaptive/ion_loading.dart';
 import '../widgets/song_form_items.dart';
 import '../../../people/presentation/widgets/ion/ion_widgets.dart' show IonItemDivider;
 import '../widgets/file_drop/file_drop_target.dart';
@@ -349,7 +350,11 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    final ok = await ref.read(songNotifierProvider.notifier).deleteSong(data.song.id!);
+    Future<bool> delete() => ref.read(songNotifierProvider.notifier).deleteSong(data.song.id!);
+    // Ionic: `ion-loading` "Werk wird gelöscht..." (WER-19).
+    final ok = context.rdSkin == null
+        ? await withIonLoading(context, delete, message: context.l10n.songsDeleting)
+        : await delete();
     if (!mounted) return;
     if (ok) {
       // Beta: back to the Werke of the new design, not the old list.
@@ -1231,10 +1236,16 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
 
   bool get _isIos => !kIsWeb && Platform.isIOS;
 
-  Future<void> _run(Future<void> Function() action) async {
+  /// [loading]: Ionic `ion-loading` with this message while [action] runs
+  /// (classic design; the Beta keeps the progress line only).
+  Future<void> _run(Future<void> Function() action, {String? loading}) async {
     setState(() => _busy = true);
     try {
-      await action();
+      if (loading != null && context.rdSkin == null) {
+        await withIonLoading<void>(context, action, message: loading);
+      } else {
+        await action();
+      }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterErrorWith(friendlyErrorMessage(e)));
     } finally {
@@ -1326,7 +1337,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
       await (await ref.read(readySongFileServiceProvider.future)).deleteAllFiles(songId: song.id!);
       await widget.onClearInstrumentIds();
       widget.onChanged();
-    });
+    }, loading: context.l10n.songsDeletingFiles);
   }
 
   /// Ionic `printSongFiles`: group PDFs with copies per player count
@@ -1532,7 +1543,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
               .read(telegramServiceProvider)
               .sendDocumentPerTelegram(url: file.url, chatId: telegramChatId!);
           if (mounted) ToastHelper.showSuccess(context, context.l10n.songsFlutterTelegramSent);
-        });
+        }, loading: context.l10n.songsSendingFile);
       case 'delete':
         final ok = await DialogHelper.showConfirmation(
           context,
