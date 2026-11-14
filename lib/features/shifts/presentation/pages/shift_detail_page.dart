@@ -14,6 +14,7 @@ import '../../../../data/models/shift/shift_instance.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../widgets/copy_shift_to_tenant_sheet.dart';
+import '../../../settings/presentation/widgets/settings_list.dart' as sl;
 import '../widgets/shift_preview_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
@@ -222,18 +223,21 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
   /// Ionic intro `ion-card`: time icon header, intro text and the danger
   /// warning label.
   Widget _buildIntroCard(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+    // EIA-26: the Ionic `ion-card` (shared card box) with the 4rem
+    // `.headerIcon` in both looks.
+    final ios = sl.ionIsIos(context);
+    return sl.IonCardBox(
+      margin: EdgeInsets.fromLTRB(sl.ionListMargin(context), 12, sl.ionListMargin(context), 16),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Icon(AppIcons.schedule, size: 64, color: AppColors.medium),
+            Icon(AppIcons.schedule, size: 64, color: ios ? sl.IonIos.text(context) : AppColors.medium),
             const SizedBox(height: 16),
             Text(
               context.l10n.shiftsEditIntro,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, color: AppColors.medium),
+              style: const TextStyle(fontSize: 14),
             ),
             const SizedBox(height: 16),
             Text(
@@ -250,81 +254,96 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
   /// `ion-label > p`: small grey label.
   Widget _pLabel(String text) => Text(text, style: const TextStyle(fontSize: 14, color: AppColors.medium));
 
-  Widget _sectionHeader(String title, {VoidCallback? onAdd, String? addTooltip}) => IonListHeader(
-        title: title,
-        padding: const EdgeInsets.fromLTRB(16, 14, 4, 2),
-        trailing: onAdd == null
-            ? null
-            : IconButton(
-                icon: Icon(AppIcons.add),
-                color: AppColors.primary,
-                tooltip: addTooltip,
-                onPressed: onAdd,
-              ),
-      );
-
   static const _line = Divider(height: 1, indent: 16);
 
   Widget _buildList(BuildContext context, ShiftPlan shift, int usageCount) {
     final isUsed = usageCount > 0;
-    return IonInsetList(
-      dividerIndent: null,
-      children: [
-        // General
-        _sectionHeader(context.l10n.generalSettingsGeneral),
-        IonStackedInput(
-          controller: _nameController,
-          label: context.l10n.typeSettingsName,
-          onChanged: (_) => _markChanged(),
-        ),
-        _line,
-        IonStackedInput(
-          controller: _descriptionController,
-          label: context.l10n.tasksDescription,
-          onChanged: (_) => _markChanged(),
-        ),
-        _line,
-
-        // Definition
-        _sectionHeader(context.l10n.shiftsDefinition,
-            onAdd: _addSegment, addTooltip: context.l10n.shiftsFlutterAddSegment),
-        if (_definitions.isEmpty) ...[
-          ListTile(title: Text(context.l10n.shiftsNoShifts)),
-          _line,
-        ] else ...[
-          for (var i = 0; i < _definitions.length; i++) ..._buildSegment(context, i),
-          ListTile(
-            title: Text(context.l10n.shiftsExample, style: const TextStyle(color: AppColors.primary)),
-            onTap: () => _showPreview(context, shift, null),
+    Widget addButton(VoidCallback onAdd, String tooltip) => IconButton(
+          icon: Icon(AppIcons.add),
+          color: AppColors.primary,
+          tooltip: tooltip,
+          onPressed: onAdd,
+        );
+    // EIA-05: Ionic three `ion-list-header` + `ion-item-group` pairs, the
+    // headers above the groups (settings inset list look, like the types
+    // page); the rows keep their own Ionic `lines`.
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: sl.ionListMargin(context)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          sl.SettingsListSection(
+            title: context.l10n.generalSettingsGeneral,
+            icons: false,
+            children: [
+              IonStackedInput(
+                controller: _nameController,
+                label: context.l10n.typeSettingsName,
+                onChanged: (_) => _markChanged(),
+              ),
+              IonStackedInput(
+                controller: _descriptionController,
+                label: context.l10n.tasksDescription,
+                onChanged: (_) => _markChanged(),
+              ),
+            ],
           ),
-          _line,
+          sl.SettingsListSection(
+            title: context.l10n.shiftsDefinition,
+            icons: false,
+            headerAction: addButton(_addSegment, context.l10n.shiftsFlutterAddSegment),
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (_definitions.isEmpty)
+                    ListTile(title: Text(context.l10n.shiftsNoShifts))
+                  else ...[
+                    for (var i = 0; i < _definitions.length; i++) ..._buildSegment(context, i),
+                    ListTile(
+                      title: Text(context.l10n.shiftsExample, style: const TextStyle(color: AppColors.primary)),
+                      onTap: () => _showPreview(context, shift, null),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
+          sl.SettingsListSection(
+            title: context.l10n.shiftsFixedOptional,
+            icons: false,
+            headerAction: addButton(_addShiftInstance, context.l10n.shiftsFlutterAddShift),
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+                    child: Text(context.l10n.shiftsFixedIntro, style: const TextStyle(fontSize: 14)),
+                  ),
+                  _line,
+                  if (_shifts.isEmpty)
+                    ListTile(title: Text(context.l10n.shiftsNoShifts))
+                  else
+                    for (var i = 0; i < _shifts.length; i++)
+                      _ShiftInstanceTile(
+                        key: ValueKey('shift_$i'),
+                        instance: _shifts[i],
+                        isLast: i == _shifts.length - 1,
+                        // LOGIC_SETTINGS: Ionic disables name/date/remove when the
+                        // plan is used by persons (they reference shift_name).
+                        isUsed: isUsed,
+                        onNameChanged: (name) => _updateShiftName(i, name),
+                        onDateChanged: (date) => _updateShiftDate(i, date),
+                        onDelete: () => _deleteShiftInstance(i),
+                        onShowPreview: () => _showPreview(context, shift, _shifts[i]),
+                      ),
+                ],
+              ),
+            ],
+          ),
         ],
-
-        // Fixed shifts (optional)
-        _sectionHeader(context.l10n.shiftsFixedOptional,
-            onAdd: _addShiftInstance, addTooltip: context.l10n.shiftsFlutterAddShift),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-          child: Text(context.l10n.shiftsFixedIntro, style: const TextStyle(fontSize: 14)),
-        ),
-        _line,
-        if (_shifts.isEmpty)
-          ListTile(title: Text(context.l10n.shiftsNoShifts))
-        else
-          for (var i = 0; i < _shifts.length; i++)
-            _ShiftInstanceTile(
-              key: ValueKey('shift_$i'),
-              instance: _shifts[i],
-              isLast: i == _shifts.length - 1,
-              // LOGIC_SETTINGS: Ionic disables name/date/remove when the
-              // plan is used by persons (they reference shift_name).
-              isUsed: isUsed,
-              onNameChanged: (name) => _updateShiftName(i, name),
-              onDateChanged: (date) => _updateShiftDate(i, date),
-              onDelete: () => _deleteShiftInstance(i),
-              onShowPreview: () => _showPreview(context, shift, _shifts[i]),
-            ),
-      ],
+      ),
     );
   }
 
