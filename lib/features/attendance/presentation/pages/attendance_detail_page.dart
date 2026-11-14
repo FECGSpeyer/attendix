@@ -101,6 +101,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   // Realtime channel - typed for proper cleanup
   RealtimeChannel? _personAttChannel;
 
+  /// The client [_personAttChannel] was opened on. Kept because `ref` can no
+  /// longer be read in [dispose] (flutter_riverpod throws there), and the
+  /// channel has to be removed exactly then.
+  SupabaseClient? _personAttClient;
+
   // Provider subscription - managed separately from realtime
   ProviderSubscription? _providerSubscription;
 
@@ -257,6 +262,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     // TODO(sprint-2c): migrate Realtime channel subscription to a repository
     // or dedicated realtime service. Keeping direct client access for now.
     final supabase = ref.read(supabaseClientProvider);
+    _personAttClient = supabase;
 
     _personAttChannel = supabase
         .channel('person-att-${widget.attendanceId}')
@@ -306,8 +312,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final channel = _personAttChannel;
     if (channel != null) {
       // TODO(sprint-2c): mirror the Realtime channel migration above.
-      final supabase = ref.read(supabaseClientProvider);
-      supabase.removeChannel(channel);
+      // Not `ref.read`: this also runs from dispose(), where ref throws. The
+      // error aborted dispose(), so the channel stayed subscribed and the
+      // page's provider listeners were never closed.
+      _personAttClient?.removeChannel(channel);
       _personAttChannel = null;
     }
   }

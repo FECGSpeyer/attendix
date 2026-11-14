@@ -594,6 +594,9 @@ class IonSearchbar extends StatelessWidget {
                 child: TextField(
                   controller: controller,
                   onChanged: onChanged,
+                  // `ion-searchbar` is an `<input type="search">`: the keyboard's
+                  // return key is the search key, not "Fertig".
+                  textInputAction: TextInputAction.search,
                   style: TextStyle(fontSize: fontSize, color: text),
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(

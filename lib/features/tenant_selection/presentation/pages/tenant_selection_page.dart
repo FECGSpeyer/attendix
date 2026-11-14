@@ -547,6 +547,10 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
           : AppBar(
               // SEL-13: Ionic toolbar buttons (iOS glass capsules).
               leading: ToolbarButtonGroup(children: [addButton]),
+              // The glass capsule needs 12 + 48 + 12; in the default 56 it
+              // was squeezed to 32 and the "+" was cut off.
+              leadingWidth:
+                  useIosLook(context) && context.rdSkin == null ? 72 : null,
               title: Text(title),
               actions: [
                 ToolbarButtonGroup(children: [

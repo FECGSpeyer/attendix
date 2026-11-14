@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/theme/redesign/rd_theme.dart';
 
@@ -203,7 +204,7 @@ class _IosCardModalFrame extends StatelessWidget {
         context.rdSkin?.bg ??
         theme.colorScheme.surface;
 
-    return Stack(
+    final frame = Stack(
       children: [
         // Presenting page on the black body.
         Positioned.fill(
@@ -331,6 +332,18 @@ class _IosCardModalFrame extends StatelessWidget {
           ),
         ),
       ],
+    );
+    // Ionic `setCardStatusBarDark` (modal.tsx, phones only): while a card
+    // modal is open the status bar sits on the black body, so its clock and
+    // icons turn white. Without it they stayed dark and could not be read
+    // in the native app.
+    if (snapshot == null || size.width >= 768) return frame;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
+      ),
+      child: frame,
     );
   }
 }

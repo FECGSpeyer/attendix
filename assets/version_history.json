@@ -1,6 +1,18 @@
 {
   "versions": [
     {
+      "version": "0.147.1",
+      "date": "14.11.2026",
+      "changes": [
+        "🐛 iPhone-App (klassisches Design): Uhrzeit und Symbole in der Statuszeile bleiben lesbar, solange ein Karten-Fenster offen ist",
+        "🐛 Suchfelder (klassisches Design): die Tastatur zeigt die Suchen-Taste statt „Fertig“",
+        "🐛 Handy im Querformat (klassisches Design): Inhalte liegen nicht mehr unter Notch oder Dynamic Island",
+        "🐛 Instanzen-Seite (klassisches Design, iOS-Look): der Plus-Knopf oben links ist nicht mehr abgeschnitten",
+        "🐛 Termin-Seite: beim Schließen wird die Live-Aktualisierung wieder sauber abgemeldet (vorher blieb sie bei jedem geöffneten Termin offen)",
+        "🐛 iOS- und Android-App: das Startbild zeigt das App-Logo wie in der alten App statt einer leeren Fläche"
+      ]
+    },
+    {
       "version": "0.147.0",
       "date": "14.11.2026",
       "changes": [
