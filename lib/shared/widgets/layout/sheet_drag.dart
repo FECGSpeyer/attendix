@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/redesign/rd_theme.dart';
@@ -66,6 +67,9 @@ class AppDraggableSheet extends StatefulWidget {
 class _AppDraggableSheetState extends State<AppDraggableSheet> {
   final _controller = DraggableScrollableController();
 
+  /// How far above the minimum extent a drag stops (see [_dragUpdate]).
+  static const double _closeEpsilon = 0.002;
+
   @override
   void dispose() {
     _controller.dispose();
@@ -86,9 +90,15 @@ class _AppDraggableSheetState extends State<AppDraggableSheet> {
   void _dragUpdate(DragUpdateDetails details) {
     if (!_controller.isAttached) return;
     final pixels = _controller.pixels - details.delta.dy;
-    _controller.jumpTo(_controller
-        .pixelsToSize(pixels)
-        .clamp(widget.minChildSize, widget.maxChildSize));
+    // Never all the way to the minimum while the finger is down: at the
+    // minimum extent the Material BottomSheet pops the route by itself
+    // (past PopScope), and [_dragEnd] would then pop the page underneath
+    // as well. Closing is decided in [_dragEnd] only.
+    final floor = widget.shouldCloseOnMinExtent && context.rdSkin == null
+        ? math.min(widget.minChildSize + _closeEpsilon, widget.maxChildSize)
+        : widget.minChildSize;
+    _controller.jumpTo(
+        _controller.pixelsToSize(pixels).clamp(floor, widget.maxChildSize));
   }
 
   Future<void> _dragEnd(DragEndDetails details) async {
@@ -103,7 +113,7 @@ class _AppDraggableSheetState extends State<AppDraggableSheet> {
       target = stops.lastWhere((s) => s < size - 0.02, orElse: () => -1);
     } else if (velocity < -700) {
       target = stops.firstWhere((s) => s > size + 0.02, orElse: () => stops.last);
-    } else if (size <= widget.minChildSize + 0.001 ||
+    } else if (size <= widget.minChildSize + 2 * _closeEpsilon ||
         size < (widget.minChildSize + stops.first) / 2) {
       target = -1;
     } else {
@@ -112,7 +122,10 @@ class _AppDraggableSheetState extends State<AppDraggableSheet> {
     if (target < 0) {
       // Closed – unless the sheet may not close right now (busy, PopScope):
       // then it returns to its first stop.
+      // Only this sheet's own route: if it is already closing, a second
+      // pop would take the page underneath with it.
       final closed = widget.shouldCloseOnMinExtent &&
+          (ModalRoute.of(context)?.isCurrent ?? true) &&
           await Navigator.of(context).maybePop();
       if (closed || !mounted || !_controller.isAttached) return;
       target = stops.first;

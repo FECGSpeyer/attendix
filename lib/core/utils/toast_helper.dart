@@ -430,6 +430,8 @@ class _IonMdToastState extends State<IonMdToast>
     );
   }
 
+  bool _actionDone = false;
+
   Future<void> _dismiss() async {
     _timer?.cancel();
     if (!mounted) return;
@@ -501,6 +503,10 @@ class _IonMdToastState extends State<IonMdToast>
                       ? (glass ? glassText : textColor)
                       : AppColors.primary,
                   onPressed: () {
+                    // Once only: the button stays hittable while the
+                    // toast fades out.
+                    if (_actionDone) return;
+                    _actionDone = true;
                     _dismiss();
                     action.onPressed();
                   },

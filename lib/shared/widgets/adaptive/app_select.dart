@@ -473,8 +473,12 @@ class _SelectPopoverRoute<T> extends PopupRoute<AppSelection<T>> {
     final left = preferredLeft
         .clamp(margin, math.max(margin, overlaySize.width - w - margin))
         .toDouble();
-    final spaceBelow =
-        overlaySize.height - anchor.bottom - media.padding.bottom - margin;
+    // Above an open keyboard (a select does not take the focus away from
+    // a text field).
+    final spaceBelow = overlaySize.height -
+        anchor.bottom -
+        math.max(media.padding.bottom, media.viewInsets.bottom) -
+        margin;
     final spaceAbove = anchor.top - media.padding.top - margin;
     // global.scss: `ion-select-popover ion-list { max-height: 23rem }`.
     const listMax = 368.0;
@@ -1037,7 +1041,13 @@ Widget? _selectedChild<T>(
   DropdownButtonBuilder? selectedItemBuilder,
 ) {
   if (items == null) return null;
-  final index = items.indexWhere((i) => i.value == value);
+  // Like Material's DropdownButton: no value = no selection, unless an
+  // enabled option really has the value null (a "Keine" option of a
+  // nullable select) – a disabled caption item never counts.
+  var index = items.indexWhere((i) => i.enabled && i.value == value);
+  if (index < 0 && value != null) {
+    index = items.indexWhere((i) => i.value == value);
+  }
   if (index < 0) return null;
   if (selectedItemBuilder != null) {
     final built = selectedItemBuilder(context);

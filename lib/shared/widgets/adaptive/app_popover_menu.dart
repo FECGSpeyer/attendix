@@ -1121,6 +1121,8 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
               // md (`alignment="start"`): top aligned with the row.
               rowTop: rowRect.top,
               rowCenter: ios ? rowRect.center.dy : null,
+              safeTop: MediaQuery.paddingOf(context).top + _margin,
+              safeBottom: MediaQuery.paddingOf(context).bottom + _margin,
               maxHeight:
                   ios
                       ? math.max(120.0, size.height - 2 * _margin)
@@ -1180,7 +1182,13 @@ class _NestedPopoverLayout extends SingleChildLayoutDelegate {
     required this.rowTop,
     required this.rowCenter,
     required this.maxHeight,
+    this.safeTop = 0,
+    this.safeBottom = 0,
   });
+
+  /// Distance kept to the top / bottom edge (safe area + margin).
+  final double safeTop;
+  final double safeBottom;
 
   final double left;
   final double width;
@@ -1195,10 +1203,16 @@ class _NestedPopoverLayout extends SingleChildLayoutDelegate {
   @override
   Offset getPositionForChild(Size size, Size childSize) {
     final center = rowCenter;
-    final top =
+    final preferred =
         center == null
             ? rowTop
             : center - childSize.height / 2 + kIosNestedPopoverOffset;
+    // Kept on screen: a long submenu opened from an upper row would
+    // otherwise start above the screen with its first entries unreachable
+    // (the card is as tall as its content and does not scroll there).
+    final minTop = math.min(safeTop, math.max(0.0, size.height - childSize.height));
+    final maxTop = math.max(minTop, size.height - childSize.height - safeBottom);
+    final top = preferred.clamp(minTop, maxTop).toDouble();
     return Offset(left, top);
   }
 
@@ -1208,7 +1222,9 @@ class _NestedPopoverLayout extends SingleChildLayoutDelegate {
       old.width != width ||
       old.rowTop != rowTop ||
       old.rowCenter != rowCenter ||
-      old.maxHeight != maxHeight;
+      old.maxHeight != maxHeight ||
+      old.safeTop != safeTop ||
+      old.safeBottom != safeBottom;
 }
 
 class _PopoverCard extends StatelessWidget {
