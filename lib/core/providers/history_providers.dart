@@ -29,7 +29,7 @@ final performanceHistoryProvider = FutureProvider<List<HistoryEntry>>((ref) asyn
 
   final response = await supabase
       .from('history')
-      .select('*, song:songId(name, number), attendance:attendance_id(date)')
+      .select('*, song:songId(name, number, prefix), attendance:attendance_id(date)')
       .eq('tenantId', tenant.id!)
       .eq('visible', true)
       .order('date', ascending: false);
@@ -54,7 +54,10 @@ final performanceHistoryProvider = FutureProvider<List<HistoryEntry>>((ref) asyn
       id: e['id'] as int?,
       songId: songId,
       songName: songData?['name'] as String?,
-      songNumber: songData?['number']?.toString(),
+      // With the Sammlung prefix ("E3"), like everywhere else.
+      songNumber: songData?['number'] == null
+          ? null
+          : '${songData?['prefix'] ?? ''}${songData?['number']}'.trim(),
       personId: personId,
       conductorName: personId != null ? conductorNames[personId] : null,
       otherConductor: e['otherConductor'] as String?,

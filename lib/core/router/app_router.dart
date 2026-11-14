@@ -493,6 +493,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         if (RedesignRoutes.active) {
           final songTarget = RedesignRoutes.oldSongTarget(location);
           if (songTarget != null) return songTarget;
+          // Old start pages and Termin links (typed links, role fallbacks
+          // like `Role.defaultRoute`, back buttons of old pages) open the
+          // pages of the new design instead of the classic ones.
+          final legacyTarget = RedesignRoutes.legacyTarget(location);
+          if (legacyTarget != null) return legacyTarget;
         }
         // REDESIGN: who may open the Termine of the new design.
         final redesignTarget = RedesignRoutes.roleRedirect(location, role);

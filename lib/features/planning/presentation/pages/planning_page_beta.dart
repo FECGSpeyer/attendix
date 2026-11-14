@@ -2014,7 +2014,9 @@ extension _PlanningBeta on _PlanningPageState {
     // action, so here and not on the Termin).
     // Waits for the Terminarten on a direct entry (not loaded yet).
     var types = const <AttendanceType>[];
-    if (ref.read(effectiveRoleProvider).isAdmin) {
+    // Ionic isAdmin: Admin and Verantwortliche (both edit Terminarten).
+    final role = ref.read(effectiveRoleProvider);
+    if (role.isAdmin || role.isResponsible) {
       try {
         types = await ref.read(attendanceTypesProvider.future);
       } catch (_) {}

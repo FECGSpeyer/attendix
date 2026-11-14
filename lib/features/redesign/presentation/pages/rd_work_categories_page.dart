@@ -62,7 +62,8 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
     final name = await _askName(title: l10n.songsAddCategory);
     if (name == null || !_stillIn(tenantId)) return;
     final created = await notifier.add(name, stillValid: () => _stillIn(tenantId));
-    if (created != null && mounted) ToastHelper.showSuccess(context, l10n.songsCategoryAdded);
+    if (!mounted || !_stillIn(tenantId)) return;
+    _report(created != null, l10n.songsCategoryAdded);
   }
 
   Future<void> _actions(SongCategory category) async {
@@ -87,7 +88,7 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
       final name = await _askName(title: l10n.songsEditCategory, initial: category.name);
       if (name == null || !_stillIn(tenantId)) return;
       final ok = await notifier.update(category.id!, name);
-      if (ok && mounted) ToastHelper.showSuccess(context, l10n.songsCategorySaved);
+      if (mounted) _report(ok, l10n.songsCategorySaved);
     } else {
       final confirmed = await showAppConfirm(
         context,
@@ -98,7 +99,17 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
       );
       if (!confirmed || !_stillIn(tenantId)) return;
       final ok = await notifier.delete(category.id!);
-      if (ok && mounted) ToastHelper.showSuccess(context, l10n.songsCategoryDeleted);
+      if (mounted) _report(ok, l10n.songsCategoryDeleted);
+    }
+  }
+
+  /// Success toast, or an error toast when the notifier reported a failure
+  /// (it swallows the error, so the page would otherwise stay silent).
+  void _report(bool ok, String success) {
+    if (ok) {
+      ToastHelper.showSuccess(context, success);
+    } else {
+      ToastHelper.showError(context, context.l10n.collectionsSaveFailed);
     }
   }
 

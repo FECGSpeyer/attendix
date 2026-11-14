@@ -230,6 +230,18 @@ class RedesignRoutes {
     return uri.replace(path: target).toString();
   }
 
+  /// Old locations that have a page of the new design while it is on:
+  /// `/attendance/:id`, `/attendance`, `/signout`, `/people` (via
+  /// [betaTarget]) and the old settings start page `/settings` (→ Ich).
+  /// Null for every other location (sub pages like `/people/:id` or
+  /// `/settings/…` stay, the new design still opens some of them).
+  static String? legacyTarget(String location) {
+    if (!active) return null;
+    if (location == '/settings') return me;
+    final target = betaTarget(location);
+    return target == location ? null : target;
+  }
+
   /// The old song page while the new design is on: `/settings/songs/:id`
   /// and `/songs-tab/:id` open the Werk page, `/settings/songs/:id/edit`
   /// "Werk bearbeiten" (links from the old pages, e.g. "Alle Details" of a

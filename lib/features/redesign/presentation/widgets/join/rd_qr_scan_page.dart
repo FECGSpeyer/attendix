@@ -71,25 +71,38 @@ class _QrScanPageState extends State<_QrScanPage> {
               text: l10n.redesignJoinScanNoCamera,
             ),
           ),
-          Center(
-            child: Container(
-              width: 240,
-              height: 240,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 3),
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 24,
-            right: 24,
-            bottom: 32,
-            child: Text(
-              _wrongCode ? l10n.redesignJoinScanWrong : l10n.redesignJoinScanHint,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-            ),
+          // Frame and hint only while the camera works; without a camera
+          // the error message stands alone.
+          ValueListenableBuilder<MobileScannerState>(
+            valueListenable: _controller,
+            builder: (context, state, _) {
+              if (state.error != null) return const SizedBox.shrink();
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 240,
+                      height: 240,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white, width: 3),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 24,
+                    right: 24,
+                    bottom: 32,
+                    child: Text(
+                      _wrongCode ? l10n.redesignJoinScanWrong : l10n.redesignJoinScanHint,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),

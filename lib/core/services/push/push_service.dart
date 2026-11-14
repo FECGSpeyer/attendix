@@ -545,16 +545,19 @@ class PushService {
   }
 
   /// Ionic togglePush (Einstellungen → Benachrichtigungen).
-  Future<void> togglePush(bool enabled) async {
-    await _setPushEnabled(enabled);
+  /// [rethrowErrors]: the Beta switch springs back when the setting could
+  /// not be stored; the classic page keeps the old silent behaviour.
+  Future<void> togglePush(bool enabled, {bool rethrowErrors = false}) async {
+    await _setPushEnabled(enabled, rethrowErrors: rethrowErrors);
     if (enabled) await initPush();
   }
 
-  Future<void> _setPushEnabled(bool enabled) async {
+  Future<void> _setPushEnabled(bool enabled, {bool rethrowErrors = false}) async {
     try {
       await tokens.setPushEnabled(enabled);
     } catch (e) {
       _log('setPushEnabled failed', e);
+      if (rethrowErrors) rethrow;
     }
   }
 
