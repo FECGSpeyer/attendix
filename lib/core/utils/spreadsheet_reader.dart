@@ -265,5 +265,7 @@ List<int>? buildTemplateXlsx(List<String> headers, List<String> example) {
     padded.add('');
   }
   sheet.appendRow(padded.map((v) => TextCellValue(v)).toList());
-  return excel.save();
+  // encode(): save() also starts a browser download of "FlutterExcel.xlsx"
+  // on the web (WERKE-48: two files for one tap).
+  return excel.encode();
 }
