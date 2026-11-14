@@ -110,7 +110,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     );
     if ((confirmed ?? false) && context.mounted) {
       await ref.read(attendanceNotifierProvider.notifier).deleteAttendance(attendance.id!);
-      ref.invalidate(realtimeAttendanceListProvider);
+      if (mounted) ref.invalidate(realtimeAttendanceListProvider);
     }
   }
 

@@ -431,6 +431,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       if (mounted) setState(() => _templateId = previous);
       return;
     }
+    if (!mounted) return; // TERMINE-22: no ref after the page is gone
     if (id.startsWith('org:')) {
       final org = ref.read(currentOrganisationProvider).valueOrNull;
       final templates = org?.planningTemplates ?? const <Plan>[];
@@ -700,6 +701,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       if (_planId == null) return;
       try {
         await repo.setMySharedPlanOrg(_planId!, null);
+        if (!mounted) return; // TERMINE-22: no ref after the page is gone
         setState(() => _isOrgPlan = false);
         unawaited(_persistLocal());
         ref.invalidate(orgPlansProvider);
@@ -717,6 +719,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     }
     try {
       await repo.setMySharedPlanOrg(_planId!, org!.id);
+      if (!mounted) return; // TERMINE-22: no ref after the page is gone
       setState(() => _isOrgPlan = true);
       unawaited(_persistLocal());
       ref.invalidate(orgPlansProvider);
@@ -1092,7 +1095,8 @@ class _MyPlanTile extends ConsumerWidget {
     if (!ok) return;
     try {
       await planRepo.deleteMySharedPlan(plan.id);
-      ref.invalidate(mySharedPlansProvider);
+      // TERMINE-22: the sheet row may be gone meanwhile.
+      if (context.mounted) ref.invalidate(mySharedPlansProvider);
     } catch (_) {
       if (context.mounted) ToastHelper.showError(context, context.l10n.plansDeleteFailed);
     }

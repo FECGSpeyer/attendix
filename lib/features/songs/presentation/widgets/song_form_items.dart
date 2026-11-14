@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
@@ -89,12 +90,22 @@ class SongStackedInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final decoration =
+    var decoration =
         ionInputDecoration(context, label: label, helperText: helperText, hintText: hintText);
     final pad = decoration.contentPadding?.resolve(TextDirection.ltr);
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 16, top: 4),
-      child: TextField(
+    // WERKE-09: iOS look – like `ion-item` the item line runs under the whole
+    // item (also under the helper text, which keeps a gap to the next
+    // label) in the colour of the other item lines.
+    final iosItem = context.rdSkin == null && useIosLook(context);
+    if (iosItem) {
+      decoration = decoration.copyWith(
+        border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
+      );
+    }
+    final field = TextField(
         controller: controller,
         enabled: enabled,
         onChanged: onChanged,
@@ -108,7 +119,18 @@ class SongStackedInput extends StatelessWidget {
           // The line runs to the row end; the text keeps the item padding.
           contentPadding: EdgeInsets.fromLTRB(0, pad?.top ?? 6, 16, pad?.bottom ?? 10),
         ),
-      ),
+      );
+    if (iosItem) {
+      return Container(
+        margin: const EdgeInsetsDirectional.only(start: 16),
+        padding: EdgeInsets.only(top: 4, bottom: helperText == null ? 0 : 8),
+        decoration: BoxDecoration(border: Border(bottom: songItemLine(context))),
+        child: field,
+      );
+    }
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(start: 16, top: 4),
+      child: field,
     );
   }
 }

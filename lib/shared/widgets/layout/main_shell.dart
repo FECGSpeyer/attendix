@@ -190,6 +190,12 @@ class MainShell extends ConsumerWidget {
     if (location.startsWith('/songs-tab') || location.startsWith('/org-plans-tab')) {
       return destinations.length - 1;
     }
+    // NACHTEST-A-95: Statistiken and Export are windows of "Mehr" (Ionic
+    // settings openStatistics / openExport); opened by address they mark
+    // "Mehr" instead of the first tab.
+    if (location.startsWith('/statistics') || location.startsWith('/export')) {
+      return destinations.length - 1;
+    }
 
     // If current route doesn't match any tab, default to first
     return 0;

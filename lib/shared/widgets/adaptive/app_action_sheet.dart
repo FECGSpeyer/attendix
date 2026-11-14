@@ -18,6 +18,7 @@ class AppActionSheetAction<T> {
     this.color,
     this.enabled = true,
     this.subtitle,
+    this.selected = false,
   });
 
   final String label;
@@ -40,6 +41,12 @@ class AppActionSheetAction<T> {
 
   /// Optional second line (Material only).
   final String? subtitle;
+
+  /// F-EINST-32: Ionic `.action-sheet-selected` – the current value of an
+  /// `ion-select interface="action-sheet"`: bold, in iOS also in the
+  /// button colour (primary; ios27 tints only the other buttons in the
+  /// text colour). The Beta sheets ignore it.
+  final bool selected;
 }
 
 /// IOS_LOOK: `ion-action-sheet`.
@@ -101,6 +108,8 @@ Future<T?> showAppActionSheet<T>(
       elevation: 0,
       barrierColor: const Color(0x33000000),
       showDragHandle: false,
+      // F-EINST-30: not Flutter's German scrim label "Gitter".
+      barrierLabel: context.l10n.commonClose,
       builder: (ctx) => _IosActionSheet<T>(
         title: title,
         message: message,
@@ -116,6 +125,7 @@ Future<T?> showAppActionSheet<T>(
     isScrollControlled: true,
     showDragHandle: false,
     shape: const RoundedRectangleBorder(),
+    barrierLabel: context.l10n.commonClose,
     // PARITY_R3: Ionic md action sheet `--max-width: 500px`, centred.
     constraints: const BoxConstraints(maxWidth: 500),
     builder: (ctx) => _MaterialActionSheet<T>(
@@ -158,9 +168,14 @@ class _IosActionSheet<T> extends StatelessWidget {
           icon: a.icon == null ? null : Icon(a.icon),
           onPressed:
               a.enabled ? () => Navigator.of(context).pop(a.value) : null,
-          child: a.color != null && !a.destructive
-              ? Text(a.label, style: TextStyle(color: a.color))
-              : Text(a.label),
+          child: a.selected && !a.destructive
+              ? Text(a.label,
+                  style: TextStyle(
+                      color: a.color ?? theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold))
+              : a.color != null && !a.destructive
+                  ? Text(a.label, style: TextStyle(color: a.color))
+                  : Text(a.label),
         );
 
     return Padding(
@@ -283,6 +298,7 @@ class _MaterialActionSheet<T> extends StatelessWidget {
       Color? color,
       String? subtitle,
       bool enabled = true,
+      bool selected = false,
       required VoidCallback onTap,
     }) {
       return InkWell(
@@ -306,7 +322,10 @@ class _MaterialActionSheet<T> extends StatelessWidget {
                       children: [
                         Text(label,
                             style: TextStyle(
-                                fontSize: 16, color: color ?? buttonColor)),
+                                fontSize: 16,
+                                color: color ?? buttonColor,
+                                fontWeight:
+                                    selected ? FontWeight.bold : null)),
                         if (subtitle != null)
                           Text(subtitle,
                               style: TextStyle(
@@ -360,6 +379,7 @@ class _MaterialActionSheet<T> extends StatelessWidget {
                   color: a.destructive ? null : a.color,
                   subtitle: a.subtitle,
                   enabled: a.enabled,
+                  selected: a.selected,
                   onTap: () => Navigator.of(context).pop(a.value),
                 ),
               if (cancelLabel != null)

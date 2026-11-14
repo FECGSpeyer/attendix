@@ -195,6 +195,8 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
         label: context.l10n.typeSettingsType,
         builder: (decoration) => AppDropdownFormField<String>(
           interface: AppSelectInterface.alert,
+          // F-EINST-33: Ionic alert header = the select's label "Typ".
+          header: context.l10n.typeSettingsType,
           value: _type,
           decoration: decoration,
           items: [

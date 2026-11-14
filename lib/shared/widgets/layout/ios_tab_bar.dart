@@ -362,7 +362,13 @@ class _TabBarFabState extends State<TabBarFab> {
   @override
   Widget build(BuildContext context) {
     final scope = IosTabBarScope.maybeOf(context);
-    if (scope == null || !useIosLook(context)) return widget.child;
+    if (scope == null || !useIosLook(context)) {
+      // F-EINST-27: the portal is dropped here too (side panel shell at
+      // tablet width, md look); its controller lost its "shown" state with
+      // it, so a later portal needs a fresh one.
+      _controller = null;
+      return widget.child;
+    }
     // Hide while another route (pushed page, sheet, dialog of the shell
     // navigator) lies on top of this page.
     final visible = ModalRoute.of(context)?.isCurrent ?? true;
@@ -378,7 +384,17 @@ class _TabBarFabState extends State<TabBarFab> {
       _controller = null;
       return const SizedBox.shrink();
     }
-    final controller = _controller ??= OverlayPortalController()..show();
+    // F-EINST-27: a disposed OverlayPortal leaves its controller hidden
+    // (OverlayPortalController keeps no "shown" state of its own once it was
+    // attached), and a new portal with that controller stayed hidden for the
+    // rest of the visit – the save button of the Terminart page was gone.
+    // Whenever the page is current, the portal gets a shown controller; a
+    // swapped controller is taken over in OverlayPortal.didUpdateWidget, so
+    // show() is never called during the build.
+    var controller = _controller;
+    if (controller == null || !controller.isShowing) {
+      controller = _controller = OverlayPortalController()..show();
+    }
     return OverlayPortal.targetsRootOverlay(
       controller: controller,
       overlayChildBuilder: (context) => widget.above

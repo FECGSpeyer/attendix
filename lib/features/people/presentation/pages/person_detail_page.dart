@@ -908,6 +908,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
+      // NACHTEST-A-17 (PERSONEN-84): the teacher list counts and the teacher
+      // sheet read playersProvider, not the realtime list – reload it so a
+      // new teacher assignment shows up without an app reload.
+      ref.invalidate(playersProvider);
 
       setState(() {
         _hasChanges = false;

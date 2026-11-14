@@ -1,0 +1,1 @@
+{"bump": "patch", "changes": ["🐛 Klassisches Design: Speichern-Knopf in der Tab-Leiste kommt zuverlässig zurück, Lehrerliste zählt neue Schüler sofort, ungültige Adressen führen zurück zur Liste", "🎨 Klassisches Design: Nacharbeiten aus dem Nachtest (PDF-Ansicht, Speicherbalken, Fenstertitel, Namensvorschläge, Platzhalter, Escape schließt Menüs)"]}

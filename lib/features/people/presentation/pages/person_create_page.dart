@@ -809,7 +809,10 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         icon: AppIcons.cake,
         label: l10n.peopleBirthday,
         value: _birthday,
-        highlight: !_birthdayEdited,
+        // NACHTEST-A-94: Ionic person.page.html:252 colours the row only for
+        // existing persons ('!existingPlayer || correctBirthday' → no
+        // colour), so the add form never shows the warning colour. The
+        // default stays today with correctBirthday false (person.page.ts:37-43).
         onChanged: (d) => setState(() {
           _birthday = d;
           _birthdayEdited = true;

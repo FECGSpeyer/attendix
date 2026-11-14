@@ -55,7 +55,7 @@ class _OpenAttendancePageState extends ConsumerState<OpenAttendancePage> {
       if (tenantId != null && tenantId != ref.read(currentTenantIdProvider)) {
         final tenants = await ref.read(userTenantsProvider.future);
         final tenant = tenants.where((t) => t.id == tenantId).firstOrNull;
-        if (tenant != null) {
+        if (tenant != null && mounted) {
           await ref.read(currentTenantProvider.notifier).setTenant(tenant);
         }
       }

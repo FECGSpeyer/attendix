@@ -13,6 +13,10 @@ import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import 'package:ionicons/ionicons.dart';
+import 'ion/ion_widgets.dart'
+    show IonBadge, IonItem, IonItemDivider, IonText;
 
 /// Same-tenant, account-less people similar to a pending applicant
 /// (Ionic person.page loadDuplicateCandidates).
@@ -109,6 +113,51 @@ class _DuplicateCandidatesCardState
             const [];
     if (matches.isEmpty) return const SizedBox.shrink();
     final groups = ref.watch(groupsMapProvider).valueOrNull ?? const {};
+
+    // PEO-24: Ionic `ion-item-divider` + items with a person icon, h3/p,
+    // a medium `%` badge and a small outlined merge button
+    // (person.html:100-126). Beta keeps its card.
+    if (context.rdSkin == null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          IonItemDivider(text: context.l10n.personSimilarExists),
+          if (_merging) const LinearProgressIndicator(),
+          for (final m in matches)
+            IonItem(
+              start: Icon(Ionicons.personOutline, color: AppColors.medium),
+              end: [
+                IonBadge(
+                  text: '${(m.score * 100).round()}%',
+                  color: AppColors.medium,
+                ),
+                const SizedBox(width: 8),
+                IonButton(
+                  label: context.l10n.personMerge,
+                  fill: IonButtonFill.outline,
+                  small: true,
+                  onPressed:
+                      _merging ? null : () => _confirmMerge(m.candidate),
+                ),
+              ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${m.candidate.firstName} ${m.candidate.lastName}',
+                    style: IonText.h3(context),
+                  ),
+                  if (m.candidate.instrument != null &&
+                      groups[m.candidate.instrument] != null)
+                    Text(groups[m.candidate.instrument]!,
+                        style: IonText.p(context)),
+                  Text(m.reason, style: IonText.p(context)),
+                ],
+              ),
+            ),
+        ],
+      );
+    }
 
     return Card(
       margin: const EdgeInsets.symmetric(

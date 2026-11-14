@@ -2,6 +2,7 @@
 // Ionic handle, the toolbar header in both looks, drag on the header, close
 // at breakpoint 0.
 import 'package:attendix/shared/widgets/dialogs/ion_sheet.dart';
+import 'package:flutter/rendering.dart';
 import 'package:attendix/shared/widgets/layout/sheet_drag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -140,5 +141,24 @@ void main() {
     final full = _size.height - IonBreakpointSheet.topGap;
     expect(_sheetTop(tester), moreOrLessEquals(_size.height - 0.6 * full, epsilon: 1));
     expect(find.byType(IonModalHandle), findsOneWidget);
+  });
+
+  testWidgets('NB-T03: iOS title keeps the Ionic room next to wide text buttons', (tester) async {
+    tester.view.physicalSize = _size;
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(MaterialApp(
+      theme: ThemeData(platform: TargetPlatform.iOS),
+      home: Scaffold(
+        body: IonSheetHeader(
+          title: 'Feld bearb',
+          start: [SizedBox(width: 140, child: TextButton(onPressed: () {}, child: const Text('A')))],
+          end: [SizedBox(width: 140, child: TextButton(onPressed: () {}, child: const Text('U')))],
+        ),
+      ),
+    ));
+    final title = tester.renderObject<RenderParagraph>(find.text('Feld bearb'));
+    expect(title.didExceedMaxLines, isFalse);
+    expect(tester.getCenter(find.text('Feld bearb')).dx, moreOrLessEquals(_size.width / 2, epsilon: 1));
   });
 }
