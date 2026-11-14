@@ -11506,6 +11506,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.';
 
   @override
+  String rdPeopleArchiveTitle(Object name) {
+    return '$name archivieren';
+  }
+
+  @override
   String get rdPeopleCopyHint =>
       'Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv.';
 
@@ -11577,6 +11582,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdPeopleReviewTitle => 'Anfrage prüfen';
+
+  @override
+  String get rdPeopleRoleOwnAdmin =>
+      'Du kannst deine eigene Admin-Rolle nicht entfernen. Bitte lass das einen anderen Admin machen.';
+
+  @override
+  String get rdPeopleRuleHintOther =>
+      'Neue Termine an diesen Tagen werden automatisch als entschuldigt eingetragen. Bei Diensten wird die Person dann nicht eingeteilt.';
 
   @override
   String get rdPeopleTeacherAdd => 'Neuer Lehrer';

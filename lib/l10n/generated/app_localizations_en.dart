@@ -11389,6 +11389,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Only admins and leads of a group in an organisation can search works across the organisation.';
 
   @override
+  String rdPeopleArchiveTitle(Object name) {
+    return 'Archive $name';
+  }
+
+  @override
   String get rdPeopleCopyHint =>
       'The person is created in the target group and stays active here.';
 
@@ -11460,6 +11465,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdPeopleReviewTitle => 'Review request';
+
+  @override
+  String get rdPeopleRoleOwnAdmin =>
+      'You cannot remove your own admin role. Please ask another admin to do it.';
+
+  @override
+  String get rdPeopleRuleHintOther =>
+      'New events on these days are automatically marked as excused. This person will not be assigned to duties then.';
 
   @override
   String get rdPeopleTeacherAdd => 'New teacher';

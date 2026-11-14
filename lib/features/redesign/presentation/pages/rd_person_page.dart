@@ -304,15 +304,19 @@ class _LeftDetails extends ConsumerWidget {
       return d == null ? null : long.format(d);
     }
 
-    Widget block(String title, String value) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: p.text)),
-              const SizedBox(height: 2),
-              Text(value, style: RdType.meta(p, size: 14)),
-            ],
+    // Full width, so a long value starts on the left (like _InfoList).
+    Widget block(String title, String value) => SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: p.text)),
+                const SizedBox(height: 2),
+                Text(value, style: RdType.meta(p, size: 14)),
+              ],
+            ),
           ),
         );
     Widget info(String title, String value) => value.length > 28 || value.contains('\n')
@@ -333,7 +337,7 @@ class _LeftDetails extends ConsumerWidget {
           l10n.redesignPersonPaused,
           pausedUntil == null ? l10n.redesignPersonPausedOpen : l10n.redesignMembersPausedUntil(long.format(pausedUntil)),
         ),
-      if (date(person.birthday) case final v?) info(l10n.redesignPersonBirthday, v),
+      if (date(person.correctBirthday ? person.birthday : null) case final v?) info(l10n.redesignPersonBirthday, v),
       if (date(person.joined) case final v?) info(l10n.redesignPersonJoined, v),
       if (date(person.playsSince) case final v?) info(l10n.personPlaysSince, v),
       if (text(person.range) case final v?) info(l10n.personVocalRange, v),
@@ -577,7 +581,8 @@ class _InfoList extends ConsumerWidget {
     final long = DateFormat.yMMMd(locale);
     final rows = <Widget>[];
 
-    final birthday = DateTime.tryParse(person.birthday ?? '');
+    // A placeholder birthday (correctBirthday false) is not shown.
+    final birthday = person.correctBirthday ? DateTime.tryParse(person.birthday ?? '') : null;
     if (birthday != null) {
       final days = rdDaysToBirthday(person.birthday);
       final when = switch (days) {
@@ -762,7 +767,7 @@ class _ArchiveDialogState extends State<_ArchiveDialog> {
     final p = context.rd;
     final l10n = context.l10n;
     return AlertDialog(
-      title: Text(l10n.peopleArchiveTitle(widget.name)),
+      title: Text(l10n.rdPeopleArchiveTitle(widget.name)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

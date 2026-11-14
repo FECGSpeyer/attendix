@@ -18553,6 +18553,12 @@ abstract class AppLocalizations {
   /// **'Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.'**
   String get rdOrgWorksNoPermission;
 
+  /// rdPeople.archiveTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{name} archivieren'**
+  String rdPeopleArchiveTitle(Object name);
+
   /// rdPeople.copyHint
   ///
   /// In de, this message translates to:
@@ -18672,6 +18678,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Anfrage prüfen'**
   String get rdPeopleReviewTitle;
+
+  /// rdPeople.roleOwnAdmin
+  ///
+  /// In de, this message translates to:
+  /// **'Du kannst deine eigene Admin-Rolle nicht entfernen. Bitte lass das einen anderen Admin machen.'**
+  String get rdPeopleRoleOwnAdmin;
+
+  /// rdPeople.ruleHintOther
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Termine an diesen Tagen werden automatisch als entschuldigt eingetragen. Bei Diensten wird die Person dann nicht eingeteilt.'**
+  String get rdPeopleRuleHintOther;
 
   /// rdPeople.teacherAdd
   ///

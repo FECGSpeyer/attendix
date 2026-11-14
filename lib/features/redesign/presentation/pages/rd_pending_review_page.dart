@@ -566,16 +566,20 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
 
     // Short values at the end of the row; long or multi-line ones (a note,
     // a text Zusatzfeld) in full below the label, so nothing is cut off.
-    Widget block(String title, String value, {Key? key}) => Padding(
+    // Full width, so the block starts on the left (not centred).
+    Widget block(String title, String value, {Key? key}) => SizedBox(
           key: key,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: p.text)),
-              const SizedBox(height: 2),
-              Text(value, style: RdType.meta(p, size: 14)),
-            ],
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: p.text)),
+                const SizedBox(height: 2),
+                Text(value, style: RdType.meta(p, size: 14)),
+              ],
+            ),
           ),
         );
     Widget info(String title, String value, {Key? key}) => value.length > 28 || value.contains('\n')

@@ -21,6 +21,7 @@ import '../../../../../data/repositories/profile_repository.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../people/person_write.dart' show organisationPersonKey, personUtcMidnightIso;
+import '../../../../people/presentation/pages/person_detail_page.dart' show personProvider;
 import '../../../../people/presentation/widgets/church_picker_sheet.dart';
 import '../../../../people/presentation/widgets/pause_person_sheet.dart' show buildPauseHistoryText;
 import '../../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
@@ -83,6 +84,11 @@ mixin RdMemberBulkActions<T extends ConsumerStatefulWidget> on ConsumerState<T> 
       ..invalidate(leftPlayersProvider)
       ..invalidate(archivedPlayersProvider)
       ..invalidate(sharedPersonFieldValuesProvider);
+    // The person page (and its stats/history, which watch it) of every
+    // changed person; personProvider is kept alive and not realtime.
+    for (final p in persons) {
+      if (p.id != null) container.invalidate(personProvider(p.id!));
+    }
     if (!mounted) return;
     setState(() {
       bulkBusy = false;
@@ -365,6 +371,9 @@ class RdBulkActionBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
+    // A red with contrast on the bar (dark bar in light mode, light bar in
+    // dark mode); the soft status red was barely visible on it.
+    final dangerColor = p.brightness == Brightness.dark ? const Color(0xFFB42318) : const Color(0xFFFCA5A5);
     return Material(
       color: p.text,
       borderRadius: BorderRadius.circular(16),
@@ -395,13 +404,13 @@ class RdBulkActionBar extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const SizedBox(height: 6),
-                            Icon(icon, size: 22, color: danger ? p.absentSoft : p.bg),
+                            Icon(icon, size: 22, color: danger ? dangerColor : p.bg),
                             const SizedBox(height: 3),
                             Text(
                               text,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 12, color: danger ? p.absentSoft : p.bg),
+                              style: TextStyle(fontSize: 12, color: danger ? dangerColor : p.bg),
                             ),
                             const SizedBox(height: 6),
                           ],

@@ -334,7 +334,7 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
                             label: l10n.redesignUnavailabilityAdd,
                             onPressed: _saving ? null : _add,
                           ),
-                          RdListNote(l10n.dutyRuleHint),
+                          RdListNote(widget.forOther ? l10n.rdPeopleRuleHintOther : l10n.dutyRuleHint),
                         ],
                       ],
                     ),

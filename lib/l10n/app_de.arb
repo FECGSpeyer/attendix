@@ -14256,6 +14256,13 @@
   "@rdOrgWorksNoPermission": {
     "description": "rdOrg.worksNoPermission"
   },
+  "rdPeopleArchiveTitle": "{name} archivieren",
+  "@rdPeopleArchiveTitle": {
+    "description": "rdPeople.archiveTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "rdPeopleCopyHint": "Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv.",
   "@rdPeopleCopyHint": {
     "description": "rdPeople.copyHint"
@@ -14347,6 +14354,14 @@
   "rdPeopleReviewTitle": "Anfrage prüfen",
   "@rdPeopleReviewTitle": {
     "description": "rdPeople.reviewTitle"
+  },
+  "rdPeopleRoleOwnAdmin": "Du kannst deine eigene Admin-Rolle nicht entfernen. Bitte lass das einen anderen Admin machen.",
+  "@rdPeopleRoleOwnAdmin": {
+    "description": "rdPeople.roleOwnAdmin"
+  },
+  "rdPeopleRuleHintOther": "Neue Termine an diesen Tagen werden automatisch als entschuldigt eingetragen. Bei Diensten wird die Person dann nicht eingeteilt.",
+  "@rdPeopleRuleHintOther": {
+    "description": "rdPeople.ruleHintOther"
   },
   "rdPeopleTeacherAdd": "Neuer Lehrer",
   "@rdPeopleTeacherAdd": {

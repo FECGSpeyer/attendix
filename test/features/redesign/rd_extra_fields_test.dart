@@ -58,6 +58,8 @@ class _FakeExtraFieldsRepo extends ExtraFieldsRepository {
     required List<ExtraField> definitions,
     List<Object>? churchIds,
     int? songTenantId,
+    Set<String>? previousIds,
+    Map<String, Map<String, String>>? renamedOptions,
   }) async {
     sanitized.add(table);
   }
