@@ -58,6 +58,8 @@ class _OpenAttendancePageState extends ConsumerState<OpenAttendancePage> {
       // `/tabs/attendance/:id`) opens the Termin in its own group, not in
       // whichever group happens to be open.
       if (tenantId == null && attendanceId != null) {
+        // tenant-read-after-await: the lookup searches the user's groups,
+        // not the current one.
         tenantId = await ref
             .read(attendanceRepositoryWithTenantProvider)
             .findTenantIdOfAttendance(
