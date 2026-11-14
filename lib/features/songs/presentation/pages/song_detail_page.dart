@@ -1488,7 +1488,13 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         if (!data.readOnly) AppActionSheetAction(value: 'category', icon: AppIcons.swapHoriz, label: context.l10n.songsChangeCategory),
         if (telegramChatId != null && telegramChatId.isNotEmpty) AppActionSheetAction(value: 'telegram', icon: AppIcons.sendOutlined, label: context.l10n.songsSendTelegram),
         if (!data.readOnly) AppActionSheetAction(value: 'delete', icon: AppIcons.deleteOutline, label: context.l10n.songsDeleteFile, destructive: true),
+        // WER-14: Ionic's last button `{ text: Abbrechen, icon:
+        // 'close-outline', role: 'destructive' }` – red, with its icon, in
+        // the button group (Beta: the separate cancel button).
+        if (context.rdSkin == null)
+          AppActionSheetAction(value: 'cancel', icon: AppIcons.close, label: context.l10n.commonCancel, destructive: true),
       ],
+      showCancel: context.rdSkin != null,
     );
     if (!mounted || action == null) return;
 
