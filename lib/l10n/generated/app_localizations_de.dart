@@ -17945,9 +17945,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanBack => 'Termin';
 
   @override
-  String get redesignPlanBlockItems => 'Punkte im Block';
-
-  @override
   String get redesignPlanBlockName => 'Name des Blocks';
 
   @override
@@ -18152,9 +18149,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanNameHint => 'Name (optional)';
 
   @override
-  String get redesignPlanNewBlock => 'Neuer Block';
-
-  @override
   String get redesignPlanNewPlan => 'Neuer Plan';
 
   @override
@@ -18217,14 +18211,18 @@ class AppLocalizationsDe extends AppLocalizations {
       'Geteilt · zum Ändern oder Beenden tippen';
 
   @override
-  String get redesignPlanQuickAddAdded => 'Hinzugefügt';
+  String get redesignPlanQuickAddBlockCreate => 'Block anlegen';
+
+  @override
+  String get redesignPlanQuickAddBlockHint =>
+      'Danach kommen neue Punkte in diesen Block.';
 
   @override
   String get redesignPlanQuickAddButton => 'Hinzufügen';
 
   @override
   String get redesignPlanQuickAddHint =>
-      'Enter fügt hinzu, danach geht es gleich mit dem nächsten weiter.';
+      'Das Blatt bleibt offen, bis du auf „Fertig“ tippst.';
 
   @override
   String redesignPlanQuickAddInBlock(Object name) {
@@ -18234,6 +18232,37 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get redesignPlanQuickAddInBlockHint =>
       'Neue Punkte kommen ans Ende des Blocks';
+
+  @override
+  String redesignPlanQuickAddMore(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'note': 'Weitere Notiz hinzufügen',
+      'other': 'Weiteren Punkt hinzufügen',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanQuickAddSummary(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Punkte hinzugefügt',
+      one: '1 Punkt hinzugefügt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignPlanQuickAddTarget => 'Neue Punkte kommen';
+
+  @override
+  String get redesignPlanQuickAddTargetBehind => 'hinter den Block';
+
+  @override
+  String redesignPlanQuickAddTargetIn(Object name) {
+    return 'in „$name“';
+  }
 
   @override
   String get redesignPlanRegister => 'Registerprobe';

@@ -21592,10 +21592,6 @@
   "@redesignPlanBack": {
     "description": "redesign.plan.back"
   },
-  "redesignPlanBlockItems": "Punkte im Block",
-  "@redesignPlanBlockItems": {
-    "description": "redesign.plan.blockItems"
-  },
   "redesignPlanBlockName": "Name des Blocks",
   "@redesignPlanBlockName": {
     "description": "redesign.plan.blockName"
@@ -21852,10 +21848,6 @@
   "@redesignPlanNameHint": {
     "description": "redesign.plan.nameHint"
   },
-  "redesignPlanNewBlock": "Neuer Block",
-  "@redesignPlanNewBlock": {
-    "description": "redesign.plan.newBlock"
-  },
   "redesignPlanNewPlan": "Neuer Plan",
   "@redesignPlanNewPlan": {
     "description": "redesign.plan.newPlan"
@@ -21937,15 +21929,19 @@
   "@redesignPlanPublicLinkShared": {
     "description": "redesign.plan.publicLinkShared"
   },
-  "redesignPlanQuickAddAdded": "Hinzugefügt",
-  "@redesignPlanQuickAddAdded": {
-    "description": "redesign.plan.quickAddAdded"
+  "redesignPlanQuickAddBlockCreate": "Block anlegen",
+  "@redesignPlanQuickAddBlockCreate": {
+    "description": "redesign.plan.quickAddBlockCreate"
+  },
+  "redesignPlanQuickAddBlockHint": "Danach kommen neue Punkte in diesen Block.",
+  "@redesignPlanQuickAddBlockHint": {
+    "description": "redesign.plan.quickAddBlockHint"
   },
   "redesignPlanQuickAddButton": "Hinzufügen",
   "@redesignPlanQuickAddButton": {
     "description": "redesign.plan.quickAddButton"
   },
-  "redesignPlanQuickAddHint": "Enter fügt hinzu, danach geht es gleich mit dem nächsten weiter.",
+  "redesignPlanQuickAddHint": "Das Blatt bleibt offen, bis du auf „Fertig“ tippst.",
   "@redesignPlanQuickAddHint": {
     "description": "redesign.plan.quickAddHint"
   },
@@ -21959,6 +21955,37 @@
   "redesignPlanQuickAddInBlockHint": "Neue Punkte kommen ans Ende des Blocks",
   "@redesignPlanQuickAddInBlockHint": {
     "description": "redesign.plan.quickAddInBlockHint"
+  },
+  "redesignPlanQuickAddMore": "{kind, select, note {Weitere Notiz hinzufügen} other {Weiteren Punkt hinzufügen}}",
+  "@redesignPlanQuickAddMore": {
+    "description": "redesign.plan.quickAddMore",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "redesignPlanQuickAddSummary": "{count, plural, one {1 Punkt hinzugefügt} other {{count} Punkte hinzugefügt}}",
+  "@redesignPlanQuickAddSummary": {
+    "description": "redesign.plan.quickAddSummary",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignPlanQuickAddTarget": "Neue Punkte kommen",
+  "@redesignPlanQuickAddTarget": {
+    "description": "redesign.plan.quickAddTarget"
+  },
+  "redesignPlanQuickAddTargetBehind": "hinter den Block",
+  "@redesignPlanQuickAddTargetBehind": {
+    "description": "redesign.plan.quickAddTargetBehind"
+  },
+  "redesignPlanQuickAddTargetIn": "in „{name}“",
+  "@redesignPlanQuickAddTargetIn": {
+    "description": "redesign.plan.quickAddTargetIn",
+    "placeholders": {
+      "name": {}
+    }
   },
   "redesignPlanRegister": "Registerprobe",
   "@redesignPlanRegister": {

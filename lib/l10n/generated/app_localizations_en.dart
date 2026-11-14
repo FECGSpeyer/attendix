@@ -17792,9 +17792,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanBack => 'Event';
 
   @override
-  String get redesignPlanBlockItems => 'Items in the block';
-
-  @override
   String get redesignPlanBlockName => 'Block name';
 
   @override
@@ -17998,9 +17995,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanNameHint => 'Name (optional)';
 
   @override
-  String get redesignPlanNewBlock => 'New block';
-
-  @override
   String get redesignPlanNewPlan => 'New plan';
 
   @override
@@ -18061,14 +18055,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanPublicLinkShared => 'Shared · tap to change or stop';
 
   @override
-  String get redesignPlanQuickAddAdded => 'Added';
+  String get redesignPlanQuickAddBlockCreate => 'Create block';
+
+  @override
+  String get redesignPlanQuickAddBlockHint =>
+      'New items then go into this block.';
 
   @override
   String get redesignPlanQuickAddButton => 'Add';
 
   @override
   String get redesignPlanQuickAddHint =>
-      'Enter adds it, then you can go straight on with the next one.';
+      'The sheet stays open until you tap “Done”.';
 
   @override
   String redesignPlanQuickAddInBlock(Object name) {
@@ -18078,6 +18076,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get redesignPlanQuickAddInBlockHint =>
       'New items go to the end of the block';
+
+  @override
+  String redesignPlanQuickAddMore(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'note': 'Add another note',
+      'other': 'Add another item',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String redesignPlanQuickAddSummary(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items added',
+      one: '1 item added',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignPlanQuickAddTarget => 'New items go';
+
+  @override
+  String get redesignPlanQuickAddTargetBehind => 'behind the block';
+
+  @override
+  String redesignPlanQuickAddTargetIn(Object name) {
+    return 'into “$name”';
+  }
 
   @override
   String get redesignPlanRegister => 'Sectional rehearsal';
