@@ -140,6 +140,8 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
       firstDate: DateTime(now.year - 2),
       lastDate: DateTime(now.year + 5),
       locale: Locale(currentLanguage()),
+      // Ionic: `[showDefaultButtons]="true"` (OK / Abbrechen).
+      overlay: IonDatetimeOverlay.buttons,
     );
     if (picked != null) setState(() => _dueDate = localToday(picked));
   }

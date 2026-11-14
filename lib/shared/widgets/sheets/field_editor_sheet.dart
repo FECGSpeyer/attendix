@@ -205,6 +205,10 @@ class DateEditorSheet {
     DateTime? initialDate,
     DateTime? firstDate,
     DateTime? lastDate,
+    // md look (QUE-27): Ionic `ion-modal.dateModal` with
+    // `<ion-datetime [preferWheel]="true">` (person page date fields).
+    IonDatetimeOverlay overlay = IonDatetimeOverlay.dateModal,
+    bool preferWheel = true,
   }) async {
     final now = DateTime.now();
     return showAppDatePicker(
@@ -212,6 +216,8 @@ class DateEditorSheet {
       initialDate: initialDate ?? now,
       firstDate: firstDate ?? DateTime(1900),
       lastDate: lastDate ?? DateTime(2100),
+      overlay: overlay,
+      preferWheel: preferWheel,
     );
   }
 }

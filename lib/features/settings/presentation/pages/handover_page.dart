@@ -111,6 +111,9 @@ mixin HandoverSelectionLogic<T extends ConsumerStatefulWidget> on ConsumerState<
       firstDate: DateTime(1900),
       lastDate: now,
       locale: Locale(currentLanguage()),
+      // Ionic: `ion-modal.dateModal`, `show-adjacent-days`.
+      overlay: IonDatetimeOverlay.dateModal,
+      showAdjacentDays: true,
     );
     if (picked != null) setState(() => date = picked);
   }

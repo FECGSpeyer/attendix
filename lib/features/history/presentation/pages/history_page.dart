@@ -451,6 +451,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         initialDate: selectedDate,
                         firstDate: DateTime(2000),
                         lastDate: DateTime.now().add(const Duration(days: 365)),
+                        // Ionic: `ion-modal.dateModal` with a wheel datetime.
+                        overlay: IonDatetimeOverlay.dateModal,
+                        preferWheel: true,
                       );
                       if (date != null) {
                         setSheetState(() {

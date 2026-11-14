@@ -1295,6 +1295,7 @@ class _DateAlertState extends State<_DateAlert> {
       initialDate: _value,
       firstDate: widget.firstDate,
       lastDate: widget.lastDate,
+      overlay: IonDatetimeOverlay.buttons, // native date input in Ionic
     );
     if (picked == null || !mounted) return;
     setState(() {

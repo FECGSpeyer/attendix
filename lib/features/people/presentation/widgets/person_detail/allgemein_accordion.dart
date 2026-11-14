@@ -608,6 +608,9 @@ class AllgemeinAccordion extends ConsumerWidget {
             initialDate: currentShiftStart,
             firstDate: DateTime(2000),
             lastDate: DateTime(2100),
+            // Ionic: `ion-datetime-button` with the calendar grid.
+            overlay: IonDatetimeOverlay.button,
+            preferWheel: false,
           );
           if (date != null) {
             onFieldChanged('shiftStart', date.toIso8601String());

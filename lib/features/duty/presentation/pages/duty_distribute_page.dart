@@ -100,6 +100,9 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
       initialDate: from ? _from : _to,
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
+      // Ionic: `[showDefaultButtons]="true"`, doneText `person.done`.
+      overlay: IonDatetimeOverlay.buttons,
+      confirmText: context.l10n.personDone,
     );
     if (picked == null) return;
     setState(() => from ? _from = picked : _to = picked);

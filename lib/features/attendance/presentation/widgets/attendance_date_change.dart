@@ -116,6 +116,9 @@ Future<bool> promptAttendanceDateChange(
           firstDate: DateTime(1900),
           lastDate: DateTime(2200),
           helpText: context.l10n.dateDialogChangeDate,
+          // md look: the alert's native date input (calendar with buttons).
+          overlay: IonDatetimeOverlay.buttons,
+          showTitle: true,
         )
       : await showAppDateAlert(
           context,

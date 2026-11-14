@@ -185,6 +185,8 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
       initialDate: DateTime.tryParse(editing.validUntil ?? '') ?? now,
       firstDate: DateTime(now.year - 1),
       lastDate: DateTime(now.year + 10),
+      // md look: Ionic has a native date input here (calendar with buttons).
+      overlay: IonDatetimeOverlay.buttons,
     );
     if (picked == null) return;
     final iso = '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
