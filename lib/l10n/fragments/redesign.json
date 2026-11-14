@@ -87,7 +87,6 @@
         "sent": "{count, plural, one {Erinnerung an 1 Person gesendet} other {Erinnerung an {count} Personen gesendet}}",
         "partlyFailed": "{sent} gesendet, {failed} fehlgeschlagen",
         "failed": "Senden hat nicht geklappt.",
-        "openLink": "{count} offen",
         "someLink": "{count} erinnern",
         "copied": "Text kopiert"
       },
@@ -251,7 +250,6 @@
         "tabRecord": "Anwesenheit",
         "answers": "Rückmeldungen",
         "invited": "{count} eingeladen",
-        "countNoAnswer": "{count} ohne Antwort",
         "registerEmpty": "{group}: 0 von {count} da.",
         "registerNames": "{count, plural, one {{names} hat abgesagt.} other {{names} haben abgesagt.}}",
         "more": "Alle Details und Bearbeiten",
@@ -359,10 +357,6 @@
         "presentOf": "{present} von {total} · {percent} %",
         "allSettled": "Alles erledigt",
         "archiveHint": "Archivieren unter •••",
-        "countHere": "{count} anwesend",
-        "countLateStarted": "{count} verspätet",
-        "countExcusedStarted": "{count} entschuldigt",
-        "countAbsentStarted": "{count} abwesend",
         "editBasics": "Grunddaten",
         "noPlanYet": "Noch kein Ablauf",
         "planEditShort": "Bearbeiten",
@@ -1712,6 +1706,18 @@
         "yesterday": "Gestern",
         "today": "Heute",
         "tomorrow": "Morgen"
+      },
+      "counters": {
+        "yes": "zugesagt",
+        "excused": "entschuldigt",
+        "excusedShort": "entsch.",
+        "later": "später",
+        "absent": "abwesend",
+        "open": "offen",
+        "here": "anwesend",
+        "late": "verspätet",
+        "noAnswer": "ohne Antwort",
+        "remind": "Erinnern"
       }
     }
   },
@@ -1803,7 +1809,6 @@
         "sent": "{count, plural, one {Reminder sent to 1 person} other {Reminder sent to {count} people}}",
         "partlyFailed": "{sent} sent, {failed} failed",
         "failed": "Sending didn't work.",
-        "openLink": "{count} open",
         "someLink": "remind {count}",
         "copied": "Text copied"
       },
@@ -1967,7 +1972,6 @@
         "tabRecord": "Attendance",
         "answers": "Responses",
         "invited": "{count} invited",
-        "countNoAnswer": "{count} without answer",
         "registerEmpty": "{group}: 0 of {count} there.",
         "registerNames": "{count, plural, one {{names} has signed out.} other {{names} have signed out.}}",
         "more": "All details and editing",
@@ -2075,10 +2079,6 @@
         "presentOf": "{present} of {total} · {percent} %",
         "allSettled": "All done",
         "archiveHint": "Archive via •••",
-        "countHere": "{count} present",
-        "countLateStarted": "{count} late",
-        "countExcusedStarted": "{count} excused",
-        "countAbsentStarted": "{count} absent",
         "editBasics": "Basics",
         "noPlanYet": "No schedule yet",
         "planEditShort": "Edit",
@@ -3428,6 +3428,18 @@
         "yesterday": "Yesterday",
         "today": "Today",
         "tomorrow": "Tomorrow"
+      },
+      "counters": {
+        "yes": "attending",
+        "excused": "excused",
+        "excusedShort": "exc.",
+        "later": "later",
+        "absent": "absent",
+        "open": "open",
+        "here": "present",
+        "late": "late",
+        "noAnswer": "no answer",
+        "remind": "Remind"
       }
     }
   }

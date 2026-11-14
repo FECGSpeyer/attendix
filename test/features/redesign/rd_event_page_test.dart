@@ -270,6 +270,11 @@ RdMember _m(int id, AttendanceStatus status, {int? group = 1, String? changedAt}
     );
 
 /// REDESIGN: a Termin in the new design (canvas D4 Überblick, D5 Anwesenheit).
+/// The answers of a Termin are numbers with their word below; the whole
+/// row is announced as one label ("24 zugesagt · 3 entschuldigt").
+Finder _answers(Pattern label) =>
+    find.byWidgetPredicate((w) => w is Semantics && label.allMatches(w.properties.label ?? '').isNotEmpty);
+
 void main() {
   setUpAll(() async {
     registerFallbackValue(<String, dynamic>{});
@@ -383,9 +388,12 @@ void main() {
     expect(find.text('Probe'), findsOneWidget);
     expect(find.text('Morgen'), findsOneWidget);
     expect(find.text('5 eingeladen'), findsOneWidget);
-    expect(find.text('0 zugesagt'), findsOneWidget);
-    expect(find.text('2 entschuldigt'), findsWidgets);
-    expect(find.text('2 ohne Antwort'), findsOneWidget);
+    // Numbers instead of the bar: zugesagt also at 0, no "abwesend" (0).
+    expect(_answers(RegExp(r'^0 zugesagt$')), findsOneWidget);
+    expect(_answers(RegExp(r'^2 entschuldigt$')), findsOneWidget);
+    expect(_answers(RegExp(r'^2 ohne Antwort$')), findsOneWidget);
+    expect(_answers(RegExp(r'^1 später$')), findsOneWidget);
+    expect(find.text('abwesend'), findsNothing);
     // The day before: answers only, "Anwesenheit eintragen" from the Termin day on.
     expect(find.text('Anwesenheit eintragen'), findsNothing);
     expect(find.text('Offene erinnern (2)'), findsOneWidget);

@@ -728,18 +728,13 @@ class _LeaderEventCard extends StatelessWidget {
                 ],
                 if (!past && c != null && c.total > 0) ...[
                   const SizedBox(height: 8),
-                  RdStatusBar(
-                    total: c.total,
-                    segments: [
-                      RdBarSegment(c.present, p.present),
-                      RdBarSegment(c.lateAnnounced, p.late),
-                      RdBarSegment(c.excused, p.excused),
-                      RdBarSegment(c.absent, p.absent),
-                    ],
+                  // Numbers in fixed columns instead of the bar: the same
+                  // number sits at the same place in every card.
+                  RdStatusCounters(
+                    columns: true,
+                    counters: rdAnswerCounters(context, c),
                     semanticLabel: _countsLine(l10n, c),
                   ),
-                  const SizedBox(height: 6),
-                  Text(_countsLine(l10n, c), style: RdType.meta(p, size: 12)),
                 ],
                 if (past && percentage != null) ...[
                   const SizedBox(height: 4),

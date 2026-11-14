@@ -1,0 +1,4 @@
+{"bump": "minor", "changes": [
+  "✨ Beta: Terminkarten zeigen die Rückmeldungen als Zahlen in festen Spalten statt als Balken, eine 0 bleibt leer",
+  "✨ Beta: „Heute“ und der Überblick im Termin zeigen dieselben Zahlen, jede Zahl im Termin öffnet die gefilterte Anwesenheit"
+]}

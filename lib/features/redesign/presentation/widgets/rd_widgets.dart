@@ -621,6 +621,160 @@ class RdStatusBar extends StatelessWidget {
   }
 }
 
+/// One number of [RdStatusCounters]: "15" over "zugesagt".
+class RdCounter {
+  const RdCounter(
+    this.value,
+    this.label,
+    this.color, {
+    this.shortLabel,
+    this.always = false,
+    this.onTap,
+    this.tapKey,
+  });
+
+  final int value;
+  final String label;
+  final Color color;
+
+  /// Used when the columns are too narrow for [label] ("entsch.").
+  final String? shortLabel;
+
+  /// Shown at 0 as well ("0 zugesagt" is the news then).
+  final bool always;
+  final VoidCallback? onTap;
+  final Key? tapKey;
+
+  bool get visible => always || value > 0;
+}
+
+/// The answers of a Termin as numbers with their word below, instead of
+/// the status bar: a full bar said nothing and one sign-out was a few
+/// pixels. A 0 is left out.
+///
+/// [columns] (lists): every counter keeps its column and a 0 leaves it
+/// empty, so the same number sits at the same place in every card.
+/// Otherwise (a single card) the numbers stand next to each other.
+class RdStatusCounters extends StatelessWidget {
+  const RdStatusCounters({
+    super.key,
+    required this.counters,
+    required this.semanticLabel,
+    this.columns = false,
+  });
+
+  final List<RdCounter> counters;
+  final String semanticLabel;
+  final bool columns;
+
+  static const double _gap = 8;
+  static const double _flowGap = 18;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final labelStyle = RdType.meta(p, size: 11);
+    final tappable = counters.any((c) => c.onTap != null);
+
+    Widget cell(RdCounter c, String label) {
+      final content = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '${c.value}',
+            maxLines: 1,
+            style: TextStyle(
+              fontSize: 17,
+              height: 1.2,
+              fontWeight: FontWeight.w700,
+              color: c.color,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+          Text(label, maxLines: 1, softWrap: false, style: labelStyle),
+        ],
+      );
+      if (c.onTap == null) return content;
+      return Semantics(
+        button: true,
+        label: '${c.value} ${c.label}',
+        excludeSemantics: true,
+        child: InkWell(
+          key: c.tapKey,
+          borderRadius: BorderRadius.circular(8),
+          onTap: c.onTap,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minWidth: 44, minHeight: 40),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              widthFactor: 1,
+              heightFactor: 1,
+              child: content,
+            ),
+          ),
+        ),
+      );
+    }
+
+    final Widget child;
+    if (!columns) {
+      child = Wrap(
+        spacing: _flowGap,
+        runSpacing: 6,
+        children: [
+          for (final c in counters)
+            if (c.visible) cell(c, c.label),
+        ],
+      );
+    } else {
+      child = LayoutBuilder(
+        builder: (context, box) {
+          final scaler = MediaQuery.textScalerOf(context);
+          double width(String text) {
+            final painter = TextPainter(
+              text: TextSpan(text: text, style: labelStyle),
+              textDirection: Directionality.of(context),
+              textScaler: scaler,
+              maxLines: 1,
+            )..layout();
+            final w = painter.width;
+            painter.dispose();
+            return w;
+          }
+
+          // Full words when all columns fit, else the short ones.
+          final full = [for (final c in counters) width(c.label)];
+          final fits = full.fold<double>(0, (a, b) => a + b) + _gap * (counters.length - 1) <= box.maxWidth;
+          final labels = [for (final c in counters) fits ? c.label : c.shortLabel ?? c.label];
+          final widths = fits ? full : [for (final l in labels) width(l)];
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var i = 0; i < counters.length; i++) ...[
+                if (i > 0) const SizedBox(width: _gap),
+                Expanded(
+                  // Each column as wide as its word needs, the rest shared.
+                  flex: (widths[i] * 10).round().clamp(1, 100000),
+                  child: counters[i].visible
+                      ? FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: AlignmentDirectional.centerStart,
+                          child: cell(counters[i], labels[i]),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ],
+          );
+        },
+      );
+    }
+    if (tappable) return child;
+    return Semantics(label: semanticLabel, excludeSemantics: true, child: child);
+  }
+}
+
 /// Date tile of a list row ("SA" over "1").
 class RdDateTile extends StatelessWidget {
   const RdDateTile({

@@ -245,71 +245,61 @@ class _NextEventCard extends ConsumerWidget {
             Text(meta, style: RdType.meta(p, size: 15)),
           ],
           const SizedBox(height: 16),
-          // The counts arrive after the card: bar and line keep their place
+          // The counts arrive after the card: the row keeps its height
           // meanwhile, so nothing below moves under the finger.
           if (id != null) ...[
-            RdStatusBar(
-              total: counts?.total ?? 0,
-              segments: counts == null
-                  ? const []
-                  : [
-                      RdBarSegment(counts.present, p.present),
-                      RdBarSegment(counts.lateAnnounced, p.late),
-                      RdBarSegment(counts.excused, p.excused),
-                      RdBarSegment(counts.absent, p.absent),
-                    ],
-              semanticLabel: counts == null ? l10n.redesignTodayLoading : _countsLine(l10n, counts),
-            ),
-            const SizedBox(height: 8),
             ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 32),
+              constraints: const BoxConstraints(minHeight: 40),
               child: Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: counts == null
                     ? Text(countsFailed ? '' : l10n.redesignTodayLoading, style: RdType.meta(p, size: 13))
-                    : toRemind > 0
-                    ? Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  // "N offen" always counts the open answers; when fewer are
-                  // reminded (stand-ins, another group) the link says so.
-                  Text(
-                    '${_countsLine(l10n, counts, withOpen: toRemind != counts.open)} · ',
-                    style: RdType.meta(p, size: 13),
-                  ),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(8),
-                    onTap: () => showRdRemindOpenSheet(
-                      context,
-                      attendanceId: id,
-                      title: info.title,
-                      when: rdRemindWhen(info.start, hasTime: hasTime),
-                    ),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(minHeight: 32),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    : Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(
-                            toRemind == counts.open
-                                ? l10n.redesignRemindOpenLink(toRemind)
-                                : l10n.redesignRemindSomeLink(toRemind),
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: p.link,
-                              decoration: TextDecoration.underline,
-                              decorationColor: p.link,
+                          Expanded(
+                            child: RdStatusCounters(
+                              counters: rdAnswerCounters(context, counts),
+                              semanticLabel: _countsLine(l10n, counts),
                             ),
                           ),
-                          Icon(Icons.chevron_right, size: 16, color: p.link),
+                          // "offen" always counts the open answers; when
+                          // fewer are reminded (stand-ins, another group)
+                          // the link says how many.
+                          if (toRemind > 0)
+                            InkWell(
+                              key: const Key('rd-today-remind'),
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: () => showRdRemindOpenSheet(
+                                context,
+                                attendanceId: id,
+                                title: info.title,
+                                when: rdRemindWhen(info.start, hasTime: hasTime),
+                              ),
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(minHeight: 40),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      toRemind == counts.open
+                                          ? l10n.redesignCountersRemind
+                                          : l10n.redesignRemindSomeLink(toRemind),
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                        color: p.link,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: p.link,
+                                      ),
+                                    ),
+                                    Icon(Icons.chevron_right, size: 16, color: p.link),
+                                  ],
+                                ),
+                              ),
+                            ),
                         ],
                       ),
-                    ),
-                  ),
-                ],
-              )
-                    : Text(_countsLine(l10n, counts), style: RdType.meta(p, size: 13)),
               ),
             ),
             const SizedBox(height: 16),
@@ -332,12 +322,12 @@ class _NextEventCard extends ConsumerWidget {
     );
   }
 
-  static String _countsLine(AppLocalizations l10n, RdStatusCounts c, {bool withOpen = true}) => [
+  static String _countsLine(AppLocalizations l10n, RdStatusCounts c) => [
         l10n.redesignTodayCountYes(c.present),
         if (c.excused > 0) l10n.redesignTodayCountExcused(c.excused),
         if (c.lateAnnounced > 0) l10n.redesignTodayCountLater(c.lateAnnounced),
         if (c.absent > 0) l10n.redesignTodayCountAbsent(c.absent),
-        if (withOpen) l10n.redesignTodayCountOpen(c.open),
+        if (c.open > 0) l10n.redesignTodayCountOpen(c.open),
       ].join(' · ');
 }
 

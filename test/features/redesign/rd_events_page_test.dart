@@ -172,6 +172,11 @@ void _size(WidgetTester tester, Size size) {
 }
 
 /// REDESIGN: tab "Termine" (canvas D2, S2).
+/// The answers of a Termin are numbers with their word below; the whole
+/// row is announced as one label ("24 zugesagt · 3 entschuldigt").
+Finder _answers(Pattern label) =>
+    find.byWidgetPredicate((w) => w is Semantics && label.allMatches(w.properties.label ?? '').isNotEmpty);
+
 void main() {
   setUpAll(() async {
     await initializeDateFormatting('de_DE');
@@ -278,7 +283,7 @@ void main() {
     expect(find.text('Konzert'), findsOneWidget);
     expect(find.text('Herbstprobe'), findsOneWidget);
     expect(find.text('Vorbei'), findsNothing);
-    expect(find.textContaining('24 zugesagt'), findsOneWidget);
+    expect(_answers(RegExp('^24 zugesagt')), findsOneWidget);
     expect(find.byTooltip('Neuer Termin'), findsOneWidget);
     expect(tester.takeException(), isNull);
 
@@ -481,7 +486,7 @@ void main() {
     await _settle(tester);
 
     // Leader list with answers, plus one chip per own Termin.
-    expect(find.textContaining('24 zugesagt'), findsOneWidget);
+    expect(_answers(RegExp('^24 zugesagt')), findsOneWidget);
     expect(find.text('Du'), findsNWidgets(2));
     expect(_semantics('Deine Antwort: Zugesagt'), findsOneWidget);
     expect(_semantics('Deine Antwort: Offen'), findsOneWidget);

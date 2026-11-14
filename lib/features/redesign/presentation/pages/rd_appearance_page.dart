@@ -157,12 +157,12 @@ class _PreviewCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text('19:30–21:30', style: RdType.meta(p, size: 15)),
             const SizedBox(height: 14),
-            RdStatusBar(
-              total: 34,
-              segments: [
-                RdBarSegment(24, p.present),
-                RdBarSegment(2, p.late),
-                RdBarSegment(3, p.excused),
+            RdStatusCounters(
+              counters: [
+                RdCounter(24, l10n.redesignCountersYes, p.present),
+                RdCounter(3, l10n.redesignCountersExcused, p.excused),
+                RdCounter(2, l10n.redesignCountersLater, p.late),
+                RdCounter(5, l10n.redesignCountersOpen, p.text),
               ],
               semanticLabel: '',
             ),

@@ -21708,6 +21708,66 @@ abstract class AppLocalizations {
   /// **'An wen?'**
   String get redesignComposeTo;
 
+  /// redesign.counters.absent
+  ///
+  /// In de, this message translates to:
+  /// **'abwesend'**
+  String get redesignCountersAbsent;
+
+  /// redesign.counters.excused
+  ///
+  /// In de, this message translates to:
+  /// **'entschuldigt'**
+  String get redesignCountersExcused;
+
+  /// redesign.counters.excusedShort
+  ///
+  /// In de, this message translates to:
+  /// **'entsch.'**
+  String get redesignCountersExcusedShort;
+
+  /// redesign.counters.here
+  ///
+  /// In de, this message translates to:
+  /// **'anwesend'**
+  String get redesignCountersHere;
+
+  /// redesign.counters.late
+  ///
+  /// In de, this message translates to:
+  /// **'verspätet'**
+  String get redesignCountersLate;
+
+  /// redesign.counters.later
+  ///
+  /// In de, this message translates to:
+  /// **'später'**
+  String get redesignCountersLater;
+
+  /// redesign.counters.noAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'ohne Antwort'**
+  String get redesignCountersNoAnswer;
+
+  /// redesign.counters.open
+  ///
+  /// In de, this message translates to:
+  /// **'offen'**
+  String get redesignCountersOpen;
+
+  /// redesign.counters.remind
+  ///
+  /// In de, this message translates to:
+  /// **'Erinnern'**
+  String get redesignCountersRemind;
+
+  /// redesign.counters.yes
+  ///
+  /// In de, this message translates to:
+  /// **'zugesagt'**
+  String get redesignCountersYes;
+
   /// redesign.create.chooseType
   ///
   /// In de, this message translates to:
@@ -22302,47 +22362,17 @@ abstract class AppLocalizations {
   /// **'{count} fehlt'**
   String redesignEventCountAbsent(Object count);
 
-  /// redesign.event.countAbsentStarted
-  ///
-  /// In de, this message translates to:
-  /// **'{count} abwesend'**
-  String redesignEventCountAbsentStarted(Object count);
-
   /// redesign.event.countExcused
   ///
   /// In de, this message translates to:
   /// **'{count} entsch.'**
   String redesignEventCountExcused(Object count);
 
-  /// redesign.event.countExcusedStarted
-  ///
-  /// In de, this message translates to:
-  /// **'{count} entschuldigt'**
-  String redesignEventCountExcusedStarted(Object count);
-
-  /// redesign.event.countHere
-  ///
-  /// In de, this message translates to:
-  /// **'{count} anwesend'**
-  String redesignEventCountHere(Object count);
-
   /// redesign.event.countLate
   ///
   /// In de, this message translates to:
   /// **'{count} später'**
   String redesignEventCountLate(Object count);
-
-  /// redesign.event.countLateStarted
-  ///
-  /// In de, this message translates to:
-  /// **'{count} verspätet'**
-  String redesignEventCountLateStarted(Object count);
-
-  /// redesign.event.countNoAnswer
-  ///
-  /// In de, this message translates to:
-  /// **'{count} ohne Antwort'**
-  String redesignEventCountNoAnswer(Object count);
 
   /// redesign.event.countOpen
   ///
@@ -27929,12 +27959,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'ohne App'**
   String get redesignRemindNoApp;
-
-  /// redesign.remind.openLink
-  ///
-  /// In de, this message translates to:
-  /// **'{count} offen'**
-  String redesignRemindOpenLink(Object count);
 
   /// redesign.remind.partlyFailed
   ///

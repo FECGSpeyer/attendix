@@ -16704,6 +16704,46 @@
   "@redesignComposeTo": {
     "description": "redesign.compose.to"
   },
+  "redesignCountersAbsent": "abwesend",
+  "@redesignCountersAbsent": {
+    "description": "redesign.counters.absent"
+  },
+  "redesignCountersExcused": "entschuldigt",
+  "@redesignCountersExcused": {
+    "description": "redesign.counters.excused"
+  },
+  "redesignCountersExcusedShort": "entsch.",
+  "@redesignCountersExcusedShort": {
+    "description": "redesign.counters.excusedShort"
+  },
+  "redesignCountersHere": "anwesend",
+  "@redesignCountersHere": {
+    "description": "redesign.counters.here"
+  },
+  "redesignCountersLate": "verspätet",
+  "@redesignCountersLate": {
+    "description": "redesign.counters.late"
+  },
+  "redesignCountersLater": "später",
+  "@redesignCountersLater": {
+    "description": "redesign.counters.later"
+  },
+  "redesignCountersNoAnswer": "ohne Antwort",
+  "@redesignCountersNoAnswer": {
+    "description": "redesign.counters.noAnswer"
+  },
+  "redesignCountersOpen": "offen",
+  "@redesignCountersOpen": {
+    "description": "redesign.counters.open"
+  },
+  "redesignCountersRemind": "Erinnern",
+  "@redesignCountersRemind": {
+    "description": "redesign.counters.remind"
+  },
+  "redesignCountersYes": "zugesagt",
+  "@redesignCountersYes": {
+    "description": "redesign.counters.yes"
+  },
   "redesignCreateChooseType": "Art wählen",
   "@redesignCreateChooseType": {
     "description": "redesign.create.chooseType"
@@ -17210,13 +17250,6 @@
       "count": {}
     }
   },
-  "redesignEventCountAbsentStarted": "{count} abwesend",
-  "@redesignEventCountAbsentStarted": {
-    "description": "redesign.event.countAbsentStarted",
-    "placeholders": {
-      "count": {}
-    }
-  },
   "redesignEventCountExcused": "{count} entsch.",
   "@redesignEventCountExcused": {
     "description": "redesign.event.countExcused",
@@ -17224,37 +17257,9 @@
       "count": {}
     }
   },
-  "redesignEventCountExcusedStarted": "{count} entschuldigt",
-  "@redesignEventCountExcusedStarted": {
-    "description": "redesign.event.countExcusedStarted",
-    "placeholders": {
-      "count": {}
-    }
-  },
-  "redesignEventCountHere": "{count} anwesend",
-  "@redesignEventCountHere": {
-    "description": "redesign.event.countHere",
-    "placeholders": {
-      "count": {}
-    }
-  },
   "redesignEventCountLate": "{count} später",
   "@redesignEventCountLate": {
     "description": "redesign.event.countLate",
-    "placeholders": {
-      "count": {}
-    }
-  },
-  "redesignEventCountLateStarted": "{count} verspätet",
-  "@redesignEventCountLateStarted": {
-    "description": "redesign.event.countLateStarted",
-    "placeholders": {
-      "count": {}
-    }
-  },
-  "redesignEventCountNoAnswer": "{count} ohne Antwort",
-  "@redesignEventCountNoAnswer": {
-    "description": "redesign.event.countNoAnswer",
     "placeholders": {
       "count": {}
     }
@@ -21688,13 +21693,6 @@
   "redesignRemindNoApp": "ohne App",
   "@redesignRemindNoApp": {
     "description": "redesign.remind.noApp"
-  },
-  "redesignRemindOpenLink": "{count} offen",
-  "@redesignRemindOpenLink": {
-    "description": "redesign.remind.openLink",
-    "placeholders": {
-      "count": {}
-    }
   },
   "redesignRemindPartlyFailed": "{sent} gesendet, {failed} fehlgeschlagen",
   "@redesignRemindPartlyFailed": {

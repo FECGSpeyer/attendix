@@ -149,6 +149,11 @@ void _size(WidgetTester tester, Size size) {
 
 /// REDESIGN: "Heute" inside the new shell renders without overflow for the
 /// main roles, on a phone and with the sidebar.
+/// The answers of a Termin are numbers with their word below; the whole
+/// row is announced as one label ("24 zugesagt · 3 entschuldigt").
+Finder _answers(Pattern label) =>
+    find.byWidgetPredicate((w) => w is Semantics && label.allMatches(w.properties.label ?? '').isNotEmpty);
+
 void main() {
   // No SharedPreferences mock on purpose: CurrentTenantNotifier's restore
   // then never reaches Supabase (as in ios_shell2_test).
@@ -241,7 +246,7 @@ void main() {
     expect(find.text('Stadtorchester'), findsWidgets);
     expect(find.text('Gesamtprobe'), findsOneWidget);
     expect(find.text('Anwesenheit erfassen'), findsOneWidget);
-    expect(find.textContaining('24 zugesagt'), findsOneWidget);
+    expect(_answers(RegExp('^24 zugesagt')), findsOneWidget);
     expect(find.text('2 neue Anmeldungen'), findsOneWidget);
     expect(find.text('3 Abmeldungen für den nächsten Termin'), findsOneWidget);
     // The week list is gone from Heute: the later Termin is only in Termine.
@@ -270,7 +275,7 @@ void main() {
 
     // "offen" counts every open answer (5); the link whom the sheet
     // reminds (rdOpenPersonsProvider).
-    expect(find.textContaining('5 offen'), findsOneWidget);
+    expect(_answers(RegExp(r'5 offen$')), findsOneWidget);
     await tester.tap(find.text('2 erinnern'));
     await _settle(tester);
     expect(find.text('2 noch offen'), findsOneWidget);
