@@ -369,7 +369,8 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                 child: Column(
                   children: [
                     MessageEditorToolbar(controller: _quill),
-                    const Divider(height: 1),
+                    // The classic toolbar draws its own bottom border.
+                    if (context.rdSkin != null) const Divider(height: 1),
                     ConstrainedBox(
                       constraints: const BoxConstraints(minHeight: 180),
                       child: Padding(

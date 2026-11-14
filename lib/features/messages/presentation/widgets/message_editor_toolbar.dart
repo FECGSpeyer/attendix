@@ -18,6 +18,9 @@ class MessageEditorToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    // EIB-20: the classic design gets Ionic's own glyph toolbar; the Beta
+    // keeps the stock Quill toolbar.
+    if (context.rdSkin == null) return _IonEditorToolbar(controller: controller);
     return QuillSimpleToolbar(
       controller: controller,
       config: QuillSimpleToolbarConfig(
@@ -63,6 +66,175 @@ class MessageEditorToolbar extends StatelessWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Ionic `app-message-editor` `.toolbar`: wrapping row of 34 px text-glyph
+/// buttons "B I U S | H •≡ 1≡ | 🔗 ↶" (radius 6, 15 px text, gap 2,
+/// padding 6), active = primary at 15 % behind primary text, step-50
+/// background with a step-150 bottom border. "H" toggles heading 2.
+class _IonEditorToolbar extends StatelessWidget {
+  const _IonEditorToolbar({required this.controller});
+
+  final QuillController controller;
+
+  static Color _step(BuildContext context, int step) {
+    final scheme = Theme.of(context).colorScheme;
+    return Color.lerp(scheme.surface, scheme.onSurface, step / 1000)!;
+  }
+
+  void _toggle(Attribute attribute, bool active) {
+    controller.formatSelection(active ? Attribute.clone(attribute, null) : attribute);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final line = _step(context, 150);
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        final attrs = controller.getSelectionStyle().attributes;
+        bool has(Attribute a) => attrs[a.key]?.value != null;
+        final list = attrs[Attribute.list.key]?.value;
+        final heading = attrs[Attribute.header.key]?.value != null;
+        Widget sep() => Container(
+              width: 1,
+              height: 22,
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              color: line,
+            );
+        return Semantics(
+          container: true,
+          label: l10n.editorFormatting,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: _step(context, 50),
+              border: Border(bottom: BorderSide(color: line)),
+            ),
+            child: Wrap(
+              spacing: 2,
+              runSpacing: 2,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                _GlyphButton(
+                  label: l10n.editorBold,
+                  active: has(Attribute.bold),
+                  onPressed: () => _toggle(Attribute.bold, has(Attribute.bold)),
+                  child: const Text('B', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+                _GlyphButton(
+                  label: l10n.editorItalic,
+                  active: has(Attribute.italic),
+                  onPressed: () => _toggle(Attribute.italic, has(Attribute.italic)),
+                  child: const Text('I', style: TextStyle(fontStyle: FontStyle.italic)),
+                ),
+                _GlyphButton(
+                  label: l10n.editorUnderline,
+                  active: has(Attribute.underline),
+                  onPressed: () => _toggle(Attribute.underline, has(Attribute.underline)),
+                  child: const Text('U', style: TextStyle(decoration: TextDecoration.underline)),
+                ),
+                _GlyphButton(
+                  label: l10n.editorStrike,
+                  active: has(Attribute.strikeThrough),
+                  onPressed: () => _toggle(Attribute.strikeThrough, has(Attribute.strikeThrough)),
+                  child: const Text('S', style: TextStyle(decoration: TextDecoration.lineThrough)),
+                ),
+                sep(),
+                _GlyphButton(
+                  label: l10n.editorHeading,
+                  active: heading,
+                  onPressed: () => controller.formatSelection(
+                    heading ? Attribute.clone(Attribute.header, null) : Attribute.h2,
+                  ),
+                  child: const Text('H'),
+                ),
+                _GlyphButton(
+                  label: l10n.editorBulletList,
+                  active: list == Attribute.ul.value,
+                  onPressed: () => _toggle(Attribute.ul, list == Attribute.ul.value),
+                  child: const Text('\u2022\u2261'),
+                ),
+                _GlyphButton(
+                  label: l10n.editorOrderedList,
+                  active: list == Attribute.ol.value,
+                  onPressed: () => _toggle(Attribute.ol, list == Attribute.ol.value),
+                  child: const Text('1\u2261'),
+                ),
+                sep(),
+                _GlyphButton(
+                  label: l10n.editorLink,
+                  active: has(Attribute.link),
+                  onPressed: () => editMessageLink(context, controller),
+                  child: const Text('\u{1F517}'),
+                ),
+                _GlyphButton(
+                  label: l10n.editorUndo,
+                  active: false,
+                  onPressed: () {
+                    if (controller.hasUndo) controller.undo();
+                  },
+                  child: const Text('\u21B6'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _GlyphButton extends StatelessWidget {
+  const _GlyphButton({
+    required this.label,
+    required this.active,
+    required this.onPressed,
+    required this.child,
+  });
+
+  final String label;
+  final bool active;
+  final VoidCallback onPressed;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    final color = active ? primary : theme.colorScheme.onSurface;
+    return Semantics(
+      button: true,
+      selected: active,
+      label: label,
+      excludeSemantics: true,
+      child: Material(
+        color: active ? primary.withValues(alpha: 0.15) : Colors.transparent,
+        borderRadius: BorderRadius.circular(6),
+        child: InkWell(
+          // Like Ionic's `mousedown.preventDefault()`: keep the editor focus.
+          canRequestFocus: false,
+          borderRadius: BorderRadius.circular(6),
+          onTap: onPressed,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minWidth: 34, minHeight: 34, maxHeight: 34),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Center(
+                widthFactor: 1,
+                child: DefaultTextStyle.merge(
+                  style: TextStyle(fontSize: 15, color: color, height: 1),
+                  child: child,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
