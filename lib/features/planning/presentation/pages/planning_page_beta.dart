@@ -378,8 +378,12 @@ extension _PlanningBeta on _PlanningPageState {
     );
     // A Probe needs no Überschrift: only an Auftritt (hervorgehobene
     // Terminart) has the field, and a plan whose Überschrift was changed
-    // before, so it can still be put back.
-    final withHeading = (_typeOf(att)?.highlight ?? false) || (_savedTitle.isNotEmpty && _savedTitle != _defaultTitle(att));
+    // before, so it can still be put back. Once shown it stays for this
+    // plan (also while it is being emptied).
+    if (PlanSongHelper.isAuftritt(att, _types) || (_savedTitle.isNotEmpty && _savedTitle != _defaultTitle(att))) {
+      _rdHeadingGen = _loadGen;
+    }
+    final withHeading = _rdHeadingGen == _loadGen;
     return RdCard(
       padding: EdgeInsets.zero,
       child: Column(
@@ -1170,7 +1174,7 @@ extension _PlanningBeta on _PlanningPageState {
   // Adding
   // ---------------------------------------------------------------------------
 
-  /// "+ Punkt hinzufügen" (at the end) or "Punkt danach einfügen" ([after]:
+  /// "+ Hinzufügen" (at the end) or "Punkt danach einfügen" ([after]:
   /// position in [_fields]; [group]: the block the new item joins).
   /// Every entry runs the classic action, which appends; the new rows are
   /// then moved to the chosen place.
@@ -1481,11 +1485,13 @@ extension _PlanningBeta on _PlanningPageState {
     );
   }
 
-  /// Adds several entries in a row: Punkt or Notiz (form), Werke (one
-  /// picker: a Werk or all current ones). [group]: into that block (at its end, or behind
-  /// [after] when it is inside); [kind] `group`: a new block, its name at
-  /// the top and its Unterpunkte right below. Every entry is stored at
-  /// once (autosave), the sheet stays open until "Fertig".
+  /// Adds several entries in a row: Punkt or Notiz (form), "+ Werke" (the
+  /// Werke of the Termin or the next Auftritt, else the Werk list) and
+  /// "Block" (leaves for the sheet of a new block). [group]: into that
+  /// block (at its end, or behind [after] when it is inside); [kind]
+  /// `group`: a new block, its name at the top and its Unterpunkte right
+  /// below. Every entry is stored at once (autosave), the sheet stays open
+  /// until "Fertig".
   Future<void> _rdQuickAdd({String kind = 'field', String? group, PlanField? after}) async {
     final l10n = context.l10n;
     final loadGen = _loadGen;
@@ -1568,7 +1574,6 @@ extension _PlanningBeta on _PlanningPageState {
           (ctx, pop) => [
             _RdQuickAddBody(
               newBlock: newBlock,
-              initialKind: kind == 'note' ? 'note' : 'field',
               initialMinutes: join != null || newBlock ? 5 : 20,
               withWorks: !isGeneral && _songs.isNotEmpty,
               // Not from "+ Punkt in …" (the sheet of that block): a block
@@ -2033,7 +2038,7 @@ extension _PlanningBeta on _PlanningPageState {
   }
 
   // ---------------------------------------------------------------------------
-  // "•••": Teilen & Export, the open plan, Registerprobenplan, zurücksetzen
+  // "Teilen" and "•••": the open plan, Registerprobenplan, zurücksetzen
   // ---------------------------------------------------------------------------
 
   /// "Teilen" at the top: the open plan as PDF or picture (both saved
@@ -2142,7 +2147,7 @@ extension _PlanningBeta on _PlanningPageState {
     if (action == 'link') {
       await _shareLink();
     } else {
-      await _rdExport(action);
+      await _rdExport(action, loadGen);
     }
   }
 
@@ -2236,11 +2241,13 @@ extension _PlanningBeta on _PlanningPageState {
     }
   }
 
-  /// PDF / Telegram of the open plan (same pages as the classic sheet).
-  Future<void> _rdExport(String action) async {
+  /// PDF or picture of the open plan (same pages as the classic sheet).
+  Future<void> _rdExport(String action, int loadGen) async {
     // Exports use the editor state, so they also work when the write failed.
     await _flushSaves(blockInvalid: false);
-    if (!mounted || !_validate(showToast: true)) return;
+    // Another plan was loaded while the last change was written: the
+    // choice was made for the old one.
+    if (!_samePlan(loadGen) || !_validate(showToast: true)) return;
     final att = _att;
     if (att == null) return;
     final plans = PlanUtils.allPlans(att);
@@ -2729,7 +2736,6 @@ class _RdBlockFramePainter extends CustomPainter {
 class _RdQuickAddBody extends StatefulWidget {
   const _RdQuickAddBody({
     required this.newBlock,
-    required this.initialKind,
     required this.initialMinutes,
     required this.withWorks,
     required this.onBlock,
@@ -2739,7 +2745,6 @@ class _RdQuickAddBody extends StatefulWidget {
   });
 
   final bool newBlock;
-  final String initialKind;
   final int initialMinutes;
   final bool withWorks;
 
@@ -2756,7 +2761,7 @@ class _RdQuickAddBody extends StatefulWidget {
 }
 
 class _RdQuickAddBodyState extends State<_RdQuickAddBody> {
-  late String _kind = widget.initialKind;
+  String _kind = 'field';
   late int _minutes = widget.initialMinutes;
   final _name = TextEditingController();
   final _added = <String>[];

@@ -85,6 +85,11 @@ class PlanSongHelper {
     return result;
   }
 
+  /// Whether [att] is an Auftritt: its Terminart is highlighted (Vortrag,
+  /// Konzert), or it is an old "vortrag" Termin without a Terminart.
+  static bool isAuftritt(PlanAttendance att, List<PlanAttendanceType> types) =>
+      att.type == 'vortrag' || (types.where((t) => t.id == att.typeId).firstOrNull?.highlight ?? false);
+
   /// "Werke vom … übernehmen" (Beta): the Termine whose planned Werke are
   /// offered for the Ablauf of [att], at most [limit].
   ///
@@ -93,6 +98,8 @@ class PlanSongHelper {
   /// highlighted (Vortrag, Konzert) or differs from the one of [att]: a
   /// Probe takes the Werke of the next Auftritt, not those of the next Probe.
   /// [history] holds the Werke of the coming Termine (`currentSongsProvider`).
+  /// [distinct]: a Werk of several Termine is listed once, at the nearest
+  /// one; without it every Termin keeps its whole list.
   static List<PlanEventWorks> eventWorks(
     PlanAttendance att, {
     required List<PlanAttendance> attendances,
@@ -100,6 +107,7 @@ class PlanSongHelper {
     required List<SongHistory> history,
     required List<Song> songs,
     int limit = 3,
+    bool distinct = true,
   }) {
     DateTime? dayOf(PlanAttendance a) {
       final d = DateTime.tryParse(a.date);
@@ -110,8 +118,7 @@ class PlanSongHelper {
     if (att.id == null || day == null) return const [];
     final start = PlanUtils.parseTimeToMinutes(PlanUtils.formatTime(att.startTime));
     int? startOf(PlanAttendance a) => PlanUtils.parseTimeToMinutes(PlanUtils.formatTime(a.startTime));
-    bool highlighted(PlanAttendance a) =>
-        a.type == 'vortrag' || (types.where((t) => t.id == a.typeId).firstOrNull?.highlight ?? false);
+    bool highlighted(PlanAttendance a) => isAuftritt(a, types);
 
     final found = <({PlanAttendance att, DateTime day, List<PlanEventWork> works})>[];
     for (final a in attendances) {
@@ -150,7 +157,7 @@ class PlanSongHelper {
     for (final f in found) {
       final works = [
         for (final w in f.works)
-          if (listed.add(w.song.id!)) w,
+          if (!distinct || listed.add(w.song.id!)) w,
       ];
       if (works.isNotEmpty) result.add((att: f.att, own: f.att.id == att.id, works: works));
       if (result.length == limit) break;

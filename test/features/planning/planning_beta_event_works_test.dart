@@ -82,7 +82,7 @@ void main() {
     expect([for (final s in own) (s.att.id, s.own)], [(8, true), (9, false)]);
   });
 
-  testWidgets('empty Ablauf: "Werke vom …" adds the ticked Werke with their conductors', (tester) async {
+  testWidgets('"Werke vom …" adds the ticked Werke with their conductors; "+ Werke" offers them again', (tester) async {
     tester.view.physicalSize = const Size(390, 1600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);

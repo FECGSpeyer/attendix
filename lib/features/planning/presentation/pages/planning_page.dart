@@ -232,6 +232,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// REDESIGN (Beta editor, [_PlanningBeta]): collapsed blocks and the row
   /// whose duration field is open.
   final Set<String> _rdCollapsed = {};
+
+  /// Beta: the load ([_loadGen]) whose plan showed the Überschrift field;
+  /// it then stays until another plan is loaded, also when emptied.
+  int? _rdHeadingGen;
   int? _rdDurationIndex;
 
   /// REDESIGN: the open block whose head is being dragged; its Unterpunkte

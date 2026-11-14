@@ -48,6 +48,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
   /// The Werk's own length in an Ablauf (empty: the usual 5 minutes).
   final _minutes = TextEditingController();
   final _minutesFocus = FocusNode();
+  String _minutesTyped = '';
   final _nameFocus = FocusNode();
   final _prefixFocus = FocusNode();
   final _numberFocus = FocusNode();
@@ -145,7 +146,8 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     _storedControls = (_difficulty, _withChoir, _withSolo, _categoryIds);
     // Like the old page: empty fields start with their default.
     _additional = {...?song.additionalFields};
-    _minutes.text = PlanSongHelper.ownMinutes(song)?.toString() ?? '';
+    _minutesTyped = PlanSongHelper.ownMinutes(song)?.toString() ?? '';
+    _minutes.text = _minutesTyped;
     _fields = data.additionalFields;
     for (final field in _fields) {
       _additional[field.id] ??= field.effectiveDefault;
@@ -250,12 +252,17 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
       if (c == null) continue;
       _additional[field.id] = field.isNumber ? num.tryParse(c.text.trim()) ?? 0 : c.text;
     }
-    // The own length lives with the Zusatzfelder (no column of its own).
-    final minutes = int.tryParse(_minutes.text.trim());
-    if (minutes != null && minutes > 0) {
-      _additional[PlanSongHelper.minutesKey] = minutes;
-    } else {
-      _additional.remove(PlanSongHelper.minutesKey);
+    // The own length lives with the Zusatzfelder (no column of its own);
+    // what is stored stays as it is until the field is changed.
+    final typed = _minutes.text.trim();
+    if (typed != _minutesTyped) {
+      _minutesTyped = typed;
+      final minutes = int.tryParse(typed);
+      if (minutes != null && minutes > 0) {
+        _additional[PlanSongHelper.minutesKey] = minutes;
+      } else {
+        _additional.remove(PlanSongHelper.minutesKey);
+      }
     }
     _writeFields();
   }
