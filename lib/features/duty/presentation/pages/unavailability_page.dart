@@ -228,7 +228,27 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
                   ),
                 ])
               : IonCloseButton(onPressed: () => Navigator.of(context).pop()),
-          title: title,
+          // F-TEAM-20: iOS `ion-title` lies over the whole toolbar with
+          // `padding-inline: 90px`, so "Regelmäßig verhindert" fits between
+          // "Zurück" and "Speichern" (between the buttons it was cut off).
+          title: useIosLook(context) ? null : title,
+          flexibleSpace: useIosLook(context)
+              ? SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 90),
+                    child: Center(
+                      child: DefaultTextStyle.merge(
+                        style: Theme.of(context).appBarTheme.titleTextStyle,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        child: title,
+                      ),
+                    ),
+                  ),
+                )
+              : null,
           actions: [
             if (editing != null)
               ToolbarButtonGroup(children: [
