@@ -25,9 +25,11 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonSheetHeader, ionItemBackground;
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonItem, IonSheetHeader, ionItemBackground;
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../shared/widgets/dialogs/ion_sheet.dart' show showIonSheet, IonSheetScaffold;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
-import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal, isIonModalCard;
 import '../../../../shared/widgets/display/ion_badge_text.dart';
 import '../widgets/field_stats_section.dart';
 
@@ -1055,6 +1057,54 @@ class _OrganisationStatsSectionState
   /// filterInstances), there is no "Abbrechen".
   Future<void> _pickTenants(List<Tenant> tenants) async {
     final selection = {..._selectedTenantIds};
+    if (context.rdSkin == null) {
+      // DAS-05: `ion-select-modal` (multiple) – toolbar with the label and
+      // "Schließen" in `slot="end"`, an `ion-list` of `ion-checkbox`
+      // rows (checkbox at the start, label after it).
+      await showIonModal<void>(
+        context,
+        builder: (ctx) {
+          final theme = Theme.of(ctx);
+          final modal = StatefulBuilder(
+            builder: (ctx, setLocal) => IonSheetScaffold(
+              title: ctx.l10n.statsFilterTenants,
+              end: [
+                TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(ctx.l10n.commonClose)),
+              ],
+              backgroundColor: ionItemBackground(ctx),
+              body: ListView(
+                padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(ctx).bottom),
+                children: [
+                  for (final t in tenants)
+                    if (t.id != null) ...[
+                      IonItem(
+                        leading: Checkbox.adaptive(
+                          value: selection.contains(t.id),
+                          onChanged: (v) => setLocal(() {
+                            v == true ? selection.add(t.id!) : selection.remove(t.id);
+                          }),
+                        ),
+                        title: Text(t.longName),
+                        onTap: () => setLocal(() {
+                          selection.contains(t.id) ? selection.remove(t.id) : selection.add(t.id!);
+                        }),
+                      ),
+                      Divider(height: useIosLook(ctx) ? 0.5 : 1, thickness: useIosLook(ctx) ? 0.5 : 1, indent: 64),
+                    ],
+                ],
+              ),
+            ),
+          );
+          if (isIonModalCard(MediaQuery.sizeOf(ctx))) return modal;
+          return ColoredBox(
+            color: theme.appBarTheme.backgroundColor ?? theme.colorScheme.surface,
+            child: SafeArea(bottom: false, child: Material(color: ionItemBackground(ctx), child: modal)),
+          );
+        },
+      );
+      if (mounted) setState(() => _selectedTenantIds = selection);
+      return;
+    }
     await showIonModal<void>(
       context,
       builder: (ctx) => StatefulBuilder(
@@ -1217,10 +1267,52 @@ class _OrganisationStatsSectionState
     return all;
   }
 
+  Widget _personsList(BuildContext context, List<_UniqueOrgPerson> persons) => Card(
+        margin: EdgeInsets.zero,
+        color: ionItemBackground(context),
+        elevation: 0,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(useIosLook(context) ? IonIos.listRadius : 16),
+        ),
+        child: Column(
+          children: _withInsetDividers([
+            for (final p in persons)
+              ListTile(
+                title: Text(p.person.fullName),
+                subtitle: Text(p.tenantNames.join('\n')),
+                trailing: _IonBadge('${p.tenantNames.length}'),
+              ),
+          ]),
+        ),
+      );
+
   /// Ionic persons modal (sheet, breakpoint 1): toolbar "Personen (n)",
   /// inset list with the name, one line per instance and a badge with the
   /// number of instances.
   void _showPersonsModal(List<_UniqueOrgPerson> persons) {
+    if (context.rdSkin == null) {
+      // EINST-25: the Ionic sheet modal `[breakpoints]="[0, 1]"
+      // [initialBreakpoint]="1"` – 10px below the safe area, with the
+      // handle, drag / backdrop tap closes it, 600px wide on desktop.
+      showIonSheet<void>(
+        context,
+        breakpoints: const [0, 1],
+        initialBreakpoint: 1,
+        builder: (ctx, controller) => IonSheetScaffold(
+          title: ctx.l10n.statsPersonsCount(persons.length),
+          backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
+          body: ListView(
+            controller: controller,
+            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            children: [
+              if (persons.isNotEmpty) _personsList(ctx, persons),
+            ],
+          ),
+        ),
+      );
+      return;
+    }
     showModalBottomSheet(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -1238,26 +1330,7 @@ class _OrganisationStatsSectionState
                   padding: const EdgeInsets.all(AppDimensions.paddingM),
                   children: [
                     if (persons.isNotEmpty)
-                      Card(
-                        margin: EdgeInsets.zero,
-                        color: ionItemBackground(context),
-                        elevation: 0,
-                        clipBehavior: Clip.antiAlias,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              useIosLook(context) ? IonIos.listRadius : 16),
-                        ),
-                        child: Column(
-                          children: _withInsetDividers([
-                            for (final p in persons)
-                              ListTile(
-                                title: Text(p.person.fullName),
-                                subtitle: Text(p.tenantNames.join('\n')),
-                                trailing: _IonBadge('${p.tenantNames.length}'),
-                              ),
-                          ]),
-                        ),
-                      ),
+                      _personsList(context, persons),
                   ],
                 ),
               ),
