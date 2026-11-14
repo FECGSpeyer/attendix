@@ -81,6 +81,16 @@ jobs:
           echo "$(wc -l < shard.txt) test files in this shard"
           xargs flutter test < shard.txt
 
+      - name: Upload golden failures
+        # Expected picture, actual picture and their difference for every
+        # golden image that no longer matches (test/golden/README.md).
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-failures-${{ matrix.shard }}
+          path: test/golden/failures/
+          if-no-files-found: ignore
+
   test:
     # One "Test" check that is green only when every shard passed.
     name: Test

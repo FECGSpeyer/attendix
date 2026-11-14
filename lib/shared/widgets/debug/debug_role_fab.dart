@@ -12,10 +12,14 @@ import '../../../core/providers/tenant_providers.dart';
 class DebugRoleFab extends ConsumerWidget {
   const DebugRoleFab({super.key});
 
+  /// Golden images show the app as users see it, without this button.
+  @visibleForTesting
+  static bool hidden = false;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Don't render anything in release mode
-    if (kReleaseMode) return const SizedBox.shrink();
+    if (kReleaseMode || hidden) return const SizedBox.shrink();
 
     final currentOverride = ref.watch(debugRoleOverrideProvider);
     final realRole = ref.watch(currentRoleProvider);
