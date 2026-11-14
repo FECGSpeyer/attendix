@@ -590,15 +590,19 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                       subtitle: Text(
                         context.l10n.typeSettingsTimesHint,
                       ),
-                      trailing: Text(_formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
-                          style: Theme.of(context).textTheme.titleMedium),
+                      trailing: _timeValue(
+                        _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
+                        onTap: () => _pickTime(isStart: true),
+                      ),
                       onTap: () => _pickTime(isStart: true),
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(context.l10n.typeSettingsEnd),
-                      trailing: Text(_formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
-                          style: Theme.of(context).textTheme.titleMedium),
+                      trailing: _timeValue(
+                        _formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
+                        onTap: () => _pickTime(isStart: false),
+                      ),
                       onTap: () => _pickTime(isStart: false),
                     ),
                   ],
@@ -1351,12 +1355,25 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   bool get _isGeneral => ref.read(currentTenantProvider)?.type == 'general';
 
+  /// QUE-28: the value of a time row – Ionic `ion-datetime-button` (a pill
+  /// without [onTap] stands in front of a disabled `ion-datetime`). The
+  /// Beta keeps its plain text.
+  Widget _timeValue(String text, {VoidCallback? onTap, Color? betaColor}) {
+    if (context.rdSkin != null) {
+      final style = Theme.of(context).textTheme.titleMedium;
+      return Text(text, style: betaColor == null ? style : style?.copyWith(color: betaColor));
+    }
+    return IonDatetimeButton(time: text, onTimeTap: onTap);
+  }
+
   Future<void> _pickTime({required bool isStart}) async {
     final time = await showAppTimePicker(
       context: context,
       initialTime: isStart
           ? (_startTime ?? const TimeOfDay(hour: 19, minute: 0))
           : (_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
+      // Ionic minuteValues="0,5,10,…,55"; the Beta keeps its minute steps.
+      minuteInterval: context.rdSkin != null ? 1 : 5,
     );
     if (time != null && mounted) {
       setState(() {
@@ -1519,11 +1536,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             contentPadding: EdgeInsets.zero,
             title: Text(l10n.typeSettingsStartShort),
             subtitle: _allDay ? Text(l10n.typeSettingsStartAllDay) : null,
-            trailing: Text(
+            trailing: _timeValue(
               start,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: _allDay ? null : AppColors.medium,
-                  ),
+              onTap: _allDay ? () => _pickTime(isStart: true) : null,
+              betaColor: _allDay ? null : AppColors.medium,
             ),
             onTap: _allDay ? () => _pickTime(isStart: true) : null,
           ),
@@ -1538,10 +1554,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(l10n.typeSettingsEnd),
-              trailing: Text(
-                _planEnd!,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppColors.medium),
-              ),
+              trailing: _timeValue(_planEnd!, betaColor: AppColors.medium),
             ),
         ],
       ),

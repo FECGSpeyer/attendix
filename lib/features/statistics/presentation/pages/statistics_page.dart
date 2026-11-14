@@ -378,9 +378,10 @@ class _PeriodSection extends StatelessWidget {
     // UX_ATT: `ion-datetime-button`: grey rounded value button
     Widget item(String label, DateTime date, bool start) => ListTile(
           title: Text(label),
-          trailing: _IonDatetimeButton(
-            label: DateHelper.getShortDate(date),
-            onTap: () => _pick(context, start: start),
+          trailing: IonDatetimeButton(
+            date: DateHelper.getShortDate(date),
+            onDateTap: () => _pick(context, start: start),
+            betaStyle: const TextStyle(fontSize: 17),
           ),
         );
     return Card(
@@ -414,31 +415,6 @@ class _IonBadge extends StatelessWidget {
         style: ionBadgeTextStyle(
           color: color == AppColors.warning ? Colors.black : Colors.white,
           height: null,
-        ),
-      ),
-    );
-  }
-}
-
-/// UX_ATT: Ionic `ion-datetime-button`.
-class _IonDatetimeButton extends StatelessWidget {
-  const _IonDatetimeButton({required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    return Material(
-      color: dark ? const Color(0xFF2C2C2E) : const Color(0xFFEDEEF0),
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Text(label, style: const TextStyle(fontSize: 17)),
         ),
       ),
     );
