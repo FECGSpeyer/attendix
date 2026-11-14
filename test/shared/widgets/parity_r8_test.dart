@@ -119,8 +119,11 @@ void main() {
       expect(parent.width, 200);
       expect(sub.left, closeTo(parent.left, 0.5));
       // Ionic iOS (`alignment="center"` + ionic-theme-utils body margin):
-      // centred on the trigger row, 8pt lower, not clamped at the top.
-      expect(sub.center.dy, closeTo(row.center.dy + kIosNestedPopoverOffset, 0.5));
+      // centred on the trigger row, 8pt lower – but (F-TERM-16) pushed back
+      // below the safe area when that would cut off its first entries.
+      final centred = row.center.dy + kIosNestedPopoverOffset - sub.height / 2;
+      expect(sub.top, closeTo(centred < safeTop + 8 ? safeTop + 8 : centred, 0.5));
+      expect(sub.top, greaterThanOrEqualTo(safeTop));
 
       // The parent keeps its place and size; Übersicht and Legende stay
       // visible (hit-testable) below the nested popover.
