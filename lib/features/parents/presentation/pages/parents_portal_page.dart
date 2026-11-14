@@ -308,7 +308,10 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                               ],
                             ),
                             if (g.childAttendances.isNotEmpty)
-                              Padding(
+                              Container(
+                                // Ionic `.ev-kids`: a left-aligned flex row
+                                // (was centred under the Termin).
+                                width: double.infinity,
                                 padding: const EdgeInsets.fromLTRB(16, 2, 16, 12),
                                 child: Wrap(
                                   spacing: 8,
