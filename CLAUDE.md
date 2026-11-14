@@ -170,6 +170,14 @@ Stattdessen legt jeder PR **eine** Changelog-Datei an:
 
 **Interne vs. Nutzer-Version:** `appVersion` und `assets/version_history.json` sind die interne Entwicklerhistorie (0.x, Sentry-Release) und werden Nutzern nicht gezeigt. Nutzer sehen `AppConstants.displayVersion` und `assets/version_history_user.json` (weitergeführte Ionic-Historie). Diese beiden nur bei Store-Releases pflegen: `displayVersion` erhöhen und einen Eintrag obendrauf in `assets/version_history_user.json` setzen (oberster Eintrag = `displayVersion`).
 
+## Beta-Dokumentation aktuell halten
+
+`docs/beta/` beschreibt das neue Design (Beta) für Nutzer: Überblick, Rollen und Szenarien je Rolle („Ich möchte …“ mit festen Nummern wie `M-02`).
+
+- Ändert ein PR, wie eine Aufgabe in der Beta abläuft, passt er das betroffene Szenario im selben PR an. Neue Aufgaben bekommen ein neues Szenario mit der nächsten freien Nummer.
+- Texte der App stehen dort in „Anführungszeichen“ und genau wie in `lib/l10n/app_de.arb`. Die CI prüft das (`python3 tool/docs/check_app_texts.py --strict`): Wer einen zitierten Text umbenennt, passt die Doku an.
+- Das Repo ist öffentlich: keine Zugangsdaten, keine internen Betriebsdetails, keine Sicherheitsbefunde in die Doku.
+
 ## Rollen-System
 
 - **Dirigent (conductor):** Vollzugriff

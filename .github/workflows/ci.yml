@@ -40,6 +40,11 @@ jobs:
         # the deploy workflow turns them into a version after the merge.
         run: python3 tool/release/release_version.py --check
 
+      - name: Check app texts quoted in the Beta docs
+        # docs/beta quotes buttons and titles of the app; a renamed text
+        # shows up here so the docs are updated in the same PR.
+        run: python3 tool/docs/check_app_texts.py --strict
+
   test-shard:
     # The suite (~365 files) is split over 4 runners; most of the time is
     # compiling each test file, so 4 shards take about a quarter of it.
