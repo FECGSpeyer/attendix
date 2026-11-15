@@ -168,7 +168,14 @@ jobs:
           target: google_apis
           profile: pixel_6
           disable-animations: true
-          script: patrol test --device emulator-5554
+          # On a failure the device log (errors only) goes into the job log.
+          script: patrol test --device emulator-5554 || (adb logcat -d -t 600 '*:E'; exit 1)
+
+      - name: Show failed flows
+        if: ${{ failure() }}
+        run: |
+          find build/app/outputs/androidTest-results -name '*.xml' -print0 2>/dev/null \
+            | xargs -0 -r grep -h -A30 -E '<(failure|error)' | head -n 200 || true
 
       - name: Upload report
         if: ${{ failure() }}
