@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.155.3",
+      "date": "15.11.2026",
+      "changes": [
+        "🎨 Klassisches Design wie Ionic: graue Texte und Symbole im dunkleren Ionic-Grau",
+        "🎨 Klassisches Design wie Ionic: Personen-Filter ohne Zeitraum, Terminart und „Personen übertragen“, Terminart ohne Hinweis zur Verwendung (beides bleibt in der Beta)"
+      ]
+    },
+    {
       "version": "0.155.2",
       "date": "15.11.2026",
       "changes": [
