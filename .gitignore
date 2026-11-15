@@ -70,3 +70,6 @@ test_bundle.dart
 .patrol.env
 /playwright-report/
 /test-results/
+
+# Local checkout of the private test database (docs/testing.md)
+/.attendix-db/

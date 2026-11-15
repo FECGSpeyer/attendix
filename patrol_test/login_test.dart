@@ -3,32 +3,68 @@ import 'package:patrol/patrol.dart';
 
 import 'support/app.dart';
 
-// The local Supabase has accounts but no tables yet. Until the schema is
-// there, these flows stay on the sign-in page: the app asks the local
-// Supabase, gets the refusal and shows it. Flows behind the sign-in follow
-// with the schema.
+// Sign-in and the first steps of a new account ("Neu dabei", N-…).
+
 /// Start of the toast for a refused sign-in.
 final _refused = RegExp('E-Mail oder Passwort falsch');
 
 /// The app says no twice: a toast, and a dialog that offers the e-mail code.
 /// Closing the dialog leaves the user on the sign-in page.
 Future<void> _expectRefusal(PatrolIntegrationTester $) async {
-  await $(_refused).waitUntilVisible(timeout: const Duration(seconds: 20));
-  await $('Anmeldung fehlgeschlagen').waitUntilVisible();
+  await see($, _refused);
+  await see($, 'Anmeldung fehlgeschlagen');
   await $(label('Abbrechen')).tap();
   await waitForPage($, LoginPage);
 }
 
 void main() {
-  patrolTest('Falsches Passwort wird abgelehnt (Beta)', ($) async {
+  patrolTest('N-02 Mich anmelden', tags: ['pr', 'mobil'], ($) async {
+    await startApp($);
+    await signInAs($, 'mitglied');
+    await see($, 'Hallo Mia');
+  });
+
+  patrolTest('N-02 Mich anmelden (klassisch)', tags: ['pr', 'mobil'], (
+    $,
+  ) async {
+    await startApp($, beta: false);
+    await signInAs($, 'mitglied');
+    await see($, RegExp('Shalom Mia'));
+  });
+
+  patrolTest('N-02 Falsches Passwort wird abgelehnt', tags: ['mobil'], (
+    $,
+  ) async {
     await startApp($);
     await signIn($, email: 'admin@attendix.test', password: 'falsch-falsch');
     await _expectRefusal($);
   });
 
-  patrolTest('Falsches Passwort wird abgelehnt (klassisch)', ($) async {
-    await startApp($, beta: false);
-    await signIn($, email: 'admin@attendix.test', password: 'falsch-falsch');
-    await _expectRefusal($);
+  patrolTest(
+    'N-02 Falsches Passwort wird abgelehnt (klassisch)',
+    tags: ['mobil'],
+    ($) async {
+      await startApp($, beta: false);
+      await signIn($, email: 'admin@attendix.test', password: 'falsch-falsch');
+      await _expectRefusal($);
+    },
+  );
+
+  patrolTest('N-05 Angemeldet, aber noch in keiner Gruppe', ($) async {
+    await startApp($);
+    await signInAs($, 'fremd', inGroup: false);
+    await see($, RegExp('Du bist noch in keiner Gruppe'));
+    await see($, 'Ich habe eine Einladung');
+    await see($, 'Eigene Gruppe gründen');
+  });
+
+  patrolTest('N-06 Auf die Freigabe warten', ($) async {
+    await startApp($);
+    await signInAs($, 'bewerber');
+    await see($, RegExp('Deine Anmeldung bei Stadtorchester wird geprüft'));
+    await see($, 'Andere Gruppe beitreten');
+    // While waiting there is only "Heute" and "Ich".
+    seeNot($, 'Termine');
+    seeNot($, 'Werke');
   });
 }

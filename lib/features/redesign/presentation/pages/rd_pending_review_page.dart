@@ -199,6 +199,9 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
   void _refresh(int id) {
     _container.invalidate(personProvider(id));
     _container.invalidate(realtimePlayersProvider);
+    // "Wartet" and its counters read this list. Without this they only
+    // change once the live update arrives, which can be late or missing.
+    _container.invalidate(realtimePendingPlayersProvider);
   }
 
   /// Old page `_approvePerson`: a changed group (with the details, the
@@ -330,6 +333,7 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
       await repo.mergePendingPlayerIntoExisting(person, candidate, approverEmail: approver);
       _container.invalidate(realtimePlayersProvider);
       _container.invalidate(pendingPlayersProvider);
+      _container.invalidate(realtimePendingPlayersProvider);
       if (!mounted) return;
       ToastHelper.showSuccess(context, l10n.personMerged);
       _leave();
