@@ -440,7 +440,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
-            SwitchListTile.adaptive(
+            IonSwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.handoverKeepInTenant),
               subtitle: Text(

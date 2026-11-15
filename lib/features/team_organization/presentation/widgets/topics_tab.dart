@@ -541,7 +541,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                 if (buckets.done.isNotEmpty)
                   IonInsetList(
                     children: [
-                      SwitchListTile.adaptive(
+                      IonSwitchListTile(
                         value: _showDone,
                         onChanged: (v) => setState(() => _showDone = v),
                         title: Text(l10n.teamOrgShowDone(buckets.done.length)),

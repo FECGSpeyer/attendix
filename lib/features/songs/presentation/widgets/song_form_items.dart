@@ -167,7 +167,7 @@ class SongToggleItem extends StatelessWidget {
           // The look decides, not the platform (`.adaptive` would draw the
           // Cupertino switch on macOS although the look is md).
           ios
-              ? Switch.adaptive(
+              ? IonSwitch(
                   value: value,
                   onChanged: onChanged,
                   activeTrackColor: AppColors.success,

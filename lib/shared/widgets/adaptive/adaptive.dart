@@ -18,4 +18,5 @@ export 'ion_datetime_button.dart';
 export 'ion_icons.dart';
 export 'ion_md_datetime.dart';
 export 'ion_radio_item.dart';
+export 'ion_switch.dart';
 export 'ios_card_modal.dart';

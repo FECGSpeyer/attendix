@@ -133,6 +133,7 @@ class _AutoMessagesEntry extends ConsumerWidget {
           icon: AppIcons.timerOutlined,
           iconColor: AppColors.primary,
           title: context.l10n.messagesAutoEntry,
+          detail: true, // Ionic detail="true": chevron in the Material look too
           subtitle: active == null ? null : context.l10n.messagesAutoActive(active),
           onTap: () => context.push('/settings/auto-messages'),
         ),

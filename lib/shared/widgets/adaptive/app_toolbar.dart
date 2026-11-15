@@ -142,12 +142,16 @@ class IosCircleIcon extends StatelessWidget {
     this.filled = false,
     this.size = IonToolbarButtonMetrics.size,
     this.iconSize = 22,
+    this.color,
   });
 
   final IconData icon;
   final bool filled;
   final double size;
   final double iconSize;
+
+  /// Icon colour; defaults to the text colour.
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +170,7 @@ class IosCircleIcon extends StatelessWidget {
         ),
       );
     }
-    final fg = theme.colorScheme.onSurface;
+    final fg = color ?? theme.colorScheme.onSurface;
     final glyph = Icon(icon, size: iconSize, color: fg);
     if (filled) {
       return Container(

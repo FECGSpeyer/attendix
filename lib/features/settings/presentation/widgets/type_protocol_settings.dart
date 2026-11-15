@@ -11,6 +11,7 @@ import '../../../../shared/widgets/layout/ionic_md.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import 'settings_form_items.dart';
 import 'settings_list.dart';
+import '../../../../shared/widgets/adaptive/ion_switch.dart';
 
 /// Protocol settings of an attendance type (Ionic type.page "Protokoll &
 /// Tagesordnung"): columns `enable_protocol`, `agenda_default_duration`,
@@ -118,7 +119,7 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SwitchListTile.adaptive(
+        IonSwitchListTile(
           title: Text(context.l10n.typeSettingsProtocolAgenda),
           subtitle: Text(context.l10n.typeSettingsProtocolHelper),
           value: s.enableProtocol,
@@ -155,7 +156,7 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
               ),
             ],
           ),
-          SwitchListTile.adaptive(
+          IonSwitchListTile(
             title: Text(context.l10n.typeSettingsSuggestPostponed),
             subtitle: Text(context.l10n.typeSettingsPostponedHelper),
             value: s.suggestPostponed,
@@ -185,7 +186,7 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
     final ios = ionIsIos(context);
     final pad = ios ? null : const EdgeInsets.symmetric(horizontal: IonMd.itemPaddingStart);
     final rows = <Widget>[
-      SwitchListTile.adaptive(
+      IonSwitchListTile(
         title: Text(context.l10n.typeSettingsProtocolAgenda),
         subtitle: Text(context.l10n.typeSettingsProtocolHelper),
         value: s.enableProtocol,
@@ -213,7 +214,7 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
                 : s.copyWith(clearDuration: true));
           },
         ),
-        SwitchListTile.adaptive(
+        IonSwitchListTile(
           title: Text(context.l10n.typeSettingsSuggestPostponed),
           subtitle: Text(context.l10n.typeSettingsPostponedHelper),
           value: s.suggestPostponed,

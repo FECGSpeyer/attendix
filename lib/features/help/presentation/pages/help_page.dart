@@ -105,12 +105,14 @@ class _HelpPageState extends ConsumerState<HelpPage> {
                 icon: AppIcons.descriptionOutlined,
                 title: article.title,
                 subtitle: context.l10n.helpArticles,
+                detail: true, // Ionic detail="true"
                 onTap: () => _openArticle(article.id),
               ),
             for (final g in results.glossaryTerms)
               SettingsListTile(
                 icon: AppIcons.menuBookOutlined,
                 title: g.term,
+                detail: true, // Ionic detail="true": chevron in the Material look too
                 subtitle: context.l10n.helpGlossary,
                 onTap: _openGlossary,
               ),

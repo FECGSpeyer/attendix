@@ -786,9 +786,19 @@ class _SongListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     // Ionic ion-label (iOS): h2 17px normal, h3 14px in text color.
     final ios = isIosLook(context);
-    final subtitleStyle = ios
-        ? TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface)
-        : Theme.of(context).textTheme.bodySmall;
+    // IONIC_PARITY: classic design: the `ion-label` sizes of both looks
+    // (h2 18.06 / 16, h3 14.875 / 14 in the text colour) with their margins.
+    final classic = context.rdSkin == null;
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final subtitleStyle = classic
+        ? TextStyle(
+            fontSize: ios ? 0.875 * IonIos.rem : 14,
+            color: onSurface,
+            height: 1.2,
+          )
+        : ios
+            ? TextStyle(fontSize: 14, color: onSurface)
+            : Theme.of(context).textTheme.bodySmall;
     final lines = <Widget>[];
     final orchestra = data.isOrchestra;
 
@@ -872,16 +882,29 @@ class _SongListItem extends StatelessWidget {
 
     return ListTile(
       onTap: onTap,
-      minVerticalPadding: ios ? 12 : null,
+      minVerticalPadding: ios ? 12 : (classic ? 10 : null),
       title: Text(
         '${song.prefix ?? ''}${song.number ?? ''} ${song.name}',
-        style: ios
-            ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w400)
-            : const TextStyle(fontWeight: FontWeight.w500),
+        style: classic
+            ? TextStyle(
+                fontSize: ios ? 1.0625 * IonIos.rem : 16,
+                fontWeight: FontWeight.w400,
+                height: 1.2,
+              )
+            : ios
+                ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w400)
+                : const TextStyle(fontWeight: FontWeight.w500),
       ),
       subtitle: lines.isEmpty
           ? null
-          : Column(crossAxisAlignment: CrossAxisAlignment.start, children: lines),
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: classic ? (ios ? 3 : 2) : 0,
+              children: [
+                if (classic) const SizedBox.shrink(),
+                ...lines,
+              ],
+            ),
       trailing: badges.isEmpty
           ? null
           : ConstrainedBox(

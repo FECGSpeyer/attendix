@@ -292,13 +292,13 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
               keyboardType: TextInputType.url,
               decoration: ionInputDecoration(context, label: context.l10n.songsLink),
             ),
-            SwitchListTile.adaptive(
+            IonSwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.songsChoirOrchestra),
               value: _withChoir,
               onChanged: (v) => setState(() => _withChoir = v),
             ),
-            SwitchListTile.adaptive(
+            IonSwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.songsWithSoloSinging),
               value: _withSolo,

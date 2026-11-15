@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../ion/ion_widgets.dart';
+import '../../../../../shared/widgets/adaptive/ion_switch.dart';
 
 /// Accordion section for problem person management.
 class ProblemfallAccordion extends StatelessWidget {
@@ -73,7 +74,7 @@ class ProblemfallAccordion extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SwitchListTile.adaptive(
+        IonSwitchListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(context.l10n.personTalkedTo),
           value: problemSolved,

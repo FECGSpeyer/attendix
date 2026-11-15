@@ -28,6 +28,8 @@ class SongsHistoryAccordion extends StatelessWidget {
   // close button to remove, "Werk(e) hinzufügen" row at the end.
   @override
   Widget build(BuildContext context) {
+    final classic = context.rdSkin == null;
+    final ios = Theme.of(context).platform == TargetPlatform.iOS;
     // IOS_DETAIL: shared accordion (iOS header look, Ionic state reset)
     return AttendanceAccordion(
         title: Text(context.l10n.attendanceSongsCount(entries.length)),
@@ -36,11 +38,28 @@ class SongsHistoryAccordion extends StatelessWidget {
             ListTile(
               // TER-15: theme item size in the classic design (Ionic ion-item).
       dense: context.rdSkin != null,
+              // IONIC_PARITY: classic design: `ion-label` h2 in primary
+              // (18.06 / 16 px) and h3 in the text colour (14.875 / 14 px).
               title: Text(
                 entries[index].songName,
-                style: const TextStyle(color: AppColors.primary, fontSize: 15),
+                style: classic
+                    ? TextStyle(
+                        color: AppColors.primary,
+                        fontSize: ios ? 18.0625 : 16,
+                        height: 1.2,
+                      )
+                    : const TextStyle(color: AppColors.primary, fontSize: 15),
               ),
-              subtitle: Text(entries[index].displayConductor),
+              subtitle: Text(
+                entries[index].displayConductor,
+                style: classic
+                    ? TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: ios ? 14.875 : 14,
+                        height: 1.2,
+                      )
+                    : null,
+              ),
               trailing: IconButton(
                 icon: Icon(AppIcons.close),
                 tooltip: context.l10n.commonRemove,

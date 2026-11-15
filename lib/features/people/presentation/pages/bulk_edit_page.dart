@@ -527,7 +527,7 @@ class _ValueEditor extends StatelessWidget {
         case 'isLeader':
           return Align(
             alignment: Alignment.centerRight,
-            child: Switch.adaptive(value: value == true, onChanged: onChanged),
+            child: IonSwitch(value: value == true, onChanged: onChanged),
           );
         case 'notes':
           return _text(hint: context.l10n.peopleNotePlaceholder);
@@ -551,7 +551,7 @@ class _ValueEditor extends StatelessWidget {
         // Ionic: <ion-toggle>{{ selectedField.label }}</ion-toggle> for the
         // "Für alle setzen" value; the per-person toggles have no label.
         final toggle =
-            Switch.adaptive(value: value == true, onChanged: onChanged);
+            IonSwitch(value: value == true, onChanged: onChanged);
         if (dense) {
           return Align(alignment: Alignment.centerRight, child: toggle);
         }

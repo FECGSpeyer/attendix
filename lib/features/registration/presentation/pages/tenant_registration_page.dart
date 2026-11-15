@@ -888,7 +888,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           widgets.add(
             IonItem(
               title: Text(field.name),
-              end: Switch.adaptive(
+              end: IonSwitch(
                 value: value,
                 onChanged: (newValue) => setState(
                     () => _formData.additionalFields[field.id] = newValue),

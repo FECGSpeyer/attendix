@@ -805,7 +805,7 @@ Future<ExtraField?> showExtraFieldSheet(
                   if (type != 'select' && type != 'bfecg_church')
                     SettingsListSection(icons: false, children: [
                       if (type == 'boolean')
-                        SwitchListTile.adaptive(
+                        IonSwitchListTile(
                           contentPadding: rowPad,
                           title: Text(l10n.extraFieldsDefaultValue),
                           value: boolDefault,
@@ -904,7 +904,7 @@ Future<ExtraField?> showExtraFieldSheet(
                         onChanged: (v) => setSheet(() => displayMode = v ?? 'chip'),
                       ),
                       if (isPerson) ...[
-                        SwitchListTile.adaptive(
+                        IonSwitchListTile(
                           contentPadding: EdgeInsets.zero,
                           title: Text(context.l10n.extraFieldsVisible),
                           subtitle: Text(context.l10n.extraFieldsVisibleHelper),
@@ -912,7 +912,7 @@ Future<ExtraField?> showExtraFieldSheet(
                           onChanged: (v) => setSheet(() => visible = v),
                         ),
                         if (visible)
-                          SwitchListTile.adaptive(
+                          IonSwitchListTile(
                             contentPadding: EdgeInsets.zero,
                             title: Text(context.l10n.extraFieldsEditable),
                             subtitle: Text(context.l10n.extraFieldsEditableHelper),
@@ -957,7 +957,7 @@ Future<ExtraField?> showExtraFieldSheet(
                       if (type != 'select' && type != 'bfecg_church') ...[
                         const SizedBox(height: AppDimensions.paddingS),
                         if (type == 'boolean')
-                          SwitchListTile.adaptive(
+                          IonSwitchListTile(
                             contentPadding: EdgeInsets.zero,
                             title: Text(context.l10n.extraFieldsDefaultValue),
                             value: boolDefault,

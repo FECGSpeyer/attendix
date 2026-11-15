@@ -22,7 +22,12 @@ import 'package:attendix/shared/widgets/display/avatar.dart' show IonAvatarPlace
 import 'package:attendix/shared/widgets/adaptive/adaptive_platform.dart'
     show IosGlass;
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' as ios27
-    show IonIos, IonDetailChevron, IonSearchbar;
+    show
+        IonIos,
+        IonDetailChevron,
+        IonSearchbar,
+        IonTranslucentAppBar,
+        SliverIonContentTopInset;
 import '../../../../../shared/widgets/display/ion_badge_text.dart';
 import 'package:attendix/shared/widgets/layout/ionic_md.dart';
 import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
@@ -33,6 +38,8 @@ import '../../../../../shared/widgets/adaptive/app_select.dart'
         IonMdSelectIcon,
         IonSelectIcon,
         showAppSelect;
+import '../../../../../shared/widgets/adaptive/ion_switch.dart';
+import '../../../../settings/presentation/widgets/ion_condense.dart';
 
 /// True when the page should look like Ionic's iOS mode.
 bool ionIsIos(BuildContext context) =>
@@ -78,9 +85,9 @@ class IonText {
         height: 1.2,
       );
 
-  /// `<h3>`: 14px normal weight, text color.
+  /// `<h3>`: iOS .875rem (14.875pt), md 14px; normal weight, text color.
   static TextStyle h3(BuildContext context) => TextStyle(
-        fontSize: 14,
+        fontSize: ionIsIos(context) ? 0.875 * ios27.IonIos.rem : 14,
         fontWeight: FontWeight.w400,
         color: _textColor(context),
         height: 1.2,
@@ -158,16 +165,25 @@ class IonListHeader extends StatelessWidget {
             fontSize: 14,
             color: Theme.of(context).colorScheme.onSurface,
           );
+    final row = Row(
+      children: [
+        Expanded(child: Text(text, style: style)),
+        if (trailing != null) trailing!,
+      ],
+    );
+    if (!ios) {
+      // md `ion-list-header`: min-height 45 with the label centred.
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 45),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: row,
+        ),
+      );
+    }
     return Padding(
-      padding: ios
-          ? const EdgeInsets.fromLTRB(16, 29, 16, 6)
-          : const EdgeInsets.fromLTRB(16, 13, 16, 10),
-      child: Row(
-        children: [
-          Expanded(child: Text(text, style: style)),
-          if (trailing != null) trailing!,
-        ],
-      ),
+      padding: const EdgeInsets.fromLTRB(16, 29, 16, 6),
+      child: row,
     );
   }
 }
@@ -217,8 +233,10 @@ class IonItemDivider extends StatelessWidget {
                     color: ionLineColor(context), width: IonMd.lineWidth)),
       ),
       alignment: Alignment.centerLeft,
+      // iOS: `min-height: 28px`, the label has no margin (the band is
+      // exactly 28 high); md: label margin 13 / 10.
       padding: ios
-          ? const EdgeInsets.fromLTRB(16, 4, 8, 4)
+          ? const EdgeInsets.fromLTRB(16, 0, 8, 0)
           : const EdgeInsets.fromLTRB(16, 13, 16, 10),
       child: Text(
         text,
@@ -1036,7 +1054,7 @@ class IonToggleRow extends StatelessWidget {
                 ),
               ),
             ),
-            Switch.adaptive(
+            IonSwitch(
               value: value,
               onChanged: editable ? onChanged : null,
               // PEO-18: Ionic `ion-toggle` without colour = app primary
@@ -1409,6 +1427,41 @@ class IonPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ios = ionIsIos(context) && condense;
+    // IONIC_PARITY: classic iPhone look: the regular Ionic toolbar (glass
+    // buttons, same height as on every other page) with the large title
+    // as the first scroll item, instead of Cupertino's 44 pt bar.
+    if (ios && context.rdSkin == null) {
+      return IonCondense(
+        builder: (context, collapsed) => Scaffold(
+          backgroundColor: ionContentBackground(context),
+          extendBodyBehindAppBar: true,
+          appBar: ios27.IonTranslucentAppBar(
+            condensed: collapsed,
+            background: ionContentBackground(context),
+            child: AppBar(
+              title: IonCondenseTitle(title, collapsed: collapsed),
+              leading: leading,
+              actions: actions,
+            ),
+          ),
+          body: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              const ios27.SliverIonContentTopInset(),
+              if (onRefresh != null)
+                CupertinoSliverRefreshControl(onRefresh: onRefresh),
+              SliverToBoxAdapter(child: IonLargeTitle(title)),
+              ...slivers,
+              SliverToBoxAdapter(
+                  child: SizedBox(
+                      height:
+                          scrollEndPadding(context, base: 16, fabRoom: 80))),
+            ],
+          ),
+          floatingActionButton: TabBarFab.wrap(floatingActionButton),
+        ),
+      );
+    }
     Widget body = CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [

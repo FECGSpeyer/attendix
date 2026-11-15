@@ -7,6 +7,7 @@ import '../../../core/theme/redesign/rd_theme.dart';
 import 'adaptive_platform.dart';
 import 'app_popover_menu.dart';
 import 'app_select.dart';
+import 'ion_switch.dart';
 
 /// One row of [showAppFilterPopover].
 sealed class AppFilterRow {
@@ -207,7 +208,7 @@ class _FilterPopoverBodyState extends State<_FilterPopoverBody> {
                 row.onChanged(!row.value);
                 _changed();
               },
-              end: Switch.adaptive(
+              end: IonSwitch(
                 value: row.value,
                 onChanged: (v) {
                   row.onChanged(v);

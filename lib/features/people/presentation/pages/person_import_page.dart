@@ -610,7 +610,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         Card(
           child: Column(
             children: [
-              SwitchListTile.adaptive(
+              IonSwitchListTile(
                 title: Text(context.l10n.peopleCreateAccounts),
                 value: _createAccounts,
                 onChanged: (v) => setState(() => _createAccounts = v),

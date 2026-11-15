@@ -219,7 +219,9 @@ void main() {
 
   // ------------------------------------------------------------ Mehr (md)
 
-  testWidgets('md settings list header: 14.4px semibold, 19.2 icon',
+  // Measured in the Ionic app (md): `.category-list` header with an icon is
+  // 0.95rem = 15.2px, a plain inset list header 16px.
+  testWidgets('md settings list header: 15.2px semibold, 19.2 icon',
       (tester) async {
     await tester.pumpWidget(_app(
       const Scaffold(
@@ -232,7 +234,7 @@ void main() {
       TargetPlatform.android,
     ));
     final style = tester.widget<Text>(find.text('Werke & Proben')).style!;
-    expect(style.fontSize, 14.4);
+    expect(style.fontSize, 15.2);
     expect(style.fontWeight, FontWeight.w600);
     expect(style.height, isNull);
     expect(tester.widget<Icon>(find.byIcon(Icons.music_note_outlined)).size,

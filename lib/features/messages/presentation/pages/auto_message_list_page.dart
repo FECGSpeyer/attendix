@@ -207,6 +207,7 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
                     SettingsListTile(
                       title: l10n.autoMessageTemplateName(tpl),
                       subtitle: l10n.autoMessageTemplateHint(tpl),
+                      detail: true, // Ionic detail="true"
                       onTap: () => _create(tpl),
                     ),
                 ],
@@ -258,7 +259,7 @@ extension on _AutoMessageListPageState {
                       subtitle: [l10n.autoMessageRuleSummary(rule, types), ...l10n.autoMessageRuleChips(rule)].join(' · '),
                       trailing: Semantics(
                         label: l10n.autoMessagesActive,
-                        child: Switch.adaptive(
+                        child: IonSwitch(
                           value: _toggling[rule.id] ?? _saved[rule.id] ?? rule.enabled,
                           activeTrackColor: p.primary,
                           onChanged: _toggling.containsKey(rule.id) ? null : (v) => _toggle(rule, v),
@@ -368,7 +369,7 @@ class _RuleRow extends StatelessWidget {
             ),
             Semantics(
               label: context.l10n.autoMessagesActive,
-              child: Switch.adaptive(value: enabled, onChanged: onToggle),
+              child: IonSwitch(value: enabled, onChanged: onToggle),
             ),
           ],
         ),

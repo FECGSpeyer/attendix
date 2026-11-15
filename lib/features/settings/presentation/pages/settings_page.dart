@@ -17,6 +17,7 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/viewer_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../shared/widgets/sheets/feedback_sheet.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
 import '../../../planning/presentation/pages/planning_page.dart' show openPlanningEditor;
@@ -146,7 +147,15 @@ class SettingsPage extends ConsumerWidget {
             ? Text(l10n.settingsSettings)
             : ios && TenantSwitcherTitle.centerTitle(ref) == null
                 ? IonHeaderPill(child: TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings))
-                : TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings),
+                : TenantSwitcherTitle.iosInset(
+                    enabled: ios &&
+                        context.rdSkin == null &&
+                        TenantSwitcherTitle.centerTitle(ref) == false &&
+                        SideNavMenuButton.maybe(context) == null,
+                    titleSpacing: 12,
+                    child: TenantSwitcherTitle(
+                        fallbackTitle: l10n.settingsSettings),
+                  ),
         // IOS_SHELL: iOS → bell in a glass circle
         actions: const [ToolbarButtonGroup(children: [NotificationBell()])],
       )),
@@ -244,6 +253,7 @@ class SettingsPage extends ConsumerWidget {
                   SettingsListTile(
                     icon: AppIcons.gridViewOutlined,
                     title: l10n.settingsConfigureDashboard,
+                    detail: true, // Ionic detail="true": chevron in the Material look too
                     onTap: () => context.push('/settings/dashboard'),
                   ),
                 ],
@@ -543,6 +553,7 @@ class SettingsPage extends ConsumerWidget {
                   SettingsListTile(
                     icon: AppIcons.helpOutline,
                     title: l10n.settingsHelp,
+                    detail: true, // Ionic detail="true": chevron in the Material look too
                     onTap: () => context.push('/settings/help'),
                   ),
                 SettingsListTile(
@@ -574,6 +585,7 @@ class SettingsPage extends ConsumerWidget {
                   SettingsListTile(
                     icon: AppIcons.constructionOutlined,
                     title: l10n.adminTitle,
+                    detail: true, // Ionic detail="true": chevron in the Material look too
                     onTap: () => context.push('/settings/administration'),
                   ),
                 // Ionic: red `ion-item color="danger" button` row. IOS_R4: no
@@ -616,6 +628,8 @@ class _PendingPersonsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ios = ionIsIos(context);
+    final classic = context.rdSkin == null;
     return Padding(
       padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
       child: IonCardBox(
@@ -626,19 +640,34 @@ class _PendingPersonsCard extends StatelessWidget {
             child: Row(
               children: [
                 Icon(AppIcons.personAdd, size: 32, color: Colors.black87),
-                const SizedBox(width: AppDimensions.paddingM),
-                Expanded(
+                SizedBox(width: ios && classic ? 17 : AppDimensions.paddingM),
+                // IONIC_PARITY: classic design: both lines centred over
+                // each other like Ionic's card (`ion-card-content` text:
+                // 1rem on the iPhone, 14 px in the Android look).
+                Flexible(
+                  fit: classic ? FlexFit.loose : FlexFit.tight,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: classic
+                        ? CrossAxisAlignment.center
+                        : CrossAxisAlignment.start,
                     children: [
                       Text(
                         context.l10n.settingsPendingCount(count),
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                        textAlign: classic ? TextAlign.center : null,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                          fontSize: classic ? (ios ? 17 : 14) : null,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         context.l10n.settingsWaitingApproval,
-                        style: const TextStyle(color: Colors.black87),
+                        textAlign: classic ? TextAlign.center : null,
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: classic ? (ios ? 17 : 14) : null,
+                        ),
                       ),
                     ],
                   ),

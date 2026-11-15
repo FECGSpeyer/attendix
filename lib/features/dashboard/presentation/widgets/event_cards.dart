@@ -204,24 +204,28 @@ class NextEventCard extends ConsumerWidget {
         ? '${l10n.homeDashboardSignedOut}\n${l10n.homeDashboardShiftCount(s.nextShiftWorkers)}'
         : l10n.homeDashboardSignedOut;
 
+    final row = Row(
+      crossAxisAlignment: classic ? CrossAxisAlignment.stretch : CrossAxisAlignment.center,
+      children: [
+        box(DashTone.green, '${s.nextPresent}', l10n.commonStatusPresent),
+        const SizedBox(width: 8),
+        box(
+          DashTone.orange,
+          '${s.nextExcused}',
+          excusedLabel,
+          onTap: s.nextExcused > 0 ? () => _showExcused(context, s) : null,
+        ),
+        const SizedBox(width: 8),
+        box(DashTone.muted, '${s.nextNeutral}', l10n.protocolOpen),
+      ],
+    );
     return Padding(
       // Ionic `.stat-grid { padding: 4px 16px 0 }`.
       padding: classic ? const EdgeInsets.fromLTRB(16, 4, 16, 0) : const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      child: Row(
-        crossAxisAlignment: classic ? CrossAxisAlignment.stretch : CrossAxisAlignment.center,
-        children: [
-          box(DashTone.green, '${s.nextPresent}', l10n.commonStatusPresent),
-          const SizedBox(width: 8),
-          box(
-            DashTone.orange,
-            '${s.nextExcused}',
-            excusedLabel,
-            onTap: s.nextExcused > 0 ? () => _showExcused(context, s) : null,
-          ),
-          const SizedBox(width: 8),
-          box(DashTone.muted, '${s.nextNeutral}', l10n.protocolOpen),
-        ],
-      ),
+      // The classic boxes are equally high (CSS grid). The card's column is
+      // unbounded in height, so `stretch` needs the intrinsic height; without
+      // it the row got an infinite height and the whole card stayed empty.
+      child: classic ? IntrinsicHeight(child: row) : row,
     );
   }
 

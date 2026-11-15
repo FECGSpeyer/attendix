@@ -77,6 +77,7 @@ class AttendancePersonTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasNotes = notes?.isNotEmpty == true;
+    final ios = useIosLook(context);
     final medium = Theme.of(
       context,
     ).textTheme.bodySmall?.copyWith(color: AppColors.medium, fontSize: 12.5);
@@ -84,7 +85,9 @@ class AttendancePersonTile extends StatelessWidget {
     // UX_ATT: Ionic iOS ion-item: 16 px start padding, 36 px avatar with
     // 16 px gap, h2 17 px name, h3 15 px note, 0.78rem medium extra lines.
     final content = ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 52),
+      // IONIC_PARITY: with the 0.5 px line below, a row is 52 pt in the
+      // iPhone look and 48 in the Android look, like `ion-item`.
+      constraints: BoxConstraints(minHeight: ios ? 51.5 : 47.5),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
@@ -107,7 +110,12 @@ class AttendancePersonTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // IOS_DETAIL: whitespace collapsed like HTML
-                  Text(collapseHtmlWhitespace(person.fullName), style: const TextStyle(fontSize: 17)),
+                  // IONIC_PARITY: `ion-item` text: 1.0625rem on the iPhone
+                  // (root 17 px), 16 px in the Android look.
+                  Text(
+                    collapseHtmlWhitespace(person.fullName),
+                    style: TextStyle(fontSize: ios ? 18.0625 : 16),
+                  ),
                   if (hasNotes)
                     Padding(
                       padding: const EdgeInsets.only(top: 2),

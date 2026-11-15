@@ -12,6 +12,8 @@ import '../adaptive/adaptive.dart';
 import '../layout/dashed_border.dart';
 import '../layout/ion_modal_handle.dart';
 import '../layout/ionic_ios.dart';
+import '../layout/ionic_md.dart';
+import '../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 
 /// Card layout building blocks of the Terminlisten (Ionic `ev-*` classes):
 /// date tile, pills, chips, section and month headers, the "Heute" card and
@@ -55,9 +57,12 @@ class EvMetrics {
       useIosLook(context) ? iosLineHeight : null;
 
   /// `--ion-color-medium`: Ionic 9 #636469 (dark #989aa2) on iOS.
-  static Color medium(BuildContext context) => useIosLook(context)
-      ? IonIos.medium(Theme.of(context).brightness)
-      : AppColors.medium;
+  /// IONIC_PARITY: the same colour in the Android look of the classic
+  /// design (Ionic 9 has one medium for both modes).
+  static Color medium(BuildContext context) =>
+      useIosLook(context) || context.rdSkin == null
+          ? IonIos.medium(Theme.of(context).brightness)
+          : AppColors.medium;
 
   /// `.list-ios.list-inset { margin: 16px }` – it outranks the app's
   /// `ion-list.ev-list { margin-top: 6px; margin-bottom: 0 }` (specificity
@@ -200,7 +205,7 @@ class EventPill extends StatelessWidget {
         softWrap: false,
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
-          fontSize: 12.8,
+          fontSize: EvMetrics.rem(context, 0.8),
           fontWeight: FontWeight.w700,
           fontFeatures: const [FontFeature.tabularFigures()],
         ),
@@ -246,7 +251,7 @@ class EventNotInvitedPill extends StatelessWidget {
             context.l10n.signoutNotInvited,
             maxLines: 1,
             softWrap: false,
-            style: TextStyle(color: fg, fontSize: 12.8, fontWeight: FontWeight.w700),
+            style: TextStyle(color: fg, fontSize: EvMetrics.rem(context, 0.8), fontWeight: FontWeight.w700),
           ),
         ],
       ),
@@ -573,7 +578,10 @@ class EventRow extends StatelessWidget {
                           style: TextStyle(
                             color: ios
                                 ? IonIos.labelP(Theme.of(context).brightness)
-                                : AppColors.medium,
+                                // IONIC_PARITY: md `ion-label p` step-600
+                                : (context.rdSkin == null
+                                    ? IonMd.note(Theme.of(context).brightness)
+                                    : AppColors.medium),
                             fontSize: EvMetrics.rem(context, 0.875),
                             height: lineHeight,
                           ),
@@ -1271,8 +1279,8 @@ class EventTodayFilledCard extends StatelessWidget {
                           children: [
                             Text(
                               title,
-                              style: const TextStyle(
-                                fontSize: 18.4,
+                              style: TextStyle(
+                                fontSize: EvMetrics.rem(context, 1.15),
                                 height: 1.25,
                                 fontWeight: FontWeight.w700,
                                 color: onPrimary,
@@ -1281,7 +1289,7 @@ class EventTodayFilledCard extends StatelessWidget {
                             if (meta != null && meta!.isNotEmpty)
                               Padding(
                                 padding: const EdgeInsets.only(top: 2),
-                                child: Text(meta!, style: TextStyle(fontSize: 14, color: dimmed)),
+                                child: Text(meta!, style: TextStyle(fontSize: EvMetrics.rem(context, 0.875), color: dimmed)),
                               ),
                           ],
                         ),
@@ -1300,7 +1308,7 @@ class EventTodayFilledCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 6),
                           Expanded(
-                            child: Text(place!, style: TextStyle(fontSize: 14, color: dimmed)),
+                            child: Text(place!, style: TextStyle(fontSize: EvMetrics.rem(context, 0.875), color: dimmed)),
                           ),
                         ],
                       ),
@@ -1322,7 +1330,7 @@ class EventTodayFilledCard extends StatelessWidget {
                               child: Text(
                                 stat.text,
                                 style: TextStyle(
-                                  fontSize: 12.8,
+                                  fontSize: EvMetrics.rem(context, 0.8),
                                   color: onPrimary,
                                   fontWeight: stat.strong ? FontWeight.w700 : FontWeight.w400,
                                 ),
@@ -1379,7 +1387,7 @@ class _EventTodayCtaButton extends StatelessWidget {
                   cta.label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 15.2, fontWeight: FontWeight.w600, color: fg),
+                  style: TextStyle(fontSize: EvMetrics.rem(context, 0.95), fontWeight: FontWeight.w600, color: fg),
                 ),
               ),
             ],

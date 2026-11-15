@@ -130,7 +130,7 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
                       RdListRow(
                         title: l10n.settingsHideCancelled,
                         showChevron: false,
-                        trailing: Switch.adaptive(
+                        trailing: IonSwitch(
                           value: hideExcused,
                           activeTrackColor: p.primary,
                           onChanged: (v) => setState(() => hideExcused = v),

@@ -777,7 +777,7 @@ class _InstanceSelectionToggleState extends ConsumerState<_InstanceSelectionTogg
               title: Text(context.l10n.settingsEnableTenantSelect),
               subtitle: Text(context.l10n.settingsTenantSelectHelper),
               onTap: () => _onChanged(!value),
-              end: Switch.adaptive(value: value, onChanged: _onChanged),
+              end: IonSwitch(value: value, onChanged: _onChanged),
             ),
           ],
         ),
@@ -788,7 +788,7 @@ class _InstanceSelectionToggleState extends ConsumerState<_InstanceSelectionTogg
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Card(
           margin: EdgeInsets.zero,
-          child: SwitchListTile.adaptive(
+          child: IonSwitchListTile(
             title: Text(context.l10n.settingsEnableTenantSelect),
             subtitle: Text(context.l10n.settingsTenantSelectHelper),
             value: value,

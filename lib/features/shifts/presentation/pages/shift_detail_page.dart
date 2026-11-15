@@ -368,7 +368,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
       ),
       ListTile(
         title: _pLabel(context.l10n.shiftsFree),
-        trailing: Switch.adaptive(
+        trailing: IonSwitch(
           value: segment.free,
           onChanged: (v) => _updateSegment(index, segment.copyWith(free: v)),
         ),

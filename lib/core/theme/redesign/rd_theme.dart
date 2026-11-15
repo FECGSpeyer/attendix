@@ -100,7 +100,9 @@ class RdType {
 /// keep their component styles and only take over the Farbwelt colours.
 ThemeData buildRdTheme(RdFarbwelt world, Brightness brightness) {
   final p = rdPalette(world, brightness);
-  final base = AppTheme.forPlatform(p.brightness, AppTheme.lookPlatform);
+  // The Beta keeps the Material letter spacing and line heights it was
+  // designed with.
+  final base = AppTheme.forPlatform(p.brightness, AppTheme.lookPlatform, ionicText: false);
   final scheme = base.colorScheme.copyWith(
     brightness: p.brightness,
     primary: p.primary,

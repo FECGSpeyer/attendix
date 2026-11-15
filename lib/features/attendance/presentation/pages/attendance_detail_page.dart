@@ -721,7 +721,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                     child: Column(
                       spacing: AppDimensions.paddingS,
                       children: [
-                        const SizedBox(height: AppDimensions.paddingXS),
+                        // IONIC_PARITY: the first group starts 16 pt below
+                        // the header in the iPhone look (22 in Android).
+                        if (ios && context.rdSkin == null)
+                          const SizedBox(height: 0)
+                        else
+                          const SizedBox(height: AppDimensions.paddingXS),
 
                         // Ionic 4.17.24: "Archiviert" banner (medium item).
                         if (attendance.archived) const _ArchivedBanner(),

@@ -11,6 +11,7 @@ import '../../../settings/presentation/widgets/settings_list.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/adaptive/ion_switch.dart';
 
 /// Card labels (Ionic `CARD_LABELS`).
 Map<String, String> dashboardCardLabels(AppLocalizations l10n) => {
@@ -74,7 +75,7 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
           _Header(context.l10n.dashSettingsTab),
           // UX_SETTINGS (WAVE 8): dashboard-settings.page.html — inset lists.
           _Box(
-            child: SwitchListTile.adaptive(
+            child: IonSwitchListTile(
               title: Text(context.l10n.dashSettingsShowTab),
               value: settings.showTab,
               onChanged: (v) => _guard(() => notifier.setShowTab(v)),
@@ -102,7 +103,7 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
                               )
                             : null,
                         title: Text(dashboardCardLabels(context.l10n)[shown[i].id] ?? shown[i].id),
-                        trailing: Switch.adaptive(
+                        trailing: IonSwitch(
                           value: shown[i].visible,
                           onChanged: _isReordering
                               ? null

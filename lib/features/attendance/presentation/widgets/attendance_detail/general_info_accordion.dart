@@ -14,6 +14,7 @@ import '../../../../../shared/widgets/adaptive/ion_datetime_button.dart';
 import 'attendance_accordion.dart';
 import '../../../../../shared/widgets/display/ion_badge_text.dart';
 import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
+import '../../../../../shared/widgets/adaptive/ion_switch.dart';
 
 /// Accordion widget for displaying and editing general attendance info
 /// Uses StatefulWidget to properly manage TextEditingController lifecycle
@@ -277,11 +278,11 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
                         child: Text(context.l10n.attendanceSetDeadline, style: const TextStyle(fontSize: 16)),
                       ),
                       const SizedBox(width: 12),
-                      Switch.adaptive(value: hasDeadline, onChanged: widget.onDeadlineToggle),
+                      IonSwitch(value: hasDeadline, onChanged: widget.onDeadlineToggle),
                     ],
                   ),
                 )
-              : SwitchListTile.adaptive(
+              : IonSwitchListTile(
                   title: Text(context.l10n.attendanceSetDeadline),
                   subtitle: Text(
                     context.l10n.attendanceDeadlineHelper,
