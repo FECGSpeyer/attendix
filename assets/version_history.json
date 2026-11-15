@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.155.5",
+      "date": "15.11.2026",
+      "changes": [
+        "🐛 Auswertung und Mitteilungen öffnen aus der Seitenleiste ohne zusätzliche Verwaltungsspalte."
+      ]
+    },
+    {
       "version": "0.155.4",
       "date": "15.11.2026",
       "changes": [
