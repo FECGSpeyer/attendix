@@ -276,7 +276,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                       subtitle: _reading && !_reviewed
                           ? Text(
                               context.l10n.songsFlutterVisionReading,
-                              style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                              style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
                             )
                           : _visionLabel != null && !_reviewed
                           ? Text(
@@ -355,7 +355,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                         child: Text(
                           context.l10n.songsFreeText,
-                          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.medium),
+                          style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.mediumOf(context)),
                         ),
                       ),
                       Padding(
@@ -482,7 +482,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
     final hint = _reading && !_reviewed
         ? Text(
             context.l10n.songsFlutterVisionReading,
-            style: const TextStyle(fontSize: 12, color: AppColors.medium),
+            style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
           )
         : _visionLabel != null && !_reviewed
             ? Text(

@@ -232,7 +232,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Icon(AppIcons.schedule, size: 64, color: ios ? sl.IonIos.text(context) : AppColors.medium),
+            Icon(AppIcons.schedule, size: 64, color: ios ? sl.IonIos.text(context) : AppColors.mediumOf(context)),
             const SizedBox(height: 16),
             Text(
               context.l10n.shiftsEditIntro,
@@ -252,7 +252,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
   }
 
   /// `ion-label > p`: small grey label.
-  Widget _pLabel(String text) => Text(text, style: const TextStyle(fontSize: 14, color: AppColors.medium));
+  Widget _pLabel(String text) => Text(text, style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context)));
 
   static const _line = Divider(height: 1, indent: 16);
 
@@ -678,7 +678,7 @@ class _ShiftInstanceTileState extends State<_ShiftInstanceTile> {
             ),
             IconButton(
               icon: Icon(AppIcons.deleteOutline,
-                  color: widget.isUsed ? AppColors.medium : AppColors.danger),
+                  color: widget.isUsed ? AppColors.mediumOf(context) : AppColors.danger),
               onPressed: widget.isUsed ? null : widget.onDelete,
               tooltip: context.l10n.commonDelete,
             ),

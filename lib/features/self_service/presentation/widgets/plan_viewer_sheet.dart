@@ -64,7 +64,7 @@ class PlanViewerSheet extends ConsumerWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.medium.withValues(alpha: 0.3),
+                  color: AppColors.mediumOf(context).withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -88,7 +88,7 @@ class PlanViewerSheet extends ConsumerWidget {
                           Text(
                             _getDateFormatted(),
                             style: TextStyle(
-                              color: AppColors.medium,
+                              color: AppColors.mediumOf(context),
                               fontSize: 12,
                             ),
                           ),
@@ -339,14 +339,14 @@ class _PlanFieldRow extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.medium.withValues(alpha: 0.1),
+                        color: AppColors.mediumOf(context).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         context.l10n.planningMinShort(duration),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
-                          color: AppColors.medium,
+                          color: AppColors.mediumOf(context),
                         ),
                       ),
                     ),
@@ -354,9 +354,9 @@ class _PlanFieldRow extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         conductor!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.medium,
+                          color: AppColors.mediumOf(context),
                         ),
                       ),
                     ],

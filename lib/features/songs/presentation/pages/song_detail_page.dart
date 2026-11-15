@@ -1019,7 +1019,7 @@ class _InlineSelect<T> extends StatelessWidget {
                     Align(
                       alignment: AlignmentDirectional.centerEnd,
                       child: DefaultTextStyle.merge(
-                        style: const TextStyle(color: AppColors.medium),
+                        style: TextStyle(color: AppColors.mediumOf(context)),
                         overflow: TextOverflow.ellipsis,
                         child: it.child,
                       ),
@@ -1123,7 +1123,7 @@ class _MultiSelectTile<T> extends StatelessWidget {
               names,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: AppColors.medium),
+              style: TextStyle(color: AppColors.mediumOf(context)),
             ),
           ),
           const SizedBox(width: 4),
@@ -1152,10 +1152,10 @@ class _SongOrigin extends StatelessWidget {
   Widget build(BuildContext context) {
     return IonInsetList(children: [
       IonItem(
-        leading: Icon(AppIcons.callSplit, color: AppColors.medium),
+        leading: Icon(AppIcons.callSplit, color: AppColors.mediumOf(context)),
         title: Text(
           context.l10n.orgSongsCopiedFrom(origin.tenantName, SongUtils.formatDate(origin.copiedAt)),
-          style: const TextStyle(fontSize: 14, color: AppColors.medium),
+          style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context)),
         ),
       ),
     ]);
@@ -1189,7 +1189,7 @@ class _CopyToOtherInstance extends ConsumerWidget {
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 4),
       children: [
         IonItem(
-          leading: Icon(AppIcons.copyOutlined, color: AppColors.medium),
+          leading: Icon(AppIcons.copyOutlined, color: AppColors.mediumOf(context)),
           title: Text(context.l10n.songsCopyToOther),
           onTap: () => showModalBottomSheet(
             context: context,

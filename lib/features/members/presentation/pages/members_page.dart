@@ -142,9 +142,9 @@ class _NoData extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(AppIcons.peopleOutline, size: 48, color: AppColors.medium.withValues(alpha: 0.5)),
+          Icon(AppIcons.peopleOutline, size: 48, color: AppColors.mediumOf(context).withValues(alpha: 0.5)),
           const SizedBox(height: AppDimensions.paddingM),
-          Text(text, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium, fontSize: 15.2)),
+          Text(text, textAlign: TextAlign.center, style: TextStyle(color: AppColors.mediumOf(context), fontSize: 15.2)),
         ],
       ),
     );

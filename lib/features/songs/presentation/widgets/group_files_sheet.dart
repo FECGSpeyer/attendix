@@ -106,7 +106,7 @@ class _GroupFilesSheetState extends ConsumerState<GroupFilesSheet> {
                       child: Text(
                         context.l10n.songsOnlyGroupsWithFiles,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 13.6, color: AppColors.medium),
+                        style: TextStyle(fontSize: 13.6, color: AppColors.mediumOf(context)),
                       ),
                     ),
                     if (selected == null)

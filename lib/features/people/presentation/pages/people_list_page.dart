@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/utils/people_sort.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/attendance_providers.dart' show playerAttendancePercentagesProvider;
 import '../../../../core/providers/attendance_rate_filter_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../rate_filter_labels.dart';
@@ -477,8 +478,13 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     // Use realtime provider for live updates
     final peopleAsync = ref.watch(realtimePlayersProvider);
     // "Anwesenheit zählen": season (default) or a chosen period / Terminart.
-    final rateFilter = ref.watch(attendanceRateFilterProvider);
-    final percentagesAsync = ref.watch(listAttendancePercentagesProvider);
+    // Classic shows the season rate like Ionic; choosing a period or a
+    // Terminart is a Beta feature (the filter rows exist only there).
+    final classic = context.rdSkin == null;
+    final rateFilter = classic ? const AttendanceRateFilter() : ref.watch(attendanceRateFilterProvider);
+    final percentagesAsync = classic
+        ? ref.watch(playerAttendancePercentagesProvider)
+        : ref.watch(listAttendancePercentagesProvider);
     final percentages = percentagesAsync.valueOrNull ?? {};
     // Ionic showTeachers = view option and tenant.maintainTeachers; names
     // from db.getTeachers().
@@ -981,7 +987,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   /// the first tap).
   Widget _buildOptionsButton({required bool isAdmin}) {
     final rate = ref.read(attendanceRateFilterProvider);
-    final active = _filterOption != 'all' || !rate.isDefault;
+    final active = _filterOption != 'all' || (context.rdSkin != null && !rate.isDefault);
     // PEO-28: Ionic `options` (filled).
     final glyph = AppIcons.ionic ? Ionicons.options : AppIcons.tune;
     return Builder(
@@ -1036,6 +1042,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final filterLabels = _filterOptionLabels(tenant);
     final sortLabels = _sortOptionLabels(tenant);
     final viewLabels = _viewOptionLabels(tenant);
+    final classic = context.rdSkin == null;
     final rate = ref.read(attendanceRateFilterProvider);
     final rateTypes = [
       for (final t in ref.read(attendanceTypesProvider).valueOrNull ?? const [])
@@ -1056,8 +1063,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         options: entries(sortLabels),
         onSelected: _onSortSelected,
       ),
-      // "Anwesenheit zählen": period of the percentages.
-      AppFilterSelect<String>(
+      // "Anwesenheit zählen": period of the percentages (not in Ionic, so
+      // only with the Beta design).
+      if (!classic)
+        AppFilterSelect<String>(
         icon: AppIcons.calendarToday,
         value: rate.period.name,
         options: [
@@ -1066,7 +1075,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         ],
         onSelected: (v) => _onRatePeriodSelected(RatePeriod.values.byName(v)),
       ),
-      if (rateTypes.length > 1)
+      if (!classic && rateTypes.length > 1)
         AppFilterSelect<String>(
           icon: AppIcons.event,
           value: rate.typeId ?? '',
@@ -1116,8 +1125,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             onTap: _toggleReorderMode,
           ),
         // Flutter extra: multi-select handover (Ionic only has the
-        // handover page in the settings)
-        AppFilterAction(
+        // handover page in the settings), so Beta only.
+        if (!classic)
+          AppFilterAction(
           icon: AppIcons.checklist,
           label: context.l10n.peopleFlutterTransferPeople,
           onTap: _enterSelectionMode,
@@ -1392,7 +1402,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                     key: ValueKey('reorder_${_reorderIds[groupName]![i]}'),
                     start: ReorderableDragStartListener(
                       index: i,
-                      child: Icon(AppIcons.dragHandle, color: AppColors.medium),
+                      child: Icon(AppIcons.dragHandle, color: AppColors.mediumOf(context)),
                     ),
                     child: Text(
                       byId[_reorderIds[groupName]![i]]?.fullName ?? '?',
@@ -2005,8 +2015,8 @@ class _BirthdayBanner extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           context.l10n.peopleAgeYears(age),
-                          style: const TextStyle(
-                              fontSize: 13.5, color: AppColors.medium),
+                          style: TextStyle(
+                              fontSize: 13.5, color: AppColors.mediumOf(context)),
                         ),
                       ],
                     ),

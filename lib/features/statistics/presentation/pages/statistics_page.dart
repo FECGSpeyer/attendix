@@ -290,7 +290,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
                 data: (_) => Column(
                   children: [
                     Icon(AppIcons.barChart,
-                        size: 64, color: AppColors.medium),
+                        size: 64, color: AppColors.mediumOf(context)),
                     const SizedBox(height: 16),
                     Text(l10n.statsFlutterNoDataInPeriod),
                   ],
@@ -462,7 +462,7 @@ class _OverviewList extends ConsumerWidget {
       if (statistics.bestAttendance != null)
         ListTile(
           title: Text(context.l10n.statsBest,
-              style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+              style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context))),
           subtitle: Text(statistics.bestAttendance!.formattedDate,
               style: TextStyle(fontSize: 17, color: Theme.of(context).colorScheme.onSurface)),
           trailing: _IonBadge('${statistics.bestAttendance!.percentage?.round() ?? 0}%',
@@ -471,7 +471,7 @@ class _OverviewList extends ConsumerWidget {
       if (statistics.worstAttendance != null)
         ListTile(
           title: Text(context.l10n.statsWorst,
-              style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+              style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context))),
           subtitle: Text(statistics.worstAttendance!.formattedDate,
               style: TextStyle(fontSize: 17, color: Theme.of(context).colorScheme.onSurface)),
           trailing: _IonBadge('${statistics.worstAttendance!.percentage?.round() ?? 0}%',
@@ -517,7 +517,7 @@ class _MembersOverview extends ConsumerWidget {
         children: _withInsetDividers([
           row(context.l10n.statsActiveMembers, active, AppColors.success),
           row(context.l10n.statsPausing, paused, AppColors.warning),
-          row(context.l10n.statsLeft, left.length, AppColors.medium),
+          row(context.l10n.statsLeft, left.length, AppColors.mediumOf(context)),
           row(context.l10n.churchOverviewTotal, current.length + left.length, AppColors.primary, bold: true),
         ]),
       ),
@@ -993,11 +993,11 @@ class _EmptyChartPlaceholder extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(AppIcons.showChart, size: 32, color: AppColors.medium),
+            Icon(AppIcons.showChart, size: 32, color: AppColors.mediumOf(context)),
             const SizedBox(height: 8),
             Text(
               message ?? context.l10n.statsFlutterNoData,
-              style: TextStyle(color: AppColors.medium),
+              style: TextStyle(color: AppColors.mediumOf(context)),
             ),
           ],
         ),

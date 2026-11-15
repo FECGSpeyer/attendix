@@ -342,7 +342,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
                   ? context.l10n.generalSettingsFlutterOrHint
                   : context.l10n.generalSettingsFlutterAndHint,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.medium,
+                    color: AppColors.mediumOf(context),
                   ),
             ),
             const SizedBox(height: AppDimensions.paddingM),

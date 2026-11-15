@@ -131,7 +131,7 @@ class PersonHeader extends ConsumerWidget {
                         padding: EdgeInsets.zero,
                         tooltip: context.l10n.personEditName,
                         icon: Icon(AppIcons.editNote,
-                            size: 20, color: AppColors.medium),
+                            size: 20, color: AppColors.mediumOf(context)),
                         onPressed: onEditName,
                       ),
                     ),

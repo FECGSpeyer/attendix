@@ -170,7 +170,7 @@ class _InstrumentCategoriesSheetState
                             Icon(
                               AppIcons.categoryOutlined,
                               size: 64,
-                              color: AppColors.medium,
+                              color: AppColors.mediumOf(context),
                             ),
                             const SizedBox(height: AppDimensions.paddingM),
                             Text(
@@ -180,7 +180,7 @@ class _InstrumentCategoriesSheetState
                             const SizedBox(height: AppDimensions.paddingS),
                             Text(
                               context.l10n.instrumentsFlutterNoCategoriesHint,
-                              style: const TextStyle(color: AppColors.medium),
+                              style: TextStyle(color: AppColors.mediumOf(context)),
                             ),
                           ],
                         ),
@@ -423,12 +423,12 @@ class _CategoryTile extends StatelessWidget {
                 if (dragIndex != null) ...[
                   ReorderableDragStartListener(
                     index: dragIndex!,
-                    child: Icon(AppIcons.reorder, color: AppColors.medium),
+                    child: Icon(AppIcons.reorder, color: AppColors.mediumOf(context)),
                   ),
                   if (category.sortOrder != null) const SizedBox(width: 16),
                 ],
                 if (category.sortOrder != null)
-                  IonBadge(text: '${category.sortOrder}', color: AppColors.medium),
+                  IonBadge(text: '${category.sortOrder}', color: AppColors.mediumOf(context)),
               ],
             )
           : null,

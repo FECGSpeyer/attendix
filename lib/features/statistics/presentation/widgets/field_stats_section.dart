@@ -122,7 +122,7 @@ class _FieldStatsSectionState extends ConsumerState<FieldStatsSection> {
         ListTile(
           title: Text(
             l10n.statsFieldNoPersons,
-            style: const TextStyle(color: AppColors.medium),
+            style: TextStyle(color: AppColors.mediumOf(context)),
           ),
         ),
     ];
@@ -238,7 +238,7 @@ class _FieldStatsRowTile extends StatelessWidget {
         children: [
           Text(
             context.l10n.commonPersons(row.count),
-            style: const TextStyle(color: AppColors.medium),
+            style: TextStyle(color: AppColors.mediumOf(context)),
           ),
           const SizedBox(width: 8),
           _Badge('${row.perc}%'),

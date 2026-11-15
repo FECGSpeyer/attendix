@@ -968,11 +968,11 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                               '${summary.postponed.join(', ')}${_type?.suggestPostponed == true ? ctx.l10n.protocolSuggestNext : ''}'),
                         _summaryTile(
                             AppIcons.checkBoxOutlined,
-                            AppColors.medium,
+                            AppColors.mediumOf(context),
                             ctx.l10n.protocolTaskCount(summary.taskCount),
                             summary.taskOwners.isNotEmpty ? ctx.l10n.protocolForNames(joinNames(summary.taskOwners)) : null),
                         if (summary.withoutOutcome.isNotEmpty)
-                          _summaryTile(AppIcons.helpOutline, AppColors.medium,
+                          _summaryTile(AppIcons.helpOutline, AppColors.mediumOf(context),
                               ctx.l10n.protocolWithoutOutcome(summary.withoutOutcome.length), summary.withoutOutcome.join(', ')),
                         if (summary.withoutNotes.isNotEmpty)
                           _summaryTile(AppIcons.errorOutline, AppColors.warning,
@@ -1000,7 +1000,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                       child: Column(children: [
                         _summaryTile(
                           AppIcons.visibilityOutlined,
-                          AppColors.medium,
+                          AppColors.mediumOf(context),
                           ctx.l10n.protocolMayRead,
                           (_type?.relevantGroups?.isNotEmpty ?? false)
                               ? ctx.l10n.protocolReadGroups(_type?.name ?? '')
@@ -1008,7 +1008,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                         ),
                         _summaryTile(
                           AppIcons.notificationsOutlined,
-                          AppColors.medium,
+                          AppColors.mediumOf(context),
                           ctx.l10n.protocolNotified,
                           '${ctx.l10n.protocolRecipients(summary.recipientCount)}${summary.taskOwners.isNotEmpty ? ctx.l10n.protocolTaskOwners(summary.taskOwners.length) : ''}',
                         ),
@@ -1077,10 +1077,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   AppColors.warning,
                   l10n.protocolPostponedCount(summary.postponed.length),
                   '${summary.postponed.join(', ')}${_type?.suggestPostponed == true ? l10n.protocolSuggestNext : ''}'),
-            _ionSummaryItem(AppIcons.checkBoxOutlined, AppColors.medium, l10n.protocolTaskCount(summary.taskCount),
+            _ionSummaryItem(AppIcons.checkBoxOutlined, AppColors.mediumOf(context), l10n.protocolTaskCount(summary.taskCount),
                 summary.taskOwners.isNotEmpty ? l10n.protocolForNames(joinNames(summary.taskOwners)) : null),
             if (summary.withoutOutcome.isNotEmpty)
-              _ionSummaryItem(AppIcons.helpOutline, AppColors.medium,
+              _ionSummaryItem(AppIcons.helpOutline, AppColors.mediumOf(context),
                   l10n.protocolWithoutOutcome(summary.withoutOutcome.length), summary.withoutOutcome.join(', ')),
             if (summary.withoutNotes.isNotEmpty)
               _ionSummaryItem(AppIcons.errorOutline, AppColors.warning,
@@ -1116,7 +1116,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           children: [
             _ionSummaryItem(
               AppIcons.visibilityOutlined,
-              AppColors.medium,
+              AppColors.mediumOf(context),
               l10n.protocolMayRead,
               (_type?.relevantGroups?.isNotEmpty ?? false)
                   ? l10n.protocolReadGroups(_type?.name ?? '')
@@ -1124,7 +1124,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             ),
             _ionSummaryItem(
               AppIcons.notificationsOutlined,
-              AppColors.medium,
+              AppColors.mediumOf(context),
               l10n.protocolNotified,
               '${l10n.protocolRecipients(summary.recipientCount)}${summary.taskOwners.isNotEmpty ? l10n.protocolTaskOwners(summary.taskOwners.length) : ''}',
             ),
@@ -1139,7 +1139,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         // Ionic `.hint-text ion-padding-horizontal`: 13px grey.
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-          child: Text(l10n.protocolEditAfterPublish, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+          child: Text(l10n.protocolEditAfterPublish, style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
         ),
         // Ionic `.ion-padding`: two block buttons, the first in the accent
         // colour with `paper-plane-outline`.
@@ -1276,7 +1276,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   '$_title · $_shortDate · ${_isPublished ? context.l10n.teamOrgPublished : context.l10n.teamOrgDraft}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.medium),
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.mediumOf(context)),
                 ),
             ],
           ),
@@ -1306,7 +1306,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                                 padding: EdgeInsets.only(right: 6),
                                 child: SizedBox(width: 12, height: 12, child: AppSpinner(strokeWidth: 2)),
                               ),
-                            Text(_saveLabel, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+                            Text(_saveLabel, style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context))),
                           ],
                         ),
                         const SizedBox(height: 4),
@@ -1578,7 +1578,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     const SizedBox(height: 2),
                     Text(
                       '${att.excused.isNotEmpty ? context.l10n.protocolExcusedCount(att.excused.length) : ''}${context.l10n.protocolFromAttendance}',
-                      style: const TextStyle(fontSize: 13, color: AppColors.medium),
+                      style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context)),
                     ),
                   ],
                 ),
@@ -1633,7 +1633,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                       title: Text(a.name),
                     ),
                   if (att.present.isEmpty)
-                    ios27.IonItem(title: Text(ctx.l10n.protocolNobodyPresent), titleColor: AppColors.medium),
+                    ios27.IonItem(title: Text(ctx.l10n.protocolNobodyPresent), titleColor: AppColors.mediumOf(context)),
                 ],
               ),
               if (att.excused.isNotEmpty)
@@ -1652,13 +1652,13 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 IonInsetList(
                   header: ctx.l10n.protocolOthersList(att.others.length),
                   children: [
-                    for (final a in att.others) ios27.IonItem(title: Text(a.name), titleColor: AppColors.medium),
+                    for (final a in att.others) ios27.IonItem(title: Text(a.name), titleColor: AppColors.mediumOf(context)),
                   ],
                 ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
                 child: Text(ctx.l10n.protocolListFromAttendance,
-                    style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+                    style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
               ),
             ],
           ),
@@ -1737,7 +1737,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             controller: scroll,
             padding: const EdgeInsets.all(16),
             children: [
-              Text(ctx.l10n.protocolWholeMeeting, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+              Text(ctx.l10n.protocolWholeMeeting, style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
               const SizedBox(height: 10),
               _editor(controller),
               StatefulBuilder(
@@ -1890,7 +1890,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     Icon(
                       list[i].status == 'completed' ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
                       size: 20,
-                      color: list[i].status == 'completed' ? AppColors.success : AppColors.medium,
+                      color: list[i].status == 'completed' ? AppColors.success : AppColors.mediumOf(context),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -1900,15 +1900,15 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                           Text(
                             list[i].title,
                             style: list[i].status == 'completed'
-                                ? const TextStyle(
-                                    fontSize: 15, decoration: TextDecoration.lineThrough, color: AppColors.medium)
+                                ? TextStyle(
+                                    fontSize: 15, decoration: TextDecoration.lineThrough, color: AppColors.mediumOf(context))
                                 : const TextStyle(fontSize: 15),
                           ),
                           if (_taskLine(list[i]).isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.only(top: 2),
                               child: Text(_taskLine(list[i]),
-                                  style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+                                  style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
                             ),
                         ],
                       ),
@@ -1927,7 +1927,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             dense: true,
             leading: Icon(
               t.status == 'completed' ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
-              color: t.status == 'completed' ? AppColors.success : AppColors.medium,
+              color: t.status == 'completed' ? AppColors.success : AppColors.mediumOf(context),
             ),
             title: Text(
               t.title,
@@ -1978,7 +1978,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         if (_sections.isEmpty)
           _ProtocolCard(
             padding: const EdgeInsets.all(16),
-            child: Text(context.l10n.protocolPlanEmpty, style: const TextStyle(color: AppColors.medium)),
+            child: Text(context.l10n.protocolPlanEmpty, style: TextStyle(color: AppColors.mediumOf(context))),
           ),
         for (final s in _sections) _sectionCard(s, map),
         // Ionic `.add-point`: clear block button in the accent colour.
@@ -1993,8 +1993,8 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 18, 0, 6),
             child: Text(context.l10n.protocolMoreTasks.toUpperCase(),
-                style: const TextStyle(
-                    fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.26, color: AppColors.medium)),
+                style: TextStyle(
+                    fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.26, color: AppColors.mediumOf(context))),
           ),
           _ProtocolCard(padding: const EdgeInsets.symmetric(horizontal: 16), child: _taskList(unassigned)),
         ],
@@ -2018,7 +2018,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       _Section s, Map<String, String> map, bool active, bool isLive, List<TeamTask> tasks, String? outcome) {
     final l10n = context.l10n;
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final muted = const TextStyle(fontSize: 13, color: AppColors.medium);
+    final muted = TextStyle(fontSize: 13, color: AppColors.mediumOf(context));
     return _ProtocolCard(
       ring: active ? _protocolAccent : (isLive ? AppColors.success.withValues(alpha: 0.6) : null),
       child: Column(
@@ -2133,7 +2133,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 Text(l.title, style: Theme.of(context).textTheme.titleSmall),
                 Text(
                   context.l10n.protocolNotInPlan,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.mediumOf(context)),
                 ),
                 _editor(_controllerFor('leftover:${l.key}', readOnly: true, initialDoc: l.doc), editable: false),
               ],
@@ -2262,7 +2262,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   Widget _sideLabel(String text) => Padding(
         padding: const EdgeInsets.fromLTRB(4, AppDimensions.paddingM, 4, 4),
         child: Text(text.toUpperCase(),
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.medium, letterSpacing: 0.6)),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.mediumOf(context), letterSpacing: 0.6)),
       );
 
   Widget _liveBar() {
@@ -2302,7 +2302,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         Text(_title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
         Text([_dateLabel, if (_timeRange.isNotEmpty) _timeRange].join(' · '), style: theme.textTheme.bodySmall),
         Text(_statusLine,
-            style: theme.textTheme.bodySmall?.copyWith(color: _isPublished ? AppColors.success : AppColors.medium)),
+            style: theme.textTheme.bodySmall?.copyWith(color: _isPublished ? AppColors.success : AppColors.mediumOf(context))),
         const SizedBox(height: AppDimensions.paddingS),
         _liveBar(),
         _sideLabel(context.l10n.protocolRunSheet),
@@ -2327,7 +2327,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                               fontSize: 13,
                               fontFeatures: const [FontFeature.tabularFigures()],
                               fontWeight: _live?.fieldId == s.id ? FontWeight.w700 : null,
-                              color: _live?.fieldId == s.id ? const Color(0xFF00815E) : AppColors.medium))),
+                              color: _live?.fieldId == s.id ? const Color(0xFF00815E) : AppColors.mediumOf(context)))),
                   minLeadingWidth: 40,
                   title: Text(s.title, maxLines: 2, overflow: TextOverflow.ellipsis),
                   subtitle: (s.conductor != null || s.duration > 0)
@@ -2343,7 +2343,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: _dotColor(s.id),
-                        border: Border.all(color: _outcomes[s.id] != null ? _dotColor(s.id) : AppColors.medium),
+                        border: Border.all(color: _outcomes[s.id] != null ? _dotColor(s.id) : AppColors.mediumOf(context)),
                       ),
                     ),
                   ),
@@ -2478,7 +2478,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       main = ListView(
         padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
         children: [
-          Text(context.l10n.protocolMoreNotes, style: theme.textTheme.labelMedium?.copyWith(color: AppColors.medium)),
+          Text(context.l10n.protocolMoreNotes, style: theme.textTheme.labelMedium?.copyWith(color: AppColors.mediumOf(context))),
           Text(l.title, style: theme.textTheme.headlineSmall),
           Text(context.l10n.protocolNotInPlan,
               style: theme.textTheme.bodySmall),
@@ -2492,7 +2492,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(AppIcons.list, size: 56, color: AppColors.medium),
+            Icon(AppIcons.list, size: 56, color: AppColors.mediumOf(context)),
             const SizedBox(height: AppDimensions.paddingS),
             Text(_sections.isNotEmpty ? context.l10n.protocolFlutterChooseLeft : context.l10n.protocolFlutterPlanEmptyShort,
                 style: theme.textTheme.titleMedium),
@@ -2543,7 +2543,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     dense: true,
                     leading: Icon(
                       t.status == 'completed' ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
-                      color: t.status == 'completed' ? AppColors.success : AppColors.medium,
+                      color: t.status == 'completed' ? AppColors.success : AppColors.mediumOf(context),
                     ),
                     title: Text(
                       t.title,
@@ -3368,12 +3368,12 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         : Card(child: Padding(padding: const EdgeInsets.all(AppDimensions.paddingM), child: child));
     // Ionic `.card-label` 13px / 600 grey, `.read-title` 17px / 600.
     final cardLabel = classic
-        ? const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.medium)
+        ? TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.mediumOf(context))
         : theme.textTheme.titleSmall;
     final readTitle = classic ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w600) : theme.textTheme.titleMedium;
     Widget pill(String name, {bool muted = false}) => classic
         ? _NamePill(name, muted: muted)
-        : Chip(label: Text(name, style: muted ? const TextStyle(color: AppColors.medium) : null));
+        : Chip(label: Text(name, style: muted ? TextStyle(color: AppColors.mediumOf(context)) : null));
     final list = ListView(
       padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
@@ -3382,7 +3382,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           Text(_title, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
           Text([_dateLabel, if (_timeRange.isNotEmpty) context.l10n.attendanceTimeOClock(_timeRange)].join(' · '),
-              style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+              style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
         ],
         if (_isPublished)
           Padding(
@@ -3432,7 +3432,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     if (_hasNotes(s.id))
                       _editor(_controllerFor(s.id, readOnly: true), editable: false)
                     else if (_tasksFor(s.id, map).isEmpty)
-                      Text(context.l10n.protocolNoNotes, style: const TextStyle(color: AppColors.medium)),
+                      Text(context.l10n.protocolNoNotes, style: TextStyle(color: AppColors.mediumOf(context))),
                     _taskList(_tasksFor(s.id, map)),
                   ],
                 ),
@@ -3657,7 +3657,7 @@ class _NamePill extends StatelessWidget {
         color: dark ? const Color(0xFF2C2C2E) : const Color(0xFFF2F2F7),
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Text(name, style: TextStyle(fontSize: 13, color: muted ? AppColors.medium : null)),
+      child: Text(name, style: TextStyle(fontSize: 13, color: muted ? AppColors.mediumOf(context) : null)),
     );
   }
 }

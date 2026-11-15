@@ -859,7 +859,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: [
                         const SizedBox(height: 80),
-                        Icon(AppIcons.notificationsOffOutlined, size: 48, color: AppColors.medium),
+                        Icon(AppIcons.notificationsOffOutlined, size: 48, color: AppColors.mediumOf(context)),
                         const SizedBox(height: AppDimensions.paddingS),
                         Center(child: Text(context.l10n.bellNone)),
                       ],
@@ -982,7 +982,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                           // ion-note: max(14px, 1rem)
                           fontSize: ios ? 16 : 14,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.medium,
+                          color: AppColors.mediumOf(context),
                         ),
                       ),
                     Text(
@@ -1002,7 +1002,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                       style: TextStyle(
                         fontSize: 11,
                         // iOS ion-note: text-color-step-650 (#a6a6a6)
-                        color: ios ? onSurface.withValues(alpha: 0.35) : AppColors.medium,
+                        color: ios ? onSurface.withValues(alpha: 0.35) : AppColors.mediumOf(context),
                       ),
                     ),
                   ],
@@ -1017,7 +1017,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                   color:
                       ios
                           ? onSurface.withValues(alpha: 0.25)
-                          : AppColors.medium.withValues(alpha: 0.6),
+                          : AppColors.mediumOf(context).withValues(alpha: 0.6),
                 ),
               ],
             ],

@@ -324,7 +324,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                                 ? null
                                 : IconButton(
                                     tooltip: l10n.commonDelete,
-                                    icon: Icon(AppIcons.cancel, size: 18, color: AppColors.medium),
+                                    icon: Icon(AppIcons.cancel, size: 18, color: AppColors.mediumOf(context)),
                                     onPressed: () => setState(() => _title.clear()),
                                   ),
                           ),
@@ -357,7 +357,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                             ],
                             Text(
                               hasPerson ? personName : l10n.tasksNobody,
-                              style: TextStyle(color: hasPerson ? theme.colorScheme.onSurface : AppColors.medium),
+                              style: TextStyle(color: hasPerson ? theme.colorScheme.onSurface : AppColors.mediumOf(context)),
                             ),
                             const SizedBox(width: 4),
                             const IonDetailIcon(),
@@ -376,13 +376,13 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                               Text(
                                 _dueDate != null ? formatLongDate(_dueDate) : l10n.tasksFlutterNoDate,
                                 style: TextStyle(
-                                    color: _dueDate != null ? theme.colorScheme.onSurface : AppColors.medium),
+                                    color: _dueDate != null ? theme.colorScheme.onSurface : AppColors.mediumOf(context)),
                               ),
                               if (_dueDate != null)
                                 IconButton(
                                   tooltip: l10n.commonDelete,
                                   visualDensity: VisualDensity.compact,
-                                  icon: Icon(AppIcons.cancel, size: 18, color: AppColors.medium),
+                                  icon: Icon(AppIcons.cancel, size: 18, color: AppColors.mediumOf(context)),
                                   onPressed: () => setState(() => _dueDate = null),
                                 )
                               else ...[
@@ -412,7 +412,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                             if (_dueDate != null)
                               IconButton(
                                 tooltip: l10n.commonDelete,
-                                icon: Icon(AppIcons.clear, color: AppColors.medium),
+                                icon: Icon(AppIcons.clear, color: AppColors.mediumOf(context)),
                                 onPressed: () => setState(() => _dueDate = null),
                               ),
                           ],
@@ -432,7 +432,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                           value: _notify,
                           onChanged: (v) => setState(() => _notify = v),
                           title: Text(l10n.tasksNotify(_firstName(persons) ?? l10n.tasksPerson)),
-                          subtitle: Text(l10n.tasksNotifyHint, style: const TextStyle(color: AppColors.medium)),
+                          subtitle: Text(l10n.tasksNotifyHint, style: TextStyle(color: AppColors.mediumOf(context))),
                         ),
                     ],
                   ),
@@ -507,7 +507,7 @@ class _PersonPickerState extends State<_PersonPicker> {
                 if (q.isEmpty) {
                   if (i == 0) {
                     return ListTile(
-                      title: Text(l10n.tasksNobody, style: const TextStyle(color: AppColors.medium)),
+                      title: Text(l10n.tasksNobody, style: TextStyle(color: AppColors.mediumOf(context))),
                       trailing: widget.selectedId == null ? Icon(AppIcons.check, color: AppColors.primary) : null,
                       onTap: () => Navigator.of(context).pop((id: null)),
                     );
@@ -515,7 +515,7 @@ class _PersonPickerState extends State<_PersonPicker> {
                   i -= 1;
                 }
                 if (filtered.isEmpty) {
-                  return ListTile(title: Text(l10n.tasksNoPersonFound, style: const TextStyle(color: AppColors.medium)));
+                  return ListTile(title: Text(l10n.tasksNoPersonFound, style: TextStyle(color: AppColors.mediumOf(context))));
                 }
                 final p = filtered[i];
                 return ListTile(

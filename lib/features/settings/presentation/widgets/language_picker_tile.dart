@@ -50,7 +50,7 @@ class LanguagePickerTile extends ConsumerWidget {
                   languageNames[current] ?? current,
                   style: TextStyle(
                     fontSize: 16,
-                    color: ios ? IonIos.text(context) : AppColors.medium,
+                    color: ios ? IonIos.text(context) : AppColors.mediumOf(context),
                   ),
                 ),
                 const SizedBox(width: 4),
@@ -60,7 +60,7 @@ class LanguagePickerTile extends ConsumerWidget {
                     // ion-select md: caret (13px, step-500).
                     : (context.rdSkin == null
                         ? const IonMdSelectIcon()
-                        : Icon(AppIcons.arrowDropDown, color: AppColors.medium)),
+                        : Icon(AppIcons.arrowDropDown, color: AppColors.mediumOf(context))),
               ],
             );
           }),

@@ -324,12 +324,12 @@ class _GroupListItem extends StatelessWidget {
                 if (dragIndex != null) ...[
                   ReorderableDragStartListener(
                     index: dragIndex!,
-                    child: Icon(AppIcons.reorder, color: AppColors.medium),
+                    child: Icon(AppIcons.reorder, color: AppColors.mediumOf(context)),
                   ),
                   if (group.sortOrder != null) const SizedBox(width: 16),
                 ],
                 if (group.sortOrder != null)
-                  IonBadge(text: '${group.sortOrder}', color: AppColors.medium),
+                  IonBadge(text: '${group.sortOrder}', color: AppColors.mediumOf(context)),
               ],
             )
           : null,
@@ -894,7 +894,7 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall
-                    ?.copyWith(color: AppColors.medium),
+                    ?.copyWith(color: AppColors.mediumOf(context)),
               ),
               const SizedBox(height: AppDimensions.paddingXS),
               Wrap(

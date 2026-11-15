@@ -206,7 +206,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
         Text(context.l10n.signoutRegularlyUnavailable),
         if (widget.forOther && widget.personName.isNotEmpty)
           Text(widget.personName,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.medium)),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.mediumOf(context))),
       ],
     );
 
@@ -282,7 +282,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
                     ? context.l10n.dutyNoRuleOther
                     : context.l10n.dutyNoRuleSelf,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.medium),
+                style: TextStyle(color: AppColors.mediumOf(context)),
               ),
             )
           else
@@ -293,7 +293,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
                     title: Text(
                         '${weekdaysText(rule.weekdays)}${rule.reason.isNotEmpty ? ' · ${rule.reason}' : ''}'),
                     subtitle: Text('${_typesText(rule, types)} · ${_untilText(rule)}',
-                        style: const TextStyle(color: AppColors.medium)),
+                        style: TextStyle(color: AppColors.mediumOf(context))),
                     onTap: () => _edit(rule),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -342,7 +342,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
                       message: weekdayLongNames[i],
                       child: IonChip(
                         label: weekdayShortNames[i],
-                        color: editing.weekdays.contains(i + 1) ? AppColors.primary : AppColors.medium,
+                        color: editing.weekdays.contains(i + 1) ? AppColors.primary : AppColors.mediumOf(context),
                         outline: !editing.weekdays.contains(i + 1),
                         onTap: () {
                           final list = [...editing.weekdays];
@@ -375,7 +375,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
               child: Text(context.l10n.dutyAllTypesHint,
-                  style: const TextStyle(color: AppColors.medium, fontSize: 12)),
+                  style: TextStyle(color: AppColors.mediumOf(context), fontSize: 12)),
             ),
           ],
         ),
@@ -387,15 +387,15 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
               hint: context.l10n.dutyChildrenHourPlaceholder,
             ),
             ListTile(
-              title: Text(context.l10n.dutyValidUntil, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+              title: Text(context.l10n.dutyValidUntil, style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context))),
               subtitle: Text(_untilText(editing), style: Theme.of(context).textTheme.bodyLarge),
               onTap: _pickValidUntil,
               trailing: editing.validUntil != null
                   ? IconButton(
-                      icon: Icon(AppIcons.clear, color: AppColors.medium, semanticLabel: context.l10n.a11yClearInput),
+                      icon: Icon(AppIcons.clear, color: AppColors.mediumOf(context), semanticLabel: context.l10n.a11yClearInput),
                       onPressed: () => setState(() => _editing = editing.copyWith(validUntil: null)),
                     )
-                  : Icon(AppIcons.calendarToday, color: AppColors.medium),
+                  : Icon(AppIcons.calendarToday, color: AppColors.mediumOf(context)),
             ),
           ],
         ),
@@ -404,7 +404,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
           child: Text(
             context.l10n.dutyRuleHint,
-            style: const TextStyle(color: AppColors.medium, fontSize: 13),
+            style: TextStyle(color: AppColors.mediumOf(context), fontSize: 13),
           ),
         ),
       ],

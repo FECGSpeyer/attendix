@@ -290,7 +290,7 @@ class _SongPickerState extends State<_SongPicker> {
             IonInsetList(children: [
               ListTile(
                 title: Text(context.l10n.attListNoSongsFound,
-                    textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium, fontSize: 14)),
+                    textAlign: TextAlign.center, style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14)),
               ),
             ]),
           if (filtered.isNotEmpty)
@@ -299,7 +299,7 @@ class _SongPickerState extends State<_SongPicker> {
                 ListTile(
                   title: Text('${s.prefix ?? ''}${s.number ?? ''} ${s.name}'),
                   subtitle: (s.composer ?? '').isNotEmpty
-                      ? Text(s.composer!, style: const TextStyle(color: AppColors.medium))
+                      ? Text(s.composer!, style: TextStyle(color: AppColors.mediumOf(context)))
                       : null,
                   onTap: () => Navigator.pop(context, s),
                 ),

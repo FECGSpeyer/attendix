@@ -305,13 +305,13 @@ class _AdminsTab extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(AppIcons.adminPanelSettings, size: 64, color: AppColors.medium),
+                Icon(AppIcons.adminPanelSettings, size: 64, color: AppColors.mediumOf(context)),
                 SizedBox(height: 16),
                 Text(context.l10n.settingsFlutterUserMgmtNoAdmins),
                 SizedBox(height: 8),
                 Text(
                   context.l10n.settingsFlutterUserMgmtNoAdminsHint,
-                  style: TextStyle(color: AppColors.medium, fontSize: 12),
+                  style: TextStyle(color: AppColors.mediumOf(context), fontSize: 12),
                 ),
               ],
             ),
@@ -352,13 +352,13 @@ class _ViewersTab extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(AppIcons.visibility, size: 64, color: AppColors.medium),
+                Icon(AppIcons.visibility, size: 64, color: AppColors.mediumOf(context)),
                 SizedBox(height: 16),
                 Text(context.l10n.settingsFlutterUserMgmtNoViewers),
                 SizedBox(height: 8),
                 Text(
                   context.l10n.settingsFlutterUserMgmtNoViewersHint,
-                  style: TextStyle(color: AppColors.medium, fontSize: 12),
+                  style: TextStyle(color: AppColors.mediumOf(context), fontSize: 12),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -400,13 +400,13 @@ class _ParentsTab extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(AppIcons.familyRestroom, size: 64, color: AppColors.medium),
+                Icon(AppIcons.familyRestroom, size: 64, color: AppColors.mediumOf(context)),
                 SizedBox(height: 16),
                 Text(context.l10n.settingsFlutterUserMgmtNoParents),
                 SizedBox(height: 8),
                 Text(
                   context.l10n.settingsFlutterUserMgmtNoParentsHint,
-                  style: TextStyle(color: AppColors.medium, fontSize: 12),
+                  style: TextStyle(color: AppColors.mediumOf(context), fontSize: 12),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -448,7 +448,7 @@ class _AllUsersTab extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(AppIcons.peopleOutline, size: 64, color: AppColors.medium),
+                Icon(AppIcons.peopleOutline, size: 64, color: AppColors.mediumOf(context)),
                 SizedBox(height: 16),
                 Text(context.l10n.settingsFlutterUserMgmtNoUsers),
               ],
@@ -510,13 +510,13 @@ class _AllUsersTab extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
           child: Row(
             children: [
-              Icon(icon, size: 20, color: AppColors.medium),
+              Icon(icon, size: 20, color: AppColors.mediumOf(context)),
               const SizedBox(width: 8),
               Text(
                 '$title (${users.length})',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: AppColors.medium,
+                  color: AppColors.mediumOf(context),
                 ),
               ),
             ],

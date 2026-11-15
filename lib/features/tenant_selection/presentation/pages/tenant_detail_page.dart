@@ -116,7 +116,7 @@ class _TenantHeader extends StatelessWidget {
           Text(
             tenant.description!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.medium,
+                  color: AppColors.mediumOf(context),
                 ),
             textAlign: TextAlign.center,
           ),
@@ -179,7 +179,7 @@ class _TenantInfoSection extends ConsumerWidget {
               child: Text(
                 context.l10n.tenantSelectFlutterInfo,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: AppColors.medium,
+                      color: AppColors.mediumOf(context),
                       fontWeight: FontWeight.w600,
                     ),
               ),
@@ -232,7 +232,7 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       dense: true,
-      leading: Icon(icon, size: 20, color: AppColors.medium),
+      leading: Icon(icon, size: 20, color: AppColors.mediumOf(context)),
       title: Text(label),
       trailing: Text(
         value,
@@ -284,9 +284,9 @@ class _DangerZone extends ConsumerWidget {
             ),
             subtitle: Text(
               context.l10n.tenantSelectFlutterDeleteTenantHint,
-              style: TextStyle(fontSize: 13, color: AppColors.medium),
+              style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context)),
             ),
-            trailing: Icon(AppIcons.chevronRight, color: AppColors.medium),
+            trailing: Icon(AppIcons.chevronRight, color: AppColors.mediumOf(context)),
             onTap: () => _showDeleteTenantDialog(context, ref, tenant),
           ),
         ),

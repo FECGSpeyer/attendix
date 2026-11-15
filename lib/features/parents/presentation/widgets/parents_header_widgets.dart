@@ -200,7 +200,7 @@ class _KidChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final perc = stats?.percentage;
     final color = perc == null
-        ? AppColors.medium
+        ? AppColors.mediumOf(context)
         : perc >= 75
             ? AppColors.success
             : perc >= 50

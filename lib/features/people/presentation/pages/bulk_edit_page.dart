@@ -307,7 +307,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
                 enabled: false,
                 child: Text(
                   context.l10n.peopleStandardFields,
-                  style: const TextStyle(color: AppColors.medium, fontSize: 12),
+                  style: TextStyle(color: AppColors.mediumOf(context), fontSize: 12),
                 ),
               ),
               for (final f in _fieldOptions.where((f) => !f.isExtra))
@@ -321,8 +321,8 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
                   enabled: false,
                   child: Text(
                     context.l10n.peopleExtraFields,
-                    style: const TextStyle(
-                      color: AppColors.medium,
+                    style: TextStyle(
+                      color: AppColors.mediumOf(context),
                       fontSize: 12,
                     ),
                   ),
@@ -344,13 +344,13 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
                   Icon(
                     AppIcons.editNote,
                     size: 48,
-                    color: AppColors.medium,
+                    color: AppColors.mediumOf(context),
                   ),
                   const SizedBox(height: AppDimensions.paddingS),
                   Text(
                     context.l10n.peopleBulkEditHint,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColors.medium),
+                    style: TextStyle(color: AppColors.mediumOf(context)),
                   ),
                 ],
               ),

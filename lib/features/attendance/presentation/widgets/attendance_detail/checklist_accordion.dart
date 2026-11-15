@@ -71,7 +71,7 @@ class ChecklistAccordion extends StatelessWidget {
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: Text(
                 context.l10n.attendanceFlutterNoTodos,
-                style: const TextStyle(color: AppColors.medium),
+                style: TextStyle(color: AppColors.mediumOf(context)),
               ),
             )
           else
@@ -129,7 +129,7 @@ class ChecklistAccordion extends StatelessWidget {
                         decoration: item.completed
                             ? TextDecoration.lineThrough
                             : null,
-                        color: item.completed ? AppColors.medium : null,
+                        color: item.completed ? AppColors.mediumOf(context) : null,
                       ),
                     ),
                     subtitle: deadlineText.isNotEmpty
@@ -141,7 +141,7 @@ class ChecklistAccordion extends StatelessWidget {
                                   ? AppColors.danger
                                   : deadlineStatus == DeadlineStatus.warning
                                       ? AppColors.warning
-                                      : AppColors.medium,
+                                      : AppColors.mediumOf(context),
                             ),
                           )
                         : null,

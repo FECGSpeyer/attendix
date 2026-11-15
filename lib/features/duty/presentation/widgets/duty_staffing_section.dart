@@ -157,7 +157,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                   ),
                   if (canManage)
                     IconButton(
-                      icon: Icon(AppIcons.cancelOutlined, color: AppColors.medium),
+                      icon: Icon(AppIcons.cancelOutlined, color: AppColors.mediumOf(context)),
                       tooltip: l10n.attendanceUnassign,
                       onPressed: () => _unassign(pa),
                     ),
@@ -171,7 +171,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                   children: [
                     Expanded(
                       child: Text('${l10n.signoutYouAreAssigned} · ${l10n.signoutPleaseConfirm}',
-                          style: const TextStyle(color: AppColors.medium, fontSize: 13)),
+                          style: TextStyle(color: AppColors.mediumOf(context), fontSize: 13)),
                     ),
                     // Ionic: `size="small" fill="outline" color="medium"`
                     // and `size="small" color="success"`.
@@ -179,7 +179,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                       IonButton(
                         label: l10n.signoutCannot,
                         fill: IonButtonFill.outline,
-                        color: AppColors.medium,
+                        color: AppColors.mediumOf(context),
                         small: true,
                         onPressed: () => declineDutyAction(context, ref, pa.id!, _attendanceId),
                       ),
@@ -249,7 +249,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                 },
                 trailing: DutyPill(
                   text: (pa.dutyState ?? '').isNotEmpty ? l10n.attendanceDeclined : l10n.attendanceSignedOut,
-                  color: AppColors.medium,
+                  color: AppColors.mediumOf(context),
                 ),
               ),
           ],
@@ -259,7 +259,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
   }
 
   Widget _divider(String label) => Container(
-        color: AppColors.medium.withAlpha(20),
+        color: AppColors.mediumOf(context).withAlpha(20),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
       );

@@ -216,7 +216,7 @@ class _StatusPill extends StatelessWidget {
       2 || 5 => (AppColors.primary.withValues(alpha: 0.14), AppColors.primary),
       3 => (AppColors.warning.withValues(alpha: 0.2), AppColors.warningDark),
       4 => (AppColors.danger.withValues(alpha: 0.14), AppColors.dangerDark),
-      _ => (AppColors.medium.withValues(alpha: 0.15), AppColors.medium),
+      _ => (AppColors.mediumOf(context).withValues(alpha: 0.15), AppColors.mediumOf(context)),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),

@@ -1790,7 +1790,7 @@ class _PopoverEndButton extends StatelessWidget {
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
       splashRadius: 18,
-      color: color ?? AppColors.medium,
+      color: color ?? AppColors.mediumOf(context),
       icon: Icon(icon, size: 20),
       onPressed: onTap,
     );

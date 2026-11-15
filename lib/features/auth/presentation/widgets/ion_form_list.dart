@@ -238,7 +238,7 @@ class IonItem extends StatelessWidget {
         if (detail && ios) ...[
           const SizedBox(width: 4),
           Icon(AppIcons.chevronRight,
-              size: 22, color: AppColors.medium.withValues(alpha: 0.6)),
+              size: 22, color: AppColors.mediumOf(context).withValues(alpha: 0.6)),
         ],
       ],
     );
@@ -273,7 +273,7 @@ InputDecoration ionItemInputDecoration(
     hintText: hint,
     helperText: helper,
     helperMaxLines: 3,
-    hintStyle: TextStyle(color: AppColors.medium.withValues(alpha: 0.75)),
+    hintStyle: TextStyle(color: AppColors.mediumOf(context).withValues(alpha: 0.75)),
     // Stacked label: 0.875rem (iOS) / 16px scaled to .75 (MD); the input
     // stretches the label to Flutter's floating size, so set the final size.
     labelStyle: TextStyle(
@@ -284,7 +284,7 @@ InputDecoration ionItemInputDecoration(
       color: Theme.of(context).colorScheme.onSurface,
       fontSize: ios ? 14 / 0.75 : 16,
     ),
-    helperStyle: const TextStyle(fontSize: 12, color: AppColors.medium),
+    helperStyle: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
     floatingLabelBehavior: FloatingLabelBehavior.always,
     filled: false,
     isDense: true,
@@ -397,7 +397,7 @@ class IonSelectValue extends StatelessWidget {
               style: TextStyle(
                 fontSize: ionItemFontSize(context),
                 color: placeholder
-                    ? AppColors.medium
+                    ? AppColors.mediumOf(context)
                     : Theme.of(context).colorScheme.onSurface,
               ),
             ),
@@ -410,7 +410,7 @@ class IonSelectValue extends StatelessWidget {
             Icon(
               ionIsIos(context) ? AppIcons.unfoldMore : AppIcons.arrowDropDown,
               size: 18,
-              color: AppColors.medium,
+              color: AppColors.mediumOf(context),
             ),
         ],
       ),
@@ -460,8 +460,8 @@ Future<T?> showIonSelectOptions<T>(
               child: Text(
                 title,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                    fontSize: 13, color: AppColors.medium),
+                style: TextStyle(
+                    fontSize: 13, color: AppColors.mediumOf(context)),
               ),
             ),
             for (final (value, label) in options)

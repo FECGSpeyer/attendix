@@ -367,12 +367,12 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                   fontSize: 25.6,
                   fontWeight: FontWeight.w700,
                   height: 1.15,
-                  color: task.status == 'completed' ? AppColors.medium : theme.colorScheme.onSurface,
+                  color: task.status == 'completed' ? AppColors.mediumOf(context) : theme.colorScheme.onSurface,
                   decoration: task.status == 'completed' ? TextDecoration.lineThrough : null,
                 ),
               ),
               const SizedBox(height: 8),
-              Text(assignee, style: const TextStyle(color: AppColors.medium)),
+              Text(assignee, style: TextStyle(color: AppColors.mediumOf(context))),
             ],
           ),
         ),
@@ -416,7 +416,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
             ),
             if (task.description?.isNotEmpty == true)
               ListTile(
-                title: Text(l10n.tasksDescription, style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+                title: Text(l10n.tasksDescription, style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context))),
                 subtitle: Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: SelectableText(task.description!,
@@ -435,7 +435,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                   leading: Icon(AppIcons.descriptionOutlined, color: AppColors.primary),
                   title: Text(l10n.tasksProtocol),
                   subtitle: attendanceLabel != null
-                      ? Text(attendanceLabel, style: const TextStyle(color: AppColors.medium))
+                      ? Text(attendanceLabel, style: TextStyle(color: AppColors.mediumOf(context)))
                       : null,
                   trailing: const IonDetailIcon(),
                   onTap: () => context.push('/settings/protocol/${task.attendanceId}'),
@@ -446,15 +446,15 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                     leading: Icon(AppIcons.list, color: AppColors.primary),
                     title: Text(l10n.tasksTopic),
                     subtitle: Text(task.agendaItem?.title ?? l10n.teamOrgOpenTopic,
-                        style: const TextStyle(color: AppColors.medium)),
+                        style: TextStyle(color: AppColors.mediumOf(context))),
                     trailing: const IonDetailIcon(),
                     onTap: () => context.push('/settings/agenda-items/${task.agendaItemId}'),
                   )
                 else if (task.agendaItem?.title != null)
                   ListTile(
-                    leading: Icon(AppIcons.list, color: AppColors.medium),
+                    leading: Icon(AppIcons.list, color: AppColors.mediumOf(context)),
                     title: Text(l10n.tasksTopic),
-                    subtitle: Text(task.agendaItem!.title!, style: const TextStyle(color: AppColors.medium)),
+                    subtitle: Text(task.agendaItem!.title!, style: TextStyle(color: AppColors.mediumOf(context))),
                   ),
             ],
           ),
@@ -464,7 +464,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
             child: Text(
               isMine ? l10n.tasksReminderSelf : l10n.tasksReminderOther,
-              style: const TextStyle(fontSize: 13, height: 1.4, color: AppColors.medium),
+              style: TextStyle(fontSize: 13, height: 1.4, color: AppColors.mediumOf(context)),
             ),
           ),
       ],

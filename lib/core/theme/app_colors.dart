@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'redesign/rd_theme.dart' show RdSkinContext;
+
 /// App color palette
 class AppColors {
   AppColors._();
@@ -142,6 +144,14 @@ class AppColors {
     if (v == dark.toARGB32()) return darkOnDark;
     if (v == light.toARGB32()) return lightOnDark;
     return color;
+  }
+
+  /// Ionic `--ion-color-medium` for grey text and icons: #636469 in light
+  /// and #989AA2 in dark mode, like Ionic 9. The Beta design keeps
+  /// [medium] (#92949C) in both.
+  static Color mediumOf(BuildContext context) {
+    if (context.rdSkin != null) return medium;
+    return Theme.of(context).brightness == Brightness.dark ? mediumOnDark : iosMediumLight;
   }
 
   /// [forBrightness] with the brightness of [context]'s theme.

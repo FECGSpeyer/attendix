@@ -600,7 +600,7 @@ class SettingsListTile extends StatelessWidget {
 /// Ionic `ion-badge` used as count in settings items
 /// (ios: radius 10, md: radius 4; 13px bold, padding 3/8).
 class SettingsCountBadge extends StatelessWidget {
-  const SettingsCountBadge(
+  SettingsCountBadge(
     this.count, {
     super.key,
     this.color = AppColors.medium,
@@ -1109,7 +1109,7 @@ class IonToggleItem extends StatelessWidget {
                       fontSize: 12,
                       color: ios
                           ? IonStackedField.iosHelper
-                          : AppColors.medium,
+                          : AppColors.mediumOf(context),
                     ),
             ),
       value: value,

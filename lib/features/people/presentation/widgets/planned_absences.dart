@@ -320,7 +320,7 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
               trailing: context.rdSkin == null && _from != null
                   ? IconButton(
                       icon: Icon(AppIcons.cancelOutlined,
-                          color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
+                          color: AppColors.mediumOf(context), semanticLabel: context.l10n.commonRemove),
                       onPressed: () => setState(() => _from = null),
                     )
                   : null,
@@ -335,7 +335,7 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
               trailing: (context.rdSkin == null ? _until != null : _from != null)
                   ? IconButton(
                       icon: Icon(AppIcons.cancelOutlined,
-                          color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
+                          color: AppColors.mediumOf(context), semanticLabel: context.l10n.commonRemove),
                       onPressed: () => setState(() {
                         if (context.rdSkin != null) _from = null;
                         _until = null;
@@ -567,7 +567,7 @@ class _PlannedAbsencesAccordionState
                 IonItem(
                   child: Text(
                     context.l10n.personNoAbsences,
-                    style: IonText.h2(context).copyWith(color: AppColors.medium),
+                    style: IonText.h2(context).copyWith(color: AppColors.mediumOf(context)),
                   ),
                 ),
               IonItem(
@@ -594,7 +594,7 @@ class _PlannedAbsencesAccordionState
               ListTile(
                 title: Text(
                   context.l10n.personNoAbsences,
-                  style: const TextStyle(color: AppColors.medium),
+                  style: TextStyle(color: AppColors.mediumOf(context)),
                 ),
               ),
             ListTile(

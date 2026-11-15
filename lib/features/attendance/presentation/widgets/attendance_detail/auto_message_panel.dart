@@ -469,7 +469,7 @@ class _Banner extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 2),
                     child: Text(
                       subtitle!,
-                      style: const TextStyle(fontSize: 12.8, color: AppColors.medium),
+                      style: TextStyle(fontSize: 12.8, color: AppColors.mediumOf(context)),
                     ),
                   ),
                 if (action != null)
@@ -511,7 +511,7 @@ class _ResponseRow extends StatelessWidget {
         children: [
           Icon(
             a.wasPresent ? AppIcons.backHandOutlined : AppIcons.chatBubbleOutline,
-            color: AppColors.medium,
+            color: AppColors.mediumOf(context),
             size: 22,
           ),
           const SizedBox(width: 16),
@@ -521,7 +521,7 @@ class _ResponseRow extends StatelessWidget {
               children: [
                 Text(a.name, style: const TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 2),
-                Text(a.detail, style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+                Text(a.detail, style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context))),
                 if (a.pending)
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
@@ -538,7 +538,7 @@ class _ResponseRow extends StatelessWidget {
                           onPressed: a.busy ? null : () => a.onDecide(false),
                           style: OutlinedButton.styleFrom(
                             visualDensity: VisualDensity.compact,
-                            foregroundColor: AppColors.medium,
+                            foregroundColor: AppColors.mediumOf(context),
                           ),
                           child: IonButtonLabel(l10n.autoMessagesReject),
                         ),
@@ -550,7 +550,7 @@ class _ResponseRow extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
                       a.stateText ?? '',
-                      style: const TextStyle(fontSize: 12.8, color: AppColors.medium),
+                      style: TextStyle(fontSize: 12.8, color: AppColors.mediumOf(context)),
                     ),
                   ),
               ],

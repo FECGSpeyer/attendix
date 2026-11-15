@@ -145,7 +145,7 @@ class ImportSummaryChips extends StatelessWidget {
         chip(context.l10n.peopleReady(ready), AppColors.success),
         if (warnings > 0) chip(context.l10n.peopleWithHint(warnings), AppColors.warning),
         if (duplicates > 0)
-          chip(context.l10n.peopleDuplicates(duplicates), AppColors.medium),
+          chip(context.l10n.peopleDuplicates(duplicates), AppColors.mediumOf(context)),
         if (errors > 0) chip(context.l10n.peopleFaulty(errors), AppColors.danger),
       ],
     );
@@ -163,7 +163,7 @@ class ImportRowStatusIcon extends StatelessWidget {
     return switch (status) {
       'ok' => Icon(AppIcons.checkCircle, color: AppColors.success, size: 20),
       'error' => Icon(AppIcons.cancel, color: AppColors.danger, size: 20),
-      'duplicate' => Icon(AppIcons.copy, color: AppColors.medium, size: 20),
+      'duplicate' => Icon(AppIcons.copy, color: AppColors.mediumOf(context), size: 20),
       _ => Icon(AppIcons.warningAmber, color: AppColors.warning, size: 20),
     };
   }

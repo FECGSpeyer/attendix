@@ -377,7 +377,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
                         const SizedBox(height: 2),
                         Text(
                           context.l10n.attendanceFilesFolderHint,
-                          style: const TextStyle(fontSize: 14, color: AppColors.medium),
+                          style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context)),
                         ),
                       ],
                     ),

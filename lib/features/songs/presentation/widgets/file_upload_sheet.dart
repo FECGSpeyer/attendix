@@ -605,7 +605,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                                 const SizedBox(height: 8),
                                 Text(
                                   context.l10n.songsDontClose,
-                                  style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                                  style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
                                 ),
                               ],
                             )
@@ -741,7 +741,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                     const SizedBox(height: 8),
                     Text(
                       context.l10n.songsDontClose,
-                      style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                      style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
                     ),
                   ],
                 ),
@@ -881,7 +881,7 @@ class _FileItemState extends State<_FileItem> {
       case _UploadStatus.error:
         return Icon(AppIcons.error, color: AppColors.danger, size: 20);
       case _UploadStatus.pending:
-        return Icon(AppIcons.schedule, color: AppColors.medium, size: 20);
+        return Icon(AppIcons.schedule, color: AppColors.mediumOf(context), size: 20);
       case null:
         final conflicts = widget.file.conflicts;
         if (conflicts.isEmpty) return null;
@@ -985,7 +985,7 @@ class _FileItemState extends State<_FileItem> {
                           padding: const EdgeInsets.only(top: 2),
                           child: Text(
                             context.l10n.songsFlutterVisionReading,
-                            style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                            style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
                           ),
                         )
                       else if (file.status == null && !file.reviewed && file.byVision)

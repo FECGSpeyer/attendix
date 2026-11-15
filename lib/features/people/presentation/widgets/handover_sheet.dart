@@ -183,7 +183,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                         Center(
                           child: Text(
                             _progressMessage,
-                            style: const TextStyle(color: AppColors.medium),
+                            style: TextStyle(color: AppColors.mediumOf(context)),
                           ),
                         ),
                         const SizedBox(height: AppDimensions.paddingM),
@@ -252,7 +252,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(AppIcons.businessOutlined,
-                size: 64, color: AppColors.medium),
+                size: 64, color: AppColors.mediumOf(context)),
             const SizedBox(height: AppDimensions.paddingM),
             Text(
               context.l10n.peopleFlutterHandoverNoTenants,
@@ -265,7 +265,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             Text(
               context.l10n.peopleFlutterHandoverNoTenantsHint,
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.medium),
+              style: TextStyle(color: AppColors.mediumOf(context)),
             ),
           ],
         ),
@@ -356,7 +356,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                 padding: const EdgeInsets.only(top: AppDimensions.paddingS),
                 child: Text(
                   context.l10n.peopleAndMore(players.length - 10),
-                  style: const TextStyle(color: AppColors.medium),
+                  style: TextStyle(color: AppColors.mediumOf(context)),
                 ),
               ),
           ],
@@ -374,7 +374,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
       padding: const EdgeInsets.only(top: AppDimensions.paddingS),
       child: Row(
         children: [
-          Icon(AppIcons.cakeOutlined, size: 16, color: AppColors.medium),
+          Icon(AppIcons.cakeOutlined, size: 16, color: AppColors.mediumOf(context)),
           const SizedBox(width: 8),
           SizedBox(
             width: 70,
@@ -392,7 +392,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             ),
           ),
           const SizedBox(width: 8),
-          const Text('–', style: TextStyle(color: AppColors.medium)),
+          Text('–', style: TextStyle(color: AppColors.mediumOf(context))),
           const SizedBox(width: 8),
           SizedBox(
             width: 70,
@@ -434,9 +434,9 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           children: [
             Text(
               context.l10n.peopleFlutterHandoverMode,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: AppColors.medium,
+                color: AppColors.mediumOf(context),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
@@ -473,9 +473,9 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           children: [
             Text(
               context.l10n.handoverTargetTenant,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: AppColors.medium,
+                color: AppColors.mediumOf(context),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
@@ -535,15 +535,15 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           children: [
             Text(
               context.l10n.handoverGroupMapping,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: AppColors.medium,
+                color: AppColors.mediumOf(context),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
             Text(
               context.l10n.peopleFlutterHandoverMappingHint,
-              style: const TextStyle(color: AppColors.medium, fontSize: 12),
+              style: TextStyle(color: AppColors.mediumOf(context), fontSize: 12),
             ),
             const SizedBox(height: AppDimensions.paddingM),
             ...instrumentIds.map((instrumentId) {
@@ -572,7 +572,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ),
-                    Icon(AppIcons.arrowForward, color: AppColors.medium),
+                    Icon(AppIcons.arrowForward, color: AppColors.mediumOf(context)),
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: AppDropdownFormField<int?>(
@@ -645,7 +645,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
               _stayInInstance
                   ? context.l10n.peopleFlutterHandoverCopyNote
                   : context.l10n.peopleFlutterHandoverTransferNote,
-              style: const TextStyle(color: AppColors.medium),
+              style: TextStyle(color: AppColors.mediumOf(context)),
             ),
           ],
         ),

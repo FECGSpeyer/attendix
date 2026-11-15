@@ -267,7 +267,7 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
                   child: Text(
                     context.l10n.attendanceAllAlreadyIncluded,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                    style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14),
                   ),
                 ),
               ],
@@ -299,7 +299,7 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
                     _ionAccordion(
                       label: context.l10n.attendanceOtherPeople,
                       count: c.others.length,
-                      badgeColor: AppColors.medium,
+                      badgeColor: AppColors.mediumOf(context),
                       initiallyExpanded: false,
                       persons: c.others,
                     ),
@@ -364,7 +364,7 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
                         Text(
                           context.l10n.attendanceAllAlreadyIncluded,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: AppColors.medium),
+                          style: TextStyle(color: AppColors.mediumOf(context)),
                         ),
                         if (widget.offerCreate) ...[
                           const SizedBox(height: 16),
@@ -378,7 +378,7 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
                           Text(
                             context.l10n.attendanceCreateNewPersonHint,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(color: AppColors.medium, fontSize: 13),
+                            style: TextStyle(color: AppColors.mediumOf(context), fontSize: 13),
                           ),
                         ],
                       ],
@@ -396,7 +396,7 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
                       _sectionHeader(
                         context.l10n.attendanceOtherPeople,
                         c.others.length,
-                        AppColors.medium,
+                        AppColors.mediumOf(context),
                         expanded: _othersExpanded || c.matching.isEmpty,
                         onTap: () => setState(() => _othersExpanded = !_othersExpanded),
                       ),

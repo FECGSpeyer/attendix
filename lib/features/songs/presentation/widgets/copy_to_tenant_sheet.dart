@@ -252,7 +252,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                       IonItem(
                         title: Text(
                           context.l10n.songsCopyInfo(widget.song.name),
-                          style: const TextStyle(color: AppColors.medium),
+                          style: TextStyle(color: AppColors.mediumOf(context)),
                         ),
                       ),
                     ],
@@ -265,14 +265,14 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                       children: [
                         for (final f in widget.song.files!.take(5))
                           IonItem(
-                            leading: Icon(AppIcons.insertDriveFileOutlined, color: AppColors.medium),
+                            leading: Icon(AppIcons.insertDriveFileOutlined, color: AppColors.mediumOf(context)),
                             title: Text(f.fileName, overflow: TextOverflow.ellipsis),
                           ),
                         if (widget.song.files!.length > 5)
                           IonItem(
                             title: Text(
                               '...${context.l10n.filesAndMore(widget.song.files!.length - 5)}',
-                              style: const TextStyle(color: AppColors.medium),
+                              style: TextStyle(color: AppColors.mediumOf(context)),
                             ),
                           ),
                       ],

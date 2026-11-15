@@ -300,7 +300,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
       }),
       leading: Icon(
         row.selected ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
-        color: row.selected ? AppColors.primary : AppColors.medium,
+        color: row.selected ? AppColors.primary : AppColors.mediumOf(context),
       ),
       title: Text(row.item.title),
       // Ionic: warning badge for postponed topics, then the grey subtitle.
@@ -316,7 +316,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
             ),
           TextSpan(text: parts.join(' · ')),
         ]),
-        style: const TextStyle(color: AppColors.medium),
+        style: TextStyle(color: AppColors.mediumOf(context)),
       ),
       trailing: row.selected && !row.inPlan
           ? (widget.modal ? _stepper(row) : Row(
@@ -428,7 +428,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
                                 _search.trim().isNotEmpty
                                     ? l10n.agendaFlutterNoMatch
                                     : l10n.agendaFlutterNoOpenTopics,
-                                style: const TextStyle(color: AppColors.medium),
+                                style: TextStyle(color: AppColors.mediumOf(context)),
                               ),
                             ),
                         ],
@@ -446,7 +446,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(_insertHint,
-                        textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+                        textAlign: TextAlign.center, style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
                     const SizedBox(height: 8),
                     SizedBox(
                       width: double.infinity,

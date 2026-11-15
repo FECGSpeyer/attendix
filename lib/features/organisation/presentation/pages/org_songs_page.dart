@@ -353,14 +353,14 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic 
                   icon: AppIcons.documentAttachOutline,
                   label: context.l10n.orgSongsOnlyWithFiles,
                   outline: !onlyWithFiles,
-                  color: onlyWithFiles ? AppColors.primary : AppColors.medium,
+                  color: onlyWithFiles ? AppColors.primary : AppColors.mediumOf(context),
                   onTap: toggleOnlyWithFiles,
                 ),
                 for (final chip in chips)
                   IonChip(
                     label: chip.name,
                     outline: !chip.selected,
-                    color: chip.selected ? AppColors.primary : AppColors.medium,
+                    color: chip.selected ? AppColors.primary : AppColors.mediumOf(context),
                     onTap: () => toggleChip(chip),
                   ),
               ],
@@ -372,7 +372,7 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic 
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
             child: Text(
               context.l10n.orgSongsResultCount(total),
-              style: const TextStyle(fontSize: 13, color: AppColors.medium),
+              style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context)),
             ),
           ),
         if (results.isNotEmpty)
@@ -411,7 +411,7 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic 
                             style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                           ),
                         ),
-                      Icon(AppIcons.copyOutlined, color: AppColors.medium, size: 20),
+                      Icon(AppIcons.copyOutlined, color: AppColors.mediumOf(context), size: 20),
                     ],
                   ),
                   onTap: () => openCopy(song),
@@ -421,7 +421,7 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic 
         else if (hasSearched && !searching)
           IonInsetList(
             children: [
-              IonItem(title: Text(context.l10n.orgSongsNoResults, style: const TextStyle(color: AppColors.medium))),
+              IonItem(title: Text(context.l10n.orgSongsNoResults, style: TextStyle(color: AppColors.mediumOf(context)))),
             ],
           ),
         if ((searching && results.isEmpty) || loadingMore)

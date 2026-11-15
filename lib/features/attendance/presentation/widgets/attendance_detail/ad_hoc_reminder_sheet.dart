@@ -162,7 +162,7 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
                   style: TextStyle(
                     fontSize: ios ? 15.3 : 14.4,
                     height: 1.4,
-                    color: AppColors.medium,
+                    color: AppColors.mediumOf(context),
                   ),
                 ),
               ),
@@ -224,7 +224,7 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 10, 0, 0),
-                        child: Icon(AppIcons.link, color: AppColors.medium),
+                        child: Icon(AppIcons.link, color: AppColors.mediumOf(context)),
                       ),
                       SizedBox(width: ios ? 16 : 32),
                       Expanded(
@@ -273,7 +273,7 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
             ],
             Text(
               context.l10n.attendanceReminderInfo,
-              style: const TextStyle(color: AppColors.medium),
+              style: TextStyle(color: AppColors.mediumOf(context)),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -313,8 +313,8 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
               const SizedBox(height: 8),
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: Icon(AppIcons.link, color: AppColors.medium),
-                title: Text(context.l10n.attendanceEmailLink, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+                leading: Icon(AppIcons.link, color: AppColors.mediumOf(context)),
+                title: Text(context.l10n.attendanceEmailLink, style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
                 subtitle: SelectableText(widget.attendanceLink!),
               ),
             ],

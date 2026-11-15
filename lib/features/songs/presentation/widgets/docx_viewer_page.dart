@@ -160,7 +160,7 @@ class _DocxViewerPageState extends State<DocxViewerPage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppDimensions.paddingS),
-              Text(_error ?? '', style: const TextStyle(color: AppColors.medium), textAlign: TextAlign.center),
+              Text(_error ?? '', style: TextStyle(color: AppColors.mediumOf(context)), textAlign: TextAlign.center),
               const SizedBox(height: AppDimensions.paddingL),
               IonButton(
                 onPressed: () {

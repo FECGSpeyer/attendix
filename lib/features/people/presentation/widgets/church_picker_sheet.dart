@@ -210,7 +210,7 @@ class _ChurchPickerState extends State<_ChurchPicker> {
                   ListTile(
                     title: Text(
                       context.l10n.personNoChurchFound,
-                      style: const TextStyle(color: AppColors.medium),
+                      style: TextStyle(color: AppColors.mediumOf(context)),
                     ),
                   ),
               ],

@@ -820,7 +820,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
             ListTile(
               title: Text(
                 '${p.title} · ${date(p.date)}${p.startTime != null ? ' · ${p.startTime}' : ''}',
-                style: const TextStyle(fontSize: 14, color: AppColors.medium),
+                style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context)),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -862,7 +862,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
               ListTile(
                 title: Text(
                   l10n.autoMessagesPreviewExcluded(p.excused, p.paused),
-                  style: const TextStyle(fontSize: 13, color: AppColors.medium),
+                  style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context)),
                 ),
               ),
           ],
@@ -1014,7 +1014,7 @@ class _SelectTile<T> extends StatelessWidget {
                 current,
                 style: TextStyle(
                   fontSize: 16,
-                  color: ios ? IonIos.text(context) : AppColors.medium,
+                  color: ios ? IonIos.text(context) : AppColors.mediumOf(context),
                 ),
               ),
               const SizedBox(width: 4),
@@ -1059,7 +1059,7 @@ class _HistoryTile extends StatelessWidget {
               fontFeatures: [FontFeature.tabularFigures()],
             ),
           ),
-          Text(label, maxLines: 2, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+          Text(label, maxLines: 2, style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context))),
         ],
       ),
     );

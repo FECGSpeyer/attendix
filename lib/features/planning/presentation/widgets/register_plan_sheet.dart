@@ -270,7 +270,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                 _insetList(null, null, [
                   // Ionic: ion-input with an inline start label.
                   ListTile(
-                    leading: Icon(AppIcons.schedule, color: AppColors.medium),
+                    leading: Icon(AppIcons.schedule, color: AppColors.mediumOf(context)),
                     title: Row(
                       children: [
                         Text(l10n.planningTimeMinutes),
@@ -542,7 +542,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
   }) {
     return ListTile(
       key: key,
-      leading: Icon(icon, color: AppColors.medium),
+      leading: Icon(icon, color: AppColors.mediumOf(context)),
       title: TextField(
         controller: controller,
         textCapitalization: capitalization,

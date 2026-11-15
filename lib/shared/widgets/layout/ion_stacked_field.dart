@@ -118,7 +118,7 @@ class IonStackedField extends StatelessWidget {
           if (helperText != null)
             Text(
               helperText!,
-              style: const TextStyle(fontSize: 12, color: AppColors.medium),
+              style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
             ),
         ],
       ),

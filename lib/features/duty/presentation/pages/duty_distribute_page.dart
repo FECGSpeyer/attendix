@@ -376,7 +376,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
   /// Ionic `.hint`: grey 13px text below a list.
   Widget _hint(String text, {bool top = false}) => Padding(
         padding: EdgeInsets.fromLTRB(24, top ? 16 : 8, 24, 16),
-        child: Text(text, style: const TextStyle(color: AppColors.medium, fontSize: 13)),
+        child: Text(text, style: TextStyle(color: AppColors.mediumOf(context), fontSize: 13)),
       );
 
   Widget _buildRules() {
@@ -466,7 +466,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
         child: Text(context.l10n.dutyNoDutyEvents,
-            textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium)),
+            textAlign: TextAlign.center, style: TextStyle(color: AppColors.mediumOf(context))),
       );
     }
     final planned = _plannedTotal;
@@ -501,7 +501,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('${row.termin.title} · ${row.existing.length + row.picked.length}/${row.termin.required}',
-                        style: const TextStyle(color: AppColors.medium)),
+                        style: TextStyle(color: AppColors.mediumOf(context))),
                     const SizedBox(height: 4),
                     Wrap(
                       spacing: 4,
@@ -510,7 +510,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
                         // Ionic ion-chips: existing = outline medium (disabled),
                         // picked = primary, open = outline danger.
                         for (final pa in row.existing)
-                          IonChip(label: pa.firstName ?? '', color: AppColors.medium, outline: true, disabled: true),
+                          IonChip(label: pa.firstName ?? '', color: AppColors.mediumOf(context), outline: true, disabled: true),
                         for (final pa in row.picked)
                           IonChip(label: pa.firstName ?? '', color: AppColors.primary, onTap: () => _change(row, pa)),
                         for (var i = 0; i < row.missing; i++)

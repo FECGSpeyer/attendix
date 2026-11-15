@@ -127,7 +127,7 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
           child: Text(
             context.l10n.orgSongSync.toUpperCase(),
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.mediumOf(context)),
           ),
         ),
         Card(

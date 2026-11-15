@@ -689,7 +689,7 @@ class IonNoData extends StatelessWidget {
                 child: Text(
                   message!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.medium),
+                  style: TextStyle(color: AppColors.mediumOf(context)),
                 ),
               ),
             for (final (text, onPressed) in actions)
@@ -951,7 +951,7 @@ class IonFieldRow extends StatelessWidget {
                         label,
                         style: TextStyle(
                           fontSize: ios ? 14 : 12,
-                          color: ios ? fg : (highlight ? fg : AppColors.medium),
+                          color: ios ? fg : (highlight ? fg : AppColors.mediumOf(context)),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -1189,7 +1189,7 @@ class _IonInputRowState extends State<IonInputRow> {
                       widget.label,
                       style: TextStyle(
                         fontSize: ios ? 14 : 12,
-                        color: ios ? fg : AppColors.medium,
+                        color: ios ? fg : AppColors.mediumOf(context),
                       ),
                     ),
                     TextField(
@@ -1323,7 +1323,7 @@ class IonSelectRow<T> extends StatelessWidget {
       style: stacked
           ? TextStyle(
               fontSize: ios ? 14 : 12,
-              color: ios ? fg : AppColors.medium,
+              color: ios ? fg : AppColors.mediumOf(context),
             )
           : TextStyle(fontSize: ios ? 17 : 16, color: fg),
     );

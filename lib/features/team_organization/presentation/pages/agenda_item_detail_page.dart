@@ -378,11 +378,11 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
                     if (item != null && item.proposer.fullName.isNotEmpty)
                       IonInsetList(children: [
                         ListTile(
-                          leading: Icon(AppIcons.lightbulbOutline, color: AppColors.medium),
+                          leading: Icon(AppIcons.lightbulbOutline, color: AppColors.mediumOf(context)),
                           title: Text(l10n.agendaProposedBy(item.proposer.fullName),
                               style: const TextStyle(fontSize: 15)),
                           subtitle: item.decisionNote?.isNotEmpty == true
-                              ? Text(item.decisionNote!, style: const TextStyle(color: AppColors.medium))
+                              ? Text(item.decisionNote!, style: TextStyle(color: AppColors.mediumOf(context)))
                               : null,
                         ),
                       ]),
@@ -502,7 +502,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
                       label: topicStatusLabels[item.status] ?? item.status,
                       color: switch (item.status) {
                         'completed' => AppColors.success,
-                        'dropped' => AppColors.medium,
+                        'dropped' => AppColors.mediumOf(context),
                         _ => AppColors.primary,
                       },
                     ),
@@ -519,7 +519,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
             if (item.description?.isNotEmpty == true)
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text(item.description!, style: const TextStyle(color: AppColors.medium)),
+                child: Text(item.description!, style: TextStyle(color: AppColors.mediumOf(context))),
               ),
           ],
         ),
@@ -542,7 +542,7 @@ class _HistorySection extends ConsumerWidget {
       if (e.outcome != null) return (label: outcomeLabels[e.outcome] ?? e.outcome!, color: outcomeColor(e.outcome));
       final d = DateTime.tryParse(e.date ?? '')?.toLocal();
       if (d != null && !d.isBefore(startOfToday)) return (label: l10n.agendaPlanned, color: AppColors.primary);
-      return (label: l10n.agendaNoOutcome, color: AppColors.medium);
+      return (label: l10n.agendaNoOutcome, color: AppColors.mediumOf(context));
     }
 
     return IonInsetList(
@@ -571,7 +571,7 @@ class _HistorySection extends ConsumerWidget {
           }),
         if (history.isEmpty)
           ListTile(
-            title: Text(l10n.agendaNotDiscussed, style: const TextStyle(color: AppColors.medium)),
+            title: Text(l10n.agendaNotDiscussed, style: TextStyle(color: AppColors.mediumOf(context))),
           ),
       ],
     );
@@ -612,19 +612,19 @@ class _TasksSection extends ConsumerWidget {
           ListTile(
             leading: Icon(
               t.status == 'completed' ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
-              color: t.status == 'completed' ? AppColors.success : AppColors.medium,
+              color: t.status == 'completed' ? AppColors.success : AppColors.mediumOf(context),
             ),
             title: Text(
               t.title,
               style: t.status == 'completed'
-                  ? const TextStyle(fontSize: 15, decoration: TextDecoration.lineThrough, color: AppColors.medium)
+                  ? TextStyle(fontSize: 15, decoration: TextDecoration.lineThrough, color: AppColors.mediumOf(context))
                   : const TextStyle(fontSize: 15),
             ),
-            subtitle: Text(_subtitle(l10n, t), style: const TextStyle(color: AppColors.medium)),
+            subtitle: Text(_subtitle(l10n, t), style: TextStyle(color: AppColors.mediumOf(context))),
             trailing: const IonDetailIcon(),
             onTap: () => context.push('/settings/tasks/${t.id}'),
           ),
-        if (tasks.isEmpty) ListTile(title: Text(l10n.agendaNoTasks, style: const TextStyle(color: AppColors.medium))),
+        if (tasks.isEmpty) ListTile(title: Text(l10n.agendaNoTasks, style: TextStyle(color: AppColors.mediumOf(context)))),
         if (isLeader)
           ListTile(
             leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),

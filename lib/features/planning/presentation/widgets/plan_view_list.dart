@@ -106,8 +106,8 @@ class _PlanViewListState extends State<PlanViewList> {
     final theme = Theme.of(context);
     // Ionic plan-viewer (iOS): h2 weight 500, grey `p` lines, grey ion-note
     // minutes at the end, full item lines.
-    const pStyle = TextStyle(color: AppColors.medium, fontSize: 14);
-    const noteStyle = TextStyle(color: AppColors.medium, fontSize: 15);
+    final pStyle = TextStyle(color: AppColors.mediumOf(context), fontSize: 14);
+    final noteStyle = TextStyle(color: AppColors.mediumOf(context), fontSize: 15);
     final children = <Widget>[];
     if (widget.showStartEnd) {
       children.add(ListTile(
@@ -190,7 +190,7 @@ class _PlanViewListState extends State<PlanViewList> {
           style: TextStyle(
             fontWeight: isHead ? FontWeight.w700 : (isActive ? FontWeight.w600 : FontWeight.w500),
             fontStyle: isNote ? FontStyle.italic : FontStyle.normal,
-            color: isActive ? AppColors.primary : (isNote ? AppColors.medium : null),
+            color: isActive ? AppColors.primary : (isNote ? AppColors.mediumOf(context) : null),
           ),
         ),
         subtitle: lines.isEmpty
@@ -308,9 +308,9 @@ class _PlanChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? AppColors.primary : AppColors.medium;
+    final color = selected ? AppColors.primary : AppColors.mediumOf(context);
     final shape = StadiumBorder(
-      side: selected ? BorderSide.none : BorderSide(color: AppColors.medium.withValues(alpha: 0.32)),
+      side: selected ? BorderSide.none : BorderSide(color: AppColors.mediumOf(context).withValues(alpha: 0.32)),
     );
     return Material(
       color: selected ? AppColors.primary.withValues(alpha: 0.12) : Colors.transparent,

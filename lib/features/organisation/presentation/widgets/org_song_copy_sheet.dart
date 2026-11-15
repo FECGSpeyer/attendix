@@ -471,10 +471,10 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
                       ),
                       if (target?.libraryName != null)
                         IonItem(
-                          leading: Icon(AppIcons.sync, color: AppColors.medium),
+                          leading: Icon(AppIcons.sync, color: AppColors.mediumOf(context)),
                           title: Text(
                             l10n.orgSongsSyncedTarget(target!.tenant.shortName, target.libraryName!),
-                            style: const TextStyle(fontSize: 14, color: AppColors.medium),
+                            style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context)),
                           ),
                         ),
                     ],
@@ -486,7 +486,7 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
                   if (_progress != null)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-                      child: Text(_progress!, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+                      child: Text(_progress!, style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
                     ),
                 ],
               ),
@@ -620,7 +620,7 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
       ],
       Padding(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-        child: Text(l10n.orgSongsCopyHint, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+        child: Text(l10n.orgSongsCopyHint, style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
       ),
       Padding(
         padding: const EdgeInsets.all(16),
@@ -740,7 +740,7 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
                 Text(option.file.fileName, style: const TextStyle(fontWeight: FontWeight.w500)),
                 Text(
                   l10n.orgSongsSourceGroup(_sourceGroupLabel(option.file)),
-                  style: const TextStyle(fontSize: 13, color: AppColors.medium),
+                  style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context)),
                 ),
                 if (option.existsInTarget)
                   Text(l10n.orgSongsFileExists, style: const TextStyle(fontSize: 13, color: AppColors.warning)),

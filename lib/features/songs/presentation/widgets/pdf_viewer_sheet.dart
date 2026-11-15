@@ -177,7 +177,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.medium.withValues(alpha: 0.3),
+                  color: AppColors.mediumOf(context).withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -258,7 +258,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
               const SizedBox(height: AppDimensions.paddingS),
               Text(
                 _error!,
-                style: const TextStyle(color: AppColors.medium),
+                style: TextStyle(color: AppColors.mediumOf(context)),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppDimensions.paddingL),

@@ -152,7 +152,7 @@ class _DateInputRowState extends State<DateInputRow> {
                       widget.label,
                       style: TextStyle(
                         fontSize: ios ? 14 : 12,
-                        color: ios || widget.highlight ? fg : AppColors.medium,
+                        color: ios || widget.highlight ? fg : AppColors.mediumOf(context),
                       ),
                     ),
                     TextField(

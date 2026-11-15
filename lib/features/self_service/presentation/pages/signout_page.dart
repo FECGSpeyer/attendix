@@ -374,7 +374,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                   child: Text(
                     context.l10n.selfServiceNoEvents,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.medium),
+                    style: TextStyle(color: AppColors.mediumOf(context)),
                   ),
                 ),
             ],
@@ -596,7 +596,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                         ref.read(currentTenantProvider)?.showAllAttendancesInfoText?.isNotEmpty == true
                             ? ref.read(currentTenantProvider)!.showAllAttendancesInfoText!
                             : EventListUtils.defaultShowAllInfoText,
-                        style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.medium),
+                        style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.mediumOf(context)),
                       ),
                     ),
                   EventChips(chips: actions.chips(context, att)),

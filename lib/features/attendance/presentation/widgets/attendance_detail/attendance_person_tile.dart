@@ -80,7 +80,7 @@ class AttendancePersonTile extends StatelessWidget {
     final ios = useIosLook(context);
     final medium = Theme.of(
       context,
-    ).textTheme.bodySmall?.copyWith(color: AppColors.medium, fontSize: 12.5);
+    ).textTheme.bodySmall?.copyWith(color: AppColors.mediumOf(context), fontSize: 12.5);
 
     // UX_ATT: Ionic iOS ion-item: 16 px start padding, 36 px avatar with
     // 16 px gap, h2 17 px name, h3 15 px note, 0.78rem medium extra lines.
@@ -175,7 +175,7 @@ class AttendancePersonTile extends StatelessWidget {
         children: [
           SlidableAction(
             onPressed: (_) => _showMoreSheet(context),
-            backgroundColor: AppColors.medium,
+            backgroundColor: AppColors.mediumOf(context),
             foregroundColor: Colors.white,
             icon: AppIcons.moreHoriz,
           ),

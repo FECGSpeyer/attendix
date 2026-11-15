@@ -1295,7 +1295,7 @@ class IonSheetHeader extends StatelessWidget {
                 textAlign: ios ? TextAlign.center : TextAlign.start,
                 style: TextStyle(
                   fontSize: 13,
-                  color: rd?.text2 ?? AppColors.medium,
+                  color: rd?.text2 ?? AppColors.mediumOf(context),
                 ),
               ),
             ],
@@ -1449,7 +1449,7 @@ InputDecoration ionInputDecoration(
       fontSize: 16,
       color: Theme.of(context).colorScheme.onSurface,
     ),
-    helperStyle: const TextStyle(fontSize: 12, color: AppColors.medium),
+    helperStyle: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
     contentPadding: const EdgeInsets.fromLTRB(0, 6, 0, 10),
     border: UnderlineInputBorder(borderSide: hairline),
     enabledBorder: UnderlineInputBorder(borderSide: hairline),

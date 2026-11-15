@@ -967,8 +967,8 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                       ),
                     if (loggedIn)
                       ListTile(
-                        leading: Icon(AppIcons.addCircleOutline, color: AppColors.medium),
-                        title: Text(context.l10n.plansNewPlan, style: const TextStyle(color: AppColors.medium)),
+                        leading: Icon(AppIcons.addCircleOutline, color: AppColors.mediumOf(context)),
+                        title: Text(context.l10n.plansNewPlan, style: TextStyle(color: AppColors.mediumOf(context))),
                         onTap: _newPlan,
                       ),
                   ],
@@ -1064,7 +1064,7 @@ class _MyPlansSheet extends ConsumerWidget {
                         Padding(
                           padding: const EdgeInsets.all(16),
                           child: Text(context.l10n.plansNoPlans,
-                              textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium)),
+                              textAlign: TextAlign.center, style: TextStyle(color: AppColors.mediumOf(context))),
                         ),
                       ]
                     : [for (final p in plans) _MyPlanTile(plan: p)],

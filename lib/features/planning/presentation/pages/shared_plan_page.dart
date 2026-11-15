@@ -835,7 +835,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
                     alignment: PlaceholderAlignment.middle,
                     child: Padding(
                       padding: EdgeInsets.only(left: 4),
-                      child: Icon(AppIcons.editOutlined, size: 15, color: AppColors.medium),
+                      child: Icon(AppIcons.editOutlined, size: 15, color: AppColors.mediumOf(context)),
                     ),
                   ),
               ])),

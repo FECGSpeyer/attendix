@@ -208,14 +208,14 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(AppIcons.familyRestroom, size: 64, color: AppColors.medium),
+                    Icon(AppIcons.familyRestroom, size: 64, color: AppColors.mediumOf(context)),
                     const SizedBox(height: 12),
                     Text(context.l10n.selfServiceFlutterNoKids),
                     const SizedBox(height: 4),
                     Text(
                       context.l10n.selfServiceFlutterNoKidsHint,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.medium),
+                      style: TextStyle(color: AppColors.mediumOf(context)),
                     ),
                   ],
                 ),
@@ -374,7 +374,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                         child: Text(
                           context.l10n.selfServiceNoEvents,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: AppColors.medium),
+                          style: TextStyle(color: AppColors.mediumOf(context)),
                         ),
                       ),
                   ],
@@ -607,7 +607,7 @@ class _TodayChildRow extends StatelessWidget {
                       context.l10n.signoutNoteChip(child.notes!),
                       style: TextStyle(
                           fontSize: 14,
-                          color: AppColors.adaptive(context, AppColors.medium)),
+                          color: AppColors.adaptive(context, AppColors.mediumOf(context))),
                     ),
                 ],
               ),

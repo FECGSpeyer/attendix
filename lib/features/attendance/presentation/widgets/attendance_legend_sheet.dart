@@ -135,7 +135,7 @@ class AttendanceLegendSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.medium.withValues(alpha: 0.3),
+                  color: AppColors.mediumOf(context).withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

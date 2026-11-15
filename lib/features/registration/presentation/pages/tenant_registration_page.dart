@@ -319,7 +319,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                         ? MemoryImage(_profileImageBytes!)
                         : null,
                     child: _profileImageBytes == null
-                        ? Icon(AppIcons.person, color: AppColors.medium)
+                        ? Icon(AppIcons.person, color: AppColors.mediumOf(context))
                         : null,
                   ),
                   label: _profileImageBytes != null

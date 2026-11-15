@@ -122,7 +122,7 @@ class UpcomingSongsSheet extends ConsumerWidget {
                       return Center(
                         child: Text(
                           context.l10n.signoutFlutterNoCurrentSongs,
-                          style: const TextStyle(color: AppColors.medium),
+                          style: TextStyle(color: AppColors.mediumOf(context)),
                         ),
                       );
                     }
@@ -266,7 +266,7 @@ class _SongListItem extends StatelessWidget {
                   ),
                 if (ios && (!linkOnly || hasLink))
                   Icon(AppIcons.chevronRight,
-                      color: (fg ?? AppColors.medium).withValues(alpha: 0.6)),
+                      color: (fg ?? AppColors.mediumOf(context)).withValues(alpha: 0.6)),
               ],
             )
           : null,

@@ -195,7 +195,7 @@ class _AttendanceResponsePageState extends ConsumerState<AttendanceResponsePage>
             child: Text(
               widget.termin,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.medium),
+              style: TextStyle(color: AppColors.mediumOf(context)),
             ),
           ),
           IonSegment<String>(

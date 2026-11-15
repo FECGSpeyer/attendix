@@ -137,7 +137,7 @@ class _ChurchPickerState extends State<ChurchPicker> {
                   prefixIcon: Icon(AppIcons.search, size: 20),
                   isDense: true,
                   filled: true,
-                  fillColor: AppColors.medium.withValues(alpha: 0.12),
+                  fillColor: AppColors.mediumOf(context).withValues(alpha: 0.12),
                   contentPadding: EdgeInsets.zero,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -177,7 +177,7 @@ class _ChurchPickerState extends State<ChurchPicker> {
               if (filtered.isEmpty)
                 IonItem(
                   label: widget.noChurchLabel,
-                  labelColor: AppColors.medium,
+                  labelColor: AppColors.mediumOf(context),
                 ),
             ],
           ),

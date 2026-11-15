@@ -139,11 +139,11 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
                             children: [
                               Text(
                                 [row.dateText, if (row.subtitle.isNotEmpty) row.subtitle].join(' · '),
-                                style: const TextStyle(color: AppColors.medium),
+                                style: TextStyle(color: AppColors.mediumOf(context)),
                               ),
                               if (_publishedText(row).isNotEmpty)
                                 Text(_publishedText(row),
-                                    style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+                                    style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context))),
                             ],
                           ),
                           // Ionic: badge (draft / published for leaders) + detail chevron.

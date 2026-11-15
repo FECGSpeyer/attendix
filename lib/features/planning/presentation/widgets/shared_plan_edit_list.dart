@@ -96,7 +96,7 @@ class _SharedPlanEditListState extends State<SharedPlanEditList> {
 
   @override
   Widget build(BuildContext context) {
-    final medium = TextStyle(fontSize: 13, color: AppColors.medium);
+    final medium = TextStyle(fontSize: 13, color: AppColors.mediumOf(context));
     return ReorderableListView(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -121,7 +121,7 @@ class _SharedPlanEditListState extends State<SharedPlanEditList> {
       title: Text(
         field.name,
         style: isNote
-            ? TextStyle(fontStyle: FontStyle.italic, color: AppColors.medium)
+            ? TextStyle(fontStyle: FontStyle.italic, color: AppColors.mediumOf(context))
             : isHead
                 ? const TextStyle(fontWeight: FontWeight.w700)
                 : null,

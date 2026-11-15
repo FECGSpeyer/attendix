@@ -129,7 +129,7 @@ class AttendanceProtocolSection extends ConsumerWidget {
                 : Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: published ? AppColors.success : AppColors.medium,
+                      color: published ? AppColors.success : AppColors.mediumOf(context),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
@@ -265,11 +265,11 @@ class AttendanceProtocolSection extends ConsumerWidget {
     return ListTile(
       leading: Icon(
         done ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
-        color: done ? AppColors.success : AppColors.medium,
+        color: done ? AppColors.success : AppColors.mediumOf(context),
       ),
       title: Text(task.title, style: done ? const TextStyle(decoration: TextDecoration.lineThrough) : null),
       subtitle: Text(subtitle),
-      trailing: Text(taskStatusLabel(task.status), style: const TextStyle(color: AppColors.medium)),
+      trailing: Text(taskStatusLabel(task.status), style: TextStyle(color: AppColors.mediumOf(context))),
       onTap: () => _push(context, ref, '/settings/tasks/${task.id}'),
     );
   }

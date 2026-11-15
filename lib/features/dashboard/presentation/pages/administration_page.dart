@@ -422,19 +422,19 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                       children: [
                         for (final c in churches)
                           ListTile(
-                            leading: Icon(AppIcons.homeOutlined, color: AppColors.medium),
+                            leading: Icon(AppIcons.homeOutlined, color: AppColors.mediumOf(context)),
                             title: Text(c.name),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
                                   tooltip: context.l10n.adminRenameChurch,
-                                  icon: Icon(AppIcons.editOutlined, color: AppColors.medium),
+                                  icon: Icon(AppIcons.editOutlined, color: AppColors.mediumOf(context)),
                                   onPressed: saving ? null : () => _rename(c),
                                 ),
                                 IconButton(
                                   tooltip: context.l10n.adminMerge,
-                                  icon: Icon(AppIcons.mergeType, color: AppColors.medium),
+                                  icon: Icon(AppIcons.mergeType, color: AppColors.mediumOf(context)),
                                   onPressed: saving ? null : () => _mergeManual(c, churches),
                                 ),
                               ],

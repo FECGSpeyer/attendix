@@ -293,7 +293,7 @@ class _OtpCodeFieldState extends State<OtpCodeField> {
           Text(
             context.l10n.loginOtpLabel,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12, color: AppColors.medium),
+            style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
           ),
         ],
       ),

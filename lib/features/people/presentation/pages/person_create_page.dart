@@ -543,7 +543,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                   : EdgeInsets.only(top: AppDimensions.paddingM),
               child: Text(
                 '${context.l10n.personAccountHelp}\n${context.l10n.personExistingUserHint}',
-                style: TextStyle(fontSize: 12, color: AppColors.medium),
+                style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
               ),
             ),
 
@@ -619,7 +619,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             Text(label,
                 style: TextStyle(
                     fontSize: ios ? 14 : 12,
-                    color: ios ? fg : AppColors.medium)),
+                    color: ios ? fg : AppColors.mediumOf(context))),
             TextFormField(
               controller: controller,
               focusNode: focusNode,

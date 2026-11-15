@@ -228,8 +228,8 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
             classic ? e.tenantLabel.toUpperCase() : e.tenantLabel,
             // ABL-20: Ionic `.org-name` 0.75rem, 600, uppercase, 0.04em.
             style: classic
-                ? const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.48, color: AppColors.medium)
-                : const TextStyle(fontSize: 12, color: AppColors.medium),
+                ? TextStyle(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.48, color: AppColors.mediumOf(context))
+                : TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
           ),
         Text(PlanUtils.longDate(e.dateTime)),
       ],
@@ -358,7 +358,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Text(text, style: const TextStyle(color: AppColors.medium, fontSize: 14)),
+            child: Text(text, style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14)),
           ),
         ],
       );
@@ -446,7 +446,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
                       ...top,
                       if (_upcoming.isEmpty)
                         ListTile(
-                          leading: Icon(AppIcons.eventOutlined, color: AppColors.medium),
+                          leading: Icon(AppIcons.eventOutlined, color: AppColors.mediumOf(context)),
                           title: Text(context.l10n.plansNoUpcomingPlans),
                         ),
                       for (var i = 0; i < _upcoming.length; i++)

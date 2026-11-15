@@ -247,7 +247,7 @@ class _SelfServiceOverviewPageState
               style: TextStyle(
                 color: useIosLook(context)
                     ? IonIos.labelP(Theme.of(context).brightness)
-                    : AppColors.medium,
+                    : AppColors.mediumOf(context),
                 fontSize: EvMetrics.rem(context, 0.875),
                 height: EvMetrics.lineHeight(context),
               ),

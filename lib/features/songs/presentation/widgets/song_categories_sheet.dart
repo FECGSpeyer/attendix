@@ -341,7 +341,7 @@ class _CategoryTile extends StatelessWidget {
             index: index,
             child: Padding(
               padding: EdgeInsets.all(8),
-              child: Icon(AppIcons.reorder, color: AppColors.medium),
+              child: Icon(AppIcons.reorder, color: AppColors.mediumOf(context)),
             ),
           ),
           ],

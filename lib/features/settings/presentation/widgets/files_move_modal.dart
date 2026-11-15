@@ -227,7 +227,7 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
             child: Text(
               l10n.filesMoveHint,
-              style: const TextStyle(color: AppColors.medium, fontSize: 14),
+              style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14),
             ),
           ),
           Padding(
@@ -268,7 +268,7 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: AppColors.medium, fontSize: 13),
+                style: TextStyle(color: AppColors.mediumOf(context), fontSize: 13),
               ),
               const SizedBox(height: 6),
               ElevatedButton.icon(
@@ -295,11 +295,11 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
     if (node.loading) {
       toggle = const SizedBox(width: 18, height: 18, child: AppSpinner(strokeWidth: 2));
     } else if (node.loaded && node.children.isEmpty) {
-      toggle = Icon(AppIcons.circle, size: 6, color: AppColors.medium);
+      toggle = Icon(AppIcons.circle, size: 6, color: AppColors.mediumOf(context));
     } else {
       toggle = Icon(
         node.expanded ? AppIcons.expandMore : AppIcons.chevronRight,
-        color: AppColors.medium,
+        color: AppColors.mediumOf(context),
       );
     }
 
@@ -333,7 +333,7 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
                 isRoot
                     ? AppIcons.homeOutlined
                     : (node.expanded ? AppIcons.folderOpenOutlined : AppIcons.folderOutlined),
-                color: selected ? AppColors.primary : AppColors.medium,
+                color: selected ? AppColors.primary : AppColors.mediumOf(context),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -347,7 +347,7 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
                           style: const TextStyle(fontSize: 16)),
                       if (note != null)
                         Text(note,
-                            style: const TextStyle(color: AppColors.medium, fontSize: 13)),
+                            style: TextStyle(color: AppColors.mediumOf(context), fontSize: 13)),
                     ],
                   ),
                 ),

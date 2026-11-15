@@ -114,12 +114,12 @@ class HomeDashboardPage extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 60),
                     child: Column(
                       children: [
-                        Icon(AppIcons.gridView, size: 48, color: AppColors.medium),
+                        Icon(AppIcons.gridView, size: 48, color: AppColors.mediumOf(context)),
                         const SizedBox(height: 16),
                         Text(
                           context.l10n.homeDashboardAllHidden,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: AppColors.medium),
+                          style: TextStyle(color: AppColors.mediumOf(context)),
                         ),
                         const SizedBox(height: 16),
                         OutlinedButton(

@@ -229,7 +229,7 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> with LinkPers
                       padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
                       child: Text(
                         context.l10n.linkPersonsIntro,
-                        style: const TextStyle(color: AppColors.medium),
+                        style: TextStyle(color: AppColors.mediumOf(context)),
                       ),
                     ),
                     for (final group in [...groups]) _buildGroupCard(group),
@@ -249,10 +249,10 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> with LinkPers
           children: [
             Text('${rep.firstName} ${rep.lastName}', style: const TextStyle(fontWeight: FontWeight.bold)),
             Text('${tenantName(rep.tenantId)} · ${formatBirthday(rep.birthday)}',
-                style: const TextStyle(color: AppColors.medium)),
+                style: TextStyle(color: AppColors.mediumOf(context))),
             Padding(
               padding: EdgeInsets.symmetric(vertical: AppDimensions.paddingXS),
-              child: Center(child: Icon(AppIcons.mergeType, color: AppColors.medium)),
+              child: Center(child: Icon(AppIcons.mergeType, color: AppColors.mediumOf(context))),
             ),
             for (final m in group.matches)
               CheckboxListTile(

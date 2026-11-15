@@ -478,7 +478,7 @@ class _ExportPageState extends ConsumerState<ExportPage> with ExportLogic {
                             index: index,
                             child: Padding(
                               padding: EdgeInsets.all(8),
-                              child: Icon(AppIcons.reorder, color: AppColors.medium),
+                              child: Icon(AppIcons.reorder, color: AppColors.mediumOf(context)),
                             ),
                           ),
                         ),
@@ -528,7 +528,7 @@ class _ExportPageState extends ConsumerState<ExportPage> with ExportLogic {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Text(
                 context.l10n.exportFlutterPdfLimitHint,
-                style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
               ),
             ),
           // DAS-17: `ion-button expand="block"` directly in `ion-content`
@@ -653,7 +653,7 @@ class _SelectValue extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: ios ? 16 : null,
-                color: ios ? IonIos.text(context) : AppColors.medium,
+                color: ios ? IonIos.text(context) : AppColors.mediumOf(context),
               ),
             ),
           ),

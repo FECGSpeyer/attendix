@@ -148,10 +148,11 @@ class AppTheme {
         : IonMd.line(brightness);
     final inputFill =
         isDark ? AppColors.inputFillDark : AppColors.inputFillLight;
-    // MD_SWEEP: Ionic 9 light `--ion-color-medium` #636469 (md too).
+    // MD_SWEEP: Ionic 9 light `--ion-color-medium` #636469 (md and iOS;
+    // the Beta theme keeps the lighter grey on iOS).
     final medium = isDark
         ? AppColors.mediumOnDark
-        : (ios ? AppColors.medium : AppColors.iosMediumLight);
+        : (ios && !ionicText ? AppColors.medium : AppColors.iosMediumLight);
     // IOS27_SWEEP: Ionic 9 `ion-label p` (`--ion-color-step-400`).
     final labelP =
         isDark ? AppColors.iosLabelPDark : AppColors.iosLabelPLight;

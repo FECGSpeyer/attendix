@@ -125,11 +125,11 @@ class _DuplicateCandidatesCardState
           if (_merging) const LinearProgressIndicator(),
           for (final m in matches)
             IonItem(
-              start: Icon(Ionicons.personOutline, color: AppColors.medium),
+              start: Icon(Ionicons.personOutline, color: AppColors.mediumOf(context)),
               end: [
                 IonBadge(
                   text: '${(m.score * 100).round()}%',
-                  color: AppColors.medium,
+                  color: AppColors.mediumOf(context),
                 ),
                 const SizedBox(width: 8),
                 IonButton(

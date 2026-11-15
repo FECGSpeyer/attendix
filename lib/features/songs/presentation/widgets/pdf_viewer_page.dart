@@ -317,7 +317,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
               const SizedBox(height: AppDimensions.paddingS),
               Text(
                 _error!,
-                style: const TextStyle(color: AppColors.medium),
+                style: TextStyle(color: AppColors.mediumOf(context)),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppDimensions.paddingL),

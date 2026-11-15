@@ -29,7 +29,7 @@ class SongBeamerFileSection extends ConsumerWidget {
         IonListHeader(l10n.songsBeamerFile),
         IonInsetList(children: [
           IonItem(
-            leading: Icon(AppIcons.tvOutlined, color: file != null ? AppColors.primary : AppColors.medium),
+            leading: Icon(AppIcons.tvOutlined, color: file != null ? AppColors.primary : AppColors.mediumOf(context)),
             title: Text(file?.name ?? l10n.planningBeamerNoFile),
             subtitle: Text(file != null ? l10n.planningBeamerChangeInApp : l10n.planningBeamerLinkInApp),
           ),

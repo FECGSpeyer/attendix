@@ -241,8 +241,8 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                   Text.rich(
                     TextSpan(
                       children: _inlineHtml(l10n.registerIntroHtml),
-                      style: const TextStyle(
-                          fontSize: 14, height: 1.5, color: AppColors.medium),
+                      style: TextStyle(
+                          fontSize: 14, height: 1.5, color: AppColors.mediumOf(context)),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -309,7 +309,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                     ],
                   ),
                   end: Icon(AppIcons.arrowDropDown,
-                      color: AppColors.medium),
+                      color: AppColors.mediumOf(context)),
                 ),
               ],
             ),
@@ -328,8 +328,8 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                   Expanded(
                     child: Text(
                       texts.help,
-                      style: const TextStyle(
-                          fontSize: 13.6, color: AppColors.medium),
+                      style: TextStyle(
+                          fontSize: 13.6, color: AppColors.mediumOf(context)),
                     ),
                   ),
                 ],
@@ -441,14 +441,14 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                             ],
                           )
                         : DefaultTextStyle.merge(
-                            style: const TextStyle(color: AppColors.medium),
+                            style: TextStyle(color: AppColors.mediumOf(context)),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   children: [
                                     Icon(AppIcons.errorOutline,
-                                        color: AppColors.medium, size: 16),
+                                        color: AppColors.mediumOf(context), size: 16),
                                     const SizedBox(width: 4),
                                     Expanded(
                                         child: Text(l10n.registerFillAll)),

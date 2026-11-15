@@ -140,7 +140,7 @@ class LargePercentageBadge extends StatelessWidget {
             label ?? context.l10n.peopleAttendance,
             style: TextStyle(
               fontSize: 12,
-              color: AppColors.medium,
+              color: AppColors.mediumOf(context),
             ),
           ),
         ],

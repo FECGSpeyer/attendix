@@ -120,7 +120,7 @@ class _TeamsConfigPageState extends ConsumerState<TeamsConfigPage> {
             Text(
               context.l10n.teamsChoose,
               style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: AppColors.medium),
+                  ?.copyWith(color: AppColors.mediumOf(context)),
             ),
           ],
         ],

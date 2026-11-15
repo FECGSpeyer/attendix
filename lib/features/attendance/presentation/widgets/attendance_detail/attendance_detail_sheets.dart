@@ -467,7 +467,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                 children: [
                   TextButton(onPressed: () => _navigate(''), child: Icon(AppIcons.homeOutlined)),
                   for (var i = 0; i < segments.length; i++) ...[
-                    Icon(AppIcons.chevronRight, size: 16, color: AppColors.medium),
+                    Icon(AppIcons.chevronRight, size: 16, color: AppColors.mediumOf(context)),
                     TextButton(
                       onPressed: () => _navigate(segments.sublist(0, i + 1).join('/')),
                       child: Text(segments[i]),
@@ -531,7 +531,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                         padding: const EdgeInsets.all(16),
                         child: Text(
                           context.l10n.folderPickerNoSubfolders,
-                          style: const TextStyle(color: AppColors.medium),
+                          style: TextStyle(color: AppColors.mediumOf(context)),
                         ),
                       ),
                   ],

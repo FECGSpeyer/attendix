@@ -1445,7 +1445,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: active ? AppColors.primary : AppColors.medium,
+                color: active ? AppColors.primary : AppColors.mediumOf(context),
               ),
             ),
           ),
@@ -1454,10 +1454,10 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     for (var i = 0; i < segments.length; i++) {
       // WER-17: `ion-breadcrumb` separators – chevron in iOS, "/" in md.
       crumbs.add(ionIsIos(context)
-          ? Icon(AppIcons.cupertinoChevronForward, size: 14, color: AppColors.medium)
-          : const Padding(
+          ? Icon(AppIcons.cupertinoChevronForward, size: 14, color: AppColors.mediumOf(context))
+          : Padding(
               padding: EdgeInsets.symmetric(horizontal: 2),
-              child: Text('/', style: TextStyle(fontSize: 14, color: AppColors.medium)),
+              child: Text('/', style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context))),
             ));
       crumbs.add(crumb(
         segments[i],
@@ -1484,7 +1484,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('$text$_storageStatusLabel',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium)),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.mediumOf(context))),
           if (max != null && max > 0) ...[
             const SizedBox(height: 4),
             Builder(builder: (context) {
@@ -1535,7 +1535,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
               child: Builder(
                 builder: (button) => IconButton(
                   icon: Icon(ios ? AppIcons.cupertinoQuestionCircle : AppIcons.helpOutline,
-                      color: AppColors.medium, semanticLabel: context.l10n.a11yHelp),
+                      color: AppColors.mediumOf(context), semanticLabel: context.l10n.a11yHelp),
                   onPressed: () => _showSearchHelp(button),
                 ),
               ),
@@ -1645,7 +1645,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
           ? null
           : Builder(
               builder: (button) => IconButton(
-                icon: Icon(AppIcons.moreHoriz, color: AppColors.medium, semanticLabel: context.l10n.a11yMoreActions),
+                icon: Icon(AppIcons.moreHoriz, color: AppColors.mediumOf(context), semanticLabel: context.l10n.a11yMoreActions),
                 onPressed: () => _showEntryActions(button, entry),
               ),
             ),
@@ -1707,7 +1707,7 @@ class _EmptyCard extends StatelessWidget {
               size: 48,
               color: ios
                   ? IonIos.text(context).withValues(alpha: 0.6)
-                  : AppColors.medium,
+                  : AppColors.mediumOf(context),
             ),
             const SizedBox(height: AppDimensions.paddingS),
             Text(text, textAlign: TextAlign.center),
