@@ -59,7 +59,7 @@ Future<bool> rdSaveExtraFields(
 /// (replaces `/settings/general/extra-fields` while the Beta is on). The
 /// fields for persons and for works as two sections, type and display as
 /// subtitle (like the old page). "+" asks for which list and opens the old
-/// add sheet, then "Zusatzfeld bearbeiten". The order is changed behind
+/// add sheet; a saved field appears right in the list. The order is changed behind
 /// "•••" › "Reihenfolge ändern" (each list on its own). Every change is
 /// saved right away like "Speichern" of the old page.
 class RdExtraFieldsPage extends ConsumerStatefulWidget {
@@ -167,7 +167,7 @@ class _RdExtraFieldsPageState extends ConsumerState<RdExtraFieldsPage> {
       ToastHelper.showError(context, l10n.extraFieldsSaveFailed);
       return;
     }
-    context.push(RedesignRoutes.extraFieldEdit(song: song, id: field.id));
+    ToastHelper.showSuccess(context, l10n.extraFieldsSaved);
   }
 
   @override

@@ -114,6 +114,88 @@ void main() {
       expect(RedesignRoutes.roleRedirect(RedesignRoutes.extraFields, Role.admin), isNull);
     });
 
+    for (final song in [false, true]) {
+      testWidgets(
+        'create ${song ? 'work' : 'person'} field: saves once and returns to the updated list',
+        (tester) async {
+          final container = await _pumpEditPage(
+            tester,
+            location: RedesignRoutes.extraFields,
+            fieldsPage: true,
+          );
+          final repo =
+              container.read(extraFieldsRepositoryWithTenantProvider)
+                  as _FakeExtraFieldsRepo;
+          final gate = repo.gate = Completer<void>();
+
+          await _openAddSheet(tester, song: song);
+          await tester.enterText(find.byType(TextField).first, 'Zusatzinfo');
+          await tester.enterText(find.byType(TextField).last, 'Demo');
+          await tester.tap(
+            find.widgetWithText(ElevatedButton, 'Feld hinzufügen'),
+          );
+          await _settle(tester);
+
+          // Still saving: no success indication or updated list yet.
+          expect(find.text('Felder gespeichert'), findsNothing);
+          expect(find.text('Zusatzinfo'), findsNothing);
+          gate.complete();
+          await _settle(tester);
+
+          expect(find.byType(RdExtraFieldsPage), findsOneWidget);
+          expect(find.byType(RdExtraFieldEditPage), findsNothing);
+          expect(find.text('Zusatzinfo'), findsOneWidget);
+          expect(find.text('Felder gespeichert'), findsOneWidget);
+          expect(repo.saves, hasLength(1));
+          final tenant = container.read(currentTenantProvider)!;
+          final created =
+              (song ? tenant.songAdditionalFields! : tenant.additionalFields!)
+                  .last;
+          expect(created.id, 'zusatzinfo');
+          expect(created.defaultValue, 'Demo');
+          expect(created.displayMode, 'chip');
+          expect(tenant.additionalFields!.take(2), [_size, _member]);
+          expect(tenant.songAdditionalFields!.first, _publisher);
+        },
+      );
+    }
+
+    testWidgets(
+      'create field: a failed save keeps the existing list and reports the failure',
+      (tester) async {
+        final container = await _pumpEditPage(
+          tester,
+          location: RedesignRoutes.extraFields,
+          fieldsPage: true,
+        );
+        final repo =
+            container.read(extraFieldsRepositoryWithTenantProvider)
+                as _FakeExtraFieldsRepo;
+        repo.failNext = true;
+
+        await _openAddSheet(tester);
+        await tester.enterText(find.byType(TextField).first, 'Zusatzinfo');
+        await tester.tap(
+          find.widgetWithText(ElevatedButton, 'Feld hinzufügen'),
+        );
+        await _settle(tester);
+
+        expect(find.byType(RdExtraFieldsPage), findsOneWidget);
+        expect(find.byType(RdExtraFieldEditPage), findsNothing);
+        expect(find.text('Fehler beim Speichern'), findsOneWidget);
+        expect(find.text('Felder gespeichert'), findsNothing);
+        expect(find.text('Zusatzinfo'), findsNothing);
+        expect(container.read(currentTenantProvider)!.additionalFields, [
+          _size,
+          _member,
+        ]);
+        expect(container.read(currentTenantProvider)!.songAdditionalFields, [
+          _publisher,
+        ]);
+        await tester.pump(const Duration(seconds: 5));
+      },
+    );
+
     testWidgets('edit page: every change of the old sheet is saved right away', (tester) async {
       final container = await _pumpEditPage(
         tester,
@@ -194,6 +276,7 @@ void main() {
 Future<ProviderContainer> _pumpEditPage(
   WidgetTester tester, {
   required String location,
+  bool fieldsPage = false,
   List<ExtraField> persons = const [_size, _member],
   List<ExtraField> songs = const [_publisher],
 }) async {
@@ -217,7 +300,7 @@ Future<ProviderContainer> _pumpEditPage(
     routes: [
       GoRoute(
         path: RedesignRoutes.extraFields,
-        builder: (_, __) => const Scaffold(body: Text('page fields')),
+        builder: (_, __) => fieldsPage ? const RdExtraFieldsPage() : const Scaffold(body: Text('page fields')),
         routes: [
           GoRoute(
             path: ':list/:id',
@@ -243,4 +326,11 @@ Future<ProviderContainer> _pumpEditPage(
   );
   await _settle(tester);
   return container;
+}
+
+Future<void> _openAddSheet(WidgetTester tester, {bool song = false}) async {
+  await tester.tap(find.byKey(const Key('rd-manage-list-add')));
+  await _settle(tester);
+  await tester.tap(find.text(song ? 'Für Werke' : 'Für Personen').last);
+  await _settle(tester);
 }

@@ -741,14 +741,15 @@ Future<ExtraField?> showExtraFieldSheet(
                         decoration: decoration,
                       ),
                     ),
-                    Builder(
-                      builder: (anchor) => SettingsSelectItem(
-                        label: l10n.extraFieldsDisplay,
-                        value: displayNames[displayMode] ?? displayMode,
-                        onTap: () => pickOne(anchor, l10n.extraFieldsDisplay, displayMode, displayNames,
-                            (v) => displayMode = v),
+                    if (isEdit)
+                      Builder(
+                        builder: (anchor) => SettingsSelectItem(
+                          label: l10n.extraFieldsDisplay,
+                          value: displayNames[displayMode] ?? displayMode,
+                          onTap: () => pickOne(anchor, l10n.extraFieldsDisplay, displayMode, displayNames,
+                              (v) => displayMode = v),
+                        ),
                       ),
-                    ),
                     if (isPerson) ...[
                       IonToggleItem(
                         title: l10n.extraFieldsVisible,
@@ -848,6 +849,7 @@ Future<ExtraField?> showExtraFieldSheet(
             final form = classic ? classicForm() : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
+                    spacing: AppDimensions.paddingM,
                     children: [
                       if (!classic) ...[
                       Row(
@@ -861,7 +863,6 @@ Future<ExtraField?> showExtraFieldSheet(
                           IconButton(icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose), onPressed: () => Navigator.pop(sheetContext)),
                         ],
                       ),
-                      const SizedBox(height: AppDimensions.paddingS),
                       ],
                       if (isEdit)
                         ListTile(
@@ -893,16 +894,17 @@ Future<ExtraField?> showExtraFieldSheet(
                         textCapitalization: TextCapitalization.sentences,
                         decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
                       ),
-                      AppDropdownFormField<String>(
-                        interface: AppSelectInterface.alert,
-                        value: displayMode,
-                        decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
-                        items: [
-                          DropdownMenuItem(value: 'chip', child: Text(context.l10n.extraFieldsAsChip)),
-                          DropdownMenuItem(value: 'underneath', child: Text(context.l10n.extraFieldsUnderName)),
-                        ],
-                        onChanged: (v) => setSheet(() => displayMode = v ?? 'chip'),
-                      ),
+                      if (isEdit)
+                        AppDropdownFormField<String>(
+                          interface: AppSelectInterface.alert,
+                          value: displayMode,
+                          decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
+                          items: [
+                            DropdownMenuItem(value: 'chip', child: Text(context.l10n.extraFieldsAsChip)),
+                            DropdownMenuItem(value: 'underneath', child: Text(context.l10n.extraFieldsUnderName)),
+                          ],
+                          onChanged: (v) => setSheet(() => displayMode = v ?? 'chip'),
+                        ),
                       if (isPerson) ...[
                         IonSwitchListTile(
                           contentPadding: EdgeInsets.zero,
@@ -921,7 +923,6 @@ Future<ExtraField?> showExtraFieldSheet(
                           ),
                       ],
                       if (type == 'select') ...[
-                        const SizedBox(height: AppDimensions.paddingS),
                         Row(
                           children: [
                             Expanded(child: Text(context.l10n.typeSettingsOptions, style: Theme.of(ctx).textTheme.titleSmall)),
@@ -943,7 +944,7 @@ Future<ExtraField?> showExtraFieldSheet(
                                   textCapitalization: TextCapitalization.sentences,
                                   decoration: InputDecoration(
                                     hintText: context.l10n.extraFieldsValuePh,
-                                    helperText: i == 0 ? context.l10n.extraFieldsFlutterFirstOptionDefault : null,
+                                    helper: i == 0 ? Text(context.l10n.extraFieldsFlutterFirstOptionDefault) : null,
                                   ),
                                 ),
                               ),
@@ -955,7 +956,6 @@ Future<ExtraField?> showExtraFieldSheet(
                           ),
                       ],
                       if (type != 'select' && type != 'bfecg_church') ...[
-                        const SizedBox(height: AppDimensions.paddingS),
                         if (type == 'boolean')
                           IonSwitchListTile(
                             contentPadding: EdgeInsets.zero,
@@ -1007,7 +1007,6 @@ Future<ExtraField?> showExtraFieldSheet(
                       ] else ...[
                       // Beta design: its buttons as before.
                       if (isEdit && isPerson) ...[
-                        const SizedBox(height: AppDimensions.paddingS),
                         TextButton(
                           onPressed: resetValues,
                           child: Text(context.l10n.extraFieldsResetAll,
@@ -1015,7 +1014,6 @@ Future<ExtraField?> showExtraFieldSheet(
                         ),
                       ],
                       if (!isEdit) ...[
-                        const SizedBox(height: AppDimensions.paddingM),
                         ElevatedButton(
                           onPressed: submit,
                           child: Text(context.l10n.typeSettingsAddField),

@@ -604,8 +604,13 @@ Alles unter „Ich“ › „Verwaltung“. Die Suche oben findet jede Einstellu
   1. Tippe auf „Feld hinzufügen“ und wähle, ob es für Personen oder für Werke
      gilt.
   2. Lege Name und Typ fest, zum Beispiel eine Auswahl mit Optionen.
-- **Ergebnis:** Das Feld erscheint bei jeder Person oder jedem Werk, zum
-  Beispiel Kleidergröße oder Verlag.
+  3. Tippe im Formular auf „Feld hinzufügen“.
+- **Ergebnis:** Nach erfolgreichem Speichern bist du wieder in der
+  aktualisierten Feldliste. Das neue Feld ist bei den Personen oder Werken
+  verfügbar, zum Beispiel Kleidergröße oder Verlag.
+- **Gut zu wissen:** Neue Felder nutzen standardmäßig „Als Chip“. Tippe auf
+  ein bestehendes Feld, um beim Bearbeiten die „Anzeige in Listen“ zu ändern,
+  zum Beispiel auf „Unter dem Namen“.
 
 ### L-48 Die Anmeldung per Link einstellen
 
