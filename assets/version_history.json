@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.155.1",
+      "date": "15.11.2026",
+      "changes": [
+        "🐛 Klassisches Design: Startseite zeigt wieder alle Karten (Termine, Mitglieder-Veränderung), nicht nur die Geburtstage",
+        "🎨 Klassisches Design näher an Ionic: Textabstände und Zeilenhöhen, Schalter und Listenpfeile im Android-Aussehen, Schriftgrößen im iPhone-Aussehen (Termin, Werke, Mehr, Eingabefelder), Kopfzeile von Gruppen, Lehrer und Mitglieder"
+      ]
+    },
+    {
       "version": "0.155.0",
       "date": "15.11.2026",
       "changes": [
