@@ -413,6 +413,7 @@ void main() {
         final router = GoRouter(
           initialLocation: RedesignRoutes.manage,
           routes: [
+            GoRoute(path: '/detail', builder: (_, __) => const Scaffold(body: Text('page detail'))),
             GoRoute(
               path: RedesignRoutes.me,
               builder: (_, __) => const Scaffold(body: Text('page me')),
@@ -432,7 +433,13 @@ void main() {
                           c,
                           s,
                           route.$2,
-                          Scaffold(key: ValueKey(route.$1), body: Text('page ${route.$1}')),
+                          Scaffold(
+                            key: ValueKey(route.$1),
+                            body: Column(children: [
+                              Text('page ${route.$1}'),
+                              TextField(key: ValueKey('filter-${route.$1}')),
+                            ]),
+                          ),
                         ),
                       ),
                   ],
@@ -452,6 +459,13 @@ void main() {
           expect(find.byType(RdManageSplit), findsNothing);
           expect(find.byType(RdManagePage), findsNothing);
           expect(tester.getSize(find.byKey(ValueKey(route.split('/').last))).width, width);
+          final filter = find.byKey(ValueKey('filter-${route.split('/').last}'));
+          await tester.enterText(filter, 'retain this selection');
+          router.push('/detail');
+          await _settle(tester);
+          router.pop();
+          await _settle(tester);
+          expect(find.widgetWithText(TextField, 'retain this selection'), findsOneWidget);
         }
 
         // Actual settings still keep their navigation column on desktop.
