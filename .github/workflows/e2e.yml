@@ -1,17 +1,28 @@
 name: E2E
 
 # Runs the flows in patrol_test/ against the real app and a LOCAL Supabase
-# that is started fresh inside this job (e2e/supabase). Nothing here talks
+# that is started fresh inside this job (e2e/supabase). Its tables, rules and
+# test data come from the private repository attendix-db. Nothing here talks
 # to the production database.
+#
+# - Pull requests: the flows tagged "pr" (a handful, the most important
+#   paths). All flows when the pull request changes the flows themselves or
+#   carries the label "e2e-alle".
+# - Every night and by hand ("Run workflow"): all flows.
 on:
   pull_request:
     branches: [master]
-    paths:
-      - 'patrol_test/**'
-      - 'e2e/**'
-      - 'android/app/src/androidTest/**'
-      - '.github/workflows/e2e.yml'
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - 'changelog/**'
+  schedule:
+    - cron: '17 2 * * *'
   workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
 
 concurrency:
   group: e2e-${{ github.event.pull_request.number || github.run_id }}
@@ -26,10 +37,21 @@ jobs:
   web:
     name: Web (Chromium)
     # Patrol pins a Playwright version; it must support the runner image.
+    # The test database needs a secret, which pull requests from forks and
+    # from Dependabot do not get.
+    if: ${{ github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+
+      - name: Checkout the test database (private)
+        uses: actions/checkout@v4
+        with:
+          repository: FECGSpeyer/attendix-db
+          ssh-key: ${{ secrets.ATTENDIX_DB_DEPLOY_KEY }}
+          path: .attendix-db
+          persist-credentials: false
 
       - name: Read Flutter version from ci.yml
         id: flutter
@@ -55,10 +77,16 @@ jobs:
           supabase start --workdir e2e -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-meta
           supabase status --workdir e2e -o env > "$RUNNER_TEMP/supabase.env"
 
-      - name: Create test accounts
+      - name: Load tables, rules and test data
+        # The schema is private and this log is public: nothing of the
+        # loading is printed here.
         run: |
           source "$RUNNER_TEMP/supabase.env"
-          e2e/seed_accounts.sh "$API_URL" "$SERVICE_ROLE_KEY"
+          export SCHEMA_ADMIN_URL="${DB_URL/\/\/postgres:/\/\/supabase_admin:}"
+          if ! .attendix-db/scripts/build_test_db.sh "$DB_URL" > "$RUNNER_TEMP/db.log" 2>&1; then
+            echo "Loading the test database failed. Details: workflow Datenbank-Regeln in attendix-db." >&2
+            exit 1
+          fi
 
       - name: Point the app at the local Supabase
         run: |
@@ -78,7 +106,17 @@ jobs:
           PATROL_WEB_VIEWPORT: '{"width":1280,"height":800}'
           PATROL_WEB_SCREENSHOT: only-on-failure
           PATROL_WEB_REPORTER: '["list","html"]'
-        run: patrol test --device chrome --web-headless
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tags=()
+          if [ "${{ github.event_name }}" = pull_request ] && [[ ",$PR_LABELS," != *,e2e-alle,* ]]; then
+            files=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate -q '.[].filename')
+            if ! grep -qE '^(patrol_test/|e2e/|\.github/workflows/e2e\.yml$)' <<< "$files"; then
+              tags=(--tags pr)
+            fi
+          fi
+          patrol test --device chrome --web-headless "${tags[@]}"
 
       - name: Upload report
         if: ${{ !cancelled() }}
@@ -93,14 +131,23 @@ jobs:
 
   android:
     name: Android (Emulator)
-    # Slow (build and emulator, about 20 minutes), so not on every pull
+    # Slow (build and emulator, about 15 minutes), so not on every pull
     # request: by hand via "Run workflow", or on pull requests that carry the
-    # label "e2e-android" (set the label before the push).
-    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'e2e-android') }}
+    # label "e2e-android" (set the label before the push). Runs the flows
+    # tagged "mobil": the others are written for a wide window.
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'e2e-android')) }}
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+
+      - name: Checkout the test database (private)
+        uses: actions/checkout@v4
+        with:
+          repository: FECGSpeyer/attendix-db
+          ssh-key: ${{ secrets.ATTENDIX_DB_DEPLOY_KEY }}
+          path: .attendix-db
+          persist-credentials: false
 
       - name: Read Flutter version from ci.yml
         id: flutter
@@ -133,10 +180,16 @@ jobs:
           supabase start --workdir e2e -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-meta
           supabase status --workdir e2e -o env > "$RUNNER_TEMP/supabase.env"
 
-      - name: Create test accounts
+      - name: Load tables, rules and test data
+        # The schema is private and this log is public: nothing of the
+        # loading is printed here.
         run: |
           source "$RUNNER_TEMP/supabase.env"
-          e2e/seed_accounts.sh "$API_URL" "$SERVICE_ROLE_KEY"
+          export SCHEMA_ADMIN_URL="${DB_URL/\/\/postgres:/\/\/supabase_admin:}"
+          if ! .attendix-db/scripts/build_test_db.sh "$DB_URL" > "$RUNNER_TEMP/db.log" 2>&1; then
+            echo "Loading the test database failed. Details: workflow Datenbank-Regeln in attendix-db." >&2
+            exit 1
+          fi
 
       - name: Point the app at the local Supabase
         # 10.0.2.2 is this machine as the emulator sees it.
@@ -172,7 +225,7 @@ jobs:
           # itself said last go into the job log.
           script: |
             adb logcat -G 16M
-            patrol test --device emulator-5554 || (adb logcat -b crash -d | tail -n 150; adb logcat -d -v brief flutter:V ActivityManager:W TestRunner:V '*:S' | tail -n 150; exit 1)
+            patrol test --device emulator-5554 --tags mobil || (adb logcat -b crash -d | tail -n 150; adb logcat -d -v brief flutter:V ActivityManager:W TestRunner:V '*:S' | tail -n 150; exit 1)
 
       - name: Show failed flows
         if: ${{ failure() }}

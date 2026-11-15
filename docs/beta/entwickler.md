@@ -226,6 +226,10 @@ Leitlinien für neue Seiten:
   der CI (vier Teile).
 - Die Szenarien dieser Doku sind die Prüfliste für Tests am Gerät. Testnamen
   und Fehlerberichte können die Nummer nennen (`M-02`).
+- Für rund 25 Szenarien gibt es einen Ablauf in `patrol_test/`, der die
+  echte App im Browser bedient und die Nummer im Namen trägt. Bei jedem PR
+  laufen die wichtigsten, jede Nacht alle
+  ([`docs/testing.md`](../testing.md)).
 
 Mehr zur Test-Infrastruktur: [`test/README.md`](../../test/README.md).
 
@@ -242,7 +246,8 @@ Mehr zur Test-Infrastruktur: [`test/README.md`](../../test/README.md).
 5. Die Seite funktioniert schmal und breit, hell und dunkel.
 6. Ändert sich, wie eine Aufgabe abläuft, ist das Szenario in `docs/beta/`
    angepasst. Neue Aufgaben haben ein neues Szenario mit der nächsten freien
-   Nummer.
+   Nummer. Gibt es zu dem Szenario einen Ablauf in `patrol_test/` (die Nummer
+   steht im Namen), ist er mit angepasst.
 7. Das Prüfskript ist grün:
 
    ```bash

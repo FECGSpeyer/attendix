@@ -151,6 +151,10 @@ final paused = TestFactories.createPausedPerson();
 
 Mehr Details: `test/README.md`
 
+### Abläufe in der echten App (E2E)
+
+`patrol_test/` bedient die echte App im Browser gegen ein lokales Supabase mit Testdaten (Workflow **E2E**: bei jedem PR die mit `pr` markierten Abläufe, jede Nacht alle). Ein Ablauf trägt die Nummer seines Szenarios aus `docs/beta/` im Namen (`M-01 …`). Ändert ein PR, wie dieses Szenario abläuft, passt er den Ablauf im selben PR an. Details: `docs/testing.md`.
+
 ## Vor dem Commit/Push
 
 **WICHTIG:** PRs erhöhen die Version **nicht** selbst (kein Ändern von `version:` in `pubspec.yaml`, `AppConstants.appVersion` oder `assets/version_history.json`). Sonst kollidiert jeder parallele PR nach jedem Merge.
