@@ -661,11 +661,16 @@ class RdStatusCounters extends StatelessWidget {
     required this.counters,
     required this.semanticLabel,
     this.columns = false,
-  });
+    this.trailing,
+  }) : assert(!columns || trailing == null);
 
   final List<RdCounter> counters;
   final String semanticLabel;
   final bool columns;
+
+  /// In flow mode, keep an action beside the last visible counter. Its
+  /// semantics stay available separately from the counters' summary.
+  final Widget? trailing;
 
   static const double _gap = 8;
   static const double _flowGap = 18;
@@ -705,25 +710,35 @@ class RdStatusCounters extends StatelessWidget {
           onTap: c.onTap,
           child: ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 44, minHeight: 40),
-            child: Align(
-              alignment: AlignmentDirectional.centerStart,
-              widthFactor: 1,
-              heightFactor: 1,
-              child: content,
-            ),
+            child: Align(alignment: AlignmentDirectional.centerStart, widthFactor: 1, heightFactor: 1, child: content),
           ),
         ),
       );
     }
 
-    Widget flow() => Wrap(
-          spacing: _flowGap,
-          runSpacing: 6,
-          children: [
-            for (final c in counters)
-              if (c.visible) cell(c, c.label),
-          ],
-        );
+    Widget flow() {
+      final visible = counters.where((c) => c.visible).toList();
+      Widget flowCell(RdCounter c) =>
+          ExcludeSemantics(excluding: trailing != null && !tappable, child: cell(c, c.label));
+      return Wrap(
+        spacing: _flowGap,
+        runSpacing: 6,
+        crossAxisAlignment: WrapCrossAlignment.end,
+        children: [
+          for (final c in visible)
+            if (c == visible.last && trailing != null)
+              Wrap(
+                spacing: _gap,
+                runSpacing: 6,
+                crossAxisAlignment: WrapCrossAlignment.end,
+                children: [flowCell(c), trailing!],
+              )
+            else
+              flowCell(c),
+          if (visible.isEmpty && trailing != null) trailing!,
+        ],
+      );
+    }
 
     final Widget child;
     if (!columns) {
@@ -783,7 +798,12 @@ class RdStatusCounters extends StatelessWidget {
       );
     }
     if (tappable) return child;
-    return Semantics(label: semanticLabel, excludeSemantics: true, child: child);
+    return Semantics(
+      label: semanticLabel,
+      excludeSemantics: trailing == null,
+      explicitChildNodes: trailing != null,
+      child: child,
+    );
   }
 }
 

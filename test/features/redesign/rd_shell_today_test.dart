@@ -1,3 +1,5 @@
+import 'dart:ui' show SemanticsAction;
+
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_type_providers.dart';
 import 'package:attendix/core/providers/dashboard_providers.dart';
@@ -269,6 +271,7 @@ void main() {
   });
 
   testWidgets('Dirigent: "2 offen" lists who is open and reminds personally (UX D2)', (tester) async {
+    final semantics = tester.ensureSemantics();
     _size(tester, const Size(393, 852));
     await tester.pumpWidget(_app(Role.admin));
     await _settle(tester);
@@ -276,6 +279,16 @@ void main() {
     // "offen" counts every open answer (5); the link whom the sheet
     // reminds (rdOpenPersonsProvider).
     expect(_answers(RegExp(r'5 offen$')), findsOneWidget);
+    expect(
+      tester.getSemantics(_answers(RegExp(r'5 offen$'))).getSemanticsData().hasAction(SemanticsAction.tap),
+      isFalse,
+      reason: 'The status summary must stay separate from the reminder action',
+    );
+    expect(
+      tester.getSemantics(find.byKey(const Key('rd-today-remind'))).getSemanticsData().hasAction(SemanticsAction.tap),
+      isTrue,
+    );
+    semantics.dispose();
     await tester.tap(find.text('2 erinnern'));
     await _settle(tester);
     expect(find.text('2 noch offen'), findsOneWidget);
@@ -284,6 +297,70 @@ void main() {
     expect(find.text('ohne App'), findsOneWidget, reason: 'Lukas has no app account');
     expect(find.text('Push an 1 Person senden'), findsOneWidget);
     expect(find.text('Als Text teilen'), findsOneWidget);
+  });
+
+  testWidgets('next event: zero counters leave no gaps and reminder follows open count', (tester) async {
+    _size(tester, const Size(1280, 900));
+    await tester.pumpWidget(_app(Role.admin, extra: [
+      rdAttendanceCountsProvider.overrideWith(
+        (ref, id) async => const RdStatusCounts(present: 15, excused: 1, open: 3),
+      ),
+    ]));
+    await _settle(tester);
+
+    expect(find.text('später'), findsNothing);
+    final yes = tester.getRect(find.text('zugesagt'));
+    final excused = tester.getRect(find.textContaining(RegExp(r'^entsch(?:uldigt|\.)$')));
+    final open = tester.getRect(find.text('offen'));
+    final remind = tester.getRect(find.byKey(const Key('rd-today-remind')));
+    expect(excused.left - yes.right, inInclusiveRange(12, 24));
+    expect(open.left - excused.right, inInclusiveRange(12, 24));
+    expect(remind.left - open.right, inInclusiveRange(4, 16));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('next event: enlarged text wraps with reminder adjacent to open count', (tester) async {
+    _size(tester, const Size(320, 1100));
+    tester.platformDispatcher.textScaleFactorTestValue = 1.5;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await tester.pumpWidget(_app(Role.admin));
+    await _settle(tester);
+
+    expect(find.text('entschuldigt'), findsOneWidget);
+    final yes = tester.getRect(find.text('zugesagt'));
+    final open = tester.getRect(find.text('offen'));
+    final remind = tester.getRect(find.byKey(const Key('rd-today-remind')));
+    expect(open.top, greaterThan(yes.bottom));
+    // At this text size even the pair needs two lines; the action stays
+    // immediately below its count instead of overflowing or shrinking.
+    expect(remind.left, closeTo(open.left, 1));
+    expect(remind.top - open.bottom, inInclusiveRange(0, 12));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('next event: distinguishes all answered from no participants and keeps zero yes', (tester) async {
+    _size(tester, const Size(393, 852));
+    for (final counts in [
+      const RdStatusCounts(excused: 2),
+      const RdStatusCounts(),
+    ]) {
+      await tester.pumpWidget(_app(Role.admin, key: UniqueKey(), extra: [
+        rdAttendanceCountsProvider.overrideWith((ref, id) async => counts),
+      ]));
+      await _settle(tester);
+      expect(find.byKey(const Key('rd-today-remind')), findsNothing);
+      expect(find.text('offen'), findsNothing);
+      if (counts.total > 0) {
+        expect(find.text('0'), findsOneWidget);
+        expect(find.text('zugesagt'), findsOneWidget);
+        expect(find.text('Alle geantwortet'), findsOneWidget);
+        expect(find.text('Keine Personen vorhanden'), findsNothing);
+      } else {
+        expect(find.text('Keine Personen vorhanden'), findsOneWidget);
+        expect(find.text('Alle geantwortet'), findsNothing);
+      }
+      expect(tester.takeException(), isNull);
+    }
   });
 
   testWidgets('Eltern answer per child right on Heute (UX E1)', (tester) async {
