@@ -65,6 +65,8 @@ Suche der Verwaltung findet auch diese Einträge und sagt, wo sie sind:
   (Auswertung, Mitteilungen, Verwaltung) und „Persönlich“ (Ich, Team, Hilfe).
 - Auf breiten Bildschirmen zeigen Listen und Detail nebeneinander: links die
   Liste, rechts der gewählte Termin oder Eintrag.
+- „Auswertung“ und „Mitteilungen“ aus der Seitenleiste nutzen den gesamten
+  Inhaltsbereich, ohne zusätzliche Verwaltungsspalte.
 
 Die App läuft im Browser (auch als installierte Web-App), auf iPhone und iPad,
 auf Android und als Mac-App.

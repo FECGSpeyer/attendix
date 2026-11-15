@@ -313,6 +313,12 @@ class _AreaList extends ConsumerWidget {
 /// pages keeps the list (its scroll position and search) as it is.
 Page<void> rdManageRoutePage(BuildContext context, GoRouterState state, RdManageEntry entry, Widget page) {
   if (rdUseSplit(context)) {
+    // Auswertung and Mitteilungen are destinations of the main sidebar.
+    // Give them the whole content area instead of a second navigation list.
+    // Pushed pages keep the existing split and their return path.
+    if (rdIsSidebarEntry(context)) {
+      return NoTransitionPage<void>(key: state.pageKey, child: page);
+    }
     // Reached by `go` the page key is the matched path ("/ich/…"); a pushed
     // page (from a picker, Auswertung › person …) keeps its own unique key,
     // so it never meets a Verwaltung page with the same key in the stack.
