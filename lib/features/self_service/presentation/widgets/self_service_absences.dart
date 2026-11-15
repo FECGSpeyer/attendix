@@ -350,11 +350,11 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
     if (_from == null || _until == null) {
       content = Row(
         children: [
-          Icon(AppIcons.calendarTodayOutlined, size: 18, color: AppColors.medium),
+          Icon(AppIcons.calendarTodayOutlined, size: 18, color: AppColors.mediumOf(context)),
           const SizedBox(width: 6),
           Text(
             _from == null ? context.l10n.signoutChooseStart : context.l10n.signoutChooseEnd,
-            style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.medium),
+            style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.mediumOf(context)),
           ),
         ],
       );
@@ -373,7 +373,7 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
             ),
           ),
           IconButton(
-            icon: Icon(AppIcons.cancelOutlined, color: AppColors.medium),
+            icon: Icon(AppIcons.cancelOutlined, color: AppColors.mediumOf(context)),
             tooltip: context.l10n.dateDialogReset,
             onPressed: _reset,
           ),
@@ -584,7 +584,7 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
                   ? null
                   : IconButton(
                       icon: Icon(AppIcons.cancelOutlined,
-                          color: AppColors.medium,
+                          color: AppColors.mediumOf(context),
                           semanticLabel: context.l10n.commonRemove),
                       onPressed: () => setState(() => _until = null),
                     ),

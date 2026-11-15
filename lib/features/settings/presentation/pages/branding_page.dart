@@ -111,7 +111,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
     final ios = ionIsIos(context);
     final pStyle = TextStyle(
       fontSize: 14,
-      color: ios ? IonIos.labelP(context) : AppColors.medium,
+      color: ios ? IonIos.labelP(context) : AppColors.mediumOf(context),
     );
 
     // UX_SETTINGS (WAVE 8): branding.page.html — arrow-back, checkmark save,
@@ -140,7 +140,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
                   children: [
                     SettingsListTile(
                       icon: AppIcons.infoOutline,
-                      iconColor: AppColors.medium,
+                      iconColor: AppColors.mediumOf(context),
                       title: '',
                       titleWidget: Text(context.l10n.brandingOrgOnly, style: pStyle),
                     ),

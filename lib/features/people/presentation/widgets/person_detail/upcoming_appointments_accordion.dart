@@ -168,7 +168,7 @@ class _UpcomingAppointmentsCardState extends State<_UpcomingAppointmentsCard> {
       case 0:
       default:
         badgeText = 'N';
-        badgeColor = AppColors.medium;
+        badgeColor = AppColors.mediumOf(context);
     }
 
     // Ionic: ion-item h2 "date | title", h3 notes, ion-badge slot="end"

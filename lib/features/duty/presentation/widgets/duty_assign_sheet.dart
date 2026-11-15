@@ -224,7 +224,7 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
                   child: Text(
                     context.l10n.dutyAllAssigned,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColors.medium),
+                    style: TextStyle(color: AppColors.mediumOf(context)),
                   ),
                 )
               : ListView(
@@ -247,7 +247,7 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
                                 }
                               }),
                               title: Text(c.name),
-                              subtitle: Text(_subtitle(c), style: const TextStyle(color: AppColors.medium)),
+                              subtitle: Text(_subtitle(c), style: TextStyle(color: AppColors.mediumOf(context))),
                             ),
                           ),
                       ],
@@ -257,7 +257,7 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
                       padding: const EdgeInsets.fromLTRB(32, 16, 32, 0),
                       child: Text(
                         context.l10n.dutyAssignHint,
-                        style: const TextStyle(color: AppColors.medium, fontSize: 13, height: 1.35),
+                        style: TextStyle(color: AppColors.mediumOf(context), fontSize: 13, height: 1.35),
                       ),
                     ),
                     if (_selected.length > widget.openPlaces)

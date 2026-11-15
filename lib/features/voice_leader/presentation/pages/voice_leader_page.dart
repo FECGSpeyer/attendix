@@ -111,13 +111,13 @@ class VoiceLeaderPage extends ConsumerWidget {
                         Icon(
                           AppIcons.peopleOutline,
                           size: 48,
-                          color: AppColors.medium.withValues(alpha: 0.5),
+                          color: AppColors.mediumOf(context).withValues(alpha: 0.5),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           context.l10n.voiceLeaderNoMembers,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: AppColors.medium),
+                          style: TextStyle(color: AppColors.mediumOf(context)),
                         ),
                       ],
                     ),
@@ -181,7 +181,7 @@ class _GroupHeader extends StatelessWidget {
                 ),
                 Text(
                   context.l10n.voiceLeaderFlutterMemberCount(memberCount),
-                  style: const TextStyle(fontSize: 13.6, color: AppColors.medium),
+                  style: TextStyle(fontSize: 13.6, color: AppColors.mediumOf(context)),
                 ),
               ],
             ),
@@ -270,7 +270,7 @@ class _MemberTile extends StatelessWidget {
                     color: AppColors.primary,
                   ),
                 if (einteilung is String && einteilung.isNotEmpty)
-                  IonBadge(text: einteilung, color: AppColors.medium),
+                  IonBadge(text: einteilung, color: AppColors.mediumOf(context)),
               ],
             ),
             const SizedBox(height: 4),
@@ -280,7 +280,7 @@ class _MemberTile extends StatelessWidget {
             if (!hasEmail && !hasPhone)
               Text(
                 context.l10n.voiceLeaderNoContact,
-                style: const TextStyle(fontSize: 13.6, color: AppColors.medium),
+                style: TextStyle(fontSize: 13.6, color: AppColors.mediumOf(context)),
               ),
             if (absences.isNotEmpty)
               Container(
@@ -295,7 +295,7 @@ class _MemberTile extends StatelessWidget {
                   children: [
                     Text(
                       context.l10n.voiceLeaderUpcomingAbsences,
-                      style: const TextStyle(fontSize: 12.8, color: AppColors.medium),
+                      style: TextStyle(fontSize: 12.8, color: AppColors.mediumOf(context)),
                     ),
                     const SizedBox(height: 4),
                     Wrap(

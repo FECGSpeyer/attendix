@@ -104,7 +104,7 @@ class _HelpMarkdownState extends State<HelpMarkdown> {
       if (token.code) {
         style = style.copyWith(
           fontFamily: 'monospace',
-          backgroundColor: AppColors.medium.withValues(alpha: 0.12),
+          backgroundColor: AppColors.mediumOf(context).withValues(alpha: 0.12),
         );
       }
       final glossaryTerm = token.glossaryTerm;

@@ -180,7 +180,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(AppIcons.peopleOutline, size: 48, color: AppColors.medium),
+            Icon(AppIcons.peopleOutline, size: 48, color: AppColors.mediumOf(context)),
             const SizedBox(height: AppDimensions.paddingM),
             Text(context.l10n.songsFlutterNoPlayers),
           ],
@@ -194,9 +194,9 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
       children: [
         Text(
           widget.fileName,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.w500,
-            color: AppColors.medium,
+            color: AppColors.mediumOf(context),
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -298,9 +298,9 @@ class _CopyCountRow extends StatelessWidget {
                 ),
                 Text(
                   context.l10n.teachersPlayerCount(playerCount),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.medium,
+                    color: AppColors.mediumOf(context),
                   ),
                 ),
               ],

@@ -145,7 +145,7 @@ class _PauseSheetState extends State<_PauseSheet> {
               padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
               child: Text(
                 context.l10n.personPauseHintAuto,
-                style: IonText.note(context).copyWith(color: AppColors.medium),
+                style: IonText.note(context).copyWith(color: AppColors.mediumOf(context)),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),

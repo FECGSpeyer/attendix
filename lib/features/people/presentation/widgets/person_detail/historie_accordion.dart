@@ -74,7 +74,7 @@ class HistorieAccordion extends ConsumerWidget {
             child: Center(
               child: Column(
                 children: [
-                  Icon(AppIcons.history, size: 48, color: AppColors.medium),
+                  Icon(AppIcons.history, size: 48, color: AppColors.mediumOf(context)),
                   const SizedBox(height: AppDimensions.paddingS),
                   Text(context.l10n.personFlutterNoHistory),
                 ],
@@ -208,7 +208,7 @@ class HistorieAccordion extends ConsumerWidget {
         badgeColor = AppColors.warning;
       } else if (text == 'N') {
         badgeText = 'N';
-        badgeColor = AppColors.medium;
+        badgeColor = AppColors.mediumOf(context);
       } else {
         badgeText = 'A';
         badgeColor = AppColors.danger;

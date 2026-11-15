@@ -215,7 +215,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
           ListTile(
             title: Text(
               context.l10n.attListDateMulti,
-              style: const TextStyle(fontSize: 12, color: AppColors.medium),
+              style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
             ),
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 4),
@@ -861,7 +861,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                     ),
                     ListTile(
                       dense: true,
-                      leading: dot(AppColors.medium),
+                      leading: dot(AppColors.mediumOf(context)),
                       title: Text(context.l10n.attListSchoolHolidaysOfState),
                     ),
                   ],
@@ -955,7 +955,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                         title: Text(context.l10n.attListHolidaysOfState),
                       ),
                       IonItem(
-                        leading: dot(AppColors.medium),
+                        leading: dot(AppColors.mediumOf(context)),
                         title: Text(context.l10n.attListSchoolHolidaysOfState),
                       ),
                     ],
@@ -1254,7 +1254,7 @@ class _IosStackedField extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               helperText!,
-              style: const TextStyle(fontSize: 12, color: AppColors.medium),
+              style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
             ),
           ],
         ],
@@ -1302,7 +1302,7 @@ class _InsetListHeader extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(fontSize: 14.4, color: AppColors.medium),
+              style: TextStyle(fontSize: 14.4, color: AppColors.mediumOf(context)),
             ),
           ),
           if (trailing != null) trailing!,

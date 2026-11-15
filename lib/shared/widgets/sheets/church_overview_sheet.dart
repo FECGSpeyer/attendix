@@ -165,7 +165,7 @@ class ChurchOverviewView extends StatelessWidget {
           ios27.IonInsetList(children: [
             ios27.IonItem(
               title: Text(l10n.churchOverviewNoChurch),
-              trailing: badge(data.withoutChurch, color: AppColors.medium),
+              trailing: badge(data.withoutChurch, color: AppColors.mediumOf(context)),
             ),
           ]),
         ],
@@ -174,7 +174,7 @@ class ChurchOverviewView extends StatelessWidget {
             ios27.IonItem(
               title: Center(
                 child: Text(l10n.churchOverviewNoPeople,
-                    style: const TextStyle(color: AppColors.medium)),
+                    style: TextStyle(color: AppColors.mediumOf(context))),
               ),
             ),
           ]),
@@ -189,7 +189,7 @@ class ChurchOverviewView extends StatelessWidget {
     final l10n = context.l10n;
     Widget header(String text) => Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-          child: Text(text, style: theme.textTheme.titleSmall?.copyWith(color: AppColors.medium)),
+          child: Text(text, style: theme.textTheme.titleSmall?.copyWith(color: AppColors.mediumOf(context))),
         );
     Widget badge(int value, {Color color = AppColors.primary}) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
@@ -227,7 +227,7 @@ class ChurchOverviewView extends StatelessWidget {
           header(l10n.churchOverviewUnassigned),
           ListTile(
             title: Text(l10n.churchOverviewNoChurch),
-            trailing: badge(data.withoutChurch, color: AppColors.medium),
+            trailing: badge(data.withoutChurch, color: AppColors.mediumOf(context)),
           ),
         ],
         if (data.total == 0)
@@ -235,7 +235,7 @@ class ChurchOverviewView extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Center(
               child: Text(l10n.churchOverviewNoPeople,
-                  style: const TextStyle(color: AppColors.medium)),
+                  style: TextStyle(color: AppColors.mediumOf(context))),
             ),
           ),
       ],

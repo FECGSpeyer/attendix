@@ -217,7 +217,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(AppIcons.campaignOutlined, size: 48, color: AppColors.medium),
+                    Icon(AppIcons.campaignOutlined, size: 48, color: AppColors.mediumOf(context)),
                     const SizedBox(height: AppDimensions.paddingM),
                     Text(
                       l10n.messagesNotAvailable,
@@ -481,7 +481,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       subtitle: Text(meta),
       trailing: Icon(
         showContent ? AppIcons.expandLess : AppIcons.expandMore,
-        color: AppColors.medium,
+        color: AppColors.mediumOf(context),
       ),
       onTap: () => setState(() => _showContent = !showContent),
     );
@@ -528,7 +528,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 12.5, height: 1.4, color: AppColors.medium),
+        style: TextStyle(fontSize: 12.5, height: 1.4, color: AppColors.mediumOf(context)),
       ),
     );
 
@@ -546,7 +546,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
           ),
           child: Text(
             l10n.messagesOverview,
-            style: theme.textTheme.titleSmall?.copyWith(color: AppColors.medium),
+            style: theme.textTheme.titleSmall?.copyWith(color: AppColors.mediumOf(context)),
           ),
         ),
       // Ionic .tiles: 2-column grid, gap 8, left-aligned value + label.
@@ -646,7 +646,7 @@ class _Tile extends StatelessWidget {
           Text(
             label,
             maxLines: 2,
-            style: const TextStyle(fontSize: 12, color: AppColors.medium),
+            style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
           ),
         ],
       ),
@@ -708,7 +708,7 @@ class _RecipientRow extends StatelessWidget {
                 if (groupName != null && groupName!.isNotEmpty)
                   TextSpan(
                     text: '  $groupName',
-                    style: theme.textTheme.bodySmall?.copyWith(color: AppColors.medium),
+                    style: theme.textTheme.bodySmall?.copyWith(color: AppColors.mediumOf(context)),
                   ),
               ],
             ),
@@ -837,8 +837,8 @@ class _MessageCardState extends State<_MessageCard> {
               Text(
                 context.l10n.messagesFrom(sender, MessageFormat.dateTime(m.createdAt)),
                 style: ios
-                    ? const TextStyle(fontSize: 12.8, color: AppColors.medium)
-                    : theme.textTheme.bodySmall?.copyWith(color: AppColors.medium),
+                    ? TextStyle(fontSize: 12.8, color: AppColors.mediumOf(context))
+                    : theme.textTheme.bodySmall?.copyWith(color: AppColors.mediumOf(context)),
               ),
               SizedBox(height: ios ? 14 : AppDimensions.paddingM),
             ],

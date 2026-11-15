@@ -218,7 +218,7 @@ class SongSelectItem extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: size,
-                color: empty ? AppColors.medium : null,
+                color: empty ? AppColors.mediumOf(context) : null,
               ),
             ),
           ),

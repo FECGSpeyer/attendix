@@ -68,7 +68,7 @@ class EditableInfoRow extends StatelessWidget {
                     label,
                     style: TextStyle(
                       fontSize: 12,
-                      color: highlight ? effectiveHighlightColor : AppColors.medium,
+                      color: highlight ? effectiveHighlightColor : AppColors.mediumOf(context),
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -84,9 +84,9 @@ class EditableInfoRow extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       subtitle!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.medium,
+                        color: AppColors.mediumOf(context),
                       ),
                     ),
                   ],
@@ -94,7 +94,7 @@ class EditableInfoRow extends StatelessWidget {
               ),
             ),
             if (onTap != null && !editable)
-              Icon(AppIcons.chevronRight, color: AppColors.medium),
+              Icon(AppIcons.chevronRight, color: AppColors.mediumOf(context)),
             if (editable)
               Icon(
                 AppIcons.edit,
@@ -192,18 +192,18 @@ class EditableToggleRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.medium,
+                    color: AppColors.mediumOf(context),
                   ),
                 ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 2),
                   Text(
                     subtitle!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.medium,
+                      color: AppColors.mediumOf(context),
                     ),
                   ),
                 ],

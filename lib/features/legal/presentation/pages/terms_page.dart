@@ -131,7 +131,7 @@ class _TermsPageState extends ConsumerState<TermsPage> {
           Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 2),
           Text(text,
-              style: const TextStyle(fontSize: 13.6, color: AppColors.medium)),
+              style: TextStyle(fontSize: 13.6, color: AppColors.mediumOf(context))),
         ],
       ),
       detail: false,
@@ -182,7 +182,7 @@ class _TermsPageState extends ConsumerState<TermsPage> {
                     context.l10n.termsIntro,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                        fontSize: 15.2, height: 1.5, color: AppColors.medium),
+                        fontSize: 15.2, height: 1.5, color: AppColors.mediumOf(context)),
                   ),
                 ),
                 SettingsListSection(

@@ -218,7 +218,7 @@ class _SelectionSheetState<T> extends State<SelectionSheet<T>> {
                       child: Center(
                         child: Text(
                           context.l10n.coreFlutterNoResultsFor(_searchQuery),
-                          style: const TextStyle(color: AppColors.medium),
+                          style: TextStyle(color: AppColors.mediumOf(context)),
                         ),
                       ),
                     ),
@@ -252,7 +252,7 @@ class _SelectionTile<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: icon != null
-          ? Icon(icon, color: isSelected ? AppColors.primary : AppColors.medium)
+          ? Icon(icon, color: isSelected ? AppColors.primary : AppColors.mediumOf(context))
           : null,
       title: Text(
         label,

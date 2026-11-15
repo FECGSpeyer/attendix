@@ -168,7 +168,7 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(AppIcons.history, size: 48, color: AppColors.medium),
+            Icon(AppIcons.history, size: 48, color: AppColors.mediumOf(context)),
             const SizedBox(height: AppDimensions.paddingM),
             Text(context.l10n.coreFlutterNoVersionHistory),
           ],

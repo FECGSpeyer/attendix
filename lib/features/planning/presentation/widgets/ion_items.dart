@@ -319,7 +319,7 @@ class IonEmptyState extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: iconSize, color: AppColors.medium),
+              Icon(icon, size: iconSize, color: AppColors.mediumOf(context)),
               const SizedBox(height: 12),
               if (title != null) ...[
                 Text(
@@ -334,7 +334,7 @@ class IonEmptyState extends StatelessWidget {
                 const SizedBox(height: 6),
               ],
               if (text.isNotEmpty)
-                Text(text, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium)),
+                Text(text, textAlign: TextAlign.center, style: TextStyle(color: AppColors.mediumOf(context))),
               if (action != null) ...[const SizedBox(height: 8), action!],
             ],
           ),
@@ -686,7 +686,7 @@ class IonSelect<T> extends StatelessWidget {
                     Align(
                       alignment: AlignmentDirectional.centerEnd,
                       child: DefaultTextStyle.merge(
-                        style: const TextStyle(color: AppColors.medium),
+                        style: TextStyle(color: AppColors.mediumOf(context)),
                         overflow: TextOverflow.ellipsis,
                         child: it.child,
                       ),

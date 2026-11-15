@@ -145,7 +145,7 @@ class AutoMessageHint extends StatelessWidget {
       child: Text.rich(
         TextSpan(text: text, children: [if (trailing != null) trailing!]),
         textAlign: center ? TextAlign.center : TextAlign.start,
-        style: const TextStyle(fontSize: 12.8, height: 1.4, color: AppColors.medium),
+        style: TextStyle(fontSize: 12.8, height: 1.4, color: AppColors.mediumOf(context)),
       ),
     );
   }
@@ -195,7 +195,7 @@ class AutoMessageChip extends StatelessWidget {
         ),
       );
     }
-    final color = selected ? AppColors.primary : AppColors.medium;
+    final color = selected ? AppColors.primary : AppColors.mediumOf(context);
     return Material(
       color: selected ? AppColors.primary.withValues(alpha: 0.12) : Colors.transparent,
       shape: StadiumBorder(side: BorderSide(color: color.withValues(alpha: selected ? 0.0 : 0.5))),

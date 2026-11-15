@@ -197,11 +197,11 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('${orgPlanDate(entry.date)}${count > 0 ? ' · ${orgPlanPoints(count)}' : ''}',
-              style: const TextStyle(fontSize: 13.6, color: AppColors.medium)),
+              style: TextStyle(fontSize: 13.6, color: AppColors.mediumOf(context))),
           if (entry.tenantLabel.isNotEmpty)
             Text(entry.tenantLabel.toUpperCase(),
-                style: const TextStyle(
-                    fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.48, color: AppColors.medium)),
+                style: TextStyle(
+                    fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.48, color: AppColors.mediumOf(context))),
         ],
       ),
       trailing: Row(
@@ -209,7 +209,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
         children: [
           if (entry.isAdHoc)
             IconButton(
-              icon: Icon(AppIcons.deleteOutline, color: AppColors.medium, semanticLabel: context.l10n.commonDelete),
+              icon: Icon(AppIcons.deleteOutline, color: AppColors.mediumOf(context), semanticLabel: context.l10n.commonDelete),
               onPressed: () => _deleteAdHoc(entry),
             ),
           const IonDetailIcon(),
@@ -452,7 +452,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
             else if (org == null)
               _orgPlansBox(context, [
                 ListTile(
-                  leading: Icon(AppIcons.infoOutline, color: AppColors.medium),
+                  leading: Icon(AppIcons.infoOutline, color: AppColors.mediumOf(context)),
                   title: Text(context.l10n.plansNoOrg),
                 ),
               ], margin: const EdgeInsets.all(16))
@@ -466,7 +466,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                     if (split.upcoming.isEmpty)
                       _orgPlansBox(context, [
                         ListTile(
-                          leading: Icon(AppIcons.eventOutlined, color: AppColors.medium),
+                          leading: Icon(AppIcons.eventOutlined, color: AppColors.mediumOf(context)),
                           title: Text(context.l10n.plansNoUpcomingOrgPlans),
                         ),
                       ], margin: const EdgeInsets.all(16))
@@ -482,8 +482,8 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                           ),
                           if (split.past.isNotEmpty)
                             ListTile(
-                              leading: Icon(AppIcons.history, color: AppColors.medium),
-                              title: Text(context.l10n.plansPastPlans, style: const TextStyle(color: AppColors.medium)),
+                              leading: Icon(AppIcons.history, color: AppColors.mediumOf(context)),
+                              title: Text(context.l10n.plansPastPlans, style: TextStyle(color: AppColors.mediumOf(context))),
                               onTap: _showHistory,
                             ),
                     ]),

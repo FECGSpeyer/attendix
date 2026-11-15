@@ -273,8 +273,8 @@ class _MultiDateCalendarState extends ConsumerState<MultiDateCalendar> {
                   Container(
                     width: 12,
                     height: 12,
-                    decoration: const BoxDecoration(
-                      color: AppColors.medium,
+                    decoration: BoxDecoration(
+                      color: AppColors.mediumOf(context),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -349,8 +349,8 @@ CalendarHighlight? multiDateHighlight(
 
   if (isSchoolHoliday) {
     return CalendarHighlight(
-      backgroundColor: AppColors.medium.withValues(alpha: 0.18),
-      textColor: AppColors.medium,
+      backgroundColor: AppColors.mediumOf(context).withValues(alpha: 0.18),
+      textColor: AppColors.mediumOf(context),
       tooltip: context.l10n.attendanceFlutterSchoolHolidays,
     );
   }
@@ -642,12 +642,12 @@ class _IonMultiDateCalendarCardState extends ConsumerState<IonMultiDateCalendarC
         weekdayStyle: TextStyle(
           fontSize: ios ? 12 : 14,
           fontWeight: ios ? FontWeight.w600 : FontWeight.w400,
-          color: ios ? AppColors.medium : onSurface.withValues(alpha: 0.6),
+          color: ios ? AppColors.mediumOf(context) : onSurface.withValues(alpha: 0.6),
         ),
         weekendStyle: TextStyle(
           fontSize: ios ? 12 : 14,
           fontWeight: ios ? FontWeight.w600 : FontWeight.w400,
-          color: ios ? AppColors.medium : onSurface.withValues(alpha: 0.6),
+          color: ios ? AppColors.mediumOf(context) : onSurface.withValues(alpha: 0.6),
         ),
       ),
       calendarBuilders: CalendarBuilders<void>(

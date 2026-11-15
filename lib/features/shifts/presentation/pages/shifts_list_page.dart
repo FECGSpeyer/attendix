@@ -90,7 +90,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Icon(AppIcons.schedule, size: 64, color: ios ? sl.IonIos.text(context) : AppColors.medium),
+            Icon(AppIcons.schedule, size: 64, color: ios ? sl.IonIos.text(context) : AppColors.mediumOf(context)),
             const SizedBox(height: 16),
             Text(
               context.l10n.shiftsIntro,

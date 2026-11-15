@@ -165,7 +165,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
                         value: _includeArchived,
                         onChanged: (v) => setState(() => _includeArchived = v),
                         title: Text(l10n.teamOrgShowOlderDone),
-                        subtitle: Text(l10n.teamOrgDoneDisappear, style: const TextStyle(color: AppColors.medium)),
+                        subtitle: Text(l10n.teamOrgDoneDisappear, style: TextStyle(color: AppColors.mediumOf(context))),
                       ),
                     ],
                   ),
@@ -245,7 +245,7 @@ class TaskListTile extends StatelessWidget {
         iconSize: 26,
         icon: Icon(
           done ? AppIcons.checkCircle : AppIcons.radioButtonUnchecked,
-          color: done ? (rd?.primary ?? AppColors.success) : (rd?.text2 ?? AppColors.medium),
+          color: done ? (rd?.primary ?? AppColors.success) : (rd?.text2 ?? AppColors.mediumOf(context)),
         ),
         onPressed: onToggle,
       ),
@@ -254,13 +254,13 @@ class TaskListTile extends StatelessWidget {
       title: Text(
         task.title,
         style: done
-            ? TextStyle(decoration: TextDecoration.lineThrough, color: rd?.text2 ?? AppColors.medium)
+            ? TextStyle(decoration: TextDecoration.lineThrough, color: rd?.text2 ?? AppColors.mediumOf(context))
             : null,
       ),
       subtitle: Text(
         parts.join(' · '),
         style: TextStyle(
-          color: overdue ? (rd?.absent ?? AppColors.danger) : (rd?.text2 ?? AppColors.medium),
+          color: overdue ? (rd?.absent ?? AppColors.danger) : (rd?.text2 ?? AppColors.mediumOf(context)),
         ),
       ),
       trailing: Wrap(

@@ -246,7 +246,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                     child: Text(
                       context.l10n.notifPushPreferred,
-                      style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                      style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context)),
                     ),
                   ),
             ],
@@ -640,7 +640,7 @@ class _SectionTitle extends StatelessWidget {
       child: Text(
         title,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: AppColors.medium,
+              color: AppColors.mediumOf(context),
               fontWeight: FontWeight.w600,
             ),
       ),

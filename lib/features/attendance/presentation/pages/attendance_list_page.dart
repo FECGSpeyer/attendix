@@ -288,7 +288,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                       if (archivedCount > 0)
                         Text(
                           context.l10n.attListArchivedCount(archivedCount),
-                          style: const TextStyle(fontSize: 13, color: AppColors.medium),
+                          style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context)),
                         ),
                     ],
                   ),
@@ -696,7 +696,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                                     padding: const EdgeInsets.only(top: 2),
                                     child: Text(
                                       dutyNames(dutyTermine[att.id]!),
-                                      style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                                      style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14),
                                     ),
                                   ),
                               ],
@@ -747,7 +747,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                                   ? Semantics(
                                       label: context.l10n.attListArchived,
                                       child: Icon(AppIcons.archiveOutlined,
-                                          size: 16, color: AppColors.medium),
+                                          size: 16, color: AppColors.mediumOf(context)),
                                     )
                                   : null,
                               subtitle: [readableDate(att), countText(att)]

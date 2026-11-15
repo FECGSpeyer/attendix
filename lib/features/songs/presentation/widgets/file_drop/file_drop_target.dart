@@ -111,7 +111,7 @@ class FileDropZone extends StatelessWidget {
       onFiles: onFiles,
       enabled: onTap != null,
       builder: (context, hovering) {
-        final color = hovering ? AppColors.primary : AppColors.medium;
+        final color = hovering ? AppColors.primary : AppColors.mediumOf(context);
         // WER-27: Ionic `border: 2px dashed` (Beta: the solid border).
         final dashed = context.rdSkin == null;
         final material = Material(

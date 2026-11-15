@@ -194,7 +194,7 @@ class _ReasonsListEditorState extends State<ReasonsListEditor> {
             onTap: () => widget.onChanged([...widget.defaults]),
             title: Text(
               context.l10n.generalSettingsRestoreDefaults,
-              style: const TextStyle(color: AppColors.medium),
+              style: TextStyle(color: AppColors.mediumOf(context)),
             ),
           ),
     ];

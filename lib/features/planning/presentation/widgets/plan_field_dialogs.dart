@@ -233,13 +233,13 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
       manual: _manualBeamer,
     );
     final file = widget.beamer?.file;
-    final muted = theme.textTheme.bodySmall?.copyWith(color: AppColors.medium);
+    final muted = theme.textTheme.bodySmall?.copyWith(color: AppColors.mediumOf(context));
     return [
       const SizedBox(height: 16),
       Align(
         alignment: Alignment.centerLeft,
         child: Text(l10n.planningBeamer.toUpperCase(),
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium)),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.mediumOf(context))),
       ),
       IonSwitchListTile(
         key: const ValueKey('plan-field-beamer-toggle'),
@@ -287,7 +287,7 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
           padding: const EdgeInsets.only(top: 10),
           child: Align(
             alignment: AlignmentDirectional.centerStart,
-            child: Text(caption, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+            child: Text(caption, style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context))),
           ),
         ),
       AppAlertInput(
@@ -665,7 +665,7 @@ class _PlanFieldEditPageState extends State<PlanFieldEditPage> {
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
         child: Text(
           l10n.planningBeamerAutoHint,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.mediumOf(context)),
         ),
       ),
     ];

@@ -184,7 +184,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         Icon(
                           AppIcons.searchOff,
                           size: 64,
-                          color: AppColors.medium,
+                          color: AppColors.mediumOf(context),
                         ),
                         const SizedBox(height: 16),
                         Text(context.l10n.historyNoneFound),
@@ -357,7 +357,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         ? l10n.historyNoneSelected
                         : l10n.historySelectedCount(selectedSongIds.length),
                   ),
-                  trailing: Icon(AppIcons.chevronRight, color: AppColors.medium),
+                  trailing: Icon(AppIcons.chevronRight, color: AppColors.mediumOf(context)),
                   onTap: () async {
                     final picked = await _pickSongs(songs, selectedSongIds);
                     if (picked != null) {
@@ -908,7 +908,7 @@ class _HistorySongPickerState extends State<_HistorySongPicker> {
                     child: Text(
                       context.l10n.historyNoneFound,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.medium),
+                      style: TextStyle(color: AppColors.mediumOf(context)),
                     ),
                   )
                 : ListView(

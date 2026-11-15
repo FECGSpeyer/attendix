@@ -969,7 +969,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           if (_teamsLinkMode)
             Text(
               context.l10n.loginLinkNote,
-              style: const TextStyle(color: AppColors.medium),
+              style: TextStyle(color: AppColors.mediumOf(context)),
             )
           else
             // AUTH: mode segment (Passwort / Code per E-Mail)

@@ -1630,7 +1630,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   Text(context.l10n.attendanceLoadFailed,
                       style: const TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 4),
-                  Text(context.l10n.attendanceTryAgain, style: const TextStyle(color: AppColors.medium)),
+                  Text(context.l10n.attendanceTryAgain, style: TextStyle(color: AppColors.mediumOf(context))),
                 ],
               ),
             ),
@@ -2882,7 +2882,7 @@ class _ArchivedBanner extends StatelessWidget {
     return IonInsetList(
       children: [
         Container(
-          color: AppColors.medium,
+          color: AppColors.mediumOf(context),
           child: ListTile(
             iconColor: Colors.white,
             textColor: Colors.white,

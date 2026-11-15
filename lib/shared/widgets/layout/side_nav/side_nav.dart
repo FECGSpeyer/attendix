@@ -419,7 +419,7 @@ class _SideNavColors {
       background: dark ? const Color(0xFF1A1A1A) : const Color(0xFFF7F7F9),
       surface: dark ? Colors.black : Colors.white,
       text: text,
-      muted: AppColors.medium,
+      muted: AppColors.mediumOf(context),
       hover: text.withValues(alpha: 0.06),
       activeBg: AppColors.primary.withValues(alpha: 0.14),
       // --ion-color-step-150 (fallback #e5e5ea)

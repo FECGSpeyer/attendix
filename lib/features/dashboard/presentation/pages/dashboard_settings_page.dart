@@ -122,8 +122,8 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
                       ? Theme.of(context).scaffoldBackgroundColor
                       : Colors.transparent,
                   child: ListTile(
-                    leading: Icon(AppIcons.refresh, color: AppColors.medium),
-                    title: Text(context.l10n.dashSettingsReset, style: const TextStyle(color: AppColors.medium)),
+                    leading: Icon(AppIcons.refresh, color: AppColors.mediumOf(context)),
+                    title: Text(context.l10n.dashSettingsReset, style: TextStyle(color: AppColors.mediumOf(context))),
                     onTap: () => _guard(notifier.resetCards),
                   ),
                 ),
@@ -134,7 +134,7 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             child: Text(
               context.l10n.dashSettingsReorderHint,
-              style: const TextStyle(fontSize: 13.5, color: AppColors.medium),
+              style: TextStyle(fontSize: 13.5, color: AppColors.mediumOf(context)),
             ),
           ),
         ],
@@ -159,7 +159,7 @@ class _Header extends StatelessWidget {
         child: Text(
           text,
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: AppColors.medium,
+                color: AppColors.mediumOf(context),
                 fontWeight: FontWeight.w600,
               ),
         ),

@@ -116,7 +116,7 @@ class ProfileHeroCard extends ConsumerWidget {
                                 color: context.rdSkin == null
                                     ? AppColors.adaptive(
                                         context, AppColors.iosMediumLight)
-                                    : AppColors.medium,
+                                    : AppColors.mediumOf(context),
                               ),
                             ),
                         ],
@@ -125,7 +125,7 @@ class ProfileHeroCard extends ConsumerWidget {
                     Icon(
                       ios ? AppIcons.cupertinoChevronForward : AppIcons.chevronRight,
                       size: ios ? 17.6 : null,
-                      color: AppColors.medium,
+                      color: AppColors.mediumOf(context),
                     ),
                   ],
                 ),

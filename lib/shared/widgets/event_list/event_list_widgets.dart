@@ -62,7 +62,7 @@ class EvMetrics {
   static Color medium(BuildContext context) =>
       useIosLook(context) || context.rdSkin == null
           ? IonIos.medium(Theme.of(context).brightness)
-          : AppColors.medium;
+          : AppColors.mediumOf(context);
 
   /// `.list-ios.list-inset { margin: 16px }` – it outranks the app's
   /// `ion-list.ev-list { margin-top: 6px; margin-bottom: 0 }` (specificity
@@ -157,7 +157,7 @@ class EventDateTile extends StatelessWidget {
     final framed = notInvited
         ? CustomPaint(
             foregroundPainter: DashedRRectPainter(
-              color: AppColors.adaptive(context, AppColors.medium).withValues(alpha: 0.6),
+              color: AppColors.adaptive(context, AppColors.mediumOf(context)).withValues(alpha: 0.6),
               radius: large ? 14 : 12,
             ),
             child: tile,
@@ -225,7 +225,7 @@ class EvNotInvited {
 
   /// `rgba(medium, 0.08)` background of the row / card.
   static Color background(BuildContext context) =>
-      AppColors.adaptive(context, AppColors.medium).withValues(alpha: 0.08);
+      AppColors.adaptive(context, AppColors.mediumOf(context)).withValues(alpha: 0.08);
 }
 
 /// Pill "Nicht eingeladen" with eye icon in place of the status pill
@@ -239,7 +239,7 @@ class EventNotInvitedPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.adaptive(context, AppColors.medium).withValues(alpha: 0.2),
+        color: AppColors.adaptive(context, AppColors.mediumOf(context)).withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
@@ -581,7 +581,7 @@ class EventRow extends StatelessWidget {
                                 // IONIC_PARITY: md `ion-label p` step-600
                                 : (context.rdSkin == null
                                     ? IonMd.note(Theme.of(context).brightness)
-                                    : AppColors.medium),
+                                    : AppColors.mediumOf(context)),
                             fontSize: EvMetrics.rem(context, 0.875),
                             height: lineHeight,
                           ),
@@ -748,7 +748,7 @@ class EventTodayCard extends StatelessWidget {
                   children: [
                     Padding(
                       padding: EdgeInsets.only(top: 2),
-                      child: Icon(AppIcons.locationOnOutlined, size: 16, color: AppColors.medium),
+                      child: Icon(AppIcons.locationOnOutlined, size: 16, color: AppColors.mediumOf(context)),
                     ),
                     const SizedBox(width: 6),
                     Expanded(
@@ -769,7 +769,7 @@ class EventTodayCard extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   infoText!,
-                  style: const TextStyle(fontStyle: FontStyle.italic, color: AppColors.medium),
+                  style: TextStyle(fontStyle: FontStyle.italic, color: AppColors.mediumOf(context)),
                 ),
               ),
             EventChips(chips: chips),
@@ -827,7 +827,7 @@ class EventTodayCard extends StatelessWidget {
       padding: margin,
       child: CustomPaint(
         foregroundPainter: DashedRRectPainter(
-          color: AppColors.adaptive(context, AppColors.medium),
+          color: AppColors.adaptive(context, AppColors.mediumOf(context)),
           radius: 18,
         ),
         child: card,

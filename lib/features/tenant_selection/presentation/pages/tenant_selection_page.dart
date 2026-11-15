@@ -715,7 +715,7 @@ class _TenantTile extends StatelessWidget {
             IconButton(
               tooltip: context.l10n.tasksDetails,
               visualDensity: VisualDensity.compact,
-              icon: Icon(AppIcons.infoOutline, color: AppColors.medium),
+              icon: Icon(AppIcons.infoOutline, color: AppColors.mediumOf(context)),
               onPressed: () {
                 if (tenant.id != null) {
                   context.pushNamed(

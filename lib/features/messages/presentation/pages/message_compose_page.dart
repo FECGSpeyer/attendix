@@ -460,7 +460,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                                       outline: !_selectedGroups.contains(g.id),
                                       color: _selectedGroups.contains(g.id)
                                           ? AppColors.primary
-                                          : AppColors.medium,
+                                          : AppColors.mediumOf(context),
                                       onTap: () {
                                         setState(() {
                                           if (!_selectedGroups.remove(g.id)) {
@@ -583,7 +583,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
           const SizedBox(height: 4),
           Text(
             l10n.messagesUnreachableSummary(counts.unreachable),
-            style: theme.textTheme.bodySmall?.copyWith(color: AppColors.medium),
+            style: theme.textTheme.bodySmall?.copyWith(color: AppColors.mediumOf(context)),
           ),
         ],
       ],

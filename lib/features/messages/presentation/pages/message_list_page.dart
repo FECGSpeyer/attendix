@@ -204,7 +204,7 @@ class _MessageRow extends StatelessWidget {
                       subtitle,
                       style: TextStyle(
                         fontSize: 14,
-                        color: ios ? IonIos.labelP(context) : AppColors.medium,
+                        color: ios ? IonIos.labelP(context) : AppColors.mediumOf(context),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -240,9 +240,9 @@ class _MessageRow extends StatelessWidget {
                             m.isSending
                                 ? context.l10n.messagesSending
                                 : context.l10n.messagesReadOf(item.stats.read, m.recipientCount),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12.8,
-                              color: AppColors.medium,
+                              color: AppColors.mediumOf(context),
                               fontFeatures: [FontFeature.tabularFigures()],
                             ),
                           ),
@@ -304,7 +304,7 @@ class _MessagesEmptyState extends StatelessWidget {
             child: Text(
               l10n.messagesNoneHint,
               textAlign: TextAlign.center,
-              style: const TextStyle(height: 1.4, color: AppColors.medium),
+              style: TextStyle(height: 1.4, color: AppColors.mediumOf(context)),
             ),
           ),
           const SizedBox(height: 24),

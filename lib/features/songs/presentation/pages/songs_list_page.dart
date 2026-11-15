@@ -629,7 +629,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                   padding: const EdgeInsets.all(AppDimensions.paddingXL),
                   child: Column(
                     children: [
-                      Icon(AppIcons.musicOffOutlined, size: 56, color: AppColors.medium),
+                      Icon(AppIcons.musicOffOutlined, size: 56, color: AppColors.mediumOf(context)),
                       const SizedBox(height: AppDimensions.paddingS),
                       Text(
                         data.songs.isEmpty

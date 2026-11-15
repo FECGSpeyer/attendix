@@ -725,7 +725,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                             const SizedBox(height: AppDimensions.paddingS),
                             Text(
                               context.l10n.generalSettingsRegisterFieldsHint,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.mediumOf(context)),
                             ),
                           ],
                         )),
@@ -837,7 +837,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                             context.l10n.generalSettingsNoRules,
                             style: TextStyle(
                               fontSize: 14,
-                              color: ionIsIos(context) ? IonIos.labelP(context) : AppColors.medium,
+                              color: ionIsIos(context) ? IonIos.labelP(context) : AppColors.mediumOf(context),
                             ),
                           ),
                         ),

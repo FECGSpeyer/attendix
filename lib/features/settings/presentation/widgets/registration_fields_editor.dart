@@ -90,7 +90,7 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
             child: Text(
               context.l10n.typeSettingsNoSignupFields,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.medium),
+              style: TextStyle(color: AppColors.mediumOf(context)),
             ),
           ),
         for (var i = 0; i < widget.fields.length; i++)
@@ -166,7 +166,7 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
           child: Text(
             context.l10n.typeSettingsNoSignupFields,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: AppColors.medium, fontSize: 14),
+            style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14),
           ),
         ),
       for (var i = 0; i < widget.fields.length; i++)

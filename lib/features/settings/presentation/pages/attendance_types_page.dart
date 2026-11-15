@@ -121,7 +121,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
                           index: index,
                           child: Icon(
                             AppIcons.dragHandle,
-                            color: ios ? IonIos.note(context) : AppColors.medium,
+                            color: ios ? IonIos.note(context) : AppColors.mediumOf(context),
                           ),
                         ),
                       ),
@@ -156,7 +156,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
                   _localTypes = [];
                 });
               },
-              backgroundColor: ios && context.rdSkin == null ? null : AppColors.medium,
+              backgroundColor: ios && context.rdSkin == null ? null : AppColors.mediumOf(context),
               child: Icon(AppIcons.close),
             )),
     ));

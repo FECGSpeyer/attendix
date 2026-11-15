@@ -40,7 +40,7 @@ class PersonStatusBadges extends StatelessWidget {
     if (person.archived) {
       badges.add(_StatusBadge(
         label: context.l10n.commonHistoryArchived,
-        color: AppColors.medium,
+        color: AppColors.mediumOf(context),
         icon: AppIcons.archive,
       ));
     }

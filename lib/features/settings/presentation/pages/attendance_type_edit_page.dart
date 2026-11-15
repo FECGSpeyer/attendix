@@ -449,8 +449,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           padding: EdgeInsets.fromLTRB(_pageMargin, AppDimensions.paddingM, _pageMargin, scrollEndPadding(context, base: AppDimensions.paddingM, fabRoom: _isNew ? 80 : 0)),
           children: [
             const IonContentTopInset(),
-            // Usage warning
-            if (_usageCount > 0) ...[
+            // Usage warning (not in Ionic, so only with the Beta design)
+            if (_usageCount > 0 && context.rdSkin != null) ...[
               Card(
                 color: AppColors.warning.withValues(alpha: 0.1),
                 child: Padding(
@@ -731,7 +731,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                               color: AppColors.primary,
                             ),
                           if (context.rdSkin != null)
-                            Icon(AppIcons.chevronRight, color: AppColors.medium)
+                            Icon(AppIcons.chevronRight, color: AppColors.mediumOf(context))
                           else ...[
                             const SizedBox(width: 8),
                             const IonDetailChevron(),
@@ -798,7 +798,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               action: context.rdSkin == null && _registrationFields.isNotEmpty
                   ? Padding(
                       padding: const EdgeInsets.only(right: 12),
-                      child: IonBadge(text: '${_registrationFields.length}', color: AppColors.medium),
+                      child: IonBadge(text: '${_registrationFields.length}', color: AppColors.mediumOf(context)),
                     )
                   : null,
               items: [RegistrationFieldsEditor(
@@ -870,7 +870,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           padding: const EdgeInsets.fromLTRB(5, 8, 5, 5),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: _color == colorName ? AppColors.medium : null,
+            color: _color == colorName ? AppColors.mediumOf(context) : null,
             borderRadius: radius,
           ),
           child: Icon(
@@ -902,7 +902,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   height: 48,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: _color == colorName ? AppColors.medium : null,
+                    color: _color == colorName ? AppColors.mediumOf(context) : null,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
@@ -1115,10 +1115,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.medium,
+                    color: AppColors.mediumOf(context),
                   ),
                 ),
               ),
@@ -1273,7 +1273,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   : EdgeInsets.fromLTRB(16, 10, ionIsIos(context) ? IonIos.itemPaddingEnd : 16, 10),
               child: Text(
                 context.l10n.typeSettingsCircleHint,
-                style: TextStyle(color: AppColors.medium, fontSize: 13),
+                style: TextStyle(color: AppColors.mediumOf(context), fontSize: 13),
               ),
             ),
           ],
@@ -1776,7 +1776,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             trailing: _timeValue(
               start,
               onTap: _allDay ? () => _pickTime(isStart: true) : null,
-              betaColor: _allDay ? null : AppColors.medium,
+              betaColor: _allDay ? null : AppColors.mediumOf(context),
             ),
             onTap: _allDay ? () => _pickTime(isStart: true) : null,
           ),
@@ -1791,7 +1791,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ListTile(
               contentPadding: _rowPad,
               title: Text(l10n.typeSettingsEnd),
-              trailing: _timeValue(_planEnd!, betaColor: AppColors.medium),
+              trailing: _timeValue(_planEnd!, betaColor: AppColors.mediumOf(context)),
             ),
         ],
     );
@@ -1820,7 +1820,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           PopupMenuItem(
             value: 'agenda',
             child: Row(children: [
-              Icon(AppIcons.commit, color: AppColors.medium),
+              Icon(AppIcons.commit, color: AppColors.mediumOf(context)),
               const SizedBox(width: 12),
               Expanded(child: Text(l10n.typeSettingsAgendaPlaceholder)),
             ]),
@@ -1851,7 +1851,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               value: 'agenda',
               label: l10n.typeSettingsAgendaPlaceholder,
               icon: AppIcons.commit,
-              iconColor: AppColors.medium,
+              iconColor: AppColors.mediumOf(context),
               lines: false,
             ),
         ],
@@ -1949,7 +1949,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       title: l10n.typeSettingsChecklist,
       action: Padding(
         padding: const EdgeInsets.only(right: 12),
-        child: IonBadge(text: '${_checklist.length}', color: AppColors.medium),
+        child: IonBadge(text: '${_checklist.length}', color: AppColors.mediumOf(context)),
       ),
       items: [
           if (_checklist.isNotEmpty)
@@ -1982,7 +1982,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     subtitle: Text(_checklistDeadlineText(item.deadlineHours)),
                     trailing: ReorderableDragStartListener(
                       index: index,
-                      child: Icon(AppIcons.reorder, color: AppColors.medium),
+                      child: Icon(AppIcons.reorder, color: AppColors.mediumOf(context)),
                     ),
                     onTap: () => _editChecklistItem(index),
                   ),
@@ -1994,9 +1994,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Column(
                 children: [
-                  Icon(AppIcons.checkBoxOutlined, size: 32, color: AppColors.medium),
+                  Icon(AppIcons.checkBoxOutlined, size: 32, color: AppColors.mediumOf(context)),
                   const SizedBox(height: 4),
-                  Text(l10n.typeSettingsNoTodos, style: const TextStyle(color: AppColors.medium)),
+                  Text(l10n.typeSettingsNoTodos, style: TextStyle(color: AppColors.mediumOf(context))),
                 ],
               ),
             ),

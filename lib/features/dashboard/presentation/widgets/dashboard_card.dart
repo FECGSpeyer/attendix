@@ -30,7 +30,7 @@ enum DashTone {
 
   /// Foreground (text/icon) colour on the tinted background.
   Color fg(BuildContext context) {
-    if (this == DashTone.muted) return AppColors.medium;
+    if (this == DashTone.muted) return AppColors.mediumOf(context);
     return _dark(context) ? darkFg : to;
   }
 
@@ -212,12 +212,12 @@ class DashEmptyRow extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            Icon(icon, size: 20, color: iconColor ?? AppColors.medium),
+            Icon(icon, size: 20, color: iconColor ?? AppColors.mediumOf(context)),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
                 text,
-                style: const TextStyle(color: AppColors.medium, fontSize: 14.5),
+                style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14.5),
               ),
             ),
           ],
@@ -241,11 +241,11 @@ class DashDivider extends StatelessWidget {
       color: dark ? Colors.white10 : const Color(0xFFE8E8E8),
       child: Text(
         label.toUpperCase(),
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 12.5,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
-          color: AppColors.medium,
+          color: AppColors.mediumOf(context),
         ),
       ),
     );
@@ -388,10 +388,10 @@ class DashMeta extends StatelessWidget {
         padding: const EdgeInsets.only(left: 8),
         child: Text(
           text,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: AppColors.medium,
+            color: AppColors.mediumOf(context),
           ),
         ),
       );
@@ -455,7 +455,7 @@ class DashRow extends StatelessWidget {
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         height: 1.3,
-                        color: dim ? AppColors.medium : null,
+                        color: dim ? AppColors.mediumOf(context) : null,
                       ),
                     ),
                     if (subtitle != null && subtitle!.isNotEmpty) ...[
@@ -464,10 +464,10 @@ class DashRow extends StatelessWidget {
                         subtitle!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           height: 1.3,
-                          color: AppColors.medium,
+                          color: AppColors.mediumOf(context),
                         ),
                       ),
                     ],

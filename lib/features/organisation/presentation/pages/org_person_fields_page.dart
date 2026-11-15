@@ -207,11 +207,11 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
                       children: [
                         SettingsListTile(
                           icon: AppIcons.infoOutline,
-                          iconColor: AppColors.medium,
+                          iconColor: AppColors.mediumOf(context),
                           title: context.l10n.orgFieldsIntro,
                           titleWidget: Text(
                             context.l10n.orgFieldsIntro,
-                            style: TextStyle(fontSize: 14, color: ios ? IonIos.labelP(context) : AppColors.medium),
+                            style: TextStyle(fontSize: 14, color: ios ? IonIos.labelP(context) : AppColors.mediumOf(context)),
                           ),
                         ),
                       ],
@@ -228,10 +228,10 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
               padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 24)),
               children: [
                 ListTile(
-                  leading: Icon(AppIcons.infoOutline, color: AppColors.medium),
+                  leading: Icon(AppIcons.infoOutline, color: AppColors.mediumOf(context)),
                   title: Text(
                     context.l10n.orgFieldsIntro,
-                    style: const TextStyle(fontSize: 13, color: AppColors.medium),
+                    style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context)),
                   ),
                 ),
                 Padding(
@@ -240,7 +240,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
                     children: [
                       Expanded(
                         child: Text(context.l10n.extraFieldsForPersons.toUpperCase(),
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium)),
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.mediumOf(context))),
                       ),
                       addButton,
                     ],
@@ -276,7 +276,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
                 Text(l10n.extraFieldsDisplayLine(mode)),
                 if (f.visibleToPlayers)
                   Row(children: [
-                    Icon(AppIcons.visibilityOutlined, size: 14, color: AppColors.medium),
+                    Icon(AppIcons.visibilityOutlined, size: 14, color: AppColors.mediumOf(context)),
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(

@@ -55,7 +55,7 @@ class MyDutyRequestsSection extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(r.termin.title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                          Text(_dateLabel(r.termin), style: const TextStyle(color: AppColors.medium, fontSize: 12)),
+                          Text(_dateLabel(r.termin), style: TextStyle(color: AppColors.mediumOf(context), fontSize: 12)),
                         ],
                       ),
                     ),
@@ -66,7 +66,7 @@ class MyDutyRequestsSection extends ConsumerWidget {
                     IonButton(
                       label: context.l10n.signoutCannot,
                       fill: IonButtonFill.outline,
-                      color: AppColors.medium,
+                      color: AppColors.mediumOf(context),
                       small: true,
                       onPressed: () => declineDutyAction(context, ref, r.pa.id!, r.termin.attendance.id!),
                     ),

@@ -402,12 +402,12 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
 
   Widget _hint(String text) {
     final tile = ListTile(
-      leading: Icon(AppIcons.infoOutline, color: AppColors.medium),
+      leading: Icon(AppIcons.infoOutline, color: AppColors.mediumOf(context)),
       title: Text(
         text,
         style: TextStyle(
           fontSize: ionIsIos(context) ? 14 : 13,
-          color: ionIsIos(context) ? IonIos.labelP(context) : AppColors.medium,
+          color: ionIsIos(context) ? IonIos.labelP(context) : AppColors.mediumOf(context),
         ),
       ),
     );
@@ -441,7 +441,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
                 _box(_defaultFields.isEmpty
                       ? ListTile(
                           title: Text(context.l10n.orgTemplatesNoDefaultFields,
-                              style: const TextStyle(color: AppColors.medium)))
+                              style: TextStyle(color: AppColors.mediumOf(context))))
                       : ReorderableListView(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -507,7 +507,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
                       if (_templates!.isEmpty)
                         ListTile(
                             title: Text(context.l10n.orgTemplatesNoTemplates,
-                                style: const TextStyle(color: AppColors.medium))),
+                                style: TextStyle(color: AppColors.mediumOf(context)))),
                       for (var i = 0; i < _templates!.length; i++) ..._templateTiles(i),
                     ],
                   ),
@@ -553,7 +553,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
           onTap: () => setState(() => _selected = expanded ? null : i),
           // Desktop/mouse fallback for the swipe options.
           onLongPress: () => _templateOptions(i),
-          trailing: Icon(expanded ? AppIcons.expandLess : AppIcons.expandMore, color: AppColors.medium),
+          trailing: Icon(expanded ? AppIcons.expandLess : AppIcons.expandMore, color: AppColors.mediumOf(context)),
         ),
       ),
       if (expanded) ...[
@@ -591,8 +591,8 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
         ),
         if (end.isNotEmpty)
           ListTile(
-            leading: Icon(AppIcons.schedule, color: AppColors.medium),
-            title: Text(context.l10n.orgTemplatesEndApprox(end), style: const TextStyle(color: AppColors.medium)),
+            leading: Icon(AppIcons.schedule, color: AppColors.mediumOf(context)),
+            title: Text(context.l10n.orgTemplatesEndApprox(end), style: TextStyle(color: AppColors.mediumOf(context))),
           ),
         const Divider(height: 1),
       ],

@@ -95,13 +95,13 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
               contentPadding: const EdgeInsets.only(left: 4, right: 12),
               leading: IconButton(
                 tooltip: l10n.tasksMarkDone,
-                icon: const Icon(Ionicons.ellipseOutline, color: AppColors.medium),
+                icon: Icon(Ionicons.ellipseOutline, color: AppColors.mediumOf(context)),
                 onPressed: () => _complete(task),
               ),
               title: Text(task.title, style: const TextStyle(fontSize: 15)),
               subtitle: Text(
                 _dueLabel(l10n, task, today),
-                style: TextStyle(color: isTaskOverdue(task, today) ? AppColors.danger : AppColors.medium),
+                style: TextStyle(color: isTaskOverdue(task, today) ? AppColors.danger : AppColors.mediumOf(context)),
               ),
               trailing:
                   task.status == 'in_progress' ? IonBadge(label: l10n.tasksInProgress, color: AppColors.warning) : null,

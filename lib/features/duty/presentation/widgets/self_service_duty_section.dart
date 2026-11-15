@@ -106,7 +106,7 @@ class SelfServiceDutySection extends ConsumerWidget {
               children: [
                 Text(r.termin.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                 const SizedBox(height: 2),
-                Text(dutyEventMetaLine(r.termin), style: const TextStyle(color: AppColors.medium)),
+                Text(dutyEventMetaLine(r.termin), style: TextStyle(color: AppColors.mediumOf(context))),
                 const SizedBox(height: 6),
                 DutyPill(text: context.l10n.signoutYouAreAssigned, color: AppColors.warningDark),
                 const SizedBox(height: AppDimensions.paddingS),
@@ -150,14 +150,14 @@ class SelfServiceDutySection extends ConsumerWidget {
               children: [
                 Text(next.termin.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                 const SizedBox(height: 2),
-                Text(dutyEventMetaLine(next.termin), style: const TextStyle(color: AppColors.medium)),
+                Text(dutyEventMetaLine(next.termin), style: TextStyle(color: AppColors.mediumOf(context))),
                 const SizedBox(height: 6),
                 Wrap(
                   spacing: 6,
                   runSpacing: 4,
                   children: [
                     DutyPill(text: context.l10n.signoutYou, color: AppColors.primary),
-                    for (final name in overview.teamOf(next.termin)) DutyPill(text: name, color: AppColors.medium),
+                    for (final name in overview.teamOf(next.termin)) DutyPill(text: name, color: AppColors.mediumOf(context)),
                   ],
                 ),
                 // P10_SELF_PLAN: Ionic `eventChips` of the next duty
@@ -192,7 +192,7 @@ class SelfServiceDutySection extends ConsumerWidget {
           children: [
             if (preview.isEmpty)
               ListTile(
-                title: Text(context.l10n.signoutAllDutiesFilled, style: const TextStyle(color: AppColors.medium)),
+                title: Text(context.l10n.signoutAllDutiesFilled, style: TextStyle(color: AppColors.mediumOf(context))),
               ),
             for (final t in preview.take(3))
               ListTile(

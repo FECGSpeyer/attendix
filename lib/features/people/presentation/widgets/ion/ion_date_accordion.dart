@@ -82,7 +82,7 @@ class _IonDateAccordionState extends State<IonDateAccordion> {
               IconButton(
                 icon: Icon(
                   AppIcons.highlightOff,
-                  color: AppColors.medium,
+                  color: AppColors.mediumOf(context),
                   semanticLabel: context.l10n.commonRemove,
                 ),
                 onPressed: widget.onClear,

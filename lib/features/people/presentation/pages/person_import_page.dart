@@ -482,7 +482,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
               if (warningCount > 0)
                 _OutlineChip(context.l10n.peopleWithHint(warningCount), AppColors.warning),
               if (duplicateCount > 0)
-                _OutlineChip(context.l10n.peopleDuplicates(duplicateCount), AppColors.medium),
+                _OutlineChip(context.l10n.peopleDuplicates(duplicateCount), AppColors.mediumOf(context)),
               if (errorCount > 0)
                 _OutlineChip(context.l10n.peopleFaulty(errorCount), AppColors.danger),
             ],

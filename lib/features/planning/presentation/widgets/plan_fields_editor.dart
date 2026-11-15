@@ -451,7 +451,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       return Padding(
         padding: const EdgeInsets.all(24),
         child: Center(
-          child: Text(widget.emptyText ?? context.l10n.planningFlutterNoItems, style: const TextStyle(color: AppColors.medium)),
+          child: Text(widget.emptyText ?? context.l10n.planningFlutterNoItems, style: TextStyle(color: AppColors.mediumOf(context))),
         ),
       );
     }
@@ -488,7 +488,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 4),
         // Ionic ion-reorder (reorder-three icon)
-        child: Icon(AppIcons.reorder, color: AppColors.medium),
+        child: Icon(AppIcons.reorder, color: AppColors.mediumOf(context)),
       ),
     );
 
@@ -503,7 +503,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
             border: Border(bottom: BorderSide(color: theme.dividerColor, width: 0.5)),
           ),
           child: ListTile(
-            leading: Icon(AppIcons.commit, color: AppColors.medium),
+            leading: Icon(AppIcons.commit, color: AppColors.mediumOf(context)),
             title: Text(context.l10n.typeSettingsAgenda),
             subtitle: Text(context.l10n.typeSettingsTopicsHere),
             trailing: dragHandle,
@@ -520,13 +520,13 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
         child: ListTile(
           dense: true,
           minTileHeight: 36,
-          leading: Icon(AppIcons.commit, color: AppColors.medium),
+          leading: Icon(AppIcons.commit, color: AppColors.mediumOf(context)),
           // F-ABL-07: Ionic `ion-label` keeps one line with an ellipsis
           // (it never broke the word over 5 lines next to the button).
           title: Text(context.l10n.planningAgendaInsertPos,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: AppColors.medium, fontSize: 14)),
+              style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14)),
           trailing: Row(mainAxisSize: MainAxisSize.min, children: [
             if (widget.onAddTopics != null)
               // Ionic `ion-button fill="clear" size="small"`.
@@ -582,7 +582,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       // Ionic `.field-info`: italic muted line.
       subtitleParts.add(Text(
         field.info!,
-        style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: AppColors.medium),
+        style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: AppColors.mediumOf(context)),
       ));
     }
 
@@ -644,7 +644,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
             fontWeight: isHead ? FontWeight.w700 : FontWeight.w400,
             fontStyle: isNote ? FontStyle.italic : FontStyle.normal,
             fontSize: isChild ? 15 : null,
-            color: isNote ? AppColors.medium : null,
+            color: isNote ? AppColors.mediumOf(context) : null,
           ),
         ),
         subtitle: subtitleParts.isEmpty
@@ -694,7 +694,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
             SlidableAction(
               flex: 2,
               onPressed: (_) => _toggleIndent(index),
-              backgroundColor: AppColors.medium,
+              backgroundColor: AppColors.mediumOf(context),
               foregroundColor: Colors.white,
               label: isChild ? context.l10n.planningOutdent : context.l10n.planningIndent,
             ),

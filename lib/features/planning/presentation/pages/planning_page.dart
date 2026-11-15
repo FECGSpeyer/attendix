@@ -1855,7 +1855,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             value: 'agenda',
             label: l10n.planningInsertAgenda,
             icon: AppIcons.commit,
-            iconColor: AppColors.medium,
+            iconColor: AppColors.mediumOf(context),
             lines: false,
           ),
         if (blockTemplates.isNotEmpty) ...[
@@ -1894,7 +1894,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             value: 'plan',
             label: l10n.planningAddAnotherPlan,
             icon: AppIcons.copyOutlined,
-            color: AppColors.medium,
+            color: AppColors.mediumOf(context),
             lines: false,
           ),
         ],
@@ -2345,7 +2345,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                         onSelected: _selectPlan,
                         trailing: IconButton(
                           tooltip: context.l10n.planningPlanOptions,
-                          color: AppColors.medium,
+                          color: AppColors.mediumOf(context),
                           icon: Icon(AppIcons.moreHoriz),
                           onPressed: _showPlanOptions,
                         ),
@@ -2428,7 +2428,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           const Divider(height: 1, indent: 16),
           ListTile(
             title: Text(context.l10n.planningAttendanceNotes,
-                style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+                style: TextStyle(fontSize: 12, color: AppColors.mediumOf(context))),
             subtitle: Text(att.notes!),
           ),
         ],

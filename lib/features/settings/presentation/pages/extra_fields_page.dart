@@ -933,7 +933,7 @@ Future<ExtraField?> showExtraFieldSheet(
                         ),
                         if (options.isEmpty)
                           Text(isEdit ? context.l10n.extraFieldsNoOptions : context.l10n.extraFieldsNoOptionsSelected,
-                              style: const TextStyle(color: AppColors.medium)),
+                              style: TextStyle(color: AppColors.mediumOf(context))),
                         for (var i = 0; i < options.length; i++)
                           Row(
                             children: [

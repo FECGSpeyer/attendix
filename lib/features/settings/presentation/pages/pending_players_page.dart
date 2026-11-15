@@ -89,7 +89,7 @@ class PendingPlayersPage extends ConsumerWidget {
                     child: Text(
                       context.l10n.settingsFlutterPendingEmpty,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.medium),
+                      style: TextStyle(color: AppColors.mediumOf(context)),
                     ),
                   )
                 else

@@ -103,7 +103,7 @@ class _AppRedirectPageState extends State<AppRedirectPage> {
                   Text(
                     context.l10n.appRedirectLoadApp,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColors.medium),
+                    style: TextStyle(color: AppColors.mediumOf(context)),
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(

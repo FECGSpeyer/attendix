@@ -64,7 +64,7 @@ class ErrorStateView extends StatelessWidget {
               Icon(
                 icon ?? (offline ? AppIcons.cloudOffOutlined : AppIcons.errorOutline),
                 size: 56,
-                color: offline ? AppColors.medium : AppColors.danger,
+                color: offline ? AppColors.mediumOf(context) : AppColors.danger,
               ),
               const SizedBox(height: AppDimensions.paddingM),
               if (title != null) ...[
@@ -80,7 +80,7 @@ class ErrorStateView extends StatelessWidget {
                 Text(
                   text,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: title != null ? AppColors.medium : null,
+                    color: title != null ? AppColors.mediumOf(context) : null,
                   ),
                   textAlign: TextAlign.center,
                 ),

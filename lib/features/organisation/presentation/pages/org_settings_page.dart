@@ -178,7 +178,7 @@ class OrgSettingsPage extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(32, 4, 32, 8),
                   child: Text(context.l10n.orgGaHint,
-                      style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+                      style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
                 ),
               ],
               if (isSuperAdmin)
@@ -232,7 +232,7 @@ class OrgSettingsPage extends ConsumerWidget {
                   ),
                   for (final t in others)
                     ListTile(
-                      leading: Icon(AppIcons.layersOutlined, color: AppColors.medium),
+                      leading: Icon(AppIcons.layersOutlined, color: AppColors.mediumOf(context)),
                       title: Text(t.shortName),
                       subtitle: Text(t.longName),
                     ),
@@ -283,7 +283,7 @@ class _Section extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
             child: Text(title!.toUpperCase(),
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium)),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.mediumOf(context))),
           ),
         Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),

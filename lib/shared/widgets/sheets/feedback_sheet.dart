@@ -204,7 +204,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                 child: Text(
                   context.l10n.settingsOr,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.medium),
+                  style: TextStyle(color: AppColors.mediumOf(context)),
                 ),
               ),
               // ion-segment without colour: neutral iOS segmented control,
@@ -418,7 +418,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
                 child: Text(context.l10n.settingsOr,
-                    style: const TextStyle(color: AppColors.medium)),
+                    style: TextStyle(color: AppColors.mediumOf(context))),
               ),
               // Tab bar: Ionic `ion-segment` (md)
               TabBar(
@@ -576,7 +576,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                         child: Icon(
                           AppIcons.star,
                           size: 22,
-                          color: star <= _rating ? AppColors.warning : AppColors.medium,
+                          color: star <= _rating ? AppColors.warning : AppColors.mediumOf(context),
                         ),
                       ),
                     ),

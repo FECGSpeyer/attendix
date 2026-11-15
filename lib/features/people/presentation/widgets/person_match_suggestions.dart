@@ -68,7 +68,7 @@ class PersonMatchSuggestions extends StatelessWidget {
                     ? AppColors.success
                     : (m.candidate.person.email?.isNotEmpty ?? false)
                         ? AppColors.primary
-                        : AppColors.medium,
+                        : AppColors.mediumOf(context),
               ),
               title: Text(
                   '${m.candidate.person.firstName} ${m.candidate.person.lastName}'),
@@ -87,7 +87,7 @@ class PersonMatchSuggestions extends StatelessWidget {
                   const SizedBox(height: 4),
                   _Badge(
                     text: '${(m.score * 100).round()}%',
-                    color: AppColors.medium,
+                    color: AppColors.mediumOf(context),
                   ),
                 ],
               ),
@@ -138,7 +138,7 @@ extension on PersonMatchSuggestions {
                         ? AppColors.success
                         : (m.candidate.person.email?.isNotEmpty ?? false)
                             ? AppColors.primary
-                            : AppColors.medium,
+                            : AppColors.mediumOf(context),
                   ),
                   end: [
                     Column(
@@ -155,7 +155,7 @@ extension on PersonMatchSuggestions {
                         const SizedBox(height: 4),
                         IonBadge(
                           text: '${(m.score * 100).round()}%',
-                          color: AppColors.medium,
+                          color: AppColors.mediumOf(context),
                         ),
                       ],
                     ),
@@ -184,7 +184,7 @@ extension on PersonMatchSuggestions {
               button: true,
               label: context.l10n.personCloseSuggestions,
               child: Material(
-                color: AppColors.medium,
+                color: AppColors.mediumOf(context),
                 shape: const CircleBorder(),
                 child: InkWell(
                   customBorder: const CircleBorder(),

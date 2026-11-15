@@ -110,11 +110,11 @@ class UsageDashboardPage extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(AppIcons.barChart, size: 48, color: AppColors.medium),
+              Icon(AppIcons.barChart, size: 48, color: AppColors.mediumOf(context)),
               const SizedBox(height: 12),
               Text(
                 context.l10n.usageNoEvents,
-                style: const TextStyle(color: AppColors.medium),
+                style: TextStyle(color: AppColors.mediumOf(context)),
               ),
             ],
           ),
@@ -307,7 +307,7 @@ class _Kpi extends StatelessWidget {
               label.toUpperCase(),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12, letterSpacing: 0.5, color: AppColors.medium),
+              style: TextStyle(fontSize: 12, letterSpacing: 0.5, color: AppColors.mediumOf(context)),
             ),
             const SizedBox(height: 4),
             Text(
@@ -331,7 +331,7 @@ class _Kpi extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(label, style: const TextStyle(fontSize: 12.5, color: AppColors.medium)),
+              Text(label, style: TextStyle(fontSize: 12.5, color: AppColors.mediumOf(context))),
               const SizedBox(height: 4),
               Text(
                 value,

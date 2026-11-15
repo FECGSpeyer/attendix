@@ -113,7 +113,7 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
             const SizedBox(width: 8),
             Badge(
               label: Text('${reminders.length}/${TypeRemindersEditor.maxReminders}'),
-              backgroundColor: AppColors.medium,
+              backgroundColor: AppColors.mediumOf(context),
             ),
           ],
         ),
@@ -153,7 +153,7 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
               return IonChip(
                 icon: AppIcons.addCircleOutline,
                 label: TypeRemindersEditor.format(h),
-                color: exists ? AppColors.medium : AppColors.primary,
+                color: exists ? AppColors.mediumOf(context) : AppColors.primary,
                 disabled: exists,
                 onTap: () => _add(h),
               );
@@ -243,7 +243,7 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
             padding: const EdgeInsets.only(right: 12, bottom: 2),
             child: IonBadge(
               text: '${reminders.length}/${TypeRemindersEditor.maxReminders}',
-              color: AppColors.medium,
+              color: AppColors.mediumOf(context),
             ),
           ),
           children: [
@@ -252,12 +252,12 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Column(
                   children: [
-                    Icon(AppIcons.notificationsOffOutlined, size: 32, color: AppColors.medium),
+                    Icon(AppIcons.notificationsOffOutlined, size: 32, color: AppColors.mediumOf(context)),
                     const SizedBox(height: 4),
                     Text(
                       context.l10n.typeSettingsNoRemindersYet,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 14, color: AppColors.medium),
+                      style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context)),
                     ),
                   ],
                 ),
@@ -291,7 +291,7 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
                       IonChip(
                         icon: AppIcons.addCircleOutline,
                         label: TypeRemindersEditor.format(h),
-                        color: reminders.contains(h) ? AppColors.medium : AppColors.primary,
+                        color: reminders.contains(h) ? AppColors.mediumOf(context) : AppColors.primary,
                         disabled: reminders.contains(h),
                         onTap: () => _add(h),
                       ),

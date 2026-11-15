@@ -409,7 +409,7 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                       enabled: _canAdd(),
                       title: Text(
                         context.l10n.attListAddSongs,
-                        style: TextStyle(color: _canAdd() ? AppColors.primary : AppColors.medium),
+                        style: TextStyle(color: _canAdd() ? AppColors.primary : AppColors.mediumOf(context)),
                       ),
                       onTap: _canAdd() ? _addSongs : null,
                     ),
@@ -572,7 +572,7 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
                     child: Text(
                       context.l10n.attListNoSongsFound,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                      style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14),
                     ),
                   ),
                 ],
@@ -672,7 +672,7 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
                       .toList();
           if (filtered.isEmpty) {
             return Center(
-              child: Text(context.l10n.attListNoSongsFound, style: const TextStyle(color: AppColors.medium)),
+              child: Text(context.l10n.attListNoSongsFound, style: TextStyle(color: AppColors.mediumOf(context))),
             );
           }
           return ListView.builder(

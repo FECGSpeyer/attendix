@@ -270,7 +270,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                 child: Text(pending.isEmpty ? ctx.l10n.teamOrgAllDecided : ctx.l10n.teamOrgSuggestionsHint,
-                    style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+                    style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
               ),
               for (final item in pending)
                 IonInsetList(
@@ -289,12 +289,12 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                         item.proposer.fullName.isNotEmpty ? item.proposer.fullName : ctx.l10n.teamOrgFlutterMember,
                         style: const TextStyle(fontSize: 15),
                       ),
-                      subtitle: Text(relativeDay(item.createdAt), style: const TextStyle(color: AppColors.medium)),
+                      subtitle: Text(relativeDay(item.createdAt), style: TextStyle(color: AppColors.mediumOf(context))),
                     ),
                     ListTile(
                       title: Text(item.title, style: const TextStyle(fontWeight: FontWeight.w600)),
                       subtitle: item.description?.isNotEmpty == true
-                          ? Text(item.description!, style: const TextStyle(color: AppColors.medium))
+                          ? Text(item.description!, style: TextStyle(color: AppColors.mediumOf(context)))
                           : null,
                     ),
                     // Ionic `.proposal-actions`: two equal buttons.
@@ -305,8 +305,8 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                           Expanded(
                             child: OutlinedButton(
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: AppColors.medium,
-                                side: const BorderSide(color: AppColors.medium),
+                                foregroundColor: AppColors.mediumOf(context),
+                                side: BorderSide(color: AppColors.mediumOf(context)),
                               ),
                               onPressed: _deciding.contains(item.id) ? null : () => _reject(item),
                               child: IonButtonLabel(ctx.l10n.teamOrgReject),
@@ -423,7 +423,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                     ListTile(
                       leading: Icon(AppIcons.lightbulbOutline, color: AppColors.warning),
                       title: Text(l10n.teamOrgFlutterNewSuggestions(buckets.pending.length)),
-                      subtitle: Text(l10n.teamOrgSubmittedByMembers, style: const TextStyle(color: AppColors.medium)),
+                      subtitle: Text(l10n.teamOrgSubmittedByMembers, style: TextStyle(color: AppColors.mediumOf(context))),
                       trailing: FilledButton(
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -460,14 +460,14 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                           title: Text(l10n.teamOrgTopName(numbers[fieldId(top)] ?? 0, fieldName(top)),
                               style: const TextStyle(fontSize: 15)),
                           subtitle: fieldConductor(top) != null
-                              ? Text(fieldConductor(top)!, style: const TextStyle(color: AppColors.medium))
+                              ? Text(fieldConductor(top)!, style: TextStyle(color: AppColors.mediumOf(context)))
                               : null,
                           trailing: IonNote(l10n.teamOrgMinutes(fieldMinutes(top))),
                           onTap: () => _topAction(top, next!, nextType),
                         ),
                       if (tops.tops.isEmpty)
                         ListTile(
-                          title: Text(l10n.teamOrgNoTopsYet, style: const TextStyle(color: AppColors.medium)),
+                          title: Text(l10n.teamOrgNoTopsYet, style: TextStyle(color: AppColors.mediumOf(context))),
                         ),
                       ListTile(
                         leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
@@ -483,7 +483,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                     header: l10n.teamOrgNextEvent,
                     children: [
                       ListTile(
-                        title: Text(l10n.teamOrgNoProtocolEvent, style: const TextStyle(color: AppColors.medium)),
+                        title: Text(l10n.teamOrgNoProtocolEvent, style: TextStyle(color: AppColors.mediumOf(context))),
                       ),
                       ListTile(
                         leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
@@ -524,7 +524,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                               ),
                             TextSpan(text: _topicSubtitle(item)),
                           ]),
-                          style: const TextStyle(color: AppColors.medium),
+                          style: TextStyle(color: AppColors.mediumOf(context)),
                         ),
                         trailing: TeamOrgBadge(
                           label: priorityLabels[item.priority] ?? item.priority,
@@ -534,7 +534,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                       ),
                     if (openTopics.isEmpty)
                       ListTile(
-                        title: Text(l10n.teamOrgNoOpenTopics, style: const TextStyle(color: AppColors.medium)),
+                        title: Text(l10n.teamOrgNoOpenTopics, style: TextStyle(color: AppColors.mediumOf(context))),
                       ),
                   ],
                 ),
@@ -550,14 +550,14 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                         for (final item in buckets.done)
                           ListTile(
                             title: Text(item.title,
-                                style: const TextStyle(
-                                    color: AppColors.medium, decoration: TextDecoration.lineThrough)),
+                                style: TextStyle(
+                                    color: AppColors.mediumOf(context), decoration: TextDecoration.lineThrough)),
                             subtitle: Text(
                               [
                                 item.status == 'dropped' ? l10n.agendaStatusDropped : l10n.agendaStatusDone,
                                 if (item.responsiblePerson.fullName.isNotEmpty) item.responsiblePerson.fullName,
                               ].join(' · '),
-                              style: const TextStyle(color: AppColors.medium),
+                              style: TextStyle(color: AppColors.mediumOf(context)),
                             ),
                             onTap: () => context.push('/settings/agenda-items/${item.id}'),
                           ),
@@ -636,7 +636,7 @@ class _MemberTopics extends ConsumerWidget {
                 children: [
                   if (sorted.isEmpty)
                     ListTile(
-                      title: Text(l10n.teamOrgNothingSuggested, style: const TextStyle(color: AppColors.medium)),
+                      title: Text(l10n.teamOrgNothingSuggested, style: TextStyle(color: AppColors.mediumOf(context))),
                     ),
                   for (final item in sorted)
                     ListTile(
@@ -648,11 +648,11 @@ class _MemberTopics extends ConsumerWidget {
                             item.proposalStatus == 'accepted'
                                 ? l10n.teamOrgAcceptedByLeaders
                                 : l10n.teamOrgSubmittedOn(_date(item.createdAt)),
-                            style: const TextStyle(color: AppColors.medium),
+                            style: TextStyle(color: AppColors.mediumOf(context)),
                           ),
                           if (item.proposalStatus == 'rejected' && item.decisionNote?.isNotEmpty == true)
                             Text('„${item.decisionNote}“',
-                                style: const TextStyle(fontStyle: FontStyle.italic, color: AppColors.medium)),
+                                style: TextStyle(fontStyle: FontStyle.italic, color: AppColors.mediumOf(context))),
                         ],
                       ),
                       trailing: TeamOrgBadge(
@@ -660,7 +660,7 @@ class _MemberTopics extends ConsumerWidget {
                         color: switch (item.proposalStatus) {
                           'accepted' => AppColors.success,
                           'rejected' => AppColors.danger,
-                          _ => AppColors.medium,
+                          _ => AppColors.mediumOf(context),
                         },
                       ),
                     ),
@@ -680,7 +680,7 @@ class _MemberTopics extends ConsumerWidget {
             children: [
               ListTile(
                 title: Text(l10n.teamOrgSuggestTopic),
-                subtitle: Text(l10n.teamOrgSuggestHint, style: const TextStyle(color: AppColors.medium)),
+                subtitle: Text(l10n.teamOrgSuggestHint, style: TextStyle(color: AppColors.mediumOf(context))),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -766,7 +766,7 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
     // Ionic: sheet hint, inset list with stacked title/description, block button.
     final hint = Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      child: Text(l10n.teamOrgSuggestHint, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+      child: Text(l10n.teamOrgSuggestHint, style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context))),
     );
     final fields = IonInsetList(
       children: [

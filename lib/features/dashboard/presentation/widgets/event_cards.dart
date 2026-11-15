@@ -102,7 +102,7 @@ class NextEventCard extends ConsumerWidget {
                       children: [
                         Padding(
                           padding: EdgeInsets.only(top: context.rdSkin == null ? 1 : 0),
-                          child: Icon(AppIcons.descriptionOutlined, size: 16, color: AppColors.medium),
+                          child: Icon(AppIcons.descriptionOutlined, size: 16, color: AppColors.mediumOf(context)),
                         ),
                         SizedBox(width: context.rdSkin == null ? 6 : 8),
                         Expanded(
@@ -110,7 +110,7 @@ class NextEventCard extends ConsumerWidget {
                             next.attendance.notes!,
                             style: context.rdSkin == null
                                 ? const TextStyle(fontSize: 13.6, color: _mediumShade)
-                                : const TextStyle(fontSize: 13.5, color: AppColors.medium),
+                                : TextStyle(fontSize: 13.5, color: AppColors.mediumOf(context)),
                           ),
                         ),
                       ],
@@ -240,7 +240,7 @@ class NextEventCard extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(context.l10n.homeDashboardAverage,
-                  style: TextStyle(fontSize: classic ? 12.8 : 13, color: AppColors.medium)),
+                  style: TextStyle(fontSize: classic ? 12.8 : 13, color: AppColors.mediumOf(context))),
               Text.rich(
                 TextSpan(children: [
                   TextSpan(
@@ -252,7 +252,7 @@ class NextEventCard extends ConsumerWidget {
                   ),
                   TextSpan(text: ' · ${context.l10n.homeDashboardTotalCount(s.nextTotal)}'),
                 ]),
-                style: TextStyle(fontSize: classic ? 12.8 : 13, color: AppColors.medium),
+                style: TextStyle(fontSize: classic ? 12.8 : 13, color: AppColors.mediumOf(context)),
               ),
             ],
           ),
@@ -326,9 +326,9 @@ class NextEventCard extends ConsumerWidget {
                           children: [
                             Text('${p.firstName ?? ''} ${p.lastName ?? ''}', style: const TextStyle(fontSize: 16)),
                             if ((p.groupName ?? '').isNotEmpty)
-                              Text(p.groupName!, style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+                              Text(p.groupName!, style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context))),
                             if ((p.notes ?? '').isNotEmpty)
-                              Text(p.notes!, style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+                              Text(p.notes!, style: TextStyle(fontSize: 14, color: AppColors.mediumOf(context))),
                           ],
                         ),
                       )
@@ -616,7 +616,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
             leading: DashTile.date(data.planDay, tone: DashTone.teal, solid: isToday),
             title: dateLabel,
             subtitle: planTimes,
-            trailing: Icon(AppIcons.chevronRight, color: AppColors.medium),
+            trailing: Icon(AppIcons.chevronRight, color: AppColors.mediumOf(context)),
           ),
           for (var i = 0; i < fields.length; i++)
             _fieldRow(
@@ -669,7 +669,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
                   style: TextStyle(
                     fontSize: isChild ? 11 : 13,
                     fontWeight: FontWeight.w600,
-                    color: active ? _mediumShade : AppColors.medium,
+                    color: active ? _mediumShade : AppColors.mediumOf(context),
                   ),
                 ),
               ),
@@ -697,7 +697,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
                             if (conductor.isNotEmpty)
                               TextSpan(
                                 text: ' · $conductor',
-                                style: const TextStyle(color: AppColors.medium, fontSize: 14.4),
+                                style: TextStyle(color: AppColors.mediumOf(context), fontSize: 14.4),
                               ),
                           ]),
                           style: TextStyle(fontSize: 16, fontWeight: activeStyle?.fontWeight, color: activeStyle?.color),
@@ -730,7 +730,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
               width: 32,
               child: Text(
                 number,
-                style: const TextStyle(fontSize: 13, color: AppColors.medium),
+                style: TextStyle(fontSize: 13, color: AppColors.mediumOf(context)),
               ),
             ),
             Expanded(
@@ -745,7 +745,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
                   if (conductor.isNotEmpty)
                     TextSpan(
                       text: ' · $conductor',
-                      style: const TextStyle(color: AppColors.medium),
+                      style: TextStyle(color: AppColors.mediumOf(context)),
                     ),
                 ]),
                 style: const TextStyle(fontSize: 14.5),

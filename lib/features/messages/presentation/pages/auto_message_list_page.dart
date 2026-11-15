@@ -165,7 +165,7 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
               padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
               child: Text(
                 l10n.autoMessagesIntro,
-                style: const TextStyle(fontSize: 14, height: 1.45, color: AppColors.medium),
+                style: TextStyle(fontSize: 14, height: 1.45, color: AppColors.mediumOf(context)),
               ),
             ),
             if (firstLoad)
@@ -338,7 +338,7 @@ class _RuleRow extends StatelessWidget {
                     summary,
                     style: TextStyle(
                       fontSize: 14,
-                      color: ios ? IonIos.labelP(context) : AppColors.medium,
+                      color: ios ? IonIos.labelP(context) : AppColors.mediumOf(context),
                     ),
                   ),
                   if (chips.isNotEmpty) ...[
