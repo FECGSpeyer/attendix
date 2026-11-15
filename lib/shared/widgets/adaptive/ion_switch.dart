@@ -55,8 +55,14 @@ class IonSwitch extends StatelessWidget {
       toggled: value,
       enabled: enabled,
       onTap: enabled ? toggle : null,
-      child: MouseRegion(
-        cursor: enabled ? SystemMouseCursors.click : MouseCursor.defer,
+      // Keyboard: Tab reaches the toggle, Space/Enter switch it (as the
+      // Material switch did before).
+      child: FocusableActionDetector(
+        enabled: enabled,
+        mouseCursor: enabled ? SystemMouseCursors.click : MouseCursor.defer,
+        actions: {
+          ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) => toggle()),
+        },
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: enabled ? toggle : null,
