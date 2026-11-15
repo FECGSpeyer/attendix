@@ -313,10 +313,16 @@ class _AreaList extends ConsumerWidget {
 /// pages keeps the list (its scroll position and search) as it is.
 Page<void> rdManageRoutePage(BuildContext context, GoRouterState state, RdManageEntry entry, Widget page) {
   if (rdUseSplit(context)) {
+    final reached = state.pageKey.value.startsWith('/');
+    // Classify this page, not the top route: opening a detail must not
+    // replace the sidebar destination underneath and discard its state.
+    final sidebarEntry = entry == RdManageEntry.statistics || entry == RdManageEntry.announcements;
+    if (reached && sidebarEntry) {
+      return NoTransitionPage<void>(key: state.pageKey, child: page);
+    }
     // Reached by `go` the page key is the matched path ("/ich/…"); a pushed
     // page (from a picker, Auswertung › person …) keeps its own unique key,
     // so it never meets a Verwaltung page with the same key in the stack.
-    final reached = state.pageKey.value.startsWith('/');
     return NoTransitionPage<void>(
       key: reached ? const ValueKey('rd-manage-split') : state.pageKey,
       child: RdManageSplit(entry: entry, detail: page, pushed: !reached),

@@ -405,6 +405,88 @@ void main() {
       expect(find.text('page groups'), findsNothing);
     });
 
+    for (final width in [393.0, 1024.0, 1440.0]) {
+      testWidgets('sidebar destinations use the full page at width $width', (tester) async {
+        tester.view.physicalSize = Size(width, 900);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final router = GoRouter(
+          initialLocation: RedesignRoutes.manage,
+          routes: [
+            GoRoute(path: '/detail', builder: (_, __) => const Scaffold(body: Text('page detail'))),
+            GoRoute(
+              path: RedesignRoutes.me,
+              builder: (_, __) => const Scaffold(body: Text('page me')),
+              routes: [
+                GoRoute(
+                  path: 'verwaltung',
+                  builder: (c, _) => width >= 1024 ? const RdManageSplit() : const RdManagePage(),
+                  routes: [
+                    for (final route in [
+                      ('auswertung', RdManageEntry.statistics),
+                      ('mitteilungen', RdManageEntry.announcements),
+                      ('gruppen', RdManageEntry.groups),
+                    ])
+                      GoRoute(
+                        path: route.$1,
+                        pageBuilder: (c, s) => rdManageRoutePage(
+                          c,
+                          s,
+                          route.$2,
+                          Scaffold(
+                            key: ValueKey(route.$1),
+                            body: Column(children: [
+                              Text('page ${route.$1}'),
+                              TextField(key: ValueKey('filter-${route.$1}')),
+                            ]),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+        await tester.pumpWidget(_app(_admin, router: router));
+        await _settle(tester);
+
+        for (final route in [RedesignRoutes.stats, RedesignRoutes.messages]) {
+          // A sidebar click replaces the current destination using go().
+          router.go(route);
+          await _settle(tester);
+          expect(find.byType(RdManageSplit), findsNothing);
+          expect(find.byType(RdManagePage), findsNothing);
+          expect(tester.getSize(find.byKey(ValueKey(route.split('/').last))).width, width);
+          final filter = find.byKey(ValueKey('filter-${route.split('/').last}'));
+          await tester.enterText(filter, 'retain this selection');
+          router.push('/detail');
+          await _settle(tester);
+          router.pop();
+          await _settle(tester);
+          expect(find.widgetWithText(TextField, 'retain this selection'), findsOneWidget);
+        }
+
+        // Actual settings still keep their navigation column on desktop.
+        router.go(RedesignRoutes.groups);
+        await _settle(tester);
+        expect(find.byType(RdManageSplit), width >= 1024 ? findsOneWidget : findsNothing);
+        expect(find.text('page gruppen'), findsOneWidget);
+
+        // A pushed page retains its return path rather than acting as a
+        // fresh sidebar destination.
+        router.push(RedesignRoutes.stats);
+        await _settle(tester);
+        expect(find.byType(RdManageSplit), width >= 1024 ? findsOneWidget : findsNothing);
+        expect(find.text('page auswertung'), findsOneWidget);
+        router.pop();
+        await _settle(tester);
+        expect(find.text('page gruppen'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
     testWidgets('a section page (old link)', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_app(_admin, initial: '/ich/verwaltung/zugaenge'));
