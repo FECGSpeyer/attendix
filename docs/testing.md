@@ -12,8 +12,8 @@ Two things watch the app as a whole, next to the unit and widget tests:
 
 The flows in `patrol_test/` drive the real app like a user: they start
 `lib/main.dart`, sign in and tap through pages. They are written once in Dart
-([Patrol](https://patrol.leancode.co)) and run in the browser; native
-platforms follow later.
+([Patrol](https://patrol.leancode.co)) and run in the browser and in the
+Android app; iOS and macOS follow later.
 
 They never talk to production. Every run starts a fresh **local Supabase**
 (`e2e/supabase`, Docker) and creates its own test accounts
@@ -25,10 +25,15 @@ end at the sign-in.
 
 ## Where they run
 
-GitHub: workflow **E2E** (`.github/workflows/e2e.yml`). It runs on pull
-requests that touch `patrol_test/`, `e2e/` or the workflow, and by hand via
-"Run workflow". A failed run uploads the Playwright report with screenshots
-as the artifact `e2e-web-report`.
+GitHub: workflow **E2E** (`.github/workflows/e2e.yml`).
+
+- **Web (Chromium)** runs on pull requests that touch `patrol_test/`, `e2e/`
+  or the workflow, and by hand via "Run workflow". A failed run uploads the
+  Playwright report with screenshots as the artifact `e2e-web-report`.
+- **Android (Emulator)** runs the same flows in the Android app. It takes
+  about 20 minutes, so it only runs by hand via "Run workflow", or on a pull
+  request that carries the label `e2e-android` (set the label before the
+  push). The emulator reaches the local Supabase of the job at `10.0.2.2`.
 
 ## Run locally
 
