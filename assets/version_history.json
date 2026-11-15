@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.155.7",
+      "date": "15.11.2026",
+      "changes": [
+        "🐛 Neues Design: Nach „Aufnehmen“ oder „Ablehnen“ verschwindet die Person sofort aus „Wartet“, auch wenn das Live-Update auf sich warten lässt"
+      ]
+    },
+    {
       "version": "0.155.6",
       "date": "15.11.2026",
       "changes": [
