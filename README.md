@@ -7,7 +7,7 @@ Läuft als PWA im Browser sowie nativ auf iOS, Android und macOS.
 
 ### Voraussetzungen (alle Plattformen)
 
-1. **Flutter SDK** (stable, mindestens 3.47, die CI nutzt 3.47.9). `flutter doctor` zeigt, was für die jeweilige Plattform noch fehlt.
+1. **Flutter SDK** (stable, mindestens 3.50, die CI nutzt 3.50.0). `flutter doctor` zeigt, was für die jeweilige Plattform noch fehlt.
 2. **Abhängigkeiten holen:**
    ```bash
    flutter pub get

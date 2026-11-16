@@ -17,6 +17,11 @@ Patch-Nummer steht in den Einstellungen bei „Was ist neu“ (z. B.
 ## Einrichtung (erledigt)
 
 - Shorebird-CLI 1.6.137 auf Leons Mac unter `~/.shorebird/bin`.
+- Eine neue Flutter-Version (in `.github/workflows/ci.yml`) erst mergen, wenn
+  Shorebird sie unterstützt (Liste: `shorebird flutter versions list` oder
+  <https://docs.shorebird.dev/getting-started/flutter-version/>), sonst
+  scheitert `shorebird release`. Vor dem ersten Build mit der neuen Version
+  die CLI aktualisieren: `shorebird upgrade`.
 - Anmeldung per `SHOREBIRD_TOKEN` in `~/.zshrc`.
 - App in der Shorebird-Konsole angelegt, `app_id` siehe `shorebird.yaml`
   (nicht geheim). `shorebird.yaml` ist als Asset in `pubspec.yaml` eingetragen
@@ -43,11 +48,11 @@ mit der Flutter-Version aus `.github/workflows/ci.yml` auf (überschreibbar per
 ```bash
 # Android → AAB (build/app/outputs/bundle/release/app-release.aab)
 scripts/store_build.sh appbundle <Dart-Defines …>
-#   = shorebird release android --flutter-version=3.47.9 -- --build-name 5.0.0 --build-number 241 …
+#   = shorebird release android --flutter-version=3.50.0 -- --build-name 5.0.0 --build-number 241 …
 
 # iOS → IPA (build/ios/ipa/)
 scripts/store_build.sh ipa <Dart-Defines …>
-#   = shorebird release ios --flutter-version=3.47.9 -- --build-name 5.0.0 --build-number 241 …
+#   = shorebird release ios --flutter-version=3.50.0 -- --build-name 5.0.0 --build-number 241 …
 
 # Android → APK (nur für Tests außerhalb des Play Store)
 scripts/store_build.sh apk <Dart-Defines …>
@@ -61,7 +66,7 @@ Mac-Version starten Apple-Silicon-Macs die iPad-App.
 
 ```bash
 scripts/store_build.sh macos-release <Dart-Defines …>
-#   = shorebird release macos --flutter-version=3.47.9 -- --build-name 5.0.0 --build-number 330 …
+#   = shorebird release macos --flutter-version=3.50.0 -- --build-name 5.0.0 --build-number 330 …
 #   → build/macos/Build/Products/Release/Attendix.app
 ```
 
@@ -93,7 +98,7 @@ Xcode angemeldet, kein lokales Distribution-Zertifikat nötig):
 
 **Build-Nummer nicht ändern**, sonst greifen keine Patches. Patches für den
 Mac App Store gehen erst ab Shorebird 1.6.128 mit Flutter 3.47.7 (wir nutzen
-3.47.9). Push und Live Activity sind auf dem Mac aus (`hostIsNativeMobile`).
+3.50.0). Push und Live Activity sind auf dem Mac aus (`hostIsNativeMobile`).
 
 Danach AAB bzw. IPA wie gewohnt in Play Console / App Store Connect hochladen.
 **Kein Xcode-Archiv** für den Store: Das wäre kein Shorebird-Release.
