@@ -37,11 +37,11 @@ class TenantSwitcherTitle extends ConsumerWidget {
   /// IOS_SHELL: custom switch handler (default: [switchTenant]).
   final ValueChanged<Tenant>? onSelected;
 
-  /// IONIC_PARITY: where the switcher capsule starts in the iOS look. Ionic
-  /// has a second, empty `ion-buttons slot="start"` (the hidden menu button)
-  /// in front of it; with the toolbar padding (4) and both groups' margins
-  /// (12 each) the capsule starts 40pt from the edge.
-  static const double iosStart = 40;
+  /// Where the switcher capsule starts in the iOS look: flush with the page
+  /// content below (16pt, the inset cards' margin) and mirroring the bell on
+  /// the right. Ionic started it at 40pt (an empty, hidden menu-button group
+  /// in front of it), which looked indented next to the cards.
+  static const double iosStart = 16;
 
   /// IONIC_PARITY: shifts [child] (the switcher as an `AppBar.title`) so
   /// that it starts at [iosStart] on a page whose AppBar uses
