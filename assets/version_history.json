@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.155.8",
+      "date": "17.11.2026",
+      "changes": [
+        "🐛 Instanz-Auswahl oben links steht jetzt bündig mit den Karten darunter (iPhone)"
+      ]
+    },
+    {
       "version": "0.155.7",
       "date": "15.11.2026",
       "changes": [
