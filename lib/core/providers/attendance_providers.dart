@@ -147,11 +147,12 @@ String attendanceStatusCountsKey(Iterable<Attendance> shown) =>
 // of the Termine tab.
 final attendanceListStatusCountsProvider = FutureProvider.autoDispose
     .family<Map<int, AttendanceStatusCounts>, String>((ref, key) async {
+  // Membership and status changes can leave the percentage unchanged.
+  ref.watch(attendanceRefetchCounter);
   final ids = key.isEmpty
       ? const <int>[]
       : key.split(',').map(int.tryParse).whereType<int>().toList();
-  // Refetch only when the percentages of these Termine change, not on every
-  // realtime event (e.g. notes edits).
+  // Also reload when the shown percentages change without a realtime event.
   final shown = ids.toSet();
   ref.watch(realtimeAttendanceListProvider.select((v) =>
       (v.valueOrNull ?? const <Attendance>[])
@@ -169,8 +170,8 @@ final attendanceListStatusCountsProvider = FutureProvider.autoDispose
     byAttendance.putIfAbsent(id, () => []).add(r.status);
   }
   return {
-    for (final e in byAttendance.entries)
-      e.key: AttendanceStatusCounts.fromStatuses(e.value),
+    for (final id in ids)
+      id: AttendanceStatusCounts.fromStatuses(byAttendance[id] ?? const []),
   };
 });
 // END ATT_DETAIL

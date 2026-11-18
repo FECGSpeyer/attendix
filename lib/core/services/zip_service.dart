@@ -9,10 +9,28 @@ import 'zip_service_stub.dart'
     if (dart.library.js_interop) 'zip_service_web.dart' as platform;
 import '../../l10n/l10n.dart';
 
+/// No archive was shared because some of its selected files could not load.
+/// Keep their names so callers can show the complete failure without turning
+/// a long list into a generic technical-error message.
+class ZipDownloadException implements Exception {
+  ZipDownloadException(Iterable<String> fileNames)
+      : failedFileNames = List<String>.unmodifiable(fileNames);
+
+  final List<String> failedFileNames;
+
+  String message([AppLocalizations? l10n]) {
+    final t = l10n ?? l10nWithoutContext;
+    return '${t.coreFlutterZipFailed}. ${t.songsFlutterFileDownloadFailed(failedFileNames.join(', '))}';
+  }
+
+  @override
+  String toString() => message();
+}
+
 /// Service for creating and sharing ZIP archives
 class ZipService {
   /// Download all song files as a ZIP archive. [onProgress] is told how
-  /// many of the files are loaded so far (for a "3 von 19" hint);
+  /// many download attempts have finished (for a "3 von 19" hint);
   /// [onPacked] runs right before the share sheet (or download) opens.
   Future<void> downloadSongFilesAsZip({
     required List<SongFile> files,
@@ -24,22 +42,21 @@ class ZipService {
       throw Exception(l10nWithoutContext.coreFlutterNoFilesToDownload);
     }
 
-    final withUrl = files.where((f) => f.url.isNotEmpty).toList();
-    final bodies = await downloadAll(withUrl, onProgress: onProgress);
+    final bodies = await downloadAll(files, onProgress: onProgress);
+    final failed = [
+      for (var i = 0; i < files.length; i++)
+        if (bodies[i] == null) files[i].fileName,
+    ];
+    if (failed.isNotEmpty) throw ZipDownloadException(failed);
 
     // Add in the order of the list (equal names get " (2)" etc.). Stored
     // without compression: PDFs and MP3s hardly shrink, and deflating them
     // only blocks the UI.
     final archive = Archive();
     final used = <String>{};
-    for (var i = 0; i < withUrl.length; i++) {
-      final bytes = bodies[i];
-      if (bytes == null) continue;
-      archive.addFile(ArchiveFile.noCompress(uniqueArchiveName(withUrl[i].fileName, used), bytes.length, bytes));
-    }
-
-    if (archive.isEmpty) {
-      throw Exception(l10nWithoutContext.coreFlutterNoFilesDownloaded);
+    for (var i = 0; i < files.length; i++) {
+      final bytes = bodies[i]!;
+      archive.addFile(ArchiveFile.noCompress(uniqueArchiveName(files[i].fileName, used), bytes.length, bytes));
     }
 
     // Encode to ZIP
@@ -73,9 +90,9 @@ class ZipService {
       while (next < files.length) {
         final i = next++;
         try {
-          result[i] = await get(files[i].url);
+          if (files[i].url.isNotEmpty) result[i] = await get(files[i].url);
         } catch (e) {
-          // Skip files that fail to download
+          // The caller rejects the archive when any member is null.
           debugPrint('Failed to download ${files[i].fileName}: $e');
         }
         onProgress?.call(++done, files.length);

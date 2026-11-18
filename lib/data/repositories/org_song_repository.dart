@@ -240,7 +240,7 @@ class OrgSongRepository extends BaseRepository with TenantAwareRepository {
           throw Exception(l10nWithoutContext.songsFlutterFileDownloadFailed(file.fileName));
         }
         final bytes = await supabase.storage.from(_bucket).download(sourcePath);
-        final fileId = SongFileService.freeStorageName(file.fileName, taken);
+        final fileId = SongFileService.freshStorageName(file.fileName, taken);
         taken.add(fileId);
         final filePath = 'songs/$libraryId/$songId/$fileId';
         await supabase.storage
@@ -248,7 +248,7 @@ class OrgSongRepository extends BaseRepository with TenantAwareRepository {
             .uploadBinary(
               filePath,
               bytes,
-              fileOptions: FileOptions(upsert: true, contentType: file.fileType.isEmpty ? null : file.fileType),
+              fileOptions: FileOptions(upsert: false, contentType: file.fileType.isEmpty ? null : file.fileType),
             );
         uploadedPaths.add(filePath);
         newFiles.add({

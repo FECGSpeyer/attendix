@@ -76,8 +76,12 @@ final personProvider =
 final personAttendanceStatsProvider =
     FutureProvider.family<Map<String, dynamic>, int>((ref, personId) async {
   ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
+  // Match the list after attendance edits, type settings and role changes.
+  ref.watch(attendanceRefetchCounter);
+  ref.watch(currentRoleProvider);
   final repo = ref.watch(playerRepositoryWithTenantProvider);
   final tenant = ref.watch(currentTenantProvider);
+  await ref.watch(attendanceTypesProvider.future);
   final person = await ref.watch(personProvider(personId).future);
 
   if (!repo.hasTenantId || person == null) {
@@ -107,8 +111,11 @@ final personAttendanceStatsProvider =
 /// Provider for person history (attendance + player history combined)
 final personHistoryProvider =
     FutureProvider.family<List<Map<String, dynamic>>, int>((ref, personId) async {
+  ref.watch(attendanceRefetchCounter);
+  final role = ref.watch(currentRoleProvider);
   final repo = ref.watch(playerRepositoryWithTenantProvider);
   final typeRepo = ref.watch(attendanceTypeRepositoryWithTenantProvider);
+  await ref.watch(attendanceTypesProvider.future);
   final person = await ref.watch(personProvider(personId).future);
 
   if (person == null || !repo.hasTenantId || !typeRepo.hasTenantId) return [];
@@ -186,7 +193,6 @@ final personHistoryProvider =
   }).toList();
 
   // Ionic getHistoryInfo: non-admins only see group changes and pauses.
-  final role = ref.watch(currentRoleProvider);
   final isAdmin = role.isAdmin || role.isResponsible;
   final playerHistory = person.history
       .where((h) => isAdmin || visibleHistoryTypesForMembers.contains(h.type))

@@ -401,6 +401,7 @@ steht das oben in der Liste, und ändern kann sie nur die Leitung dort.
 - **Ergebnis:** Die Dateien stehen beim Werk und sind ihrer Stimme zugeordnet.
 - **Gut zu wissen:** Die Stimme erkennt die App am Dateinamen, bei unklaren
   Namen an der ersten Seite. Eine Datei darf höchstens 20 MB groß sein.
+  Auch Dateien ohne Dateiendung können hochgeladen werden.
 
 ### L-31 Eine Datei umbenennen, ersetzen, einer anderen Stimme zuordnen oder löschen
 
@@ -412,7 +413,10 @@ steht das oben in der Liste, und ändern kann sie nur die Leitung dort.
 - **Ergebnis:** Die Änderung gilt sofort für alle.
 - **Gut zu wissen:** Dasselbe Menü hat „Teilen“, „Herunterladen“ und
   „Drucken“. Beim Ersetzen bleiben Name und Stimme, die alte Fassung wird
-  gelöscht.
+  gelöscht. Schlägt das Speichern einer Löschung fehl, bleibt die Datei
+  verfügbar; du kannst die Löschung erneut versuchen. Beim ZIP-Download
+  meldet die App fehlgeschlagene Dateien und erstellt erst dann ein Archiv,
+  wenn alle ausgewählten Dateien geladen wurden.
 
 ### L-32 Sehen, für welche Stimmen noch Noten fehlen
 

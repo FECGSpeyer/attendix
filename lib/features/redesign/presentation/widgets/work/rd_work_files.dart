@@ -489,7 +489,9 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
     try {
       await task();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
+      if (mounted) {
+        ToastHelper.showError(context, e is ZipDownloadException ? e.message(context.l10n) : friendlyErrorMessage(e));
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }

@@ -392,7 +392,9 @@ Future<void> _downloadAll(BuildContext context, WidgetRef ref, Song song, List<S
         );
   } catch (e) {
     closeOverlay();
-    if (context.mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
+    if (context.mounted) {
+      ToastHelper.showError(context, e is ZipDownloadException ? e.message(l10n) : friendlyErrorMessage(e));
+    }
   } finally {
     closeOverlay();
     progress.dispose();

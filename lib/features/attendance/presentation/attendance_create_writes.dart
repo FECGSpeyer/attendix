@@ -206,11 +206,17 @@ class AttendanceCreateWriter {
     final normalizedDate = DateTime(date.year, date.month, date.day, 12);
     final dateString = normalizedDate.toUtc().toIso8601String();
 
+    // Use the same resolved times for the stored Termin and its deadlines.
+    final resolvedStartTime = input.startTime ?? type.startTime;
+    final resolvedEndTime = input.endTime ?? type.endTime;
+
     // Prepare checklist from type
     List<Map<String, dynamic>>? checklist;
     if (type.checklist != null && type.checklist!.isNotEmpty) {
       // RT-003: Safe time parsing
-      final parsedTime = type.startTime != null ? _parseTime(type.startTime!) : null;
+      final parsedTime = resolvedStartTime != null
+          ? _parseTime(resolvedStartTime)
+          : null;
       final eventDateTime = DateTime(
         normalizedDate.year,
         normalizedDate.month,
@@ -235,11 +241,6 @@ class AttendanceCreateWriter {
         };
       }).toList();
     }
-
-    // Start/end: user input (Flutter-only field) > type times (Ionic uses
-    // the type times only, no tenant fallback).
-    final resolvedStartTime = input.startTime ?? type.startTime;
-    final resolvedEndTime = input.endTime ?? type.endTime;
 
     // INTEGRATION: new Termine of a type marked as default org plan are
     // org plans (Ionic attendance-create: is_org_plan = type.is_default_org_plan).

@@ -26,6 +26,8 @@ import 'package:attendix/features/redesign/presentation/widgets/import/rd_import
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:pdfx/pdfx.dart';
+import 'package:pdfx/src/renderer/interfaces/platform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -178,6 +180,19 @@ class _BrowserFile extends PlatformFile {
 }
 
 /// The KI without suggestions.
+// These fixtures contain filename hints, not renderable PDF documents.
+class _UnreadableFixturePdf extends PdfxPlatform {
+  @override
+  Future<PdfDocument> openData(FutureOr<Uint8List> data, {String? password}) async =>
+      throw const FormatException('Fixture has no PDF pages');
+  @override
+  Future<PdfDocument> openFile(String filePath, {String? password}) async =>
+      throw const FormatException('Fixture has no PDF pages');
+  @override
+  Future<PdfDocument> openAsset(String name, {String? password}) async =>
+      throw const FormatException('Fixture has no PDF pages');
+}
+
 final _noAi = RdImportAi((_) async => {'answers': []});
 
 List<Override> _overrides(_FakeFiles files, _FakeSongs songs, _FakeGroupNotifier groups,
@@ -1067,6 +1082,9 @@ void main() {
   });
 
   testWidgets('review: "Fragen beantworten" shows only the open questions, back goes to the review', (tester) async {
+    final previousPdf = PdfxPlatform.instance;
+    PdfxPlatform.instance = _UnreadableFixturePdf();
+    addTearDown(() => PdfxPlatform.instance = previousPdf);
     tester.view.physicalSize = const Size(430, 1400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);

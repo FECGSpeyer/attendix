@@ -28,7 +28,7 @@ void main() {
       );
 
   AuthFlowService service() =>
-      AuthFlowService(auth, linkProcessingTimeout: const Duration(milliseconds: 200));
+      AuthFlowService(auth);
 
   setUpAll(() {
     registerFallbackValue(OtpType.recovery);
@@ -63,13 +63,13 @@ void main() {
     expect(await future, AuthLinkOutcome.failed);
   });
 
-  test('recovery processed by supabase_flutter (passwordRecovery event) succeeds', () async {
+  test('an unrelated recovery event cannot validate a failed code exchange', () async {
     when(() => auth.exchangeCodeForSession(any()))
         .thenThrow(AuthException('Code verifier could not be found'));
     final future = service().handleAuthLink(recoveryCode);
     current = session('user-b');
     events.add(AuthState(AuthChangeEvent.passwordRecovery, current));
-    expect(await future, AuthLinkOutcome.recovery);
+    expect(await future, AuthLinkOutcome.failed);
   });
 
   test('own successful code exchange succeeds', () async {
@@ -79,6 +79,27 @@ void main() {
       return AuthSessionUrlResponse(session: b, redirectType: 'passwordRecovery');
     });
     expect(await service().handleAuthLink(recoveryCode), AuthLinkOutcome.recovery);
+  });
+
+  test('a code without a recovery path uses the successful exchange type', () async {
+    final b = session('user-b');
+    when(() => auth.exchangeCodeForSession(any())).thenAnswer((_) async {
+      current = b;
+      return AuthSessionUrlResponse(session: b, redirectType: 'passwordRecovery');
+    });
+    final link = AuthLink.parse(Uri.parse('https://attendix.de/?code=valid'));
+    expect(await service().handleAuthLink(link), AuthLinkOutcome.recovery);
+  });
+
+  test('implicit magic link is handled by the app link processor', () async {
+    final b = session('user-b');
+    when(() => auth.setSession('valid-refresh')).thenAnswer((_) async {
+      current = b;
+      return AuthResponse(session: b);
+    });
+    final link = AuthLink.parse(Uri.parse(
+      'https://attendix.de/#access_token=access&refresh_token=valid-refresh&type=magiclink'));
+    expect(await service().handleAuthLink(link), AuthLinkOutcome.signupConfirmed);
   });
 
   test('invalid token_hash recovery link with A signed in fails (catch path)', () async {
