@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.155.9",
+      "date": "18.11.2026",
+      "changes": [
+        "🐛 Anwesenheitswerte in Mitgliederliste und Personendetails werden vollständig und nach Änderungen aktuell berechnet.",
+        "🐛 Termine, Teilnehmerzähler, Schichtstatus, Plan-Uhrzeiten und Checklistenfristen berücksichtigen die tatsächlichen Daten und Uhrzeiten.",
+        "🐛 Typkennzeichnungen in den Beta-Terminkarten bleiben bei mehrzeiligen Titeln oben ausgerichtet.",
+        "🐛 Berechtigungsänderungen während des Speicherns bleiben erhalten; Anmeldelinks werden eindeutig verarbeitet.",
+        "🐛 Dateilöschungen bleiben bei Verbindungsfehlern konsistent, ZIP-Downloads melden fehlende Dateien und Dateien ohne Endung lassen sich hochladen."
+      ]
+    },
+    {
       "version": "0.155.8",
       "date": "17.11.2026",
       "changes": [
