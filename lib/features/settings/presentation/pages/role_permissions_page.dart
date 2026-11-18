@@ -75,26 +75,32 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
   }
 
   Future<bool> _save() async {
+    if (ref.read(rolePermissionNotifierProvider).isLoading) return false;
     final canEditFilesShared = ref.read(effectiveRoleProvider).isAdmin;
-    final changed = _permissions.entries
+    final submitted = Map<Role, TenantRolePermission>.of(_permissions);
+    final submittedFilesShared = _filesShared;
+    final changed = submitted.entries
         .where((e) => _original[e.key] != e.value)
         .map((e) => e.value)
         .toList();
     final ok = await ref.read(rolePermissionNotifierProvider.notifier).save(
           changed,
-          filesShared: canEditFilesShared && _filesShared != _originalFilesShared ? _filesShared : null,
+          filesShared: canEditFilesShared && submittedFilesShared != _originalFilesShared
+              ? submittedFilesShared
+              : null,
         );
     if (!mounted) return ok;
     if (ok) {
       setState(() {
-        _original = Map.of(_permissions);
-        _originalFilesShared = _filesShared;
+        // Edits made while the request was pending still need another save.
+        _original = submitted;
+        if (canEditFilesShared) _originalFilesShared = submittedFilesShared;
       });
       ToastHelper.showSuccess(context, context.l10n.rolePermSaved);
     } else {
       ToastHelper.showError(context, context.l10n.rolePermSaveFailed);
     }
-    return ok;
+    return ok && !_hasUnsavedChanges;
   }
 
   Future<void> _confirmLeave() async {

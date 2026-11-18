@@ -28,6 +28,9 @@ class SupabaseConfig {
       anonKey: supabaseAnonKey,
       authOptions: const FlutterAuthClientOptions(
         authFlowType: AuthFlowType.pkce,
+        // auth_link_listener owns cold-start and subsequent links. A second
+        // consumer can consume the PKCE verifier before our handler sees it.
+        detectSessionInUri: false,
       ),
       realtimeClientOptions: const RealtimeClientOptions(
         logLevel: RealtimeLogLevel.info,

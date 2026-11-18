@@ -61,7 +61,7 @@ abstract final class EventListUtils {
     final start = parse(date);
     if (start == null) return null;
     final days = (durationDays ?? 1) < 1 ? 1 : (durationDays ?? 1);
-    return _day(start).add(Duration(days: days - 1));
+    return DateTime(start.year, start.month, start.day + days - 1);
   }
 
   /// A Termin is past only once its last day is over, so a running Freizeit stays current.

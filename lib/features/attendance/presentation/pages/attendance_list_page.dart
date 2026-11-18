@@ -88,7 +88,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     if (!ref.read(effectiveRoleProvider).canAddAttendance) return;
     await context.push('/attendance/$attendanceId');
     if (mounted) {
-      ref.invalidate(realtimeAttendanceListProvider);
+      ref.read(attendanceRefetchCounter.notifier).state++;
     }
   }
 
@@ -578,6 +578,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             final counts = listCounts[att.id];
             if (counts == null) return null;
             final total = counts.total;
+            if (total == 0) return null;
             final present = ((att.percentage ?? 0) / 100 * total).round();
             return context.l10n.attListPresentOf(present, total);
           }

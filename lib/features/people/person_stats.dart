@@ -47,7 +47,7 @@ Map<String, int> computePersonAttendanceStats(
     final attendance = row['attendance'];
     if (attendance is! Map) continue;
     final date = DateTime.tryParse(attendance['date']?.toString() ?? '');
-    if (date == null || !date.isAfter(windowStart) || !date.isBefore(now)) {
+    if (date == null || date.isBefore(windowStart) || !date.isBefore(now)) {
       continue;
     }
     total++;
@@ -61,9 +61,12 @@ Map<String, int> computePersonAttendanceStats(
     );
 
     final attType = attendance['attType'];
+    final dutyState = row['duty_state'];
+    final hasDutyAssignment =
+        dutyState != null && !(dutyState is String && dutyState.isEmpty);
     final includeInAverage = attType is Map &&
         attType['include_in_average'] == true &&
-        !(attType['duty_mode'] == true && row['duty_state'] == null);
+        !(attType['duty_mode'] == true && !hasDutyAssignment);
     if (includeInAverage) {
       counted++;
       if (isAttended) attended++;

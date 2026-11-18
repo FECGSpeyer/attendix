@@ -1247,7 +1247,10 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         await action();
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterErrorWith(friendlyErrorMessage(e)));
+      if (mounted) {
+        final message = e is ZipDownloadException ? e.message(context.l10n) : friendlyErrorMessage(e);
+        ToastHelper.showError(context, context.l10n.songsFlutterErrorWith(message));
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }

@@ -5,9 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../core/config/supabase_config.dart';
 import '../../../core/router/legacy_routes.dart' show startupLinkUri;
 import '../../../core/services/offline_queue_service.dart'
     show rootScaffoldMessengerKey;
@@ -19,20 +17,12 @@ import '../../../l10n/l10n.dart';
 import '../../../core/utils/toast_helper.dart';
 
 /// AUTH: wires up the Ionic auth-link handling (app.component.ts):
-/// * `PASSWORD_RECOVERY` auth events → alert "Neues Passwort" over /login
+/// * successful recovery links → alert "Neues Passwort" over /login
 /// * on web, the initial URL is checked for recovery / signup-confirmation
 ///   links (`?token_hash&type`, `?code`, `#access_token`).
 ///
 /// Call once from the root widget after the first frame.
 void initAuthLinkHandling(WidgetRef ref, GoRouter router) {
-  ref.listenManual<AsyncValue<AuthState>>(authStateProvider, (_, next) {
-    final event = next.valueOrNull?.event;
-    if (event == AuthChangeEvent.passwordRecovery) {
-      unawaited(presentPasswordRecoveryAlert(
-          ref.read(authFlowServiceProvider), router));
-    }
-  });
-
   if (!kIsWeb) {
     initNativeAppLinks(ref, router);
     return;

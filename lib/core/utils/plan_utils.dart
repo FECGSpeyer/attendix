@@ -271,7 +271,7 @@ class PlanUtils {
   static int? parseTimeToMinutes(String? value) {
     if (value == null || value.trim().isEmpty) return null;
     final v = value.trim();
-    final iso = DateTime.tryParse(v);
+    final iso = _parseClockDate(v);
     if (iso != null && v.contains('T')) {
       return iso.hour * 60 + iso.minute;
     }
@@ -280,6 +280,15 @@ class PlanUtils {
       return int.parse(match.group(1)!) * 60 + int.parse(match.group(2)!);
     }
     return null;
+  }
+
+  // Offset-free plan values store clock fields, even in a local DST gap.
+  // UTC arithmetic preserves those fields; explicit offsets already parse
+  // as UTC and retain their established interpretation.
+  static DateTime? _parseClockDate(String value) {
+    final iso = DateTime.tryParse(value);
+    if (iso == null || iso.isUtc) return iso;
+    return DateTime.tryParse('${value}Z') ?? iso;
   }
 
   static String formatMinutes(int minutes) {
@@ -319,14 +328,14 @@ class PlanUtils {
   static String computeEndIso(String start, List<PlanField> fields, {DateTime? now}) {
     DateTime? base;
     if (start.contains('T')) {
-      final iso = DateTime.tryParse(start.trim());
-      if (iso != null) base = DateTime(iso.year, iso.month, iso.day, iso.hour, iso.minute);
+      final iso = _parseClockDate(start.trim());
+      if (iso != null) base = DateTime.utc(iso.year, iso.month, iso.day, iso.hour, iso.minute);
     }
     if (base == null) {
       final m = parseTimeToMinutes(start);
       if (m == null) return '';
       final today = now ?? DateTime.now();
-      base = DateTime(today.year, today.month, today.day, m ~/ 60, m % 60);
+      base = DateTime.utc(today.year, today.month, today.day, m ~/ 60, m % 60);
     }
     final end = base.add(Duration(minutes: totalMinutes(fields)));
     return DateFormat("yyyy-MM-dd'T'HH:mm").format(end);

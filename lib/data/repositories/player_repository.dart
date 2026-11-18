@@ -1674,16 +1674,18 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// (person_attendances has no tenantId column).
   Future<List<Map<String, dynamic>>> getPersonAttendanceStatsRows(int personId) async {
     try {
-      final response = await supabase
+      final response = await fetchAllPages<Map<String, dynamic>>((from, to) async => await supabase
           .from('person_attendances')
           .select('status, notes, duty_state, '
               'attendance:attendance_id!inner(id, date, tenantId, archived, '
               'attType:type_id(include_in_average, duty_mode))')
           .eq('person_id', personId)
-          .eq('attendance.tenantId', currentTenantId);
+          .eq('attendance.tenantId', currentTenantId)
+          .order('id', ascending: true)
+          .range(from, to));
       // Ionic 4.17.24 getPersonAttendances: archived only for admins/responsible.
       final showArchived = canSeeArchivedAttendances(currentUserRole);
-      return List<Map<String, dynamic>>.from(response as List)
+      return response
           .where((row) =>
               showArchived || !isArchivedRow(row['attendance'] as Map<String, dynamic>?))
           .toList();
@@ -1698,15 +1700,17 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   Future<List<Map<String, dynamic>>> getPersonAttendanceHistoryRows(int personId,
       {String? fromDate}) async {
     try {
-      var query = supabase
-          .from('person_attendances')
-          .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, type_id, tenantId, archived)')
-          .eq('person_id', personId)
-          .eq('attendance.tenantId', currentTenantId);
-      if (fromDate != null) query = query.gte('attendance.date', fromDate);
-      final response = await query;
+      final response = await fetchAllPages<Map<String, dynamic>>((from, to) async {
+        var query = supabase
+            .from('person_attendances')
+            .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, type_id, tenantId, archived)')
+            .eq('person_id', personId)
+            .eq('attendance.tenantId', currentTenantId);
+        if (fromDate != null) query = query.gte('attendance.date', fromDate);
+        return await query.order('id', ascending: true).range(from, to);
+      });
       final showArchived = canSeeArchivedAttendances(currentUserRole);
-      return List<Map<String, dynamic>>.from(response as List)
+      return response
           .where((row) =>
               showArchived || !isArchivedRow(row['attendance'] as Map<String, dynamic>?))
           .toList();

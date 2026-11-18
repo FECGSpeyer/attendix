@@ -80,8 +80,8 @@ Future<void> addPersonsToAttendance(
         final result = ShiftUtils.statusByShiftOrDefault(
           shift: ShiftUtils.findShift(shifts, person.shiftId),
           attendanceDate: date,
-          attendanceStart: type?.startTime ?? '19:00',
-          attendanceEnd: type?.endTime ?? '21:00',
+          attendanceStart: attendance?.startTime ?? type?.startTime ?? '19:00',
+          attendanceEnd: attendance?.endTime ?? type?.endTime ?? '21:00',
           defaultStatus: defaultStatus,
           shiftStart: person.shiftStart,
           shiftName: person.shiftName,

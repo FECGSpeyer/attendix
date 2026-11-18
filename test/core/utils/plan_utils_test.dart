@@ -118,6 +118,50 @@ void main() {
       expect(PlanUtils.formatTime('2026-10-28T09:35:00'), '09:35');
     });
 
+    test('naive ISO clock values keep their wall time through a DST gap', () {
+      for (final value in [
+        '2026-03-29T02:30',
+        '2026-03-29T02:30:00',
+        ' 2026-03-29T02:30:45.123 ',
+        '20260329T023000',
+      ]) {
+        expect(PlanUtils.parseTimeToMinutes(value), 150, reason: value);
+      }
+    });
+
+    test('explicit ISO offsets retain their existing UTC clock semantics', () {
+      const values = {
+        '2026-03-29T02:30:00Z': 150,
+        '2026-03-29T02:30:00z': 150,
+        '2026-03-29T02:30:00+02:00': 30,
+        '2026-03-29T02:30:00+0200': 30,
+        '2026-03-29T02:30:00+02': 30,
+        '2026-03-29T02:30:00-02:30': 300,
+        '2026-03-29T00:30:00+02:00': 1350,
+        '2026-03-29T23:30:00-02:00': 90,
+      };
+      for (final entry in values.entries) {
+        expect(PlanUtils.parseTimeToMinutes(entry.key), entry.value, reason: entry.key);
+      }
+    });
+
+    test('stored end matches the displayed clock across DST and midnight', () {
+      final fields = [f('a', '30')];
+      const cases = {
+        '2026-03-29T02:30:00': '2026-03-29T03:00',
+        '2026-10-25T02:45:00': '2026-10-25T03:15',
+        '2026-03-28T23:45:00': '2026-03-29T00:15',
+        '2026-03-29T02:30:00+02:00': '2026-03-29T01:00',
+      };
+      for (final entry in cases.entries) {
+        final stored = PlanUtils.computeEndIso(entry.key, fields);
+        expect(stored, entry.value, reason: entry.key);
+        expect(PlanUtils.formatTime(stored), PlanUtils.computeEnd(entry.key, fields));
+      }
+      expect(PlanUtils.computeEndIso('02:30', fields, now: DateTime.utc(2026, 3, 29)),
+          '2026-03-29T03:00');
+    });
+
     test('template start time is stored as ion-datetime ISO value (not HH:mm)', () {
       final v = PlanUtils.ionTimeValue(10, 5, now: DateTime(2026, 11, 5));
       expect(v, '2026-11-05T10:05:00');
