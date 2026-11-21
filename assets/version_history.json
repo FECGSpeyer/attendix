@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.155.10",
+      "date": "21.11.2026",
+      "changes": [
+        "🔗 Edge Function fecg-bridge (Gemeinde App) aus dem alten Repo übernommen"
+      ]
+    },
+    {
       "version": "0.155.9",
       "date": "18.11.2026",
       "changes": [
