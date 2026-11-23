@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.155.11",
+      "date": "23.11.2026",
+      "changes": [
+        "🔧 API-Konfiguration, Doku und Session-Übernahme-Tests auf https://api.attendix.de aktualisiert"
+      ]
+    },
+    {
       "version": "0.155.10",
       "date": "21.11.2026",
       "changes": [
