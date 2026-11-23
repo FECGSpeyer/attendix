@@ -3,7 +3,7 @@
 #
 # The Flutter app replaces the Ionic app as an update of the store app
 # "Attendix" (io.stephanus.attendix). The stores only accept versions above
-# Ionic's last one: 4.19.9, Android versionCode 230, iOS build 239.
+# Ionic's last one: 4.19.25, Android versionCode 246, iOS build 255.
 #
 # pubspec.yaml keeps the internal developer version (0.x+build, see
 # CLAUDE.md "Interne vs. Nutzer-Version"), which is far below that. This
@@ -32,8 +32,8 @@
 set -euo pipefail
 
 STORE_BUILD_OFFSET=100
-IONIC_ANDROID_VERSION_CODE=230
-IONIC_IOS_BUILD=239
+IONIC_ANDROID_VERSION_CODE=246
+IONIC_IOS_BUILD=255
 
 cd "$(dirname "$0")/.."
 
@@ -53,8 +53,8 @@ for ionic in "$IONIC_ANDROID_VERSION_CODE" "$IONIC_IOS_BUILD"; do
     exit 1
   fi
 done
-if [[ "$(printf '%s\n' "$name" 4.19.9 | sort -V | tail -n1)" != "$name" || "$name" == 4.19.9 ]]; then
-  echo "store_build: build name $name is not above Ionic's 4.19.9" >&2
+if [[ "$(printf '%s\n' "$name" 4.19.25 | sort -V | tail -n1)" != "$name" || "$name" == 4.19.25 ]]; then
+  echo "store_build: build name $name is not above Ionic's 4.19.25" >&2
   exit 1
 fi
 

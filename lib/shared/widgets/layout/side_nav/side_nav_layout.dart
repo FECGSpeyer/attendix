@@ -3,18 +3,17 @@ import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// SIDE_NAV (Ionic 4.19.0 `LayoutService`): navigation mode of the app.
-/// - phone (< 768 px): tab bar
-/// - tablet portrait (768–991 px): side panel as overlay (menu button,
-///   swipe from the edge)
-/// - from 992 px: fixed side panel next to the content, expanded or
+/// SIDE_NAV (Ionic 4.19.14 `LayoutService`): navigation mode of the app.
+/// - phone (< 768 px) and any device in portrait (tablet portrait): tab bar
+/// - landscape 768–991 px: side panel as overlay (menu button, swipe from edge)
+/// - landscape from 992 px: fixed side panel next to the content, expanded or
 ///   collapsed to an icon rail
 enum SideNavMode { none, overlay, fixed }
 
-/// From this width the side panel replaces the tab bar (overlay).
+/// From this width the side panel replaces the tab bar in landscape (overlay).
 const double sidePanelMinWidth = 768;
 
-/// From this width the side panel stays next to the content (split pane).
+/// From this width the side panel stays next to the content in landscape (split pane).
 const double sidePanelFixedMinWidth = 992;
 
 /// Without a stored choice the fixed panel is expanded from this width on.
@@ -29,7 +28,8 @@ const double sidePanelRailWidth = 72;
 /// Ionic `ion-menu.side-nav-menu { --width: 300px; --max-width: 85vw }`.
 const double sidePanelOverlayWidth = 300;
 
-SideNavMode sideNavModeFor(double width) {
+SideNavMode sideNavModeFor(double width, {bool portrait = false}) {
+  if (portrait) return SideNavMode.none;
   if (width >= sidePanelFixedMinWidth) return SideNavMode.fixed;
   if (width >= sidePanelMinWidth) return SideNavMode.overlay;
   return SideNavMode.none;
@@ -38,8 +38,8 @@ SideNavMode sideNavModeFor(double width) {
 /// Ionic `LayoutService.collapsed`: the fixed panel as an icon rail; the
 /// overlay is always expanded. Without a stored choice the panel is
 /// collapsed below [sidePanelExpandedDefaultMinWidth].
-bool sideNavCollapsed(double width, bool? choice) {
-  if (sideNavModeFor(width) != SideNavMode.fixed) return false;
+bool sideNavCollapsed(double width, bool? choice, {bool portrait = false}) {
+  if (sideNavModeFor(width, portrait: portrait) != SideNavMode.fixed) return false;
   return choice ?? width < sidePanelExpandedDefaultMinWidth;
 }
 

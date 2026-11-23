@@ -11,7 +11,10 @@ void main() {
     expect(sideNavModeFor(767), SideNavMode.none);
     expect(sideNavModeFor(768), SideNavMode.overlay);
     expect(sideNavModeFor(992), SideNavMode.fixed);
+    expect(sideNavModeFor(768, portrait: true), SideNavMode.none);
+    expect(sideNavModeFor(1024, portrait: true), SideNavMode.none);
     expect(sideNavCollapsed(1100, null), isTrue);
+    expect(sideNavCollapsed(1100, null, portrait: true), isFalse);
     expect(sideNavCollapsed(1200, null), isFalse);
     expect(sideNavCollapsed(900, true), isFalse); // overlay is never a rail
   });

@@ -909,6 +909,11 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
 
     try {
+      // Ionic 4.19.13: add to upcoming attendances BEFORE clearing paused,
+      // so a failed backfill keeps the person paused instead of missing from
+      // upcoming Termine.
+      await addToUpcomingAttendances(player);
+
       // Add history entry
       final history = List<Map<String, dynamic>>.from(
         player.history.map((e) => e.toJson()),
@@ -928,9 +933,6 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           })
           .eq('id', player.id!)
           .eq('tenantId', currentTenantId);
-
-      // Add to upcoming attendances
-      await addToUpcomingAttendances(player);
     } catch (e, stack) {
       handleError(e, stack, 'unpausePlayer');
       rethrow;
@@ -1266,26 +1268,44 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         ensureNotDemo('checkAndUnpausePlayers'); // DEMO_GUARD
         final player = Person.fromJson(playerData as Map<String, dynamic>);
 
-        // Add history entry
-        final history = List<Map<String, dynamic>>.from(
-          player.history.map((e) => e.toJson()),
-        );
-        history.add({
-          'date': DateTime.now().toUtc().toIso8601String(),
-          'text': 'Automatisch reaktiviert (Pausendatum erreicht)',
-          'type': PlayerHistoryType.unpaused.value,
-        });
+        try {
+          // Ionic 4.19.13: add to upcoming attendances BEFORE clearing paused,
+          // so a failure keeps the player paused and retries on the next open.
+          await addToUpcomingAttendances(player);
 
-        // Update player
-        await supabase.from('player').update({
-          'paused': false,
-          'paused_until': null,
-          'history': history,
-        }).eq('id', player.id!)
-          .eq('tenantId', currentTenantId);
+          // Add history entry
+          final history = List<Map<String, dynamic>>.from(
+            player.history.map((e) => e.toJson()),
+          );
+          history.add({
+            'date': DateTime.now().toUtc().toIso8601String(),
+            'text': 'Automatisch reaktiviert (Pausendatum erreicht)',
+            'type': PlayerHistoryType.unpaused.value,
+          });
 
-        // Add to upcoming attendances
-        await addToUpcomingAttendances(player);
+          // Update player
+          await supabase
+              .from('player')
+              .update({
+                'paused': false,
+                'paused_until': null,
+                'history': history,
+              })
+              .eq('id', player.id!)
+              .eq('tenantId', currentTenantId);
+        } catch (e, stack) {
+          if (e is DemoModeException) rethrow;
+          if (kDebugMode) {
+            debugPrint(
+              '[PlayerRepository] Error in checkAndUnpausePlayers for player ${player.id}: $e',
+            );
+          }
+          ErrorReporter.report(
+            e,
+            stack,
+            where: 'PlayerRepository.checkAndUnpausePlayers',
+          );
+        }
       }
     } catch (e, stack) {
       // Only the demo error reaches the caller (demo toast).

@@ -1,5 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:attendix/core/config/supabase_config.dart';
+import 'package:attendix/data/models/person/person.dart';
+import 'package:attendix/data/repositories/player_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show AuthClientOptions, SupabaseClient;
 
 /// Security tests for PlayerRepository
 ///
@@ -254,6 +263,203 @@ void main() {
           contains(".eq('tenantId', currentTenantId)"),
           reason: 'checkAndUnpausePlayers must filter by tenantId',
         );
+      });
+
+      test('unpausePlayer and checkAndUnpausePlayers backfill attendances before clearing paused', () {
+        for (final method in ['unpausePlayer', 'checkAndUnpausePlayers']) {
+          final section = _extractMethodBody(playerRepoSource, method);
+          expect(section, isNotNull);
+          final addIdx = section!.indexOf('await addToUpcomingAttendances(player)');
+          final updateIdx = section.indexOf('.update(');
+          expect(addIdx, greaterThan(-1), reason: '$method must call addToUpcomingAttendances');
+          expect(updateIdx, greaterThan(addIdx),
+              reason: '$method must backfill attendances before setting paused=false');
+        }
+      });
+    });
+
+    group('Ionic 4.19.13 Unpause Ordering Behavior', () {
+      TestWidgetsFlutterBinding.ensureInitialized();
+
+      SupabaseClient buildClient({
+        required List<String> mutations,
+        required bool failAttendanceLoad,
+      }) {
+        final client = MockClient((request) async {
+          const jsonHeaders = {'content-type': 'application/json'};
+          final table = request.url.pathSegments.last;
+          final single = (request.headers['Accept'] ?? request.headers['accept'] ?? '')
+              .contains('vnd.pgrst.object');
+
+          if (request.method == 'POST' && table == 'person_attendances') {
+            mutations.add('POST:person_attendances');
+            return http.Response('[]', 201, headers: jsonHeaders, request: request);
+          }
+          if (request.method == 'PATCH' && table == 'player') {
+            mutations.add('PATCH:player');
+            return http.Response('[]', 200, headers: jsonHeaders, request: request);
+          }
+          if (request.method == 'GET') {
+            switch (table) {
+              case 'player':
+                return http.Response(
+                  jsonEncode([
+                    {
+                      'id': 5,
+                      'firstName': 'Anna',
+                      'lastName': 'Berg',
+                      'tenantId': 42,
+                      'instrument': 1,
+                      'paused': true,
+                      'paused_until': '2020-01-01',
+                    },
+                  ]),
+                  200,
+                  headers: jsonHeaders,
+                  request: request,
+                );
+              case 'attendance':
+                if (failAttendanceLoad) {
+                  return http.Response(
+                    jsonEncode({'message': 'network failure'}),
+                    500,
+                    headers: jsonHeaders,
+                    request: request,
+                  );
+                }
+                return http.Response(
+                  jsonEncode([
+                    {
+                      'id': 77,
+                      'type_id': 't1',
+                      'date': '2099-03-05',
+                      'start_time': '19:30',
+                      'end_time': '21:30',
+                    },
+                  ]),
+                  200,
+                  headers: jsonHeaders,
+                  request: request,
+                );
+              case 'attendance_types':
+                return http.Response(
+                  jsonEncode([
+                    {
+                      'id': 't1',
+                      'relevant_groups': <int>[],
+                      'relevant_persons': null,
+                      'default_status': 0,
+                      'additional_fields_filter': null,
+                      'all_day': false,
+                      'start_time': '19:30',
+                      'end_time': '21:30',
+                    },
+                  ]),
+                  200,
+                  headers: jsonHeaders,
+                  request: request,
+                );
+              case 'tenants':
+                if (single) {
+                  return http.Response(
+                    jsonEncode({'additional_fields': <Object>[]}),
+                    200,
+                    headers: jsonHeaders,
+                    request: request,
+                  );
+                }
+                return http.Response('[]', 200, headers: jsonHeaders, request: request);
+              case 'tenant_group_tenants':
+                if (single) {
+                  return http.Response(
+                    jsonEncode({
+                      'code': 'PGRST116',
+                      'details': 'The result contains 0 rows',
+                      'message': 'no rows',
+                    }),
+                    406,
+                    headers: jsonHeaders,
+                    request: request,
+                  );
+                }
+                return http.Response('[]', 200, headers: jsonHeaders, request: request);
+              default:
+                return http.Response('[]', 200, headers: jsonHeaders, request: request);
+            }
+          }
+          return http.Response('[]', 200, headers: jsonHeaders, request: request);
+        });
+        return SupabaseClient(
+          'http://localhost:54321',
+          'test-key',
+          httpClient: client,
+          authOptions: const AuthClientOptions(autoRefreshToken: false),
+        );
+      }
+
+      test('checkAndUnpausePlayers keeps player paused if adding upcoming attendances fails', () async {
+        final mutations = <String>[];
+        final supabase = buildClient(mutations: mutations, failAttendanceLoad: true);
+        final container = ProviderContainer(
+          overrides: [supabaseClientProvider.overrideWithValue(supabase)],
+        );
+        addTearDown(container.dispose);
+
+        final repo = container.read(playerRepositoryForTenantProvider(42));
+        await repo.checkAndUnpausePlayers();
+
+        expect(mutations, isEmpty);
+      });
+
+      test('checkAndUnpausePlayers inserts person_attendances before patching player paused=false', () async {
+        final mutations = <String>[];
+        final supabase = buildClient(mutations: mutations, failAttendanceLoad: false);
+        final container = ProviderContainer(
+          overrides: [supabaseClientProvider.overrideWithValue(supabase)],
+        );
+        addTearDown(container.dispose);
+
+        final repo = container.read(playerRepositoryForTenantProvider(42));
+        await repo.checkAndUnpausePlayers();
+
+        expect(mutations, ['POST:person_attendances', 'PATCH:player']);
+      });
+
+      test('unpausePlayer keeps player paused on backfill failure and inserts before patch on success', () async {
+        final failedMutations = <String>[];
+        final failClient = buildClient(mutations: failedMutations, failAttendanceLoad: true);
+        final failContainer = ProviderContainer(
+          overrides: [supabaseClientProvider.overrideWithValue(failClient)],
+        );
+        addTearDown(failContainer.dispose);
+
+        const pausedPerson = Person(
+          id: 5,
+          firstName: 'Anna',
+          lastName: 'Berg',
+          tenantId: 42,
+          instrument: 1,
+          paused: true,
+          pausedUntil: '2020-01-01',
+        );
+
+        final failRepo = failContainer.read(playerRepositoryForTenantProvider(42));
+        await expectLater(
+          () => failRepo.unpausePlayer(pausedPerson),
+          throwsA(anything),
+        );
+        expect(failedMutations, isEmpty);
+
+        final okMutations = <String>[];
+        final okClient = buildClient(mutations: okMutations, failAttendanceLoad: false);
+        final okContainer = ProviderContainer(
+          overrides: [supabaseClientProvider.overrideWithValue(okClient)],
+        );
+        addTearDown(okContainer.dispose);
+
+        final okRepo = okContainer.read(playerRepositoryForTenantProvider(42));
+        await okRepo.unpausePlayer(pausedPerson);
+        expect(okMutations, ['POST:person_attendances', 'PATCH:player']);
       });
     });
 

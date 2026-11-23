@@ -47,16 +47,23 @@ class AppSpinner extends StatelessWidget {
       );
     }
     final tick = valueColor?.value ?? color;
-    return LayoutBuilder(builder: (context, constraints) {
-      var radius = _iosDefaultRadius;
-      final side = [constraints.maxWidth, constraints.maxHeight]
-          .reduce((a, b) => a < b ? a : b);
-      if (side.isFinite && side < radius * 2) radius = side / 2;
-      return Semantics(
-        label: semanticsLabel,
-        value: semanticsValue,
-        child: CupertinoActivityIndicator(radius: radius, color: tick),
-      );
-    });
+    const defaultSize = _iosDefaultRadius * 2;
+    return Semantics(
+      label: semanticsLabel,
+      value: semanticsValue,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: defaultSize,
+          maxHeight: defaultSize,
+        ),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: CupertinoActivityIndicator(
+            radius: _iosDefaultRadius,
+            color: tick,
+          ),
+        ),
+      ),
+    );
   }
 }

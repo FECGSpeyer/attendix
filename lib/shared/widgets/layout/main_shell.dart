@@ -364,9 +364,14 @@ class MainShell extends ConsumerWidget {
     // IOS_SHELL: pages put their ion-fab into the tab bar row (TabBarFab).
     final ios = useIosLook(context);
     final Widget page = NativeAppAdGate(child: child);
-    // SIDE_NAV (Ionic 4.19.0): from tablet width a side panel replaces the
-    // tab bar – an overlay below 992px, next to the content above.
-    final sideMode = sideNavModeFor(MediaQuery.sizeOf(context).width);
+    // SIDE_NAV (Ionic 4.19.14): in landscape from tablet width a side panel
+    // replaces the tab bar – an overlay below 992px, next to the content above.
+    // Portrait keeps the tab bar even on tablets.
+    final screenSize = MediaQuery.sizeOf(context);
+    final sideMode = sideNavModeFor(
+      screenSize.width,
+      portrait: screenSize.height > screenSize.width,
+    );
     if (sideMode != SideNavMode.none) {
       return _SidePanelShell(mode: sideMode, child: page);
     }
@@ -399,8 +404,8 @@ class MainShell extends ConsumerWidget {
   }
 }
 
-/// SIDE_NAV (Ionic 4.19.0 tabs.page: `ion-split-pane` + `ion-menu`): the
-/// shell on tablets and computers. Tablet portrait (768–991px): the side
+/// SIDE_NAV (Ionic 4.19.14 tabs.page: `ion-split-pane` + `ion-menu`): the
+/// shell on tablets (landscape) and computers. Landscape 768–991px: the side
 /// panel is an overlay (menu button in the pages, swipe from the edge);
 /// from 992px it stands next to the content, 272px wide or as a 72px icon
 /// rail. The pages see the room next to the panel as their screen size.
@@ -421,8 +426,11 @@ class _SidePanelShellState extends ConsumerState<_SidePanelShell> {
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
     final fixed = widget.mode == SideNavMode.fixed;
-    final collapsed =
-        sideNavCollapsed(mq.size.width, ref.watch(sideNavCollapsedChoiceProvider));
+    final collapsed = sideNavCollapsed(
+      mq.size.width,
+      ref.watch(sideNavCollapsedChoiceProvider),
+      portrait: mq.size.height > mq.size.width,
+    );
     final navWidth = collapsed ? sidePanelRailWidth : sidePanelWidth;
 
     Widget content = Column(

@@ -59,11 +59,18 @@ Future<void> pumpGolden(
   Widget Function(Widget child)? shell,
   Size size = goldenPhone,
   double pixelRatio = 2,
+  Brightness brightness = Brightness.light,
+  TextScaler? textScaler,
 }) async {
   SharedPreferences.setMockInitialValues({});
   tester.view.physicalSize = size * pixelRatio;
   tester.view.devicePixelRatio = pixelRatio;
   addTearDown(tester.view.reset);
+
+  if (brightness != Brightness.light) {
+    tester.platformDispatcher.platformBrightnessTestValue = brightness;
+    addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+  }
 
   // A phone has no keyboard focus: no focus rings.
   FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTouch;
@@ -109,10 +116,10 @@ Future<void> pumpGolden(
         builder: (context, ref, _) {
           final ThemeData theme;
           if (look.isBeta) {
-            theme = buildRdTheme(ref.watch(redesignSettingsProvider).world, Brightness.light)
+            theme = buildRdTheme(ref.watch(redesignSettingsProvider).world, brightness)
                 .copyWith(platform: platform);
           } else {
-            theme = AppTheme.forPlatform(Brightness.light, platform);
+            theme = AppTheme.forPlatform(brightness, platform);
           }
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
@@ -126,7 +133,16 @@ Future<void> pumpGolden(
             supportedLocales: AppLocalizations.supportedLocales,
             theme: theme,
             routerConfig: router,
-            builder: (context, child) => TooltipVisibility(visible: false, child: child!),
+            builder: (context, child) {
+              Widget result = TooltipVisibility(visible: false, child: child!);
+              if (textScaler != null) {
+                result = MediaQuery(
+                  data: MediaQuery.of(context).copyWith(textScaler: textScaler),
+                  child: result,
+                );
+              }
+              return result;
+            },
           );
         },
       ),

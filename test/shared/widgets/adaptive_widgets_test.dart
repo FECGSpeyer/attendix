@@ -209,6 +209,45 @@ void main() {
         ios ? findsNothing : findsOneWidget);
   }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
+  testWidgets('AppSpinner iOS: supports SliverFillRemaining, IntrinsicHeight and tight boxes',
+      (tester) async {
+    await tester.pumpWidget(app(
+      CustomScrollView(
+        slivers: const [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(child: AppSpinner()),
+          ),
+        ],
+      ),
+    ));
+    expect(tester.takeException(), isNull);
+    expect(find.byType(CupertinoActivityIndicator), findsOneWidget);
+    expect(tester.getSize(find.byType(AppSpinner)), const Size(28, 28));
+
+    await tester.pumpWidget(app(
+      const IntrinsicHeight(
+        child: Row(
+          children: [AppSpinner()],
+        ),
+      ),
+    ));
+    expect(tester.takeException(), isNull);
+    expect(tester.getSize(find.byType(AppSpinner)), const Size(28, 28));
+
+    await tester.pumpWidget(app(
+      const Center(
+        child: SizedBox(
+          width: 20,
+          height: 20,
+          child: AppSpinner(),
+        ),
+      ),
+    ));
+    expect(tester.takeException(), isNull);
+    expect(tester.getSize(find.byType(AppSpinner)), const Size(20, 20));
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
   testWidgets('AppSegmentedButton: ion-segment on iOS, same callback',
       (tester) async {
     Set<int>? changed;

@@ -1159,6 +1159,27 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   // UI
   // ---------------------------------------------------------------------------
 
+  /// Ionic 4.19.16 `handleInPageBack`: beendet zuerst den Auswahlmodus,
+  /// geht in Unterordnern eine Ebene hoch. false = im obersten Ordner oder
+  /// kein Zugriff.
+  bool _handleInPageBack({required bool canAccess}) {
+    if (!canAccess) return false;
+    if (_selectionMode) {
+      _exitSelection();
+      return true;
+    }
+    if (_currentPath.isNotEmpty) {
+      _navigateTo(FilesRepository.parentPath(_currentPath));
+      return true;
+    }
+    return false;
+  }
+
+  void _goBackClassic(BuildContext context, {required bool canAccess}) {
+    if (_handleInPageBack(canAccess: canAccess)) return;
+    context.canPop() ? context.pop() : context.go('/settings');
+  }
+
   @override
   Widget build(BuildContext context) {
     final canAccess = ref.watch(canAccessFilesProvider);
@@ -1171,7 +1192,12 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       return _buildBeta(context, canAccess: canAccess, isRoleLoading: isRoleLoading, canEdit: canEdit);
     }
 
-    return Scaffold(
+    return PopScope(
+      canPop: !canAccess || (_currentPath.isEmpty && !_selectionMode),
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _handleInPageBack(canAccess: canAccess);
+      },
+      child: Scaffold(
       // Ionic 4.19.1: selection toolbar (✕, "n ausgewählt", Alle/Keine)
       appBar: _selectionMode
           ? AppBar(
@@ -1209,7 +1235,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                   button: true,
                   label: MaterialLocalizations.of(context).backButtonTooltip,
                   child: GestureDetector(
-                    onTap: () => context.canPop() ? context.pop() : context.go('/settings'),
+                    onTap: () => _goBackClassic(context, canAccess: canAccess),
                     // PARITY_R7: Ionic `ion-buttons` glass around a clear
                     // icon-only `ion-button` (28px ionicon, 25px radius) is
                     // larger than the 44pt back circle.
@@ -1219,7 +1245,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
               )
             : IconButton(
                 icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
-                onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
+                onPressed: () => _goBackClassic(context, canAccess: canAccess),
               ),
         leadingWidth: ionIsIos(context) ? 72 : null, // PARITY_R7: 12 + 48 + 12
         actions: [
@@ -1428,6 +1454,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                     ],
                   ),
                 ),
+      ),
     );
   }
 

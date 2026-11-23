@@ -27,7 +27,7 @@ bash tool/release/check_well_known.sh --apple-cdn https://attendix.de https://ww
 ## 2. Beim Release
 
 - [ ] Store-Builds mit `shorebird release` bauen (siehe `docs/release/shorebird.md`).
-- [ ] Versionsnummern: Android `versionCode` > 227, iOS-Build > 236.
+- [ ] Versionsnummern: Android `versionCode` > 246, iOS-Build > 255 (Ionic 4.19.25).
 - [ ] iOS: „Phasenweise Veröffentlichung“ einschalten.
 - [ ] Android: gestaffelter Rollout 5 % → 20 % → 50 % → 100 %; vor jeder Stufe Absturzrate und Rückmeldungen prüfen.
 
