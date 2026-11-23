@@ -1,8 +1,0 @@
-{
-  "bump": "patch",
-  "changes": [
-    "🧭 Desktop-Seitenleiste: Bei „Automatische Nachrichten“ bleibt jetzt „Mitteilungen“ aktiv statt auf „Einstellungen“ zurückzuspringen",
-    "🎨 Termin-Detail (Material): Labels „Info-Text“ und „Notizen“ nutzen wieder den sauberen Eingaberahmen mit Abstand",
-    "✅ Klassische E2E-Tests deutlich ausgebaut (inkl. Absagen mit Grund, Termin/Person anlegen, Stimmführer, Beobachter, Bewerber & Mobil-Runs auf Android)"
-  ]
-}
