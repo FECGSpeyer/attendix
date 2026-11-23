@@ -1,7 +1,0 @@
-{
-  "bump": "minor",
-  "changes": [
-    "📅 Kalender-Abo: Hinweis mit neuem api.attendix.de-Link bei noch genutzter alter supabase.co-Adresse",
-    "📨 Termin-Menü: Termine lassen sich als interaktive Karte über @attendix_bot in eine Telegram-Gruppe senden"
-  ]
-}

@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.156.0",
+      "date": "23.11.2026",
+      "changes": [
+        "📅 Kalender-Abo: Hinweis mit neuem api.attendix.de-Link bei noch genutzter alter supabase.co-Adresse",
+        "📨 Termin-Menü: Termine lassen sich als interaktive Karte über @attendix_bot in eine Telegram-Gruppe senden"
+      ]
+    },
+    {
       "version": "0.155.12",
       "date": "23.11.2026",
       "changes": [
