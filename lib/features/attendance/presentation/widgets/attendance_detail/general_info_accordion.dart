@@ -15,6 +15,7 @@ import 'attendance_accordion.dart';
 import '../../../../../shared/widgets/display/ion_badge_text.dart';
 import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
 import '../../../../../shared/widgets/adaptive/ion_switch.dart';
+import '../../../../../shared/widgets/layout/ion_stacked_field.dart';
 
 /// Accordion widget for displaying and editing general attendance info
 /// Uses StatefulWidget to properly manage TextEditingController lifecycle
@@ -546,7 +547,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
   }
 
   /// `ion-item lines="none"` + `ion-label position="stacked"` + borderless
-  /// ion-input / ion-textarea. Material keeps the floating-label field.
+  /// ion-input / ion-textarea. MD uses [IonStackedField] for 1:1 Ionic parity.
   Widget _stackedField(
     BuildContext context, {
     required String label,
@@ -560,27 +561,18 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
     TextInputType? keyboardType,
   }) {
     if (!useIosLook(context)) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.paddingM,
-          vertical: AppDimensions.paddingS,
-        ),
-        child: TextField(
-          decoration: InputDecoration(
-            labelText: label,
-            hintText: hintText,
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-          ),
-          textCapitalization: TextCapitalization.sentences,
-          keyboardType: keyboardType,
-          controller: controller,
-          focusNode: focusNode,
-          minLines: minLines,
-          maxLines: maxLines,
-          textInputAction: textInputAction,
-          onSubmitted: onSubmitted,
-          onTapOutside: (_) => focusNode.unfocus(),
-        ),
+      return IonStackedField(
+        label: label,
+        controller: controller,
+        focusNode: focusNode,
+        hintText: hintText,
+        minLines: minLines,
+        maxLines: maxLines,
+        textInputAction: textInputAction,
+        onSubmitted: onSubmitted,
+        keyboardType: keyboardType,
+        line: false,
+        lineInset: false,
       );
     }
     return Padding(

@@ -9,6 +9,7 @@ import 'package:attendix/features/attendance/presentation/widgets/attendance_det
 import 'package:attendix/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart';
 import 'package:attendix/features/attendance/presentation/widgets/attendance_detail/status_chip.dart';
 import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ion_stacked_field.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonDetailChevron;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -135,7 +136,7 @@ void main() {
     expect(find.text('Notizen'), findsOneWidget);
   });
 
-  widgetTest('Allgemein (MD): stacked fields keep InputDecorationTheme border and spacing',
+  widgetTest('Allgemein (MD): stacked fields use borderless IonStackedField like Ionic',
       (tester) async {
     final attendance = TestFactories.createAttendance(id: 7, date: '2099-01-10');
     await tester.pumpApp(Builder(
@@ -162,16 +163,20 @@ void main() {
     await tester.tap(find.text('Allgemein'));
     await tester.pumpAndSettle();
 
-    final infoDecoration = tester
-        .widget<TextField>(find.widgetWithText(TextField, 'Info-Text'))
-        .decoration!;
-    final notesDecoration = tester
-        .widget<TextField>(find.widgetWithText(TextField, 'Notizen'))
-        .decoration!;
-    expect(infoDecoration.floatingLabelBehavior, FloatingLabelBehavior.always);
-    expect(notesDecoration.floatingLabelBehavior, FloatingLabelBehavior.always);
-    expect(infoDecoration.border, isNot(InputBorder.none));
-    expect(notesDecoration.border, isNot(InputBorder.none));
+    expect(find.byType(IonStackedField), findsNWidgets(2));
+    expect(find.text('Info-Text'), findsOneWidget);
+    expect(find.text('Notizen'), findsOneWidget);
+    final fields = tester.widgetList<TextField>(
+      find.descendant(
+        of: find.byType(IonStackedField),
+        matching: find.byType(TextField),
+      ),
+    );
+    expect(fields, hasLength(2));
+    for (final field in fields) {
+      expect(field.decoration!.filled, isFalse);
+      expect(field.decoration!.border, InputBorder.none);
+    }
     expect(tester.takeException(), isNull);
   });
 

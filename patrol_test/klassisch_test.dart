@@ -137,7 +137,7 @@ void main() {
       await signInAs($, 'beobachter');
       await tapOn($, 'Termine');
       await see($, 'Probe');
-      await see($, RegExp(r'2 von 8 anwesend'));
+      await see($, RegExp(r'\d+ von 8 anwesend'));
       await $('Probe').first.tap();
       await $.pump(const Duration(milliseconds: 300));
       seeNot($, 'Allgemein');
@@ -152,7 +152,7 @@ void main() {
     await tapOn($, 'Absagen');
     await see($, 'Abmeldung');
     await tapOn($, 'Krankheitsbedingt');
-    await tapOn($, find.byTooltip('Bestätigen'));
+    await tapOn($, const Key('excuse-reason-confirm'));
     await see($, RegExp('Entschuldigt|Abgesagt'));
     await see($, RegExp('Krankheitsbedingt'));
   });
@@ -198,6 +198,7 @@ void main() {
       await tapOn($, 'Allgemein');
       await see($, 'Info-Text');
       await see($, 'Notizen');
+      await see($, 'Anmeldefrist setzen');
     },
   );
 

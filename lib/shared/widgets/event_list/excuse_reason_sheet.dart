@@ -118,6 +118,7 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
     ];
     final end = <Widget>[
       IconButton(
+        key: const Key('excuse-reason-confirm'),
         icon: Icon(AppIcons.check),
         tooltip: context.l10n.commonConfirm,
         onPressed: _confirmable ? _confirm : null,
