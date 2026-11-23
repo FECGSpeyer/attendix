@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../planning/presentation/pages/planning_page.dart' show openPlanningEditor;
@@ -40,6 +41,7 @@ import '../../../../core/services/export_service.dart';
 import '../../../../core/services/offline_queue_service.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/demo_guard.dart' show DemoModeException;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
@@ -62,6 +64,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/adaptive/ion_loading.dart' show showIonLoading;
 import '../../../../shared/widgets/display/ion_badge_text.dart';
 import '../widgets/attendance_date_change.dart';
 import '../person_attendance_writes.dart'; // REDESIGN: shared write path
@@ -145,6 +148,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   // LOGIC_ATT: person rows removed on this device (no "deletedByOther")
   final Set<String> _ownDeletedPaIds = {};
   bool _isSendingReminder = false;
+  bool _isSendingTelegramCard = false;
 
   @override
   void initState() {
@@ -1020,7 +1024,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   void _handleMenuAction(String action) {
     const mutating = {
-      'photo', 'add_person', 'start_checklist', 'reset_checklist', 'reminder',
+      'photo',
+      'add_person',
+      'start_checklist',
+      'reset_checklist',
+      'reminder',
+      'telegram_card',
     };
     if (mutating.contains(action) &&
         !canMutateAttendanceDetail(ref.read(effectiveRoleProvider))) {
@@ -1056,6 +1065,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         break;
       case 'reminder':
         _sendAdHocReminder();
+        break;
+      case 'telegram_card':
+        _sendTelegramCard();
         break;
       case 'write_unexcused':
         _writeUnexcused();
@@ -1238,6 +1250,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (hasChurch) item('church', AppIcons.businessOutlined, context.l10n.attendanceChurchOverview),
       item('legend', AppIcons.infoOutline, context.l10n.signoutLegend),
       if (canMutate) item('reminder', AppIcons.notificationsOutlined, context.l10n.attendanceSendReminder),
+      if (canMutate) item('telegram_card', AppIcons.paperPlaneOutline, context.l10n.attendanceTelegramCard),
       // AUTO_MESSAGES (Ionic 4.18 b1977e29): "Unentschuldigte anschreiben (n)"
       // for admins/responsibles once the Termin has started.
       if (_canWriteUnexcused(attendance, type))
@@ -1552,6 +1565,57 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     } finally {
       _isSendingReminder = false;
     }
+  }
+
+  /// Ionic 4.19.24 `sendTelegramCard`: requests a signed `@attendix_bot`
+  /// `startgroup` URL and opens Telegram after confirmation.
+  Future<void> _sendTelegramCard() async {
+    if (_isSendingTelegramCard) return;
+    _isSendingTelegramCard = true;
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    final loading = showIonLoading(context);
+    String? url;
+    try {
+      url = await repo.createTelegramCardLink(widget.attendanceId);
+    } on DemoModeException {
+      return;
+    } catch (_) {
+      url = null;
+    } finally {
+      loading.dismiss();
+      _isSendingTelegramCard = false;
+    }
+    if (!mounted) return;
+    if (url == null) {
+      ToastHelper.showError(context, context.l10n.attendanceTelegramCardFailed);
+      return;
+    }
+    final targetUrl = url;
+    await showAppDialog<void>(
+      context: context,
+      builder: (ctx) => AppAlertDialog(
+        title: Text(ctx.l10n.attendanceTelegramCard),
+        content: Text(ctx.l10n.attendanceTelegramCardHint),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(ctx.l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              try {
+                await launchUrl(
+                  Uri.parse(targetUrl),
+                  mode: LaunchMode.externalApplication,
+                );
+              } catch (_) {}
+            },
+            child: Text(ctx.l10n.attendanceTelegramCardOpen),
+          ),
+        ],
+      ),
+    );
   }
 
   /// LOGIC_ATT: Ionic onAttRealtimeChanges – another user changed the Termin

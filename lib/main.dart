@@ -18,6 +18,7 @@ import 'core/providers/redesign_providers.dart';
 import 'core/router/app_router.dart';
 import 'core/router/legacy_url.dart';
 import 'core/services/app_update_service.dart';
+import 'core/services/ical_migration_service.dart';
 import 'core/services/update_hint.dart';
 import 'core/services/web_safe_area.dart';
 import 'core/services/offline_queue_service.dart';
@@ -163,6 +164,7 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
   // SHOREBIRD: download a new code push patch silently when the app returns
   // from the background (active from the next start, nothing visible).
   late final AppLifecycleListener _shorebirdResumeListener;
+  Timer? _icalMigrationTimer;
 
   @override
   void initState() {
@@ -197,6 +199,13 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       if (mounted) {
         unawaited(AppIconService.setIcon(ref.read(redesignSettingsProvider).appIconName));
       }
+      if (mounted) {
+        try {
+          if (ref.read(supabaseClientProvider).auth.currentSession != null) {
+            _scheduleIcalMigrationCheck();
+          }
+        } catch (_) {}
+      }
       // TEAMS: silent Microsoft SSO inside a Teams tab, once detection is done
       final teams = ref.read(teamsServiceProvider);
       unawaited(teams.init().then((_) {
@@ -211,8 +220,30 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     });
   }
 
+  void _scheduleIcalMigrationCheck() {
+    if (_icalMigrationTimer != null || IcalMigrationService.instance.hasChecked) {
+      return;
+    }
+    _icalMigrationTimer = Timer(const Duration(seconds: 5), () {
+      _icalMigrationTimer = null;
+      if (!mounted) return;
+      try {
+        final client = ref.read(supabaseClientProvider);
+        if (client.auth.currentSession == null) return;
+        unawaited(
+          IcalMigrationService.instance.checkOnce(
+            supabase: client,
+            contextResolver: () =>
+                ref.read(routerProvider).routerDelegate.navigatorKey.currentContext,
+          ),
+        );
+      } catch (_) {}
+    });
+  }
+
   @override
   void dispose() {
+    _icalMigrationTimer?.cancel();
     _shorebirdResumeListener.dispose();
     super.dispose();
   }
@@ -222,6 +253,9 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     // SOL_FIX4: the offline queue follows the signed-in account (recount and
     // replay only that user's writes on login / logout / account switch).
     ref.listen(currentUserProvider, (previous, next) {
+      if (next.valueOrNull != null) {
+        _scheduleIcalMigrationCheck();
+      }
       if (previous?.valueOrNull?.id != next.valueOrNull?.id) {
         // SOL_FIX7: sign-out / account switch removes the offline read
         // caches (attendance detail/list, songs) of the previous account.

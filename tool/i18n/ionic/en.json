@@ -1039,6 +1039,10 @@
     "statusOverview": "Status overview",
     "churchOverview": "Church overview",
     "sendReminder": "Send reminder",
+    "telegramCard": "Send as Telegram card",
+    "telegramCardHint": "Pick the group in Telegram. @attendix_bot posts a card for this event there, where everyone with a linked Telegram can sign in and out.",
+    "telegramCardOpen": "Open Telegram",
+    "telegramCardFailed": "The Telegram card could not be created.",
     "general": "General",
     "date": "Date",
     "infoText": "Info text",
@@ -3471,5 +3475,12 @@
     "groupTeam": "Team",
     "groupAdmin": "Administration",
     "groupAccount": "Account"
+  },
+  "icalMigration": {
+    "header": "Set up your calendar subscription again",
+    "message": "Attendix has moved to its own server. Your calendar subscription still uses the old address and will soon stop receiving events.\n\nPlease remove the old subscription in your calendar app and subscribe to this link instead:\n\n{link}",
+    "done": "Done",
+    "messageMultiple": "Attendix has moved to its own server. Your calendar subscriptions still use the old address and will soon stop receiving events.\n\nPlease remove the old subscriptions in your calendar app and subscribe to these links instead:\n\n{links}",
+    "copyLinkN": "Copy link {n}"
   }
 }

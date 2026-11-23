@@ -1141,6 +1141,34 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Ionic 4.19.24 `sendTelegramCard`: signs a Telegram `startgroup` link for
+  /// `@attendix_bot` via the `attendix-bot` Edge Function.
+  Future<String?> createTelegramCardLink(int attendanceId) async {
+    ensureNotDemo('createTelegramCardLink'); // DEMO_GUARD
+    try {
+      await _assertAttendanceInTenant(attendanceId, 'createTelegramCardLink');
+      final response = await supabase.functions.invoke(
+        'attendix-bot',
+        body: {
+          'action': 'card_link',
+          'attendanceId': attendanceId,
+        },
+      );
+      final data = response.data;
+      final url = data is Map ? data['url']?.toString() : null;
+      if (url == null || url.isEmpty) return null;
+      final uri = Uri.tryParse(url);
+      if (uri == null || (uri.scheme != 'https' && uri.scheme != 'http')) {
+        return null;
+      }
+      return url;
+    } catch (e, stack) {
+      if (e is DemoModeException) rethrow;
+      handleError(e, stack, 'createTelegramCardLink');
+      rethrow;
+    }
+  }
+
   /// Storage path of the description attachment (Ionic onAttachmentSelect).
   static String attachmentPath(int attendanceId, String fileName) {
     final safeName = fileName.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '_');

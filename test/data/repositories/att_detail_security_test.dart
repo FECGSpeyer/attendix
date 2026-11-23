@@ -29,6 +29,13 @@ void main() {
       expect(body, contains("functions.invoke('send-ad-hoc-reminder'"));
     });
 
+    test('createTelegramCardLink validates demo mode, Termin tenant and invokes attendix-bot', () {
+      final body = methodBody('createTelegramCardLink');
+      expect(body, contains("ensureNotDemo('createTelegramCardLink')"));
+      expect(body, contains("_assertAttendanceInTenant(attendanceId"));
+      expect(body, contains("functions.invoke(\n        'attendix-bot'"));
+    });
+
     test('uploadAttachment validates the Termin and filters the update by tenantId', () {
       final body = methodBody('uploadAttachment');
       expect(body, contains('_assertAttendanceInTenant(attendanceId'));

@@ -2822,6 +2822,22 @@
   "@attendanceTasksFromEvent": {
     "description": "attendance.tasksFromEvent"
   },
+  "attendanceTelegramCard": "Als Telegram-Karte senden",
+  "@attendanceTelegramCard": {
+    "description": "attendance.telegramCard"
+  },
+  "attendanceTelegramCardFailed": "Die Telegram-Karte konnte nicht erstellt werden.",
+  "@attendanceTelegramCardFailed": {
+    "description": "attendance.telegramCardFailed"
+  },
+  "attendanceTelegramCardHint": "Wähle in Telegram die Gruppe aus. @attendix_bot postet dort eine Karte zu diesem Termin, über die sich alle mit verknüpftem Telegram an- und abmelden können.",
+  "@attendanceTelegramCardHint": {
+    "description": "attendance.telegramCardHint"
+  },
+  "attendanceTelegramCardOpen": "Telegram öffnen",
+  "@attendanceTelegramCardOpen": {
+    "description": "attendance.telegramCardOpen"
+  },
   "attendanceTelegramImage": "Per Telegram senden (Bild)",
   "@attendanceTelegramImage": {
     "description": "attendance.telegramImage"
@@ -7867,6 +7883,35 @@
   "homeDashboardYesterday": "Gestern",
   "@homeDashboardYesterday": {
     "description": "homeDashboard.yesterday"
+  },
+  "icalMigrationCopyLinkN": "Link {n} kopieren",
+  "@icalMigrationCopyLinkN": {
+    "description": "icalMigration.copyLinkN",
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "icalMigrationDone": "Erledigt",
+  "@icalMigrationDone": {
+    "description": "icalMigration.done"
+  },
+  "icalMigrationHeader": "Kalender-Abo neu einrichten",
+  "@icalMigrationHeader": {
+    "description": "icalMigration.header"
+  },
+  "icalMigrationMessage": "Attendix ist auf einen eigenen Server umgezogen. Dein Kalender-Abo nutzt noch die alte Adresse und bekommt bald keine Termine mehr.\n\nBitte lösche das alte Abo in deiner Kalender-App und abonniere diesen Link neu:\n\n{link}",
+  "@icalMigrationMessage": {
+    "description": "icalMigration.message",
+    "placeholders": {
+      "link": {}
+    }
+  },
+  "icalMigrationMessageMultiple": "Attendix ist auf einen eigenen Server umgezogen. Deine Kalender-Abos nutzen noch die alte Adresse und bekommt bald keine Termine mehr.\n\nBitte lösche die alten Abos in deiner Kalender-App und abonniere diese Links neu:\n\n{links}",
+  "@icalMigrationMessageMultiple": {
+    "description": "icalMigration.messageMultiple",
+    "placeholders": {
+      "links": {}
+    }
   },
   "imageViewerHint": "Doppeltippen oder mit zwei Fingern zoomen",
   "@imageViewerHint": {

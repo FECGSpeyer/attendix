@@ -3678,6 +3678,30 @@ abstract class AppLocalizations {
   /// **'Aufgaben aus diesem Termin'**
   String get attendanceTasksFromEvent;
 
+  /// attendance.telegramCard
+  ///
+  /// In de, this message translates to:
+  /// **'Als Telegram-Karte senden'**
+  String get attendanceTelegramCard;
+
+  /// attendance.telegramCardFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Telegram-Karte konnte nicht erstellt werden.'**
+  String get attendanceTelegramCardFailed;
+
+  /// attendance.telegramCardHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle in Telegram die Gruppe aus. @attendix_bot postet dort eine Karte zu diesem Termin, über die sich alle mit verknüpftem Telegram an- und abmelden können.'**
+  String get attendanceTelegramCardHint;
+
+  /// attendance.telegramCardOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Telegram öffnen'**
+  String get attendanceTelegramCardOpen;
+
   /// attendance.telegramImage
   ///
   /// In de, this message translates to:
@@ -10220,6 +10244,36 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Gestern'**
   String get homeDashboardYesterday;
+
+  /// icalMigration.copyLinkN
+  ///
+  /// In de, this message translates to:
+  /// **'Link {n} kopieren'**
+  String icalMigrationCopyLinkN(Object n);
+
+  /// icalMigration.done
+  ///
+  /// In de, this message translates to:
+  /// **'Erledigt'**
+  String get icalMigrationDone;
+
+  /// icalMigration.header
+  ///
+  /// In de, this message translates to:
+  /// **'Kalender-Abo neu einrichten'**
+  String get icalMigrationHeader;
+
+  /// icalMigration.message
+  ///
+  /// In de, this message translates to:
+  /// **'Attendix ist auf einen eigenen Server umgezogen. Dein Kalender-Abo nutzt noch die alte Adresse und bekommt bald keine Termine mehr.\n\nBitte lösche das alte Abo in deiner Kalender-App und abonniere diesen Link neu:\n\n{link}'**
+  String icalMigrationMessage(Object link);
+
+  /// icalMigration.messageMultiple
+  ///
+  /// In de, this message translates to:
+  /// **'Attendix ist auf einen eigenen Server umgezogen. Deine Kalender-Abos nutzen noch die alte Adresse und bekommt bald keine Termine mehr.\n\nBitte lösche die alten Abos in deiner Kalender-App und abonniere diese Links neu:\n\n{links}'**
+  String icalMigrationMessageMultiple(Object links);
 
   /// imageViewer.hint
   ///

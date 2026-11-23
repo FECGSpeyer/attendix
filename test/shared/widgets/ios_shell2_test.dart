@@ -180,8 +180,8 @@ void main() {
     expect(inShell, 16 + 34);
   }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-  // SIDE_NAV (Ionic 4.19.0): from 768px the side panel replaces the tab bar,
-  // so the widest tab bar is 767px.
+  // SIDE_NAV (Ionic 4.19.14): in landscape from 768px the side panel replaces
+  // the tab bar; portrait keeps the tab bar even on tablets.
   testWidgets('Material: md tab bar clusters 168px tabs, no tooltips',
       (tester) async {
     tester.view.physicalSize = const Size(760, 900);
@@ -262,16 +262,28 @@ void main() {
     handle.dispose();
   });
 
-  testWidgets('SIDE_NAV: tablet portrait → overlay panel, no tab bar',
+  testWidgets('SIDE_NAV (Ionic 4.19.14): tablet portrait keeps tab bar, no side panel',
       (tester) async {
     tester.view.physicalSize = const Size(820, 1180);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(_app());
     await tester.pumpAndSettle();
-    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(NavigationBar), findsOneWidget);
     expect(find.byType(SideNav), findsNothing);
     expect(_pageSize!.width, 820);
+  });
+
+  testWidgets('SIDE_NAV (Ionic 4.19.14): tablet landscape below 992px → overlay panel, no tab bar',
+      (tester) async {
+    tester.view.physicalSize = const Size(900, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_app());
+    await tester.pumpAndSettle();
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(SideNav), findsNothing);
+    expect(_pageSize!.width, 900);
   });
 
   group('source', () {

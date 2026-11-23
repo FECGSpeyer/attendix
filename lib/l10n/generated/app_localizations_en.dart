@@ -2277,6 +2277,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendanceTasksFromEvent => 'Tasks from this event';
 
   @override
+  String get attendanceTelegramCard => 'Send as Telegram card';
+
+  @override
+  String get attendanceTelegramCardFailed =>
+      'The Telegram card could not be created.';
+
+  @override
+  String get attendanceTelegramCardHint =>
+      'Pick the group in Telegram. @attendix_bot posts a card for this event there, where everyone with a linked Telegram can sign in and out.';
+
+  @override
+  String get attendanceTelegramCardOpen => 'Open Telegram';
+
+  @override
   String get attendanceTelegramImage => 'Send via Telegram (image)';
 
   @override
@@ -6329,6 +6343,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeDashboardYesterday => 'Yesterday';
+
+  @override
+  String icalMigrationCopyLinkN(Object n) {
+    return 'Copy link $n';
+  }
+
+  @override
+  String get icalMigrationDone => 'Done';
+
+  @override
+  String get icalMigrationHeader => 'Set up your calendar subscription again';
+
+  @override
+  String icalMigrationMessage(Object link) {
+    return 'Attendix has moved to its own server. Your calendar subscription still uses the old address and will soon stop receiving events.\n\nPlease remove the old subscription in your calendar app and subscribe to this link instead:\n\n$link';
+  }
+
+  @override
+  String icalMigrationMessageMultiple(Object links) {
+    return 'Attendix has moved to its own server. Your calendar subscriptions still use the old address and will soon stop receiving events.\n\nPlease remove the old subscriptions in your calendar app and subscribe to these links instead:\n\n$links';
+  }
 
   @override
   String get imageViewerHint => 'Double-tap or pinch to zoom';

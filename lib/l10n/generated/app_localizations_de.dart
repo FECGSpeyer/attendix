@@ -2293,6 +2293,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceTasksFromEvent => 'Aufgaben aus diesem Termin';
 
   @override
+  String get attendanceTelegramCard => 'Als Telegram-Karte senden';
+
+  @override
+  String get attendanceTelegramCardFailed =>
+      'Die Telegram-Karte konnte nicht erstellt werden.';
+
+  @override
+  String get attendanceTelegramCardHint =>
+      'Wähle in Telegram die Gruppe aus. @attendix_bot postet dort eine Karte zu diesem Termin, über die sich alle mit verknüpftem Telegram an- und abmelden können.';
+
+  @override
+  String get attendanceTelegramCardOpen => 'Telegram öffnen';
+
+  @override
   String get attendanceTelegramImage => 'Per Telegram senden (Bild)';
 
   @override
@@ -6408,6 +6422,27 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get homeDashboardYesterday => 'Gestern';
+
+  @override
+  String icalMigrationCopyLinkN(Object n) {
+    return 'Link $n kopieren';
+  }
+
+  @override
+  String get icalMigrationDone => 'Erledigt';
+
+  @override
+  String get icalMigrationHeader => 'Kalender-Abo neu einrichten';
+
+  @override
+  String icalMigrationMessage(Object link) {
+    return 'Attendix ist auf einen eigenen Server umgezogen. Dein Kalender-Abo nutzt noch die alte Adresse und bekommt bald keine Termine mehr.\n\nBitte lösche das alte Abo in deiner Kalender-App und abonniere diesen Link neu:\n\n$link';
+  }
+
+  @override
+  String icalMigrationMessageMultiple(Object links) {
+    return 'Attendix ist auf einen eigenen Server umgezogen. Deine Kalender-Abos nutzen noch die alte Adresse und bekommt bald keine Termine mehr.\n\nBitte lösche die alten Abos in deiner Kalender-App und abonniere diese Links neu:\n\n$links';
+  }
 
   @override
   String get imageViewerHint => 'Doppeltippen oder mit zwei Fingern zoomen';
