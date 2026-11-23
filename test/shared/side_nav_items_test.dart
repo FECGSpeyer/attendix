@@ -52,6 +52,9 @@ void main() {
         const NavContext(role: Role.admin, canAccessFiles: true));
     expect(activeNavItemId(groups, '/settings/files'), 'files');
     expect(activeNavItemId(groups, '/settings/general'), 'settings');
+    expect(activeNavItemId(groups, '/settings/auto-messages'), 'messages');
+    expect(activeNavItemId(groups, '/settings/auto-messages/42?tab=history'),
+        'messages');
     expect(activeNavItemId(groups, '/attendance/12?x=1'), 'attendance');
   });
 }

@@ -39,6 +39,7 @@ class NavItem {
     required this.icon,
     required this.label,
     this.route,
+    this.extraRoutes = const [],
     this.action,
     this.badge,
   });
@@ -49,6 +50,9 @@ class NavItem {
 
   /// Absolute target route; either [route] or [action].
   final String? route;
+
+  /// Additional routes that highlight this item in the side panel.
+  final List<String> extraRoutes;
   final NavAction? action;
   final NavBadge? badge;
 }
@@ -173,7 +177,8 @@ List<NavGroup> buildNavGroups(NavContext ctx) {
         id: 'messages',
         icon: AppIcons.campaignOutlined,
         label: (l) => l.settingsAnnouncements,
-        route: '/settings/messages'));
+        route: '/settings/messages',
+        extraRoutes: const ['/settings/auto-messages']));
   }
   if (ctx.canAccessFiles) {
     team.add(NavItem(
@@ -228,16 +233,23 @@ List<NavGroup> buildNavGroups(NavContext ctx) {
 
 /// Id of the active entry: the longest matching route wins, so "Einstellungen"
 /// stays active for all sub pages without an own entry while e.g.
-/// `/settings/files` marks the file storage.
+/// `/settings/files` marks the file storage and `/settings/auto-messages`
+/// keeps "Mitteilungen" active.
 String? activeNavItemId(List<NavGroup> groups, String location) {
   final path = location.split('?').first.split('#').first;
   NavItem? best;
+  var bestLength = -1;
   for (final item in groups.expand((g) => g.items)) {
-    final route = item.route;
-    if (route == null) continue;
-    final matches = path == route || path.startsWith('$route/');
-    if (matches && (best == null || route.length > best.route!.length)) {
-      best = item;
+    final candidates = [
+      if (item.route != null) item.route!,
+      ...item.extraRoutes,
+    ];
+    for (final candidate in candidates) {
+      final matches = path == candidate || path.startsWith('$candidate/');
+      if (matches && candidate.length > bestLength) {
+        best = item;
+        bestLength = candidate.length;
+      }
     }
   }
   return best?.id;

@@ -135,6 +135,46 @@ void main() {
     expect(find.text('Notizen'), findsOneWidget);
   });
 
+  widgetTest('Allgemein (MD): stacked fields keep InputDecorationTheme border and spacing',
+      (tester) async {
+    final attendance = TestFactories.createAttendance(id: 7, date: '2099-01-10');
+    await tester.pumpApp(Builder(
+      builder: (ctx) => Theme(
+        data: Theme.of(ctx).copyWith(platform: TargetPlatform.android),
+        child: Scaffold(
+          body: SingleChildScrollView(
+            child: GeneralInfoAccordion(
+              attendance: attendance,
+              attendanceType: null,
+              onTypeInfoChanged: (_) {},
+              onNotesChanged: (_) {},
+              onStartTimeSelect: () {},
+              onEndTimeSelect: () {},
+              onDeadlineToggle: (_) {},
+              onDeadlineSelect: () {},
+              onExportExcel: () {},
+              onEditDescription: () {},
+            ),
+          ),
+        ),
+      ),
+    ));
+    await tester.tap(find.text('Allgemein'));
+    await tester.pumpAndSettle();
+
+    final infoDecoration = tester
+        .widget<TextField>(find.widgetWithText(TextField, 'Info-Text'))
+        .decoration!;
+    final notesDecoration = tester
+        .widget<TextField>(find.widgetWithText(TextField, 'Notizen'))
+        .decoration!;
+    expect(infoDecoration.floatingLabelBehavior, FloatingLabelBehavior.always);
+    expect(notesDecoration.floatingLabelBehavior, FloatingLabelBehavior.always);
+    expect(infoDecoration.border, isNot(InputBorder.none));
+    expect(notesDecoration.border, isNot(InputBorder.none));
+    expect(tester.takeException(), isNull);
+  });
+
   widgetTest('Allgemein: accordion state is not restored from page storage', (tester) async {
     final attendance = TestFactories.createAttendance(id: 7, date: '2099-01-10');
     Widget build(Key key) => ios(Scaffold(

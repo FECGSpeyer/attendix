@@ -298,6 +298,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
           // Info-Text: Ionic stacked label + plain ion-textarea + helper text
           if (ionForm)
             _IosStackedField(
+              fieldKey: const Key('classic-attendance-create-info'),
               label: context.l10n.attListInfoText,
               helperText: context.l10n.attListInfoTextHelper,
               textCapitalization: TextCapitalization.sentences,
@@ -308,6 +309,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
+              key: const Key('classic-attendance-create-info'),
               textCapitalization: TextCapitalization.sentences,
               maxLines: null,
               decoration: InputDecoration(
@@ -443,6 +445,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               shape: const StadiumBorder(),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
+                key: const Key('classic-attendance-create-submit'),
                 onTap: canSubmit ? _createAttendances : null,
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(minHeight: 53),
@@ -479,6 +482,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
             color: canSubmit ? AppColors.primary : AppColors.primary.withValues(alpha: 0.4),
             borderRadius: BorderRadius.circular(10),
             child: InkWell(
+              key: const Key('classic-attendance-create-submit'),
               borderRadius: BorderRadius.circular(10),
               onTap: canSubmit ? _createAttendances : null,
               child: Padding(
@@ -1196,6 +1200,7 @@ class _IosStackedField extends StatelessWidget {
   const _IosStackedField({
     required this.label,
     required this.onChanged,
+    this.fieldKey,
     this.controller,
     this.helperText,
     this.hintText,
@@ -1204,6 +1209,7 @@ class _IosStackedField extends StatelessWidget {
     this.minLines,
   });
 
+  final Key? fieldKey;
   final String label;
   final ValueChanged<String> onChanged;
   final TextEditingController? controller;
@@ -1229,6 +1235,7 @@ class _IosStackedField extends StatelessWidget {
           Text(label, style: TextStyle(fontSize: ios ? 16 : 12, color: onSurface)),
           const SizedBox(height: 6),
           TextField(
+            key: fieldKey,
             controller: controller,
             keyboardType: multiline ? TextInputType.multiline : keyboardType,
             textCapitalization: textCapitalization,

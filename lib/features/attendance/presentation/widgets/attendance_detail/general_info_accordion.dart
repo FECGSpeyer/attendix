@@ -561,13 +561,15 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
   }) {
     if (!useIosLook(context)) {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: 4),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.paddingM,
+          vertical: AppDimensions.paddingS,
+        ),
         child: TextField(
           decoration: InputDecoration(
             labelText: label,
             hintText: hintText,
             floatingLabelBehavior: FloatingLabelBehavior.always,
-            border: InputBorder.none,
           ),
           textCapitalization: TextCapitalization.sentences,
           keyboardType: keyboardType,

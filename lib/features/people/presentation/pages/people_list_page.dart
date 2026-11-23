@@ -765,7 +765,11 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           : isAdmin
               // IOS_SHELL: iOS → ion-fab in the tab bar row
               ? TabBarFab(
-                  child: IonFabButton(onPressed: () => showPersonCreateModal(context)))
+                  child: IonFabButton(
+                    key: const Key('classic-people-add'),
+                    onPressed: () => showPersonCreateModal(context),
+                  ),
+                )
               : null,
     );
   }

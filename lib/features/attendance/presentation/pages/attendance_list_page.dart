@@ -372,6 +372,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   /// UX_ATT: round "+" FAB bottom right (Ionic ion-fab). On iOS the Ionic
   /// iOS 26 theme draws it as a 61 px white glass button with a dark icon.
   Widget _buildFab(BuildContext context) => IonFabButton(
+        key: const Key('classic-events-add'),
         onPressed: _openCreate,
         tooltip: context.l10n.attListAddEvent,
         icon: AppIcons.add,

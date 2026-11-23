@@ -204,6 +204,15 @@ jobs:
           flutter pub get
           dart pub global activate patrol_cli "$PATROL_CLI_VERSION"
 
+      - name: Remove broken preinstalled NDK directories
+        run: |
+          for d in "${ANDROID_SDK_ROOT:-}"/ndk/* "${ANDROID_HOME:-}"/ndk/*; do
+            if [ -d "$d" ] && [ ! -f "$d/source.properties" ]; then
+              echo "Removing broken NDK directory without source.properties: $d"
+              rm -rf "$d"
+            fi
+          done
+
       - name: Build app and flows
         run: patrol build android
 
