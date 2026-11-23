@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.156.3",
+      "date": "23.11.2026",
+      "changes": [
+        "Klassik (Android/MD): Info-Text und Notizen im Allgemein-Bereich entsprechen nun 1:1 dem rahmenlosen Ionic-Stacked-Feld"
+      ]
+    },
+    {
       "version": "0.156.2",
       "date": "23.11.2026",
       "changes": [

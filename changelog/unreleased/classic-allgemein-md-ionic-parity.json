@@ -1,6 +1,0 @@
-{
-  "bump": "patch",
-  "changes": [
-    "Klassik (Android/MD): Info-Text und Notizen im Allgemein-Bereich entsprechen nun 1:1 dem rahmenlosen Ionic-Stacked-Feld"
-  ]
-}
