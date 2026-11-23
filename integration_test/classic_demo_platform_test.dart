@@ -4,6 +4,7 @@ import 'package:attendix/core/providers/locale_provider.dart'
 import 'package:attendix/core/providers/redesign_providers.dart'
     show redesignEnabledStorageKey;
 import 'package:attendix/core/theme/app_icons.dart';
+import 'package:attendix/core/utils/toast_helper.dart' show IonMdToast;
 import 'package:attendix/features/attendance/presentation/pages/attendance_detail_page.dart';
 import 'package:attendix/features/attendance/presentation/pages/attendance_list_page.dart';
 import 'package:attendix/features/auth/presentation/pages/login_page.dart';
@@ -136,8 +137,11 @@ Future<void> _scrollAndTapText(WidgetTester tester, String text) async {
     }
   }
   await _pumpUntil(tester, target, reason: 'Text "$text"');
-  await tester.ensureVisible(target.first);
-  await tester.pump(const Duration(milliseconds: 150));
+  await Scrollable.ensureVisible(
+    tester.element(target.first),
+    alignment: 0.5,
+  );
+  await tester.pump(const Duration(milliseconds: 200));
   await tester.tap(target.first);
   await tester.pump(const Duration(milliseconds: 400));
 }
@@ -152,16 +156,22 @@ Future<void> _goBack(WidgetTester tester) async {
       matching: find.byIcon(AppIcons.close),
     ),
     find.byIcon(AppIcons.arrowBackIosNew),
+    find.byIcon(AppIcons.chevronLeft),
     find.byIcon(AppIcons.arrowBack),
+    find.bySemanticsLabel(RegExp(r'^zurück$', caseSensitive: false)),
     find.byType(BackButtonIcon),
     find.byType(BackButton),
   ];
-  for (final finder in candidates) {
-    if (finder.hitTestable().evaluate().isNotEmpty) {
-      await tester.tap(finder.hitTestable().first);
-      await tester.pump(const Duration(milliseconds: 400));
-      return;
+  for (var attempt = 0; attempt < 25; attempt++) {
+    for (final finder in candidates) {
+      final hits = finder.hitTestable();
+      if (hits.evaluate().isNotEmpty) {
+        await tester.tap(hits.first);
+        await tester.pump(const Duration(milliseconds: 400));
+        return;
+      }
     }
+    await tester.pump(const Duration(milliseconds: 200));
   }
   await tester.pageBack();
   await tester.pump(const Duration(milliseconds: 400));
@@ -319,7 +329,17 @@ void main() {
       final telegramItem = find.text('Als Telegram-Karte senden');
       await _pumpUntil(tester, telegramItem);
       await tester.tap(telegramItem.first);
-      await tester.pump(const Duration(milliseconds: 600));
+
+      // Wait for DemoGuard's top toast (3s) to appear and dismiss so it does not
+      // obscure the top-left AppBar back button during _goBack.
+      var sawToast = false;
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 200));
+        final toastPresent = find.byType(IonMdToast).evaluate().isNotEmpty;
+        if (toastPresent) sawToast = true;
+        if ((sawToast && !toastPresent) || (!sawToast && i >= 18)) break;
+      }
+      await tester.pump(const Duration(milliseconds: 200));
 
       // Demo write protection blocks creating a bot link without crashing.
       expect(
@@ -330,6 +350,14 @@ void main() {
 
       await _goBack(tester);
       await _pumpUntil(tester, find.byType(AttendanceListPage));
+
+      const captureHold = int.fromEnvironment('CAPTURE_HOLD_SECONDS');
+      if (captureHold > 0) {
+        debugPrint('CLASSIC_PLATFORM_CAPTURE_READY');
+        for (var i = 0; i < captureHold * 4; i++) {
+          await tester.pump(const Duration(milliseconds: 250));
+        }
+      }
 
       // 3. Settings sub-pages (top to bottom): Gruppen, Mitteilungen ->
       //    Automatische Nachrichten (including SideNav active state),
