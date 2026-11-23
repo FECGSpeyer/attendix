@@ -37,7 +37,7 @@ Future<void> _pressIonFab(PatrolIntegrationTester $, Key key) async {
 }
 
 void main() {
-  patrolTest('Klassisch: Für den nächsten Termin zusagen', tags: ['mobil'], (
+  patrolTest('Klassisch - Für den nächsten Termin zusagen', tags: ['mobil'], (
     $,
   ) async {
     await startApp($, beta: false);
@@ -47,7 +47,7 @@ void main() {
     await see($, 'Zugesagt');
   });
 
-  patrolTest('Klassisch: Termine der Gruppe ansehen', tags: ['mobil'], (
+  patrolTest('Klassisch - Termine der Gruppe ansehen', tags: ['mobil'], (
     $,
   ) async {
     await startApp($, beta: false);
@@ -59,7 +59,7 @@ void main() {
   });
 
   patrolTest(
-    'Klassisch: Personenliste filtern und Detail öffnen',
+    'Klassisch - Personenliste filtern und Detail öffnen',
     tags: ['pr', 'mobil'],
     ($) async {
       await startApp($, beta: false);
@@ -80,7 +80,7 @@ void main() {
   );
 
   patrolTest(
-    'Klassisch: Termin-Detail und Optionsmenü inkl. Telegram-Karte',
+    'Klassisch - Termin-Detail und Optionsmenü inkl. Telegram-Karte',
     tags: ['mobil'],
     ($) async {
       await startApp($, beta: false);
@@ -96,7 +96,7 @@ void main() {
     },
   );
 
-  patrolTest('Klassisch: Werke suchen', ($) async {
+  patrolTest('Klassisch - Werke suchen', ($) async {
     await startApp($, beta: false);
     await signInAs($, 'mitglied');
     await tapOn($, 'Werke');
@@ -106,7 +106,7 @@ void main() {
     await see($, RegExp('Kleine Nachtmusik'));
   });
 
-  patrolTest('Klassisch: Gruppen und Dateiablage öffnen', ($) async {
+  patrolTest('Klassisch - Gruppen und Dateiablage öffnen', ($) async {
     await startApp($, beta: false);
     await signInAs($, 'admin');
     await tapOn($, 'Einstellungen');
@@ -119,7 +119,7 @@ void main() {
   });
 
   patrolTest(
-    'Klassisch: Elternportal zeigt Kind und Termine',
+    'Klassisch - Elternportal zeigt Kind und Termine',
     tags: ['mobil'],
     ($) async {
       await startApp($, beta: false);
@@ -130,7 +130,7 @@ void main() {
   );
 
   patrolTest(
-    'Klassisch: Beobachter sieht Termine schreibgeschützt',
+    'Klassisch - Beobachter sieht Termine schreibgeschützt',
     tags: ['mobil'],
     ($) async {
       await startApp($, beta: false);
@@ -146,7 +146,7 @@ void main() {
   );
 
   // Ionic core-parity & write flows (isolated in Kammerchor or read-only).
-  patrolTest('Klassisch: Termin mit Grund absagen', tags: ['mobil'], ($) async {
+  patrolTest('Klassisch - Termin mit Grund absagen', tags: ['mobil'], ($) async {
     await startApp($, beta: false);
     await signInAs($, 'chor-mitglied');
     await tapOn($, 'Absagen');
@@ -157,7 +157,7 @@ void main() {
     await see($, RegExp('Krankheitsbedingt'));
   });
 
-  patrolTest('Klassisch: Stimmführer sieht Meine Stimme', ($) async {
+  patrolTest('Klassisch - Stimmführer sieht Meine Stimme', ($) async {
     await startApp($, beta: false);
     await signInAs($, 'stimmfuehrer');
     await tapOn($, 'Meine Stimme');
@@ -166,7 +166,7 @@ void main() {
   });
 
   patrolTest(
-    'Klassisch: Beobachter sieht Personen schreibgeschützt',
+    'Klassisch - Beobachter sieht Personen schreibgeschützt',
     tags: ['mobil'],
     ($) async {
       await startApp($, beta: false);
@@ -180,7 +180,7 @@ void main() {
   );
 
   patrolTest(
-    'Klassisch: Neuen Termin anlegen und Anwesenheit öffnen',
+    'Klassisch - Neuen Termin anlegen und Anwesenheit öffnen',
     tags: ['mobil'],
     ($) async {
       await startApp($, beta: false);
@@ -202,7 +202,7 @@ void main() {
     },
   );
 
-  patrolTest('Klassisch: Neue Person anlegen', ($) async {
+  patrolTest('Klassisch - Neue Person anlegen', ($) async {
     await startApp($, beta: false);
     await signInAs($, 'chor-admin');
     await see($, RegExp('Personen|Dashboard'));
@@ -218,7 +218,7 @@ void main() {
   });
 
   patrolTest(
-    'Klassisch: Mitteilungen, Automatische Nachrichten und Ausloggen',
+    'Klassisch - Mitteilungen, Automatische Nachrichten und Ausloggen',
     ($) async {
       await startApp($, beta: false);
       await signInAs($, 'admin');
@@ -237,7 +237,7 @@ void main() {
     },
   );
 
-  patrolTest('Klassisch: Bewerber sieht Warteseite ohne Haupt-Tabs', ($) async {
+  patrolTest('Klassisch - Bewerber sieht Warteseite ohne Haupt-Tabs', ($) async {
     await startApp($, beta: false);
     await signInAs($, 'bewerber');
     await see($, RegExp('Deine Registrierung wurde erfolgreich übermittelt'));
