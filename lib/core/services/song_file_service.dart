@@ -795,7 +795,7 @@ class SongFileService {
   Future<Uint8List?> downloadFileBytes(String url) async {
     try {
       // Extract storage path from URL
-      // URL format: https://xxx.supabase.co/storage/v1/object/public/songs/...
+      // URL format: https://api.attendix.de/storage/v1/object/public/songs/... (or legacy *.supabase.co)
       final uri = Uri.parse(url);
       final pathSegments = uri.pathSegments;
 

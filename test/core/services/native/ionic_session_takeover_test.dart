@@ -29,4 +29,37 @@ void main() {
       isNull,
     );
   });
+
+  group('custom domain https://api.attendix.de', () {
+    const customUrl = 'https://api.attendix.de';
+
+    test('prefers sb-api-auth-token when both custom and legacy tokens exist', () {
+      final raw = jsonEncode({
+        'sb-ultyjzgwejpehfjuyenr-auth-token': jsonEncode({
+          'refresh_token': 'legacy-token',
+        }),
+        'sb-api-auth-token': jsonEncode({
+          'access_token': 'a',
+          'refresh_token': 'custom-token',
+        }),
+        'currentTenantId': '7',
+      });
+      final session = parseIonicStorage(raw, supabaseUrl: customUrl);
+      expect(session?.refreshToken, 'custom-token');
+      expect(session?.tenantId, 7);
+    });
+
+    test('falls back to legacy sb-ultyjzgwejpehfjuyenr-auth-token on upgrade', () {
+      final raw = jsonEncode({
+        'sb-ultyjzgwejpehfjuyenr-auth-token': jsonEncode({
+          'access_token': 'a',
+          'refresh_token': 'legacy-token',
+        }),
+        'currentTenantId': '12',
+      });
+      final session = parseIonicStorage(raw, supabaseUrl: customUrl);
+      expect(session?.refreshToken, 'legacy-token');
+      expect(session?.tenantId, 12);
+    });
+  });
 }

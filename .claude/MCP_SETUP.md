@@ -14,7 +14,7 @@ claude mcp remove supabase
 
 # Neu mit Service Key hinzufügen
 claude mcp add \
-  -e SUPABASE_URL=https://ultyjzgwejpehfjuyenr.supabase.co \
+  -e SUPABASE_URL=https://api.attendix.de \
   -e SUPABASE_SERVICE_ROLE_KEY=<DEIN_SERVICE_KEY> \
   --transport stdio supabase -- npx -y @supabase/mcp-server-postgrest
 ```

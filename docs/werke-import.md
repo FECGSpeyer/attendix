@@ -36,7 +36,7 @@ supabase functions deploy werke-import --project-ref ultyjzgwejpehfjuyenr
 Kurztest ohne Anmeldung (muss 401 liefern):
 
 ```bash
-curl -i -X POST https://ultyjzgwejpehfjuyenr.supabase.co/functions/v1/werke-import \
+curl -i -X POST https://api.attendix.de/functions/v1/werke-import \
   -H "Content-Type: application/json" -d '{}'
 ```
 
