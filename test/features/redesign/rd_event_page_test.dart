@@ -346,6 +346,11 @@ void main() {
         await _settle(tester);
         verify(() => h.repo.createTelegramCardLink(21)).called(1);
         expect(find.textContaining('@attendix_bot'), findsOneWidget);
+        final dialogSurface = find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.byWidgetPredicate((w) => w is Material && w.type == MaterialType.card),
+        );
+        expect(tester.getSize(dialogSurface).width, lessThanOrEqualTo(560));
         expect(launches, isEmpty);
         await tester.tap(find.text(openLabel));
         await _settle(tester);

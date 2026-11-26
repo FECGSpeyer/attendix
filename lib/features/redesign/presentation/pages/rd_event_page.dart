@@ -658,33 +658,38 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       final target = Uri.parse(url);
       await showAppDialog<void>(
         context: context,
-        builder: (ctx) => AppAlertDialog(
-          title: Text(ctx.l10n.attendanceTelegramCard),
-          content: Text(ctx.l10n.attendanceTelegramCardHint),
-          scrollable: true,
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text(ctx.l10n.commonCancel),
+        builder: (ctx) => Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: AppAlertDialog(
+              title: Text(ctx.l10n.attendanceTelegramCard),
+              content: Text(ctx.l10n.attendanceTelegramCardHint),
+              scrollable: true,
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: Text(ctx.l10n.commonCancel),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(ctx).pop();
+                    if (!isCurrent()) return;
+                    try {
+                      final opened = await launchUrl(target, mode: LaunchMode.externalApplication);
+                      if (!opened && mounted && isCurrent()) {
+                        ToastHelper.showError(context, context.l10n.attendanceTelegramCardFailed);
+                      }
+                    } catch (_) {
+                      if (mounted && isCurrent()) {
+                        ToastHelper.showError(context, context.l10n.attendanceTelegramCardFailed);
+                      }
+                    }
+                  },
+                  child: Text(ctx.l10n.attendanceTelegramCardOpen),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(ctx).pop();
-                if (!isCurrent()) return;
-                try {
-                  final opened = await launchUrl(target, mode: LaunchMode.externalApplication);
-                  if (!opened && mounted && isCurrent()) {
-                    ToastHelper.showError(context, context.l10n.attendanceTelegramCardFailed);
-                  }
-                } catch (_) {
-                  if (mounted && isCurrent()) {
-                    ToastHelper.showError(context, context.l10n.attendanceTelegramCardFailed);
-                  }
-                }
-              },
-              child: Text(ctx.l10n.attendanceTelegramCardOpen),
-            ),
-          ],
+          ),
         ),
       );
     } finally {
