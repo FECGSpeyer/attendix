@@ -40,8 +40,164 @@ const _secondViolins = CatalogGroupDraft(
   tuning: 'C',
   clefs: ['treble'],
 );
+const _renamedPresetVoice = CatalogGroupDraft(
+  key: 'violin_1',
+  instrumentId: 'violin',
+  name: 'Violine solo I',
+  categoryName: 'Solisten',
+  tuning: 'G',
+  clefs: ['f'],
+);
+const _customInstrument = CatalogGroupDraft(
+  key: 'custom:1',
+  instrumentId: '',
+  name: 'Nyckelharpa',
+);
 
 void main() {
+  testWidgets('setup accepts an intentional empty selection', (tester) async {
+    CatalogPickerResult? result;
+    await _open(
+      tester,
+      purpose: CatalogPickerPurpose.setup,
+      onPickerResult: (value) => result = value,
+    );
+    expect(find.text('Auswahl übernehmen'), findsOneWidget);
+    await _apply(tester);
+    expect(result, isNotNull);
+    expect(result!.drafts, isEmpty);
+    expect(result!.presetId, isNull);
+  });
+
+  for (final scenario in [
+    (kind: 'orchestra', label: '3 Instrumente hinzufügen'),
+    (kind: 'choir', label: '3 Stimmen hinzufügen'),
+  ]) {
+    testWidgets('add action names the count for ${scenario.kind}', (
+      tester,
+    ) async {
+      await _open(
+        tester,
+        tenantType: scenario.kind,
+        initialSelection: const [
+          CatalogGroupDraft(key: 'one', instrumentId: '', name: 'Eins'),
+          CatalogGroupDraft(key: 'two', instrumentId: '', name: 'Zwei'),
+          CatalogGroupDraft(key: 'three', instrumentId: '', name: 'Drei'),
+        ],
+      );
+      expect(find.text(scenario.label), findsOneWidget);
+      await _apply(tester);
+    });
+  }
+
+  testWidgets('reopening restores the preset and renamed numbered row', (
+    tester,
+  ) async {
+    CatalogPickerResult? result;
+    await _open(
+      tester,
+      initialPresetId: 'symphony_orchestra',
+      initialSelection: const [_renamedPresetVoice],
+      onPickerResult: (value) => result = value,
+    );
+    expect(find.text('Sinfonieorchester'), findsOneWidget);
+    await tester.enterText(find.byKey(const Key('catalog-search')), 'Violine');
+    await tester.pumpAndSettle();
+    final row = find.byKey(const Key('catalog-entry-violin_1'));
+    await tester.ensureVisible(row);
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(RdListRow, 'Violine solo I'), findsOneWidget);
+    await tester.tap(row);
+    await tester.pumpAndSettle();
+    await tester.tap(row);
+    await tester.pumpAndSettle();
+    await _apply(tester);
+    expect(result!.presetId, 'symphony_orchestra');
+    expect(result!.drafts.single, same(_renamedPresetVoice));
+  });
+
+  testWidgets('choosing the same preset retains edited and unselected rows', (
+    tester,
+  ) async {
+    CatalogPickerResult? result;
+    await _open(
+      tester,
+      initialPresetId: 'symphony_orchestra',
+      initialSelection: const [_renamedPresetVoice, _customInstrument],
+      onPickerResult: (value) => result = value,
+    );
+    await tester.tap(find.byKey(const Key('catalog-presets')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Sinfonieorchester').last);
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsNothing);
+    await _apply(tester);
+    expect(result!.presetId, 'symphony_orchestra');
+    expect(result!.drafts, [_renamedPresetVoice, _customInstrument]);
+  });
+
+  testWidgets('merging presets keeps custom names and adds missing defaults', (
+    tester,
+  ) async {
+    CatalogPickerResult? result;
+    await _open(
+      tester,
+      initialPresetId: 'string_orchestra',
+      initialSelection: const [_renamedPresetVoice, _customInstrument],
+      onPickerResult: (value) => result = value,
+    );
+    await tester.tap(find.byKey(const Key('catalog-presets')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Sinfonieorchester'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ergänzen'));
+    await tester.pumpAndSettle();
+    await _apply(tester);
+    expect(result!.presetId, 'symphony_orchestra');
+    expect(result!.drafts, hasLength(15));
+    expect(result!.drafts.first, same(_renamedPresetVoice));
+    expect(result!.drafts[1], same(_customInstrument));
+    expect(
+      result!.drafts.map((draft) => draft.name),
+      containsAll(['2. Violinen', 'Querflöte']),
+    );
+    expect(
+      result!.drafts.map((draft) => draft.name),
+      isNot(contains('1. Violinen')),
+    );
+  });
+
+  testWidgets('explicit replace starts from the new preset defaults', (
+    tester,
+  ) async {
+    CatalogPickerResult? result;
+    await _open(
+      tester,
+      initialPresetId: 'symphony_orchestra',
+      initialSelection: const [_renamedPresetVoice, _customInstrument],
+      onPickerResult: (value) => result = value,
+    );
+    await tester.ensureVisible(find.byKey(const Key('catalog-presets')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('catalog-presets')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Streichorchester'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Streichorchester'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ersetzen'));
+    await tester.pumpAndSettle();
+    await _apply(tester);
+    expect(result!.presetId, 'string_orchestra');
+    expect(result!.drafts.map((draft) => draft.name), [
+      '1. Violinen',
+      '2. Violinen',
+      'Bratschen',
+      'Violoncelli',
+      'Kontrabässe',
+    ]);
+  });
+
   testWidgets(
     'reopened renamed catalog draft retains its name and aliases after toggle off and on',
     (tester) async {
@@ -214,22 +370,55 @@ void main() {
     },
   );
 
+  testWidgets('without preset keeps the current selection', (tester) async {
+    List<CatalogGroupDraft>? result;
+    CatalogPickerResult? pickerResult;
+    await _open(
+      tester,
+      initialPresetId: 'symphony_orchestra',
+      initialSelection: const [_firstViolins],
+      onResult: (value) => result = value,
+      onPickerResult: (value) => pickerResult = value,
+    );
+    await tester.tap(find.byKey(const Key('catalog-presets')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ohne Vorlage').last);
+    await tester.pumpAndSettle();
+    await _apply(tester);
+    expect(result?.map((draft) => draft.name), ['1. Violinen']);
+    expect(result!.single, same(_firstViolins));
+    expect(pickerResult!.presetId, isNull);
+  });
+
   testWidgets(
-    'without preset explicitly clears selection and returns an empty draft list',
+    'changing a preset requires a choice before replacing custom drafts',
     (tester) async {
       List<CatalogGroupDraft>? result;
+      CatalogPickerResult? pickerResult;
       await _open(
         tester,
-        initialSelection: const [_firstViolins],
+        initialPresetId: 'symphony_orchestra',
+        initialSelection: const [
+          CatalogGroupDraft(
+            key: 'custom:1',
+            instrumentId: '',
+            name: 'Nyckelharpa',
+          ),
+        ],
         onResult: (value) => result = value,
+        onPickerResult: (value) => pickerResult = value,
       );
       await tester.tap(find.byKey(const Key('catalog-presets')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Ohne Vorlage').last);
+      await tester.tap(find.text('Streichorchester'));
+      await tester.pumpAndSettle();
+      expect(find.text('Ergänzen'), findsOneWidget);
+      expect(find.text('Ersetzen'), findsOneWidget);
+      await tester.tap(find.text('Abbrechen').last);
       await tester.pumpAndSettle();
       await _apply(tester);
-      expect(result, isEmpty);
-      expect(result, isNotNull);
+      expect(result?.map((draft) => draft.name), ['Nyckelharpa']);
+      expect(pickerResult!.presetId, 'symphony_orchestra');
     },
   );
 
@@ -324,10 +513,12 @@ void main() {
         of: find.text('Violine'),
         matching: find.byType(RdListRow),
       );
+      expect(find.byTooltip('Weitere Stimme anlegen'), findsOneWidget);
       await tester.tap(
         find.descendant(of: row, matching: find.byType(IconButton)),
       );
       await tester.pumpAndSettle();
+      expect(find.text('Weitere Stimme anlegen'), findsOneWidget);
       await tester.enterText(find.byType(TextField).last, 'Violine III');
       await tester.tap(find.text('Fertig'));
       await tester.pumpAndSettle();
@@ -389,7 +580,7 @@ void main() {
   );
 
   testWidgets(
-    'account change during the open picker discards the returned drafts',
+    'account change during a preset change discards the returned drafts',
     (tester) async {
       final repositories = <int, _MemoryGroupRepo>{};
       await tester.pumpWidget(_listApp(repositories));
@@ -405,7 +596,14 @@ void main() {
       );
       await tester.pumpAndSettle();
       await _selectRow(tester, 'Bassflöte');
+      await tester.tap(find.byKey(const Key('catalog-presets')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Streichorchester'));
+      await tester.pumpAndSettle();
+      expect(find.text('Ergänzen'), findsOneWidget);
       container.read(_accountProvider.notifier).state = 'account-b';
+      await tester.tap(find.text('Ergänzen'));
+      await tester.pumpAndSettle();
       await _apply(tester);
       expect(repositories[7]!.storedGroups, isEmpty);
       expect(find.text('1 Eintrag hinzugefügt'), findsNothing);
@@ -568,6 +766,40 @@ void main() {
     expect(repositories[7]!.storedGroups, isEmpty);
   });
 
+  testWidgets('preset change remains usable at 320px with large text', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 844);
+    tester.view.devicePixelRatio = 1;
+    tester.view.padding = const FakeViewPadding(top: 47, bottom: 34);
+    addTearDown(tester.view.reset);
+    CatalogPickerResult? result;
+    await _open(
+      tester,
+      textScale: 2,
+      initialPresetId: 'symphony_orchestra',
+      initialSelection: const [_renamedPresetVoice],
+      onPickerResult: (value) => result = value,
+    );
+    await tester.ensureVisible(find.byKey(const Key('catalog-presets')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('catalog-presets')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Streichorchester'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Streichorchester'));
+    await tester.pumpAndSettle();
+    expect(find.text('Ergänzen'), findsOneWidget);
+    expect(find.text('Ersetzen'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.text('Abbrechen').last);
+    await tester.pumpAndSettle();
+    await _apply(tester);
+    expect(result!.drafts.single, same(_renamedPresetVoice));
+    expect(result!.presetId, 'symphony_orchestra');
+    expect(tester.takeException(), isNull);
+  });
+
   for (final palette in RdFarbwelt.values) {
     for (final brightness in Brightness.values) {
       for (final width in [320.0, 393.0]) {
@@ -602,7 +834,10 @@ Future<void> _open(
   String tenantType = 'orchestra',
   List<Group> existingGroups = const [],
   List<CatalogGroupDraft> initialSelection = const [],
+  String? initialPresetId,
+  CatalogPickerPurpose purpose = CatalogPickerPurpose.add,
   ValueChanged<List<CatalogGroupDraft>?>? onResult,
+  ValueChanged<CatalogPickerResult?>? onPickerResult,
   RdFarbwelt palette = RdFarbwelt.petrol,
   Brightness brightness = Brightness.light,
   double textScale = 1,
@@ -630,8 +865,11 @@ Future<void> _open(
                     tenantType: tenantType,
                     existingGroups: existingGroups,
                     initialSelection: initialSelection,
+                    initialPresetId: initialPresetId,
+                    purpose: purpose,
                   );
-                  onResult?.call(result);
+                  onResult?.call(result?.drafts);
+                  onPickerResult?.call(result);
                 },
                 child: const Text('öffnen'),
               ),

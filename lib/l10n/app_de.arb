@@ -3877,11 +3877,25 @@
   "@brandingTextPh": {
     "description": "branding.textPh"
   },
+  "catalogAddCount": "{kind, select, choir {{count, plural, one {1 Stimme hinzufügen} other {{count} Stimmen hinzufügen}}} other {{count, plural, one {1 Instrument hinzufügen} other {{count} Instrumente hinzufügen}}}}",
+  "@catalogAddCount": {
+    "description": "catalogAddCount",
+    "placeholders": {
+      "kind": {},
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "catalogAddPart": "Weitere Stimme anlegen",
+  "@catalogAddPart": {
+    "description": "catalogAddPart"
+  },
   "catalogAllFamilies": "Alle",
   "@catalogAllFamilies": {
     "description": "catalogAllFamilies"
   },
-  "catalogApply": "Übernehmen",
+  "catalogApply": "Auswahl übernehmen",
   "@catalogApply": {
     "description": "catalogApply"
   },
@@ -3948,6 +3962,22 @@
   "@catalogPreset": {
     "description": "catalogPreset"
   },
+  "catalogPresetChangeMessage": "Du kannst die neue Vorlage ergänzen oder deine Auswahl ersetzen. Beim Ersetzen gehen eigene Namen und Einträge verloren.",
+  "@catalogPresetChangeMessage": {
+    "description": "catalogPresetChangeMessage"
+  },
+  "catalogPresetChangeTitle": "Vorlage wechseln?",
+  "@catalogPresetChangeTitle": {
+    "description": "catalogPresetChangeTitle"
+  },
+  "catalogPresetMerge": "Ergänzen",
+  "@catalogPresetMerge": {
+    "description": "catalogPresetMerge"
+  },
+  "catalogPresetReplace": "Ersetzen",
+  "@catalogPresetReplace": {
+    "description": "catalogPresetReplace"
+  },
   "catalogRemove": "Auswahl entfernen",
   "@catalogRemove": {
     "description": "catalogRemove"
@@ -3979,7 +4009,7 @@
       }
     }
   },
-  "catalogSetupChoose": "Auswahl bearbeiten",
+  "catalogSetupChoose": "Auswahl anpassen",
   "@catalogSetupChoose": {
     "description": "catalogSetupChoose"
   },
@@ -3992,15 +4022,31 @@
       }
     }
   },
+  "catalogSetupDiscard": "Auswahl verwerfen",
+  "@catalogSetupDiscard": {
+    "description": "catalogSetupDiscard"
+  },
   "catalogSetupFailed": "Ensemble angelegt. Die Auswahl konnte nicht übernommen werden. Du kannst sie später in der Verwaltung ergänzen.",
   "@catalogSetupFailed": {
     "description": "catalogSetupFailed"
+  },
+  "catalogSetupLater": "Später einrichten",
+  "@catalogSetupLater": {
+    "description": "catalogSetupLater"
   },
   "catalogSetupNone": "Keine Auswahl",
   "@catalogSetupNone": {
     "description": "catalogSetupNone"
   },
-  "catalogSetupTitle": "Vorlage und Auswahl",
+  "catalogSetupSkipMessage": "Die ausgewählten Instrumente oder Stimmen werden nicht angelegt. Du kannst die Besetzung später in der Verwaltung einrichten.",
+  "@catalogSetupSkipMessage": {
+    "description": "catalogSetupSkipMessage"
+  },
+  "catalogSetupSkipTitle": "Auswahl verwerfen?",
+  "@catalogSetupSkipTitle": {
+    "description": "catalogSetupSkipTitle"
+  },
+  "catalogSetupTitle": "Besetzung wählen",
   "@catalogSetupTitle": {
     "description": "catalogSetupTitle"
   },
@@ -23143,7 +23189,7 @@
   "@redesignTenantsNewMain": {
     "description": "redesign.tenants.newMain"
   },
-  "redesignTenantsNewMainHint": "Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. {kind, select, orchestra{Instrumente wie Violine oder Trompete} choir{Stimmen wie Sopran oder Alt} other{Untergruppen}} legst du später in der Verwaltung an.",
+  "redesignTenantsNewMainHint": "Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. {kind, select, orchestra{Instrumente wählst du oben aus und kannst sie später in der Verwaltung ergänzen.} choir{Stimmen wählst du oben aus und kannst sie später in der Verwaltung ergänzen.} other{Untergruppen legst du später in der Verwaltung an.}}",
   "@redesignTenantsNewMainHint": {
     "description": "redesign.tenants.newMainHint",
     "placeholders": {

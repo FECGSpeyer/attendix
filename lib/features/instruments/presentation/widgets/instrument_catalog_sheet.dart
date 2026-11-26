@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart'
     show RdFieldRow, RdFormBody, rdInputDecoration;
 import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart'
@@ -14,17 +15,69 @@ import '../../data/catalog_selection.dart';
 import '../../data/instrument_catalog.dart';
 import '../../data/instrument_presets.dart';
 
+enum CatalogPickerPurpose { setup, add }
+
+class CatalogPickerResult {
+  const CatalogPickerResult({required this.drafts, this.presetId});
+
+  final List<CatalogGroupDraft> drafts;
+  final String? presetId;
+}
+
+enum CatalogPresetChange { merge, replace }
+
+/// The same explicit choice protects both setup and the collection picker.
+Future<CatalogPresetChange?> showCatalogPresetChangeDialog(
+  BuildContext context,
+) {
+  final l10n = context.l10n;
+  return showAppDialog<CatalogPresetChange>(
+    context: context,
+    builder:
+        (dialogContext) => AppAlertDialog(
+          title: Text(l10n.catalogPresetChangeTitle),
+          content: Text(l10n.catalogPresetChangeMessage),
+          scrollable: true,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.redesignCommonCancel),
+            ),
+            TextButton(
+              onPressed:
+                  () => Navigator.of(
+                    dialogContext,
+                  ).pop(CatalogPresetChange.replace),
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(dialogContext).colorScheme.error,
+              ),
+              child: Text(l10n.catalogPresetReplace),
+            ),
+            TextButton(
+              onPressed:
+                  () => Navigator.of(
+                    dialogContext,
+                  ).pop(CatalogPresetChange.merge),
+              child: Text(l10n.catalogPresetMerge),
+            ),
+          ],
+        ),
+  );
+}
+
 /// Local collection picker. Nothing is written until the caller imports
-/// the returned drafts. Null means cancel; an empty list is intentional.
-Future<List<CatalogGroupDraft>?> showInstrumentCatalogSheet(
+/// the returned drafts. Null means cancel; empty drafts are intentional.
+Future<CatalogPickerResult?> showInstrumentCatalogSheet(
   BuildContext context, {
   required String tenantType,
   List<Group> existingGroups = const [],
   List<CatalogGroupDraft> initialSelection = const [],
+  String? initialPresetId,
+  CatalogPickerPurpose purpose = CatalogPickerPurpose.add,
   bool allowCustom = true,
 }) {
   final statusBar = MediaQuery.paddingOf(context).top;
-  return showModalBottomSheet<List<CatalogGroupDraft>>(
+  return showModalBottomSheet<CatalogPickerResult>(
     context: context,
     useRootNavigator: true,
     useSafeArea: true,
@@ -36,6 +89,8 @@ Future<List<CatalogGroupDraft>?> showInstrumentCatalogSheet(
           tenantType: tenantType,
           existingGroups: List.unmodifiable(existingGroups),
           initialSelection: List.unmodifiable(initialSelection),
+          initialPresetId: initialPresetId,
+          purpose: purpose,
           allowCustom: allowCustom,
           statusBar: statusBar,
         ),
@@ -47,6 +102,8 @@ class _InstrumentCatalogSheet extends StatefulWidget {
     required this.tenantType,
     required this.existingGroups,
     required this.initialSelection,
+    required this.initialPresetId,
+    required this.purpose,
     required this.allowCustom,
     required this.statusBar,
   });
@@ -54,6 +111,8 @@ class _InstrumentCatalogSheet extends StatefulWidget {
   final String tenantType;
   final List<Group> existingGroups;
   final List<CatalogGroupDraft> initialSelection;
+  final String? initialPresetId;
+  final CatalogPickerPurpose purpose;
   final bool allowCustom;
   final double statusBar;
 
@@ -66,15 +125,21 @@ class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
   final _search = TextEditingController();
   late final _rowOverrides = <String, CatalogGroupDraft>{
     for (final draft in widget.initialSelection)
-      if (draft.instrumentId.isNotEmpty && draft.key == draft.instrumentId)
-        draft.key: draft,
+      if (draft.instrumentId.isNotEmpty) draft.key: draft,
   };
   late final _selected = <String, CatalogGroupDraft>{
     for (final draft in widget.initialSelection)
       if (draft.name.trim().isNotEmpty && !_exists(draft)) draft.key: draft,
   };
   InstrumentFamily? _family;
-  CatalogPreset? _preset;
+  late CatalogPreset? _preset =
+      instrumentPresets
+          .where(
+            (preset) =>
+                preset.id == widget.initialPresetId &&
+                preset.tenantType == widget.tenantType,
+          )
+          .firstOrNull;
   bool _showSelection = false;
   int _customSerial = 0;
 
@@ -112,10 +177,13 @@ class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
   }
 
   void _apply() => Navigator.of(context).pop(
-    List<CatalogGroupDraft>.unmodifiable(
-      _selected.values.where(
-        (draft) => draft.name.trim().isNotEmpty && !_exists(draft),
+    CatalogPickerResult(
+      drafts: List<CatalogGroupDraft>.unmodifiable(
+        _selected.values.where(
+          (draft) => draft.name.trim().isNotEmpty && !_exists(draft),
+        ),
       ),
+      presetId: _preset?.id,
     ),
   );
 
@@ -161,17 +229,35 @@ class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
     );
     if (!mounted || choice == null) return;
     final preset = presets.where((preset) => preset.id == choice).firstOrNull;
+    if (preset?.id == _preset?.id) return;
+    if (preset == null) {
+      // Removing the association never removes the user's selection.
+      setState(() => _preset = null);
+      return;
+    }
+    final change =
+        _selected.isEmpty
+            ? CatalogPresetChange.replace
+            : await showCatalogPresetChangeDialog(context);
+    if (!mounted || change == null) return;
+    final additions =
+        [
+          for (final entry in preset.entries.where(
+            (entry) => entry.selectedByDefault,
+          ))
+            draftFromPresetEntry(entry, languageCode: _language),
+        ].where((draft) => !_exists(draft)).toList();
+    final selection =
+        change == CatalogPresetChange.merge
+            ? mergeCatalogDrafts(_selected.values.toList(), additions)
+            : additions;
     setState(() {
       _preset = preset;
-      _rowOverrides.clear();
+      if (change == CatalogPresetChange.replace) _rowOverrides.clear();
       _selected.clear();
-      if (preset != null) {
-        for (final entry in preset.entries.where(
-          (entry) => entry.selectedByDefault,
-        )) {
-          final draft = draftFromPresetEntry(entry, languageCode: _language);
-          if (!_exists(draft)) _selected[draft.key] = draft;
-        }
+      for (final draft in selection) {
+        _selected[draft.key] = draft;
+        if (draft.instrumentId.isNotEmpty) _rowOverrides[draft.key] = draft;
       }
       _showSelection = false;
     });
@@ -199,9 +285,10 @@ class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
 
   Future<void> _editName(CatalogGroupDraft draft, {String? sourceKey}) async {
     final l10n = context.l10n;
+    final existing = _exists(draft);
     final name = await showRdTextSheet(
       context,
-      title: l10n.catalogEditName,
+      title: existing ? l10n.catalogAddPart : l10n.catalogEditName,
       initial: draft.name,
       hint: l10n.catalogNameHint(widget.tenantType),
       helper: l10n.catalogEditHint,
@@ -211,7 +298,7 @@ class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
     var renamed = draft.copyWith(name: name);
     // An existing local entry is never edited. Give the additional voice
     // its own draft key, after copyWith has restricted its synonyms.
-    if (_exists(draft)) {
+    if (existing) {
       renamed = CatalogGroupDraft(
         key: _newKey('voice:${draft.key}'),
         instrumentId: renamed.instrumentId,
@@ -306,7 +393,7 @@ class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
           onChanged: existing ? null : (_) => _toggle(draft),
         ),
         trailing: IconButton(
-          tooltip: l10n.catalogEditName,
+          tooltip: existing ? l10n.catalogAddPart : l10n.catalogEditName,
           icon: Icon(Icons.edit_outlined, size: 20, color: context.rd.text2),
           onPressed: () => _editName(draft, sourceKey: sourceKey),
         ),
@@ -325,6 +412,10 @@ class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
             .clamp(160.0, mq.size.height * 0.90)
             .toDouble();
     final results = _results();
+    final applyLabel =
+        widget.purpose == CatalogPickerPurpose.setup
+            ? l10n.catalogApply
+            : l10n.catalogAddCount(widget.tenantType, _selected.length);
     return Padding(
       padding: EdgeInsets.only(bottom: mq.viewInsets.bottom),
       child: SafeArea(
@@ -464,11 +555,32 @@ class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    RdPrimaryButton(
-                      key: const Key('catalog-apply'),
-                      label: l10n.catalogApply,
-                      height: math.max(48, mq.textScaler.scale(16) + 24),
-                      onPressed: _apply,
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final label = TextPainter(
+                          text: TextSpan(
+                            text: applyLabel,
+                            style: (Theme.of(context).textTheme.labelLarge ??
+                                    const TextStyle())
+                                .copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                          textDirection: Directionality.of(context),
+                          textScaler: mq.textScaler,
+                        )..layout(
+                          maxWidth: math.max(1, constraints.maxWidth - 32),
+                        );
+                        final height = math.max(48.0, label.height + 24);
+                        label.dispose();
+                        return RdPrimaryButton(
+                          key: const Key('catalog-apply'),
+                          label: applyLabel,
+                          height: height,
+                          onPressed: _apply,
+                        );
+                      },
                     ),
                   ],
                 ),

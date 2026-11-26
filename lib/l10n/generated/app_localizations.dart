@@ -5067,6 +5067,18 @@ abstract class AppLocalizations {
   /// **'z.B. Verbandsname'**
   String get brandingTextPh;
 
+  /// catalogAddCount
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, choir {{count, plural, one {1 Stimme hinzufügen} other {{count} Stimmen hinzufügen}}} other {{count, plural, one {1 Instrument hinzufügen} other {{count} Instrumente hinzufügen}}}}'**
+  String catalogAddCount(String kind, num count);
+
+  /// catalogAddPart
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Stimme anlegen'**
+  String get catalogAddPart;
+
   /// catalogAllFamilies
   ///
   /// In de, this message translates to:
@@ -5076,7 +5088,7 @@ abstract class AppLocalizations {
   /// catalogApply
   ///
   /// In de, this message translates to:
-  /// **'Übernehmen'**
+  /// **'Auswahl übernehmen'**
   String get catalogApply;
 
   /// catalogBrowse
@@ -5157,6 +5169,30 @@ abstract class AppLocalizations {
   /// **'Vorlage'**
   String get catalogPreset;
 
+  /// catalogPresetChangeMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Du kannst die neue Vorlage ergänzen oder deine Auswahl ersetzen. Beim Ersetzen gehen eigene Namen und Einträge verloren.'**
+  String get catalogPresetChangeMessage;
+
+  /// catalogPresetChangeTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage wechseln?'**
+  String get catalogPresetChangeTitle;
+
+  /// catalogPresetMerge
+  ///
+  /// In de, this message translates to:
+  /// **'Ergänzen'**
+  String get catalogPresetMerge;
+
+  /// catalogPresetReplace
+  ///
+  /// In de, this message translates to:
+  /// **'Ersetzen'**
+  String get catalogPresetReplace;
+
   /// catalogRemove
   ///
   /// In de, this message translates to:
@@ -5190,7 +5226,7 @@ abstract class AppLocalizations {
   /// catalogSetupChoose
   ///
   /// In de, this message translates to:
-  /// **'Auswahl bearbeiten'**
+  /// **'Auswahl anpassen'**
   String get catalogSetupChoose;
 
   /// catalogSetupCount
@@ -5199,11 +5235,23 @@ abstract class AppLocalizations {
   /// **'{count, plural, one {1 Eintrag ausgewählt} other {{count} Einträge ausgewählt}}'**
   String catalogSetupCount(num count);
 
+  /// catalogSetupDiscard
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl verwerfen'**
+  String get catalogSetupDiscard;
+
   /// catalogSetupFailed
   ///
   /// In de, this message translates to:
   /// **'Ensemble angelegt. Die Auswahl konnte nicht übernommen werden. Du kannst sie später in der Verwaltung ergänzen.'**
   String get catalogSetupFailed;
+
+  /// catalogSetupLater
+  ///
+  /// In de, this message translates to:
+  /// **'Später einrichten'**
+  String get catalogSetupLater;
 
   /// catalogSetupNone
   ///
@@ -5211,10 +5259,22 @@ abstract class AppLocalizations {
   /// **'Keine Auswahl'**
   String get catalogSetupNone;
 
+  /// catalogSetupSkipMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Die ausgewählten Instrumente oder Stimmen werden nicht angelegt. Du kannst die Besetzung später in der Verwaltung einrichten.'**
+  String get catalogSetupSkipMessage;
+
+  /// catalogSetupSkipTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl verwerfen?'**
+  String get catalogSetupSkipTitle;
+
   /// catalogSetupTitle
   ///
   /// In de, this message translates to:
-  /// **'Vorlage und Auswahl'**
+  /// **'Besetzung wählen'**
   String get catalogSetupTitle;
 
   /// catalogTitle
@@ -29517,7 +29577,7 @@ abstract class AppLocalizations {
   /// redesign.tenants.newMainHint
   ///
   /// In de, this message translates to:
-  /// **'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. {kind, select, orchestra{Instrumente wie Violine oder Trompete} choir{Stimmen wie Sopran oder Alt} other{Untergruppen}} legst du später in der Verwaltung an.'**
+  /// **'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. {kind, select, orchestra{Instrumente wählst du oben aus und kannst sie später in der Verwaltung ergänzen.} choir{Stimmen wählst du oben aus und kannst sie später in der Verwaltung ergänzen.} other{Untergruppen legst du später in der Verwaltung an.}}'**
   String redesignTenantsNewMainHint(String kind);
 
   /// redesign.tenants.newMainName

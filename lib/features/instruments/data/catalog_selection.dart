@@ -94,20 +94,42 @@ CatalogGroupDraft draftFromPresetEntry(
   );
 }
 
+/// Adds missing drafts without changing existing names, metadata or order.
+/// Keys preserve deliberate overrides; only complete names and curated aliases
+/// identify equivalents, so numbered parts and related types stay separate.
+List<CatalogGroupDraft> mergeCatalogDrafts(
+  List<CatalogGroupDraft> current,
+  List<CatalogGroupDraft> additions,
+) {
+  final merged = [...current];
+  final keys = current.map((draft) => draft.key).toSet();
+  final names = current.expand(_draftNames).toSet();
+  for (final draft in additions) {
+    final draftNames = _draftNames(draft);
+    if (keys.contains(draft.key) || draftNames.any(names.contains)) continue;
+    merged.add(draft);
+    keys.add(draft.key);
+    names.addAll(draftNames);
+  }
+  return List.unmodifiable(merged);
+}
+
 /// Matches complete names or explicit aliases; leaders are not instruments.
 bool draftMatchesGroup(CatalogGroupDraft draft, Group group) {
   if (group.maingroup == true) return false;
-  final draftNames =
-      [
-        draft.name,
-        ...draft.synonyms,
-      ].map(normalizeCatalogName).where((name) => name.isNotEmpty).toSet();
+  final draftNames = _draftNames(draft);
   final groupNames = [
     group.name,
     ...(group.synonyms ?? '').split(','),
   ].map(normalizeCatalogName).where((name) => name.isNotEmpty);
   return groupNames.any(draftNames.contains);
 }
+
+Set<String> _draftNames(CatalogGroupDraft draft) =>
+    [
+      draft.name,
+      ...draft.synonyms,
+    ].map(normalizeCatalogName).where((name) => name.isNotEmpty).toSet();
 
 List<String> _preciseSynonyms(String name, Iterable<String> aliases) {
   final seen = {normalizeCatalogName(name)};

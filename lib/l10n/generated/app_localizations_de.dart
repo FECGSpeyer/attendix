@@ -3169,10 +3169,34 @@ class AppLocalizationsDe extends AppLocalizations {
   String get brandingTextPh => 'z.B. Verbandsname';
 
   @override
+  String catalogAddCount(String kind, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Stimmen hinzufügen',
+      one: '1 Stimme hinzufügen',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Instrumente hinzufügen',
+      one: '1 Instrument hinzufügen',
+    );
+    String _temp2 = intl.Intl.selectLogic(kind, {
+      'choir': '$_temp0',
+      'other': '$_temp1',
+    });
+    return '$_temp2';
+  }
+
+  @override
+  String get catalogAddPart => 'Weitere Stimme anlegen';
+
+  @override
   String get catalogAllFamilies => 'Alle';
 
   @override
-  String get catalogApply => 'Übernehmen';
+  String get catalogApply => 'Auswahl übernehmen';
 
   @override
   String get catalogBrowse => 'Sammlung';
@@ -3239,6 +3263,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get catalogPreset => 'Vorlage';
 
   @override
+  String get catalogPresetChangeMessage =>
+      'Du kannst die neue Vorlage ergänzen oder deine Auswahl ersetzen. Beim Ersetzen gehen eigene Namen und Einträge verloren.';
+
+  @override
+  String get catalogPresetChangeTitle => 'Vorlage wechseln?';
+
+  @override
+  String get catalogPresetMerge => 'Ergänzen';
+
+  @override
+  String get catalogPresetReplace => 'Ersetzen';
+
+  @override
   String get catalogRemove => 'Auswahl entfernen';
 
   @override
@@ -3275,7 +3312,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get catalogSetupChoose => 'Auswahl bearbeiten';
+  String get catalogSetupChoose => 'Auswahl anpassen';
 
   @override
   String catalogSetupCount(num count) {
@@ -3289,14 +3326,27 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get catalogSetupDiscard => 'Auswahl verwerfen';
+
+  @override
   String get catalogSetupFailed =>
       'Ensemble angelegt. Die Auswahl konnte nicht übernommen werden. Du kannst sie später in der Verwaltung ergänzen.';
+
+  @override
+  String get catalogSetupLater => 'Später einrichten';
 
   @override
   String get catalogSetupNone => 'Keine Auswahl';
 
   @override
-  String get catalogSetupTitle => 'Vorlage und Auswahl';
+  String get catalogSetupSkipMessage =>
+      'Die ausgewählten Instrumente oder Stimmen werden nicht angelegt. Du kannst die Besetzung später in der Verwaltung einrichten.';
+
+  @override
+  String get catalogSetupSkipTitle => 'Auswahl verwerfen?';
+
+  @override
+  String get catalogSetupTitle => 'Besetzung wählen';
 
   @override
   String catalogTitle(String kind) {
@@ -19250,11 +19300,13 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String redesignTenantsNewMainHint(String kind) {
     String _temp0 = intl.Intl.selectLogic(kind, {
-      'orchestra': 'Instrumente wie Violine oder Trompete',
-      'choir': 'Stimmen wie Sopran oder Alt',
-      'other': 'Untergruppen',
+      'orchestra':
+          'Instrumente wählst du oben aus und kannst sie später in der Verwaltung ergänzen.',
+      'choir':
+          'Stimmen wählst du oben aus und kannst sie später in der Verwaltung ergänzen.',
+      'other': 'Untergruppen legst du später in der Verwaltung an.',
     });
-    return 'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. $_temp0 legst du später in der Verwaltung an.';
+    return 'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. $_temp0';
   }
 
   @override

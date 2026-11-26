@@ -1653,7 +1653,7 @@
         "newShortHint": "Für kurze Anzeigen, z. B. in der Gruppenauswahl.",
         "newMain": "Hauptgruppe",
         "newMainName": "Name der Hauptgruppe",
-        "newMainHint": "Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. {kind, select, orchestra{Instrumente wie Violine oder Trompete} choir{Stimmen wie Sopran oder Alt} other{Untergruppen}} legst du später in der Verwaltung an.",
+        "newMainHint": "Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. {kind, select, orchestra{Instrumente wählst du oben aus und kannst sie später in der Verwaltung ergänzen.} choir{Stimmen wählst du oben aus und kannst sie später in der Verwaltung ergänzen.} other{Untergruppen legst du später in der Verwaltung an.}}",
         "newMissing": "Bitte fülle Name, Kürzel und Hauptgruppe aus.",
         "newCreated": "Die Gruppe wurde gegründet.",
         "deleteAccount": "Konto löschen"
@@ -3408,7 +3408,7 @@
         "newShortHint": "For compact places, e.g. the group list.",
         "newMain": "Main group",
         "newMainName": "Name of the main group",
-        "newMainHint": "The main group is for the leaders (e.g. conductors, board). It cannot be deleted and gets more rights. Add {kind, select, orchestra{instruments like violin or trumpet} choir{voices like soprano or alto} other{subgroups}} later in Manage.",
+        "newMainHint": "The main group is for the leaders (e.g. conductors, board). It cannot be deleted and gets more rights. {kind, select, orchestra{Choose instruments above and add more later in Manage.} choir{Choose voices above and add more later in Manage.} other{Add subgroups later in Manage.}}",
         "newMissing": "Please fill in name, short name and main group.",
         "newCreated": "The group was created.",
         "deleteAccount": "Delete account"

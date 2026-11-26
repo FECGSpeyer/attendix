@@ -183,6 +183,104 @@ void main() {
     });
   });
 
+  group('merging selections', () {
+    test('keeps renamed same-key drafts and their custom metadata', () {
+      const renamed = CatalogGroupDraft(
+        key: 'flute',
+        instrumentId: 'flute',
+        name: 'Querflöte solo',
+        categoryName: 'Solisten',
+        synonyms: ['Solo flute'],
+        tuning: 'G',
+        clefs: ['f'],
+      );
+      const custom = CatalogGroupDraft(
+        key: 'custom:1',
+        instrumentId: '',
+        name: 'Nyckelharpa',
+      );
+      final current = [renamed, custom];
+      final additions = [
+        draftFromInstrument(_instrument('flute'), languageCode: 'de'),
+        draftFromInstrument(_instrument('oboe'), languageCode: 'de'),
+      ];
+
+      final merged = mergeCatalogDrafts(current, additions);
+
+      expect(merged.map((draft) => draft.name), [
+        'Querflöte solo',
+        'Nyckelharpa',
+        'Oboe',
+      ]);
+      expect(merged.first, same(renamed));
+      expect(merged[1], same(custom));
+      expect(merged.first.categoryName, 'Solisten');
+      expect(merged.first.synonyms, ['Solo flute']);
+      expect(merged.first.tuning, 'G');
+      expect(merged.first.clefs, ['f']);
+      expect(current, hasLength(2));
+      expect(additions, hasLength(2));
+    });
+
+    test('skips exact curated equivalents across different draft keys', () {
+      const existing = CatalogGroupDraft(
+        key: 'custom:1',
+        instrumentId: '',
+        name: '  GEIGE  ',
+      );
+      final merged = mergeCatalogDrafts(
+        [existing],
+        [
+          draftFromInstrument(_instrument('violin'), languageCode: 'de'),
+          const CatalogGroupDraft(
+            key: 'english-flute',
+            instrumentId: 'flute',
+            name: 'Flute',
+            synonyms: ['Querflöte'],
+          ),
+          const CatalogGroupDraft(
+            key: 'german-flute',
+            instrumentId: 'flute',
+            name: 'Querflöte',
+          ),
+        ],
+      );
+
+      expect(merged.map((draft) => draft.key), ['custom:1', 'english-flute']);
+      expect(merged.first, same(existing));
+    });
+
+    test('retains separate numbered parts and different flute types', () {
+      const first = CatalogGroupDraft(
+        key: 'existing-first',
+        instrumentId: 'violin',
+        name: 'Geige I',
+      );
+      final merged = mergeCatalogDrafts(
+        [first],
+        [
+          for (final entry in _preset('string_orchestra').entries.take(2))
+            draftFromPresetEntry(entry, languageCode: 'de'),
+          draftFromInstrument(_instrument('flute'), languageCode: 'de'),
+          draftFromInstrument(_instrument('bass_flute'), languageCode: 'de'),
+          const CatalogGroupDraft(
+            key: 'flute-two',
+            instrumentId: 'flute',
+            name: 'Querflöte 2',
+          ),
+        ],
+      );
+
+      expect(merged.map((draft) => draft.name), [
+        'Geige I',
+        '2. Violinen',
+        'Querflöte',
+        'Bassflöte',
+        'Querflöte 2',
+      ]);
+    });
+  });
+
   group('draft matching', () {
     test(
       'German and English names plus precise aliases represent one type',

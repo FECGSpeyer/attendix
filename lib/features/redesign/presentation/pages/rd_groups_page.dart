@@ -139,11 +139,12 @@ class _RdGroupsPageState extends ConsumerState<RdGroupsPage> {
         await context.push(RedesignRoutes.groupEdit(created!.id!));
         return;
       }
-      drafts = await showInstrumentCatalogSheet(
+      final selection = await showInstrumentCatalogSheet(
         context,
         tenantType: kind,
         existingGroups: ref.read(groupsProvider).valueOrNull ?? const <Group>[],
       );
+      drafts = selection?.drafts;
       if (!mounted || drafts == null || drafts.isEmpty || !isCurrent()) return;
       final online = await ref.read(connectivityCheckProvider)();
       if (!mounted || !isCurrent()) return;

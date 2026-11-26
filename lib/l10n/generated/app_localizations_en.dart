@@ -3141,10 +3141,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get brandingTextPh => 'e.g. association name';
 
   @override
+  String catalogAddCount(String kind, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count voices',
+      one: 'Add 1 voice',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count instruments',
+      one: 'Add 1 instrument',
+    );
+    String _temp2 = intl.Intl.selectLogic(kind, {
+      'choir': '$_temp0',
+      'other': '$_temp1',
+    });
+    return '$_temp2';
+  }
+
+  @override
+  String get catalogAddPart => 'Add another voice';
+
+  @override
   String get catalogAllFamilies => 'All';
 
   @override
-  String get catalogApply => 'Apply';
+  String get catalogApply => 'Use selection';
 
   @override
   String get catalogBrowse => 'Collection';
@@ -3210,6 +3234,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get catalogPreset => 'Preset';
 
   @override
+  String get catalogPresetChangeMessage =>
+      'You can add the new preset or replace your selection. Replacing it discards custom names and entries.';
+
+  @override
+  String get catalogPresetChangeTitle => 'Change preset?';
+
+  @override
+  String get catalogPresetMerge => 'Add to selection';
+
+  @override
+  String get catalogPresetReplace => 'Replace';
+
+  @override
   String get catalogRemove => 'Remove selection';
 
   @override
@@ -3246,7 +3283,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get catalogSetupChoose => 'Edit selection';
+  String get catalogSetupChoose => 'Adjust selection';
 
   @override
   String catalogSetupCount(num count) {
@@ -3260,14 +3297,27 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get catalogSetupDiscard => 'Discard selection';
+
+  @override
   String get catalogSetupFailed =>
       'Ensemble created. The selection could not be applied. You can add it later in management.';
+
+  @override
+  String get catalogSetupLater => 'Set up later';
 
   @override
   String get catalogSetupNone => 'No selection';
 
   @override
-  String get catalogSetupTitle => 'Preset and selection';
+  String get catalogSetupSkipMessage =>
+      'The selected instruments or voices will not be created. You can set up the instrumentation later in Manage.';
+
+  @override
+  String get catalogSetupSkipTitle => 'Discard selection?';
+
+  @override
+  String get catalogSetupTitle => 'Choose instrumentation';
 
   @override
   String catalogTitle(String kind) {
@@ -19087,11 +19137,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String redesignTenantsNewMainHint(String kind) {
     String _temp0 = intl.Intl.selectLogic(kind, {
-      'orchestra': 'instruments like violin or trumpet',
-      'choir': 'voices like soprano or alto',
-      'other': 'subgroups',
+      'orchestra': 'Choose instruments above and add more later in Manage.',
+      'choir': 'Choose voices above and add more later in Manage.',
+      'other': 'Add subgroups later in Manage.',
     });
-    return 'The main group is for the leaders (e.g. conductors, board). It cannot be deleted and gets more rights. Add $_temp0 later in Manage.';
+    return 'The main group is for the leaders (e.g. conductors, board). It cannot be deleted and gets more rights. $_temp0';
   }
 
   @override
