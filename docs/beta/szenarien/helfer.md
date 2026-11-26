@@ -149,12 +149,15 @@ sieht.
 - **Wo:** Termine › Plus
 - **Voraussetzung:** Die Leitung hat für Helfer „Termine anlegen“ erlaubt.
 - **Schritte:**
-  1. Tippe auf das Plus. „Neuer Termin“ öffnet sich.
-  2. Wähle eine „Vorlage“ aus früheren Terminen oder fülle selbst aus: „Art“,
-     „Titel“, „Datum“, „Zeit“, „Ort“.
-  3. Auf Wunsch: „Antwort bis“ für eine Frist, „Weitere Daten“ für eine Serie,
-     „Werke“ für das Programm.
-  4. Tippe auf „Anlegen“.
+  1. Tippe auf das Plus. Als Helfer öffnest du direkt „Neuer Termin“.
+  2. Wähle unter „Was findet statt?“ die Terminart und ergänze bei Bedarf den
+     „Titel“. Die Zeiten der Terminart werden übernommen.
+  3. Prüfe unter „Wann?“ das „Datum“, „Beginn“ und „Ende“ oder bei ganztägigen
+     Terminen die „Dauer“. Für eine Serie öffnest du dort „Wiederholen“.
+  4. Ergänze bei Bedarf den „Ort“. Unter „Weitere Optionen“ findest du
+     „Antwort bis“ für eine Frist und eine „Vorlage“ aus früheren Terminen.
+     In Musikgruppen kannst du dort auch „Werke“ für das Programm wählen.
+  5. Tippe auf „Termin anlegen“, bei mehreren Daten auf „… Termine anlegen“.
 - **Ergebnis:** Der Termin steht in der Liste. Die Eingeladenen sehen ihn und
   können antworten.
 - **Gut zu wissen:** Wer eingeladen ist, legt die Art fest. Bei einer Serie

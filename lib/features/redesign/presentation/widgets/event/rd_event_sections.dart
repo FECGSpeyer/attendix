@@ -11,10 +11,8 @@ import '../../../../../core/providers/attendance_type_providers.dart';
 import '../../../../../core/providers/conductor_providers.dart';
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/debug_providers.dart';
-import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/organisation_providers.dart';
 import '../../../../../core/providers/plan_providers.dart';
-import '../../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
 import '../../../../../core/providers/role_permission_providers.dart';
 import '../../../../../core/providers/song_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
@@ -47,7 +45,6 @@ import '../../../../planning/presentation/attendance_plan_viewer.dart';
 import '../../../../planning/presentation/widgets/rd_plan_start.dart';
 import '../../../../planning/presentation/widgets/rd_plan_widgets.dart' show PlanEventWork, showRdEventWorksSheet;
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart' show openFilesFolderRoute;
-import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../data/providers/rd_event_works_providers.dart';
 import '../../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
 import '../../../data/rd_event_details_logic.dart';
@@ -155,7 +152,6 @@ class RdProgramNumber extends StatelessWidget {
 ///   the Ablauf carries its clock time.
 /// * Tap → Zum Werk / Dirigent ändern / Werk entfernen (with Rückgängig;
 ///   a removed Werk also leaves the Ablauf).
-/// * "Ohne Tenor": the Werk has no Noten for a group somebody plays in.
 ///
 /// Shown for types that manage Werke (Ionic `manageSongs && !isGeneral`).
 class RdEventProgramSection extends ConsumerStatefulWidget {
@@ -579,11 +575,6 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     final canOpenWork = canOpenSongsTab(ref.watch(effectiveRoleProvider));
     final title = l10n.redesignEventWorks;
     final plan = rdPlanOf(widget.attendance);
-    final songs = ref.watch(songsProvider).valueOrNull ?? const <Song>[];
-    final isGeneral = ref.watch(currentTenantProvider)?.type == 'general';
-    final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
-    final categories = ref.watch(groupCategoriesProvider).valueOrNull ?? const [];
-    final playerCounts = ref.watch(missingGroupsPlayerCountsProvider);
 
     /// "19:45": where the Werk stands in the Ablauf (null: not in it).
     String? planTime(int songId) {
@@ -594,15 +585,6 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
       return start == null
           ? l10n.redesignPlanSongInPlan
           : PlanUtils.formatMinutes(PlanUtils.startMinutesAt(start, plan.fields, at));
-    }
-
-    /// "Ohne Tenor": no Noten for a group somebody plays in.
-    String? missing(int songId) {
-      if (isGeneral) return null;
-      final ids = songs.where((s) => s.id == songId).firstOrNull?.instrumentIds;
-      if (ids == null || ids.isEmpty) return null;
-      final text = SongUtils.missingInstrumentsText(ids, groups, categories, playerCounts: playerCounts);
-      return text.isEmpty ? null : text;
     }
 
     final Widget body;
@@ -657,13 +639,6 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
                 : null,
             trailing: switch (planTime(entries[i].songId)) {
               final time? => RdPill(time, key: ValueKey('rd-program-time-$i')),
-              null => null,
-            },
-            footer: switch (missing(entries[i].songId)) {
-              final text? => Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Align(alignment: Alignment.centerLeft, child: RdPill(text, tone: RdTone.late)),
-                ),
               null => null,
             },
             showChevron: canEdit || canOpenWork,

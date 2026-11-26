@@ -11017,6 +11017,71 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminWorkHistory => 'Gespielte Werke';
 
   @override
+  String get rdCreateFormAllDayHint =>
+      'Ganztägig, wie in dieser Terminart vorgesehen.';
+
+  @override
+  String get rdCreateFormCustomTimes =>
+      'Deine angepassten Zeiten bleiben erhalten.';
+
+  @override
+  String rdCreateFormInvited(Object circle) {
+    return 'Eingeladen: $circle';
+  }
+
+  @override
+  String get rdCreateFormNoDates =>
+      'Keine Termine ausgewählt. Prüfe die Wiederholung und die ausgelassenen Feiertage.';
+
+  @override
+  String get rdCreateFormNoEventTypes =>
+      'Für diesen Bereich ist noch keine Terminart eingerichtet.';
+
+  @override
+  String get rdCreateFormOptions => 'Weitere Optionen';
+
+  @override
+  String get rdCreateFormPlaceHint => 'Ort hinzufügen · optional';
+
+  @override
+  String get rdCreateFormRepeat => 'Wiederholen';
+
+  @override
+  String get rdCreateFormScopeChanged =>
+      'Die Gruppe oder Anmeldung hat sich geändert. Öffne das Formular erneut, um dort einen Termin anzulegen.';
+
+  @override
+  String get rdCreateFormTitleHint => 'Titel ergänzen';
+
+  @override
+  String get rdCreateFormTypeDefaults => 'Zeiten aus der Terminart übernommen.';
+
+  @override
+  String get rdCreateFormWhat => 'Was findet statt?';
+
+  @override
+  String get rdCreateFormWhen => 'Wann?';
+
+  @override
+  String get rdCreateMenuClose => 'Auswahl schließen';
+
+  @override
+  String rdCreateMenuEvent(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Orchestertermin',
+      'choir': 'Chortermin',
+      'other': 'Termin',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get rdCreateMenuEventHint => 'Termin mit Anwesenheit';
+
+  @override
+  String get rdCreateMenuMeetingHint => 'Tagesordnung und Protokoll';
+
+  @override
   String get rdCriticalAddAnd => 'und außerdem …';
 
   @override

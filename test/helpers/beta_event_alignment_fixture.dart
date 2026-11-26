@@ -26,6 +26,10 @@ Widget betaEventAlignmentFixture({
   DateTime? referenceDay,
   double textScale = 1,
   String typeLabel = 'Vortrag',
+  Map<int, RdStatusCounts> counts = const {
+    71: RdStatusCounts(present: 45, excused: 4),
+    72: RdStatusCounts(present: 41, excused: 8),
+  },
 }) {
   final day = referenceDay ?? DateTime.now();
   String date(int offset) =>
@@ -63,12 +67,7 @@ Widget betaEventAlignmentFixture({
           AttendanceType(id: 'vortrag', tenantId: 7, name: typeLabel),
         ],
       ),
-      rdUpcomingCountsProvider.overrideWith(
-        (ref) async => const {
-          71: RdStatusCounts(present: 45, excused: 4),
-          72: RdStatusCounts(present: 41, excused: 8),
-        },
-      ),
+      rdUpcomingCountsProvider.overrideWith((ref) async => counts),
     ],
     child: MaterialApp(
       debugShowCheckedModeBanner: false,

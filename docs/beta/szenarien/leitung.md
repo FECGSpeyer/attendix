@@ -77,14 +77,16 @@ die Leitung kann.
 
 ### L-04 Eine Serie von Terminen anlegen
 
-- **Wo:** Termine › Plus › „Neuer Termin“
+- **Wo:** Termine › Plus
 - **Schritte:**
-  1. Fülle den Termin aus wie in H-10.
-  2. Tippe auf „Weitere Daten“ und wähle „Jeden … bis …“ oder „Alle 2 Wochen
-     bis …“.
-  3. Die Seite zeigt, wie viele Termine angelegt werden und wie viele in
-     Ferien oder auf einen Feiertag fallen.
-  4. Tippe auf „Anlegen“.
+  1. Wähle nach dem Plus je nach Gruppe „Orchestertermin“, „Chortermin“ oder
+     „Termin“. Fülle das Formular aus wie in
+     [H-10](helfer.md#h-10-einen-neuen-termin-anlegen).
+  2. Tippe unter „Wann?“ auf „Wiederholen“ und wähle „Jede Woche“ oder
+     „Alle 2 Wochen“. Lege unter „Bis“ das Ende der Serie fest.
+  3. Prüfe die Anzahl der Termine und gegebenenfalls die Hinweise zu Ferien
+     und Feiertagen.
+  4. Tippe auf „… Termine anlegen“. Die Schaltfläche nennt die Anzahl.
 - **Ergebnis:** Alle Termine der Serie stehen in der Liste.
 - **Gut zu wissen:** Ferien und Feiertage richten sich nach dem Bundesland der
   Gruppe (siehe L-51).
@@ -790,12 +792,16 @@ Für Gruppen mit Teamorganisation: Besprechungen der Leitung und ihre Aufgaben.
 
 ### L-61 Eine Besprechung planen
 
-- **Wo:** Termine › Plus › „Besprechung planen“
+- **Wo:** Termine › Plus › „Besprechung“
 - **Schritte:**
-  1. Tippe in „Neuer Termin“ auf „Besprechung planen“.
-  2. Lege Datum und Zeit fest und lege an.
-- **Ergebnis:** Die Besprechung steht unter „Ich“ › „Team“ › „Besprechungen“
-  mit einer leeren „Tagesordnung“.
+  1. Tippe nach dem Plus auf „Besprechung“. „Neue Besprechung“ öffnet sich
+     direkt.
+  2. Wähle „Tag“ und „Wer ist dabei?“. Bei mehreren Besprechungsarten kannst
+     du zuvor die „Art“ wechseln.
+  3. Tippe auf „Anlegen“.
+- **Ergebnis:** Die neue Besprechung öffnet sich mit einer leeren
+  „Tagesordnung“ und steht unter „Ich“ › „Team“ › „Besprechungen“.
+- **Gut zu wissen:** Der Personenkreis gilt für alle Besprechungen dieser Art.
 
 ### L-62 Die Tagesordnung füllen und die Besprechung führen
 

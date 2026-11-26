@@ -13614,6 +13614,80 @@
   "@rdAdminWorkHistory": {
     "description": "rdAdmin.workHistory"
   },
+  "rdCreateFormAllDayHint": "Ganztägig, wie in dieser Terminart vorgesehen.",
+  "@rdCreateFormAllDayHint": {
+    "description": "rdCreateForm.allDayHint"
+  },
+  "rdCreateFormCustomTimes": "Deine angepassten Zeiten bleiben erhalten.",
+  "@rdCreateFormCustomTimes": {
+    "description": "rdCreateForm.customTimes"
+  },
+  "rdCreateFormInvited": "Eingeladen: {circle}",
+  "@rdCreateFormInvited": {
+    "description": "rdCreateForm.invited",
+    "placeholders": {
+      "circle": {}
+    }
+  },
+  "rdCreateFormNoDates": "Keine Termine ausgewählt. Prüfe die Wiederholung und die ausgelassenen Feiertage.",
+  "@rdCreateFormNoDates": {
+    "description": "rdCreateForm.noDates"
+  },
+  "rdCreateFormNoEventTypes": "Für diesen Bereich ist noch keine Terminart eingerichtet.",
+  "@rdCreateFormNoEventTypes": {
+    "description": "rdCreateForm.noEventTypes"
+  },
+  "rdCreateFormOptions": "Weitere Optionen",
+  "@rdCreateFormOptions": {
+    "description": "rdCreateForm.options"
+  },
+  "rdCreateFormPlaceHint": "Ort hinzufügen · optional",
+  "@rdCreateFormPlaceHint": {
+    "description": "rdCreateForm.placeHint"
+  },
+  "rdCreateFormRepeat": "Wiederholen",
+  "@rdCreateFormRepeat": {
+    "description": "rdCreateForm.repeat"
+  },
+  "rdCreateFormScopeChanged": "Die Gruppe oder Anmeldung hat sich geändert. Öffne das Formular erneut, um dort einen Termin anzulegen.",
+  "@rdCreateFormScopeChanged": {
+    "description": "rdCreateForm.scopeChanged"
+  },
+  "rdCreateFormTitleHint": "Titel ergänzen",
+  "@rdCreateFormTitleHint": {
+    "description": "rdCreateForm.titleHint"
+  },
+  "rdCreateFormTypeDefaults": "Zeiten aus der Terminart übernommen.",
+  "@rdCreateFormTypeDefaults": {
+    "description": "rdCreateForm.typeDefaults"
+  },
+  "rdCreateFormWhat": "Was findet statt?",
+  "@rdCreateFormWhat": {
+    "description": "rdCreateForm.what"
+  },
+  "rdCreateFormWhen": "Wann?",
+  "@rdCreateFormWhen": {
+    "description": "rdCreateForm.when"
+  },
+  "rdCreateMenuClose": "Auswahl schließen",
+  "@rdCreateMenuClose": {
+    "description": "rdCreateMenu.close"
+  },
+  "rdCreateMenuEvent": "{kind, select, orchestra {Orchestertermin} choir {Chortermin} other {Termin}}",
+  "@rdCreateMenuEvent": {
+    "description": "rdCreateMenu.event",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "rdCreateMenuEventHint": "Termin mit Anwesenheit",
+  "@rdCreateMenuEventHint": {
+    "description": "rdCreateMenu.eventHint"
+  },
+  "rdCreateMenuMeetingHint": "Tagesordnung und Protokoll",
+  "@rdCreateMenuMeetingHint": {
+    "description": "rdCreateMenu.meetingHint"
+  },
   "rdCriticalAddAnd": "und außerdem …",
   "@rdCriticalAddAnd": {
     "description": "rdCritical.addAnd"

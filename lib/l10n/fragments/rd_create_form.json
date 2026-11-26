@@ -1,0 +1,36 @@
+{
+  "de": {
+    "rdCreateForm": {
+      "what": "Was findet statt?",
+      "when": "Wann?",
+      "repeat": "Wiederholen",
+      "options": "Weitere Optionen",
+      "typeDefaults": "Zeiten aus der Terminart übernommen.",
+      "customTimes": "Deine angepassten Zeiten bleiben erhalten.",
+      "allDayHint": "Ganztägig, wie in dieser Terminart vorgesehen.",
+      "titleHint": "Titel ergänzen",
+      "placeHint": "Ort hinzufügen · optional",
+      "invited": "Eingeladen: {circle}",
+      "noEventTypes": "Für diesen Bereich ist noch keine Terminart eingerichtet.",
+      "scopeChanged": "Die Gruppe oder Anmeldung hat sich geändert. Öffne das Formular erneut, um dort einen Termin anzulegen.",
+      "noDates": "Keine Termine ausgewählt. Prüfe die Wiederholung und die ausgelassenen Feiertage."
+    }
+  },
+  "en": {
+    "rdCreateForm": {
+      "what": "What is happening?",
+      "when": "When?",
+      "repeat": "Repeat",
+      "options": "More options",
+      "typeDefaults": "Times taken from the event type.",
+      "customTimes": "Your adjusted times are kept.",
+      "allDayHint": "All day, as configured for this event type.",
+      "titleHint": "Add a title",
+      "placeHint": "Add a location · optional",
+      "invited": "Invited: {circle}",
+      "noEventTypes": "No event type has been set up for this section yet.",
+      "scopeChanged": "The group or account has changed. Reopen the form to create an event there.",
+      "noDates": "No dates selected. Check the recurrence and skipped holidays."
+    }
+  }
+}

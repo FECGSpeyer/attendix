@@ -30,18 +30,20 @@ typedef MeetingCircle = ({List<int> groups, List<int> persons});
 /// The first Besprechung of a group also creates its Terminart (with
 /// "Protokoll & Tagesordnung"), so nothing has to be set up before.
 /// Returns the id of the new Termin, or null.
-Future<int?> showNewMeetingSheet(BuildContext context) =>
-    showRdSettingsSheet<int>(context, (_) => const _NewMeetingSheet());
+Future<int?> showNewMeetingSheet(BuildContext context, {DateTime? initialDate}) =>
+    showRdSettingsSheet<int>(context, (_) => _NewMeetingSheet(initialDate: initialDate));
 
 class _NewMeetingSheet extends ConsumerStatefulWidget {
-  const _NewMeetingSheet();
+  const _NewMeetingSheet({this.initialDate});
+
+  final DateTime? initialDate;
 
   @override
   ConsumerState<_NewMeetingSheet> createState() => _NewMeetingSheetState();
 }
 
 class _NewMeetingSheetState extends ConsumerState<_NewMeetingSheet> {
-  late DateTime _day = _today;
+  late DateTime _day = DateUtils.dateOnly(widget.initialDate ?? _today);
   String? _typeId;
 
   /// The circle as edited here; null = the type's stored circle.
@@ -55,11 +57,12 @@ class _NewMeetingSheetState extends ConsumerState<_NewMeetingSheet> {
   }
 
   Future<void> _pickDay() async {
+    final lastDate = DateTime(_today.year + 5);
     final picked = await showAppDatePicker(
       context: context,
       initialDate: _day,
-      firstDate: _today,
-      lastDate: DateTime(_today.year + 5),
+      firstDate: _day.isBefore(_today) ? _day : _today,
+      lastDate: _day.isAfter(lastDate) ? _day : lastDate,
     );
     if (picked != null && mounted) setState(() => _day = picked);
   }

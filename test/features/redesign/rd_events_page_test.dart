@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_type_providers.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
+import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/message_providers.dart';
 import 'package:attendix/core/providers/player_absence_providers.dart';
 import 'package:attendix/core/providers/realtime_providers.dart';
@@ -10,6 +11,7 @@ import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/role_permission_providers.dart';
 import 'package:attendix/core/providers/self_service_providers.dart';
 import 'package:attendix/core/providers/signout_providers.dart';
+import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
@@ -18,9 +20,12 @@ import 'package:attendix/features/redesign/data/providers/rd_events_providers.da
 import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_events_page.dart';
 import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
+import 'package:attendix/features/redesign/presentation/widgets/event/rd_event_create_menu.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_split_view.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -29,12 +34,13 @@ import 'package:intl/date_symbol_data_local.dart';
 import '../../factories/test_factories.dart';
 
 class _TenantNotifier extends CurrentTenantNotifier {
-  _TenantNotifier(super.ref) {
+  _TenantNotifier(super.ref, {String type = 'orchestra'}) {
     state = TestFactories.createTenant(
       id: 7,
       shortName: 'SO',
       longName: 'Stadtorchester',
       showMembersList: true,
+      type: type,
     );
   }
 }
@@ -44,24 +50,32 @@ String _day(int offset, {DateTime? from}) {
   return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 }
 
-CrossTenantPersonAttendance _own(String id, int dayOffset, AttendanceStatus status) =>
-    CrossTenantPersonAttendance(
-      id: id,
-      attendanceId: int.parse(id),
-      status: status,
-      date: _day(dayOffset),
-      typeInfo: 'Probe $id',
-      startTime: '23:30',
-      endTime: '23:50',
-      place: 'Probenraum',
-      tenantId: 7,
-      tenantName: 'SO',
-      tenantColor: 'primary',
-    );
+CrossTenantPersonAttendance _own(
+  String id,
+  int dayOffset,
+  AttendanceStatus status,
+) => CrossTenantPersonAttendance(
+  id: id,
+  attendanceId: int.parse(id),
+  status: status,
+  date: _day(dayOffset),
+  typeInfo: 'Probe $id',
+  startTime: '23:30',
+  endTime: '23:50',
+  place: 'Probenraum',
+  tenantId: 7,
+  tenantName: 'SO',
+  tenantColor: 'primary',
+);
 
 Widget _app(
   Role role, {
   bool canCreate = true,
+  bool split = false,
+  bool shell = true,
+  String tenantType = 'orchestra',
+  Widget? page,
+  double textScale = 1,
   List<AttendanceType> types = const [],
   int? pending,
   List<CrossTenantPersonAttendance> extraUpcoming = const [],
@@ -71,24 +85,70 @@ Widget _app(
     initialLocation: '/termine',
     routes: [
       ShellRoute(
-        builder: (context, state, child) => RdShell(child: child),
+        builder:
+            (context, state, child) => shell ? RdShell(child: child) : child,
         routes: [
           GoRoute(
             path: '/termine',
-            builder: (_, __) => const RdEventsPage(),
+            builder:
+                (_, __) =>
+                    page ??
+                    (split
+                        ? const RdSplitScope(
+                          isDetail: false,
+                          child: RdEventsPage(),
+                        )
+                        : const RdEventsPage()),
             routes: [
               GoRoute(
+                path: 'neu',
+                builder:
+                    (_, state) => Scaffold(
+                      body: Column(
+                        children: [
+                          const Text('page new event'),
+                          if (state.extra != null)
+                            Text('selected date ${state.extra}'),
+                        ],
+                      ),
+                    ),
+              ),
+              GoRoute(
                 path: 'meine/:paId',
-                builder: (_, state) => Scaffold(body: Text('page own ${state.pathParameters['paId']}')),
+                builder:
+                    (_, state) => Scaffold(
+                      body: Text('page own ${state.pathParameters['paId']}'),
+                    ),
               ),
               GoRoute(
                 path: ':id',
-                builder: (_, state) => Scaffold(body: Text('page termin ${state.pathParameters['id']}')),
+                builder:
+                    (_, state) => Scaffold(
+                      body: Text('page termin ${state.pathParameters['id']}'),
+                    ),
               ),
             ],
           ),
-          for (final path in ['/heute', '/people', '/mitglieder', '/members', '/songs-tab', '/werke', '/ich'])
-            GoRoute(path: path, builder: (_, __) => Scaffold(body: Text('page $path'))),
+          for (final path in [
+            '/heute',
+            '/people',
+            '/mitglieder',
+            '/members',
+            '/songs-tab',
+            '/werke',
+            '/ich',
+          ])
+            GoRoute(
+              path: path,
+              builder: (_, __) => Scaffold(body: Text('page $path')),
+            ),
+          GoRoute(
+            path: '/settings/team-organization/meeting/:id',
+            builder:
+                (_, state) => Scaffold(
+                  body: Text('page meeting ${state.pathParameters['id']}'),
+                ),
+          ),
         ],
       ),
     ],
@@ -103,42 +163,76 @@ Widget _app(
       canCreateAttendanceProvider.overrideWithValue(canCreate),
       canSelfReportAbsenceProvider.overrideWithValue(true),
       canSelfPauseProvider.overrideWithValue(false),
-      currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+      currentTenantProvider.overrideWith(
+        (ref) => _TenantNotifier(ref, type: tenantType),
+      ),
       userTenantsProvider.overrideWith((ref) async => const []),
       unreadNotificationCountProvider.overrideWith((ref) async => 0),
       userNotificationsRealtimeProvider.overrideWith((ref) {}),
       canAccessFilesProvider.overrideWithValue(false),
       currentSelfServicePlayerProvider.overrideWith(
-        (ref) async => TestFactories.createPerson(id: 3, firstName: 'Lea', tenantId: 7),
+        (ref) async =>
+            TestFactories.createPerson(id: 3, firstName: 'Lea', tenantId: 7),
       ),
-      signoutDataProvider.overrideWith(signout ?? (ref) async => SignoutData(
-            current: _own('11', 0, AttendanceStatus.neutral),
-            upcoming: [
-              _own('12', 2, AttendanceStatus.present),
-              _own('13', 40, AttendanceStatus.excused),
-              ...extraUpcoming,
-            ],
-            past: [_own('10', -2, AttendanceStatus.present)],
-            percentage: 92,
-          )),
-      attendanceTypesProvider.overrideWith((ref) async => types),
-      if (pending != null) pendingAttendanceIdProvider.overrideWith((ref) => pending),
-      realtimeAttendanceListProvider.overrideWith((ref) async => [
-            TestFactories.createAttendance(
-              id: 21,
-              date: _day(0),
-              typeId: 'p',
-              typeInfo: 'Gesamtprobe',
-              startTime: '23:30',
-              endTime: '23:50',
+      signoutDataProvider.overrideWith(
+        signout ??
+            (ref) async => SignoutData(
+              current: _own('11', 0, AttendanceStatus.neutral),
+              upcoming: [
+                _own('12', 2, AttendanceStatus.present),
+                _own('13', 40, AttendanceStatus.excused),
+                ...extraUpcoming,
+              ],
+              past: [_own('10', -2, AttendanceStatus.present)],
+              percentage: 92,
             ),
-            TestFactories.createAttendance(id: 22, date: _day(2), typeId: 'k', typeInfo: 'Konzert'),
-            TestFactories.createAttendance(id: 24, date: _day(45), typeId: 'p', typeInfo: 'Herbstprobe'),
-            TestFactories.createAttendance(id: 23, date: _day(-3), typeInfo: 'Vorbei', percentage: 80),
-          ]),
-      rdUpcomingCountsProvider.overrideWith((ref) async => const {
-            21: RdStatusCounts(present: 24, excused: 3, lateAnnounced: 2, open: 5),
-          }),
+      ),
+      attendanceTypesProvider.overrideWith((ref) async => types),
+      protocolTypesProvider.overrideWith((ref) async => const []),
+      typeCirclePersonsProvider.overrideWith((ref) async => const {}),
+      groupsMapProvider.overrideWith((ref) async => const {}),
+      if (pending != null)
+        pendingAttendanceIdProvider.overrideWith((ref) => pending),
+      realtimeAttendanceListProvider.overrideWith(
+        (ref) async => [
+          TestFactories.createAttendance(
+            id: 21,
+            date: _day(0),
+            typeId: 'p',
+            typeInfo: 'Gesamtprobe',
+            startTime: '23:30',
+            endTime: '23:50',
+          ),
+          TestFactories.createAttendance(
+            id: 22,
+            date: _day(2),
+            typeId: 'k',
+            typeInfo: 'Konzert',
+          ),
+          TestFactories.createAttendance(
+            id: 24,
+            date: _day(45),
+            typeId: 'p',
+            typeInfo: 'Herbstprobe',
+          ),
+          TestFactories.createAttendance(
+            id: 23,
+            date: _day(-3),
+            typeInfo: 'Vorbei',
+            percentage: 80,
+          ),
+        ],
+      ),
+      rdUpcomingCountsProvider.overrideWith(
+        (ref) async => const {
+          21: RdStatusCounts(
+            present: 24,
+            excused: 3,
+            lateAnnounced: 2,
+            open: 5,
+          ),
+        },
+      ),
     ],
     child: Consumer(
       builder: (context, ref, _) {
@@ -149,6 +243,13 @@ Widget _app(
           supportedLocales: AppLocalizations.supportedLocales,
           theme: buildRdTheme(s.world, Brightness.light),
           routerConfig: router,
+          builder:
+              (context, child) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: TextScaler.linear(textScale)),
+                child: child!,
+              ),
         );
       },
     ),
@@ -162,8 +263,9 @@ Future<void> _settle(WidgetTester tester) async {
   }
 }
 
-Finder _semantics(String label) =>
-    find.byWidgetPredicate((w) => w is Semantics && w.properties.label == label);
+Finder _semantics(String label) => find.byWidgetPredicate(
+  (w) => w is Semantics && w.properties.label == label,
+);
 
 void _size(WidgetTester tester, Size size) {
   tester.view.physicalSize = size;
@@ -172,15 +274,212 @@ void _size(WidgetTester tester, Size size) {
 }
 
 /// REDESIGN: tab "Termine" (canvas D2, S2).
-/// The answers of a Termin are numbers with their word below; the whole
+/// The answers of a Termin are numbers with their word beside them; the whole
 /// row is announced as one label ("24 zugesagt · 3 entschuldigt").
-Finder _answers(Pattern label) =>
-    find.byWidgetPredicate((w) => w is Semantics && label.allMatches(w.properties.label ?? '').isNotEmpty);
+Finder _answers(Pattern label) => find.byWidgetPredicate(
+  (w) =>
+      w is Semantics && label.allMatches(w.properties.label ?? '').isNotEmpty,
+);
 
 void main() {
   setUpAll(() async {
     await initializeDateFormatting('de_DE');
     await initializeDateFormatting('de');
+  });
+
+  testWidgets('leader plus opens an anchored choice before creating an event', (
+    tester,
+  ) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin, shell: false));
+    await _settle(tester);
+
+    final plus = find.byTooltip('Neuer Termin');
+    final plusRect = tester.getRect(plus);
+    await tester.tap(plus);
+    await _settle(tester);
+
+    expect(find.text('Orchestertermin'), findsOneWidget);
+    expect(find.text('Besprechung'), findsOneWidget);
+    expect(find.text('page new event'), findsNothing);
+    expect(
+      tester.getRect(find.text('Besprechung')).bottom,
+      lessThan(plusRect.top),
+    );
+
+    await tester.tap(find.text('Orchestertermin'));
+    await _settle(tester);
+    expect(find.text('page new event'), findsOneWidget);
+    expect(find.text('Besprechung'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('helper with create permission goes straight to the event form', (
+    tester,
+  ) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.helper, shell: false));
+    await _settle(tester);
+
+    await tester.tap(find.byTooltip('Neuer Termin'));
+    await _settle(tester);
+
+    expect(find.text('page new event'), findsOneWidget);
+    expect(find.text('Besprechung'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'desktop header offers the same choices and opens the meeting sheet',
+    (tester) async {
+      _size(tester, const Size(1280, 900));
+      await tester.pumpWidget(
+        _app(
+          Role.responsible,
+          split: true,
+          shell: false,
+          tenantType: 'general',
+        ),
+      );
+      await _settle(tester);
+
+      expect(find.byType(FloatingActionButton), findsNothing);
+      await tester.tap(find.byKey(const Key('rd-events-add')));
+      await _settle(tester);
+
+      expect(find.text('Termin'), findsOneWidget);
+      expect(find.text('Orchestertermin'), findsNothing);
+      await tester.tap(find.text('Besprechung'));
+      await _settle(tester);
+
+      expect(find.text('Neue Besprechung'), findsOneWidget);
+      expect(find.byKey(const ValueKey('rd-new-meeting-day')), findsOneWidget);
+      expect(find.text('page new event'), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('create choice closes with its button, outside tap and Escape', (
+    tester,
+  ) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin, shell: false));
+    await _settle(tester);
+
+    await tester.tap(find.byTooltip('Neuer Termin'));
+    await _settle(tester);
+    await tester.tap(find.byTooltip('Auswahl schließen'));
+    await _settle(tester);
+    expect(find.text('Orchestertermin'), findsNothing);
+
+    await tester.tap(find.byTooltip('Neuer Termin'));
+    await _settle(tester);
+    await tester.tap(find.text('Vergangen · Ø 80 %'));
+    await _settle(tester);
+    expect(find.text('Orchestertermin'), findsNothing);
+    expect(
+      find.text('Gesamtprobe'),
+      findsOneWidget,
+      reason: 'outside tap only closes the menu',
+    );
+
+    await tester.tap(find.byTooltip('Neuer Termin'));
+    await _settle(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await _settle(tester);
+    expect(find.text('Orchestertermin'), findsNothing);
+    expect(find.byTooltip('Neuer Termin'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'event choice forwards a picked date to the normal creation route',
+    (tester) async {
+      _size(tester, const Size(393, 852));
+      await tester.pumpWidget(
+        _app(
+          Role.admin,
+          shell: false,
+          page: Scaffold(
+            floatingActionButton: RdEventCreateMenu(
+              initialDate: DateTime(2027, 6, 1),
+            ),
+          ),
+        ),
+      );
+      await _settle(tester);
+
+      await tester.tap(find.byTooltip('Neuer Termin'));
+      await _settle(tester);
+      await tester.tap(find.text('Orchestertermin'));
+      await _settle(tester);
+
+      expect(
+        find.text('selected date 2027-06-01 00:00:00.000'),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'meeting choice keeps the picked day and opens the returned meeting',
+    (tester) async {
+      _size(tester, const Size(393, 852));
+      await tester.pumpWidget(
+        _app(
+          Role.admin,
+          shell: false,
+          page: Scaffold(
+            floatingActionButton: RdEventCreateMenu(
+              initialDate: DateTime(2027, 6, 1),
+            ),
+          ),
+        ),
+      );
+      await _settle(tester);
+
+      await tester.tap(find.byTooltip('Neuer Termin'));
+      await _settle(tester);
+      await tester.tap(find.text('Besprechung'));
+      await _settle(tester);
+
+      final dayRow = find.byKey(const ValueKey('rd-new-meeting-day'));
+      expect(tester.widget<RdListRow>(dayRow).value, 'Di, 01.06.');
+      Navigator.of(tester.element(dayRow)).pop(42);
+      await _settle(tester);
+      expect(find.text('page meeting 42'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('create choices fit a narrow phone with large text', (
+    tester,
+  ) async {
+    _size(tester, const Size(320, 640));
+    await tester.pumpWidget(
+      _app(
+        Role.admin,
+        shell: false,
+        textScale: 2,
+        page: const Scaffold(floatingActionButton: RdEventCreateMenu()),
+      ),
+    );
+    await _settle(tester);
+
+    await tester.tap(find.byTooltip('Neuer Termin'));
+    await _settle(tester);
+
+    for (final title in ['Orchestertermin', 'Besprechung']) {
+      final rect = tester.getRect(find.text(title));
+      expect(rect.left, greaterThanOrEqualTo(0));
+      expect(rect.right, lessThanOrEqualTo(320));
+      expect(rect.top, greaterThanOrEqualTo(0));
+      expect(
+        rect.bottom,
+        lessThan(tester.getRect(find.byKey(const Key('rd-events-add'))).top),
+      );
+    }
+    expect(tester.takeException(), isNull);
   });
 
   group('rdUpcoming / rdPast', () {

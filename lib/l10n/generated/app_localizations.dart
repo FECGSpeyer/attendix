@@ -17743,6 +17743,108 @@ abstract class AppLocalizations {
   /// **'Gespielte Werke'**
   String get rdAdminWorkHistory;
 
+  /// rdCreateForm.allDayHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ganztägig, wie in dieser Terminart vorgesehen.'**
+  String get rdCreateFormAllDayHint;
+
+  /// rdCreateForm.customTimes
+  ///
+  /// In de, this message translates to:
+  /// **'Deine angepassten Zeiten bleiben erhalten.'**
+  String get rdCreateFormCustomTimes;
+
+  /// rdCreateForm.invited
+  ///
+  /// In de, this message translates to:
+  /// **'Eingeladen: {circle}'**
+  String rdCreateFormInvited(Object circle);
+
+  /// rdCreateForm.noDates
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Termine ausgewählt. Prüfe die Wiederholung und die ausgelassenen Feiertage.'**
+  String get rdCreateFormNoDates;
+
+  /// rdCreateForm.noEventTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Bereich ist noch keine Terminart eingerichtet.'**
+  String get rdCreateFormNoEventTypes;
+
+  /// rdCreateForm.options
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Optionen'**
+  String get rdCreateFormOptions;
+
+  /// rdCreateForm.placeHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ort hinzufügen · optional'**
+  String get rdCreateFormPlaceHint;
+
+  /// rdCreateForm.repeat
+  ///
+  /// In de, this message translates to:
+  /// **'Wiederholen'**
+  String get rdCreateFormRepeat;
+
+  /// rdCreateForm.scopeChanged
+  ///
+  /// In de, this message translates to:
+  /// **'Die Gruppe oder Anmeldung hat sich geändert. Öffne das Formular erneut, um dort einen Termin anzulegen.'**
+  String get rdCreateFormScopeChanged;
+
+  /// rdCreateForm.titleHint
+  ///
+  /// In de, this message translates to:
+  /// **'Titel ergänzen'**
+  String get rdCreateFormTitleHint;
+
+  /// rdCreateForm.typeDefaults
+  ///
+  /// In de, this message translates to:
+  /// **'Zeiten aus der Terminart übernommen.'**
+  String get rdCreateFormTypeDefaults;
+
+  /// rdCreateForm.what
+  ///
+  /// In de, this message translates to:
+  /// **'Was findet statt?'**
+  String get rdCreateFormWhat;
+
+  /// rdCreateForm.when
+  ///
+  /// In de, this message translates to:
+  /// **'Wann?'**
+  String get rdCreateFormWhen;
+
+  /// rdCreateMenu.close
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl schließen'**
+  String get rdCreateMenuClose;
+
+  /// rdCreateMenu.event
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, orchestra {Orchestertermin} choir {Chortermin} other {Termin}}'**
+  String rdCreateMenuEvent(String kind);
+
+  /// rdCreateMenu.eventHint
+  ///
+  /// In de, this message translates to:
+  /// **'Termin mit Anwesenheit'**
+  String get rdCreateMenuEventHint;
+
+  /// rdCreateMenu.meetingHint
+  ///
+  /// In de, this message translates to:
+  /// **'Tagesordnung und Protokoll'**
+  String get rdCreateMenuMeetingHint;
+
   /// rdCritical.addAnd
   ///
   /// In de, this message translates to:
