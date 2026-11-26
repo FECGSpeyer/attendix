@@ -40,10 +40,10 @@
 - `instrumentPresets` list; `CatalogGroupDraft draftFromInstrument(CatalogInstrument instrument, {required String languageCode, String? name})`; `CatalogGroupDraft draftFromPresetEntry(CatalogPresetEntry entry, {required String languageCode})`.
 - `String normalizeCatalogName(String value)`; `bool draftMatchesGroup(CatalogGroupDraft draft, Group group)` with exact normalized names/curated aliases and no main-group matches.
 
-- [ ] Write tests for synonyms, family filter, distinct flute variants and tuned/mallet instruments; observe failure.
-- [ ] Add curated data (at least 60 useful distinct types), presets and precise drafts. Default symphony selection has 14 rows, violin I/II share type but distinct keys/names/aliases.
-- [ ] Test custom renaming and German/English equivalent names; no wildcard/substrings in duplicate detection.
-- [ ] Run `flutter test test/features/instruments/`; analyze changed Dart files; commit only owned files.
+- [x] Write tests for synonyms, family filter, distinct flute variants and tuned/mallet instruments; observe failure.
+- [x] Add curated data (at least 60 useful distinct types), presets and precise drafts. Default symphony selection has 14 rows, violin I/II share type but distinct keys/names/aliases.
+- [x] Test custom renaming and German/English equivalent names; no wildcard/substrings in duplicate detection.
+- [x] Run `flutter test test/features/instruments/`; analyze changed Dart files; commit only owned files.
 
 ## Task 2: Tenant-bound batch importer
 
@@ -51,10 +51,10 @@
 
 **Interfaces:** `Future<List<Group>> GroupRepository.createGroups(List<Map<String,dynamic>> rows)` sanitizes each, forcibly binds tenant, honors demo, and uses one insert. `CatalogImportResult` has `added`, `skipped` integer counts. `Future<CatalogImportResult> importCatalogGroups(GroupRepository repository, List<CatalogGroupDraft> drafts, {bool Function()? isCurrent})` reads current groups/categories, removes duplicates, ensures categories, appends sort order, inserts all remaining groups once. `isCurrent` checked after awaits before another mutation; throws/cancels on scope change.
 
-- [ ] Write behavior tests using repository fakes or recorded HTTP requests: preservation, no duplicate second import, name alias handling, no main-group reuse, partial category failure, empty batch and context switch.
-- [ ] Implement sanitized bulk writes and category reuse; no destructive rollback. Explicit null/empty metadata survives rather than defaulting to C/treble.
-- [ ] Test demo rejection, tenant binding and caller data not mutated.
-- [ ] Run importer/repository tests and relevant group/provider tests.
+- [x] Write behavior tests using repository fakes or recorded HTTP requests: preservation, no duplicate second import, name alias handling, no main-group reuse, partial category failure, empty batch and context switch.
+- [x] Implement sanitized bulk writes and category reuse; no destructive rollback. Explicit null/empty metadata survives rather than defaulting to C/treble.
+- [x] Test demo rejection, tenant binding and caller data not mutated.
+- [x] Run importer/repository tests and relevant group/provider tests.
 
 ## Task 3: Shared collection picker and existing group list
 
@@ -62,18 +62,18 @@
 
 **Interface:** `Future<List<CatalogGroupDraft>?> showInstrumentCatalogSheet(BuildContext context, {required String tenantType, List<Group> existingGroups = const [], List<CatalogGroupDraft> initialSelection = const [], bool allowCustom = true})`. Returns drafts only; no network writes. Empty list is a deliberate empty selection; null is cancel. Picker includes presets plus empty, search, family filter, selectable results with persistent selection, editable output names and custom entry.
 
-- [ ] Test search/select/filter retention/cancel and distinct numbered voice selection before implementing.
-- [ ] Reuse Rd sheet/form/list/choice styles. Existing groups marked; rename action enables explicit new voice. General tenant retains existing manual add path.
-- [ ] Existing orchestral/choir plus calls picker and Task 2 importer under captured tenant/account/role and duplicate-submit guard; refresh groups/map/categories/counts in finally, and no stale navigation/toast.
-- [ ] Create DE/EN fragment; run `dart run tool/i18n/build_arb.dart` and `flutter gen-l10n`.
-- [ ] Verify phone width, increased text and dark/light palette in widget tests.
+- [x] Test search/select/filter retention/cancel and distinct numbered voice selection before implementing.
+- [x] Reuse Rd sheet/form/list/choice styles. Existing groups marked; rename action enables explicit new voice. General tenant retains existing manual add path.
+- [x] Existing orchestral/choir plus calls picker and Task 2 importer under captured tenant/account/role and duplicate-submit guard; refresh groups/map/categories/counts in finally, and no stale navigation/toast.
+- [x] Create DE/EN fragment; run `dart run tool/i18n/build_arb.dart` and `flutter gen-l10n`.
+- [x] Verify phone width, increased text and dark/light palette in widget tests.
 
 ## Task 4: Tenant setup, documentation and integration
 
 **Files:** `lib/features/tenant_selection/presentation/pages/tenant_create_page.dart`; related tests; `docs/beta/` matching scenario; `changelog/unreleased/instrument-catalog.json`.
 
-- [ ] Add optional template/selection section to existing creation form; reuse picker drafts, clear incompatible selection on type change, preserve main leadership group separately.
-- [ ] After tenant creation succeeds and has been selected, import drafts through repository bound to new ID. Distinguish creation failure from template failure; no duplicate tenant when only template application fails.
-- [ ] Test the orchestral and choir setup, empty/custom path, selection-only failure and account switch.
-- [ ] Add minor changelog and beta instructions with exact generated UI text.
-- [ ] Run appropriate feature/repository/widget tests, `flutter analyze`, documentation checks, and broader suite once. Have independent reviewers assess behavior and Flutter/tenant correctness.
+- [x] Add optional template/selection section to existing creation form; reuse picker drafts, clear incompatible selection on type change, preserve main leadership group separately.
+- [x] After tenant creation succeeds and has been selected, import drafts through repository bound to new ID. Distinguish creation failure from template failure; no duplicate tenant when only template application fails.
+- [x] Test the orchestral and choir setup, empty/custom path, selection-only failure and account switch.
+- [x] Add minor changelog and beta instructions with exact generated UI text.
+- [x] Run appropriate feature/repository/widget tests, `flutter analyze`, documentation checks, and broader suite once. Have independent reviewers assess behavior and Flutter/tenant correctness.

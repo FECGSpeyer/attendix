@@ -287,12 +287,20 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
 
   Future<void> _chooseCatalog() async {
     final type = _selectedType;
+    final accountId = ref.read(currentAuthUserIdProvider);
+    final tenantId = ref.read(currentTenantIdProvider);
     final selection = await showInstrumentCatalogSheet(
       context,
       tenantType: type,
       initialSelection: _catalogSelection,
     );
-    if (!mounted || selection == null || _selectedType != type) return;
+    if (!mounted ||
+        selection == null ||
+        _selectedType != type ||
+        ref.read(currentAuthUserIdProvider) != accountId ||
+        ref.read(currentTenantIdProvider) != tenantId) {
+      return;
+    }
     setState(() => _catalogSelection = selection);
   }
 
@@ -368,7 +376,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
           context,
           context.l10n.redesignTenantsNewCreated,
         );
-        context.go(RedesignRoutes.today);
+        GoRouter.of(context).go(RedesignRoutes.today);
       }
     } catch (e) {
       if (mounted && beforeSelection()) {

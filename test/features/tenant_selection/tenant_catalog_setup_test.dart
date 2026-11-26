@@ -168,6 +168,35 @@ Future<void> submit(WidgetTester tester) async {
 }
 
 void main() {
+  for (final switchAccount in [true, false]) {
+    testWidgets(
+      'setup discards picker result after scope change (account: $switchAccount)',
+      (tester) async {
+        final container = await launch(tester, CreateRepo(), GroupsRepo());
+        await tester.tap(find.text('Orchester'));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.byKey(const Key('rd-tenant-catalog')));
+        await tester.tap(find.byKey(const Key('rd-tenant-catalog')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('catalog-presets')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Sinfonieorchester'));
+        await tester.pumpAndSettle();
+        if (switchAccount) {
+          container.read(account.notifier).state = 'u2';
+        } else {
+          await container
+              .read(currentTenantProvider.notifier)
+              .setTenant(created);
+        }
+        await tester.tap(find.text('Übernehmen'));
+        await tester.pumpAndSettle();
+        expect(find.text('14 Einträge ausgewählt'), findsNothing);
+        expect(find.text('Keine Auswahl'), findsOneWidget);
+      },
+    );
+  }
+
   testWidgets(
     'general starts without catalog; type change clears the selection',
     (tester) async {
