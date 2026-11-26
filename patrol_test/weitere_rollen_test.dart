@@ -13,7 +13,7 @@ void main() {
     await signInAs($, 'beobachter');
     await tapOn($, 'Termine');
     await see($, 'Sommerkonzert');
-    await see($, 'zugesagt');
+    await see($, RegExp(r'^\d+\s+zugesagt$'));
     // An observer cannot open a single Termin.
     await $('Sommerkonzert').tap();
     seeNot($, 'Anwesenheit');

@@ -41,5 +41,5 @@
 - The final integrated targeted suite passed 289 tests, including creation, menu, counters, time rules, type flags, invitation circles, meeting helpers and event details.
 - Actual Flutter widget screenshots were rendered with fixture data and real app fonts; the temporary capture test is removed before handoff.
 - Final targeted analyzer: no issues across 11 changed source/test targets. Independent review reverified save focus lock, retained duty overrides and landscape keyboard layout; neutral empty-state copy resolves its remaining minor finding.
-- Fresh Flutter and general reviews found an invisible time-default fallback after type changes and a stale H-10 E2E flow; both are fixed, with two time regression tests and updated Patrol selectors.
+- Reviews and browser checks found an invisible time-default fallback after type changes and stale E2E selectors for creation and inline counters; these are fixed, with two time regression tests and updated H-10/B-02 Patrol selectors.
 - All eight Linux golden comparisons pass after visually reviewing and updating only the intentional event-list image. Beta scenarios, strict app-text checks and the changelog fragment are updated. Full-library analysis passes with existing informational lints outside the changed files.
