@@ -3169,6 +3169,148 @@ class AppLocalizationsDe extends AppLocalizations {
   String get brandingTextPh => 'z.B. Verbandsname';
 
   @override
+  String get catalogAllFamilies => 'Alle';
+
+  @override
+  String get catalogApply => 'Übernehmen';
+
+  @override
+  String get catalogBrowse => 'Sammlung';
+
+  @override
+  String catalogCustom(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'Eigene Stimme',
+      'other': 'Eigenes Instrument',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogEditHint =>
+      'Mit einem anderen Namen kannst du eine weitere Stimme anlegen.';
+
+  @override
+  String get catalogEditName => 'Eigenen Namen verwenden';
+
+  @override
+  String get catalogExisting => 'Bereits vorhanden';
+
+  @override
+  String get catalogImportFailed =>
+      'Die Auswahl konnte nicht übernommen werden. Bitte prüfe die Liste und versuche es erneut.';
+
+  @override
+  String catalogImportSuccess(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge hinzugefügt',
+      one: '1 Eintrag hinzugefügt',
+      zero: 'Alle ausgewählten Einträge sind bereits vorhanden.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogName => 'Name';
+
+  @override
+  String catalogNameHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'Name der Stimme',
+      'other': 'Name des Instruments',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogNoResults =>
+      'Keine passenden Einträge. Du kannst einen eigenen Namen hinzufügen.';
+
+  @override
+  String get catalogOffline =>
+      'Die Sammlung ist offline verfügbar. Zum Übernehmen brauchst du eine Verbindung.';
+
+  @override
+  String get catalogOptional => 'Optional';
+
+  @override
+  String get catalogPreset => 'Vorlage';
+
+  @override
+  String get catalogRemove => 'Auswahl entfernen';
+
+  @override
+  String catalogSearch(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'Stimme suchen',
+      'other': 'Instrument oder anderen Namen suchen',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String catalogSearchHint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'z. B. Sopran oder Alt',
+      'other': 'z. B. Geige oder Bassflöte',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogSelected => 'Ausgewählt';
+
+  @override
+  String catalogSelectedCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge ausgewählt',
+      one: '1 Eintrag ausgewählt',
+      zero: 'Keine Einträge ausgewählt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogSetupChoose => 'Auswahl bearbeiten';
+
+  @override
+  String catalogSetupCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge ausgewählt',
+      one: '1 Eintrag ausgewählt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogSetupFailed =>
+      'Ensemble angelegt. Die Auswahl konnte nicht übernommen werden. Du kannst sie später in der Verwaltung ergänzen.';
+
+  @override
+  String get catalogSetupNone => 'Keine Auswahl';
+
+  @override
+  String get catalogSetupTitle => 'Vorlage und Auswahl';
+
+  @override
+  String catalogTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'choir': 'Stimmen auswählen',
+      'other': 'Instrumente auswählen',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogWithoutPreset => 'Ohne Vorlage';
+
+  @override
   String get churchOverviewChurches => 'Gemeinden';
 
   @override
@@ -15721,7 +15863,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignGroupEditClefsHint =>
-      'Mindestens ein Notenschlüssel bleibt ausgewählt.';
+      'Wähle die verwendeten Notenschlüssel. Die Auswahl kann leer bleiben.';
 
   @override
   String redesignGroupEditDelete(String kind) {

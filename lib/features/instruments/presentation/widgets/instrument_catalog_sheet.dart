@@ -1,0 +1,482 @@
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../data/models/instrument/instrument.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart'
+    show RdFieldRow, RdFormBody, rdInputDecoration;
+import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart'
+    show RdSheetHead, showRdSettingsSheet, showRdTextSheet;
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../data/catalog_selection.dart';
+import '../../data/instrument_catalog.dart';
+import '../../data/instrument_presets.dart';
+
+/// Local collection picker. Nothing is written until the caller imports
+/// the returned drafts. Null means cancel; an empty list is intentional.
+Future<List<CatalogGroupDraft>?> showInstrumentCatalogSheet(
+  BuildContext context, {
+  required String tenantType,
+  List<Group> existingGroups = const [],
+  List<CatalogGroupDraft> initialSelection = const [],
+  bool allowCustom = true,
+}) {
+  final statusBar = MediaQuery.paddingOf(context).top;
+  return showModalBottomSheet<List<CatalogGroupDraft>>(
+    context: context,
+    useRootNavigator: true,
+    useSafeArea: true,
+    isScrollControlled: true,
+    showDragHandle: true,
+    backgroundColor: context.rd.bg,
+    builder:
+        (context) => _InstrumentCatalogSheet(
+          tenantType: tenantType,
+          existingGroups: List.unmodifiable(existingGroups),
+          initialSelection: List.unmodifiable(initialSelection),
+          allowCustom: allowCustom,
+          statusBar: statusBar,
+        ),
+  );
+}
+
+class _InstrumentCatalogSheet extends StatefulWidget {
+  const _InstrumentCatalogSheet({
+    required this.tenantType,
+    required this.existingGroups,
+    required this.initialSelection,
+    required this.allowCustom,
+    required this.statusBar,
+  });
+
+  final String tenantType;
+  final List<Group> existingGroups;
+  final List<CatalogGroupDraft> initialSelection;
+  final bool allowCustom;
+  final double statusBar;
+
+  @override
+  State<_InstrumentCatalogSheet> createState() =>
+      _InstrumentCatalogSheetState();
+}
+
+class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
+  final _search = TextEditingController();
+  late final _rowOverrides = <String, CatalogGroupDraft>{
+    for (final draft in widget.initialSelection)
+      if (draft.instrumentId.isNotEmpty && draft.key == draft.instrumentId)
+        draft.key: draft,
+  };
+  late final _selected = <String, CatalogGroupDraft>{
+    for (final draft in widget.initialSelection)
+      if (draft.name.trim().isNotEmpty && !_exists(draft)) draft.key: draft,
+  };
+  InstrumentFamily? _family;
+  CatalogPreset? _preset;
+  bool _showSelection = false;
+  int _customSerial = 0;
+
+  String get _language => Localizations.localeOf(context).languageCode;
+  bool get _choir => widget.tenantType == 'choir';
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
+
+  bool _exists(CatalogGroupDraft draft) =>
+      widget.existingGroups.any((group) => draftMatchesGroup(draft, group));
+
+  String _newKey(String prefix) {
+    String key;
+    do {
+      key = '$prefix:${++_customSerial}';
+    } while (_selected.containsKey(key) ||
+        widget.initialSelection.any((draft) => draft.key == key) ||
+        _rowOverrides.values.any((draft) => draft.key == key));
+    return key;
+  }
+
+  void _toggle(CatalogGroupDraft draft) {
+    if (_exists(draft)) return;
+    setState(() {
+      if (_selected.containsKey(draft.key)) {
+        _selected.remove(draft.key);
+      } else {
+        _selected[draft.key] = draft;
+      }
+    });
+  }
+
+  void _apply() => Navigator.of(context).pop(
+    List<CatalogGroupDraft>.unmodifiable(
+      _selected.values.where(
+        (draft) => draft.name.trim().isNotEmpty && !_exists(draft),
+      ),
+    ),
+  );
+
+  Future<void> _choosePreset() async {
+    final l10n = context.l10n;
+    final presets =
+        instrumentPresets
+            .where((preset) => preset.tenantType == widget.tenantType)
+            .toList();
+    final choice = await showRdSettingsSheet<String>(
+      context,
+      (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          RdSheetHead(title: l10n.catalogPreset),
+          Flexible(
+            child: RdFormBody(
+              shrinkWrap: true,
+              children: [
+                RdGroupedList(
+                  children: [
+                    RdListRow(
+                      title: l10n.catalogWithoutPreset,
+                      selected: _preset == null,
+                      showChevron: false,
+                      onTap: () => Navigator.of(context).pop(''),
+                    ),
+                    for (final preset in presets)
+                      RdListRow(
+                        title: preset.label(_language),
+                        selected: _preset?.id == preset.id,
+                        showChevron: false,
+                        onTap: () => Navigator.of(context).pop(preset.id),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    if (!mounted || choice == null) return;
+    final preset = presets.where((preset) => preset.id == choice).firstOrNull;
+    setState(() {
+      _preset = preset;
+      _rowOverrides.clear();
+      _selected.clear();
+      if (preset != null) {
+        for (final entry in preset.entries.where(
+          (entry) => entry.selectedByDefault,
+        )) {
+          final draft = draftFromPresetEntry(entry, languageCode: _language);
+          if (!_exists(draft)) _selected[draft.key] = draft;
+        }
+      }
+      _showSelection = false;
+    });
+  }
+
+  Future<void> _custom() async {
+    final l10n = context.l10n;
+    final name = await showRdTextSheet(
+      context,
+      title: l10n.catalogCustom(widget.tenantType),
+      hint: l10n.catalogNameHint(widget.tenantType),
+      required: true,
+    );
+    if (!mounted || name == null) return;
+    final draft = CatalogGroupDraft(
+      key: _newKey('custom'),
+      instrumentId: '',
+      name: name,
+    );
+    setState(() {
+      if (!_exists(draft)) _selected[draft.key] = draft;
+      _showSelection = true;
+    });
+  }
+
+  Future<void> _editName(CatalogGroupDraft draft, {String? sourceKey}) async {
+    final l10n = context.l10n;
+    final name = await showRdTextSheet(
+      context,
+      title: l10n.catalogEditName,
+      initial: draft.name,
+      hint: l10n.catalogNameHint(widget.tenantType),
+      helper: l10n.catalogEditHint,
+      required: true,
+    );
+    if (!mounted || name == null) return;
+    var renamed = draft.copyWith(name: name);
+    // An existing local entry is never edited. Give the additional voice
+    // its own draft key, after copyWith has restricted its synonyms.
+    if (_exists(draft)) {
+      renamed = CatalogGroupDraft(
+        key: _newKey('voice:${draft.key}'),
+        instrumentId: renamed.instrumentId,
+        name: renamed.name,
+        categoryName: renamed.categoryName,
+        synonyms: renamed.synonyms,
+        tuning: renamed.tuning,
+        clefs: renamed.clefs,
+      );
+    }
+    setState(() {
+      for (final key in _rowOverrides.keys.toList()) {
+        if (_rowOverrides[key]!.key == draft.key) _rowOverrides[key] = renamed;
+      }
+      if (sourceKey != null) _rowOverrides[sourceKey] = renamed;
+      _selected.remove(draft.key);
+      if (!_exists(renamed)) _selected[renamed.key] = renamed;
+    });
+  }
+
+  List<({CatalogGroupDraft draft, String sourceKey, bool optional})>
+  _results() {
+    final catalogResults = searchInstrumentCatalog(
+      _search.text,
+      family: _family,
+      voicesOnly: _choir,
+    );
+    final matchingIds =
+        catalogResults.map((instrument) => instrument.id).toSet();
+    final instruments = {
+      for (final instrument in instrumentCatalog) instrument.id: instrument,
+    };
+    final query = normalizeCatalogName(_search.text);
+    final presetIds =
+        _preset?.entries.map((entry) => entry.instrumentId).toSet() ??
+        <String>{};
+    final results =
+        <({CatalogGroupDraft draft, String sourceKey, bool optional})>[];
+    for (final entry in _preset?.entries ?? const <CatalogPresetEntry>[]) {
+      final draft =
+          _rowOverrides[entry.key] ??
+          draftFromPresetEntry(entry, languageCode: _language);
+      if (_family != null &&
+          instruments[entry.instrumentId]?.family != _family) {
+        continue;
+      }
+      if (query.isNotEmpty &&
+          !matchingIds.contains(entry.instrumentId) &&
+          ![
+            draft.name,
+            ...draft.synonyms,
+          ].any((name) => normalizeCatalogName(name).contains(query))) {
+        continue;
+      }
+      results.add((
+        draft: draft,
+        sourceKey: entry.key,
+        optional: !entry.selectedByDefault,
+      ));
+    }
+    for (final instrument in catalogResults) {
+      if (presetIds.contains(instrument.id)) continue;
+      final draft =
+          _rowOverrides[instrument.id] ??
+          draftFromInstrument(instrument, languageCode: _language);
+      results.add((draft: draft, sourceKey: instrument.id, optional: false));
+    }
+    return results;
+  }
+
+  Widget _row(
+    CatalogGroupDraft draft, {
+    String? sourceKey,
+    bool optional = false,
+  }) {
+    final l10n = context.l10n;
+    final existing = _exists(draft);
+    final selected = _selected.containsKey(draft.key);
+    return Semantics(
+      selected: selected,
+      child: RdListRow(
+        key: Key('catalog-entry-${draft.key}'),
+        title: draft.name,
+        subtitle:
+            existing
+                ? l10n.catalogExisting
+                : (optional ? l10n.catalogOptional : null),
+        selected: selected,
+        showChevron: false,
+        leading: Checkbox(
+          value: selected,
+          onChanged: existing ? null : (_) => _toggle(draft),
+        ),
+        trailing: IconButton(
+          tooltip: l10n.catalogEditName,
+          icon: Icon(Icons.edit_outlined, size: 20, color: context.rd.text2),
+          onPressed: () => _editName(draft, sourceKey: sourceKey),
+        ),
+        onTap: existing ? null : () => _toggle(draft),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final p = context.rd;
+    final mq = MediaQuery.of(context);
+    final height =
+        (mq.size.height - mq.viewInsets.bottom - widget.statusBar - 48)
+            .clamp(160.0, mq.size.height * 0.90)
+            .toDouble();
+    final results = _results();
+    return Padding(
+      padding: EdgeInsets.only(bottom: mq.viewInsets.bottom),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: height,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              RdSheetHead(title: l10n.catalogTitle(widget.tenantType)),
+              Expanded(
+                child: RdFormBody(
+                  children: [
+                    RdGroupedList(
+                      children: [
+                        RdFieldRow(
+                          label: l10n.catalogSearch(widget.tenantType),
+                          child: TextField(
+                            key: const Key('catalog-search'),
+                            controller: _search,
+                            decoration: rdInputDecoration(
+                              p,
+                              l10n.catalogSearchHint(widget.tenantType),
+                            ),
+                            style: RdType.body(p),
+                            textInputAction: TextInputAction.search,
+                            onChanged: (_) => setState(() {}),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (!_choir) ...[
+                      const SizedBox(height: 12),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            RdChoiceChip(
+                              label: l10n.catalogAllFamilies,
+                              selected: _family == null,
+                              onTap: () => setState(() => _family = null),
+                            ),
+                            for (final family in InstrumentFamily.values) ...[
+                              const SizedBox(width: 8),
+                              RdChoiceChip(
+                                key: Key('catalog-family-${family.name}'),
+                                label: family.label(_language),
+                                selected: _family == family,
+                                onTap: () => setState(() => _family = family),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                    RdGroupedList(
+                      children: [
+                        RdListRow(
+                          key: const Key('catalog-presets'),
+                          title: l10n.catalogPreset,
+                          value:
+                              _preset?.label(_language) ??
+                              l10n.catalogWithoutPreset,
+                          onTap: _choosePreset,
+                        ),
+                        if (widget.allowCustom)
+                          RdListRow(
+                            key: const Key('catalog-custom'),
+                            title: l10n.catalogCustom(widget.tenantType),
+                            leading: RdRowIcon(Icons.add),
+                            onTap: _custom,
+                          ),
+                        RdListRow(
+                          title: l10n.catalogSelected,
+                          value: _selected.length.toString(),
+                          showChevron: false,
+                          trailing: Icon(
+                            _showSelection
+                                ? Icons.expand_less
+                                : Icons.expand_more,
+                            color: p.text2,
+                          ),
+                          onTap:
+                              () => setState(
+                                () => _showSelection = !_showSelection,
+                              ),
+                        ),
+                      ],
+                    ),
+                    if (_showSelection && _selected.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      RdGroupedList(
+                        key: const Key('catalog-selection'),
+                        children: [
+                          for (final draft in _selected.values) _row(draft),
+                        ],
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4, bottom: 8),
+                      child: Text(l10n.catalogBrowse, style: RdType.section(p)),
+                    ),
+                    if (results.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Text(
+                          l10n.catalogNoResults,
+                          style: RdType.meta(p, size: 15),
+                        ),
+                      )
+                    else
+                      RdGroupedList(
+                        children: [
+                          for (final result in results)
+                            _row(
+                              result.draft,
+                              sourceKey: result.sourceKey,
+                              optional: result.optional,
+                            ),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        l10n.catalogSelectedCount(_selected.length),
+                        style: RdType.meta(p, size: 13),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    RdPrimaryButton(
+                      key: const Key('catalog-apply'),
+                      label: l10n.catalogApply,
+                      height: math.max(48, mq.textScaler.scale(16) + 24),
+                      onPressed: _apply,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

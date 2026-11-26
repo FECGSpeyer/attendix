@@ -3877,6 +3877,144 @@
   "@brandingTextPh": {
     "description": "branding.textPh"
   },
+  "catalogAllFamilies": "Alle",
+  "@catalogAllFamilies": {
+    "description": "catalogAllFamilies"
+  },
+  "catalogApply": "Übernehmen",
+  "@catalogApply": {
+    "description": "catalogApply"
+  },
+  "catalogBrowse": "Sammlung",
+  "@catalogBrowse": {
+    "description": "catalogBrowse"
+  },
+  "catalogCustom": "{kind, select, choir {Eigene Stimme} other {Eigenes Instrument}}",
+  "@catalogCustom": {
+    "description": "catalogCustom",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "catalogEditHint": "Mit einem anderen Namen kannst du eine weitere Stimme anlegen.",
+  "@catalogEditHint": {
+    "description": "catalogEditHint"
+  },
+  "catalogEditName": "Eigenen Namen verwenden",
+  "@catalogEditName": {
+    "description": "catalogEditName"
+  },
+  "catalogExisting": "Bereits vorhanden",
+  "@catalogExisting": {
+    "description": "catalogExisting"
+  },
+  "catalogImportFailed": "Die Auswahl konnte nicht übernommen werden. Bitte prüfe die Liste und versuche es erneut.",
+  "@catalogImportFailed": {
+    "description": "catalogImportFailed"
+  },
+  "catalogImportSuccess": "{count, plural, =0 {Alle ausgewählten Einträge sind bereits vorhanden.} one {1 Eintrag hinzugefügt} other {{count} Einträge hinzugefügt}}",
+  "@catalogImportSuccess": {
+    "description": "catalogImportSuccess",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "catalogName": "Name",
+  "@catalogName": {
+    "description": "catalogName"
+  },
+  "catalogNameHint": "{kind, select, choir {Name der Stimme} other {Name des Instruments}}",
+  "@catalogNameHint": {
+    "description": "catalogNameHint",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "catalogNoResults": "Keine passenden Einträge. Du kannst einen eigenen Namen hinzufügen.",
+  "@catalogNoResults": {
+    "description": "catalogNoResults"
+  },
+  "catalogOffline": "Die Sammlung ist offline verfügbar. Zum Übernehmen brauchst du eine Verbindung.",
+  "@catalogOffline": {
+    "description": "catalogOffline"
+  },
+  "catalogOptional": "Optional",
+  "@catalogOptional": {
+    "description": "catalogOptional"
+  },
+  "catalogPreset": "Vorlage",
+  "@catalogPreset": {
+    "description": "catalogPreset"
+  },
+  "catalogRemove": "Auswahl entfernen",
+  "@catalogRemove": {
+    "description": "catalogRemove"
+  },
+  "catalogSearch": "{kind, select, choir {Stimme suchen} other {Instrument oder anderen Namen suchen}}",
+  "@catalogSearch": {
+    "description": "catalogSearch",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "catalogSearchHint": "{kind, select, choir {z. B. Sopran oder Alt} other {z. B. Geige oder Bassflöte}}",
+  "@catalogSearchHint": {
+    "description": "catalogSearchHint",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "catalogSelected": "Ausgewählt",
+  "@catalogSelected": {
+    "description": "catalogSelected"
+  },
+  "catalogSelectedCount": "{count, plural, =0 {Keine Einträge ausgewählt} one {1 Eintrag ausgewählt} other {{count} Einträge ausgewählt}}",
+  "@catalogSelectedCount": {
+    "description": "catalogSelectedCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "catalogSetupChoose": "Auswahl bearbeiten",
+  "@catalogSetupChoose": {
+    "description": "catalogSetupChoose"
+  },
+  "catalogSetupCount": "{count, plural, one {1 Eintrag ausgewählt} other {{count} Einträge ausgewählt}}",
+  "@catalogSetupCount": {
+    "description": "catalogSetupCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "catalogSetupFailed": "Ensemble angelegt. Die Auswahl konnte nicht übernommen werden. Du kannst sie später in der Verwaltung ergänzen.",
+  "@catalogSetupFailed": {
+    "description": "catalogSetupFailed"
+  },
+  "catalogSetupNone": "Keine Auswahl",
+  "@catalogSetupNone": {
+    "description": "catalogSetupNone"
+  },
+  "catalogSetupTitle": "Vorlage und Auswahl",
+  "@catalogSetupTitle": {
+    "description": "catalogSetupTitle"
+  },
+  "catalogTitle": "{kind, select, choir {Stimmen auswählen} other {Instrumente auswählen}}",
+  "@catalogTitle": {
+    "description": "catalogTitle",
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "catalogWithoutPreset": "Ohne Vorlage",
+  "@catalogWithoutPreset": {
+    "description": "catalogWithoutPreset"
+  },
   "churchOverviewChurches": "Gemeinden",
   "@churchOverviewChurches": {
     "description": "churchOverview.churches"
@@ -19079,7 +19217,7 @@
   "@redesignGroupEditClefs": {
     "description": "redesign.groupEdit.clefs"
   },
-  "redesignGroupEditClefsHint": "Mindestens ein Notenschlüssel bleibt ausgewählt.",
+  "redesignGroupEditClefsHint": "Wähle die verwendeten Notenschlüssel. Die Auswahl kann leer bleiben.",
   "@redesignGroupEditClefsHint": {
     "description": "redesign.groupEdit.clefsHint"
   },

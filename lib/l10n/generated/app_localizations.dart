@@ -5067,6 +5067,168 @@ abstract class AppLocalizations {
   /// **'z.B. Verbandsname'**
   String get brandingTextPh;
 
+  /// catalogAllFamilies
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get catalogAllFamilies;
+
+  /// catalogApply
+  ///
+  /// In de, this message translates to:
+  /// **'Übernehmen'**
+  String get catalogApply;
+
+  /// catalogBrowse
+  ///
+  /// In de, this message translates to:
+  /// **'Sammlung'**
+  String get catalogBrowse;
+
+  /// catalogCustom
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, choir {Eigene Stimme} other {Eigenes Instrument}}'**
+  String catalogCustom(String kind);
+
+  /// catalogEditHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mit einem anderen Namen kannst du eine weitere Stimme anlegen.'**
+  String get catalogEditHint;
+
+  /// catalogEditName
+  ///
+  /// In de, this message translates to:
+  /// **'Eigenen Namen verwenden'**
+  String get catalogEditName;
+
+  /// catalogExisting
+  ///
+  /// In de, this message translates to:
+  /// **'Bereits vorhanden'**
+  String get catalogExisting;
+
+  /// catalogImportFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Auswahl konnte nicht übernommen werden. Bitte prüfe die Liste und versuche es erneut.'**
+  String get catalogImportFailed;
+
+  /// catalogImportSuccess
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Alle ausgewählten Einträge sind bereits vorhanden.} one {1 Eintrag hinzugefügt} other {{count} Einträge hinzugefügt}}'**
+  String catalogImportSuccess(num count);
+
+  /// catalogName
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get catalogName;
+
+  /// catalogNameHint
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, choir {Name der Stimme} other {Name des Instruments}}'**
+  String catalogNameHint(String kind);
+
+  /// catalogNoResults
+  ///
+  /// In de, this message translates to:
+  /// **'Keine passenden Einträge. Du kannst einen eigenen Namen hinzufügen.'**
+  String get catalogNoResults;
+
+  /// catalogOffline
+  ///
+  /// In de, this message translates to:
+  /// **'Die Sammlung ist offline verfügbar. Zum Übernehmen brauchst du eine Verbindung.'**
+  String get catalogOffline;
+
+  /// catalogOptional
+  ///
+  /// In de, this message translates to:
+  /// **'Optional'**
+  String get catalogOptional;
+
+  /// catalogPreset
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage'**
+  String get catalogPreset;
+
+  /// catalogRemove
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl entfernen'**
+  String get catalogRemove;
+
+  /// catalogSearch
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, choir {Stimme suchen} other {Instrument oder anderen Namen suchen}}'**
+  String catalogSearch(String kind);
+
+  /// catalogSearchHint
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, choir {z. B. Sopran oder Alt} other {z. B. Geige oder Bassflöte}}'**
+  String catalogSearchHint(String kind);
+
+  /// catalogSelected
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgewählt'**
+  String get catalogSelected;
+
+  /// catalogSelectedCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Keine Einträge ausgewählt} one {1 Eintrag ausgewählt} other {{count} Einträge ausgewählt}}'**
+  String catalogSelectedCount(num count);
+
+  /// catalogSetupChoose
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl bearbeiten'**
+  String get catalogSetupChoose;
+
+  /// catalogSetupCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Eintrag ausgewählt} other {{count} Einträge ausgewählt}}'**
+  String catalogSetupCount(num count);
+
+  /// catalogSetupFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Ensemble angelegt. Die Auswahl konnte nicht übernommen werden. Du kannst sie später in der Verwaltung ergänzen.'**
+  String get catalogSetupFailed;
+
+  /// catalogSetupNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Auswahl'**
+  String get catalogSetupNone;
+
+  /// catalogSetupTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage und Auswahl'**
+  String get catalogSetupTitle;
+
+  /// catalogTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{kind, select, choir {Stimmen auswählen} other {Instrumente auswählen}}'**
+  String catalogTitle(String kind);
+
+  /// catalogWithoutPreset
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Vorlage'**
+  String get catalogWithoutPreset;
+
   /// churchOverview.churches
   ///
   /// In de, this message translates to:
@@ -24411,7 +24573,7 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.clefsHint
   ///
   /// In de, this message translates to:
-  /// **'Mindestens ein Notenschlüssel bleibt ausgewählt.'**
+  /// **'Wähle die verwendeten Notenschlüssel. Die Auswahl kann leer bleiben.'**
   String get redesignGroupEditClefsHint;
 
   /// redesign.groupEdit.delete
