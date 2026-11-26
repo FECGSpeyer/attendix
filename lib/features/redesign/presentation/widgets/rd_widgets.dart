@@ -621,7 +621,7 @@ class RdStatusBar extends StatelessWidget {
   }
 }
 
-/// One number of [RdStatusCounters]: "15" over "zugesagt".
+/// One number and label of [RdStatusCounters].
 class RdCounter {
   const RdCounter(
     this.value,
@@ -655,18 +655,23 @@ class RdCounter {
 /// [columns] (lists): every counter keeps its column and a 0 leaves it
 /// empty, so the same number sits at the same place in every card.
 /// Otherwise (a single card) the numbers stand next to each other.
+/// [inline] places smaller numbers beside their labels and wraps whole
+/// counters when space is limited.
 class RdStatusCounters extends StatelessWidget {
   const RdStatusCounters({
     super.key,
     required this.counters,
     required this.semanticLabel,
     this.columns = false,
+    this.inline = false,
     this.trailing,
-  }) : assert(!columns || trailing == null);
+  }) : assert(!columns || trailing == null),
+       assert(!columns || !inline);
 
   final List<RdCounter> counters;
   final String semanticLabel;
   final bool columns;
+  final bool inline;
 
   /// In flow mode, keep an action beside the last visible counter. Its
   /// semantics stay available separately from the counters' summary.
@@ -679,26 +684,44 @@ class RdStatusCounters extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.rd;
     // With the inherited font: the columns are measured as they are drawn.
-    final labelStyle = DefaultTextStyle.of(context).style.merge(RdType.meta(p, size: 12));
+    final labelStyle = DefaultTextStyle.of(context).style
+        .merge(RdType.meta(p, size: 12));
     final numberStyle = DefaultTextStyle.of(context).style.merge(
-      const TextStyle(
-        fontSize: 17,
+      TextStyle(
+        fontSize: inline ? 13 : 17,
         height: 1.2,
-        fontWeight: FontWeight.w700,
-        fontFeatures: [FontFeature.tabularFigures()],
+        fontWeight: inline ? FontWeight.w600 : FontWeight.w700,
+        fontFeatures: const [FontFeature.tabularFigures()],
       ),
     );
     final tappable = counters.any((c) => c.onTap != null);
 
     Widget cell(RdCounter c, String label) {
-      final content = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('${c.value}', maxLines: 1, style: numberStyle.copyWith(color: c.color)),
-          Text(label, maxLines: 1, softWrap: false, style: labelStyle),
-        ],
-      );
+      final content = inline
+          ? Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: '${c.value}\u00a0',
+                    style: numberStyle.copyWith(color: c.color),
+                  ),
+                  TextSpan(text: label),
+                ],
+              ),
+              style: labelStyle,
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${c.value}',
+                  maxLines: 1,
+                  style: numberStyle.copyWith(color: c.color),
+                ),
+                Text(label, maxLines: 1, softWrap: false, style: labelStyle),
+              ],
+            );
       if (c.onTap == null) return content;
       return Semantics(
         button: true,
@@ -710,7 +733,12 @@ class RdStatusCounters extends StatelessWidget {
           onTap: c.onTap,
           child: ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 44, minHeight: 40),
-            child: Align(alignment: AlignmentDirectional.centerStart, widthFactor: 1, heightFactor: 1, child: content),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              widthFactor: 1,
+              heightFactor: 1,
+              child: content,
+            ),
           ),
         ),
       );
@@ -718,10 +746,12 @@ class RdStatusCounters extends StatelessWidget {
 
     Widget flow() {
       final visible = counters.where((c) => c.visible).toList();
-      Widget flowCell(RdCounter c) =>
-          ExcludeSemantics(excluding: trailing != null && !tappable, child: cell(c, c.label));
+      Widget flowCell(RdCounter c) => ExcludeSemantics(
+        excluding: trailing != null && !tappable,
+        child: cell(c, c.label),
+      );
       return Wrap(
-        spacing: _flowGap,
+        spacing: inline ? 13 : _flowGap,
         runSpacing: 6,
         crossAxisAlignment: WrapCrossAlignment.end,
         children: [
@@ -772,8 +802,13 @@ class RdStatusCounters extends StatelessWidget {
 
           // Full words when all columns fit, else the short ones.
           final full = [for (final c in counters) width(c.label)];
-          final fits = full.fold<double>(0, (a, b) => a + b) + _gap * (counters.length - 1) <= box.maxWidth;
-          final labels = [for (final c in counters) fits ? c.label : c.shortLabel ?? c.label];
+          final fits =
+              full.fold<double>(0, (a, b) => a + b) +
+                  _gap * (counters.length - 1) <=
+              box.maxWidth;
+          final labels = [
+            for (final c in counters) fits ? c.label : c.shortLabel ?? c.label,
+          ];
           final widths = fits ? full : [for (final l in labels) width(l)];
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,

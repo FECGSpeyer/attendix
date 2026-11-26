@@ -10897,6 +10897,70 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdAdminWorkHistory => 'Played works';
 
   @override
+  String get rdCreateFormAllDayHint =>
+      'All day, as configured for this event type.';
+
+  @override
+  String get rdCreateFormCustomTimes => 'Your adjusted times are kept.';
+
+  @override
+  String rdCreateFormInvited(Object circle) {
+    return 'Invited: $circle';
+  }
+
+  @override
+  String get rdCreateFormNoDates =>
+      'No dates selected. Check the recurrence and skipped holidays.';
+
+  @override
+  String get rdCreateFormNoEventTypes =>
+      'No event type has been set up for this section yet.';
+
+  @override
+  String get rdCreateFormOptions => 'More options';
+
+  @override
+  String get rdCreateFormPlaceHint => 'Add a location · optional';
+
+  @override
+  String get rdCreateFormRepeat => 'Repeat';
+
+  @override
+  String get rdCreateFormScopeChanged =>
+      'The group or account has changed. Reopen the form to create an event there.';
+
+  @override
+  String get rdCreateFormTitleHint => 'Add a title';
+
+  @override
+  String get rdCreateFormTypeDefaults => 'Times taken from the event type.';
+
+  @override
+  String get rdCreateFormWhat => 'What is happening?';
+
+  @override
+  String get rdCreateFormWhen => 'When?';
+
+  @override
+  String get rdCreateMenuClose => 'Close choices';
+
+  @override
+  String rdCreateMenuEvent(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'orchestra': 'Orchestra event',
+      'choir': 'Choir event',
+      'other': 'Event',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get rdCreateMenuEventHint => 'Event with attendance';
+
+  @override
+  String get rdCreateMenuMeetingHint => 'Agenda and minutes';
+
+  @override
   String get rdCriticalAddAnd => 'and also …';
 
   @override

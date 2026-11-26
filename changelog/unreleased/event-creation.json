@@ -1,0 +1,8 @@
+{
+  "bump": "minor",
+  "changes": [
+    "✨ Termine intuitiver anlegen: direkte Auswahl zwischen Termin und Besprechung, übersichtliches Formular und dauerhaft sichtbarer Anlegen-Button",
+    "✨ Kompaktere Rückmeldungen auf Terminkarten bei unveränderter Datumsanzeige",
+    "🐛 Werke im Termin ohne Hinweise auf fehlende Instrumente anzeigen"
+  ]
+}

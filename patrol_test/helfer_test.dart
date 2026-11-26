@@ -47,9 +47,10 @@ void main() {
     await signInAs($, 'chor-admin');
     await tapOn($, 'Termine');
     await tapOn($, const Key('rd-events-add'));
+    await tapOn($, 'Chortermin');
     await see($, 'Neuer Termin');
     await $(TextField).first.enterText('Sonderprobe');
-    await tapOn($, 'Anlegen');
+    await tapOn($, 'Termin anlegen');
     await see($, 'Sonderprobe');
   });
 

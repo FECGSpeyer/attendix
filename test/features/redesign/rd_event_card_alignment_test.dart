@@ -1,3 +1,4 @@
+import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
 import 'package:attendix/features/redesign/presentation/widgets/today/rd_today_common.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,8 @@ void main() {
         expect(
           tester.getRect(longDate).center.dy,
           closeTo(tester.getRect(longCard).center.dy, 0.5),
-          reason: 'The date box stays vertically centered when the title wraps.',
+          reason:
+              'The date box stays vertically centered when the title wraps.',
         );
         expect(
           tester.getRect(pill).right,
@@ -78,5 +80,63 @@ void main() {
         expect(tester.takeException(), isNull);
       },
     );
+  }
+
+  for (final scale in [1.6, 2.0]) {
+    testWidgets('answer labels stay readable in a narrow card at ${scale}x', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(320, 1800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        betaEventAlignmentFixture(
+          textScale: scale,
+          counts: const {
+            71: RdStatusCounts(
+              present: 0,
+              excused: 111,
+              lateAnnounced: 22,
+              absent: 333,
+              open: 44,
+            ),
+          },
+        ),
+      );
+      for (var i = 0; i < 12; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+
+      final counters = find.byType(RdStatusCounters);
+      expect(counters, findsOneWidget);
+      for (final label in [
+        'zugesagt',
+        'entschuldigt',
+        'später',
+        'abwesend',
+        'offen',
+      ]) {
+        expect(
+          find.descendant(
+            of: counters,
+            matching: find.textContaining(label, findRichText: true),
+          ),
+          findsOneWidget,
+        );
+      }
+      final semantics = tester.ensureSemantics();
+      try {
+        await tester.pump();
+        expect(
+          tester.getSemantics(counters).label,
+          contains(
+            '0 zugesagt · 111 entschuldigt · 22 später · 333 abwesend · 44 offen',
+          ),
+        );
+      } finally {
+        semantics.dispose();
+      }
+      expect(tester.takeException(), isNull);
+    });
   }
 }

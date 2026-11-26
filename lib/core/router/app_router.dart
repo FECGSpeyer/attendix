@@ -607,7 +607,9 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'neu',
                 name: 'redesignEventCreate',
-                builder: (context, state) => const RdEventCreatePage(),
+                builder: (context, state) => RdEventCreatePage(
+                  initialDate: state.extra is DateTime ? state.extra as DateTime : null,
+                ),
               ),
               GoRoute(
                 path: 'meine/:paId',

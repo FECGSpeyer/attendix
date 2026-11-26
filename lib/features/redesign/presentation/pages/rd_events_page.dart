@@ -23,6 +23,7 @@ import '../../data/providers/rd_events_providers.dart';
 import '../../data/providers/rd_today_providers.dart';
 import '../widgets/event/rd_absence_sheet.dart';
 import '../widgets/event/rd_current_songs_sheet.dart' show showCurrentSongsSheet;
+import '../widgets/event/rd_event_create_menu.dart';
 import '../widgets/event/rd_parent_event_card.dart';
 import '../widgets/today/rd_parent_today.dart' show rdOpenChildren;
 import '../../../parents/data/providers/parents_providers.dart';
@@ -113,14 +114,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
         }
       },
       floatingActionButton: canCreate && !inSplit
-          ? FloatingActionButton(
-              tooltip: l10n.redesignEventsNew,
-              backgroundColor: p.primary,
-              foregroundColor: p.onPrimary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-              onPressed: () => context.push(RedesignRoutes.newEvent),
-              child: const Icon(Icons.add, size: 28),
-            )
+          ? const RdEventCreateMenu()
           : null,
       children: [
         Row(
@@ -165,13 +159,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
             ),
             if (canCreate && inSplit) ...[
               const SizedBox(width: 8),
-              RdCircleButton(
-                key: const Key('rd-events-add'),
-                icon: Icons.add,
-                label: l10n.redesignEventsNew,
-                primary: true,
-                onPressed: () => context.push(RedesignRoutes.newEvent),
-              ),
+              const RdEventCreateMenu(compact: true),
             ],
           ],
         ),
@@ -727,10 +715,9 @@ class _LeaderEventCard extends StatelessWidget {
                 ],
                 if (!past && c != null && c.total > 0) ...[
                   const SizedBox(height: 8),
-                  // Numbers in fixed columns instead of the bar: the same
-                  // number sits at the same place in every card.
+                  // Compact number-and-word pairs below the event details.
                   RdStatusCounters(
-                    columns: true,
+                    inline: true,
                     counters: rdAnswerCounters(context, c),
                     semanticLabel: _countsLine(l10n, c),
                   ),

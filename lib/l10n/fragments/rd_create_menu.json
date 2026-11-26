@@ -1,0 +1,18 @@
+{
+  "de": {
+    "rdCreateMenu": {
+      "event": "{kind, select, orchestra {Orchestertermin} choir {Chortermin} other {Termin}}",
+      "eventHint": "Termin mit Anwesenheit",
+      "meetingHint": "Tagesordnung und Protokoll",
+      "close": "Auswahl schließen"
+    }
+  },
+  "en": {
+    "rdCreateMenu": {
+      "event": "{kind, select, orchestra {Orchestra event} choir {Choir event} other {Event}}",
+      "eventHint": "Event with attendance",
+      "meetingHint": "Agenda and minutes",
+      "close": "Close choices"
+    }
+  }
+}

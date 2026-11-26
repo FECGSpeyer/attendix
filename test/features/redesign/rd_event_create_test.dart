@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_type_providers.dart';
@@ -11,11 +14,14 @@ import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/role_permission_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
+import 'package:attendix/core/providers/team_org_providers.dart';
+import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/router/redesign_routes.dart';
 import 'package:attendix/core/services/holiday_service.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
+import 'package:attendix/data/models/team_org/team_org.dart';
 import 'package:attendix/data/repositories/profile_repository.dart';
 import 'package:attendix/features/redesign/data/rd_create_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_event_create_page.dart';
@@ -26,27 +32,32 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show SupabaseClient, AuthClientOptions;
 
 import '../../factories/test_factories.dart';
 
 class _TenantNotifier extends CurrentTenantNotifier {
+  void switchGroup() {
+    state = TestFactories.createTenant(id: 8, shortName: 'X', longName: 'Andere Gruppe');
+  }
+
   _TenantNotifier(super.ref) {
     state = TestFactories.createTenant(id: 7, shortName: 'SO', longName: 'Stadtorchester');
   }
 }
 
-const _probe = AttendanceType(id: 'p', name: 'Probe', startTime: '19:30', endTime: '21:30', placeEnabled: true);
+const _probe = AttendanceType(
+  id: 'p',
+  name: 'Probe',
+  startTime: '19:30',
+  endTime: '21:30',
+  placeEnabled: true,
+);
 const _konzert = AttendanceType(id: 'k', name: 'Konzert', startTime: '18:00', endTime: '20:00');
 const _hidden = AttendanceType(id: 'h', name: 'Alt', visible: false);
 
-Attendance _att(int id, String date, String typeId, {String? info, String? place, String? start}) => Attendance(
-      id: id,
-      date: date,
-      typeId: typeId,
-      typeInfo: info,
-      place: place,
-      startTime: start,
-    );
+Attendance _att(int id, String date, String typeId, {String? info, String? place, String? start}) =>
+    Attendance(id: id, date: date, typeId: typeId, typeInfo: info, place: place, startTime: start);
 
 /// Bounded pumps: loading spinners never settle.
 Future<void> _settle(WidgetTester tester) async {
@@ -55,7 +66,16 @@ Future<void> _settle(WidgetTester tester) async {
   }
 }
 
-Widget _app({bool canCreate = true, List<Attendance>? history}) {
+Widget eventCreateTestApp({
+  bool canCreate = true,
+  List<Attendance>? history,
+  List<AttendanceType> types = const [_probe, _konzert, _hidden],
+  List<ProtocolType> protocols = const [],
+  bool protocolLoadFails = false,
+  Future<bool>? permission,
+  double textScale = 1,
+  ThemeData? theme,
+}) {
   final router = GoRouter(
     initialLocation: '/termine/neu',
     routes: [
@@ -74,26 +94,46 @@ Widget _app({bool canCreate = true, List<Attendance>? history}) {
   );
   return ProviderScope(
     overrides: [
-      initialRedesignSettingsProvider.overrideWithValue(
-        const RedesignSettings(world: RdFarbwelt.petrol),
-      ),
+      initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings(world: RdFarbwelt.petrol)),
       effectiveRoleProvider.overrideWithValue(Role.admin),
       canCreateAttendanceProvider.overrideWithValue(canCreate),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
-      attendanceTypesProvider.overrideWith((ref) async => const [_probe, _konzert, _hidden]),
-      realtimeAttendanceListProvider.overrideWith((ref) async =>
-          history ??
-          [
-            _att(1, '2026-10-01', 'p', info: 'Gesamtprobe', place: 'Probenraum 2', start: '19:00'),
-            _att(2, '2026-10-08', 'p', info: 'Gesamtprobe', place: 'Probenraum 2', start: '19:30'),
-            _att(3, '2026-10-10', 'k', place: 'Stadthalle'),
-          ]),
+      attendanceTypesProvider.overrideWith((ref) async => types),
+      protocolTypesProvider.overrideWith((ref) async {
+        if (protocolLoadFails) throw StateError('offline');
+        return protocols;
+      }),
+      typeCirclePersonsProvider.overrideWith((ref) async => const {}),
+      currentAuthUserIdProvider.overrideWithValue('test-user'),
+      supabaseClientProvider.overrideWith((ref) {
+        final client = SupabaseClient(
+          'https://example.invalid',
+          'test-key',
+          authOptions: const AuthClientOptions(autoRefreshToken: false),
+        );
+        ref.onDispose(() {
+          client.dispose();
+        });
+        return client;
+      }),
+      if (permission != null) canCreateAttendanceConfirmedProvider.overrideWith((ref) => permission),
+      realtimeAttendanceListProvider.overrideWith(
+        (ref) async =>
+            history ??
+            [
+              _att(1, '2026-10-01', 'p', info: 'Gesamtprobe', place: 'Probenraum 2', start: '19:00'),
+              _att(2, '2026-10-08', 'p', info: 'Gesamtprobe', place: 'Probenraum 2', start: '19:30'),
+              _att(3, '2026-10-10', 'k', place: 'Stadthalle'),
+            ],
+      ),
       holidaysProvider.overrideWith((ref) async => const HolidayData()),
-      playersProvider.overrideWith((ref) async => [
-            TestFactories.createPerson(id: 1, tenantId: 7, instrument: 1),
-            TestFactories.createPerson(id: 2, tenantId: 7, instrument: 2),
-            TestFactories.createPerson(id: 3, tenantId: 7, instrument: 2, paused: true),
-          ]),
+      playersProvider.overrideWith(
+        (ref) async => [
+          TestFactories.createPerson(id: 1, tenantId: 7, instrument: 1),
+          TestFactories.createPerson(id: 2, tenantId: 7, instrument: 2),
+          TestFactories.createPerson(id: 3, tenantId: 7, instrument: 2, paused: true),
+        ],
+      ),
       personExtraFieldsProvider.overrideWith((ref) async => const <ProfileExtraField>[]),
       groupsMapProvider.overrideWith((ref) async => const {1: 'Violine', 2: 'Flöte'}),
     ],
@@ -101,7 +141,12 @@ Widget _app({bool canCreate = true, List<Attendance>? history}) {
       locale: const Locale('de'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+      theme: theme ?? buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+      builder:
+          (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
+            child: child!,
+          ),
       routerConfig: router,
     ),
   );
@@ -110,6 +155,7 @@ Widget _app({bool canCreate = true, List<Attendance>? history}) {
 /// REDESIGN: "Termin anlegen" (canvas TerminAnlegen).
 void main() {
   setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
     await initializeDateFormatting('de_DE');
     await initializeDateFormatting('de');
   });
@@ -134,18 +180,27 @@ void main() {
 
   test('rdMovedSeriesEnd keeps the series length in calendar days', () {
     // Over the change to summer time (Europe/Berlin: 47 h between the days).
-    expect(rdMovedSeriesEnd(DateTime(2026, 3, 28), DateTime(2026, 3, 30), DateTime(2026, 5, 9)),
-        DateTime(2026, 5, 11));
+    expect(
+      rdMovedSeriesEnd(DateTime(2026, 3, 28), DateTime(2026, 3, 30), DateTime(2026, 5, 9)),
+      DateTime(2026, 5, 11),
+    );
     // Back to winter time (49 h), and moving the start earlier.
-    expect(rdMovedSeriesEnd(DateTime(2026, 10, 24), DateTime(2026, 10, 26), DateTime(2026, 12, 5)),
-        DateTime(2026, 12, 7));
-    expect(rdMovedSeriesEnd(DateTime(2026, 3, 30), DateTime(2026, 3, 28), DateTime(2026, 5, 11)),
-        DateTime(2026, 5, 9));
+    expect(
+      rdMovedSeriesEnd(DateTime(2026, 10, 24), DateTime(2026, 10, 26), DateTime(2026, 12, 5)),
+      DateTime(2026, 12, 7),
+    );
+    expect(
+      rdMovedSeriesEnd(DateTime(2026, 3, 30), DateTime(2026, 3, 28), DateTime(2026, 5, 11)),
+      DateTime(2026, 5, 9),
+    );
     // Never before the new first day.
-    expect(rdMovedSeriesEnd(DateTime(2026, 5, 1), DateTime(2026, 6, 1), DateTime(2026, 4, 1)),
-        DateTime(2026, 6, 1));
+    expect(
+      rdMovedSeriesEnd(DateTime(2026, 5, 1), DateTime(2026, 6, 1), DateTime(2026, 4, 1)),
+      DateTime(2026, 6, 1),
+    );
     // The page moves the end only this way.
-    final page = File('lib/features/redesign/presentation/pages/rd_event_create_page.dart').readAsStringSync();
+    final page =
+        File('lib/features/redesign/presentation/pages/rd_event_create_page.dart').readAsStringSync();
     expect(page, contains('rdMovedSeriesEnd(_date, day, _until)'));
     expect(page, isNot(contains('.difference(_date)')));
   });
@@ -153,10 +208,20 @@ void main() {
   test('rdHolidayOn: school holidays are a range, public holidays one day', () {
     final data = HolidayData(
       publicHolidays: [
-        Holiday(id: 'a', name: 'Weihnachten', startDate: DateTime(2026, 12, 25), endDate: DateTime(2026, 12, 25)),
+        Holiday(
+          id: 'a',
+          name: 'Weihnachten',
+          startDate: DateTime(2026, 12, 25),
+          endDate: DateTime(2026, 12, 25),
+        ),
       ],
       schoolHolidays: [
-        Holiday(id: 'b', name: 'Herbstferien', startDate: DateTime(2026, 10, 26), endDate: DateTime(2026, 10, 31)),
+        Holiday(
+          id: 'b',
+          name: 'Herbstferien',
+          startDate: DateTime(2026, 10, 26),
+          endDate: DateTime(2026, 10, 31),
+        ),
       ],
     );
     expect(rdHolidayOn(data, DateTime(2026, 10, 26, 12)), 'Herbstferien');
@@ -211,15 +276,18 @@ void main() {
 
   group('rdTemplates', () {
     test('most created kinds first, newest one gives time and place', () {
-      final t = rdTemplates([
-        _att(1, '2026-09-01', 'p', info: 'Gesamtprobe', place: 'Saal', start: '19:00'),
-        _att(2, '2026-10-01', 'p', info: 'Gesamtprobe', place: 'Probenraum 2', start: '19:30'),
-        _att(3, '2026-10-02', 'p', info: 'Registerprobe'),
-        _att(4, '2026-10-03', 'k'),
-        _att(5, '2026-10-04', 'k'),
-        _att(6, '2026-10-05', 'h', info: 'Versteckt'),
-        _att(7, '2026-10-06', 'p', info: ' gesamtprobe '),
-      ], const [_probe, _konzert]);
+      final t = rdTemplates(
+        [
+          _att(1, '2026-09-01', 'p', info: 'Gesamtprobe', place: 'Saal', start: '19:00'),
+          _att(2, '2026-10-01', 'p', info: 'Gesamtprobe', place: 'Probenraum 2', start: '19:30'),
+          _att(3, '2026-10-02', 'p', info: 'Registerprobe'),
+          _att(4, '2026-10-03', 'k'),
+          _att(5, '2026-10-04', 'k'),
+          _att(6, '2026-10-05', 'h', info: 'Versteckt'),
+          _att(7, '2026-10-06', 'p', info: ' gesamtprobe '),
+        ],
+        const [_probe, _konzert],
+      );
       expect(t.map((x) => x.title), ['Konzert', 'Gesamtprobe', 'Registerprobe']);
       final gesamt = t[1];
       expect(gesamt.type.id, 'p');
@@ -250,24 +318,261 @@ void main() {
   });
 
   group('page', () {
-    testWidgets('starts with the most used template, weekly series shows the summary', (tester) async {
+    testWidgets('landscape keyboard leaves a visible create action without overflow', (tester) async {
+      tester.view.physicalSize = const Size(640, 320);
+      tester.view.devicePixelRatio = 1;
+      tester.view.viewInsets = const FakeViewPadding(bottom: 180);
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(eventCreateTestApp(history: const [], textScale: 1.6));
+      await _settle(tester);
+      final submit = find.byKey(const ValueKey('rd-create-submit'));
+      expect(tester.getRect(submit).bottom, lessThanOrEqualTo(140));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('manually changed time pair survives changing the type', (tester) async {
+      tester.view.physicalSize = const Size(430, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(eventCreateTestApp(history: const []));
+      await _settle(tester);
+      await tester.tap(find.text('19:30'));
+      await _settle(tester);
+      Navigator.of(tester.element(find.byType(TimePickerDialog))).pop(const TimeOfDay(hour: 20, minute: 15));
+      await _settle(tester);
+      await tester.tap(find.text('Konzert'));
+      await _settle(tester);
+      expect(find.text('20:15'), findsOneWidget);
+      expect(find.text('21:30'), findsOneWidget);
+      expect(find.text('18:00'), findsNothing);
+    });
+
+    testWidgets('changing type shows its default end beside a custom start', (tester) async {
+      tester.view.physicalSize = const Size(430, 1100);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        eventCreateTestApp(
+          history: const [],
+          permission: Future.value(true),
+          types: const [AttendanceType(id: 'open-end', name: 'Offenes Ende', startTime: '19:00'), _konzert],
+        ),
+      );
+      await _settle(tester);
+      await tester.tap(find.text('19:00'));
+      await _settle(tester);
+      Navigator.of(tester.element(find.byType(TimePickerDialog))).pop(const TimeOfDay(hour: 22, minute: 0));
+      await _settle(tester);
+      await tester.tap(find.byKey(const ValueKey('rd-create-type-k')));
+      await _settle(tester);
+      expect(find.text('22:00'), findsOneWidget);
+      expect(find.text('20:00'), findsOneWidget);
+      expect(find.text('–'), findsNothing);
+
+      // The invalid pair is visible and the existing save validation still blocks it.
+      await tester.tap(find.byKey(const ValueKey('rd-create-submit')));
+      await _settle(tester);
+      expect(find.text('Das Ende kann nicht vor dem Beginn liegen.'), findsOneWidget);
+      expect(find.text('page termine'), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('changing type shows its default start beside a custom end', (tester) async {
+      tester.view.physicalSize = const Size(430, 1100);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        eventCreateTestApp(
+          history: const [],
+          types: const [AttendanceType(id: 'open-start', name: 'Offener Beginn', endTime: '21:30'), _konzert],
+        ),
+      );
+      await _settle(tester);
+      await tester.tap(find.text('21:30'));
+      await _settle(tester);
+      Navigator.of(tester.element(find.byType(TimePickerDialog))).pop(const TimeOfDay(hour: 20, minute: 15));
+      await _settle(tester);
+      await tester.tap(find.byKey(const ValueKey('rd-create-type-k')));
+      await _settle(tester);
+      expect(find.text('18:00'), findsOneWidget);
+      expect(find.text('20:15'), findsOneWidget);
+      expect(find.text('20:00'), findsNothing);
+      expect(find.text('–'), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('all-day duration and duty staffing remain editable', (tester) async {
+      tester.view.physicalSize = const Size(430, 1400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        eventCreateTestApp(
+          history: const [],
+          types: const [
+            AttendanceType(
+              id: 'd',
+              name: 'Probenwochenende',
+              allDay: true,
+              durationDays: 2,
+              dutyMode: true,
+              dutyRequired: 3,
+            ),
+          ],
+        ),
+      );
+      await _settle(tester);
+      expect(find.text('Beginn'), findsNothing);
+      expect(find.text('2 Tage'), findsOneWidget);
+      await tester.tap(find.byTooltip('Einen Tag mehr'));
+      await _settle(tester);
+      expect(find.text('3 Tage'), findsOneWidget);
+      expect(find.text('3'), findsOneWidget);
+      await tester.tap(find.byTooltip('Mehr'));
+      await _settle(tester);
+      expect(find.text('4'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('rd-create-type-d')));
+      await _settle(tester);
+      expect(find.text('4'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('failed meeting classification offers retry instead of unfiltered creation', (tester) async {
+      await tester.pumpWidget(eventCreateTestApp(protocolLoadFails: true));
+      await _settle(tester);
+      expect(find.text('Erneut versuchen'), findsOneWidget);
+      expect(find.byType(TextField), findsNothing);
+      expect(find.byKey(const ValueKey('rd-create-submit')), findsNothing);
+    });
+
+    testWidgets('switching groups while permission is pending does not resume the old draft', (tester) async {
+      tester.view.physicalSize = const Size(430, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final permission = Completer<bool>();
+      await tester.pumpWidget(eventCreateTestApp(history: const [], permission: permission.future));
+      await _settle(tester);
+      final container = ProviderScope.containerOf(tester.element(find.byType(RdEventCreatePage)));
+      await tester.tap(find.byKey(const ValueKey('rd-create-submit')));
+      await tester.pump();
+      (container.read(currentTenantProvider.notifier) as _TenantNotifier).switchGroup();
+      permission.complete(true);
+      await _settle(tester);
+      expect(find.textContaining('Die Gruppe oder Anmeldung hat sich geändert'), findsOneWidget);
+      expect(find.byKey(const ValueKey('rd-create-submit')), findsNothing);
+      expect(find.text('page termine'), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('manual title and place survive changing the event type', (tester) async {
+      tester.view.physicalSize = const Size(430, 1100);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(eventCreateTestApp(history: const []));
+      await _settle(tester);
+      await tester.enterText(find.byType(TextField).first, 'Registerprobe');
+      await tester.enterText(find.byType(TextField).last, 'Raum 4');
+      await tester.tap(find.text('Konzert').first);
+      await _settle(tester);
+      expect(tester.widget<TextField>(find.byType(TextField).first).controller!.text, 'Registerprobe');
+      expect(tester.widget<TextField>(find.byType(TextField).last).controller!.text, 'Raum 4');
+      expect(find.text('18:00'), findsOneWidget);
+    });
+
+    testWidgets('meeting types cannot be chosen in regular event creation', (tester) async {
+      await tester.pumpWidget(
+        eventCreateTestApp(
+          history: const [],
+          types: const [_probe, AttendanceType(id: 'm', name: 'Vorstand')],
+          protocols: const [ProtocolType(id: 'm', name: 'Vorstand', enableProtocol: true)],
+        ),
+      );
+      await _settle(tester);
+      expect(find.text('Vorstand'), findsNothing);
+      expect(find.text('Besprechung planen'), findsNothing);
+    });
+
+    testWidgets('one bottom create action stays visible at narrow width and large text', (tester) async {
+      tester.view.physicalSize = const Size(320, 740);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(eventCreateTestApp(history: const [], textScale: 1.6));
+      await _settle(tester);
+      final submit = find.byKey(const ValueKey('rd-create-submit'));
+      expect(submit, findsOneWidget);
+      expect(tester.getRect(submit).bottom, lessThanOrEqualTo(740));
+      final before = tester.getTopLeft(submit);
+      await tester.drag(find.byType(ListView).first, const Offset(0, -300));
+      await _settle(tester);
+      expect(tester.getTopLeft(submit), before);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      await _settle(tester);
+      expect(tester.getRect(submit).bottom, lessThanOrEqualTo(440));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('submission locks the draft before permission resolves and unlocks on denial', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(430, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final permission = Completer<bool>();
+      await tester.pumpWidget(eventCreateTestApp(history: const [], permission: permission.future));
+      await _settle(tester);
+      await tester.tap(find.byKey(const ValueKey('rd-create-submit')));
+      await tester.pump();
+      final page = tester.element(find.byType(RdEventCreatePage));
+      final guards = ProviderScope.containerOf(page).read(routeLeaveGuardRegistryProvider);
+      expect(await guards.canLeave(), isFalse);
+      expect(
+        tester
+            .stateList<EditableTextState>(find.byType(EditableText))
+            .any((s) => s.widget.focusNode.canRequestFocus),
+        isFalse,
+      );
+      for (var i = 0; i < 8; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        expect(
+          tester
+              .stateList<EditableTextState>(find.byType(EditableText))
+              .any((s) => s.widget.focusNode.hasFocus),
+          isFalse,
+        );
+      }
+      final button = find.descendant(
+        of: find.byKey(const ValueKey('rd-create-submit')),
+        matching: find.byType(FilledButton),
+      );
+      expect(tester.widget<FilledButton>(button).onPressed, isNull);
+      permission.complete(false);
+      await _settle(tester);
+      expect(tester.widget<FilledButton>(button).onPressed, isNotNull);
+      expect(await guards.canLeave(), isTrue);
+    });
+    testWidgets('starts with a type, explicit templates and weekly series remain available', (tester) async {
       tester.view.physicalSize = const Size(430, 1800);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
-      await tester.pumpWidget(_app());
+      await tester.pumpWidget(eventCreateTestApp());
       await _settle(tester);
 
       expect(find.text('Neuer Termin'), findsOneWidget);
-      expect(find.text('Gesamtprobe'), findsWidgets);
-      // Template applied: title, place, time.
+      expect(find.text('Gesamtprobe'), findsNothing);
+      // Initially use type defaults; templates are an explicit shortcut.
       final title = tester.widget<TextField>(find.byType(TextField).first);
-      expect(title.controller!.text, 'Gesamtprobe');
+      expect(title.controller!.text, 'Probe');
       expect(find.text('Probenraum 2'), findsOneWidget);
       expect(find.text('19:30'), findsOneWidget);
       // Invited: everyone active (the paused person is left out).
-      expect(find.text('Alle · 2'), findsOneWidget);
-      // One submit only: "Anlegen" in the top bar.
-      expect(find.text('Anlegen'), findsOneWidget);
+      expect(find.text('Eingeladen: Alle · 2'), findsOneWidget);
+      // A single create action stays outside the scrolling form.
+      expect(find.text('Termin anlegen'), findsOneWidget);
+      await tester.tap(find.text('Weitere Optionen'));
+      await _settle(tester);
+      await tester.tap(find.text('Gesamtprobe'));
+      await _settle(tester);
+      expect(title.controller!.text, 'Gesamtprobe');
 
       // Konzert template: its time; Ort is offered at every Art.
       await tester.tap(find.text('Konzert').first);
@@ -276,7 +581,7 @@ void main() {
       expect(find.text('Ort'), findsOneWidget);
 
       // Weekly series.
-      await tester.tap(find.text('Weitere Daten'));
+      await tester.tap(find.text('Wiederholen'));
       await _settle(tester);
       await tester.tap(find.text('Jede Woche'));
       await _settle(tester);
@@ -288,7 +593,7 @@ void main() {
     });
 
     testWidgets('without permission only a hint, Anlegen disabled', (tester) async {
-      await tester.pumpWidget(_app(canCreate: false));
+      await tester.pumpWidget(eventCreateTestApp(canCreate: false));
       await _settle(tester);
       expect(find.text('Du darfst keine Termine anlegen.'), findsOneWidget);
       expect(find.byType(TextField), findsNothing);
@@ -298,14 +603,14 @@ void main() {
       tester.view.physicalSize = const Size(430, 1800);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
-      await tester.pumpWidget(_app(history: const []));
+      await tester.pumpWidget(eventCreateTestApp(history: const []));
       await _settle(tester);
       // No history: the first visible type, its time, no template chips row
       // for a single kind is still shown for two types.
       expect(find.text('Probe'), findsWidgets);
       await tester.enterText(find.byType(TextField).first, 'Sonderprobe');
       await _settle(tester);
-      await tester.tap(find.text('Abbrechen'));
+      await tester.tap(find.byTooltip('Abbrechen'));
       await _settle(tester);
       expect(find.text('Termin verwerfen?'), findsOneWidget);
       await tester.tap(find.text('Weiter bearbeiten'));
@@ -318,10 +623,11 @@ void main() {
     tester.view.physicalSize = const Size(430, 1800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(_app(history: const []));
+    await tester.pumpWidget(eventCreateTestApp(history: const []));
     await _settle(tester);
-    final guards = ProviderScope.containerOf(tester.element(find.byType(RdEventCreatePage)))
-        .read(routeLeaveGuardRegistryProvider);
+    final guards = ProviderScope.containerOf(
+      tester.element(find.byType(RdEventCreatePage)),
+    ).read(routeLeaveGuardRegistryProvider);
     expect(guards.hasGuards, isTrue);
 
     // Untouched: the tab switch goes ahead without asking.
@@ -347,8 +653,10 @@ void main() {
   });
 
   group('source', () {
-    final page = File('lib/features/redesign/presentation/pages/rd_event_create_page.dart').readAsStringSync();
-    final writes = File('lib/features/attendance/presentation/attendance_create_writes.dart').readAsStringSync();
+    final page =
+        File('lib/features/redesign/presentation/pages/rd_event_create_page.dart').readAsStringSync();
+    final writes =
+        File('lib/features/attendance/presentation/attendance_create_writes.dart').readAsStringSync();
     final router = File('lib/core/router/app_router.dart').readAsStringSync();
 
     test('creates through the shared write path with permission check', () {
