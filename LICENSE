@@ -1,0 +1,27 @@
+Copyright (c) 2026 Attendix / FECG Speyer. All rights reserved.
+
+Proprietary Software — All Rights Reserved
+
+This repository and all of its contents (including source code, configuration,
+documentation, graphics, icons, branding, and build outputs) are proprietary
+and confidential intellectual property of the copyright holders.
+
+No license or right is granted to anyone other than the copyright holders and
+persons explicitly authorized in writing by the copyright holders to:
+
+  - use, run, deploy, or host the software (commercially or non-commercially),
+  - copy, reproduce, or distribute the software in whole or in part,
+  - modify, adapt, translate, or create derivative works from the software, or
+  - sublicense, sell, rent, lease, or otherwise exploit the software or the
+    "Attendix" name, logo, or brand assets.
+
+Public visibility of this repository on GitHub is solely for transparency and
+authorized development workflows. Nothing in this repository grants any
+permission beyond the minimal platform rights required by the GitHub Terms of
+Service (such as viewing the repository on GitHub).
+
+Third-party libraries, packages, and fonts referenced or included in this
+repository (such as `assets/fonts/Roboto-OFL.txt` and dependencies declared in
+`pubspec.yaml`) remain subject to their respective licenses.
+
+For licensing inquiries, contact the repository owners via https://attendix.de.

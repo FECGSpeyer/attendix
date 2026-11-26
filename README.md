@@ -97,3 +97,7 @@ Weitere Hinweise für Entwickler stehen in [CLAUDE.md](CLAUDE.md).
 - [Handbuch zum neuen Design (Beta)](docs/beta/README.md): Überblick, Rollen und Aufgaben je Rolle („Ich möchte …“).
 - [So ist die Beta gebaut](docs/beta/entwickler.md): Aufbau im Code und Regeln für Änderungen.
 - [Alle Dokumente](docs/README.md): Einrichten, Betrieb, Sicherheit.
+
+## Lizenz
+
+Alle Rechte vorbehalten (*All Rights Reserved*) — siehe [LICENSE](LICENSE). Die Nutzung, Vervielfältigung, Veränderung, Weiterverbreitung, das Hosting und der Verkauf dieser Software sind ohne ausdrückliche schriftliche Erlaubnis der Rechteinhaber nicht gestattet.
