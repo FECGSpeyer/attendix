@@ -9,6 +9,7 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/data/repositories/group_repository.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_group_edit_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,10 +39,23 @@ class _FakeGroupRepo extends GroupRepository {
   }
 }
 
-const _violin = Group(id: 5, name: 'Violine', categoryId: 10, tuning: 'C', clefs: ['g']);
+const _violin = Group(
+  id: 5,
+  name: 'Violine',
+  categoryId: 10,
+  tuning: 'C',
+  clefs: ['g'],
+);
 const _main = Group(id: 6, name: 'Dirigenten', maingroup: true);
 
-Widget _app(void Function(_FakeGroupRepo) onRepo, {int groupId = 5, int members = 2}) {
+Widget _app(
+  void Function(_FakeGroupRepo) onRepo, {
+  int groupId = 5,
+  int members = 2,
+  Group instrument = _violin,
+  Locale locale = const Locale('de'),
+  double textScale = 1,
+}) {
   final router = GoRouter(
     initialLocation: '/ich/verwaltung/gruppen/$groupId',
     routes: [
@@ -49,7 +63,13 @@ Widget _app(void Function(_FakeGroupRepo) onRepo, {int groupId = 5, int members 
         path: '/ich/verwaltung/gruppen',
         builder: (_, __) => const Scaffold(body: Text('page groups')),
         routes: [
-          GoRoute(path: ':id', builder: (_, s) => RdGroupEditPage(groupId: int.parse(s.pathParameters['id']!))),
+          GoRoute(
+            path: ':id',
+            builder:
+                (_, s) => RdGroupEditPage(
+                  groupId: int.parse(s.pathParameters['id']!),
+                ),
+          ),
         ],
       ),
     ],
@@ -67,15 +87,24 @@ Widget _app(void Function(_FakeGroupRepo) onRepo, {int groupId = 5, int members 
         onRepo(repo);
         return repo;
       }),
-      groupsProvider.overrideWith((ref) async => const [_violin, _main]),
-      groupCategoriesProvider.overrideWith((ref) async => const [GroupCategory(id: 10, name: 'Streicher')]),
+      groupsProvider.overrideWith((ref) async => [instrument, _main]),
+      groupCategoriesProvider.overrideWith(
+        (ref) async => const [GroupCategory(id: 10, name: 'Streicher')],
+      ),
       rdGroupMemberCountProvider(groupId).overrideWith((ref) async => members),
     ],
     child: MaterialApp.router(
-      locale: const Locale('de'),
+      locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+      builder:
+          (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: TextScaler.linear(textScale)),
+            child: child!,
+          ),
       routerConfig: router,
     ),
   );
@@ -95,7 +124,9 @@ void _phone(WidgetTester tester) {
 
 void main() {
   group('RdGroupEditPage', () {
-    testWidgets('every field of the old page, saved right away', (tester) async {
+    testWidgets('every field of the old page, saved right away', (
+      tester,
+    ) async {
       _phone(tester);
       late _FakeGroupRepo repo;
       await tester.pumpWidget(_app((r) => repo = r));
@@ -110,7 +141,10 @@ void main() {
 
       await tester.tap(find.text('B'));
       await tester.tap(find.text('Bassschlüssel (F)'));
-      await tester.enterText(find.byKey(const Key('rd-group-edit-name')), 'Violine 1');
+      await tester.enterText(
+        find.byKey(const Key('rd-group-edit-name')),
+        'Violine 1',
+      );
       await tester.tap(find.byKey(const Key('rd-group-edit-done')));
       await _settle(tester);
 
@@ -124,16 +158,25 @@ void main() {
       expect(find.text('page groups'), findsOneWidget);
     });
 
-    testWidgets('says why a group with members cannot be deleted', (tester) async {
+    testWidgets('says why a group with members cannot be deleted', (
+      tester,
+    ) async {
       _phone(tester);
       await tester.pumpWidget(_app((_) {}));
       await _settle(tester);
       await tester.ensureVisible(find.byKey(const Key('rd-group-edit-delete')));
       await _settle(tester);
-      expect(find.textContaining('Verschiebe sie zuerst zu einem anderen Instrument.'), findsOneWidget);
+      expect(
+        find.textContaining(
+          'Verschiebe sie zuerst zu einem anderen Instrument.',
+        ),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('the main group hides the music fields and cannot be deleted', (tester) async {
+    testWidgets('the main group hides the music fields and cannot be deleted', (
+      tester,
+    ) async {
       _phone(tester);
       await tester.pumpWidget(_app((_) {}, groupId: 6, members: 0));
       await _settle(tester);
@@ -142,7 +185,168 @@ void main() {
       expect(find.text('SYNONYME'), findsNothing);
       await tester.ensureVisible(find.byKey(const Key('rd-group-edit-delete')));
       await _settle(tester);
-      expect(find.text('Die Hauptgruppe lässt sich nicht löschen.'), findsOneWidget);
+      expect(
+        find.text('Die Hauptgruppe lässt sich nicht löschen.'),
+        findsOneWidget,
+      );
+    });
+
+    for (final clefs in <List<String>?>[null, const []]) {
+      testWidgets('unset metadata stays visible without writing ($clefs)', (
+        tester,
+      ) async {
+        _phone(tester);
+        late _FakeGroupRepo repo;
+        await tester.pumpWidget(
+          _app(
+            (r) => repo = r,
+            instrument: Group(id: 5, name: 'Schlagwerk', clefs: clefs),
+          ),
+        );
+        await _settle(tester);
+
+        expect(
+          tester
+              .widget<RdChoiceChip>(
+                find.byKey(const Key('rd-group-edit-tuning-unset')),
+              )
+              .selected,
+          isTrue,
+        );
+        expect(
+          tester
+              .widget<RdChoiceChip>(
+                find.byKey(const Key('rd-group-edit-tuning-C')),
+              )
+              .selected,
+          isFalse,
+        );
+        expect(
+          tester
+              .widget<RdChoiceChip>(
+                find.byKey(const Key('rd-group-edit-clef-G')),
+              )
+              .selected,
+          isFalse,
+        );
+        expect(
+          tester
+              .widget<RdChoiceChip>(
+                find.byKey(const Key('rd-group-edit-clefs-unset')),
+              )
+              .selected,
+          isTrue,
+        );
+        await tester.tap(find.byKey(const Key('rd-group-edit-done')));
+        await _settle(tester);
+        expect(repo.updates, isEmpty);
+      });
+    }
+
+    testWidgets(
+      'chooses music metadata from an unset instrument without an invented clef',
+      (tester) async {
+        _phone(tester);
+        late _FakeGroupRepo repo;
+        await tester.pumpWidget(
+          _app(
+            (r) => repo = r,
+            instrument: const Group(id: 5, name: 'Schlagwerk', clefs: []),
+          ),
+        );
+        await _settle(tester);
+
+        await tester.tap(find.text('C'));
+        await tester.tap(find.text('Bassschlüssel (F)'));
+        await _settle(tester);
+        expect(repo.updates, [
+          {'tuning': 'C'},
+          {
+            'clefs': ['f'],
+          },
+        ]);
+      },
+    );
+
+    testWidgets('clears tuning and the final clef explicitly', (tester) async {
+      _phone(tester);
+      late _FakeGroupRepo repo;
+      await tester.pumpWidget(_app((r) => repo = r));
+      await _settle(tester);
+
+      await tester.tap(find.byKey(const Key('rd-group-edit-tuning-unset')));
+      await tester.tap(find.text('Violinschlüssel (G)'));
+      await _settle(tester);
+      expect(repo.updates, [
+        {'tuning': null},
+        {'clefs': <String>[]},
+      ]);
+      expect(
+        tester
+            .widget<RdChoiceChip>(
+              find.byKey(const Key('rd-group-edit-clefs-unset')),
+            )
+            .selected,
+        isTrue,
+      );
+    });
+
+    testWidgets('clears multiple clefs through the unset choice', (
+      tester,
+    ) async {
+      _phone(tester);
+      late _FakeGroupRepo repo;
+      await tester.pumpWidget(
+        _app(
+          (r) => repo = r,
+          instrument: const Group(
+            id: 5,
+            name: 'Viola',
+            tuning: 'C',
+            clefs: ['g', 'c'],
+          ),
+        ),
+      );
+      await _settle(tester);
+
+      await tester.tap(find.byKey(const Key('rd-group-edit-clefs-unset')));
+      await _settle(tester);
+      expect(repo.updates, [
+        {'clefs': <String>[]},
+      ]);
+      expect(
+        tester
+            .widget<RdChoiceChip>(find.byKey(const Key('rd-group-edit-clef-G')))
+            .selected,
+        isFalse,
+      );
+      expect(
+        tester
+            .widget<RdChoiceChip>(find.byKey(const Key('rd-group-edit-clef-C')))
+            .selected,
+        isFalse,
+      );
+    });
+
+    testWidgets('unset choices remain accessible with enlarged text', (
+      tester,
+    ) async {
+      _phone(tester);
+      await tester.pumpWidget(
+        _app(
+          (_) {},
+          instrument: const Group(id: 5, name: 'Percussion', clefs: []),
+          locale: const Locale('en'),
+          textScale: 2,
+        ),
+      );
+      await _settle(tester);
+      expect(find.text('Not set'), findsNWidgets(2));
+      await tester.ensureVisible(
+        find.byKey(const Key('rd-group-edit-clefs-unset')),
+      );
+      await _settle(tester);
+      expect(tester.takeException(), isNull);
     });
   });
 }
