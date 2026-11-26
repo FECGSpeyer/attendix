@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
@@ -18,6 +19,7 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/services/offline_queue_service.dart' show offlineQueueNotifierProvider, rootScaffoldMessengerKey;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/archived_attendance.dart';
+import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/event_list_utils.dart';
@@ -27,7 +29,8 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart' show AppActionSheetAction, showAppActionSheet;
+import '../../../../shared/widgets/adaptive/adaptive.dart' show AppActionSheetAction, AppAlertDialog, showAppActionSheet, showAppDialog;
+import '../../../../shared/widgets/adaptive/ion_loading.dart' show showIonLoading;
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart' show registrationAnswerText;
 import '../../../attendance/presentation/attendance_group_sort.dart'
     show mainGroupIdOf, sortPersonsByGroup;
@@ -89,7 +92,7 @@ class RdEventPage extends ConsumerStatefulWidget {
 }
 
 /// Entries of the ••• menu.
-enum _MenuAction { church, excel, archive }
+enum _MenuAction { church, excel, telegram, archive }
 
 /// Days of [attendance], with the type's default for all-day types (a
 /// Freizeit without own `duration_days` still runs on day 2).
@@ -143,6 +146,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   _Undo? _undo;
   String? _toast;
   int _bulkWrites = 0;
+  bool _isSendingTelegramCard = false;
 
   String _query = '';
 
@@ -547,7 +551,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   // ---------------------------------------------------------------------------
 
   /// "•••" next to "Bearbeiten" (concept L6): Status-Übersicht,
-  /// Gemeinde-Übersicht, Excel, Archivieren. The Vorbereitung lives in the
+  /// Gemeinde-Übersicht, Excel, Telegram-Karte, Archivieren. The Vorbereitung lives in the
   /// Überblick, the answers per status in the Anwesenheit.
   /// "Termin löschen" is at the bottom of "Bearbeiten".
   Future<void> _openMenu(Attendance attendance, List<RdMember> members) async {
@@ -578,6 +582,13 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
             icon: Icons.table_chart_outlined,
             label: l10n.redesignEventExportExcel,
           ),
+        if (canMutateAttendanceDetail(role))
+          AppActionSheetAction(
+            value: _MenuAction.telegram,
+            icon: Icons.send_outlined,
+            label: l10n.attendanceTelegramCard,
+            enabled: !_isSendingTelegramCard,
+          ),
         if (canArchive)
           AppActionSheetAction(
             value: _MenuAction.archive,
@@ -597,6 +608,8 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         );
       case _MenuAction.excel:
         await _exportExcel(attendance, members);
+      case _MenuAction.telegram:
+        await _sendTelegramCard();
       case _MenuAction.archive:
         await _toggleArchived(attendance);
     }
@@ -605,6 +618,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   bool _menuHasActions(Attendance attendance, List<RdMember> members) {
     if (members.isNotEmpty) return true;
     final role = ref.watch(effectiveRoleProvider);
+    if (canMutateAttendanceDetail(role)) return true;
     final type = ref.watch(attendanceTypeForAttendanceProvider(_id)).valueOrNull;
     return canArchiveAttendance(
       date: attendance.date,
@@ -612,6 +626,70 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       archived: attendance.archived,
       role: role,
     );
+  }
+
+  /// Create a group-card link, then open it directly from the confirmation
+  /// button so browsers retain the user gesture required for a new window.
+  Future<void> _sendTelegramCard() async {
+    if (_isSendingTelegramCard || !canMutateAttendanceDetail(ref.read(effectiveRoleProvider))) return;
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    final attendanceId = _id;
+    final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
+    bool isCurrent() => mounted && _id == attendanceId && session.isCurrent() &&
+        canMutateAttendanceDetail(ref.read(effectiveRoleProvider));
+    _isSendingTelegramCard = true;
+    try {
+      String? url;
+      final loading = showIonLoading(context);
+      try {
+        url = await repo.createTelegramCardLink(attendanceId);
+      } on DemoModeException {
+        return; // The repository already showed the demo restriction.
+      } catch (_) {
+        url = null;
+      } finally {
+        loading.dismiss();
+      }
+      if (!mounted || !isCurrent()) return;
+      if (url == null) {
+        ToastHelper.showError(context, context.l10n.attendanceTelegramCardFailed);
+        return;
+      }
+      final target = Uri.parse(url);
+      await showAppDialog<void>(
+        context: context,
+        builder: (ctx) => AppAlertDialog(
+          title: Text(ctx.l10n.attendanceTelegramCard),
+          content: Text(ctx.l10n.attendanceTelegramCardHint),
+          scrollable: true,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(ctx.l10n.commonCancel),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(ctx).pop();
+                if (!isCurrent()) return;
+                try {
+                  final opened = await launchUrl(target, mode: LaunchMode.externalApplication);
+                  if (!opened && mounted && isCurrent()) {
+                    ToastHelper.showError(context, context.l10n.attendanceTelegramCardFailed);
+                  }
+                } catch (_) {
+                  if (mounted && isCurrent()) {
+                    ToastHelper.showError(context, context.l10n.attendanceTelegramCardFailed);
+                  }
+                }
+              },
+              child: Text(ctx.l10n.attendanceTelegramCardOpen),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      _isSendingTelegramCard = false;
+    }
   }
 
   /// "Als Excel exportieren" with the statuses shown on this page.

@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/constants/enums.dart';
+import 'package:attendix/core/utils/demo_guard.dart';
 import 'package:attendix/core/providers/attendance_detail_providers.dart';
 import 'package:attendix/core/providers/attendance_providers.dart';
 import 'package:attendix/core/providers/connectivity_provider.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
+import 'package:attendix/core/providers/profile_providers.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/role_permission_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
@@ -144,6 +146,8 @@ class _Harness {
   /// Index in [writes] of a write that fails (after [gate]).
   int? failAt;
 
+  String sessionId = 's1';
+
   Widget app({RdEventTab tab = RdEventTab.overview, bool split = false}) {
     when(() => repo.hasTenantId).thenReturn(true);
     when(() => repo.validatePersonAttendanceTenant(any())).thenAnswer((_) async => valid);
@@ -204,7 +208,7 @@ class _Harness {
         attendanceRepositoryWithTenantProvider.overrideWithValue(repo),
         connectivityProvider.overrideWith((ref) => const Stream<bool>.empty()),
         offlineQueueUserIdProvider.overrideWithValue(() => 'u1'),
-        offlineQueueSessionIdProvider.overrideWithValue(() => 's1'),
+        offlineQueueSessionIdProvider.overrideWithValue(() => sessionId),
         offlineQueueAuthEventsProvider.overrideWithValue(authEvents.stream),
         offlineQueueNotifierProvider.overrideWith(_OnlineQueue.new),
         attendanceDetailProvider.overrideWith((ref, id) async => TestFactories.createAttendance(
@@ -236,6 +240,7 @@ class _Harness {
         canViewAttendanceNotesProvider.overrideWithValue(canViewNotes),
         supabaseAuthProvider.overrideWithValue(_auth()),
         currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+        personExtraFieldsProvider.overrideWith((ref) async => const []),
         canViewAttendanceChecklistProvider.overrideWithValue(false),
         canAccessFilesProvider.overrideWithValue(false),
         protocolTypeByIdProvider.overrideWith((ref, id) => null),
@@ -244,6 +249,7 @@ class _Harness {
         songsProvider.overrideWith((ref) async => const []),
       ],
       child: MaterialApp.router(
+        scaffoldMessengerKey: rootScaffoldMessengerKey,
         locale: const Locale('de'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
@@ -293,6 +299,183 @@ void main() {
   });
 
   setUp(() => SharedPreferences.setMockInitialValues({}));
+
+  group('Telegram event card', () {
+    const cardLabel = 'Als Telegram-Karte senden';
+    const openLabel = 'Telegram öffnen';
+    const failureLabel = 'Die Telegram-Karte konnte nicht erstellt werden.';
+    const targetUrl = 'https://t.me/attendix_bot?startgroup=test-card';
+    const channel = MethodChannel('plugins.flutter.io/url_launcher');
+    final launches = <MethodCall>[];
+    var launchSucceeds = true;
+    var launchThrows = false;
+
+    setUp(() {
+      launches.clear();
+      launchSucceeds = true;
+      launchThrows = false;
+      DemoGuard.resetForTest();
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (call) async {
+        launches.add(call);
+        if (launchThrows) throw PlatformException(code: 'unavailable');
+        return launchSucceeds;
+      });
+    });
+    tearDown(() {
+      DemoGuard.resetForTest();
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, null);
+    });
+
+    Future<void> openMenu(WidgetTester tester, _Harness h) async {
+      await tester.pumpWidget(h.app());
+      await _settle(tester);
+      await tester.tap(find.byKey(const Key('rd-event-menu')));
+      await _settle(tester);
+    }
+
+    for (final size in [const Size(390, 844), const Size(1280, 900)]) {
+      testWidgets('opens Telegram only after explicit confirmation at $size', (tester) async {
+        _size(tester, size);
+        final h = _Harness();
+        when(() => h.repo.createTelegramCardLink(21)).thenAnswer((_) async => targetUrl);
+        await openMenu(tester, h);
+        expect(find.text(cardLabel), findsOneWidget);
+        await tester.tap(find.text(cardLabel));
+        await _settle(tester);
+        verify(() => h.repo.createTelegramCardLink(21)).called(1);
+        expect(find.textContaining('@attendix_bot'), findsOneWidget);
+        expect(launches, isEmpty);
+        await tester.tap(find.text(openLabel));
+        await _settle(tester);
+        expect(launches, hasLength(1));
+        expect(launches.single.method, 'launch');
+        expect(launches.single.arguments['url'], targetUrl);
+        expect(launches.single.arguments['useWebView'], isFalse);
+        expect(launches.single.arguments['useSafariVC'], isFalse);
+        expect(find.text(openLabel), findsNothing);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets('cancel leaves Telegram closed', (tester) async {
+      final h = _Harness();
+      when(() => h.repo.createTelegramCardLink(21)).thenAnswer((_) async => targetUrl);
+      await openMenu(tester, h);
+      await tester.tap(find.text(cardLabel));
+      await _settle(tester);
+      await tester.tap(find.text('Abbrechen'));
+      await _settle(tester);
+      expect(launches, isEmpty);
+      expect(find.text(openLabel), findsNothing);
+    });
+
+    for (final role in Role.values) {
+      testWidgets('Telegram entry respects $role permissions', (tester) async {
+        await openMenu(tester, _Harness(role: role));
+        expect(find.text(cardLabel),
+            [Role.admin, Role.responsible, Role.voiceLeaderHelper].contains(role) ? findsOneWidget : findsNothing);
+      });
+    }
+
+    testWidgets('can share a new event without members', (tester) async {
+      await openMenu(tester, _Harness(empty: true));
+      expect(find.text(cardLabel), findsOneWidget);
+    });
+
+    for (final throwsError in [false, true]) {
+      testWidgets('failed link creation shows an error and allows retry (throws: $throwsError)', (tester) async {
+        final h = _Harness();
+        when(() => h.repo.createTelegramCardLink(21)).thenAnswer((_) async {
+          if (throwsError) throw Exception('offline');
+          return null;
+        });
+        await openMenu(tester, h);
+        await tester.tap(find.text(cardLabel));
+        await _settle(tester);
+        expect(find.text(failureLabel), findsOneWidget);
+        expect(find.text(openLabel), findsNothing);
+        expect(launches, isEmpty);
+        // The error toast covers the header menu until it disappears.
+        await tester.pump(const Duration(seconds: 5));
+        await _settle(tester);
+        when(() => h.repo.createTelegramCardLink(21)).thenAnswer((_) async => targetUrl);
+        await tester.tap(find.byKey(const Key('rd-event-menu')));
+        await _settle(tester);
+        await tester.tap(find.text(cardLabel));
+        await _settle(tester);
+        expect(find.text(openLabel), findsOneWidget);
+      });
+    }
+
+    testWidgets('demo restriction does not become a generic error or open Telegram', (tester) async {
+      final h = _Harness();
+      when(() => h.repo.createTelegramCardLink(21)).thenAnswer((_) async {
+        DemoGuard.showRestrictedToast();
+        throw const DemoModeException();
+      });
+      await openMenu(tester, h);
+      await tester.tap(find.text(cardLabel));
+      await _settle(tester);
+      expect(find.text(kDemoRestrictedMessage), findsOneWidget);
+      expect(find.text(failureLabel), findsNothing);
+      expect(find.text(openLabel), findsNothing);
+      expect(launches, isEmpty);
+    });
+
+    for (final throwsError in [false, true]) {
+      testWidgets('failed Telegram launch shows an error (throws: $throwsError)', (tester) async {
+        launchSucceeds = false;
+        launchThrows = throwsError;
+        final h = _Harness();
+        when(() => h.repo.createTelegramCardLink(21)).thenAnswer((_) async => targetUrl);
+        await openMenu(tester, h);
+        await tester.tap(find.text(cardLabel));
+        await _settle(tester);
+        await tester.tap(find.text(openLabel));
+        await _settle(tester);
+        expect(find.text(failureLabel), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    for (final switchBeforeResponse in [true, false]) {
+      testWidgets('session switch prevents opening an old card (before response: $switchBeforeResponse)', (tester) async {
+        final h = _Harness();
+        final response = Completer<String?>();
+        when(() => h.repo.createTelegramCardLink(21)).thenAnswer((_) => response.future);
+        await openMenu(tester, h);
+        await tester.tap(find.text(cardLabel));
+        await _settle(tester);
+        if (switchBeforeResponse) h.sessionId = 's2';
+        response.complete(targetUrl);
+        await _settle(tester);
+        if (!switchBeforeResponse) {
+          h.sessionId = 's2';
+          await tester.tap(find.text(openLabel));
+          await _settle(tester);
+        }
+        expect(find.text(openLabel), findsNothing);
+        expect(launches, isEmpty);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets('leaving the page while the link loads does not open Telegram', (tester) async {
+      final h = _Harness();
+      final response = Completer<String?>();
+      when(() => h.repo.createTelegramCardLink(21)).thenAnswer((_) => response.future);
+      await openMenu(tester, h);
+      await tester.tap(find.text(cardLabel));
+      await _settle(tester);
+      await tester.pumpWidget(const SizedBox());
+      response.complete(targetUrl);
+      await _settle(tester);
+      expect(launches, isEmpty);
+      expect(tester.takeException(), isNull);
+    });
+  });
 
   group('Termin logic', () {
     test('register gaps: groups where nobody will be there, biggest first', () {
