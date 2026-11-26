@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.158.0",
+      "date": "26.11.2026",
+      "changes": [
+        "✨ Termine intuitiver anlegen: direkte Auswahl zwischen Termin und Besprechung, übersichtliches Formular und dauerhaft sichtbarer Anlegen-Button",
+        "✨ Kompaktere Rückmeldungen auf Terminkarten bei unveränderter Datumsanzeige",
+        "🐛 Werke im Termin ohne Hinweise auf fehlende Instrumente anzeigen"
+      ]
+    },
+    {
       "version": "0.157.2",
       "date": "26.11.2026",
       "changes": [
