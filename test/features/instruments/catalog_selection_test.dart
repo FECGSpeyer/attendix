@@ -282,6 +282,55 @@ void main() {
   });
 
   group('draft matching', () {
+    test('draft equivalents use exact names and aliases from either draft', () {
+      final flute = draftFromInstrument(
+        _instrument('flute'),
+        languageCode: 'de',
+      );
+      const customAlias = CatalogGroupDraft(
+        key: 'custom:1',
+        instrumentId: '',
+        name: '  FLAUTO  ',
+      );
+      const selectedAlias = CatalogGroupDraft(
+        key: 'another-flute',
+        instrumentId: 'flute',
+        name: 'Holzbläser Solo',
+        synonyms: ['Querflöte'],
+      );
+      expect(draftMatchesDraft(flute, customAlias), isTrue);
+      expect(draftMatchesDraft(customAlias, flute), isTrue);
+      expect(draftMatchesDraft(flute, selectedAlias), isTrue);
+      expect(draftMatchesDraft(selectedAlias, flute), isTrue);
+    });
+
+    test(
+      'draft equivalents keep numbered parts and related types distinct',
+      () {
+        final violins =
+            _preset('string_orchestra').entries
+                .take(2)
+                .map((entry) => draftFromPresetEntry(entry, languageCode: 'de'))
+                .toList();
+        expect(draftMatchesDraft(violins[0], violins[1]), isFalse);
+        final flute = draftFromInstrument(
+          _instrument('flute'),
+          languageCode: 'de',
+        );
+        expect(
+          draftMatchesDraft(flute, flute.copyWith(name: 'Querflöte 2')),
+          isFalse,
+        );
+        expect(
+          draftMatchesDraft(
+            flute,
+            draftFromInstrument(_instrument('bass_flute'), languageCode: 'de'),
+          ),
+          isFalse,
+        );
+      },
+    );
+
     test(
       'German and English names plus precise aliases represent one type',
       () {

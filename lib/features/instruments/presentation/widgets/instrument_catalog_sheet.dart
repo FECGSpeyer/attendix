@@ -319,6 +319,21 @@ class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
     });
   }
 
+  CatalogGroupDraft _resolveRow(CatalogGroupDraft draft) {
+    final override = _rowOverrides[draft.key];
+    final selected =
+        _selected[draft.key] ??
+        _selected[override?.key] ??
+        _selected.values
+            .where((selected) => draftMatchesDraft(draft, selected))
+            .firstOrNull;
+    if (selected == null) return override ?? draft;
+    // Merge may retain another key for the same part. Keep that association
+    // after deselection so reselecting restores the original draft as well.
+    _rowOverrides[draft.key] = selected;
+    return selected;
+  }
+
   List<({CatalogGroupDraft draft, String sourceKey, bool optional})>
   _results() {
     final catalogResults = searchInstrumentCatalog(
@@ -338,9 +353,9 @@ class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
     final results =
         <({CatalogGroupDraft draft, String sourceKey, bool optional})>[];
     for (final entry in _preset?.entries ?? const <CatalogPresetEntry>[]) {
-      final draft =
-          _rowOverrides[entry.key] ??
-          draftFromPresetEntry(entry, languageCode: _language);
+      final draft = _resolveRow(
+        draftFromPresetEntry(entry, languageCode: _language),
+      );
       if (_family != null &&
           instruments[entry.instrumentId]?.family != _family) {
         continue;
@@ -361,9 +376,9 @@ class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
     }
     for (final instrument in catalogResults) {
       if (presetIds.contains(instrument.id)) continue;
-      final draft =
-          _rowOverrides[instrument.id] ??
-          draftFromInstrument(instrument, languageCode: _language);
+      final draft = _resolveRow(
+        draftFromInstrument(instrument, languageCode: _language),
+      );
       results.add((draft: draft, sourceKey: instrument.id, optional: false));
     }
     return results;

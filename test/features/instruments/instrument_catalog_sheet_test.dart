@@ -167,6 +167,170 @@ void main() {
     );
   });
 
+  testWidgets(
+    'merging an equivalent custom draft selects the preset row and removes the survivor',
+    (tester) async {
+      CatalogPickerResult? result;
+      await _open(tester, onPickerResult: (value) => result = value);
+      await tester.tap(find.byKey(const Key('catalog-custom')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).last, 'Querflöte');
+      await tester.tap(find.text('Fertig'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const Key('catalog-presets')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('catalog-presets')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Sinfonieorchester'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Ergänzen'));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const Key('catalog-search')),
+        'Querflöte',
+      );
+      await tester.pumpAndSettle();
+      final row = find.widgetWithText(RdListRow, 'Querflöte');
+      await tester.ensureVisible(row);
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<Checkbox>(
+              find.descendant(of: row, matching: find.byType(Checkbox)),
+            )
+            .value,
+        isTrue,
+      );
+      expect(find.text('14 Instrumente hinzufügen'), findsOneWidget);
+      await tester.tap(row);
+      await tester.pumpAndSettle();
+      expect(find.text('13 Instrumente hinzufügen'), findsOneWidget);
+      await _apply(tester);
+      expect(result!.presetId, 'symphony_orchestra');
+      expect(result!.drafts, hasLength(13));
+      expect(
+        result!.drafts.map((draft) => draft.key),
+        isNot(contains(anyOf('custom:1', 'flute'))),
+      );
+    },
+  );
+
+  for (final draft in const [
+    CatalogGroupDraft(
+      key: 'custom:exact-flute',
+      instrumentId: '',
+      name: 'Querflöte',
+    ),
+    CatalogGroupDraft(
+      key: 'custom:alias-flute',
+      instrumentId: '',
+      name: 'Flauto',
+      categoryName: 'Solisten',
+      synonyms: ['Solo woodwind'],
+      tuning: 'G',
+      clefs: ['f'],
+    ),
+    CatalogGroupDraft(
+      key: 'imported-flute',
+      instrumentId: 'flute',
+      name: 'Flauto',
+      categoryName: 'Eigene Holzbläser',
+      synonyms: ['Solo woodwind'],
+      tuning: 'G',
+      clefs: ['f'],
+    ),
+  ]) {
+    testWidgets(
+      'reopened equivalent draft ${draft.key} stays associated after deselection',
+      (tester) async {
+        CatalogPickerResult? result;
+        await _open(
+          tester,
+          initialPresetId: 'symphony_orchestra',
+          initialSelection: [draft],
+          onPickerResult: (value) => result = value,
+        );
+        await tester.enterText(
+          find.byKey(const Key('catalog-search')),
+          'Querflöte',
+        );
+        await tester.pumpAndSettle();
+        final row = find.widgetWithText(RdListRow, draft.name);
+        expect(row, findsOneWidget);
+        await tester.ensureVisible(row);
+        await tester.pumpAndSettle();
+        final checkbox = find.descendant(
+          of: row,
+          matching: find.byType(Checkbox),
+        );
+        expect(tester.widget<Checkbox>(checkbox).value, isTrue);
+        await tester.tap(row);
+        await tester.pumpAndSettle();
+        expect(tester.widget<Checkbox>(checkbox).value, isFalse);
+        expect(find.text('0 Instrumente hinzufügen'), findsOneWidget);
+        await tester.tap(row);
+        await tester.pumpAndSettle();
+        expect(find.text('1 Instrument hinzufügen'), findsOneWidget);
+        await _apply(tester);
+        expect(result!.drafts.single, same(draft));
+        expect(result!.presetId, 'symphony_orchestra');
+
+        await _open(
+          tester,
+          initialPresetId: result!.presetId,
+          initialSelection: result!.drafts,
+          onPickerResult: (value) => result = value,
+        );
+        await tester.enterText(
+          find.byKey(const Key('catalog-search')),
+          'Querflöte',
+        );
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(row);
+        await tester.pumpAndSettle();
+        expect(tester.widget<Checkbox>(checkbox).value, isTrue);
+        await tester.tap(row);
+        await tester.pumpAndSettle();
+        await _apply(tester);
+        expect(result!.drafts, isEmpty);
+      },
+    );
+  }
+
+  testWidgets('catalog row removes an equivalent draft without a preset', (
+    tester,
+  ) async {
+    CatalogPickerResult? result;
+    await _open(
+      tester,
+      initialSelection: const [
+        CatalogGroupDraft(key: 'custom:1', instrumentId: '', name: 'Flauto'),
+      ],
+      onPickerResult: (value) => result = value,
+    );
+    await tester.enterText(
+      find.byKey(const Key('catalog-search')),
+      'Querflöte',
+    );
+    await tester.pumpAndSettle();
+    final row = find.widgetWithText(RdListRow, 'Flauto');
+    await tester.ensureVisible(row);
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<Checkbox>(
+            find.descendant(of: row, matching: find.byType(Checkbox)),
+          )
+          .value,
+      isTrue,
+    );
+    await tester.tap(row);
+    await tester.pumpAndSettle();
+    await _apply(tester);
+    expect(result!.drafts, isEmpty);
+    expect(result!.presetId, isNull);
+  });
+
   testWidgets('explicit replace starts from the new preset defaults', (
     tester,
   ) async {

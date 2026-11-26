@@ -114,6 +114,12 @@ List<CatalogGroupDraft> mergeCatalogDrafts(
   return List.unmodifiable(merged);
 }
 
+/// Matches complete names and explicit aliases, independently of draft keys.
+bool draftMatchesDraft(CatalogGroupDraft draft, CatalogGroupDraft other) {
+  final draftNames = _draftNames(draft);
+  return _draftNames(other).any(draftNames.contains);
+}
+
 /// Matches complete names or explicit aliases; leaders are not instruments.
 bool draftMatchesGroup(CatalogGroupDraft draft, Group group) {
   if (group.maingroup == true) return false;
