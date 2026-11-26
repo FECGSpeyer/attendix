@@ -107,9 +107,14 @@ Freigabe warten.
   2. Trag „Name“ und „Kürzel“ ein.
   3. Benenne die „Hauptgruppe“. Sie ist für die Leitung, zum Beispiel
      Dirigenten oder Vorstand.
-  4. Tippe auf „Gründen“.
+  4. Bei Orchester oder Chor kannst du unter „Vorlage und Auswahl“ die
+     „Auswahl bearbeiten“: Wähle eine Vorlage, ergänze einzelne Einträge oder
+     beginne ohne Vorlage. Die Hauptgruppe für die Leitung bleibt davon getrennt.
+  5. Tippe auf „Gründen“.
 - **Ergebnis:** Die Gruppe ist angelegt und du bist ihr Administrator. Weiter
   geht es mit Instrumenten, Mitgliedern und Terminen
   ([Leitung](leitung.md#gruppe-einrichten)).
 - **Gut zu wissen:** Die Art der Gruppe bestimmt die Wörter der App
   (Instrument, Stimme oder Untergruppe) und ob es den Reiter „Werke“ gibt.
+  Scheitert nur die Übernahme der Auswahl, bleibt die neue Gruppe angelegt.
+  Ergänze die Instrumente oder Stimmen dann über die Verwaltung (L-46).
