@@ -97,6 +97,7 @@ Mac App Store gehen erst ab Shorebird 1.6.128 mit Flutter 3.47.7 (wir nutzen
 
 Danach AAB bzw. IPA wie gewohnt in Play Console / App Store Connect hochladen.
 **Kein Xcode-Archiv** für den Store: Das wäre kein Shorebird-Release.
+(Für schnelle, automatische TestFlight-Builds ohne OTA-Patches siehe [xcode-cloud.md](xcode-cloud.md).)
 `scripts/store_build.sh ios|macos` baut weiter mit `flutter build` (z. B.
 `ios --config-only`) und warnt, dass daraus kein Shorebird-Release entsteht.
 
