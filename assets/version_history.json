@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.157.1",
+      "date": "26.11.2026",
+      "changes": [
+        "✨ Termine: Datumsbox links vertikal mittig ausgerichtet und optisch zentriert",
+        "✨ Anwesenheit: Personen mit „Kommt später“ wie „Entschuldigt“ ohne Schnell-Buttons darstellen; Tipp auf die Zeile öffnet das Status-Sheet"
+      ]
+    },
+    {
       "version": "0.157.0",
       "date": "26.11.2026",
       "changes": [
