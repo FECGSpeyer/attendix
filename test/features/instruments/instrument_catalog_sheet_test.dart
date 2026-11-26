@@ -167,51 +167,113 @@ void main() {
     );
   });
 
+  for (final previousDraft in const [
+    CatalogGroupDraft(key: 'flute', instrumentId: 'flute', name: 'Querflöte'),
+    CatalogGroupDraft(key: 'custom:old', instrumentId: '', name: 'Flauto'),
+  ]) {
+    testWidgets(
+      'merging an equivalent custom draft updates the stale ${previousDraft.key} row association',
+      (tester) async {
+        CatalogPickerResult? result;
+        await _open(
+          tester,
+          initialSelection: [previousDraft],
+          onPickerResult: (value) => result = value,
+        );
+        await tester.enterText(
+          find.byKey(const Key('catalog-search')),
+          'Querflöte',
+        );
+        await tester.pumpAndSettle();
+        await _selectRow(tester, previousDraft.name);
+        await tester.ensureVisible(find.byKey(const Key('catalog-custom')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('catalog-custom')));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField).last, 'Querflöte');
+        await tester.tap(find.text('Fertig'));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.byKey(const Key('catalog-presets')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('catalog-presets')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Sinfonieorchester'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Ergänzen'));
+        await tester.pumpAndSettle();
+        await tester.enterText(
+          find.byKey(const Key('catalog-search')),
+          'Querflöte',
+        );
+        await tester.pumpAndSettle();
+        final row = find.widgetWithText(RdListRow, 'Querflöte');
+        await tester.ensureVisible(row);
+        await tester.pumpAndSettle();
+        expect(
+          tester
+              .widget<Checkbox>(
+                find.descendant(of: row, matching: find.byType(Checkbox)),
+              )
+              .value,
+          isTrue,
+        );
+        expect(find.text('14 Instrumente hinzufügen'), findsOneWidget);
+        await tester.tap(row);
+        await tester.pumpAndSettle();
+        expect(find.text('13 Instrumente hinzufügen'), findsOneWidget);
+        await _apply(tester);
+        expect(result!.presetId, 'symphony_orchestra');
+        expect(result!.drafts, hasLength(13));
+        expect(
+          result!.drafts.map((draft) => draft.key),
+          isNot(contains(anyOf('custom:1', 'flute'))),
+        );
+      },
+    );
+  }
+
   testWidgets(
-    'merging an equivalent custom draft selects the preset row and removes the survivor',
+    'deselected renamed row stays separate from an equivalent custom draft',
     (tester) async {
+      const renamed = CatalogGroupDraft(
+        key: 'flute',
+        instrumentId: 'flute',
+        name: 'Querflöte 2',
+        categoryName: 'Solisten',
+        tuning: 'G',
+        clefs: ['f'],
+      );
+      const custom = CatalogGroupDraft(
+        key: 'custom:1',
+        instrumentId: '',
+        name: 'Querflöte',
+      );
       CatalogPickerResult? result;
-      await _open(tester, onPickerResult: (value) => result = value);
-      await tester.tap(find.byKey(const Key('catalog-custom')));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).last, 'Querflöte');
-      await tester.tap(find.text('Fertig'));
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(find.byKey(const Key('catalog-presets')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('catalog-presets')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Sinfonieorchester'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Ergänzen'));
-      await tester.pumpAndSettle();
+      await _open(
+        tester,
+        initialSelection: const [renamed, custom],
+        onPickerResult: (value) => result = value,
+      );
       await tester.enterText(
         find.byKey(const Key('catalog-search')),
         'Querflöte',
       );
       await tester.pumpAndSettle();
-      final row = find.widgetWithText(RdListRow, 'Querflöte');
-      await tester.ensureVisible(row);
-      await tester.pumpAndSettle();
+      await _selectRow(tester, 'Querflöte 2');
+      final row = find.widgetWithText(RdListRow, 'Querflöte 2');
+      expect(row, findsOneWidget);
       expect(
         tester
             .widget<Checkbox>(
               find.descendant(of: row, matching: find.byType(Checkbox)),
             )
             .value,
-        isTrue,
+        isFalse,
       );
-      expect(find.text('14 Instrumente hinzufügen'), findsOneWidget);
-      await tester.tap(row);
-      await tester.pumpAndSettle();
-      expect(find.text('13 Instrumente hinzufügen'), findsOneWidget);
+      expect(find.text('1 Instrument hinzufügen'), findsOneWidget);
+      await _selectRow(tester, 'Querflöte 2');
       await _apply(tester);
-      expect(result!.presetId, 'symphony_orchestra');
-      expect(result!.drafts, hasLength(13));
-      expect(
-        result!.drafts.map((draft) => draft.key),
-        isNot(contains(anyOf('custom:1', 'flute'))),
-      );
+      expect(result!.drafts, [custom, renamed]);
     },
   );
 

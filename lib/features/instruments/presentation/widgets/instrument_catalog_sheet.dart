@@ -320,14 +320,17 @@ class _InstrumentCatalogSheetState extends State<_InstrumentCatalogSheet> {
   }
 
   CatalogGroupDraft _resolveRow(CatalogGroupDraft draft) {
-    final override = _rowOverrides[draft.key];
+    final rowDraft = _rowOverrides[draft.key] ?? draft;
+    // Renamed parts keep their identity even while unchecked. Equivalent
+    // overrides can still resolve through the catalog's curated aliases.
+    final matchingDraft = draftMatchesDraft(rowDraft, draft) ? draft : rowDraft;
     final selected =
         _selected[draft.key] ??
-        _selected[override?.key] ??
+        _selected[rowDraft.key] ??
         _selected.values
-            .where((selected) => draftMatchesDraft(draft, selected))
+            .where((selected) => draftMatchesDraft(matchingDraft, selected))
             .firstOrNull;
-    if (selected == null) return override ?? draft;
+    if (selected == null) return rowDraft;
     // Merge may retain another key for the same part. Keep that association
     // after deselection so reselecting restores the original draft as well.
     _rowOverrides[draft.key] = selected;
